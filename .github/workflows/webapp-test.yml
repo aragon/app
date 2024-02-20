@@ -5,6 +5,7 @@ on:
     branches-ignore: ## Ignore develop and main branches to avoid an unneeded 2nd build.
       - 'develop'
       - 'main'
+      - 'DOPS-634-Fleek-deprecation-migrate-aragon-app'
 
 jobs:
   build-and-test:
