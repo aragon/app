@@ -69,7 +69,7 @@ jobs:
       - name: Take correct fleek config
         env:
           FLEEK_FILE: ${{ needs.set-environment.outputs.environment }}
-        run: mv ./.github/fleek/fleekxyz_${{FLEEK_FILE}}.config.json .fleek.json
+        run: echo ${FLEEK_FILE};ls ./.github/fleek/fleekxyz_${FLEEK_FILE}.config.json ;mv ./.github/fleek/fleekxyz_${FLEEK_FILE}.config.json .fleek.json
       - name: Install Fleek CLI
         run: npm i -g @fleekxyz/cli
       - name: Deploy through Fleek
