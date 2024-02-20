@@ -1,4 +1,4 @@
-name: WebApp Deploy
+name: WebApp Deploy fleekxyz
 on:
   workflow_dispatch:
   push:
