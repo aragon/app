@@ -1,9 +1,9 @@
 {
   "sites": [
     {
-      "slug": "crooked-needle-many",
+      "slug": "aragon-app",
       "distDir": "dist",
-      "buildCommand": null
+      "buildCommand": ""
     }
   ]
 }
