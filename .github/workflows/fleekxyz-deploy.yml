@@ -3,8 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'develop'
-      - 'main'
+      - 'DOPS-634-Fleek-deprecation-migrate-aragon-app'
 
 jobs:
   #######################
