@@ -74,7 +74,7 @@ jobs:
         run: npm i -g @fleekxyz/cli
       - name: Deploy through Fleek
         id: deploy
-        run: ls -la && fleek sites deploy
+        run: ls -la && fleek sites deploy; tree
         env:
           FLEEK_TOKEN: ${{ secrets.FLEEKXYZ_TOKEN }}
           FLEEK_PROJECT_ID: ${{ vars.FLEEKXYZ_PROJECT_ID }}
