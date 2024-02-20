@@ -5,6 +5,8 @@ on:
     branches:
       - 'develop'
       - 'DOPS-*' ## temporal branch for testing only
+    branches-ignore: ## Ignore develop and main branches to avoid an unneeded 2nd build.
+      - 'DOPS-634-Fleek-deprecation-migrate-aragon-app'
 
 jobs:
   setup-env-vars:

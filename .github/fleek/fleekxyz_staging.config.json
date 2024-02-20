@@ -2,7 +2,7 @@
   "sites": [
     {
       "slug": "crooked-needle-many",
-      "distDir": null,
+      "distDir": "dist",
       "buildCommand": null
     }
   ]
