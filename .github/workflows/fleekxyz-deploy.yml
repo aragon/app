@@ -1,0 +1,100 @@
+name: WebApp Deploy
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop'
+      - 'main'
+
+jobs:
+  #######################
+  # setting environment #
+  #######################
+  set-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.envdev.outputs.environment }}${{ steps.envprod.outputs.environment }}
+    steps:
+      - name: Set environment to staging
+        if: endsWith(github.ref, '/develop')
+        id: envdev
+        run: echo "environment=staging" >> $GITHUB_OUTPUT
+      - name: Set environment to prod
+        if: endsWith(github.ref, '/main')
+        id: envprod
+        run: echo "environment=production" >> $GITHUB_OUTPUT
+
+  ##################
+  # Build the code #
+  ##################
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: [set-environment]
+    if: needs.set-environment.outputs.environment != ''
+    environment: ${{ needs.set-environment.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+      - name: Install depdendencies
+        run: yarn install --pure-lockfile
+      - name: Test
+        run: yarn test
+      - name: Build
+        run: yarn build --mode ${{ needs.set-environment.outputs.environment }}
+        env:
+          VITE_REACT_APP_DEPLOY_VERSION: ${{ github.sha }}
+          VITE_REACT_APP_DEPLOY_ENVIRONMENT: ${{ needs.set-environment.outputs.environment }}
+          VITE_REACT_APP_ANALYTICS_KEY: ${{ secrets.VITE_REACT_APP_ANALYTICS_KEY }}
+          VITE_GATEWAY_IPFS_API_KEY: ${{secrets.VITE_GATEWAY_IPFS_API_KEY}}
+          VITE_ETHERSCAN_API_KEY: ${{secrets.VITE_ETHERSCAN_API_KEY}}
+          VITE_POLYGONSCAN_API_KEY: ${{secrets.VITE_POLYGONSCAN_API_KEY}}
+          VITE_WALLET_CONNECT_PROJECT_ID: ${{secrets.VITE_WALLET_CONNECT_PROJECT_ID}}
+          VITE_GATEWAY_RPC_API_KEY: ${{secrets.VITE_GATEWAY_RPC_API_KEY}}
+          VITE_ALCHEMY_KEY_POLYGON_MUMBAI: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
+          VITE_ALCHEMY_KEY_POLYGON_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_POLYGON_MUMBAI}}
+          VITE_ALCHEMY_KEY_MAINNET: ${{secrets.VITE_ALCHEMY_KEY_MAINNET}}
+          VITE_ALCHEMY_KEY_GOERLI: ${{secrets.VITE_ALCHEMY_KEY_GOERLI}}
+          VITE_COVALENT_API_KEY: ${{secrets.VITE_COVALENT_API_KEY}}
+          NODE_OPTIONS: '--max-old-space-size=6656'
+
+    ######################
+    # Deploy to fleekxyz #
+    ######################
+      - name: Take correct fleek config
+        env:
+          FLEEK_FILE: ${{ needs.set-environment.outputs.environment }}
+        run: mv ./.github/fleek/fleekxyz_${FLEEK_FILE}.config.json .fleek.json
+      - name: Install Fleek CLI
+        run: npm i -g @fleekxyz/cli
+      - name: Deploy through Fleek
+        id: deploy
+        run: cd ${{ env.working-directory }} && fleek sites deploy
+        env:
+          FLEEK_TOKEN: ${{ secrets.FLEEKXYZ_TOKEN }}
+          FLEEK_PROJECT_ID: ${{ vars.FLEEKXYZ_PROJECT_ID }}
+
+      - name: Get the Fleek output url
+        run: echo "The Fleek deploy url is ${{ steps.deploy.outputs.deployUrl }}"
+
+    ####################
+    # Send info to APM #
+    ####################
+      - name: Upload sourcemap to Kibana sourcemap endpoint (APM)
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          for f in $(find ./dist/assets/ -name *.js.map) ; do
+            curl -X POST "https://kibana-sourcemaps.aragon.org/api/apm/sourcemaps" \
+              -H 'Content-Type: multipart/form-data' \
+              -H 'kbn-xsrf: true' \
+              -H 'Authorization: ApiKey ${{ secrets.APM_API_KEY }}' \
+              -F service_name="zaragoza" \
+              -F service_version="$COMMIT_SHA" \
+              -F bundle_filepath="http://localhost/assets/$(basename $f)" \
+              -F sourcemap=@$f
+          done
