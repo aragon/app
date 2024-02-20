@@ -13,7 +13,9 @@ jobs:
   set-environment:
     runs-on: ubuntu-latest
     outputs:
-      environment: ${{ steps.envdev.outputs.environment }}${{ steps.envprod.outputs.environment }}
+      #environment: ${{ steps.envdev.outputs.environment }}${{ steps.envprod.outputs.environment }}
+      #workaround to use allways staging
+      environment: 'staging'
     steps:
       - name: Set environment to staging
         if: endsWith(github.ref, '/develop')
