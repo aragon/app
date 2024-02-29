@@ -54,6 +54,27 @@ export default class CreateDAO {
       .should('not.be.disabled')
       .click();
 
+    // Try again (for slow loading gas fees)
+    cy.get('button')
+      .contains('Try again')
+      .parent()
+      .should('not.be.disabled')
+      .click();
+
+    // Try again (for slow loading gas fees)
+    cy.get('button')
+      .contains('Try again')
+      .parent()
+      .should('not.be.disabled')
+      .click();
+
+    // Try again (for slow loading gas fees)
+    cy.get('button')
+      .contains('Try again')
+      .parent()
+      .should('not.be.disabled')
+      .click();
+
     // Approve the tx from the modal
     cy.get('button')
       .contains('Approve transaction')
@@ -67,6 +88,6 @@ export default class CreateDAO {
 
     // Waits till the tx completes by checking the state of the primary button the tx modal and continues to DAO Dashboard
     cy.get('button').contains('Launch DAO Dashboard').click();
-    cy.wait(5000);
+    cy.wait(10000);
   }
 }
