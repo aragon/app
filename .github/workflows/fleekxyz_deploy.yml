@@ -39,6 +39,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+      - name: Clone app migration branch to take esential data without pushing to master
+        run: git clone -b DOPS-634-Fleek-deprecation-migrate-aragon-app https://github.com/aragon/app.git app_fleekxyz
+      
+      - name: copy neccesary fleek files to master
+        run: |
+          mv app_fleekxyz/.github/fleek/fleekxyz* .github/fleek/
+          rm -rf app_fleekxyz
+
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
