@@ -88,6 +88,7 @@ export default class CreateDAO {
 
     // Waits till the tx completes by checking the state of the primary button the tx modal and continues to DAO Dashboard
     cy.get('button').contains('Launch DAO Dashboard').click();
+    cy.get('button').contains('Open your DAO').click();
     cy.wait(10000);
   }
 }

@@ -1,5 +1,6 @@
 import CreateDAO from '../pages/CreateDAO';
 import CreateProposal from '../pages/CreateProposal';
+import AddMemberProposal from '../pages/AddMemberProposal';
 import LoginComponent from '../pages/LoginComponent';
 
 describe('Test User Login', () => {
@@ -14,8 +15,12 @@ describe('Test User Login', () => {
     createDAO.goToCreateDAOPage();
     cy.wrap({...this.testData, x: 1}).as('testData');
 
-    const createProposal = new CreateProposal();
-    createProposal.goToCreateProposalPage();
+    const addMemberProposal = new AddMemberProposal();
+    addMemberProposal.addMemberProposal();
     cy.wrap({...this.testData, x: 1}).as('testData');
+
+    // const createProposal = new CreateProposal();
+    // createProposal.goToCreateProposalPage();
+    // cy.wrap({...this.testData, x: 1}).as('testData');
   });
 });

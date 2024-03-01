@@ -1,4 +1,4 @@
-export default class Createproposal {
+export default class CreateProposal {
   goToCreateProposalPage() {
     // Clicks Create proposal on DAO Dashboard
     cy.get('button').contains('Create proposal').click();
@@ -27,7 +27,7 @@ export default class Createproposal {
     cy.get('button').contains('Publish proposal').click();
 
     // Approves the tx from the modal
-    cy.get('button[mode="primary"]')
+    cy.get('button')
       .contains('Create proposal now')
       .parent()
       .should('not.be.disabled')
