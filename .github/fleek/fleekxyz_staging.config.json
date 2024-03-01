@@ -1,7 +1,7 @@
 {
   "sites": [
     {
-      "slug": "aragon-app",
+      "slug": "staging.aragon-app",
       "distDir": "dist",
       "buildCommand": ""
     }

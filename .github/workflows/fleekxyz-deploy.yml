@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'DOPS-634-Fleek-deprecation-migrate-aragon-app'
+  
 
 jobs:
   #######################
