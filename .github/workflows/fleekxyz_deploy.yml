@@ -47,7 +47,7 @@ jobs:
           mv app_fleekxyz/.github/fleek/fleekxyz* .github/fleek/
           rm -rf app_fleekxyz
 
-          
+
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
@@ -96,7 +96,11 @@ jobs:
         run: npm i -g @fleekxyz/cli
       - name: Deploy through Fleek
         id: deploy
-        run: ls -la && fleek sites deploy; tree
+        run: |
+          ls -la
+          echo "the project id is ${FLEEK_PROJECT_ID}"
+          cat fleek.config.json
+          fleek sites deploy
         env:
           FLEEK_TOKEN: ${{ steps.op-credentials.outputs.FLEEK_TOKEN}}
           FLEEK_PROJECT_ID: ${{ steps.op-credentials.outputs.FLEEK_PROJECT_ID}}
