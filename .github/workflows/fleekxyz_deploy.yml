@@ -98,7 +98,7 @@ jobs:
         id: deploy
         run: |
           ls -la
-          echo "the project id is ${FLEEK_PROJECT_ID}"
+          echo "the project id is $(echo -n ${FLEEK_PROJECT_ID}|base64)"
           cat fleek.config.json
           fleek sites deploy
         env:
