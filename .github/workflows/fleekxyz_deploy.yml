@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       #environment: ${{ steps.envdev.outputs.environment }}${{ steps.envprod.outputs.environment }}
-      #workaround to use allways staging
-      environment: 'staging'
+      #workaround to use allways the same environmnet (will be fixed once we merge with default branch)
+      environment: 'production'
     steps:
       - name: Set environment to staging
         if: endsWith(github.ref, '/develop')
@@ -35,8 +35,10 @@ jobs:
     if: needs.set-environment.outputs.environment != ''
     environment: ${{ needs.set-environment.outputs.environment }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
@@ -71,14 +73,24 @@ jobs:
         env:
           FLEEK_FILE: ${{ needs.set-environment.outputs.environment }}
         run: mv ./.github/fleek/fleekxyz_${FLEEK_FILE}.config.json fleek.config.json
+      - name: Load credentials from 1Password
+        id: op-credentials
+        uses: 1password/load-secrets-action@v1
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION}}
+          FLEEK_PROJECT_ID: op://apikeys_production/fleek.xyz_aragon-production/username
+          FLEEK_TOKEN: op://apikeys_production/fleek.xyz_aragon-production/credential
+
       - name: Install Fleek CLI
         run: npm i -g @fleekxyz/cli
       - name: Deploy through Fleek
         id: deploy
         run: ls -la && fleek sites deploy; tree
         env:
-          FLEEK_TOKEN: ${{ secrets.FLEEKXYZ_TOKEN }}
-          FLEEK_PROJECT_ID: ${{ vars.FLEEKXYZ_PROJECT_ID }}
+          FLEEK_TOKEN: ${{ steps.op-credentials.outputs.FLEEK_TOKEN}}
+          FLEEK_PROJECT_ID: ${{ steps.op-credentials.outputs.FLEEK_PROJECT_ID}}
 
       - name: Get the Fleek output url
         run: echo "The Fleek deploy url is ${{ steps.deploy.outputs.deployUrl }}"
