@@ -6,6 +6,6 @@ Welcome to the documentation hub for the Aragon App web application. This docume
 
 Ensure consistency and maintainability by following our coding guidelines:
 
-- [Coding Guidelines](./coding-guidelines/coding-guidelines.md)
-- [Naming Conventions](./coding-guidelines/naming-conventions.md)
-- [Pull Requests](./coding-guidelines/pull-requests.md)
+- [Coding Guidelines](./codingGuidelines/codingGuidelines.md)
+- [Naming Conventions](./codingGuidelines/namingConventions.md)
+- [Pull Requests](./codingGuidelines/pullRequests.md)
