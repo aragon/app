@@ -2,16 +2,18 @@
 
 Follow the guidelines below when opening and merging pull requests:
 
-- Subject line must be prefixed with a lowercase type (`fix`, `feat`, ..) followed by a colon and a space.
-- The type `feat` must be used when a commit adds a new feature to the application or library.
-- The type `fix` must be used when a commit represent a bug fix to your application or library.
-- Types other than `feat` and `fix` may be used as defined in the [Angular convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type).
-- When available, the related Jira ticket must be specified as scope and enclosed in parenthesis, e.g. `fix(APP-1234):`. Multiple Jira tickets must be specified as a comma-separated list , e.g. `fix(APP-12,APP-34):`.
-- A description must follow the type/scope prefix and describes the code changes.
-- The description must be capitalized and use the imperative mood.
+-   Subject line must be prefixed with a lowercase type (`fix`, `feat`, ..) followed by a colon and a space.
+-   The type `feat` must be used when a commit adds a new feature to the application or library.
+-   The type `fix` must be used when a commit represent a bug fix to your application or library.
+-   Types other than `feat` and `fix` may be used as defined in the
+    [Angular convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type).
+-   When available, the related Jira ticket must be specified as scope and enclosed in parenthesis, e.g.
+    `fix(APP-1234):`. Multiple Jira tickets must be specified as a comma-separated list , e.g. `fix(APP-12,APP-34):`.
+-   A description must follow the type/scope prefix and describes the code changes.
+-   The description must be capitalized and use the imperative mood.
 
-**NOTE**: When merging a pull request containing only one commit, Github will suggest using the commit name instead of the PR name.
-Ensure that the commit name follows the commit guidelines above.
+**NOTE**: When merging a pull request containing only one commit, Github will suggest using the commit name instead of
+the PR name. Ensure that the commit name follows the commit guidelines above.
 
 ## Examples:
 

@@ -1,14 +1,18 @@
 {
   "name": "@aragon/app-next",
-  "description": "Human-centered DAO infrastructure",
   "version": "0.1.0",
+  "description": "Human-centered DAO infrastructure",
+  "author": "Aragon Association",
+  "homepage": "https://github.com/aragon/app-next#readme",
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettify": "prettier . --check",
+    "prettify:fix": "prettier . --write"
   },
   "dependencies": {
     "next": "14.1.4",
@@ -23,9 +27,26 @@
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
     "postcss": "^8",
+    "prettier": "^3.2.5",
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "prettier-plugin-tailwindcss": "^0.5.13",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aragon/app-next.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aragon/app-next/issues"
+  },
+  "keywords": [
+    "aragon",
+    "dao",
+    "react",
+    "nextjs",
+    "tailwind"
+  ],
   "engines": {
     "node": ">=20.0.0"
   },

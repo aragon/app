@@ -14,7 +14,10 @@
 
 # Aragon App - Next
 
-The Aragon App is an easy-to-use platform that empowers users to create and manage their Decentralized Autonomous Organizations (DAOs). The application interacts with the [Aragon OSx](https://github.com/aragon/osx) through the integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the [Aragon ODS](https://github.com/aragon/ods) library.
+The Aragon App is an easy-to-use platform that empowers users to create and manage their Decentralized Autonomous
+Organizations (DAOs). The application interacts with the [Aragon OSx](https://github.com/aragon/osx) through the
+integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the [Aragon ODS](https://github.com/aragon/ods)
+library.
 
 ## Getting Started
 
@@ -36,27 +39,28 @@ yarn dev
 
 Other available commands include:
 
-- Lint the code:
+-   Lint the code:
 
 ```bash
-npm run lint
+yarn lint
 ```
 
-- Build the project:
+-   Build the project:
 
 ```bash
-npm run build
+yarn build
 ```
 
-- Run tests:
+-   Run tests:
 
 ```bash
-npm run test
+yarn test
 ```
 
 ## Environments
 
-The Aragon App supports various environments, each with its unique URL and deployment trigger. Here are the available environments:
+The Aragon App supports various environments, each with its unique URL and deployment trigger. Here are the available
+environments:
 
 | Name                 | Url                            | Deployment trigger                               | Environment file  |
 | -------------------- | ------------------------------ | ------------------------------------------------ | ----------------- |
@@ -70,10 +74,10 @@ The Aragon App supports various environments, each with its unique URL and deplo
 
 The Aragon App is built using the following tools to ensure a seamless user experience:
 
-- [ReactJS](https://reactjs.org)
-- [NextJs](https://nextjs.org/)
-- [TypeScript](https://www.typescriptlang.org)
-- [Tailwind CSS](https://tailwindcss.com)
+-   [ReactJS](https://reactjs.org)
+-   [NextJs](https://nextjs.org/)
+-   [TypeScript](https://www.typescriptlang.org)
+-   [Tailwind CSS](https://tailwindcss.com)
 
 For more technical information about the Aragon App, please check the [Aragon App Documentation](./docs/index.md).
 
@@ -84,14 +88,15 @@ Please make sure to update tests as appropriate.
 
 ## Security
 
-If you believe you've found a security issue, we encourage you to notify us. We welcome working with you to resolve the issue promptly.
-Security Contact Email: sirt@aragon.org
-Please do not use the issue tracker for security issues.
+If you believe you've found a security issue, we encourage you to notify us. We welcome working with you to resolve the
+issue promptly. Security Contact Email: sirt@aragon.org Please do not use the issue tracker for security issues.
 
 ## Learn More
 
-For more information about Aragon and its ecosystem, please visit the [Aragon website](https://aragon.org/) and explore our [Developer Portal](https://devs.aragon.org/).
-Join our [Developer Community](https://aragonproject.typeform.com/to/LngekEhU) to stay updated and contribute to the growth of decentralized governance.
+For more information about Aragon and its ecosystem, please visit the [Aragon website](https://aragon.org/) and explore
+our [Developer Portal](https://devs.aragon.org/). Join our
+[Developer Community](https://aragonproject.typeform.com/to/LngekEhU) to stay updated and contribute to the growth of
+decentralized governance.
 
 ## License
 
