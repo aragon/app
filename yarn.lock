@@ -52,6 +52,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^7.6.0"
     "@typescript-eslint/parser": "npm:^7.6.0"
     autoprefixer: "npm:^10.4.19"
+    classnames: "npm:^2.5.1"
     eslint: "npm:^8.57.0"
     eslint-config-next: "npm:^14.2.1"
     eslint-plugin-import: "npm:^2.29.1"
@@ -71,6 +72,7 @@ __metadata:
     prettier-plugin-tailwindcss: "npm:^0.5.13"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
+    server-only: "npm:^0.0.1"
     tailwindcss: "npm:^3.4.3"
     tailwindcss-fluid-type: "npm:^2.0.6"
     ts-jest: "npm:^29.1.2"
@@ -3487,7 +3489,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.0.0":
+"classnames@npm:^2.0.0, classnames@npm:^2.5.1":
   version: 2.5.1
   resolution: "classnames@npm:2.5.1"
   checksum: 10c0/afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
@@ -8236,6 +8238,13 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/fbfe717094ace0aa8d6332d7ef5ce727259815bd8d8815700853f4faf23aacbd7192522f0dc5af6df52ef4fa85a355ebd2f5d39f554bd028200d6cf481ab9b53
+  languageName: node
+  linkType: hard
+
+"server-only@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "server-only@npm:0.0.1"
+  checksum: 10c0/4704f0ef85da0be981af6d4ed8e739d39bcfd265b9c246a684060acda5642d0fdc6daffc2308e71e2682c5f508090978802eae0a77623c9b90a49f9ae68048d6
   languageName: node
   linkType: hard
 

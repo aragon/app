@@ -1,8 +1,10 @@
+import type { Translations } from '@/shared/components/translationsContext';
+
 export interface IFooterLink {
     /**
      * Label of the footer link.
      */
-    label: string;
+    label: keyof Translations['app']['application']['footer']['link'];
     /**
      * Url of the footer link.
      */
@@ -10,10 +12,10 @@ export interface IFooterLink {
 }
 
 export const footerLinks: IFooterLink[] = [
-    { label: 'app.application.footer.link.explore', link: '#' },
-    { label: 'app.application.footer.link.learn', link: '#' },
-    { label: 'app.application.footer.link.build', link: '#' },
-    { label: 'app.application.footer.link.help', link: '#' },
-    { label: 'app.application.footer.link.privacy', link: '#' },
-    { label: 'app.application.footer.link.termsOfService', link: '#' },
+    { label: 'explore', link: '#' },
+    { label: 'learn', link: '#' },
+    { label: 'build', link: '#' },
+    { label: 'help', link: '#' },
+    { label: 'privacy', link: '#' },
+    { label: 'termsOfService', link: '#' },
 ];

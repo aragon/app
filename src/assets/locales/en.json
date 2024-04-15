@@ -1,8 +1,16 @@
 {
-  "app.application.footer.link.explore": "Explore",
-  "app.application.footer.link.learn": "Learn",
-  "app.application.footer.link.build": "Build",
-  "app.application.footer.link.help": "Help",
-  "app.application.footer.link.privacy": "Privacy",
-  "app.application.footer.link.termsOfService": "Terms of Service"
+  "app": {
+    "application": {
+      "footer": {
+        "link": {
+          "explore": "Explore",
+          "learn": "Learn",
+          "build": "Build",
+          "help": "Help",
+          "privacy": "Privacy",
+          "termsOfService": "Terms of Service"
+        }
+      }
+    }
+  }
 }

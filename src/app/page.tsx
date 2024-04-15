@@ -1,7 +1,3 @@
-export default function Home() {
-    return (
-        <main>
-            <p>Aragon App - Next</p>
-        </main>
-    );
-}
+import { ExploreDaos } from '@/modules/explore/pages/exploreDaos';
+
+export default ExploreDaos;
