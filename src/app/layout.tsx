@@ -1,7 +1,6 @@
-import { RootLayout } from '@/modules/application/components/rootLayout';
+import { LayoutRoot } from '@/modules/application/components/layouts/layoutRoot';
 import { defaultMetadata } from '@/modules/application/constants/defaultMetadata';
-import './globals.css';
 
 export const metadata = defaultMetadata;
 
-export default RootLayout;
+export default LayoutRoot;

@@ -2,16 +2,17 @@ import { TranslationsContextProvider } from '@/shared/components/translationsCon
 import { getTranslations } from '@/shared/components/translationsContext/translations';
 import '@aragon/ods/index.css';
 import type { ReactNode } from 'react';
-import { Footer } from '../footer';
+import { Footer } from '../../footer';
+import './layoutRoot.css';
 
-export interface IRootLayoutProps {
+export interface ILayoutRootProps {
     /**
      * Children of the root layout.
      */
     children?: ReactNode;
 }
 
-export const RootLayout: React.FC<IRootLayoutProps> = async (props) => {
+export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const { children } = props;
     const translations = await getTranslations();
 
@@ -19,7 +20,7 @@ export const RootLayout: React.FC<IRootLayoutProps> = async (props) => {
         <html lang="en" className="h-full">
             <body className="flex h-full flex-col bg-neutral-50">
                 <TranslationsContextProvider translations={translations}>
-                    <div className="flex grow">{children}</div>
+                    <div className="flex grow flex-col">{children}</div>
                     <Footer />
                 </TranslationsContextProvider>
             </body>
