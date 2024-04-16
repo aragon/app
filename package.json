@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --no-lint",
+    "build:analyze": "cross-env ANALYZE=true next build --no-lint",
     "start": "next start",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -28,6 +29,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.2.1",
     "@tailwindcss/typography": "^0.5.12",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^15.0.2",
@@ -39,6 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^7.6.0",
     "@typescript-eslint/parser": "^7.6.0",
     "autoprefixer": "^10.4.19",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.1",
     "eslint-plugin-import": "^2.29.1",
