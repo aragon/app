@@ -1,7 +1,12 @@
-import type { ComponentProps } from 'react';
+import type { ReactNode } from 'react';
 import { HeaderDao } from '../../headers/headerDao';
 
-export interface ILayoutDaoProps extends ComponentProps<'main'> {}
+export interface ILayoutDaoProps {
+    /**
+     * Children of the layout.
+     */
+    children?: ReactNode;
+}
 
 export const LayoutDao: React.FC<ILayoutDaoProps> = (props) => {
     return (

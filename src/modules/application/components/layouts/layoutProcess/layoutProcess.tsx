@@ -1,7 +1,12 @@
-import type { ComponentProps } from 'react';
+import type { ReactNode } from 'react';
 import { HeaderProcess } from '../../headers/headerProcess';
 
-export interface ILayoutProcessProps extends ComponentProps<'main'> {}
+export interface ILayoutProcessProps {
+    /**
+     * Children of the layout.
+     */
+    children?: ReactNode;
+}
 
 export const LayoutProcess: React.FC<ILayoutProcessProps> = (props) => {
     return (
