@@ -10,7 +10,7 @@ class MockTranslations {
             return key;
         }
 
-        const values = Object.keys(options).map((key) => `${key}=${options[key]}`);
+        const values = Object.keys(options).map((key) => `${key}=${options[key]?.toString() ?? 'undefined'}`);
 
         return `${key} (${values.toString()})`;
     };

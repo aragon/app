@@ -27,7 +27,7 @@ describe('<LayoutRoot /> component', () => {
         // Suppress "<html> cannot appear as a child of <div>" warnings.
         // To be fixed by React 19 migration (see https://github.com/testing-library/react-testing-library/issues/1250)
         testLogger.suppressErrors();
-        headersSpy.mockReturnValue({ get: jest.fn() } as unknown as ReadonlyHeaders);
+        headersSpy.mockReturnValue({ get: jest.fn() } as unknown as Promise<ReadonlyHeaders>);
     });
 
     afterEach(() => {
@@ -50,7 +50,7 @@ describe('<LayoutRoot /> component', () => {
     });
 
     it('renders the providers components and passes the english translations', async () => {
-        const assets = await translations['en']();
+        const assets = await translations.en();
         render(await createTestComponent());
         const providers = screen.getByTestId('providers-mock');
         expect(providers).toBeInTheDocument();

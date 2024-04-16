@@ -1,12 +1,13 @@
 import { daoOptions } from '@/shared/api/daoService';
 import { testLogger } from '@/test/utils';
+import * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { LayoutWizard, type ILayoutWizardProps } from './layoutWizard';
 
 jest.mock('@tanstack/react-query', () => ({
-    ...jest.requireActual('@tanstack/react-query'),
+    ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
         <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
             {props.children}

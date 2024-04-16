@@ -49,12 +49,11 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
             return assetList;
         }
 
-        const lowercasedSearchValue = searchValue.toLowerCase();
-
         return assetList.filter(({ token }) => {
-            const tokenName = token.name?.toLowerCase() || '';
-            const tokenSymbol = token.symbol?.toLowerCase() || '';
-            return tokenName.includes(lowercasedSearchValue) || tokenSymbol.includes(lowercasedSearchValue);
+            const tokenName = token.name.toLowerCase();
+            const tokenSymbol = token.symbol.toLowerCase();
+
+            return [tokenName, tokenSymbol].includes(searchValue.toLowerCase());
         });
     }, [assetList, searchValue, hasSearch]);
 
@@ -79,7 +78,7 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                 emptyState={emptyState}
                 errorState={errorState}
             >
-                {filteredAssets?.map((asset) => (
+                {filteredAssets.map((asset) => (
                     <AssetListItem key={asset.token.address} asset={asset} onAssetClick={onAssetClick} />
                 ))}
             </DataListContainer>

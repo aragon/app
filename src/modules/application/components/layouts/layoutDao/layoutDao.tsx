@@ -30,7 +30,7 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     } catch (error: unknown) {
         return (
             <Page.Error
-                error={JSON.parse(JSON.stringify(error))}
+                error={JSON.parse(JSON.stringify(error)) as unknown}
                 actionLink="/"
                 notFoundNamespace="app.application.layoutDao"
             />

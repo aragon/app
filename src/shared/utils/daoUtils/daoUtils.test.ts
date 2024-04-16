@@ -32,7 +32,7 @@ describe('dao utils', () => {
 
         it('processes the DAO avatar to return a full IPFS url', async () => {
             const dao = generateDao({ avatar: 'cidTest' });
-            const ipfsUrl = `https://ipfs.com/ipfs/${dao.avatar}`;
+            const ipfsUrl = `https://ipfs.com/ipfs/${dao.avatar!}`;
             getDaoSpy.mockResolvedValue(dao);
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 

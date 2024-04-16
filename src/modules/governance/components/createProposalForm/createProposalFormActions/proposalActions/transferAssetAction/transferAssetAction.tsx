@@ -1,5 +1,4 @@
 import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
@@ -8,8 +7,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, formatUnits, parseUnits, zeroAddress } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
-export interface ITransferAssetActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface ITransferAssetActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 const erc20TransferAbi = {
     type: 'function',
@@ -27,7 +25,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     const { setValue } = useFormContext();
 
-    const fieldName = `actions.[${index}]`;
+    const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     const receiver = useWatch<Record<string, ITransferAssetFormData['receiver']>>({ name: `${fieldName}.receiver` });
@@ -36,7 +34,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     const tokenDecimals = asset?.token.decimals ?? 18;
     const tokenAddress = asset?.token.address ?? zeroAddress;
-    const tokenName = asset?.token?.name ?? 'Ether';
+    const tokenName = asset?.token.name ?? 'Ether';
     const isNativeToken = tokenAddress === zeroAddress;
 
     const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;

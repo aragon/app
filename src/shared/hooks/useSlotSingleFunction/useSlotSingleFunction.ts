@@ -21,7 +21,7 @@ export const useSlotSingleFunction = <TResult = unknown, TParams = unknown>(
     const { params: functionParams, slotId, pluginId } = params;
 
     const slotFunction = pluginRegistryUtils.getSlotFunction<TParams, TResult>({ slotId, pluginId });
-    const result = slotFunction?.(functionParams) as TResult | undefined;
+    const result = slotFunction?.(functionParams);
 
     return result;
 };

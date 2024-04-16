@@ -1,11 +1,6 @@
 import type { translations } from '@/shared/constants/translations';
 
-export type ITFuncOptions = {
-    /**
-     * Values to be replaced on the translation.
-     */
-    [key: string]: string | number | undefined | null;
-};
+export type ITFuncOptions = Record<string, string | number | undefined | null>;
 
 export type Translations = Awaited<ReturnType<(typeof translations)['en']>>;
 
