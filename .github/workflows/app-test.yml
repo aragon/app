@@ -1,0 +1,62 @@
+name: App Test
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+  NODE_CACHE: "yarn"
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.3
+      - name: Setup Node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: ${{ env.NODE_CACHE }}
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build application
+        run: yarn build
+      - name: Cache NextJs build
+        uses: actions/cache@v3.3.1
+        with:
+          path: ${{ github.workspace }}/.next
+          key: ${{ github.ref }}-${{ github.sha }}
+
+  test:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.3
+      - name: Setup Node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: ${{ env.NODE_CACHE }}
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Restore cached NextJs build
+        uses: actions/cache@v3.3.1
+        with:
+          path: ${{ github.workspace }}/.next
+          key: ${{ github.ref }}-${{ github.sha }}
+      - name: Run tests with coverage
+        run: |
+          set -eo pipefail
+          yarn test:coverage
+      - name: Check types
+        run: yarn type-check
+      - name: Check linter
+        run: yarn lint
+      - name: Check prettier
+        run: yarn prettify
