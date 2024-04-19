@@ -18,7 +18,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@aragon/ods": ["./src/shared/lib/@aragon/ods"],
+      "@aragon/ods-original": ["./node_modules/@aragon/ods"]
     }
   },
   "include": ["src", "next-env.d.ts", ".next/types/**/*.ts", "*.config.js", "*.config.mjs", ".eslintrc.js"],

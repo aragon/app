@@ -4,12 +4,14 @@ import type { ComponentProps } from 'react';
 export interface IHeaderBaseProps extends ComponentProps<'header'> {}
 
 export const HeaderBase: React.FC<IHeaderBaseProps> = (props) => {
-    const { className, ...otherProps } = props;
+    const { className, children, ...otherProps } = props;
 
     return (
         <header
-            className={classNames('h-[124px] w-full border-b border-neutral-100 bg-neutral-0', className)}
+            className={classNames('flex w-full border-b border-neutral-100 bg-neutral-0 px-6', className)}
             {...otherProps}
-        />
+        >
+            {children}
+        </header>
     );
 };
