@@ -27,7 +27,7 @@ jobs:
       - name: Build application
         run: yarn build
       - name: Cache NextJs build
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v4.0.2
         with:
           path: ${{ github.workspace }}/.next
           key: ${{ github.ref }}-${{ github.sha }}
@@ -46,7 +46,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Restore cached NextJs build
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v4.0.2
         with:
           path: ${{ github.workspace }}/.next
           key: ${{ github.ref }}-${{ github.sha }}
