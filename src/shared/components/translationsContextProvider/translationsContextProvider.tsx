@@ -1,11 +1,11 @@
 'use client';
 
+import { type translationUtils } from '@/shared/utils/translationsUtils';
 import { createContext, useContext, type ReactNode } from 'react';
-import { type getTranslations } from './translations';
+
+export type Translations = Awaited<ReturnType<typeof translationUtils.getTranslations>>;
 
 const translationsContext = createContext<Translations | null>(null);
-
-export type Translations = Awaited<ReturnType<typeof getTranslations>>;
 
 export interface ITranslationsContextProviderProps {
     /**

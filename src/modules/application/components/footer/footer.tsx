@@ -1,10 +1,10 @@
-import { getTranslations } from '@/shared/components/translationsContextProvider/translations';
+import { translationUtils } from '@/shared/utils/translationsUtils';
 import { footerLinks } from './footerLinks';
 
 export interface IFooterProps {}
 
 export const Footer: React.FC<IFooterProps> = async () => {
-    const translations = await getTranslations();
+    const translations = await translationUtils.getTranslations();
 
     return (
         <footer className="flex justify-center border-t border-neutral-100 bg-neutral-0 px-6 py-5">

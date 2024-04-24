@@ -1,4 +1,4 @@
-import { getTranslations } from '@/shared/components/translationsContextProvider/translations';
+import { translationUtils } from '@/shared/utils/translationsUtils';
 import '@aragon/ods/index.css';
 import type { ReactNode } from 'react';
 import { Footer } from '../../footer';
@@ -14,7 +14,7 @@ export interface ILayoutRootProps {
 
 export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const { children } = props;
-    const translations = await getTranslations();
+    const translations = await translationUtils.getTranslations();
 
     return (
         <html lang="en" className="h-full">
