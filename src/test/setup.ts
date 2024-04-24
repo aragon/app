@@ -5,3 +5,6 @@ import { testLogger } from './utils';
 
 // Setup test logger
 testLogger.setup();
+
+// Mock global fetch
+global.fetch = jest.fn();

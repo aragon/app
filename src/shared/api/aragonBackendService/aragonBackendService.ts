@@ -1,7 +1,7 @@
 import type { IRequestParams } from './domain';
 
 export class AragonBackendService {
-    private baseUrl = 'http://13.37.212.55:3000';
+    private baseUrl = process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL;
 
     request = async <TData, TUrlParams = unknown, TQueryParams = unknown>(
         url: string,
