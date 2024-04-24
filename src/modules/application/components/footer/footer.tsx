@@ -1,4 +1,4 @@
-import { getTranslations } from '@/shared/components/translationsContext/translations';
+import { getTranslations } from '@/shared/components/translationsContextProvider/translations';
 import { footerLinks } from './footerLinks';
 
 export interface IFooterProps {}

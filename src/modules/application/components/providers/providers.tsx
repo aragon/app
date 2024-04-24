@@ -1,6 +1,6 @@
 'use client';
 
-import { TranslationsContextProvider, type Translations } from '@/shared/components/translationsContext';
+import { TranslationsContextProvider, type Translations } from '@/shared/components/translationsContextProvider';
 import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
 import { wagmiConfig } from '../../constants/wagmi';

@@ -1,4 +1,4 @@
-import { getTranslations } from '@/shared/components/translationsContext/translations';
+import { getTranslations } from '@/shared/components/translationsContextProvider/translations';
 import '@aragon/ods/index.css';
 import type { ReactNode } from 'react';
 import { Footer } from '../../footer';
