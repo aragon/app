@@ -1,3 +1,4 @@
+import { generateResponse } from '@/shared/testUtils';
 import { AragonBackendService } from './aragonBackendService';
 
 class ServiceTest extends AragonBackendService {}
@@ -7,10 +8,6 @@ describe('AragonBackend service', () => {
     let serviceTest = new ServiceTest();
 
     const fetchSpy = jest.spyOn(global, 'fetch');
-
-    beforeEach(() => {
-        fetchSpy.mockResolvedValue({ ok: true, json: jest.fn() } as unknown as Response);
-    });
 
     afterEach(() => {
         process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL = originalEnvUrl;
@@ -29,14 +26,14 @@ describe('AragonBackend service', () => {
         });
 
         it('throws the statusText as error on request error', async () => {
-            const response = { ok: false, statusText: 'something wrong happened' } as Response;
+            const response = generateResponse({ ok: false, statusText: 'something wrong happened' });
             fetchSpy.mockResolvedValue(response);
             await expect(serviceTest.request('/test')).rejects.toEqual(new Error(response.statusText));
         });
 
         it('returns the parsed json response', async () => {
             const parsedResult = { value: 'key' };
-            const response = { ok: true, json: () => parsedResult } as unknown as Response;
+            const response = generateResponse({ json: () => Promise.resolve(parsedResult) });
             fetchSpy.mockResolvedValue(response);
             const result = await serviceTest.request('/url');
             expect(result).toEqual(parsedResult);

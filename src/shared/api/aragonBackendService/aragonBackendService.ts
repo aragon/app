@@ -1,4 +1,6 @@
-import type { IRequestParams } from './domain';
+import type { IRequestUrlQueryParams } from './domain';
+
+type IRequestParams<TUrlParams, TQueryParams> = Partial<IRequestUrlQueryParams<TUrlParams, TQueryParams>>;
 
 export class AragonBackendService {
     private baseUrl = process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL;
