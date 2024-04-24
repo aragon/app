@@ -1,11 +1,10 @@
 import { type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import { type IDao } from '@/shared/api/daoService';
-import { type InfiniteQueryOptions } from '@/shared/types';
-import { type SharedInfiniteQueryOptions } from '@/shared/types/queryOptions';
+import type { InfiniteQueryOptions, SharedInfiniteQueryOptions } from '@/shared/types';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { daoExplorerService } from '../daoExplorerService';
-import { type IGetDaoListParams } from '../daoExplorerService.api';
-import { daoExplorerServiceKeys } from '../daoExplorerServiceKeys';
+import { daoExplorerService } from '../../daoExplorerService';
+import { type IGetDaoListParams } from '../../daoExplorerService.api';
+import { daoExplorerServiceKeys } from '../../daoExplorerServiceKeys';
 
 export const daoListOptions = (
     params: IGetDaoListParams,

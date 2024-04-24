@@ -1,6 +1,6 @@
 import { Page } from '@/shared/components/page/page';
 import { QueryClient } from '@tanstack/react-query';
-import { daoListOptions } from '../../api/daoExplorerService/queries/useDaoList';
+import { daoListOptions } from '../../api/daoExplorerService';
 import { DaoList } from '../../components/daoList';
 
 export interface IExploreDaosProps {}

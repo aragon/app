@@ -1,4 +1,4 @@
-import { daoOptions } from '@/shared/api/daoService/queries/useDao';
+import { daoOptions } from '@/shared/api/daoService';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { HeaderDao } from '../../headers/headerDao';

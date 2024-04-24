@@ -1,7 +1,7 @@
 'use client';
 
 import { DaoDataListItemStructure, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
-import { useDaoList } from '../../api/daoExplorerService/queries/useDaoList';
+import { useDaoList } from '../../api/daoExplorerService';
 
 export interface IDaoListProps {
     /**
