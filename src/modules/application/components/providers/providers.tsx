@@ -3,8 +3,8 @@
 import { TranslationsContextProvider, type Translations } from '@/shared/components/translationsContext';
 import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
-import { queryClient } from '../../constants/reactQuery';
 import { wagmiConfig } from '../../constants/wagmi';
+import { queryClientUtils } from '../../utils/queryClientUtils';
 
 export interface IProvidersProps {
     /**
@@ -22,6 +22,8 @@ export interface IProvidersProps {
  */
 export const Providers: React.FC<IProvidersProps> = (props) => {
     const { translations, children } = props;
+
+    const queryClient = queryClientUtils.getQueryClient();
 
     return (
         <TranslationsContextProvider translations={translations}>

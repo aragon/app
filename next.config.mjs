@@ -4,6 +4,15 @@ const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'tr
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    async redirects() {
+        return [
+            {
+                source: '/dao/:slug',
+                destination: '/dao/:slug/dashboard',
+                permanent: true,
+            },
+        ];
+    },
     experimental: {
         typedRoutes: true,
     },

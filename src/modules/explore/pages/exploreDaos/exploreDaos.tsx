@@ -1,5 +1,21 @@
+import { Page } from '@/shared/components/page/page';
+import { QueryClient } from '@tanstack/react-query';
+import { daoListOptions } from '../../api/daoExplorerService/queries/useDaoList';
+import { DaoList } from '../../components/daoList';
+
 export interface IExploreDaosProps {}
 
-export const ExploreDaos: React.FC<IExploreDaosProps> = () => {
-    return <div>Explore DAOs</div>;
+const daosPerPage = 20;
+
+export const ExploreDaos: React.FC<IExploreDaosProps> = async () => {
+    const queryClient = new QueryClient();
+
+    const daoListQueryParams = { limit: daosPerPage, skip: 0 };
+    await queryClient.prefetchInfiniteQuery(daoListOptions({ queryParams: daoListQueryParams }));
+
+    return (
+        <Page queryClient={queryClient}>
+            <DaoList limit={daosPerPage} />
+        </Page>
+    );
 };
