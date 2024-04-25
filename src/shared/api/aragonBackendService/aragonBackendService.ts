@@ -39,10 +39,7 @@ export class AragonBackendService {
             return url;
         }
 
-        const parsedUrl = Object.keys(params ?? {}).reduce(
-            (current, key) => current.replace(`:${key}`, params[key]),
-            url,
-        );
+        const parsedUrl = Object.keys(params).reduce((current, key) => current.replace(`:${key}`, params[key]), url);
 
         return parsedUrl;
     };

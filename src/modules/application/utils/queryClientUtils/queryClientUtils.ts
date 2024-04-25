@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { queryClientConfig } from '../constants/reactQuery';
+import { queryClientConfig } from '../../constants/reactQuery';
 
 class QueryClientUtils {
     private browserQueryClient: QueryClient | undefined;
@@ -11,10 +11,11 @@ class QueryClientUtils {
         }
 
         if (this.browserQueryClient == null) {
+            // Create new client as browser query client hasn't been initialized yet
             this.browserQueryClient = this.makeQueryClient();
         }
 
-        return this.makeQueryClient();
+        return this.browserQueryClient;
     };
 
     private makeQueryClient = () => new QueryClient(queryClientConfig);

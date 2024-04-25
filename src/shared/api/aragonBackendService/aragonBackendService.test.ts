@@ -41,6 +41,27 @@ describe('AragonBackend service', () => {
     });
 
     describe('buildUrl', () => {
+        it('build the full url from the given base url', () => {
+            const baseUrl = 'https://test.com';
+            const url = '/api';
+            const expectedUrl = `${baseUrl}${url}`;
+
+            process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL = baseUrl;
+            serviceTest = new ServiceTest();
+            expect(serviceTest['buildUrl'](url)).toEqual(expectedUrl);
+        });
+
+        it('correctly builds the full url from the given base url and url parameters', () => {
+            const baseUrl = 'https://aragon.com';
+            const url = '/proposals/:proposalId';
+            const urlParams = { proposalId: 'id-test' };
+            const expectedUrl = `${baseUrl}/proposals/${urlParams.proposalId}`;
+
+            process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL = baseUrl;
+            serviceTest = new ServiceTest();
+            expect(serviceTest['buildUrl'](url, { urlParams })).toEqual(expectedUrl);
+        });
+
         it('builds the full url from the given base url, query parameters and url parameters', () => {
             const baseUrl = 'https://aragon.com';
             const url = '/dao/:daoId';
@@ -51,17 +72,6 @@ describe('AragonBackend service', () => {
             process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL = baseUrl;
             serviceTest = new ServiceTest();
             expect(serviceTest['buildUrl'](url, { queryParams, urlParams })).toEqual(expectedUrl);
-        });
-
-        it('correctly builds the full url without query parameters', () => {
-            const baseUrl = 'https://aragon.com';
-            const url = '/proposals/:proposalId';
-            const urlParams = { proposalId: 'id-test' };
-            const expectedUrl = `${baseUrl}/proposals/${urlParams.proposalId}`;
-
-            process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL = baseUrl;
-            serviceTest = new ServiceTest();
-            expect(serviceTest['buildUrl'](url, { urlParams })).toEqual(expectedUrl);
         });
     });
 
