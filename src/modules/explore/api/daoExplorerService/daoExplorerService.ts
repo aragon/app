@@ -7,8 +7,8 @@ class DaoExplorerService extends AragonBackendService {
         daoList: '/dao',
     };
 
-    getDaoList = ({ queryParams }: IGetDaoListParams): Promise<IPaginatedResponse<IDao>> => {
-        const result = this.request<IPaginatedResponse<IDao>>(this.urls.daoList, { queryParams });
+    getDaoList = async ({ queryParams }: IGetDaoListParams): Promise<IPaginatedResponse<IDao>> => {
+        const result = await this.request<IPaginatedResponse<IDao>>(this.urls.daoList, { queryParams });
 
         return result;
     };

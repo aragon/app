@@ -10,7 +10,7 @@ export class AragonBackendService {
         params: IRequestParams<TUrlParams, TQueryParams> = {},
     ): Promise<TData> => {
         const completeUrl = this.buildUrl(url, params);
-        const result = await fetch(completeUrl);
+        const result = await fetch(completeUrl, { cache: 'no-store' });
 
         if (!result.ok) {
             throw new Error(result.statusText);
