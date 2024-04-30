@@ -22,7 +22,14 @@ describe('AragonBackend service', () => {
             serviceTest = new ServiceTest();
             const url = '/test';
             await serviceTest.request(url);
-            expect(fetchSpy).toHaveBeenCalledWith(`${baseUrl}${url}`);
+            expect(fetchSpy).toHaveBeenCalledWith(`${baseUrl}${url}`, expect.anything());
+        });
+
+        it('does not cache the request', async () => {
+            fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
+            const url = '/entity';
+            await serviceTest.request(url);
+            expect(fetchSpy).toHaveBeenCalledWith(expect.anything(), { cache: 'no-store' });
         });
 
         it('throws the statusText as error on request error', async () => {
