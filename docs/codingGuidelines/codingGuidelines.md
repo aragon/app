@@ -1,4 +1,4 @@
-# Coding guidelines
+# Coding Guidelines
 
 In addition to the coding rules enforced by `eslint` and `prettier`, adhere to the following guidelines and conventions
 throughout the coding process.
