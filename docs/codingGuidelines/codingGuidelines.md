@@ -21,11 +21,3 @@ throughout the coding process.
 
 -   Treat component props as read-only and avoid modifying them within the component.
 -   Always prefer passing content between components using the `children` property rather than custom props.
-
-## Project Structure
-
--   Implement components, utilities, and hooks specific to each module within the related module folder (e.g.,
-    `/modules/governance`) to maintain modularity and organization.
--   Implement generic UI components, utilities, and hooks shared across the application within the `/shared` folder.
--   Implement plugin-specific components, utilities, and hooks within the related plugin folder (e.g.
-    `/plugins/tokenVoting`)

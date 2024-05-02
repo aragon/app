@@ -76,7 +76,7 @@ modules or plugins in the future.
 The `plugins` folder contains plugin-specific logic, with each plugin having its own folder. Currently maintained
 plugins include:
 
--   **`multisig`**: Manage a DAO through a list of wallets with the same power.
+-   **`multisig`**: Manage a DAO through a list of wallets with the same voting power.
 -   **`token`**: Manage a DAO through a governance token where an individual's voting power is directly proportional to
     the number of tokens they hold.
 -   **`gasless`**: Manage a DAO through a gasless voting process.
