@@ -5,6 +5,8 @@ import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
 import { wagmiConfig } from '../../constants/wagmi';
 import { queryClientUtils } from '../../utils/queryClientUtils';
+import { OdsImage } from './odsImage';
+import { OdsLink } from './odsLink';
 
 export interface IProvidersProps {
     /**
@@ -17,6 +19,8 @@ export interface IProvidersProps {
     children?: ReactNode;
 }
 
+const coreProviderValues = { Link: OdsLink, Img: OdsImage };
+
 /**
  * Provides global providers for the whole application.
  */
@@ -27,7 +31,11 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
 
     return (
         <TranslationsContextProvider translations={translations}>
-            <OdsModulesProvider wagmiConfig={wagmiConfig} queryClient={queryClient}>
+            <OdsModulesProvider
+                wagmiConfig={wagmiConfig}
+                queryClient={queryClient}
+                coreProviderValues={coreProviderValues}
+            >
                 {children}
             </OdsModulesProvider>
         </TranslationsContextProvider>
