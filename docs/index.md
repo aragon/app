@@ -13,7 +13,7 @@ Ensure consistency and maintainability by following our coding guidelines:
 
 ## Project Docs
 
-Check the project specific processes and guidelines here:
+Check the project specific processes and guidelines below:
 
 -   [Data Fetching](./projectDocs/dataFetching.md)
 -   [Plugin Encapsulation](./projectDocs/pluginEncapsulation.md)
