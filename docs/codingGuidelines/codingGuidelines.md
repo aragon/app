@@ -7,6 +7,9 @@ throughout the coding process.
 
 -   Remove all `console.log()` calls before committing code.
 -   Commented-out code should be removed and not committed.
+-   Whenever possible, use the
+    [early-return pattern](https://gomakethings.com/the-early-return-pattern-in-javascript/#what-is-the-early-return-pattern)
+    to improve code readability and reduce nesting levels.
 
 ## React Components
 

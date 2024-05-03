@@ -16,5 +16,6 @@ Ensure consistency and maintainability by following our coding guidelines:
 Check the project specific processes and guidelines here:
 
 -   [Data Fetching](./projectDocs/dataFetching.md)
+-   [Plugin Encapsulation](./projectDocs/pluginEncapsulation.md)
 -   [Project Structure](./projectDocs/projectStructure.md)
 -   [Testing](./projectDocs/testing.md)
