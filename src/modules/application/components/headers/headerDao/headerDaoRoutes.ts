@@ -2,7 +2,7 @@ import type { INavigationRoute } from '../../navigation';
 
 type DaoRoutes = INavigationRoute<__next_route_internal_types__.DynamicRoutes<string>>;
 
-export const headerDaoRoutes = (slug: string): DaoRoutes[] => [
+export const headerDaoRoutes = (slug?: string): DaoRoutes[] => [
     { label: 'Dashboard', link: `/dao/${slug}/dashboard` },
     { label: 'Proposals', link: `/dao/${slug}/proposals` },
     { label: 'Members', link: `/dao/${slug}/members` },

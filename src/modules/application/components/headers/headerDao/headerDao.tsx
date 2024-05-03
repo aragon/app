@@ -1,5 +1,7 @@
-import type { IDao } from '@/shared/api/daoService';
-import { AvatarIcon, DaoAvatar, type IconType } from '@aragon/ods';
+'use client';
+
+import { useDao } from '@/shared/api/daoService';
+import { AvatarIcon, DaoAvatar, IconType } from '@aragon/ods';
 import classNames from 'classnames';
 import { Navigation } from '../../navigation';
 import { Wallet } from '../../wallet';
@@ -8,15 +10,18 @@ import { headerDaoRoutes } from './headerDaoRoutes';
 
 export interface IHeaderDaoProps extends IHeaderBaseProps {
     /**
-     * DAO to be rendered.
+     * DAO slug to display the data for.
      */
-    dao: IDao;
+    slug: string;
 }
 
-export const HeaderDao: React.FC<IHeaderDaoProps> = async (props) => {
-    const { dao, className, ...otherProps } = props;
+export const HeaderDao: React.FC<IHeaderDaoProps> = (props) => {
+    const { slug, className, ...otherProps } = props;
 
-    const routes = headerDaoRoutes(dao.permalink);
+    const urlParams = { slug };
+    const { data: dao } = useDao({ urlParams });
+
+    const routes = headerDaoRoutes(dao?.permalink);
 
     return (
         <HeaderBase className={classNames('flex flex-col gap-2 pt-5', className)} {...otherProps}>
@@ -28,7 +33,7 @@ export const HeaderDao: React.FC<IHeaderDaoProps> = async (props) => {
                 <div className="flex flex-row gap-2">
                     <Wallet />
                     <button className="rounded-full border border-neutral-100 bg-neutral-0 p-1">
-                        <AvatarIcon icon={'MENU' as IconType} size="lg" />
+                        <AvatarIcon icon={IconType.MENU} size="lg" />
                     </button>
                 </div>
             </div>
