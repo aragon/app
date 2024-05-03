@@ -19,11 +19,11 @@ these conventions enhances code readability, maintainability, and consistency ac
 When adding new translations to the project, adhere to the following pattern:
 
 ```
-app.[module-name].[component-name].[translation-key]
+app.[moduleName].[componentName].[translationKey]
 ```
 
 -   The `app` prefix denotes the current project.
--   The `module-name` specifies the name of the module where the component is located (e.g. `governance`).
--   The `component-name` is the name of the component (e.g. `proposalsPage`). If multiple components exist within the
+-   The `moduleName` specifies the name of the module where the component is located (e.g. `governance`).
+-   The `componentName` is the name of the component (e.g. `proposalsPage`). If multiple components exist within the
     same folder, split the key accordingly (e.g. `createDaoDialog.createDaoSteps`).
--   The `translation-key` is a descriptive key for the translation.
+-   The `translationKey` is a descriptive key for the translation.

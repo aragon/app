@@ -16,15 +16,16 @@ export interface ILayoutDaoProps {
 
 export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     const { params, ...otherProps } = props;
+    const { slug } = params;
 
     const queryClient = new QueryClient();
 
-    const daoUrlParams = { slug: params.slug };
-    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }, { staleTime: Infinity }));
+    const daoUrlParams = { slug };
+    await queryClient.prefetchQuery(daoOptions({ urlParams: daoUrlParams }));
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <HeaderDao dao={dao} />
+            <HeaderDao slug={slug} />
             <main {...otherProps} />
         </HydrationBoundary>
     );

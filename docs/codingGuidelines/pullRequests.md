@@ -12,8 +12,8 @@ Follow the guidelines below when opening and merging pull requests:
 -   A description must follow the type/scope prefix and describes the code changes.
 -   The description must be capitalized and use the imperative mood.
 
-**NOTE**: When merging a pull request containing only one commit, Github will suggest using the commit name instead of
-the PR name. Ensure that the commit name follows the commit guidelines above.
+**⚠️ NOTE**: When merging a pull request containing only one commit, Github will suggest using the commit name instead
+of the PR name. Ensure that the commit name follows the commit guidelines above.
 
 ## Examples:
 

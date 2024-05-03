@@ -1,7 +1,9 @@
-import { daoService, type IDao, type IGetDaoParams } from '@/shared/api/daoService';
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
+import { daoService } from '../../daoService';
+import type { IGetDaoParams } from '../../daoService.api';
 import { daoServiceKeys } from '../../daoServiceKeys';
+import type { IDao } from '../../domain';
 
 export const daoOptions = (params: IGetDaoParams, options?: QueryOptions<IDao>): SharedQueryOptions<IDao> => ({
     queryKey: daoServiceKeys.dao(params),

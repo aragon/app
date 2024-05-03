@@ -1,4 +1,4 @@
-# Coding guidelines
+# Coding Guidelines
 
 In addition to the coding rules enforced by `eslint` and `prettier`, adhere to the following guidelines and conventions
 throughout the coding process.
@@ -7,6 +7,9 @@ throughout the coding process.
 
 -   Remove all `console.log()` calls before committing code.
 -   Commented-out code should be removed and not committed.
+-   Whenever possible, use the
+    [early-return pattern](https://gomakethings.com/the-early-return-pattern-in-javascript/#what-is-the-early-return-pattern)
+    to improve code readability and reduce nesting levels.
 
 ## React Components
 
@@ -21,11 +24,3 @@ throughout the coding process.
 
 -   Treat component props as read-only and avoid modifying them within the component.
 -   Always prefer passing content between components using the `children` property rather than custom props.
-
-## Project Structure
-
--   Implement components, utilities, and hooks specific to each module within the related module folder (e.g.,
-    `/modules/governance`) to maintain modularity and organization.
--   Implement generic UI components, utilities, and hooks shared across the application within the `/shared` folder.
--   Implement plugin-specific components, utilities, and hooks within the related plugin folder (e.g.
-    `/plugins/tokenVoting`)
