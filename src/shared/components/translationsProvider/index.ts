@@ -3,4 +3,4 @@ export {
     useTranslations,
     type ITranslationsContextProviderProps,
     type Translations,
-} from './translationsContextProvider';
+} from './translationsProvider';

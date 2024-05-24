@@ -3,15 +3,14 @@ import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
 
 describe('<Footer /> component', () => {
-    const createServerComponent = async (props?: Partial<IFooterProps>) => {
+    const createTestComponent = (props?: Partial<IFooterProps>) => {
         const completeProps: IFooterProps = { ...props };
-        const Component = await Footer(completeProps);
 
-        return Component;
+        return <Footer {...completeProps} />;
     };
 
-    it('renders the footer links', async () => {
-        render(await createServerComponent());
+    it('renders the footer links', () => {
+        render(createTestComponent());
         expect(screen.getAllByRole('link')).toHaveLength(footerLinks.length);
     });
 });

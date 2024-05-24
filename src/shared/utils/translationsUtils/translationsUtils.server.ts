@@ -1,6 +1,6 @@
 import 'server-only';
 
-class TranslationUtils {
+class TranslationUtilsServer {
     private translations = {
         en: () => import('@/assets/locales/en.json').then((module) => module.default),
     };
@@ -8,4 +8,6 @@ class TranslationUtils {
     getTranslations = async (locale: keyof typeof this.translations = 'en') => this.translations[locale]();
 }
 
-export const translationUtils = new TranslationUtils();
+export type Translations = Awaited<ReturnType<typeof translationUtilsServer.getTranslations>>;
+
+export const translationUtilsServer = new TranslationUtilsServer();

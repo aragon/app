@@ -6,7 +6,7 @@ import {
     useTranslations,
     type ITranslationsContextProviderProps,
     type Translations,
-} from './translationsContextProvider';
+} from './translationsProvider';
 
 describe('<TranslationsContextProvider /> component', () => {
     const createTestComponent = (props?: Partial<ITranslationsContextProviderProps>) => {

@@ -1,0 +1,42 @@
+'use client';
+
+import { translationUtilsClient, type ITFuncOptions, type Translations } from '@/shared/utils/translationsUtils';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
+
+export interface ITranslationContext {
+    /**
+     * Function to process the given translation (e.g. replace keys with given values).
+     */
+    t: (translation: string, options?: ITFuncOptions) => string;
+}
+
+const translationsContext = createContext<ITranslationContext | null>(null);
+
+export interface ITranslationsProviderProps {
+    /**
+     * Translations for the selected language.
+     */
+    translations: Translations;
+    /**
+     * Children of the component.
+     */
+    children?: ReactNode;
+}
+
+export const TranslationsProvider: React.FC<ITranslationsProviderProps> = (props) => {
+    const { translations, children } = props;
+
+    const contextValues = useMemo(() => ({ t: translationUtilsClient.t(translations) }), [translations]);
+
+    return <translationsContext.Provider value={contextValues}>{children}</translationsContext.Provider>;
+};
+
+export const useTranslationsContext = () => {
+    const translations = useContext(translationsContext);
+
+    if (translations == null) {
+        throw new Error('useTranslations: hook must be used within the TranslationsContextProvider to work properly.');
+    }
+
+    return translations;
+};

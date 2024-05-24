@@ -2,7 +2,7 @@
 
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
-import { TranslationsContextProvider, type Translations } from '@/shared/components/translationsContextProvider';
+import { TranslationsContextProvider, type Translations } from '@/shared/components/translationsProvider';
 import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
 import { wagmiConfig } from '../../constants/wagmi';
