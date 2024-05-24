@@ -1,14 +1,14 @@
-import Link, { type LinkProps } from 'next/link';
+import { Link, type ILinkProps } from '@/shared/components/link';
 import type { ReactNode } from 'react';
 
-export interface INavigationRouteProps<TRoute> extends LinkProps<TRoute> {
+export interface INavigationRouteProps extends ILinkProps {
     /**
      * Children of the component.
      */
     children?: ReactNode;
 }
 
-export const NavigationRoute = <TRoute extends string>(props: INavigationRouteProps<TRoute>) => {
+export const NavigationRoute = (props: INavigationRouteProps) => {
     const { href, children, ...otherProps } = props;
 
     return (
