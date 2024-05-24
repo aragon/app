@@ -15,4 +15,8 @@ describe('<Link /> component', () => {
         expect(link).toBeInTheDocument();
         expect(link.href).toMatch(href);
     });
+
+    it('sets default href when relative property is not defined', () => {
+        expect(() => render(createTestComponent())).not.toThrow();
+    });
 });
