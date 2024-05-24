@@ -1,4 +1,4 @@
-import type { Translations } from './translationsUtils.server';
+import type { translationUtilsServer } from './translationsUtils.server';
 
 export type ITFuncOptions = {
     /**
@@ -6,6 +6,8 @@ export type ITFuncOptions = {
      */
     [key: string]: string | number;
 };
+
+export type Translations = Awaited<ReturnType<typeof translationUtilsServer.getTranslations>>;
 
 class TranslationsUtilsClient {
     t =

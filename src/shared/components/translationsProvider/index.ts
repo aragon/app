@@ -1,6 +1,1 @@
-export {
-    TranslationsContextProvider,
-    useTranslations,
-    type ITranslationsContextProviderProps,
-    type Translations,
-} from './translationsProvider';
+export { TranslationsProvider, useTranslations } from './translationsProvider';

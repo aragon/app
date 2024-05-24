@@ -31,12 +31,12 @@ export const TranslationsProvider: React.FC<ITranslationsProviderProps> = (props
     return <translationsContext.Provider value={contextValues}>{children}</translationsContext.Provider>;
 };
 
-export const useTranslationsContext = () => {
-    const translations = useContext(translationsContext);
+export const useTranslations = () => {
+    const values = useContext(translationsContext);
 
-    if (translations == null) {
+    if (values == null) {
         throw new Error('useTranslations: hook must be used within the TranslationsContextProvider to work properly.');
     }
 
-    return translations;
+    return values;
 };

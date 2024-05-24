@@ -8,6 +8,4 @@ class TranslationUtilsServer {
     getTranslations = async (locale: keyof typeof this.translations = 'en') => this.translations[locale]();
 }
 
-export type Translations = Awaited<ReturnType<typeof translationUtilsServer.getTranslations>>;
-
 export const translationUtilsServer = new TranslationUtilsServer();
