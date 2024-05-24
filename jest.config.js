@@ -11,6 +11,7 @@ const config = {
         '^.+\\.svg$': '<rootDir>/src/test/svgTransform.js',
         '^.+\\.m?[tj]sx?$': ['ts-jest', { tsconfig: { jsx: 'react-jsx' } }],
     },
+    transformIgnorePatterns: ['node_modules/(?!(@aragon/ods|wagmi|@wagmi)/)'],
 };
 
 module.exports = config;

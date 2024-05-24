@@ -1,12 +1,12 @@
 'use client';
 
+import { Image } from '@/shared/components/image';
+import { Link } from '@/shared/components/link';
 import { TranslationsContextProvider, type Translations } from '@/shared/components/translationsContextProvider';
 import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
 import { wagmiConfig } from '../../constants/wagmi';
 import { queryClientUtils } from '../../utils/queryClientUtils';
-import { OdsImage } from './odsImage';
-import { OdsLink } from './odsLink';
 
 export interface IProvidersProps {
     /**
@@ -19,7 +19,7 @@ export interface IProvidersProps {
     children?: ReactNode;
 }
 
-const coreProviderValues = { Link: OdsLink, Img: OdsImage };
+const coreProviderValues = { Link: Link, Img: Image };
 
 /**
  * Provides global providers for the whole application.
