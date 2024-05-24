@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/ods": "npm:^1.0.29"
+    "@aragon/ods": "npm:^1.0.31"
     "@next/bundle-analyzer": "npm:^14.2.3"
     "@tailwindcss/typography": "npm:^0.5.13"
     "@tanstack/react-query": "npm:^5.37.1"
@@ -92,9 +92,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/ods@npm:^1.0.29":
-  version: 1.0.29
-  resolution: "@aragon/ods@npm:1.0.29"
+"@aragon/ods@npm:^1.0.31":
+  version: 1.0.31
+  resolution: "@aragon/ods@npm:1.0.31"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.1.0"
     "@radix-ui/react-alert-dialog": "npm:^1.0.0"
@@ -130,7 +130,7 @@ __metadata:
     tailwindcss: ^3.4.0
     viem: ^2.11.0
     wagmi: ^2.9.0
-  checksum: 10c0/93bdb23414ebcf30ebb9b59b900e790451a9d8e16df41a575beca2f4c6c09f46693693fd5ce4abb92ddd3b07567028744f335a409e84342d58abcd5dfecd9fc2
+  checksum: 10c0/2cd1fd15d2d7441a34d00d6f814666ac6d1b040fd6a541d21c8732570dc02ccffbacfd5ab467e301c321ca8cbef327e4a37819a912c96d544ab517effbef2c2d
   languageName: node
   linkType: hard
 
