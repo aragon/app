@@ -8,7 +8,7 @@ const config = {
         '^@/(.*)$': '<rootDir>/src/$1',
     },
     transform: {
-        '^.+\\.svg$': '<rootDir>/src/test/svgTransform.js',
+        '^.+\\.(svg|css)$': '<rootDir>/src/test/fileTransform.js',
         '^.+\\.m?[tj]sx?$': ['ts-jest', { tsconfig: { jsx: 'react-jsx' } }],
     },
     transformIgnorePatterns: ['node_modules/(?!(@aragon/ods|wagmi|@wagmi)/)'],

@@ -1,32 +1,24 @@
+import type { Translations } from '@/shared/utils/translationsUtils';
 import { testLogger } from '@/test/utils';
 import { render, renderHook, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import {
-    TranslationsContextProvider,
-    useTranslations,
-    type ITranslationsContextProviderProps,
-    type Translations,
-} from './translationsProvider';
+import { TranslationsProvider, useTranslations, type ITranslationsProviderProps } from './translationsProvider';
 
-describe('<TranslationsContextProvider /> component', () => {
-    const createTestComponent = (props?: Partial<ITranslationsContextProviderProps>) => {
-        const completeProps: ITranslationsContextProviderProps = {
+describe('<TranslationsProvider /> component', () => {
+    const createTestComponent = (props?: Partial<ITranslationsProviderProps>) => {
+        const completeProps: ITranslationsProviderProps = {
             translations: {} as Translations,
             ...props,
         };
 
-        return <TranslationsContextProvider {...completeProps} />;
+        return <TranslationsProvider {...completeProps} />;
     };
 
     const createHookWrapper = (context?: Translations) =>
         function hookWrapper(props: { children: ReactNode }) {
             const completeContext: Translations = { ...context } as Translations;
 
-            return (
-                <TranslationsContextProvider translations={completeContext}>
-                    {props.children}
-                </TranslationsContextProvider>
-            );
+            return <TranslationsProvider translations={completeContext}>{props.children}</TranslationsProvider>;
         };
 
     it('renders the children property', () => {
@@ -42,9 +34,9 @@ describe('<TranslationsContextProvider /> component', () => {
         });
 
         it('returns the context values', () => {
-            const context = { key: 'value' } as unknown as Translations;
-            const { result } = renderHook(() => useTranslations(), { wrapper: createHookWrapper(context) });
-            expect(result.current).toEqual(context);
+            const translations = { key: 'value' } as unknown as Translations;
+            const { result } = renderHook(() => useTranslations(), { wrapper: createHookWrapper(translations) });
+            expect(result.current.t('key')).toEqual('value');
         });
     });
 });

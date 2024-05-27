@@ -1,10 +1,10 @@
-import { type Translations } from '@/shared/components/translationsContextProvider';
+import { type Translations } from '@/shared/utils/translationsUtils';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { Providers, type IProvidersProps } from './providers';
 
-jest.mock('@/shared/components/translationsContextProvider', () => ({
-    TranslationsContextProvider: (props: { translations: Translations; children: ReactNode }) => (
+jest.mock('@/shared/components/translationsProvider', () => ({
+    TranslationsProvider: (props: { translations: Translations; children: ReactNode }) => (
         <div data-testid="translations-context" data-translations={JSON.stringify(props.translations)}>
             {props.children}
         </div>

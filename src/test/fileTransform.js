@@ -15,7 +15,7 @@ const fileNameToIcon = (name) =>
 
 const transform = (src, filePath) => {
     if (path.extname(filePath) !== '.svg') {
-        return src;
+        return { code: `module.exports = ${JSON.stringify(path.basename(src))};` };
     }
 
     const componentName = fileNameToComponent(filePath);

@@ -10,6 +10,16 @@
           "privacy": "Privacy",
           "termsOfService": "Terms of Service"
         }
+      },
+      "headerDao": {
+        "route": {
+          "dashboard": "Dashboard",
+          "proposals": "Proposals",
+          "members": "Members",
+          "assets": "Assets",
+          "transactions": "Transactions",
+          "settings": "Settings"
+        }
       }
     }
   }
