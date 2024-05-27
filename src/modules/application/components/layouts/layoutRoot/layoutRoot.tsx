@@ -1,4 +1,4 @@
-import { translationUtils } from '@/shared/utils/translationsUtils';
+import { translations } from '@/shared/constants/translations';
 import '@aragon/ods/index.css';
 import type { ReactNode } from 'react';
 import { Footer } from '../../footer';
@@ -14,12 +14,12 @@ export interface ILayoutRootProps {
 
 export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const { children } = props;
-    const translations = await translationUtils.getTranslations();
+    const translationAssets = await translations['en']();
 
     return (
         <html lang="en" className="h-full">
             <body className="flex h-full flex-col bg-neutral-50">
-                <Providers translations={translations}>
+                <Providers translations={translationAssets}>
                     <div className="flex grow flex-col">{children}</div>
                     <Footer />
                 </Providers>

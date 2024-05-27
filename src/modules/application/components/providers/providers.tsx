@@ -2,7 +2,8 @@
 
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
-import { TranslationsContextProvider, type Translations } from '@/shared/components/translationsContextProvider';
+import { TranslationsProvider } from '@/shared/components/translationsProvider';
+import type { Translations } from '@/shared/utils/translationsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
 import { wagmiConfig } from '../../constants/wagmi';
@@ -30,7 +31,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
     const queryClient = queryClientUtils.getQueryClient();
 
     return (
-        <TranslationsContextProvider translations={translations}>
+        <TranslationsProvider translations={translations}>
             <OdsModulesProvider
                 wagmiConfig={wagmiConfig}
                 queryClient={queryClient}
@@ -38,6 +39,6 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
             >
                 {children}
             </OdsModulesProvider>
-        </TranslationsContextProvider>
+        </TranslationsProvider>
     );
 };
