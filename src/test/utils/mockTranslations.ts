@@ -1,3 +1,4 @@
+import type { ITranslationContext } from '@/shared/components/translationsProvider';
 import * as TranslationsProvider from '@/shared/components/translationsProvider';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 
@@ -15,16 +16,18 @@ class MockTranslations {
     };
 
     setup = () => {
-        const useTranslationsSpy = jest.spyOn(TranslationsProvider, 'useTranslations');
+        let useTranslationsSpy: jest.SpyInstance<ITranslationContext> | undefined;
 
         beforeEach(() => {
             if (this.shouldMockTranslations) {
-                useTranslationsSpy.mockReturnValue({ t: this.tMock });
+                useTranslationsSpy = jest
+                    .spyOn(TranslationsProvider, 'useTranslations')
+                    .mockReturnValue({ t: this.tMock });
             }
         });
 
         afterEach(() => {
-            useTranslationsSpy.mockRestore();
+            useTranslationsSpy?.mockRestore();
             this.shouldMockTranslations = true;
         });
     };
