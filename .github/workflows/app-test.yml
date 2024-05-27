@@ -22,10 +22,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.NODE_CACHE }}
+      - name: Restore NextJs cache
+        uses: actions/cache@v4.0.2
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.[jt]sx?') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Build application
-        run: yarn build
+      - name: Build DEV application
+        run: |
+          yarn setup development
+          yarn build
       - name: Cache NextJs build
         uses: actions/cache@v4.0.2
         with:
