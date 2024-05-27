@@ -1,4 +1,4 @@
-import type { Translations } from '@/shared/components/translationsProvider';
+import type { Translations } from '@/shared/utils/translationsUtils';
 
 export interface IFooterLink {
     /**

@@ -10,7 +10,6 @@ export const Footer: React.FC<IFooterProps> = () => {
 
     return (
         <footer className="flex justify-center border-t border-neutral-100 bg-neutral-0 px-6 py-5">
-            {t('test')}
             <div className="flex flex-col md:flex-row md:gap-6">
                 {footerLinks.map(({ link, label }) => (
                     <a key={label} href={link}>

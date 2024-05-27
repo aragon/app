@@ -1,4 +1,4 @@
-import type { translationUtilsServer } from './translationsUtils.server';
+import type { translations } from '@/shared/constants/translations';
 
 export type ITFuncOptions = {
     /**
@@ -7,9 +7,9 @@ export type ITFuncOptions = {
     [key: string]: string | number;
 };
 
-export type Translations = Awaited<ReturnType<typeof translationUtilsServer.getTranslations>>;
+export type Translations = Awaited<ReturnType<(typeof translations)['en']>>;
 
-class TranslationsUtilsClient {
+class TranslationsUtils {
     t =
         (translations: Translations) =>
         (key: string, options: ITFuncOptions = {}) => {
@@ -37,4 +37,4 @@ class TranslationsUtilsClient {
         };
 }
 
-export const translationUtilsClient = new TranslationsUtilsClient();
+export const translationUtils = new TranslationsUtils();

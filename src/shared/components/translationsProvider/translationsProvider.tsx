@@ -1,6 +1,6 @@
 'use client';
 
-import { translationUtilsClient, type ITFuncOptions, type Translations } from '@/shared/utils/translationsUtils';
+import { translationUtils, type ITFuncOptions, type Translations } from '@/shared/utils/translationsUtils';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
 export interface ITranslationContext {
@@ -26,7 +26,7 @@ export interface ITranslationsProviderProps {
 export const TranslationsProvider: React.FC<ITranslationsProviderProps> = (props) => {
     const { translations, children } = props;
 
-    const contextValues = useMemo(() => ({ t: translationUtilsClient.t(translations) }), [translations]);
+    const contextValues = useMemo(() => ({ t: translationUtils.t(translations) }), [translations]);
 
     return <translationsContext.Provider value={contextValues}>{children}</translationsContext.Provider>;
 };

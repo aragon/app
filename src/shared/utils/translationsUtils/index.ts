@@ -1,1 +1,1 @@
-export { translationUtilsClient, type ITFuncOptions, type Translations } from './translationsUtils.client';
+export { translationUtils, type ITFuncOptions, type Translations } from './translationsUtils';
