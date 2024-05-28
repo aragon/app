@@ -15,7 +15,7 @@ export const Page: React.FC<IPageProps> = (props) => {
 
     return (
         <HydrationBoundary state={queryClient ? dehydrate(queryClient) : null}>
-            <Container className={classNames('px-3 py-5', className)} {...otherProps} />
+            <Container className={classNames('py-4', className)} {...otherProps} />
         </HydrationBoundary>
     );
 };
