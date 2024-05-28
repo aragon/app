@@ -19,4 +19,19 @@ describe('<Link /> component', () => {
     it('sets default href when relative property is not defined', () => {
         expect(() => render(createTestComponent())).not.toThrow();
     });
+
+    it('appends noopener and noreferrer rel to rel property when target is _blank', () => {
+        const target = '_blank';
+        const href = 'https://google.com';
+        const rel = 'search';
+        render(createTestComponent({ target, href, rel }));
+        expect(screen.getByRole<HTMLAnchorElement>('link').rel).toEqual(`noopener noreferrer ${rel}`);
+    });
+
+    it('does not change rel property when target is not blank', () => {
+        const rel = 'next';
+        const href = '/test';
+        render(createTestComponent({ rel, href }));
+        expect(screen.getByRole<HTMLAnchorElement>('link').rel).toEqual(rel);
+    });
 });
