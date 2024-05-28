@@ -2,6 +2,7 @@
   "app": {
     "application": {
       "footer": {
+        "copyright": "@ {{year}} Aragon",
         "link": {
           "explore": "Explore",
           "learn": "Learn",
