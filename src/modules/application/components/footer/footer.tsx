@@ -15,7 +15,7 @@ export const Footer: React.FC<IFooterProps> = () => {
     const { t } = useTranslations();
 
     const year = new Date().getFullYear();
-    const appVersion = `v${process.env.version}`;
+    const version = process.env.version!;
 
     const layoutClassNames = [
         "[grid-template-areas:'metadata''links''copyright']", // Default
@@ -32,22 +32,23 @@ export const Footer: React.FC<IFooterProps> = () => {
                         <Image alt="Aragon APP logo" width={40} fill={false} src={AragonAppLogo} />
                     </div>
                     <div className="flex flex-row gap-2">
-                        <Tag variant="primary" label="Beta" />
-                        <Tag variant="primary" label={appVersion} />
+                        <Tag variant="primary" label={t('app.application.footer.beta')} />
+                        <Tag variant="primary" label={t('app.application.footer.version', { version })} />
                     </div>
                 </div>
-                <div className="flex flex-col content-center [grid-area:links] md:flex-row md:gap-6">
-                    {footerLinks.map(({ link, label }) => (
+                <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
+                    {footerLinks.map(({ link, label, target }) => (
                         <Link
+                            className="truncate border-b border-neutral-100 py-4 text-base font-normal leading-tight text-neutral-500 last:border-none md:border-none md:py-0"
                             key={label}
-                            className="border-b border-neutral-100 py-4 text-base font-normal leading-tight text-neutral-500 last:border-none md:border-none md:py-0"
                             href={link}
+                            target={target}
                         >
                             {t(`app.application.footer.link.${label}`)}
                         </Link>
                     ))}
                 </div>
-                <p className="pb-3 pt-6 text-base font-normal leading-tight text-neutral-500 [grid-area:copyright] md:py-0">
+                <p className="truncate pb-3 pt-6 text-base font-normal leading-tight text-neutral-500 [grid-area:copyright] md:py-0">
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>

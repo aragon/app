@@ -2,6 +2,8 @@
   "app": {
     "application": {
       "footer": {
+        "version": "v{{version}}",
+        "beta": "Beta",
         "copyright": "@ {{year}} Aragon",
         "link": {
           "explore": "Explore",

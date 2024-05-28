@@ -9,13 +9,17 @@ export interface IFooterLink {
      * Url of the footer link.
      */
     link: string;
+    /**
+     * Target of the link.
+     */
+    target?: string;
 }
 
 export const footerLinks: IFooterLink[] = [
-    { label: 'explore', link: '#' },
-    { label: 'learn', link: '#' },
-    { label: 'build', link: '#' },
-    { label: 'help', link: '#' },
-    { label: 'privacy', link: '#' },
-    { label: 'termsOfService', link: '#' },
+    { label: 'explore', link: '/' },
+    { label: 'learn', link: 'https://aragon.org/resource-library', target: '_blank' },
+    { label: 'build', link: 'https://devs.aragon.org', target: '_blank' },
+    { label: 'help', link: 'https://discord.com/invite/AhzsGmh7fK', target: '_blank' },
+    { label: 'privacy', link: 'https://aragon.org/privacy-policy', target: '_blank' },
+    { label: 'termsOfService', link: 'https://aragon.org/terms-and-conditions', target: '_blank' },
 ];
