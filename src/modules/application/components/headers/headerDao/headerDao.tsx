@@ -24,7 +24,7 @@ export const HeaderDao: React.FC<IHeaderDaoProps> = (props) => {
     const routes = headerDaoRoutes(dao?.permalink);
 
     return (
-        <HeaderBase className={classNames('flex flex-col gap-2 pt-5', className)} {...otherProps}>
+        <HeaderBase containerClasses={classNames('flex flex-col gap-2 pt-5', className)} {...otherProps}>
             <div className="flex flex-row justify-between">
                 <button className="flex flex-row items-center gap-3 p-1">
                     <DaoAvatar src={dao?.avatar ?? undefined} size="md" />

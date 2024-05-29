@@ -1,4 +1,5 @@
 import BundleAnalyzer from '@next/bundle-analyzer';
+import packageInfo from './package.json' assert { type: 'json' };
 
 const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
 
@@ -25,6 +26,9 @@ const nextConfig = {
     },
     experimental: {
         typedRoutes: true,
+    },
+    env: {
+        version: packageInfo.version,
     },
 };
 

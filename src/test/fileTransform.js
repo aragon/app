@@ -1,40 +1,19 @@
 const path = require('path');
 
-const fileNameToComponent = (name) =>
-    `${path.basename(name, '.svg')}-icon`
-        .split(/\W+/)
-        .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
-        .join('');
-
-const fileNameToIcon = (name) =>
-    path
-        .basename(name, '.svg')
-        .split(/\W+/)
-        .map((part) => part.toUpperCase())
-        .join('_');
-
 const transform = (src, filePath) => {
+    const fileName = path.basename(filePath);
+
+    // Simply exports unsupported Jest assets as a string containining their file name.
+    // (see https://jestjs.io/docs/code-transformation#transforming-images-to-their-path)
     if (path.extname(filePath) !== '.svg') {
-        return { code: `module.exports = ${JSON.stringify(path.basename(src))};` };
+        return { code: `module.exports = "${fileName}";` };
     }
 
-    const componentName = fileNameToComponent(filePath);
-    const iconName = fileNameToIcon(filePath);
+    // Mock NextJs behaviour of determining the width and height property of local imported images.
+    // (see https://nextjs.org/docs/app/building-your-application/optimizing/images#local-images)
+    const code = `module.exports = { src: "${filePath}", height: 10, width: 10 };`;
 
-    return {
-        code: `
-            const React = require('react');
-
-            function ${componentName}(props) {
-                return React.createElement(
-                    'svg',
-                    Object.assign({}, props, {'data-testid': '${iconName}'})
-                );
-            }
-
-            module.exports = ${componentName};
-        `,
-    };
+    return { code };
 };
 
 module.exports = {

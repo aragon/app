@@ -11,7 +11,6 @@ describe('<Image /> component', () => {
     };
 
     it('renders a NextJs image component', () => {
-        testLogger.suppressErrors();
         const src = '/test.jpg';
         render(createTestComponent({ src }));
         const image = screen.getByRole<HTMLImageElement>('img');
