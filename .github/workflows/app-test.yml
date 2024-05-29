@@ -29,7 +29,9 @@ jobs:
       - name: Cache NextJs build
         uses: actions/cache@v4.0.2
         with:
-          path: ${{ github.workspace }}/.next
+          path: |
+            ${{ github.workspace }}/.next
+            ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
 
   test:
@@ -48,7 +50,9 @@ jobs:
       - name: Restore cached NextJs build
         uses: actions/cache@v4.0.2
         with:
-          path: ${{ github.workspace }}/.next
+          path: |
+            ${{ github.workspace }}/.next
+            ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
       - name: Run tests with coverage
         run: |
