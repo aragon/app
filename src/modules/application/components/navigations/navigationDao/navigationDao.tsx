@@ -3,28 +3,28 @@
 import { useDao } from '@/shared/api/daoService';
 import { AvatarIcon, DaoAvatar, IconType } from '@aragon/ods';
 import classNames from 'classnames';
-import { Navigation } from '../../navigation';
+import { NavigationLinks } from '../../navigationLinks';
 import { Wallet } from '../../wallet';
-import { HeaderBase, type IHeaderBaseProps } from '../headerBase';
-import { headerDaoRoutes } from './headerDaoRoutes';
+import { NavigationBase, type INavigationBaseProps } from '../navigationBase';
+import { navigationDaoLinks } from './navigationDaoLinks';
 
-export interface IHeaderDaoProps extends IHeaderBaseProps {
+export interface INavigationDaoProps extends INavigationBaseProps {
     /**
      * DAO slug to display the data for.
      */
     slug: string;
 }
 
-export const HeaderDao: React.FC<IHeaderDaoProps> = (props) => {
-    const { slug, className, ...otherProps } = props;
+export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
+    const { slug, containerClasses, ...otherProps } = props;
 
     const urlParams = { slug };
     const { data: dao } = useDao({ urlParams });
 
-    const routes = headerDaoRoutes(dao?.permalink);
+    const links = navigationDaoLinks(dao?.permalink);
 
     return (
-        <HeaderBase containerClasses={classNames('flex flex-col gap-2 pt-5', className)} {...otherProps}>
+        <NavigationBase containerClasses={classNames('flex flex-col gap-2 pt-5', containerClasses)} {...otherProps}>
             <div className="flex flex-row justify-between">
                 <button className="flex flex-row items-center gap-3 p-1">
                     <DaoAvatar src={dao?.avatar ?? undefined} size="md" />
@@ -37,7 +37,7 @@ export const HeaderDao: React.FC<IHeaderDaoProps> = (props) => {
                     </button>
                 </div>
             </div>
-            <Navigation routes={routes} />
-        </HeaderBase>
+            <NavigationLinks links={links} />
+        </NavigationBase>
     );
 };

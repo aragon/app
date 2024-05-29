@@ -1,0 +1,5 @@
+describe('<NavigationBase /> component', () => {
+    it('', () => {
+        //
+    });
+});

@@ -15,8 +15,8 @@
           "termsOfService": "Terms of Service"
         }
       },
-      "headerDao": {
-        "route": {
+      "navigationDao": {
+        "link": {
           "dashboard": "Dashboard",
           "proposals": "Proposals",
           "members": "Members",

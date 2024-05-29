@@ -1,0 +1,5 @@
+describe('<NavigationProcess /> component', () => {
+    it('', () => {
+        //
+    });
+});

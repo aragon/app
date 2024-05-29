@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { HeaderProcess } from '../../headers/headerProcess';
+import { NavigationProcess } from '../../navigations/navigationProcess';
 
 export interface ILayoutProcessProps {
     /**
@@ -11,7 +11,7 @@ export interface ILayoutProcessProps {
 export const LayoutProcess: React.FC<ILayoutProcessProps> = (props) => {
     return (
         <>
-            <HeaderProcess />
+            <NavigationProcess />
             <main {...props} />
         </>
     );
