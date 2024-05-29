@@ -29,7 +29,7 @@ export const Footer: React.FC<IFooterProps> = () => {
                 <div className="flex flex-row items-center justify-between gap-4 pb-4 pt-3 [grid-area:metadata] md:justify-normal md:py-0">
                     <div className="flex flex-row gap-1">
                         <Image alt="Aragon logo" width={32} height={32} fill={false} src="/icon.svg" />
-                        <Image alt="Aragon APP logo" width={40} fill={false} src={AragonAppLogo} />
+                        <Image alt="Aragon App logo" width={41} height={13} fill={false} src={AragonAppLogo} />
                     </div>
                     <div className="flex flex-row gap-2">
                         <Tag variant="primary" label={t('app.application.footer.beta')} />

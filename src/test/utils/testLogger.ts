@@ -6,6 +6,12 @@ class TestLogger {
 
     private testErrorLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
+            // Suppress "fetchPriority" React error until fixed on stable version
+            // (See https://github.com/facebook/react/issues/27233)
+            if (params[1] === 'fetchPriority') {
+                return;
+            }
+
             this.originalConsoleError.apply(console, params);
         }
     });
