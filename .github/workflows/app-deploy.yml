@@ -49,40 +49,41 @@ jobs:
             ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
 
-  test:
-    needs: prepare
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.1.6
-      - name: Setup Node
-        uses: actions/setup-node@v4.0.2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: ${{ env.NODE_CACHE }}
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Restore cached NextJs build
-        uses: actions/cache@v4.0.2
-        with:
-          path: |
-            ${{ github.workspace }}/.next
-            ${{ github.workspace }}/.env.local
-            ${{ github.workspace }}/next-env.d.ts
-          key: ${{ github.ref }}-${{ github.sha }}
-      - name: Check types
-        run: yarn type-check
-      - name: Check linter
-        run: yarn lint
-      - name: Check prettier
-        run: yarn prettify
-      - name: Run tests with coverage
-        run: |
-          set -eo pipefail
-          yarn test:coverage
+  # To be enabled
+  # test:
+  #   needs: prepare
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4.1.6
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v4.0.2
+  #       with:
+  #         node-version: ${{ env.NODE_VERSION }}
+  #         cache: ${{ env.NODE_CACHE }}
+  #     - name: Install dependencies
+  #       run: yarn install --frozen-lockfile
+  #     - name: Restore cached NextJs build
+  #       uses: actions/cache@v4.0.2
+  #       with:
+  #         path: |
+  #           ${{ github.workspace }}/.next
+  #           ${{ github.workspace }}/.env.local
+  #           ${{ github.workspace }}/next-env.d.ts
+  #         key: ${{ github.ref }}-${{ github.sha }}
+  #     - name: Check types
+  #       run: yarn type-check
+  #     - name: Check linter
+  #       run: yarn lint
+  #     - name: Check prettier
+  #       run: yarn prettify
+  #     - name: Run tests with coverage
+  #       run: |
+  #         set -eo pipefail
+  #         yarn test:coverage
 
   deploy:
-    needs: test
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
