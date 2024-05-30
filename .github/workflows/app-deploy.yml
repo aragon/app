@@ -104,13 +104,11 @@ jobs:
             ${{ github.workspace }}/.env.local
             ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
-      - name: Pull Vercel setup
-        run: vercel pull --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Bundle Vercel application
-        run: vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
+        run: yarn vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Vercel deployment
-        run: vercel deploy --prebuilt --prod --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
+        run: yarn vercel deploy --prebuilt --prod --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
       - name: Set deployment alias
         run: |
           DEPLOYMENT_URL=`cat deployment-url.txt`
-          vercel alias $DEPLOYMENT_URL ${{ env.APP_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
+          yarn vercel alias $DEPLOYMENT_URL ${{ env.APP_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
