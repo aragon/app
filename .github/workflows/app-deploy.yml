@@ -14,8 +14,7 @@ env:
   NODE_VERSION: 20
   NODE_CACHE: "yarn"
   APP_ENV: ${{ (github.ref == 'refs/heads/main' && 'production') || 'development' }}
-  VERCEL_ARGS: ${{ (github.ref == 'refs/heads/main' && '--confirm --prod') || '--confirm'  }}
-  VERCEL_DOMAIN: ${{ (github.ref == 'refs/heads/main' && 'flooz.xyz') || 'develop.flooz.xyz'  }}
+  APP_DOMAIN: ${{ (github.ref == 'refs/heads/main' && 'prod-app-next.vercel.app') || 'dev-app-next.vercel.app'  }}
 
 jobs:
   prepare:
@@ -43,11 +42,45 @@ jobs:
       - name: Cache NextJs build
         uses: actions/cache@v4.0.2
         with:
-          path: ${{ github.workspace }}/.next
+          path: |
+            ${{ github.workspace }}/.next
+            ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
 
-  deploy:
+  test:
     needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.6
+      - name: Setup Node
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: ${{ env.NODE_CACHE }}
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Restore cached NextJs build
+        uses: actions/cache@v4.0.2
+        with:
+          path: |
+            ${{ github.workspace }}/.next
+            ${{ github.workspace }}/.env.local
+            ${{ github.workspace }}/next-env.d.ts
+          key: ${{ github.ref }}-${{ github.sha }}
+      - name: Check types
+        run: yarn type-check
+      - name: Check linter
+        run: yarn lint
+      - name: Check prettier
+        run: yarn prettify
+      - name: Run tests with coverage
+        run: |
+          set -eo pipefail
+          yarn test:coverage
+
+  deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -61,47 +94,16 @@ jobs:
       - name: Restore cached NextJs build
         uses: actions/cache@v4.0.2
         with:
-          path: ${{ github.workspace }}/.next
+          path: |
+            ${{ github.workspace }}/.next
+            ${{ github.workspace }}/.env.local
+            ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
-      - name: Setup environment
-        run: yarn setup ${{ env.APP_ENVIRONMENT }}
+      - name: Bundle Vercel application
+        run: vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Vercel deployment
-        id: deploy
-        uses: amondnet/vercel-action@v25.1.1
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          scope: flooz-trade
-          github-comment: false
-          vercel-args: ${{ env.VERCEL_ARGS }}
-      - name: Set vercel alias
-        uses: actions/github-script@v6.4.1
-        env:
-          previewUrl: ${{ steps.deploy.outputs.preview-url }}
-          aliasDomain: ${{ env.VERCEL_ALIAS_DOMAIN }}
-          vercelToken: ${{ secrets.VERCEL_TOKEN }}
-          vercelTeamId: ${{ secrets.VERCEL_ORG_ID }}
-        with:
-          script: |
-            const setAlias = require('./.github/scripts/set-alias.js');
-            await setAlias({ github, context, core });
-      - name: Version check
-        id: version-check
-        uses: EndBug/version-check@v2.1.1
-        with:
-          diff-search: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Version check fail
-        if: steps.version-check.outputs.changed == 'false' && github.ref == 'refs/heads/main'
+        run: vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
+      - name: Set deployment alias
         run: |
-          echo "No version change found, please bump the application version on the package.json file and create a release manually."
-      - name: Create release
-        if: steps.version-check.outputs.changed == 'true' && github.ref == 'refs/heads/main'
-        uses: actions/create-release@v1.1.4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.version-check.outputs.version }}
-          release_name: v${{ steps.version-check.outputs.version }}
+          DEPLOYMENT_URL=`cat deployment-url.txt`
+          vercel alias $DEPLOYMENT_URL ${{ env.APP_ENV }} --token=${{ secrets.APP_DOMAIN }} --scope ${{ secrets.VERCEL_SCOPE }}

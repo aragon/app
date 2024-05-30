@@ -3,6 +3,7 @@
     "application": {
       "footer": {
         "version": "v{{version}}",
+        "versionEnv": "v{{version}} ({{env}})",
         "beta": "Beta",
         "copyright": "@ {{year}} Aragon",
         "link": {

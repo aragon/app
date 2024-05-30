@@ -11,11 +11,19 @@ import { footerLinks } from './footerLinks';
 
 export interface IFooterProps {}
 
+const envLabel: Record<string, string | undefined> = {
+    development: 'DEV',
+    staging: 'STG',
+};
+
 export const Footer: React.FC<IFooterProps> = () => {
     const { t } = useTranslations();
 
     const year = new Date().getFullYear();
     const version = process.env.version!;
+
+    const env = envLabel[process.env.NEXT_PUBLIC_ENV!];
+    const versionLabel = env != null ? 'versionEnv' : 'version';
 
     const layoutClassNames = [
         "[grid-template-areas:'metadata''links''copyright']", // Default
@@ -33,7 +41,7 @@ export const Footer: React.FC<IFooterProps> = () => {
                     </div>
                     <div className="flex flex-row gap-2">
                         <Tag variant="primary" label={t('app.application.footer.beta')} />
-                        <Tag variant="primary" label={t('app.application.footer.version', { version })} />
+                        <Tag variant="primary" label={t(`app.application.footer.${versionLabel}`, { version, env })} />
                     </div>
                 </div>
                 <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
