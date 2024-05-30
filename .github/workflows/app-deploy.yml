@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Build DEV or PROD application
         run: |
           yarn setup ${{ env.APP_ENV }}
@@ -62,7 +62,7 @@ jobs:
   #         node-version: ${{ env.NODE_VERSION }}
   #         cache: ${{ env.NODE_CACHE }}
   #     - name: Install dependencies
-  #       run: yarn install --frozen-lockfile
+  #       run: yarn install --immutable
   #     - name: Restore cached NextJs build
   #       uses: actions/cache@v4.0.2
   #       with:
@@ -93,7 +93,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.NODE_CACHE }}
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Restore cached NextJs build
         uses: actions/cache@v4.0.2
         with:
@@ -111,4 +111,4 @@ jobs:
       - name: Set deployment alias
         run: |
           DEPLOYMENT_URL=`cat deployment-url.txt`
-          vercel alias $DEPLOYMENT_URL ${{ env.APP_ENV }} --token=${{ secrets.APP_DOMAIN }} --scope ${{ secrets.VERCEL_SCOPE }}
+          vercel alias $DEPLOYMENT_URL ${{ env.APP_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
