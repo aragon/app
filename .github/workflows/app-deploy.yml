@@ -107,7 +107,7 @@ jobs:
       - name: Bundle Vercel application
         run: vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Vercel deployment
-        run: vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
+        run: vercel deploy --prebuilt --prod --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
       - name: Set deployment alias
         run: |
           DEPLOYMENT_URL=`cat deployment-url.txt`
