@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - setup-deployment # To be removed
 
 concurrency:
   group: ${{ github.ref }}
