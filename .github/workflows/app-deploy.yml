@@ -102,6 +102,8 @@ jobs:
             ${{ github.workspace }}/.env.local
             ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
+      - name: Pull Vercel setup
+        run: vercel pull --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Bundle Vercel application
         run: vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Vercel deployment
