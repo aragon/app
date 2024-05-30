@@ -1,4 +1,4 @@
-name: Flooz Deploy v1
+name: App Deploy
 
 on:
   push:
