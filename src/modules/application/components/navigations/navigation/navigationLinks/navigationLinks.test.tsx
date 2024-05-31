@@ -21,4 +21,18 @@ describe('<Navigation.Links /> component', () => {
         expect(screen.getByRole('link', { name: links[0].label })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: links[1].label })).toBeInTheDocument();
     });
+
+    it('renders properly on columns variant', () => {
+        const variant = 'columns';
+        const { container } = render(createTestComponent({ variant }));
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+        expect(container.querySelector('.flex-row')).toBeInTheDocument();
+    });
+
+    it('renders properly on rows variant', () => {
+        const variant = 'rows';
+        const { container } = render(createTestComponent({ variant }));
+        // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+        expect(container.querySelector('.flex-col')).toBeInTheDocument();
+    });
 });
