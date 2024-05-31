@@ -1,5 +1,0 @@
-describe('<NavigationLinks /> component', () => {
-    it('', () => {
-        //
-    });
-});

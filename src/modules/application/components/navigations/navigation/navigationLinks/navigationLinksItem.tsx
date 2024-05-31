@@ -1,4 +1,5 @@
 import { Link, type ILinkProps } from '@/shared/components/link';
+import { Icon, type IconType } from '@aragon/ods';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
@@ -10,13 +11,17 @@ export interface INavigationLinksItemProps extends ILinkProps {
      */
     children?: ReactNode;
     /**
+     * Icon of the navigation link.
+     */
+    icon: IconType;
+    /**
      * Variant of the component.
      */
     variant: NavigationLinksVariant;
 }
 
 export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
-    const { href, variant, children, className, ...otherProps } = props;
+    const { href, variant, icon, children, className, ...otherProps } = props;
 
     const pathname = usePathname();
     const isActive = pathname === href;
@@ -25,14 +30,17 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
         <Link
             href={href}
             className={classNames(
-                'py-3 text-base font-normal leading-tight text-neutral-500',
+                'flex flex-row gap-3 py-3 text-neutral-500',
+                { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'rows' },
                 { 'border-b-2 border-primary-400 pb-2.5': isActive && variant === 'columns' },
+                { 'bg-neutral-50': isActive && variant === 'rows' },
                 { 'text-neutral-800': isActive },
                 className,
             )}
             {...otherProps}
         >
-            {children}
+            {variant === 'rows' && <Icon icon={icon} />}
+            <p className="text-base font-normal leading-tight">{children}</p>
         </Link>
     );
 };

@@ -23,11 +23,16 @@ export const NavigationLinks = <TRouteType extends string>(props: INavigationLin
 
     return (
         <div
-            className={classNames('flex flex-row gap-10', { 'flex-row gap-10': variant === 'columns' }, className)}
+            className={classNames(
+                'flex overflow-auto',
+                { 'flex-row gap-10': variant === 'columns' },
+                { 'flex-col gap-1': variant === 'rows' },
+                className,
+            )}
             {...otherProps}
         >
-            {links.map(({ link, label }) => (
-                <NavigationLinksItem key={link} href={link} variant={variant}>
+            {links.map(({ link, label, icon }) => (
+                <NavigationLinksItem key={link} href={link} icon={icon} variant={variant}>
                     {t(label)}
                 </NavigationLinksItem>
             ))}

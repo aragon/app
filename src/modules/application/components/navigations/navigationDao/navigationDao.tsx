@@ -1,13 +1,13 @@
 'use client';
 
 import { useDao } from '@/shared/api/daoService';
-import { AvatarIcon, DaoAvatar, IconType } from '@aragon/ods';
+import { DaoAvatar } from '@aragon/ods';
 import classNames from 'classnames';
-import { NavigationLinks } from '../../navigationLinks';
-import { NavigationBase, type INavigationBaseProps } from '../navigationBase';
+import { useState } from 'react';
+import { Navigation, type INavigationContainerProps } from '../navigation';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
-export interface INavigationDaoProps extends INavigationBaseProps {
+export interface INavigationDaoProps extends INavigationContainerProps {
     /**
      * DAO slug to display the data for.
      */
@@ -17,19 +17,15 @@ export interface INavigationDaoProps extends INavigationBaseProps {
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const { slug, containerClasses, ...otherProps } = props;
 
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
     const urlParams = { slug };
     const { data: dao } = useDao({ urlParams });
 
     const links = navigationDaoLinks(slug); // TODO: use dao?.permalink
 
-    const menuTriggerClasses = [
-        'rounded-full border border-neutral-100 bg-neutral-0 p-[3px] outline-none md:hidden', // Default
-        'hover:border-neutral-200 active:border-neutral-200 active:bg-neutral-50', // Hover / Active states
-        'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset', // Focus state
-    ].join('');
-
     return (
-        <NavigationBase
+        <Navigation.Container
             containerClasses={classNames('flex flex-col gap-2 py-3 md:pb-0 md:pt-5 lg:gap-3', containerClasses)}
             {...otherProps}
         >
@@ -39,12 +35,12 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     <p className="text-base leading-tight text-neutral-800">{dao?.name}</p>
                 </button>
                 <div className="flex flex-row gap-2">
-                    <button className={menuTriggerClasses}>
-                        <AvatarIcon icon={IconType.MENU} size="lg" />
-                    </button>
+                    {/* TODO: render wallet component */}
+                    <Navigation.Trigger onClick={() => setIsDialogOpen(true)} />
                 </div>
             </div>
-            <NavigationLinks className="hidden md:flex lg:pl-[56px]" links={links} variant="columns" />
-        </NavigationBase>
+            <Navigation.Links className="hidden md:flex lg:pl-[56px]" links={links} variant="columns" />
+            <Navigation.Dialog links={links} open={isDialogOpen} onOpenChange={setIsDialogOpen} />
+        </Navigation.Container>
     );
 };
