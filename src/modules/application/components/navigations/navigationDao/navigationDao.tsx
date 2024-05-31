@@ -22,7 +22,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const urlParams = { slug };
     const { data: dao } = useDao({ urlParams });
 
-    const links = navigationDaoLinks(slug); // TODO: use dao?.permalink
+    const links = navigationDaoLinks(dao?.permalink);
 
     return (
         <Navigation.Container

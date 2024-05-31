@@ -13,7 +13,7 @@ export interface INavigationLinksProps<TRouteType extends string> extends Compon
      * Variant of the component.
      * @default columns
      */
-    variant: NavigationLinksVariant;
+    variant?: NavigationLinksVariant;
 }
 
 export const NavigationLinks = <TRouteType extends string>(props: INavigationLinksProps<TRouteType>) => {
