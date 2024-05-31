@@ -1,7 +1,7 @@
 'use client';
 
 import { useDao } from '@/shared/api/daoService';
-import { DaoAvatar } from '@aragon/ods';
+import { Button, DaoAvatar, IconType } from '@aragon/ods';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { Navigation, type INavigationContainerProps } from '../navigation';
@@ -40,7 +40,21 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 </div>
             </div>
             <Navigation.Links className="hidden md:flex lg:pl-[56px]" links={links} variant="columns" />
-            <Navigation.Dialog links={links} open={isDialogOpen} onOpenChange={setIsDialogOpen} />
+            <Navigation.Dialog links={links} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <div className="flex w-full flex-row px-4">
+                    <div className="flex grow flex-row justify-between">
+                        <DaoAvatar src={dao?.avatar ?? undefined} size="md" />
+                        <div className="flex flex-row gap-3">
+                            <Button variant="tertiary" size="md" iconLeft={IconType.COPY} />
+                            <Button variant="tertiary" size="md" iconLeft={IconType.APP_EXPLORE} />
+                        </div>
+                    </div>
+                    <div className="flex flex-row font-normal leading-tight">
+                        <p className="text-xl text-neutral-800">{dao?.name}</p>
+                        <p className="text-base text-neutral-500">{dao?.ens ?? dao?.daoAddress}</p>
+                    </div>
+                </div>
+            </Navigation.Dialog>
         </Navigation.Container>
     );
 };
