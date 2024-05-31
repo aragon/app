@@ -21,12 +21,31 @@ describe('<Footer /> component', () => {
     });
 
     it('renders the application metadata info', () => {
-        process.env.version = '1.0.2';
         render(createTestComponent());
         expect(screen.getByRole('img', { name: 'Aragon logo' })).toBeInTheDocument();
         expect(screen.getByRole('img', { name: 'Aragon App logo' })).toBeInTheDocument();
         expect(screen.getByText(/footer.beta/)).toBeInTheDocument();
-        expect(screen.getByText(/footer.version \(version=1.0.2\)/)).toBeInTheDocument();
+    });
+
+    it('renders current version and DEV label on development environment', () => {
+        process.env.version = '1.0.2';
+        process.env.NEXT_PUBLIC_ENV = 'development';
+        render(createTestComponent());
+        expect(screen.getByText(/footer.versionEnv \(version=1.0.2,env=DEV\)/)).toBeInTheDocument();
+    });
+
+    it('renders current version and STG label on staging environment', () => {
+        process.env.version = '0.0.1';
+        process.env.NEXT_PUBLIC_ENV = 'staging';
+        render(createTestComponent());
+        expect(screen.getByText(/footer.versionEnv \(version=0.0.1,env=STG\)/)).toBeInTheDocument();
+    });
+
+    it('only renders current version of production environment', () => {
+        process.env.version = '1.5.0';
+        process.env.NEXT_PUBLIC_ENV = 'production';
+        render(createTestComponent());
+        expect(screen.getByText(/footer.version \(version=1.5.0,env=undefined\)/)).toBeInTheDocument();
     });
 
     it('renders the footer links', () => {
