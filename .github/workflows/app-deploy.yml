@@ -83,7 +83,7 @@ jobs:
           yarn test:coverage
 
   deploy:
-    needs: prepare
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
