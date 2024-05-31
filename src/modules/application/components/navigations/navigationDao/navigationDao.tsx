@@ -31,7 +31,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         >
             <div className="flex flex-row justify-between">
                 <button className="flex flex-row items-center gap-3 p-1">
-                    <DaoAvatar src={dao?.avatar ?? undefined} size="md" />
+                    <DaoAvatar src={dao?.avatar ?? undefined} name={dao?.name} size="md" />
                     <p className="text-base leading-tight text-neutral-800">{dao?.name}</p>
                 </button>
                 <div className="flex flex-row gap-2">
@@ -41,15 +41,15 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             </div>
             <Navigation.Links className="hidden md:flex lg:pl-[56px]" links={links} variant="columns" />
             <Navigation.Dialog links={links} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <div className="flex w-full flex-row px-4">
+                <div className="flex flex-col gap-4 px-4">
                     <div className="flex grow flex-row justify-between">
-                        <DaoAvatar src={dao?.avatar ?? undefined} size="md" />
+                        <DaoAvatar src={dao?.avatar ?? undefined} name={dao?.name} size="md" />
                         <div className="flex flex-row gap-3">
                             <Button variant="tertiary" size="md" iconLeft={IconType.COPY} />
                             <Button variant="tertiary" size="md" iconLeft={IconType.APP_EXPLORE} />
                         </div>
                     </div>
-                    <div className="flex flex-row font-normal leading-tight">
+                    <div className="flex flex-col gap-1.5 font-normal leading-tight">
                         <p className="text-xl text-neutral-800">{dao?.name}</p>
                         <p className="text-base text-neutral-500">{dao?.ens ?? dao?.daoAddress}</p>
                     </div>
