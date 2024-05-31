@@ -4,7 +4,7 @@ export type ITFuncOptions = {
     /**
      * Values to be replaced on the translation.
      */
-    [key: string]: string | number;
+    [key: string]: string | number | undefined;
 };
 
 export type Translations = Awaited<ReturnType<(typeof translations)['en']>>;

@@ -1,0 +1,47 @@
+name: App Staging
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+  NODE_CACHE: "yarn"
+  APP_ENV: "staging"
+  APP_DOMAIN: "stg-app-next.vercel.app"
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.6
+      - name: Setup Node
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: ${{ env.NODE_CACHE }}
+      - name: Restore NextJs cache
+        uses: actions/cache@v4.0.2
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.[jt]sx?') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Prepare STG build
+        run: yarn setup ${{ env.APP_ENV }}
+      - name: Bundle Vercel application
+        run: yarn vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
+      - name: Vercel deployment
+        run: yarn vercel deploy --prebuilt --prod --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
+      - name: Set deployment alias
+        run: |
+          DEPLOYMENT_URL=`cat deployment-url.txt`
+          yarn vercel alias $DEPLOYMENT_URL ${{ env.APP_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
