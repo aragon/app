@@ -2,9 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
 
-jest.mock('../applicationTags', () => ({
-    ApplicationTags: () => <div data-testid="application-tags-mock" />,
-}));
+jest.mock('../applicationTags', () => ({ ApplicationTags: () => <div data-testid="application-tags-mock" /> }));
+jest.mock('../aragonLogo', () => ({ AragonLogo: () => <div data-testid="aragon-logo-mock" /> }));
 
 describe('<Footer /> component', () => {
     const originalProcessEnv = process.env;
@@ -24,10 +23,9 @@ describe('<Footer /> component', () => {
         jest.useRealTimers();
     });
 
-    it('renders the application metadata info', () => {
+    it('renders the aragon logo', () => {
         render(createTestComponent());
-        expect(screen.getByRole('img', { name: 'Aragon logo' })).toBeInTheDocument();
-        expect(screen.getByRole('img', { name: 'Aragon App logo' })).toBeInTheDocument();
+        expect(screen.getByTestId('aragon-logo-mock')).toBeInTheDocument();
     });
 
     it('renders the application tags', () => {

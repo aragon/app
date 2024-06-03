@@ -1,13 +1,12 @@
 'use client';
 
-import AragonAppLogo from '@/assets/images/aragon-app.svg';
 import { Container } from '@/shared/components/container';
-import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { ApplicationTags } from '../applicationTags';
+import { AragonLogo } from '../aragonLogo';
 import { footerLinks } from './footerLinks';
 
 export interface IFooterProps extends ComponentProps<'footer'> {}
@@ -29,10 +28,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
         <footer className={classNames('border-t border-neutral-100 bg-neutral-0 py-5', className)} {...otherProps}>
             <Container className={classNames('grid items-center md:gap-6', layoutClassNames)}>
                 <div className="flex flex-row items-center justify-between gap-4 pb-4 pt-3 [grid-area:metadata] md:justify-normal md:py-0 xl:justify-self-start">
-                    <div className="flex flex-row gap-1">
-                        <Image alt="Aragon logo" width={32} height={32} fill={false} src="/icon.svg" />
-                        <Image alt="Aragon App logo" className="w-10" fill={false} src={AragonAppLogo} />
-                    </div>
+                    <AragonLogo />
                     <ApplicationTags variant="primary" />
                 </div>
                 <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
