@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
 
+jest.mock('../applicationTags', () => ({
+    ApplicationTags: () => <div data-testid="application-tags-mock" />,
+}));
+
 describe('<Footer /> component', () => {
     const originalProcessEnv = process.env;
 
@@ -24,28 +28,11 @@ describe('<Footer /> component', () => {
         render(createTestComponent());
         expect(screen.getByRole('img', { name: 'Aragon logo' })).toBeInTheDocument();
         expect(screen.getByRole('img', { name: 'Aragon App logo' })).toBeInTheDocument();
-        expect(screen.getByText(/footer.beta/)).toBeInTheDocument();
     });
 
-    it('renders current version and DEV label on development environment', () => {
-        process.env.version = '1.0.2';
-        process.env.NEXT_PUBLIC_ENV = 'development';
+    it('renders the application tags', () => {
         render(createTestComponent());
-        expect(screen.getByText(/footer.versionEnv \(version=1.0.2,env=DEV\)/)).toBeInTheDocument();
-    });
-
-    it('renders current version and STG label on staging environment', () => {
-        process.env.version = '0.0.1';
-        process.env.NEXT_PUBLIC_ENV = 'staging';
-        render(createTestComponent());
-        expect(screen.getByText(/footer.versionEnv \(version=0.0.1,env=STG\)/)).toBeInTheDocument();
-    });
-
-    it('only renders current version of production environment', () => {
-        process.env.version = '1.5.0';
-        process.env.NEXT_PUBLIC_ENV = 'production';
-        render(createTestComponent());
-        expect(screen.getByText(/footer.version \(version=1.5.0,env=undefined\)/)).toBeInTheDocument();
+        expect(screen.getByTestId('application-tags-mock')).toBeInTheDocument();
     });
 
     it('renders the footer links', () => {
