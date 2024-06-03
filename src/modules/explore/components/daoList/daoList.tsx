@@ -1,20 +1,20 @@
 'use client';
 
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoDataListItemStructure, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
-import { useDaoList } from '../../api/daoExplorerService';
+import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService';
 
 export interface IDaoListProps {
     /**
-     * Number of DAOs to be rendered per page.
+     * Default parameters to fetch the list of DAOs.
      */
-    limit: number;
+    defaultParams: IGetDaoListParams;
 }
 
 export const DaoList: React.FC<IDaoListProps> = (props) => {
-    const { limit } = props;
+    const { defaultParams } = props;
 
-    const daoListQueryParams = { limit, skip: 0 };
-    const { data: daoListData, isLoading, fetchNextPage } = useDaoList({ queryParams: daoListQueryParams });
+    const { data: daoListData, isLoading, fetchNextPage } = useDaoList(defaultParams);
 
     const daoList = daoListData?.pages.flatMap((page) => page.data);
 
@@ -35,7 +35,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         address={dao.daoAddress}
                         name={dao.name}
                         description={dao.description}
-                        logoSrc={dao.avatar ?? undefined}
+                        logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
                     />
                 ))}
             </DataListContainer>

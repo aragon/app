@@ -10,12 +10,13 @@ const daosPerPage = 20;
 export const ExploreDaos: React.FC<IExploreDaosProps> = async () => {
     const queryClient = new QueryClient();
 
-    const daoListQueryParams = { limit: daosPerPage, skip: 0 };
-    await queryClient.prefetchInfiniteQuery(daoListOptions({ queryParams: daoListQueryParams }));
+    const daoListQueryParams = { limit: daosPerPage, skip: 0, orderProp: 'tvlUSD' };
+    const daoListParams = { queryParams: daoListQueryParams };
+    await queryClient.prefetchInfiniteQuery(daoListOptions(daoListParams));
 
     return (
         <Page queryClient={queryClient}>
-            <DaoList limit={daosPerPage} />
+            <DaoList defaultParams={daoListParams} />
         </Page>
     );
 };
