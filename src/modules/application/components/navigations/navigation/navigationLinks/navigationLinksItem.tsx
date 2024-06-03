@@ -31,6 +31,7 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
     return (
         <Link
             href={href}
+            aria-current={isActive ? 'page' : undefined}
             className={classNames(
                 'flex flex-row gap-3 py-3 text-neutral-500',
                 { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'rows' },

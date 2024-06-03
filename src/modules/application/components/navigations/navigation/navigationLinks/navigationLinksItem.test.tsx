@@ -1,8 +1,15 @@
 import { IconType } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
+import * as NextNavigation from 'next/navigation';
 import { NavigationLinksItem, type INavigationLinksItemProps } from './navigationLinksItem';
 
 describe('<NavigationLinksItem /> component', () => {
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+
+    afterEach(() => {
+        usePathnameSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<INavigationLinksItemProps>) => {
         const completeProps: INavigationLinksItemProps = {
             icon: IconType.APP_ASSETS,
@@ -27,7 +34,21 @@ describe('<NavigationLinksItem /> component', () => {
         expect(screen.getByTestId(icon)).toBeInTheDocument();
     });
 
-    it('renders the link as active when href matches current pathname', () => {
-        // TODO
+    it('correctly renders the link as row and active when href matches current pathname', () => {
+        const href = '/test';
+        const variant = 'rows';
+        usePathnameSpy.mockReturnValue(href);
+        render(createTestComponent({ variant, href }));
+        expect(screen.getByRole('link').getAttribute('aria-current')).toEqual('page');
+        expect(screen.getByRole('link').className).toContain('bg-neutral-50');
+    });
+
+    it('correctly renders the link as column and active when href matches current pathname', () => {
+        const href = '/column-test';
+        const variant = 'columns';
+        usePathnameSpy.mockReturnValue(href);
+        render(createTestComponent({ variant, href }));
+        expect(screen.getByRole('link').getAttribute('aria-current')).toEqual('page');
+        expect(screen.getByRole('link').className).toContain('border-b-2');
     });
 });
