@@ -1,3 +1,5 @@
+'use client';
+
 import { Link, type ILinkProps } from '@/shared/components/link';
 import { Icon, type IconType } from '@aragon/ods';
 import classNames from 'classnames';
