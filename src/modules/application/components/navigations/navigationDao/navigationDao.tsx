@@ -36,7 +36,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         >
             <div className="flex flex-row justify-between gap-1">
                 <button className="flex min-w-0 flex-row items-center gap-3 p-1">
-                    <DaoAvatar src={daoAvatar} name={dao?.name} size="md" />
+                    <DaoAvatar src={daoAvatar} name={dao?.name} size="lg" />
                     <p className="truncate text-base font-normal leading-tight text-neutral-800">{dao?.name}</p>
                 </button>
                 <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
