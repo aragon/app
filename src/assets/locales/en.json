@@ -1,10 +1,12 @@
 {
   "app": {
     "application": {
-      "footer": {
+      "applicationTags": {
         "version": "v{{version}}",
         "versionEnv": "v{{version}} ({{env}})",
-        "beta": "Beta",
+        "beta": "Beta"
+      },
+      "footer": {
         "copyright": "@ {{year}} Aragon",
         "link": {
           "explore": "Explore",
@@ -15,8 +17,8 @@
           "termsOfService": "Terms of Service"
         }
       },
-      "headerDao": {
-        "route": {
+      "navigationDao": {
+        "link": {
           "dashboard": "Dashboard",
           "proposals": "Proposals",
           "members": "Members",

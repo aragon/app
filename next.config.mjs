@@ -18,7 +18,7 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'gateway.pinata.cloud',
+                hostname: 'aragon-1.mypinata.cloud',
                 port: '',
                 pathname: '/ipfs/**',
             },

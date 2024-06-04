@@ -18,7 +18,13 @@ export const daoListOptions = (
             return undefined;
         }
 
-        return { ...params, skip: skip + limit };
+        return {
+            ...params,
+            queryParams: {
+                ...params.queryParams,
+                skip: skip + limit,
+            },
+        };
     },
     ...options,
 });

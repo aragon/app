@@ -2,7 +2,15 @@
 const config = {
     testEnvironment: 'jsdom',
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
-    coveragePathIgnorePatterns: ['.d.ts', '.api.ts', 'index.ts', '/src/app', '/src/test', '/src/shared/lib'],
+    coveragePathIgnorePatterns: [
+        '.d.ts',
+        '.api.ts',
+        'index.ts',
+        '/src/app',
+        '/src/test',
+        '/src/shared/lib',
+        '/testUtils/',
+    ],
     setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
