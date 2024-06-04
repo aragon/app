@@ -1,4 +1,8 @@
-import type { QueryObserverBaseResult, QueryObserverSuccessResult } from '@tanstack/react-query';
+import type {
+    QueryObserverBaseResult,
+    QueryObserverLoadingErrorResult,
+    QueryObserverSuccessResult,
+} from '@tanstack/react-query';
 
 const generateReactQueryResultBase = <TData, TError>(
     result?: Partial<QueryObserverBaseResult<TData, TError>>,
@@ -43,4 +47,19 @@ export const generateReactQueryResultSuccess = <TData, TError>(
     isRefetchError: false,
     isSuccess: true,
     status: 'success',
+});
+
+export const generateReactQueryResultError = <TData, TError>(
+    result?: Partial<QueryObserverLoadingErrorResult<TData, TError>>,
+): QueryObserverLoadingErrorResult<TData, TError> => ({
+    ...generateReactQueryResultBase(result),
+    data: undefined,
+    error: (result?.error ?? 'error') as TError,
+    isError: true,
+    isPending: false,
+    isLoading: false,
+    isLoadingError: true,
+    isRefetchError: false,
+    isSuccess: false,
+    status: 'error',
 });

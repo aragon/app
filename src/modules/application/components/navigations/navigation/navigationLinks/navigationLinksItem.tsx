@@ -43,7 +43,9 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
             {...otherProps}
         >
             {variant === 'rows' && <Icon icon={icon} />}
-            <p className="text-base font-normal leading-tight">{children}</p>
+            <p className={classNames('text-base font-normal leading-tight', { truncate: variant === 'rows' })}>
+                {children}
+            </p>
         </Link>
     );
 };
