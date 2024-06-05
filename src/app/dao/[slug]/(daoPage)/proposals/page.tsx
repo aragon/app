@@ -1,3 +1,3 @@
-import { DaoProposals } from '@/modules/governance/pages/daoProposals';
+import { DaoProposalsPage } from '@/modules/governance/pages/daoProposalsPage';
 
-export default DaoProposals;
+export default DaoProposalsPage;

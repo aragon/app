@@ -1,3 +1,3 @@
-import { DaoSettings } from '@/modules/settings/pages/daoSettings';
+import { DaoSettingsPage } from '@/modules/settings/pages/daoSettingsPage';
 
-export default DaoSettings;
+export default DaoSettingsPage;

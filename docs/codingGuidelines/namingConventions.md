@@ -8,6 +8,7 @@ these conventions enhances code readability, maintainability, and consistency ac
 -   Use Camel Case and `.tsx` file extention for component file names (e.g. `daoList.tsx`).
 -   Use Pascal Case for component names (e.g. `DaoList`).
 -   Ensure the file name always matches the component name.
+-   Add `page` suffix to page components (e.g. `ExploreDaosPage`)
 
 ## Component Properties
 

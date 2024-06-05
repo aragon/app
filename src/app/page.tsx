@@ -1,3 +1,3 @@
-import { ExploreDaos } from '@/modules/explore/pages/exploreDaos';
+import { ExploreDaosPage } from '@/modules/explore/pages/exploreDaosPage';
 
-export default ExploreDaos;
+export default ExploreDaosPage;

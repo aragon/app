@@ -1,3 +1,3 @@
-import { DaoDashboard } from '@/modules/dashboard/pages/daoDashboard';
+import { DaoDashboardPage } from '@/modules/dashboard/pages/daoDashboardPage';
 
-export default DaoDashboard;
+export default DaoDashboardPage;

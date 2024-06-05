@@ -1,3 +1,3 @@
-import { CreateProposal } from '@/modules/governance/pages/createProposal/createProposal';
+import { CreateProposalPage } from '@/modules/governance/pages/createProposalPage';
 
-export default CreateProposal;
+export default CreateProposalPage;

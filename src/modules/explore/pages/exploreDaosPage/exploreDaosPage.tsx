@@ -3,11 +3,11 @@ import { QueryClient } from '@tanstack/react-query';
 import { daoListOptions } from '../../api/daoExplorerService';
 import { DaoList } from '../../components/daoList';
 
-export interface IExploreDaosProps {}
+export interface IExploreDaosPageProps {}
 
 const daosPerPage = 20;
 
-export const ExploreDaos: React.FC<IExploreDaosProps> = async () => {
+export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
     const queryClient = new QueryClient();
 
     const daoListQueryParams = { limit: daosPerPage, skip: 0, orderProp: 'tvlUSD' };

@@ -1,3 +1,3 @@
-import { CreateDao } from '@/modules/createDao/pages/createDao';
+import { CreateDaoPage } from '@/modules/createDao/pages/createDaoPage';
 
-export default CreateDao;
+export default CreateDaoPage;
