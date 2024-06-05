@@ -7,7 +7,7 @@ import { LayoutDao, type ILayoutDaoProps } from './layoutDao';
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={props.state}>
+        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
             {props.children}
         </div>
     ),
