@@ -38,9 +38,11 @@ describe('<LayoutDao /> component', () => {
         return Component;
     };
 
-    it('renders the navigation DAO component', async () => {
-        render(await createTestComponent());
+    it('renders the navigation DAO component and children property', async () => {
+        const children = 'test-children';
+        render(await createTestComponent({ children }));
         expect(screen.getByTestId('navigation-dao-mock')).toBeInTheDocument();
+        expect(screen.getByText(children)).toBeInTheDocument();
     });
 
     it('prefetches the DAO from the given slug', async () => {
