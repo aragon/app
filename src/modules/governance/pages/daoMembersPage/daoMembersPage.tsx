@@ -7,6 +7,13 @@ export interface IDaoMembersPageProps {
     params: IDaoPageParams;
 }
 
-export const DaoMembersPage: React.FC<IDaoMembersPageProps> = () => {
-    return <div>DAO Members</div>;
+export const DaoMembersPage: React.FC<IDaoMembersPageProps> = (props) => {
+    const { params } = props;
+
+    return (
+        <Page>
+            <div>DAO Members Page</div>
+            <DaoMemberList daoSlug={params.slug} />
+        </Page>
+    );
 };
