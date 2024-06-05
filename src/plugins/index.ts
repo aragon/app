@@ -1,0 +1,2 @@
+import './multisigPlugin';
+import './tokenPlugin';

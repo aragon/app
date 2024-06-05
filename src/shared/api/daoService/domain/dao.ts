@@ -1,4 +1,5 @@
 import type { Network } from '@/shared/types';
+import type { IDaoPlugin } from './daoPlugin';
 
 export interface IDao {
     /**
@@ -29,4 +30,8 @@ export interface IDao {
      * Avatar of the DAO or null when DAO has no avatar.
      */
     avatar: string | null;
+    /**
+     * Governance plugins of the DAO.
+     */
+    plugins: IDaoPlugin[];
 }

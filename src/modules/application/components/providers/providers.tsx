@@ -6,6 +6,7 @@ import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
+import '../../../../plugins';
 import { wagmiConfig } from '../../constants/wagmi';
 import { queryClientUtils } from '../../utils/queryClientUtils';
 
