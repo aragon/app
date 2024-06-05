@@ -13,7 +13,7 @@ jest.mock('../../providers', () => ({
 }));
 
 describe('<LayoutRoot /> component', () => {
-    const createServerComponent = async (props?: Partial<ILayoutRootProps>) => {
+    const createTestComponent = async (props?: Partial<ILayoutRootProps>) => {
         const completeProps: ILayoutRootProps = { ...props };
         const Component = await LayoutRoot(completeProps);
 
@@ -28,14 +28,14 @@ describe('<LayoutRoot /> component', () => {
 
     it('renders the children property and the application footer', async () => {
         const children = 'test-children';
-        render(await createServerComponent({ children }));
+        render(await createTestComponent({ children }));
         expect(screen.getByText(children)).toBeInTheDocument();
         expect(screen.getByText(/footer.link.explore/)).toBeInTheDocument();
     });
 
     it('renders the providers components and passes the english translations', async () => {
         const assets = await translations['en']();
-        render(await createServerComponent());
+        render(await createTestComponent());
         const providers = screen.getByTestId('providers-mock');
         expect(providers).toBeInTheDocument();
         expect(providers.dataset.translations).toEqual(JSON.stringify(assets));
