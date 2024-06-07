@@ -6,15 +6,15 @@ import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService
 
 export interface IDaoListProps {
     /**
-     * Default parameters to fetch the list of DAOs.
+     * Initial parameters to use for fetching the list of DAOs.
      */
-    defaultParams: IGetDaoListParams;
+    initialParams: IGetDaoListParams;
 }
 
 export const DaoList: React.FC<IDaoListProps> = (props) => {
-    const { defaultParams } = props;
+    const { initialParams } = props;
 
-    const { data: daoListData, isLoading, fetchNextPage } = useDaoList(defaultParams);
+    const { data: daoListData, isLoading, fetchNextPage } = useDaoList(initialParams);
 
     const daoList = daoListData?.pages.flatMap((page) => page.data);
 
@@ -26,7 +26,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             pageSize={daoListData?.pages[0].limit}
             itemsCount={daoListData?.pages[0].totRecords}
         >
-            <DataListContainer className="grid grid-cols-2">
+            <DataListContainer className="grid grid-cols-1 lg:grid-cols-2">
                 {daoList?.map((dao) => (
                     <DaoDataListItemStructure
                         key={dao.permalink}
