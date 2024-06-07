@@ -3,11 +3,12 @@
 import { Button, Heading, IconType } from '@aragon/ods';
 import classNames from 'classnames';
 import { type ComponentProps } from 'react';
+import { useTranslations } from '../../translationsProvider';
 import { PageContextProvider } from '../pageContext';
 
 export interface IPageMainAction {
     /**
-     * Label of  the action.
+     * Translation key the action.
      */
     label: string;
     /**
@@ -18,7 +19,7 @@ export interface IPageMainAction {
 
 export interface IPageMainProps extends ComponentProps<'main'> {
     /**
-     * Title of the main section of the page, to be used for pages without header.
+     * Translation key of the main section of the page, to be used for pages without header.
      */
     title?: string;
     /**
@@ -31,6 +32,8 @@ const mainContextValues = { contentType: 'main' as const };
 
 export const PageMain: React.FC<IPageMainProps> = (props) => {
     const { className, children, title, action, ...otherProps } = props;
+
+    const { t } = useTranslations();
 
     return (
         <PageContextProvider value={mainContextValues}>
@@ -45,10 +48,10 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
             >
                 {title && (
                     <header className="flex flex-row justify-between gap-6">
-                        <Heading size="h1">{title}</Heading>
+                        <Heading size="h1">{t(title)}</Heading>
                         {action && (
                             <Button variant="primary" size="md" onClick={action.onClick} iconLeft={IconType.PLUS}>
-                                {action.label}
+                                {t(action.label)}
                             </Button>
                         )}
                     </header>

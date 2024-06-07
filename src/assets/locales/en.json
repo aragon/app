@@ -31,6 +31,16 @@
     "finance": {
       "assetList": {
         "entity": "Assets"
+      },
+      "daoAssetsPage": {
+        "title": "Assets",
+        "action": "New transfer",
+        "aside": {
+          "details": {
+            "title": "Details",
+            "blockchain": "Blockchain"
+          }
+        }
       }
     },
     "shared": {
