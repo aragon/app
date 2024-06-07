@@ -2,6 +2,7 @@ import { Collapsible, Heading } from '@aragon/ods';
 import classNames from 'classnames';
 import type { ComponentProps, ReactNode } from 'react';
 import { Container } from '../../container';
+import { useTranslations } from '../../translationsProvider';
 import { PageHeaderStat, type IPageHeaderStat } from './pageHeaderStat';
 
 export interface IPageHeaderProps extends ComponentProps<'header'> {
@@ -26,6 +27,8 @@ export interface IPageHeaderProps extends ComponentProps<'header'> {
 export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
     const { title, description, stats, avatar, children, className, ...otherProps } = props;
 
+    const { t } = useTranslations();
+
     return (
         <header
             className={classNames('bg-gradient-to-b from-neutral-0 to-neutral-50 py-12', className)}
@@ -36,8 +39,8 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                     <div className="flex w-2/3 flex-col gap-4">
                         <Heading size="h1">{title}</Heading>
                         <Collapsible
-                            buttonLabelClosed="Read more"
-                            buttonLabelOpened="Read less"
+                            buttonLabelClosed={t('app.shared.page.header.readMore')}
+                            buttonLabelOpened={t('app.shared.page.header.readLess')}
                             customCollapsedHeight={46}
                             className="text-neutral-500"
                         >
@@ -51,7 +54,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             </div>
                         )}
                     </div>
-                    <div className="w-1/3">{avatar}</div>
+                    {avatar && <div className="w-1/3">{avatar}</div>}
                 </div>
                 {children}
             </Container>

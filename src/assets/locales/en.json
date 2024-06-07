@@ -27,6 +27,14 @@
           "settings": "Settings"
         }
       }
+    },
+    "shared": {
+      "page": {
+        "header": {
+          "readMore": "Read more",
+          "readLess": "Read less"
+        }
+      }
     }
   }
 }
