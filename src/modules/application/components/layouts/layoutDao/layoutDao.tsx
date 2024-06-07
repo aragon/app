@@ -15,7 +15,7 @@ export interface ILayoutDaoProps {
 }
 
 export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
-    const { params, ...otherProps } = props;
+    const { params, children } = props;
     const { slug } = params;
 
     const queryClient = new QueryClient();
@@ -26,7 +26,7 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <NavigationDao slug={slug} />
-            <main {...otherProps} />
+            {children}
         </HydrationBoundary>
     );
 };

@@ -9,10 +9,12 @@ export interface ILayoutProcessProps {
 }
 
 export const LayoutProcess: React.FC<ILayoutProcessProps> = (props) => {
+    const { children } = props;
+
     return (
         <>
             <NavigationProcess />
-            <main {...props} />
+            {children}
         </>
     );
 };
