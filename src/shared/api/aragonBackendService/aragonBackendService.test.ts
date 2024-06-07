@@ -1,4 +1,4 @@
-import { generateResponse } from '@/shared/testUtils';
+import { generatePaginatedResponse, generateResponse } from '@/shared/testUtils';
 import { AragonBackendService } from './aragonBackendService';
 
 class ServiceTest extends AragonBackendService {}
@@ -44,6 +44,32 @@ describe('AragonBackend service', () => {
             fetchSpy.mockResolvedValue(response);
             const result = await serviceTest.request('/url');
             expect(result).toEqual(parsedResult);
+        });
+    });
+
+    describe('getNextPageParams', () => {
+        it('returns undefined when there are no more items to fetch (skip + limit equals to totRecords)', () => {
+            const previousPage = generatePaginatedResponse({ skip: 10, totRecords: 25, limit: 15 });
+            const previousParams = { queryParams: {} };
+            expect(serviceTest.getNextPageParams(previousPage, [previousPage], previousParams)).toBeUndefined();
+        });
+
+        it('returns undefined when there are no more items to fetch (skip + limit greater than totRecords)', () => {
+            const previousPage = generatePaginatedResponse({ skip: 10, totRecords: 25, limit: 25 });
+            const previousParams = { queryParams: {} };
+            expect(serviceTest.getNextPageParams(previousPage, [previousPage], previousParams)).toBeUndefined();
+        });
+
+        it('returns the params to fetch the next page when having more items to fetch', () => {
+            const previousPage = generatePaginatedResponse({ skip: 20, totRecords: 41, limit: 20 });
+            const previousParams = { queryParams: { otherParams: 'value' }, urlParams: { id: 'test' } };
+            expect(serviceTest.getNextPageParams(previousPage, [previousPage], previousParams)).toEqual({
+                ...previousParams,
+                queryParams: {
+                    ...previousParams.queryParams,
+                    skip: 40,
+                },
+            });
         });
     });
 

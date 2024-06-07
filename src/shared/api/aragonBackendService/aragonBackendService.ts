@@ -1,4 +1,4 @@
-import type { IRequestUrlQueryParams } from './domain';
+import type { IPaginatedResponse, IRequestQueryParams, IRequestUrlQueryParams } from './domain';
 
 type IRequestParams<TUrlParams, TQueryParams> = Partial<IRequestUrlQueryParams<TUrlParams, TQueryParams>>;
 
@@ -17,6 +17,26 @@ export class AragonBackendService {
         }
 
         return result.json();
+    };
+
+    getNextPageParams = <TParams extends IRequestQueryParams<object>, TData = unknown>(
+        lastPage: IPaginatedResponse<TData>,
+        _allPages: Array<IPaginatedResponse<TData>>,
+        previousParams: TParams,
+    ): TParams | undefined => {
+        const { skip, limit, totRecords } = lastPage;
+
+        if (skip + limit >= totRecords) {
+            return undefined;
+        }
+
+        return {
+            ...previousParams,
+            queryParams: {
+                ...previousParams.queryParams,
+                skip: skip + limit,
+            },
+        };
     };
 
     private buildUrl = <TUrlParams, TQueryParams>(
