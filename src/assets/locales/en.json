@@ -28,6 +28,11 @@
         }
       }
     },
+    "finance": {
+      "assetList": {
+        "entity": "Assets"
+      }
+    },
     "shared": {
       "page": {
         "header": {
