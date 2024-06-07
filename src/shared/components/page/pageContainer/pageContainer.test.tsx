@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { Page, type IPageProps } from './page';
+import { PageContainer, type IPageContainerProps } from './pageContainer';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual('@tanstack/react-query'),
@@ -13,11 +13,11 @@ jest.mock('@tanstack/react-query', () => ({
     ),
 }));
 
-describe('<Page /> component', () => {
-    const createTestComponent = (props?: Partial<IPageProps>) => {
-        const completeProps: IPageProps = { ...props };
+describe('<PageContainer /> component', () => {
+    const createTestComponent = (props?: Partial<IPageContainerProps>) => {
+        const completeProps: IPageContainerProps = { ...props };
 
-        return <Page {...completeProps} />;
+        return <PageContainer {...completeProps} />;
     };
 
     it('renders the children property', () => {

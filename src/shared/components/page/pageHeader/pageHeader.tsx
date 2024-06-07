@@ -1,0 +1,60 @@
+import { Collapsible, Heading } from '@aragon/ods';
+import classNames from 'classnames';
+import type { ComponentProps, ReactNode } from 'react';
+import { Container } from '../../container';
+import { PageHeaderStat, type IPageHeaderStat } from './pageHeaderStat';
+
+export interface IPageHeaderProps extends ComponentProps<'header'> {
+    /**
+     * Title of the page.
+     */
+    title?: string;
+    /**
+     * Description of the page.
+     */
+    description?: string;
+    /**
+     * Statistics displayed on the header.
+     */
+    stats?: IPageHeaderStat[];
+    /**
+     * Optional avatar of the header.
+     */
+    avatar?: ReactNode;
+}
+
+export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
+    const { title, description, stats, avatar, children, className, ...otherProps } = props;
+
+    return (
+        <header
+            className={classNames('bg-gradient-to-b from-neutral-0 to-neutral-50 py-12', className)}
+            {...otherProps}
+        >
+            <Container inset={true} className="flex flex-col gap-6">
+                <div className="flex flex-row gap-20">
+                    <div className="flex w-2/3 flex-col gap-4">
+                        <Heading size="h1">{title}</Heading>
+                        <Collapsible
+                            buttonLabelClosed="Read more"
+                            buttonLabelOpened="Read less"
+                            customCollapsedHeight={46}
+                            className="text-neutral-500"
+                        >
+                            {description}
+                        </Collapsible>
+                        {stats != null && stats.length > 0 && (
+                            <div className="flex flex-row gap-16 py-4">
+                                {stats.map((stat) => (
+                                    <PageHeaderStat key={stat.label} {...stat} />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <div className="w-1/3">{avatar}</div>
+                </div>
+                {children}
+            </Container>
+        </header>
+    );
+};
