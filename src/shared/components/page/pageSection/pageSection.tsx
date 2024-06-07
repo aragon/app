@@ -1,3 +1,5 @@
+'use client';
+
 import { Heading } from '@aragon/ods';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';

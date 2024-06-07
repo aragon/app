@@ -1,3 +1,5 @@
+'use client';
+
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { PageContextProvider } from '../pageContext';
