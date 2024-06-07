@@ -8,7 +8,7 @@ import { PageContextProvider } from '../pageContext';
 
 export interface IPageMainAction {
     /**
-     * Translation key the action.
+     * Label of the action.
      */
     label: string;
     /**
@@ -19,7 +19,7 @@ export interface IPageMainAction {
 
 export interface IPageMainProps extends ComponentProps<'main'> {
     /**
-     * Translation key of the main section of the page, to be used for pages without header.
+     * Label of the main section of the page, to be used for pages without header.
      */
     title?: string;
     /**

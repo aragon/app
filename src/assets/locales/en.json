@@ -28,13 +28,41 @@
         }
       }
     },
+    "dashboard": {
+      "daoDashboardPage": {
+        "header": {
+          "stat": {
+            "proposals": "Proposals",
+            "members": "Members",
+            "treasury": "Treasury value"
+          },
+          "action": {
+            "follow": "Follow DAO"
+          }
+        },
+        "main": {
+          "assets": {
+            "title": "Top assets"
+          }
+        },
+        "aside": {
+          "details": {
+            "title": "Details",
+            "blockchain": "Blockchain",
+            "address": "Contract address"
+          }
+        }
+      }
+    },
     "finance": {
       "assetList": {
         "entity": "Assets"
       },
       "daoAssetsPage": {
-        "title": "Assets",
-        "action": "New transfer",
+        "main": {
+          "title": "Assets",
+          "action": "New transfer"
+        },
         "aside": {
           "details": {
             "title": "Details",

@@ -33,14 +33,14 @@ describe('<Page.Main /> component', () => {
     });
 
     it('renders the title when defined', () => {
-        const title = 'page-title-key';
+        const title = 'page title';
         render(createTestComponent({ title }));
         expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
     });
 
     it('renders the action when title and action properties are defined', async () => {
         const title = 'test-title';
-        const action = { label: 'action-key', onClick: jest.fn() };
+        const action = { label: 'action', onClick: jest.fn() };
         render(createTestComponent({ title, action }));
         const actionButton = screen.getByRole('button', { name: action.label });
         expect(actionButton).toBeInTheDocument();
