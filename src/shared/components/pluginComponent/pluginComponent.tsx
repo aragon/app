@@ -10,6 +10,10 @@ export interface IPluginComponentProps {
      */
     pluginIds: PluginId[];
     /**
+     * Eventual children of the loaded component.
+     */
+    componentChildren?: ReactNode;
+    /**
      * Other properties passed to the loaded component.
      */
     [key: string]: unknown;

@@ -1,6 +1,7 @@
 'use client';
 
 import { AssetList } from '@/modules/finance/components/assetList';
+import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -61,6 +62,19 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>
                         </AssetList>
+                    </Page.Section>
+                    <Page.Section title={t('app.dashboard.daoDashboardPage.main.members.title')}>
+                        <DaoMemberList slug={dao!.permalink} hidePagination={true}>
+                            <Button
+                                className="self-start"
+                                variant="tertiary"
+                                size="md"
+                                iconRight={IconType.CHEVRON_RIGHT}
+                                href={`/dao/${dao?.permalink}/members`}
+                            >
+                                {t('app.dashboard.daoDashboardPage.main.viewAll')}
+                            </Button>
+                        </DaoMemberList>
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>

@@ -1,5 +1,6 @@
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
 import { useParams } from 'next/navigation';
+import type { ReactNode } from 'react';
 import { useTokenMemberList } from '../../api/tokenPluginService';
 import { TokenMemberListItem } from './tokenMemberListItem';
 
@@ -8,10 +9,18 @@ export interface ITokenMemberListProps {
      * Plugin address to display the members for.
      */
     pluginAddress: string;
+    /**
+     * Hides the pagination when set to true.
+     */
+    hidePagination?: boolean;
+    /**
+     * Children of the component.
+     */
+    children?: ReactNode;
 }
 
 export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
-    const { pluginAddress } = props;
+    const { pluginAddress, hidePagination, children } = props;
 
     const { slug } = useParams<{ slug: string }>();
 
@@ -33,10 +42,14 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
             pageSize={tokenMemberListData?.pages[0].metadata.limit}
             itemsCount={tokenMemberListData?.pages[0].metadata.totRecords}
         >
-            <DataListContainer SkeletonElement={MemberDataListItem.Skeleton} className="grid grid-cols-3">
+            <DataListContainer
+                SkeletonElement={MemberDataListItem.Skeleton}
+                className="grid grid-cols-1 lg:grid-cols-3"
+            >
                 {tokenMemberList?.map((member) => <TokenMemberListItem key={member.address} member={member} />)}
             </DataListContainer>
-            <DataListPagination />
+            {!hidePagination && <DataListPagination />}
+            {children}
         </DataListRoot>
     );
 };
