@@ -1,5 +1,5 @@
 export * from './domain';
-export { tokenPluginService } from './multisigPluginService';
+export { multisigPluginService } from './multisigPluginService';
 export * from './multisigPluginService.api';
-export { TokenPluginServiceKey, tokenPluginServiceKeys } from './multisigPluginServiceKeys';
+export { MultisigPluginServiceKey, multisigPluginServiceKeys } from './multisigPluginServiceKeys';
 export * from './queries';
