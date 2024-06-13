@@ -69,6 +69,21 @@
             "blockchain": "Blockchain"
           }
         }
+      },
+      "transactionList": {
+        "entity": "Transactions"
+      },
+      "daoTransactionsPage": {
+        "main": {
+          "title": "Transactions",
+          "action": "New transfer"
+        },
+        "aside":{
+          "details": {
+            "title": "Details",
+            "blockchain": "Blockchain"
+          } 
+        }
       }
     },
     "shared": {
