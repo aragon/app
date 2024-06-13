@@ -2,7 +2,7 @@ export interface IDaoPlugin {
     /**
      * Id of the plugin.
      */
-    id: string;
+    subdomain: string;
     /**
      * Address of the plugin.
      */

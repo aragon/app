@@ -1,1 +1,1 @@
-export { pluginUtils, type IPlugin } from './pluginUtils';
+export { pluginUtils, type IPlugin, type PluginId, type SlotId } from './pluginUtils';

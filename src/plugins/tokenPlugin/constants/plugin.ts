@@ -1,6 +1,6 @@
 import type { IPlugin } from '@/shared/utils/pluginUtils';
 
 export const plugin: IPlugin = {
-    id: 'token.dao.eth',
+    id: 'token-voting',
     name: 'Token',
 };
