@@ -7,6 +7,7 @@ export type SlotId = string;
 export type PluginId = string;
 
 // Component registered.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Component = ComponentType<any>;
 
 export interface IPlugin {
