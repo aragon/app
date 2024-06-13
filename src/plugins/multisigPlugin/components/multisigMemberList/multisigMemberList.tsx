@@ -1,5 +1,6 @@
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
 import { useParams } from 'next/navigation';
+import type { ReactNode } from 'react';
 import { useMultisigMemberList } from '../../api/tokenPluginService';
 
 export interface IMultisigMemberListProps {
@@ -7,10 +8,18 @@ export interface IMultisigMemberListProps {
      * Plugin address to display the members for.
      */
     pluginAddress: string;
+    /**
+     * Hides the pagination when set to true.
+     */
+    hidePagination?: boolean;
+    /**
+     * Children of the component.
+     */
+    children?: ReactNode;
 }
 
 export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) => {
-    const { pluginAddress } = props;
+    const { pluginAddress, hidePagination, children } = props;
 
     const { slug } = useParams<{ slug: string }>();
 
@@ -32,16 +41,21 @@ export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) =>
             pageSize={tokenMemberListData?.pages[0].metadata.limit}
             itemsCount={tokenMemberListData?.pages[0].metadata.totRecords}
         >
-            <DataListContainer SkeletonElement={MemberDataListItem.Skeleton} className="grid grid-cols-3">
+            <DataListContainer
+                SkeletonElement={MemberDataListItem.Skeleton}
+                className="grid grid-cols-1 lg:grid-cols-3"
+            >
                 {tokenMemberList?.map((member) => (
                     <MemberDataListItem.Structure
                         key={member.address}
                         address={member.address}
                         ensName={member.ens ?? undefined}
+                        className="min-w-0"
                     />
                 ))}
             </DataListContainer>
-            <DataListPagination />
+            {!hidePagination && <DataListPagination />}
+            {children}
         </DataListRoot>
     );
 };

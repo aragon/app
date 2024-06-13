@@ -22,6 +22,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
             // TODO: update member data list item component to support string
             votingPower={Number(formattedVotingPower)}
             ensName={member.ens ?? undefined}
+            className="min-w-0"
         />
     );
 };

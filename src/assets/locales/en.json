@@ -44,6 +44,9 @@
           "assets": {
             "title": "Top assets"
           },
+          "members": {
+            "title": "Members"
+          },
           "viewAll": "View all"
         },
         "aside": {
