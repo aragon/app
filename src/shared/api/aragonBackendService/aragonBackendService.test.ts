@@ -1,4 +1,4 @@
-import { generatePaginatedResponse, generateResponse } from '@/shared/testUtils';
+import { generatePaginatedResponse, generatePaginatedResponseMetadata, generateResponse } from '@/shared/testUtils';
 import { AragonBackendService } from './aragonBackendService';
 
 class ServiceTest extends AragonBackendService {}
@@ -49,19 +49,22 @@ describe('AragonBackend service', () => {
 
     describe('getNextPageParams', () => {
         it('returns undefined when there are no more items to fetch (skip + limit equals to totRecords)', () => {
-            const previousPage = generatePaginatedResponse({ skip: 10, totRecords: 25, limit: 15 });
+            const previousPageMeta = generatePaginatedResponseMetadata({ skip: 10, totRecords: 25, limit: 15 });
+            const previousPage = generatePaginatedResponse({ metadata: previousPageMeta });
             const previousParams = { queryParams: {} };
             expect(serviceTest.getNextPageParams(previousPage, [previousPage], previousParams)).toBeUndefined();
         });
 
         it('returns undefined when there are no more items to fetch (skip + limit greater than totRecords)', () => {
-            const previousPage = generatePaginatedResponse({ skip: 10, totRecords: 25, limit: 25 });
+            const previousPageMeta = generatePaginatedResponseMetadata({ skip: 10, totRecords: 25, limit: 25 });
+            const previousPage = generatePaginatedResponse({ metadata: previousPageMeta });
             const previousParams = { queryParams: {} };
             expect(serviceTest.getNextPageParams(previousPage, [previousPage], previousParams)).toBeUndefined();
         });
 
         it('returns the params to fetch the next page when having more items to fetch', () => {
-            const previousPage = generatePaginatedResponse({ skip: 20, totRecords: 41, limit: 20 });
+            const previousPageMeta = generatePaginatedResponseMetadata({ skip: 20, totRecords: 41, limit: 20 });
+            const previousPage = generatePaginatedResponse({ metadata: previousPageMeta });
             const previousParams = { queryParams: { otherParams: 'value' }, urlParams: { id: 'test' } };
             expect(serviceTest.getNextPageParams(previousPage, [previousPage], previousParams)).toEqual({
                 ...previousParams,

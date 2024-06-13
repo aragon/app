@@ -24,7 +24,7 @@ export class AragonBackendService {
         _allPages: Array<IPaginatedResponse<TData>>,
         previousParams: TParams,
     ): TParams | undefined => {
-        const { skip, limit, totRecords } = lastPage;
+        const { skip, limit, totRecords } = lastPage.metadata;
 
         if (skip + limit >= totRecords) {
             return undefined;

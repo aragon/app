@@ -18,8 +18,8 @@ export const AssetList: React.FC<IAssetListProps> = () => {
             entityLabel={t('app.finance.assetList.entity')}
             onLoadMore={fetchNextPage}
             state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={assetListData?.pages[0].limit}
-            itemsCount={assetListData?.pages[0].totRecords}
+            pageSize={assetListData?.pages[0].metadata.limit}
+            itemsCount={assetListData?.pages[0].metadata.totRecords}
         >
             <DataListContainer>
                 {assetList?.map((asset) => (

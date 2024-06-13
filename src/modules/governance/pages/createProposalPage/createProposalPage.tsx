@@ -1,5 +1,13 @@
+import { Page } from '@/shared/components/page';
+
 export interface ICreateProposalPageProps {}
 
 export const CreateProposalPage: React.FC<ICreateProposalPageProps> = () => {
-    return <div>Create Proposal</div>;
+    return (
+        <Page.Container>
+            <Page.Container>
+                <p>Create Proposal Page</p>
+            </Page.Container>
+        </Page.Container>
+    );
 };

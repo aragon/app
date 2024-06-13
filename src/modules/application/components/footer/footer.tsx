@@ -21,13 +21,13 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     const layoutClassNames = [
         "[grid-template-areas:'metadata''links''copyright']", // Default
         "md:[grid-template-areas:'links''metadata''copyright'] md:justify-items-center", // MD
-        "xl:grid-cols-[1fr_min-content_1fr] xl:[grid-template-areas:'metadata_links_copyright']", // XL
+        "lg:grid-cols-[1fr_min-content_1fr] lg:[grid-template-areas:'metadata_links_copyright']", // LG
     ];
 
     return (
         <footer className={classNames('border-t border-neutral-100 bg-neutral-0 py-5', className)} {...otherProps}>
-            <Container className={classNames('grid items-center md:gap-6', layoutClassNames)}>
-                <div className="flex flex-row items-center justify-between gap-4 pb-4 pt-3 [grid-area:metadata] md:justify-normal md:py-0 xl:justify-self-start">
+            <Container className={classNames('grid items-center md:gap-6', layoutClassNames)} inset={true}>
+                <div className="flex flex-row items-center justify-between gap-4 pb-4 pt-3 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
                     <AragonLogo />
                     <ApplicationTags variant="primary" />
                 </div>
@@ -43,7 +43,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         </Link>
                     ))}
                 </div>
-                <p className="truncate pb-3 pt-6 text-base font-normal leading-tight text-neutral-500 [grid-area:copyright] md:py-0 xl:justify-self-end">
+                <p className="truncate pb-3 pt-6 text-base font-normal leading-tight text-neutral-500 [grid-area:copyright] md:py-0 lg:justify-self-end">
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>

@@ -1,9 +1,7 @@
-import { generatePaginatedResponse } from '@/shared/testUtils';
+import { generatePaginatedResponse, generatePaginatedResponseMetadata } from '@/shared/testUtils';
 import { generateBalance } from '../../testUtils';
 
 export const balanceListMock = generatePaginatedResponse({
-    limit: 3,
-    totRecords: 3,
     data: [
         generateBalance({
             logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -27,4 +25,5 @@ export const balanceListMock = generatePaginatedResponse({
             balance: '0.14234',
         }),
     ],
+    metadata: generatePaginatedResponseMetadata({ limit: 3, totRecords: 3 }),
 });

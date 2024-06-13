@@ -23,8 +23,8 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             entityLabel="DAO"
             onLoadMore={fetchNextPage}
             state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={daoListData?.pages[0].limit}
-            itemsCount={daoListData?.pages[0].totRecords}
+            pageSize={daoListData?.pages[0].metadata.limit}
+            itemsCount={daoListData?.pages[0].metadata.totRecords}
         >
             <DataListContainer className="grid grid-cols-1 lg:grid-cols-2">
                 {daoList?.map((dao) => (

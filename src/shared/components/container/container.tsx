@@ -15,9 +15,9 @@ export const Container: React.FC<IContainerProps> = (props) => {
     return (
         <div
             className={classNames(
-                'mx-auto max-w-screen-xl px-3',
-                { 'md:px-6': !inset },
-                { 'md:px-20': inset },
+                'mx-auto max-w-screen-xl px-4 md:px-6',
+                { 'lg:px-10 xl:px-6': !inset },
+                { 'lg:px-10 xl:px-20': inset },
                 className,
             )}
             {...otherProps}

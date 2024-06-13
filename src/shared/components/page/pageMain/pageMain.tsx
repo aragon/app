@@ -39,7 +39,7 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
         <PageContextProvider value={mainContextValues}>
             <main
                 className={classNames(
-                    'flex w-2/3 flex-col',
+                    'flex flex-col lg:w-2/3',
                     { 'gap-20': title == null },
                     { 'gap-6': title != null },
                     className,
