@@ -37,11 +37,13 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             <div className="flex flex-row justify-between gap-1">
                 <button className="flex min-w-0 flex-row items-center gap-3 p-1">
                     <DaoAvatar src={daoAvatar} name={dao?.name} size="lg" />
-                    <p className="truncate text-base font-normal leading-tight text-neutral-800">{dao?.name}</p>
+                    <p className="hidden truncate text-base font-normal leading-tight text-neutral-800 md:block">
+                        {dao?.name}
+                    </p>
                 </button>
                 <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
             </div>
-            <Navigation.Links className="hidden md:flex lg:pl-[56px]" links={links} variant="columns" />
+            <Navigation.Links className="hidden md:flex xl:pl-14" links={links} variant="columns" />
             <Navigation.Dialog links={links} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <div className="flex flex-col gap-4 px-4">
                     <div className="flex grow flex-row justify-between">

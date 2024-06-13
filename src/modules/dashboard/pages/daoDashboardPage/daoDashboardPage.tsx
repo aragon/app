@@ -1,5 +1,19 @@
-export interface IDaoDashboardPageProps {}
+import { Page } from '@/shared/components/page';
+import { DaoDashboardPageContent } from './daoDashboardPageContent';
 
-export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = () => {
-    return <div>DAO Dashboard</div>;
+export interface IDaoDashboardPageProps {
+    /**
+     * DAO page parameters.
+     */
+    params: { slug: string };
+}
+
+export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = (props) => {
+    const { params } = props;
+
+    return (
+        <Page.Container>
+            <DaoDashboardPageContent slug={params.slug} />
+        </Page.Container>
+    );
 };

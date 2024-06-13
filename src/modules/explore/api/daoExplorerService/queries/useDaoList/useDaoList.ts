@@ -11,21 +11,9 @@ export const daoListOptions = (
     options?: InfiniteQueryOptions<IPaginatedResponse<IDao>, IGetDaoListParams>,
 ): SharedInfiniteQueryOptions<IPaginatedResponse<IDao>, IGetDaoListParams> => ({
     queryKey: daoExplorerServiceKeys.daoList(params),
-    queryFn: ({ pageParam }) => daoExplorerService.getDaoList(pageParam),
     initialPageParam: params,
-    getNextPageParam: ({ skip, limit, data }) => {
-        if (data.length === 0) {
-            return undefined;
-        }
-
-        return {
-            ...params,
-            queryParams: {
-                ...params.queryParams,
-                skip: skip + limit,
-            },
-        };
-    },
+    queryFn: ({ pageParam }) => daoExplorerService.getDaoList(pageParam),
+    getNextPageParam: daoExplorerService.getNextPageParams,
     ...options,
 });
 

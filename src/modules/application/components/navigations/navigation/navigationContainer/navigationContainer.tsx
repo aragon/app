@@ -13,7 +13,10 @@ export const NavigationContainer: React.FC<INavigationContainerProps> = (props) 
     const { className, containerClasses, children, ...otherProps } = props;
 
     return (
-        <nav className={classNames('flex w-full border-b border-neutral-100 bg-neutral-0', className)} {...otherProps}>
+        <nav
+            className={classNames('sticky top-0 z-10 flex w-full border-b border-neutral-100 bg-neutral-0', className)}
+            {...otherProps}
+        >
             <Container className={classNames('w-full grow', containerClasses)}>{children}</Container>
         </nav>
     );

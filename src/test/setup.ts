@@ -15,3 +15,6 @@ mockTranslations.setup();
 
 // Globally setup TextEncoder/TextDecoder needed by viem
 Object.assign(global, { TextDecoder, TextEncoder });
+
+// Mock ResideObserver functionality
+global.ResizeObserver = jest.fn().mockImplementation(() => ({ observe: jest.fn(), disconnect: jest.fn() }));

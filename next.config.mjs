@@ -22,6 +22,11 @@ const nextConfig = {
                 port: '',
                 pathname: '/ipfs/**',
             },
+            {
+                protocol: 'https',
+                hostname: 's2.coinmarketcap.com',
+                port: '',
+            },
         ],
     },
     experimental: {

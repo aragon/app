@@ -7,7 +7,7 @@
         "beta": "Beta"
       },
       "footer": {
-        "copyright": "@ {{year}} Aragon",
+        "copyright": "© {{year}} Aragon",
         "link": {
           "explore": "Explore",
           "learn": "Learn",
@@ -25,6 +25,57 @@
           "assets": "Assets",
           "transactions": "Transactions",
           "settings": "Settings"
+        }
+      }
+    },
+    "dashboard": {
+      "daoDashboardPage": {
+        "header": {
+          "stat": {
+            "proposals": "Proposals",
+            "members": "Members",
+            "treasury": "Treasury value"
+          },
+          "action": {
+            "follow": "Follow DAO"
+          }
+        },
+        "main": {
+          "assets": {
+            "title": "Top assets"
+          }
+        },
+        "aside": {
+          "details": {
+            "title": "Details",
+            "blockchain": "Blockchain",
+            "address": "Contract address"
+          }
+        }
+      }
+    },
+    "finance": {
+      "assetList": {
+        "entity": "Assets"
+      },
+      "daoAssetsPage": {
+        "main": {
+          "title": "Assets",
+          "action": "New transfer"
+        },
+        "aside": {
+          "details": {
+            "title": "Details",
+            "blockchain": "Blockchain"
+          }
+        }
+      }
+    },
+    "shared": {
+      "page": {
+        "header": {
+          "readMore": "Read more",
+          "readLess": "Read less"
         }
       }
     }

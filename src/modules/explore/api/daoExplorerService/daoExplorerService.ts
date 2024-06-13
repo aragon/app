@@ -4,7 +4,7 @@ import type { IGetDaoListParams } from './daoExplorerService.api';
 
 class DaoExplorerService extends AragonBackendService {
     private urls = {
-        daoList: '/dao',
+        daoList: '/daos',
     };
 
     getDaoList = async ({ queryParams }: IGetDaoListParams): Promise<IPaginatedResponse<IDao>> => {
