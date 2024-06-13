@@ -7,7 +7,7 @@ export type SlotId = string;
 export type PluginId = string;
 
 // Component registered.
-export type Component = ComponentType;
+export type Component = ComponentType<any>;
 
 export interface IPlugin {
     /**

@@ -1,42 +1,34 @@
 'use client';
 
 import { useDao } from '@/shared/api/daoService';
-import { pluginUtils } from '@/shared/utils/pluginUtils';
-import { useEffect, useState, type ComponentType } from 'react';
+import { PluginComponent } from '@/shared/components/pluginComponent';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoMemberListProps {
     /**
-     * DAO slug to display the member of.
+     * Slug of the DAO.
      */
-    daoSlug: string;
+    slug: string;
 }
 
-const defaultComponent = () => <div />;
-
 export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
-    const { daoSlug } = props;
+    const { slug } = props;
 
-    const [Component, setComponent] = useState<ComponentType>(() => defaultComponent);
-
-    const daoParams = { slug: daoSlug };
-    const { data: dao } = useDao({ urlParams: daoParams });
-
-    useEffect(() => {
-        const loadedComponent = pluginUtils.getSlotComponent({
-            slotId: GovernanceSlotId.DAO_MEMBER_LIST,
-            pluginId: 'multisig.dao.eth',
-        });
-
-        if (loadedComponent) {
-            setComponent(() => loadedComponent);
-        }
-    }, []);
+    const useDaoParams = { slug };
+    const { data: dao } = useDao({ urlParams: useDaoParams });
 
     return (
-        <div>
-            <p>DAO member list for dao {dao?.name}</p>
-            <Component />
-        </div>
+        <>
+            {dao?.plugins.map((plugin) => (
+                <PluginComponent
+                    key={plugin.address}
+                    slotId={GovernanceSlotId.DAO_MEMBER_LIST}
+                    pluginId={plugin.subdomain}
+                    pluginAddress={plugin.address}
+                >
+                    <p>Unsupported plugin {plugin.subdomain}</p>
+                </PluginComponent>
+            ))}
+        </>
     );
 };

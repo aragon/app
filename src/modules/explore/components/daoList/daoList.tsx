@@ -1,5 +1,6 @@
 'use client';
 
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoDataListItemStructure, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
 import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService';
@@ -10,6 +11,8 @@ export interface IDaoListProps {
      */
     initialParams: IGetDaoListParams;
 }
+
+const getPluginsName = (plugins: IDaoPlugin[]) => plugins.map((plugin) => plugin.subdomain).join(',');
 
 export const DaoList: React.FC<IDaoListProps> = (props) => {
     const { initialParams } = props;
@@ -36,6 +39,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         name={dao.name}
                         description={dao.description}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
+                        plugin={getPluginsName(dao.plugins)}
                     />
                 ))}
             </DataListContainer>

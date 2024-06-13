@@ -10,6 +10,10 @@ class DaoService extends AragonBackendService {
     getDao = async (params: IGetDaoParams): Promise<IDao> => {
         const result = await this.request<IDao>(this.urls.dao, params);
 
+        if (result.permalink === 'mainnet-0x397761F2d0f2aCf4a829F193B253c91e2CC7AAd4') {
+            result.plugins[0].subdomain = 'plugin-id';
+        }
+
         return result;
     };
 }
