@@ -43,7 +43,8 @@
         "main": {
           "assets": {
             "title": "Top assets"
-          }
+          },
+          "viewAll": "View all"
         },
         "aside": {
           "details": {

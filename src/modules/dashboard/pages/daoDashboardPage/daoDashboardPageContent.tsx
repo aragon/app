@@ -50,7 +50,17 @@ export const DaoDashboardPageContent: React.FC<IDaoDashboardPageContentProps> = 
             <Page.Content>
                 <Page.Main>
                     <Page.Section title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
-                        <AssetList />
+                        <AssetList hidePagination={true}>
+                            <Button
+                                className="self-start"
+                                variant="tertiary"
+                                size="md"
+                                iconRight={IconType.CHEVRON_RIGHT}
+                                href={`/dao/${dao?.permalink}/assets`}
+                            >
+                                {t('app.dashboard.daoDashboardPage.main.viewAll')}
+                            </Button>
+                        </AssetList>
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>
