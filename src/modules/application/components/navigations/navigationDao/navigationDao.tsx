@@ -26,7 +26,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const handleCopyClick = () => clipboardUtils.copy(dao!.address);
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
-    const links = navigationDaoLinks(dao?.id);
+    const links = navigationDaoLinks(dao);
     const dialogSubtitle = dao?.ens != null ? dao.ens : addressUtils.truncateAddress(dao?.address);
 
     return (
