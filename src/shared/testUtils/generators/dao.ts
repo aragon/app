@@ -9,5 +9,6 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     description: 'description',
     ens: null,
     avatar: null,
+    plugins: [],
     ...dao,
 });
