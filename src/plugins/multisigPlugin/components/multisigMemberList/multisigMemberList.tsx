@@ -38,8 +38,8 @@ export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) =>
             entityLabel="Members"
             onLoadMore={fetchNextPage}
             state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={tokenMemberListData?.pages[0].metadata.limit}
-            itemsCount={tokenMemberListData?.pages[0].metadata.totRecords}
+            pageSize={10}
+            itemsCount={tokenMemberListData?.pages[0].metadata.totalRecords}
         >
             <DataListContainer
                 SkeletonElement={MemberDataListItem.Skeleton}
