@@ -1,5 +1,5 @@
 import { Page } from '@/shared/components/page';
-import { DaoDashboardPageContent } from './daoDashboardPageContent';
+import { DaoDashboardPageClient } from './daoDashboardPageClient';
 
 export interface IDaoDashboardPageProps {
     /**
@@ -13,7 +13,7 @@ export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = (props) => {
 
     return (
         <Page.Container>
-            <DaoDashboardPageContent slug={params.slug} />
+            <DaoDashboardPageClient slug={params.slug} />
         </Page.Container>
     );
 };

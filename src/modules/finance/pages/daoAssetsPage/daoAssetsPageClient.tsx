@@ -5,9 +5,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList } from '@aragon/ods';
 import { AssetList } from '../../components/assetList';
 
-export interface IDaoAssetsPageContentProps {}
+export interface IDaoAssetsPageClientProps {}
 
-export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = () => {
+export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = () => {
     const { t } = useTranslations();
 
     return (

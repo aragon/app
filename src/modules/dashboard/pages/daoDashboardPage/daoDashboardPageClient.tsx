@@ -7,14 +7,14 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { Button, DaoAvatar, DefinitionList, Dropdown, IconType, Link, addressUtils } from '@aragon/ods';
 
-export interface IDaoDashboardPageContentProps {
+export interface IDaoDashboardPageClientProps {
     /**
      * Slug of the DAO.
      */
     slug: string;
 }
 
-export const DaoDashboardPageContent: React.FC<IDaoDashboardPageContentProps> = (props) => {
+export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (props) => {
     const { slug } = props;
 
     const { t } = useTranslations();

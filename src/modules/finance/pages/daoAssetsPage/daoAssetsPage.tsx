@@ -1,7 +1,7 @@
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
 import { balanceListOptions } from '../../api/financeService/queries/useBalanceList';
-import { DaoAssetsPageContent } from './daoAssetsPageContent';
+import { DaoAssetsPageClient } from './daoAssetsPageClient';
 
 export interface IDaoAssetsPageProps {}
 
@@ -11,7 +11,7 @@ export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async () => {
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoAssetsPageContent />
+            <DaoAssetsPageClient />
         </Page.Container>
     );
 };
