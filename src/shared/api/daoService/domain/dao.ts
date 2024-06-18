@@ -7,9 +7,8 @@ export interface IDao {
     permalink: string;
     /**
      * Address of the DAO.
-     * TODO: change attribute name to "address"
      */
-    daoAddress: string;
+    address: string;
     /**
      * Network of the DAO.
      */
