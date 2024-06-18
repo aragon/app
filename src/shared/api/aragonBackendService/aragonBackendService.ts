@@ -24,9 +24,9 @@ export class AragonBackendService {
         _allPages: Array<IPaginatedResponse<TData>>,
         previousParams: TParams,
     ): TParams | undefined => {
-        const { skip, limit, totRecords } = lastPage.metadata;
+        const { page, totalPages } = lastPage.metadata;
 
-        if (skip + limit >= totRecords) {
+        if (page >= totalPages) {
             return undefined;
         }
 
@@ -34,7 +34,7 @@ export class AragonBackendService {
             ...previousParams,
             queryParams: {
                 ...previousParams.queryParams,
-                skip: skip + limit,
+                page: page + 1,
             },
         };
     };

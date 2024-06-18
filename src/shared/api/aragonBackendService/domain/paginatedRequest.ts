@@ -1,10 +1,10 @@
 export interface IPaginatedRequest {
     /**
-     * Defines how many elements should be skipped for the request.
+     * Defines which page to fetch (1-based indexing).
      */
-    skip?: number;
+    page?: number;
     /**
      * Limits the results amount to the defined value.
      */
-    limit?: number;
+    pageSize?: number;
 }

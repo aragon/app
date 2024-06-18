@@ -25,5 +25,5 @@ export const balanceListMock = generatePaginatedResponse({
             balance: '0.14234',
         }),
     ],
-    metadata: generatePaginatedResponseMetadata({ limit: 3, totRecords: 3 }),
+    metadata: generatePaginatedResponseMetadata({ pageSize: 3, totalRecords: 3 }),
 });

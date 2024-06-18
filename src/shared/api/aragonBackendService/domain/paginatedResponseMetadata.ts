@@ -1,22 +1,18 @@
 export interface IPaginatedResponseMetadata {
     /**
-     * Current page that has been fetched.
+     * The page that has been fetched (1-based indexing).
      */
-    currentPage: number;
+    page: number;
+    /**
+     * Defines how many elements are fetched per page.
+     */
+    pageSize: number;
     /**
      * Total number of pages for the current collection.
      */
-    totPages: number;
+    totalPages: number;
     /**
      * Total number of records for the current collection.
      */
-    totRecords: number;
-    /**
-     * Number of records being returned.
-     */
-    limit: number;
-    /**
-     * Number of records being skipped.
-     */
-    skip: number;
+    totalRecords: number;
 }
