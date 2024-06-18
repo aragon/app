@@ -71,6 +71,13 @@
           }
         }
       },
+      "detailsList": {
+        "title": "Details",
+        "blockchain": "Blockchain",
+        "vaultAddress": "Vault address",
+        "vaultEns": "Vault ENS"
+      },
+      
       "transactionList": {
         "entity": "Transactions"
       },
