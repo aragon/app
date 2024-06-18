@@ -1,32 +1,29 @@
 import { Page } from '@/shared/components/page';
-import { DefinitionListContainer, DefinitionListItem } from '@aragon/ods';
-import { DaoMemberList } from '../../components/daoMemberList';
+import type { IDaoPageParams } from '@/shared/types';
+import { QueryClient } from '@tanstack/react-query';
+import { memberListOptions } from '../../api/governanceService';
+import { DaoMembersPageClient } from './daoMembersPageClient';
 
 export interface IDaoMembersPageProps {
     /**
      * DAO page parameters.
      */
-    params: { slug: string };
+    params: IDaoPageParams;
 }
 
-export const DaoMembersPage: React.FC<IDaoMembersPageProps> = (props) => {
+export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     const { params } = props;
 
+    const queryClient = new QueryClient();
+
+    const memberListQueryParams = { daoId: params.id };
+    const memberListParams = { queryParams: memberListQueryParams };
+    await queryClient.prefetchInfiniteQuery(memberListOptions(memberListParams));
+
     return (
-        <Page.Container>
+        <Page.Container queryClient={queryClient}>
             <Page.Content>
-                <Page.Main title="Members">
-                    <DaoMemberList slug={params.slug} />
-                </Page.Main>
-                <Page.Aside>
-                    <Page.Section title="Details">
-                        <DefinitionListContainer>
-                            <DefinitionListItem term="Blockchain">
-                                <p className="text-neutral-500">Ethereum Mainnet</p>
-                            </DefinitionListItem>
-                        </DefinitionListContainer>
-                    </Page.Section>
-                </Page.Aside>
+                <DaoMembersPageClient daoId={params.id} />
             </Page.Content>
         </Page.Container>
     );

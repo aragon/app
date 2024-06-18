@@ -6,7 +6,7 @@ import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
-import '../../../../plugins';
+import { initialisePlugins } from '../../../../plugins';
 import { wagmiConfig } from '../../constants/wagmi';
 import { queryClientUtils } from '../../utils/queryClientUtils';
 
@@ -30,6 +30,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
     const { translations, children } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
+    initialisePlugins();
 
     return (
         <TranslationsProvider translations={translations}>

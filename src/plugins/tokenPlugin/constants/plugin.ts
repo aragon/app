@@ -1,6 +1,6 @@
 import type { IPlugin } from '@/shared/utils/pluginUtils';
 
 export const plugin: IPlugin = {
-    id: 'token-voting',
+    id: 'tokenVoting',
     name: 'Token',
 };

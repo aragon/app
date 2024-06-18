@@ -10,5 +10,6 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     ens: null,
     avatar: null,
     plugins: [],
+    isSupported: true,
     ...dao,
 });

@@ -31,6 +31,10 @@ export interface IDao {
      */
     avatar: string | null;
     /**
+     * Defines if the DAO is setup with plugins supported by the App or not.
+     */
+    isSupported: boolean;
+    /**
      * Governance plugins of the DAO.
      */
     plugins: IDaoPlugin[];

@@ -1,5 +1,4 @@
 import { pluginUtils, type PluginId, type SlotId } from '@/shared/utils/pluginUtils';
-import type { ReactNode } from 'react';
 
 export interface IPluginComponentProps {
     /**
@@ -11,26 +10,19 @@ export interface IPluginComponentProps {
      */
     pluginId: PluginId;
     /**
-     * Fallback content displayed for unsupported plugins.
-     */
-    children?: ReactNode;
-    /**
-     * Eventual children of the loaded component.
-     */
-    componentChildren?: ReactNode;
-    /**
      * Other properties passed to the loaded component.
      */
     [key: string]: unknown;
 }
 
 export const PluginComponent: React.FC<IPluginComponentProps> = (props) => {
-    const { slotId, pluginId, children, componentChildren, ...otherProps } = props;
+    const { slotId, pluginId, ...otherProps } = props;
 
-    const LoadedComponent = pluginUtils.getSlotComponent({
-        slotId,
-        pluginId,
-    });
+    const LoadedComponent = pluginUtils.getSlotComponent({ slotId, pluginId });
 
-    return <>{LoadedComponent ? <LoadedComponent {...otherProps}>{componentChildren}</LoadedComponent> : children}</>;
+    if (LoadedComponent == null) {
+        return null;
+    }
+
+    return <LoadedComponent {...otherProps} />;
 };

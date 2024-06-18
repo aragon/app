@@ -7,9 +7,9 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoMemberListProps {
     /**
-     * Slug of the DAO.
+     * ID of the DAO.
      */
-    slug: string;
+    daoId: string;
     /**
      * Hides the pagination when set to true.
      */
@@ -21,25 +21,21 @@ export interface IDaoMemberListProps {
 }
 
 export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
-    const { slug, hidePagination, children } = props;
+    const { daoId, hidePagination, children } = props;
 
-    const useDaoParams = { slug };
+    const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
-    return (
-        <>
-            {dao?.plugins.map((plugin) => (
-                <PluginComponent
-                    key={plugin.address}
-                    slotId={GovernanceSlotId.DAO_MEMBER_LIST}
-                    pluginId={plugin.subdomain}
-                    pluginAddress={plugin.address}
-                    hidePagination={hidePagination}
-                    componentChildren={children}
-                >
-                    <p>Unsupported plugin {plugin.subdomain}</p>
-                </PluginComponent>
-            ))}
-        </>
-    );
+    return dao?.plugins.map((plugin) => (
+        <PluginComponent
+            key={plugin.address}
+            slotId={GovernanceSlotId.DAO_MEMBER_LIST}
+            // pluginId={plugin.type}
+            pluginId="multisig"
+            daoId={daoId}
+            hidePagination={hidePagination}
+        >
+            {children}
+        </PluginComponent>
+    ));
 };
