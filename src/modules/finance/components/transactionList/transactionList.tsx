@@ -4,9 +4,9 @@ import { useTransactionList } from '@/modules/finance/api/financeService/queries
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, TransactionDataListItemStructure } from '@aragon/ods';
 
-export interface ITransactionList {}
+export interface ITransactionListProps {}
 
-export const TransactionList: React.FC<ITransactionList> = () => {
+export const TransactionList: React.FC<ITransactionListProps> = () => {
     const { t } = useTranslations();
 
     const { data: transactionListData, fetchNextPage, isLoading } = useTransactionList({ queryParams: {} });
@@ -18,8 +18,8 @@ export const TransactionList: React.FC<ITransactionList> = () => {
             entityLabel={t('app.finance.transactionList.entity')}
             onLoadMore={fetchNextPage}
             state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={transactionListData?.pages[0].metadata.limit}
-            itemsCount={transactionListData?.pages[0].metadata.totRecords}
+            pageSize={transactionListData?.pages[0].metadata.pageSize}
+            itemsCount={transactionListData?.pages[0].metadata.totalRecords}
         >
             <DataListContainer>
                 {transactionList?.map((transaction) => (
