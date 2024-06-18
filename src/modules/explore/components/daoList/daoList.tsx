@@ -32,7 +32,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         key={dao.permalink}
                         href={`/dao/${dao.permalink}/dashboard`}
                         ens={dao.ens ?? undefined}
-                        address={dao.daoAddress}
+                        address={dao.address}
                         name={dao.name}
                         description={dao.description}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}

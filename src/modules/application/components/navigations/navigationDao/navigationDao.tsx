@@ -23,11 +23,11 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const urlParams = { slug };
     const { data: dao } = useDao({ urlParams });
 
-    const handleCopyClick = () => clipboardUtils.copy(dao!.daoAddress);
+    const handleCopyClick = () => clipboardUtils.copy(dao!.address);
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
     const links = navigationDaoLinks(dao?.permalink);
-    const dialogSubtitle = dao?.ens != null ? dao.ens : addressUtils.truncateAddress(dao?.daoAddress);
+    const dialogSubtitle = dao?.ens != null ? dao.ens : addressUtils.truncateAddress(dao?.address);
 
     return (
         <Navigation.Container

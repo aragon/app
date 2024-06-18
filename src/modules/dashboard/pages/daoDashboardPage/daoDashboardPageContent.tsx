@@ -28,7 +28,7 @@ export const DaoDashboardPageContent: React.FC<IDaoDashboardPageContentProps> = 
         { value: '42.69M', label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
     ];
 
-    const truncatedAddress = addressUtils.truncateAddress(dao?.daoAddress);
+    const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
     return (
         <>

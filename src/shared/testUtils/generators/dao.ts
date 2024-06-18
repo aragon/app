@@ -3,7 +3,7 @@ import { Network } from '@/shared/types';
 
 export const generateDao = (dao?: Partial<IDao>): IDao => ({
     permalink: 'dao-test',
-    daoAddress: '1234',
+    address: '1234',
     network: Network.ETHEREUM_MAINNET,
     name: 'name',
     description: 'description',
