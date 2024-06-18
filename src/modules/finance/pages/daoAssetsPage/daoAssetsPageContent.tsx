@@ -1,14 +1,24 @@
 'use client';
 
+import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DefinitionList } from '@aragon/ods';
 import { AssetList } from '../../components/assetList';
+import { DetailsList } from '@/modules/finance/components/detailsList/detailsList';
 
-export interface IDaoAssetsPageContentProps {}
+export interface IDaoAssetsPageContentProps {
+    /**
+     * DAO page parameters.
+     */
+    slug: string;
+}
 
-export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = () => {
+export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = (props) => {
+    const { slug } = props;
     const { t } = useTranslations();
+
+    const useDaoParams = { slug };
+    const { data: dao, isLoading: daoLoading } = useDao({ urlParams: useDaoParams });
 
     return (
         <Page.Content>
@@ -19,13 +29,12 @@ export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = () => 
                 <AssetList />
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.finance.daoAssetsPage.aside.details.title')}>
-                    <DefinitionList.Container>
-                        <DefinitionList.Item term={t('app.finance.daoAssetsPage.aside.details.blockchain')}>
-                            <p className="text-neutral-500">Ethereum Mainnet</p>
-                        </DefinitionList.Item>
-                    </DefinitionList.Container>
-                </Page.Section>
+                <DetailsList
+                    network={dao?.network}
+                    vaultAddress={dao?.address}
+                    ensAddress={dao?.ens}
+                    isLoading={daoLoading}
+                />
             </Page.Aside>
         </Page.Content>
     );
