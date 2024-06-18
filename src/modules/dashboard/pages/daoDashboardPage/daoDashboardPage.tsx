@@ -1,11 +1,12 @@
 import { Page } from '@/shared/components/page';
+import type { IDaoPageParams } from '@/shared/types';
 import { DaoDashboardPageClient } from './daoDashboardPageClient';
 
 export interface IDaoDashboardPageProps {
     /**
      * DAO page parameters.
      */
-    params: { slug: string };
+    params: IDaoPageParams;
 }
 
 export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = (props) => {
@@ -13,7 +14,7 @@ export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = (props) => {
 
     return (
         <Page.Container>
-            <DaoDashboardPageClient slug={params.slug} />
+            <DaoDashboardPageClient id={params.id} />
         </Page.Container>
     );
 };

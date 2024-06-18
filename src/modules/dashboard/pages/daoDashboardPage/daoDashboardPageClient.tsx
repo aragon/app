@@ -9,17 +9,17 @@ import { Button, DaoAvatar, DefinitionList, Dropdown, IconType, Link, addressUti
 
 export interface IDaoDashboardPageClientProps {
     /**
-     * Slug of the DAO.
+     * ID of the DAO.
      */
-    slug: string;
+    id: string;
 }
 
 export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (props) => {
-    const { slug } = props;
+    const { id } = props;
 
     const { t } = useTranslations();
 
-    const useDaoParams = { slug };
+    const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
     const stats = [
@@ -28,7 +28,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         { value: '42.69M', label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
     ];
 
-    const truncatedAddress = addressUtils.truncateAddress(dao?.daoAddress);
+    const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
     return (
         <>
@@ -56,7 +56,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 variant="tertiary"
                                 size="md"
                                 iconRight={IconType.CHEVRON_RIGHT}
-                                href={`/dao/${dao?.permalink}/assets`}
+                                href={`/dao/${dao?.id}/assets`}
                             >
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>

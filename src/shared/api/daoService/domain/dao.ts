@@ -4,12 +4,11 @@ export interface IDao {
     /**
      * Identifier of the DAO.
      */
-    permalink: string;
+    id: string;
     /**
      * Address of the DAO.
-     * TODO: change attribute name to "address"
      */
-    daoAddress: string;
+    address: string;
     /**
      * Network of the DAO.
      */

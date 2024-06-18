@@ -30,7 +30,7 @@ describe('<LayoutDao /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: { slug: 'test-dao' },
+            params: { id: 'test-dao' },
             ...props,
         };
 
@@ -46,7 +46,7 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('prefetches the DAO from the given slug', async () => {
-        const params = { slug: 'my-dao' };
+        const params = { id: 'my-dao' };
         render(await createTestComponent({ params }));
         expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
     });

@@ -34,7 +34,7 @@ describe('<NavigationDao /> component', () => {
 
     const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
         const completeProps: INavigationDaoProps = {
-            slug: 'test-dao',
+            id: 'test-dao',
             ...props,
         };
 
@@ -53,9 +53,9 @@ describe('<NavigationDao /> component', () => {
     });
 
     it('renders the DAO links for the current DAO on desktop devices', () => {
-        const slug = 'test-dao';
-        const daoLinks = navigationDaoLinks(slug);
-        render(createTestComponent({ slug }));
+        const id = 'test-dao';
+        const daoLinks = navigationDaoLinks(id);
+        render(createTestComponent({ id }));
         daoLinks.forEach((link) => expect(screen.getByRole('link', { name: link.label })).toBeInTheDocument());
         // eslint-disable-next-line testing-library/no-node-access
         expect(screen.getByRole('link', { name: daoLinks[0].label }).parentElement?.className).toContain(
@@ -85,8 +85,8 @@ describe('<NavigationDao /> component', () => {
     });
 
     it('renders the truncated address on the navigation dialog when dao has no ENS', async () => {
-        const dao = generateDao({ daoAddress: '0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722', ens: undefined });
-        const truncatedAddress = addressUtils.truncateAddress(dao.daoAddress);
+        const dao = generateDao({ address: '0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722', ens: undefined });
+        const truncatedAddress = addressUtils.truncateAddress(dao.address);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
         await userEvent.click(screen.getByTestId('nav-trigger-mock'));
@@ -94,7 +94,7 @@ describe('<NavigationDao /> component', () => {
     });
 
     it('renders a copy button to copy the DAO address on the navigation dialog', async () => {
-        const dao = generateDao({ daoAddress: '0x1234' });
+        const dao = generateDao({ address: '0x1234' });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
         await userEvent.click(screen.getByTestId('nav-trigger-mock'));
@@ -103,7 +103,7 @@ describe('<NavigationDao /> component', () => {
         expect(copyButton).toBeInTheDocument();
 
         await userEvent.click(copyButton);
-        expect(copySpy).toHaveBeenCalledWith(dao.daoAddress);
+        expect(copySpy).toHaveBeenCalledWith(dao.address);
     });
 
     it('renders a explore button to navigate to the explore page on the navigation dialog', async () => {

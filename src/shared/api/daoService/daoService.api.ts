@@ -2,9 +2,9 @@ import type { IRequestUrlParams } from '../aragonBackendService';
 
 export interface IGetDaoUrlParams {
     /**
-     * Slug of the DAO to be fetched.
+     * ID of the DAO to be fetched.
      */
-    slug: string;
+    id: string;
 }
 
 export interface IGetDaoParams extends IRequestUrlParams<IGetDaoUrlParams> {}

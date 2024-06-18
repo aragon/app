@@ -29,10 +29,10 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             <DataListContainer className="grid grid-cols-1 lg:grid-cols-2">
                 {daoList?.map((dao) => (
                     <DaoDataListItemStructure
-                        key={dao.permalink}
-                        href={`/dao/${dao.permalink}/dashboard`}
+                        key={dao.id}
+                        href={`/dao/${dao.id}/dashboard`}
                         ens={dao.ens ?? undefined}
-                        address={dao.daoAddress}
+                        address={dao.address}
                         name={dao.name}
                         description={dao.description}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
