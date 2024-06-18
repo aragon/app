@@ -2,11 +2,19 @@
 
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AssetDataListItemStructure, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
+import type { ComponentProps } from 'react';
 import { useBalanceList } from '../../api/financeService';
 
-export interface IAssetListProps {}
+export interface IAssetListProps extends ComponentProps<'div'> {
+    /**
+     * Hides the pagination component when set to true.
+     */
+    hidePagination?: boolean;
+}
 
-export const AssetList: React.FC<IAssetListProps> = () => {
+export const AssetList: React.FC<IAssetListProps> = (props) => {
+    const { hidePagination, children, ...otherProps } = props;
+
     const { t } = useTranslations();
 
     const { data: assetListData, fetchNextPage, isLoading } = useBalanceList({ queryParams: {} });
@@ -18,8 +26,9 @@ export const AssetList: React.FC<IAssetListProps> = () => {
             entityLabel={t('app.finance.assetList.entity')}
             onLoadMore={fetchNextPage}
             state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={assetListData?.pages[0].metadata.limit}
-            itemsCount={assetListData?.pages[0].metadata.totRecords}
+            pageSize={assetListData?.pages[0].metadata.pageSize}
+            itemsCount={assetListData?.pages[0].metadata.totalRecords}
+            {...otherProps}
         >
             <DataListContainer>
                 {assetList?.map((asset) => (
@@ -32,7 +41,8 @@ export const AssetList: React.FC<IAssetListProps> = () => {
                     />
                 ))}
             </DataListContainer>
-            <DataListPagination />
+            {!hidePagination && <DataListPagination />}
+            {children}
         </DataListRoot>
     );
 };

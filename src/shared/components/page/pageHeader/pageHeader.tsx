@@ -47,7 +47,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             {description}
                         </Collapsible>
                         {stats != null && stats.length > 0 && (
-                            <div className="flex flex-row gap-16 py-4">
+                            <div className="flex flex-row gap-6 py-4 lg:gap-10 xl:gap-16">
                                 {stats.map((stat) => (
                                     <PageHeaderStat key={stat.label} {...stat} />
                                 ))}

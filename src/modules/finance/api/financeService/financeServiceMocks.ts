@@ -26,7 +26,7 @@ export const balanceListMock = generatePaginatedResponse({
             balance: '0.14234',
         }),
     ],
-    metadata: generatePaginatedResponseMetadata({ limit: 3, totRecords: 3 }),
+    metadata: generatePaginatedResponseMetadata({ pageSize: 3, totalRecords: 3 }),
 });
 
 export const transactionListMock = generatePaginatedResponse({
@@ -65,5 +65,5 @@ export const transactionListMock = generatePaginatedResponse({
             hash: '0xd1a1c5e3b1b5b6f4e1d7c5f6e1d5b5c5d1c5e3f1b5b1b5e1d5c5f1b5c1e3d1b6',
         }),
     ],
-    metadata: generatePaginatedResponseMetadata({ limit: 3, totRecords: 3 }),
+    metadata: generatePaginatedResponseMetadata({ pageSize: 3, totalRecords: 3 }),
 });

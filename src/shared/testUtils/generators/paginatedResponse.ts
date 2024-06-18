@@ -4,7 +4,7 @@ import { generatePaginatedResponseMetadata } from './paginatedResponseMetadata';
 export const generatePaginatedResponse = <TData>(
     response?: Partial<IPaginatedResponse<TData>>,
 ): IPaginatedResponse<TData> => ({
+    metadata: generatePaginatedResponseMetadata(),
+    data: [],
     ...response,
-    data: response?.data ?? [],
-    metadata: generatePaginatedResponseMetadata(response?.metadata),
 });
