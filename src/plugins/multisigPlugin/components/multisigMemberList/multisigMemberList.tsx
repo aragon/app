@@ -1,51 +1,30 @@
+import { useMemberList } from '@/modules/governance/api/governanceService';
+import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
-import { useParams } from 'next/navigation';
-import type { ReactNode } from 'react';
-import { useMultisigMemberList } from '../../api/tokenPluginService';
 
-export interface IMultisigMemberListProps {
-    /**
-     * Plugin address to display the members for.
-     */
-    pluginAddress: string;
-    /**
-     * Hides the pagination when set to true.
-     */
-    hidePagination?: boolean;
-    /**
-     * Children of the component.
-     */
-    children?: ReactNode;
-}
+export interface IMultisigMemberListProps extends IDaoMemberListProps {}
 
 export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) => {
-    const { pluginAddress, hidePagination, children } = props;
+    const { daoId, hidePagination, children } = props;
 
-    const { slug } = useParams<{ slug: string }>();
+    const memberListQueryParams = { daoId };
+    const { data: memberListData, isLoading, fetchNextPage } = useMemberList({ queryParams: memberListQueryParams });
 
-    const memberUrlParams = { slug };
-    const memberQueryParams = { pluginAddress };
-    const {
-        data: tokenMemberListData,
-        fetchNextPage,
-        isLoading,
-    } = useMultisigMemberList({ urlParams: memberUrlParams, queryParams: memberQueryParams });
-
-    const tokenMemberList = tokenMemberListData?.pages.flatMap((page) => page.data);
+    const memberList = memberListData?.pages.flatMap((page) => page.data);
 
     return (
         <DataListRoot
             entityLabel="Members"
             onLoadMore={fetchNextPage}
             state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={10}
-            itemsCount={tokenMemberListData?.pages[0].metadata.totalRecords}
+            pageSize={memberListData?.pages[0].metadata.pageSize}
+            itemsCount={memberListData?.pages[0].metadata.totalRecords}
         >
             <DataListContainer
                 SkeletonElement={MemberDataListItem.Skeleton}
                 className="grid grid-cols-1 lg:grid-cols-3"
             >
-                {tokenMemberList?.map((member) => (
+                {memberList?.map((member) => (
                     <MemberDataListItem.Structure
                         key={member.address}
                         address={member.address}

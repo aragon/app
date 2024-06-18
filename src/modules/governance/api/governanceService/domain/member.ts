@@ -1,4 +1,4 @@
-export interface IMultisigMember {
+export interface IMember {
     /**
      * Address of the member.
      */
@@ -7,4 +7,8 @@ export interface IMultisigMember {
      * ENS name linked to the member address.
      */
     ens: string | null;
+    /**
+     * Type of the member.
+     */
+    type: string;
 }

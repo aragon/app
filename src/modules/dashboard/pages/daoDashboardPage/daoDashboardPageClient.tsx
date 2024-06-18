@@ -30,9 +30,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     ];
 
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
-    const hasSupportedPlugins = dao?.plugins.some(
-        ({ subdomain }) => subdomain === 'multisig' || subdomain === 'token-voting',
-    );
 
     return (
         <>
@@ -66,15 +63,15 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </Button>
                         </AssetList>
                     </Page.Section>
-                    {hasSupportedPlugins && (
+                    {dao?.isSupported && (
                         <Page.Section title={t('app.dashboard.daoDashboardPage.main.members.title')}>
-                            <DaoMemberList slug={dao!.permalink} hidePagination={true}>
+                            <DaoMemberList daoId={id} hidePagination={true}>
                                 <Button
                                     className="self-start"
                                     variant="tertiary"
                                     size="md"
                                     iconRight={IconType.CHEVRON_RIGHT}
-                                    href={`/dao/${dao?.permalink}/members`}
+                                    href={`/dao/${id}/members`}
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
