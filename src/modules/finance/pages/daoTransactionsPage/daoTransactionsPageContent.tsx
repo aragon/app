@@ -18,7 +18,7 @@ export const DaoTransactionsPageContent: React.FC<IDaoTransactionsPageContentPro
     const { t } = useTranslations();
 
     const useDaoParams = { slug };
-    const { data: dao, isLoading: daoLoading } = useDao({ urlParams: useDaoParams });
+    const { data: dao } = useDao({ urlParams: useDaoParams });
 
     return (
         <Page.Content>
@@ -29,12 +29,7 @@ export const DaoTransactionsPageContent: React.FC<IDaoTransactionsPageContentPro
                 <TransactionList />
             </Page.Main>
             <Page.Aside>
-                <DetailsList
-                    network={dao?.network}
-                    vaultAddress={dao?.address}
-                    ensAddress={dao?.ens}
-                    isLoading={daoLoading}
-                />
+                <DetailsList network={dao?.network} vaultAddress={dao?.address} ensAddress={dao?.ens} />
             </Page.Aside>
         </Page.Content>
     );

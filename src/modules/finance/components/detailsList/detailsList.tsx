@@ -1,6 +1,6 @@
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, DefinitionList, StateSkeletonBar, type IDefinitionListContainerProps } from '@aragon/ods';
+import { addressUtils, DefinitionList, IconType, Link, type IDefinitionListContainerProps } from '@aragon/ods';
 
 interface IDetailsListProps extends IDefinitionListContainerProps {
     /**
@@ -15,40 +15,34 @@ interface IDetailsListProps extends IDefinitionListContainerProps {
      * ENS address of the DAO.
      */
     ensAddress?: string | null;
-    /**
-     * Loading state of the DAO.
-     */
-    isLoading?: boolean;
 }
 
 export const DetailsList: React.FC<IDetailsListProps> = (props) => {
-    const { network, vaultAddress, ensAddress, isLoading, ...otherProps } = props;
+    const { network, vaultAddress, ensAddress, ...otherProps } = props;
     const { t } = useTranslations();
 
     return (
         <Page.Section title={t('app.finance.detailsList.title')}>
             <DefinitionList.Container {...otherProps}>
                 <DefinitionList.Item term={t('app.finance.detailsList.blockchain')}>
-                    {isLoading ? (
-                        <StateSkeletonBar width="100%" />
-                    ) : (
-                        <p className="capitalize text-neutral-500">{network ?? 'Unknown Network'}</p>
-                    )}
+                    <p className="capitalize text-neutral-500">{network ?? 'Unknown Network'}</p>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.finance.detailsList.vaultAddress')}>
-                    {isLoading ? (
-                        <StateSkeletonBar width="100%" />
+                    {vaultAddress ? (
+                        <Link href="#" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                            {addressUtils.truncateAddress(vaultAddress)}
+                        </Link>
                     ) : (
-                        <p className="text-neutral-500">
-                            {addressUtils.truncateAddress(vaultAddress) ?? 'Unknown Address'}
-                        </p>
+                        <p className="text-neutral-500">Unknown address</p>
                     )}
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.finance.detailsList.vaultEns')}>
-                    {isLoading ? (
-                        <StateSkeletonBar width="100%" />
+                    {ensAddress ? (
+                        <Link href="#" target="_blank" iconRight={ensAddress ? IconType.LINK_EXTERNAL : undefined}>
+                            {ensAddress}
+                        </Link>
                     ) : (
-                        <p className="text-neutral-500">{ensAddress ?? 'N/A'}</p>
+                        <p className="text-neutral-500">N/A</p>
                     )}
                 </DefinitionList.Item>
             </DefinitionList.Container>

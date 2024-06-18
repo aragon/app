@@ -18,7 +18,7 @@ export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = (props
     const { t } = useTranslations();
 
     const useDaoParams = { slug };
-    const { data: dao, isLoading: daoLoading } = useDao({ urlParams: useDaoParams });
+    const { data: dao  } = useDao({ urlParams: useDaoParams });
 
     return (
         <Page.Content>
@@ -33,7 +33,7 @@ export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = (props
                     network={dao?.network}
                     vaultAddress={dao?.address}
                     ensAddress={dao?.ens}
-                    isLoading={daoLoading}
+            
                 />
             </Page.Aside>
         </Page.Content>
