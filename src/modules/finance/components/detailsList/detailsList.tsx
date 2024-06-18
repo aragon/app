@@ -28,17 +28,11 @@ export const DetailsList: React.FC<IDetailsListProps> = (props) => {
                     <p className="capitalize text-neutral-500">{network ?? 'Unknown Network'}</p>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.finance.detailsList.vaultAddress')}>
-                    {vaultAddress ? (
-                        <Link href="#" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                            {addressUtils.truncateAddress(vaultAddress)}
-                        </Link>
-                    ) : (
-                        <p className="text-neutral-500">Unknown address</p>
-                    )}
+                    <Link iconRight={IconType.LINK_EXTERNAL}>{addressUtils.truncateAddress(vaultAddress)}</Link>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.finance.detailsList.vaultEns')}>
                     {ensAddress ? (
-                        <Link href="#" target="_blank" iconRight={ensAddress ? IconType.LINK_EXTERNAL : undefined}>
+                        <Link href="#" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                             {ensAddress}
                         </Link>
                     ) : (
