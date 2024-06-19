@@ -1,5 +1,10 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, IDefinitionListContainerProps, IDefinitionListItemProps, ILinkProps } from '@aragon/ods';
+import {
+    addressUtils,
+    type IDefinitionListContainerProps,
+    type IDefinitionListItemProps,
+    type ILinkProps,
+} from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { FinanceDetailsList, type IFinanceDetailsListProps } from './financeDetailsList';
 
