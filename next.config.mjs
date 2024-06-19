@@ -27,11 +27,6 @@ const nextConfig = {
                 hostname: 's2.coinmarketcap.com',
                 port: '',
             },
-            {
-                protocol: 'https',
-                hostname: 'i.seadn.io',
-                port: '',
-            },
         ],
     },
     experimental: {

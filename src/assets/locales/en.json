@@ -44,9 +44,6 @@
           "assets": {
             "title": "Top assets"
           },
-          "members": {
-            "title": "Members"
-          },
           "viewAll": "View all"
         },
         "aside": {
@@ -66,19 +63,6 @@
         "main": {
           "title": "Assets",
           "action": "New transfer"
-        },
-        "aside": {
-          "details": {
-            "title": "Details",
-            "blockchain": "Blockchain"
-          }
-        }
-      }
-    },
-    "governance": {
-      "daoMembersPage": {
-        "main": {
-          "title": "Members"
         },
         "aside": {
           "details": {
