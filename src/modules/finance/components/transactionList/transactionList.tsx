@@ -1,5 +1,3 @@
-'use client';
-
 import { useTransactionList } from '@/modules/finance/api/financeService/queries/useTransactionList';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -12,9 +10,6 @@ import {
 import { type ComponentProps } from 'react';
 
 export interface ITransactionListProps extends ComponentProps<'div'> {
-    /**
-     * Hides the pagination component when set to true.
-     */
     hidePagination?: boolean;
 }
 
@@ -24,20 +19,20 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
 
     const { data: transactionListData, fetchNextPage, isLoading } = useTransactionList({ queryParams: {} });
 
-    const transactionList = transactionListData?.pages.flatMap((page) => page.data);
+    const transactionList = transactionListData?.pages.flatMap((page) => page.data) || [];
 
     return (
         <DataListRoot
             entityLabel={t('app.finance.transactionList.entity')}
             onLoadMore={fetchNextPage}
             state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={transactionListData?.pages[0].metadata.pageSize}
-            itemsCount={transactionListData?.pages[0].metadata.totalRecords}
+            pageSize={transactionListData?.pages[0]?.metadata.pageSize}
+            itemsCount={transactionListData?.pages[0]?.metadata.totalRecords}
             {...otherProps}
         >
             <DataListContainer>
-                {transactionList != null ? (
-                    transactionList?.map((transaction) => (
+                {transactionList.length > 0 ? (
+                    transactionList.map((transaction) => (
                         <TransactionDataListItemStructure
                             chainId={transaction.chainId}
                             hash={transaction.hash}
@@ -59,7 +54,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                     />
                 )}
             </DataListContainer>
-            {transactionList?.length && !hidePagination && <DataListPagination />}
+            {transactionList.length > 0 && !hidePagination && <DataListPagination />}
             {children}
         </DataListRoot>
     );
