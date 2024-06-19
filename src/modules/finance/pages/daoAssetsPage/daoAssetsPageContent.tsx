@@ -1,10 +1,10 @@
 'use client';
 
+import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList/financeDetailsList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AssetList } from '../../components/assetList';
-import { DetailsList } from '@/modules/finance/components/detailsList/detailsList';
 
 export interface IDaoAssetsPageContentProps {
     /**
@@ -18,7 +18,7 @@ export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = (props
     const { t } = useTranslations();
 
     const useDaoParams = { slug };
-    const { data: dao  } = useDao({ urlParams: useDaoParams });
+    const { data: dao } = useDao({ urlParams: useDaoParams });
 
     return (
         <Page.Content>
@@ -29,12 +29,7 @@ export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = (props
                 <AssetList />
             </Page.Main>
             <Page.Aside>
-                <DetailsList
-                    network={dao?.network}
-                    vaultAddress={dao?.address}
-                    ensAddress={dao?.ens}
-            
-                />
+                <FinanceDetailsList network={dao?.network} vaultAddress={dao?.address} ensAddress={dao?.ens} />
             </Page.Aside>
         </Page.Content>
     );

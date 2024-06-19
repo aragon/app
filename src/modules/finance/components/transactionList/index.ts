@@ -1,1 +1,1 @@
-export { TransactionList } from './transactionList';
+export { TransactionList, type ITransactionListProps } from './transactionList';

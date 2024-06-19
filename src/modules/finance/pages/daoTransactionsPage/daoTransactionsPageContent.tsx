@@ -1,6 +1,6 @@
 'use client';
 
-import { DetailsList } from '@/modules/finance/components/detailsList/detailsList';
+import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList/financeDetailsList';
 import { TransactionList } from '@/modules/finance/components/transactionList/transactionList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -29,7 +29,7 @@ export const DaoTransactionsPageContent: React.FC<IDaoTransactionsPageContentPro
                 <TransactionList />
             </Page.Main>
             <Page.Aside>
-                <DetailsList network={dao?.network} vaultAddress={dao?.address} ensAddress={dao?.ens} />
+                <FinanceDetailsList network={dao?.network} vaultAddress={dao?.address} ensAddress={dao?.ens} />
             </Page.Aside>
         </Page.Content>
     );

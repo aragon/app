@@ -2,7 +2,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, DefinitionList, IconType, Link, type IDefinitionListContainerProps } from '@aragon/ods';
 
-interface IDetailsListProps extends IDefinitionListContainerProps {
+export interface IFinanceDetailsListProps extends IDefinitionListContainerProps {
     /**
      * Network name of the DAO.
      */
@@ -17,7 +17,7 @@ interface IDetailsListProps extends IDefinitionListContainerProps {
     ensAddress?: string | null;
 }
 
-export const DetailsList: React.FC<IDetailsListProps> = (props) => {
+export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) => {
     const { network, vaultAddress, ensAddress, ...otherProps } = props;
     const { t } = useTranslations();
 

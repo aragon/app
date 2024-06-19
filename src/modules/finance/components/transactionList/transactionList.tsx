@@ -10,6 +10,9 @@ import {
 import { type ComponentProps } from 'react';
 
 export interface ITransactionListProps extends ComponentProps<'div'> {
+    /**
+     * If true, the pagination will be hidden.
+     */
     hidePagination?: boolean;
 }
 
