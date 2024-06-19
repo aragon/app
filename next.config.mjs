@@ -8,8 +8,8 @@ const nextConfig = {
     async redirects() {
         return [
             {
-                source: '/dao/:slug',
-                destination: '/dao/:slug/dashboard',
+                source: '/dao/:id',
+                destination: '/dao/:id/dashboard',
                 permanent: true,
             },
         ];

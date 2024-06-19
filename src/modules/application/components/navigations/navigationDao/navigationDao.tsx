@@ -10,23 +10,23 @@ import { navigationDaoLinks } from './navigationDaoLinks';
 
 export interface INavigationDaoProps extends INavigationContainerProps {
     /**
-     * DAO slug to display the data for.
+     * ID of the DAO to display the data for.
      */
-    slug: string;
+    id: string;
 }
 
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
-    const { slug, containerClasses, ...otherProps } = props;
+    const { id, containerClasses, ...otherProps } = props;
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const urlParams = { slug };
+    const urlParams = { id };
     const { data: dao } = useDao({ urlParams });
 
     const handleCopyClick = () => clipboardUtils.copy(dao!.address);
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
-    const links = navigationDaoLinks(dao?.permalink);
+    const links = navigationDaoLinks(dao?.id);
     const dialogSubtitle = dao?.ens != null ? dao.ens : addressUtils.truncateAddress(dao?.address);
 
     return (

@@ -1,4 +1,5 @@
 import { daoService } from '@/shared/api/daoService';
+import type { IDaoPageParams } from '@/shared/types';
 import { type Metadata } from 'next';
 import { ipfsUtils } from '../ipfsUtils';
 
@@ -6,14 +7,14 @@ export interface IGenerateDaoMetadataParams {
     /**
      * Path parameters of DAO pages.
      */
-    params: { slug: string };
+    params: IDaoPageParams;
 }
 
 class DaoMetadataUtils {
     generateMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
-        const { slug } = params;
+        const { id } = params;
 
-        const getDaoParams = { slug };
+        const getDaoParams = { id };
         const dao = await daoService.getDao({ urlParams: getDaoParams });
 
         const daoAvatarUrl = ipfsUtils.cidToSrc(dao.avatar);

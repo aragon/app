@@ -1,12 +1,12 @@
 import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList';
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
-import { DaoTransactionsPageContent } from './daoTransactionsPageContent';
+import { DaoTransactionsPageClient } from './daoTransactionsPageClient';
 export interface IDaoTransactionsPageProps {
     /**
      * DAO page parameters.
      */
-    params: { slug: string };
+    params: { id: string };
 }
 
 export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (props) => {
@@ -16,7 +16,7 @@ export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (p
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoTransactionsPageContent slug={params.slug} />
+            <DaoTransactionsPageClient id={params.id} />
         </Page.Container>
     );
 };

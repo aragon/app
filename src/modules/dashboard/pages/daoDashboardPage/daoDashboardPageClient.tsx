@@ -7,19 +7,19 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { Button, DaoAvatar, DefinitionList, Dropdown, IconType, Link, addressUtils } from '@aragon/ods';
 
-export interface IDaoDashboardPageContentProps {
+export interface IDaoDashboardPageClientProps {
     /**
-     * Slug of the DAO.
+     * ID of the DAO.
      */
-    slug: string;
+    id: string;
 }
 
-export const DaoDashboardPageContent: React.FC<IDaoDashboardPageContentProps> = (props) => {
-    const { slug } = props;
+export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (props) => {
+    const { id } = props;
 
     const { t } = useTranslations();
 
-    const useDaoParams = { slug };
+    const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
     const stats = [
@@ -56,7 +56,7 @@ export const DaoDashboardPageContent: React.FC<IDaoDashboardPageContentProps> = 
                                 variant="tertiary"
                                 size="md"
                                 iconRight={IconType.CHEVRON_RIGHT}
-                                href={`/dao/${dao?.permalink}/assets`}
+                                href={`/dao/${dao?.id}/assets`}
                             >
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>

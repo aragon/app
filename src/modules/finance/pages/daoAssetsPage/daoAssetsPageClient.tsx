@@ -6,18 +6,18 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AssetList } from '../../components/assetList';
 
-export interface IDaoAssetsPageContentProps {
+export interface IDaoAssetsPageClientProps {
     /**
      * DAO page parameters.
      */
-    slug: string;
+    id: string;
 }
 
-export const DaoAssetsPageContent: React.FC<IDaoAssetsPageContentProps> = (props) => {
-    const { slug } = props;
+export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) => {
+    const { id } = props;
     const { t } = useTranslations();
 
-    const useDaoParams = { slug };
+    const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
     return (

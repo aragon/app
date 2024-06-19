@@ -6,18 +6,18 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
-export interface IDaoTransactionsPageContentProps {
+export interface IDaoTransactionsPageClientProps {
     /**
      * DAO page parameters.
      */
-    slug: string;
+    id: string;
 }
 
-export const DaoTransactionsPageContent: React.FC<IDaoTransactionsPageContentProps> = (props) => {
-    const { slug } = props;
+export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps> = (props) => {
+    const { id } = props;
     const { t } = useTranslations();
 
-    const useDaoParams = { slug };
+    const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
     return (

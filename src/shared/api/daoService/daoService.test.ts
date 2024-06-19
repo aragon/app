@@ -10,7 +10,7 @@ describe('dao service', () => {
 
     it('getDao fetches the specified DAO', async () => {
         const dao = generateDao();
-        const params = { urlParams: { slug: 'dao-test' } };
+        const params = { urlParams: { id: 'dao-test' } };
 
         requestSpy.mockResolvedValue(dao);
         const result = await daoService.getDao(params);

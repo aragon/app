@@ -4,7 +4,7 @@ export interface IDao {
     /**
      * Identifier of the DAO.
      */
-    permalink: string;
+    id: string;
     /**
      * Address of the DAO.
      */

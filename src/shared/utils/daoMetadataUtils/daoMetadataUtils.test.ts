@@ -13,12 +13,12 @@ describe('daoMetadata utils', () => {
     });
 
     describe('generateMetadata', () => {
-        it('fetches the DAO with the given slug and returns the relative title and description metadata', async () => {
-            const slug = 'eth-mainnet-my-dao';
+        it('fetches the DAO with the given id and returns the relative title and description metadata', async () => {
+            const id = 'eth-mainnet-my-dao';
             const dao = generateDao({ name: 'My DAO', description: 'Description' });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await daoMetadataUtils.generateMetadata({ params: { slug } });
+            const metadata = await daoMetadataUtils.generateMetadata({ params: { id } });
             expect(metadata.title).toEqual(dao.name);
             expect(metadata.description).toEqual(dao.description);
         });
@@ -29,7 +29,7 @@ describe('daoMetadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
-            const metadata = await daoMetadataUtils.generateMetadata({ params: { slug: 'test' } });
+            const metadata = await daoMetadataUtils.generateMetadata({ params: { id: 'test' } });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
             expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
         });
@@ -38,7 +38,7 @@ describe('daoMetadata utils', () => {
             const dao = generateDao({ avatar: undefined });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await daoMetadataUtils.generateMetadata({ params: { slug: 'test' } });
+            const metadata = await daoMetadataUtils.generateMetadata({ params: { id: 'test' } });
             expect(metadata.openGraph?.images).toBeUndefined();
         });
     });

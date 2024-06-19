@@ -2,7 +2,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     addressUtils,
     type IDefinitionListContainerProps,
-    type IDefinitionListItemProps,
+    IDefinitionListItemProps,
     type ILinkProps,
 } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';

@@ -11,7 +11,7 @@ describe('useDao query', () => {
     });
 
     it('fetches the specified DAO', async () => {
-        const params = { slug: 'test' };
+        const params = { id: 'test' };
         const dao = generateDao();
         daoServiceSpy.mockResolvedValue(dao);
         const { result } = renderHook(() => useDao({ urlParams: params }), { wrapper: ReactQueryWrapper });
