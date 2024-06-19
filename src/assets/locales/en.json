@@ -75,6 +75,19 @@
         }
       }
     },
+    "governance": {
+      "daoMembersPage": {
+        "main": {
+          "title": "Members"
+        },
+        "aside": {
+          "details": {
+            "title": "Details",
+            "blockchain": "Blockchain"
+          }
+        }
+      }
+    },
     "shared": {
       "page": {
         "header": {

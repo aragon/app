@@ -25,17 +25,16 @@ export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
+    const pluginIds = dao?.plugins.map((plugin) => plugin.type) ?? [];
 
-    return dao?.plugins.map((plugin) => (
+    return (
         <PluginComponent
-            key={plugin.address}
-            slotId={GovernanceSlotId.DAO_MEMBER_LIST}
-            // pluginId={plugin.type}
-            pluginId="multisig"
+            slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
+            pluginIds={pluginIds}
             daoId={daoId}
             hidePagination={hidePagination}
         >
             {children}
         </PluginComponent>
-    ));
+    );
 };

@@ -1,4 +1,4 @@
-import { pluginUtils, type PluginId, type SlotId } from '@/shared/utils/pluginUtils';
+import { pluginRegistryUtils, type PluginId, type SlotId } from '@/shared/utils/pluginRegistryUtils';
 
 export interface IPluginComponentProps {
     /**
@@ -6,9 +6,9 @@ export interface IPluginComponentProps {
      */
     slotId: SlotId;
     /**
-     * Plugin to load the component from.
+     * Plugin IDs to load the component from.
      */
-    pluginId: PluginId;
+    pluginIds: PluginId[];
     /**
      * Other properties passed to the loaded component.
      */
@@ -16,9 +16,11 @@ export interface IPluginComponentProps {
 }
 
 export const PluginComponent: React.FC<IPluginComponentProps> = (props) => {
-    const { slotId, pluginId, ...otherProps } = props;
+    const { slotId, pluginIds, ...otherProps } = props;
 
-    const LoadedComponent = pluginUtils.getSlotComponent({ slotId, pluginId });
+    const LoadedComponent = pluginIds
+        .map((pluginId) => pluginRegistryUtils.getSlotComponent({ slotId, pluginId }))
+        .find((component) => component != null);
 
     if (LoadedComponent == null) {
         return null;

@@ -14,15 +14,13 @@ export const navigationDaoLinks = (dao?: IDao): DaoRoutes[] => [
         label: 'app.application.navigationDao.link.proposals',
         link: `/dao/${dao?.id}/proposals`,
         icon: IconType.APP_PROPOSALS,
-        // TODO: remove comment when attribute is available
-        // hidden: !dao?.isSupported,
+        hidden: !dao?.isSupported,
     },
     {
         label: 'app.application.navigationDao.link.members',
         link: `/dao/${dao?.id}/members`,
         icon: IconType.APP_MEMBERS,
-        // TODO: remove comment when attribute is available
-        // hidden: !dao?.isSupported,
+        hidden: !dao?.isSupported,
     },
     {
         label: 'app.application.navigationDao.link.assets',
