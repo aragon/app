@@ -13,7 +13,9 @@ export type PluginComponent<TComponentProps = any> = ComponentType<TComponentPro
 // Record of slot components
 export type SlotComponents = Record<SlotId, Record<PluginId, PluginComponent>>;
 
-// Plugin registry (only slot components for the time being).
+/**
+ * Registry of all the plugin specific components and metadata
+ */
 export interface IPluginRegistry {
     /**
      * Registered slot components.

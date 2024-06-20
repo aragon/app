@@ -6,7 +6,7 @@ export interface IPluginComponentProps {
      */
     slotId: SlotId;
     /**
-     * Plugin IDs to load the component from.
+     * Plugin IDs to load the component from. The component renders only the first component slot found.
      */
     pluginIds: PluginId[];
     /**
