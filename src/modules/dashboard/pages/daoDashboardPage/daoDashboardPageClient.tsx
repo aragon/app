@@ -15,6 +15,8 @@ export interface IDaoDashboardPageClientProps {
     id: string;
 }
 
+const dashboardMembersCount = 6;
+
 export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (props) => {
     const { id } = props;
 
@@ -30,6 +32,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     ];
 
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
+
+    const memberListParams = { queryParams: { daoId: id, pageSize: dashboardMembersCount } };
 
     return (
         <>
@@ -65,7 +69,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                     </Page.Section>
                     {dao?.isSupported && (
                         <Page.Section title={t('app.dashboard.daoDashboardPage.main.members.title')}>
-                            <DaoMemberList daoId={id} hidePagination={true}>
+                            <DaoMemberList initialParams={memberListParams} daoId={id} hidePagination={true}>
                                 <Button
                                     className="self-start"
                                     variant="tertiary"

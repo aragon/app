@@ -30,7 +30,7 @@ export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
-    const pluginIds = dao?.plugins.map((plugin) => plugin.type) ?? [];
+    const pluginIds = dao?.plugins.map((plugin) => plugin.subdomain) ?? [];
 
     return (
         <PluginComponent slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST} pluginIds={pluginIds} {...otherProps} />

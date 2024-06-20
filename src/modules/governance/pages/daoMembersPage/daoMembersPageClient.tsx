@@ -12,15 +12,19 @@ export interface IDaoMembersPageClientProps {
     daoId: string;
 }
 
+const daoMembersCount = 9;
+
 export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
 
+    const memberListParams = { queryParams: { daoId, pageSize: daoMembersCount } };
+
     return (
         <>
             <Page.Main title={t('app.governance.daoMembersPage.main.title')}>
-                <DaoMemberList daoId={daoId} />
+                <DaoMemberList initialParams={memberListParams} daoId={daoId} />
             </Page.Main>
             <Page.Aside>
                 <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')}>
