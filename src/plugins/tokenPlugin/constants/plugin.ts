@@ -1,4 +1,4 @@
-import type { IPlugin } from '@/shared/utils/pluginUtils';
+import type { IPlugin } from '@/shared/utils/pluginRegistryUtils';
 
 export const plugin: IPlugin = {
     id: 'tokenVoting',
