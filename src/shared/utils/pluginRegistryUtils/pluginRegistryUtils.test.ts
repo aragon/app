@@ -34,11 +34,25 @@ describe('pluginRegistry utils', () => {
         expect(pluginRegistryUtils.getSlotComponent({ slotId, pluginId })).toEqual(secondComponent);
     });
 
-    it('returns undefined when no component is registered for the given slot and plugin ids', () => {
+    it('returns undefined when no component is registered for the given plugin id', () => {
         const slotId = 'slot-id';
         const registeredPluginId = 'multisig';
         const unregisteredPluginId = 'tokenVoting';
         pluginRegistryUtils.registerSlotComponent({ slotId, pluginId: registeredPluginId, component: () => null });
         expect(pluginRegistryUtils.getSlotComponent({ slotId, pluginId: unregisteredPluginId })).toBeUndefined();
+    });
+
+    it('returns undefined when no component is registered for the given slot id', () => {
+        const registeredSlotId = 'member-list';
+        const unregisteredSlotId = 'settings';
+        const pluginId = 'tokenVoting';
+        pluginRegistryUtils.registerSlotComponent({
+            slotId: registeredSlotId,
+            pluginId: pluginId,
+            component: () => null,
+        });
+        expect(
+            pluginRegistryUtils.getSlotComponent({ slotId: unregisteredSlotId, pluginId: pluginId }),
+        ).toBeUndefined();
     });
 });
