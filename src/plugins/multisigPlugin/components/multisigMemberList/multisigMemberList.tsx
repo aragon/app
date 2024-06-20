@@ -1,22 +1,29 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
+import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
 
 export interface IMultisigMemberListProps extends IDaoMemberListProps {}
 
 export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) => {
-    const { daoId, hidePagination, children } = props;
+    const { initialParams, hidePagination, children } = props;
 
-    const memberListQueryParams = { daoId };
-    const { data: memberListData, isLoading, fetchNextPage } = useMemberList({ queryParams: memberListQueryParams });
+    const {
+        data: memberListData,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+        fetchNextPage,
+    } = useMemberList(initialParams);
 
     const memberList = memberListData?.pages.flatMap((page) => page.data);
+    const dataListState = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
     return (
         <DataListRoot
             entityLabel="Members"
             onLoadMore={fetchNextPage}
-            state={isLoading ? 'fetchingNextPage' : 'idle'}
+            state={dataListState}
             pageSize={memberListData?.pages[0].metadata.pageSize}
             itemsCount={memberListData?.pages[0].metadata.totalRecords}
         >

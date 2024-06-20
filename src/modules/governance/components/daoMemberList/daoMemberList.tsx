@@ -3,11 +3,16 @@
 import { useDao } from '@/shared/api/daoService';
 import { PluginComponent } from '@/shared/components/pluginComponent';
 import type { ReactNode } from 'react';
+import type { IGetMemberListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoMemberListProps {
     /**
-     * ID of the DAO.
+     * Initial parameters to use for fetching the member list.
+     */
+    initialParams: IGetMemberListParams;
+    /**
+     * ID of the DAO to display the members for.
      */
     daoId: string;
     /**
@@ -21,20 +26,13 @@ export interface IDaoMemberListProps {
 }
 
 export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
-    const { daoId, hidePagination, children } = props;
+    const { daoId, ...otherProps } = props;
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
     const pluginIds = dao?.plugins.map((plugin) => plugin.type) ?? [];
 
     return (
-        <PluginComponent
-            slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
-            pluginIds={pluginIds}
-            daoId={daoId}
-            hidePagination={hidePagination}
-        >
-            {children}
-        </PluginComponent>
+        <PluginComponent slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST} pluginIds={pluginIds} {...otherProps} />
     );
 };

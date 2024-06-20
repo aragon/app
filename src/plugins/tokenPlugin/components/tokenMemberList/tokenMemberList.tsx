@@ -1,5 +1,6 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
+import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
 import type { ITokenMember } from '../../types/tokenMember';
 import { TokenMemberListItem } from './tokenMemberListItem';
@@ -7,22 +8,24 @@ import { TokenMemberListItem } from './tokenMemberListItem';
 export interface ITokenMemberListProps extends IDaoMemberListProps {}
 
 export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
-    const { daoId, hidePagination, children } = props;
+    const { initialParams, hidePagination, children } = props;
 
-    const memberListQueryParams = { daoId };
     const {
         data: memberListData,
-        isLoading,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
         fetchNextPage,
-    } = useMemberList<ITokenMember>({ queryParams: memberListQueryParams });
+    } = useMemberList<ITokenMember>(initialParams);
 
     const memberList = memberListData?.pages.flatMap((page) => page.data);
+    const dataListState = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
     return (
         <DataListRoot
             entityLabel="Members"
             onLoadMore={fetchNextPage}
-            state={isLoading ? 'fetchingNextPage' : 'idle'}
+            state={dataListState}
             pageSize={memberListData?.pages[0].metadata.pageSize}
             itemsCount={memberListData?.pages[0].metadata.totalRecords}
         >
