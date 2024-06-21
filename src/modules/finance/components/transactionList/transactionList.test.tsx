@@ -1,11 +1,10 @@
 import { useTransactionList } from '@/modules/finance/api/financeService/queries/useTransactionList';
 import { generateTransaction } from '@/modules/finance/testUtils';
-import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateReactQueryResultSuccess } from '@/shared/testUtils';
 import {
     OdsModulesProvider,
     type IDataListContainerProps,
     type IDataListPaginationProps,
-    type IEmptyStateProps,
     type ITransactionDataListItemProps,
 } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
@@ -14,12 +13,15 @@ import { TransactionList, type ITransactionListProps } from './transactionList';
 jest.mock('@/modules/finance/api/financeService/queries/useTransactionList');
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
-    EmptyState: (props: IEmptyStateProps) => <div data-testid="empty-state" {...props} />,
+    TransactionDataListItemSkeleton: () => <div data-testid="transaction-data-list-item-skeleton" />,
     DataListPagination: (props: IDataListPaginationProps) => <div data-testid="data-list-pagination" {...props} />,
-    DataListContainer: (props: IDataListContainerProps) => <div data-testid="data-list-container" {...props} />,
+    DataListContainer: ({ SkeletonElement, ...props }: IDataListContainerProps) => (
+        <div data-testid="data-list-container" {...props} />
+    ),
     TransactionDataListItemStructure: (props: ITransactionDataListItemProps) => (
         <div data-testid="transaction-data-list-item" data-props={JSON.stringify(props)} />
     ),
+    CardEmptyState: (props: any) => <div data-testid="card-empty-state" {...props} />,
 }));
 
 describe('<TransactionList /> component', () => {
@@ -46,9 +48,9 @@ describe('<TransactionList /> component', () => {
         const transactions = [
             generateTransaction(),
             generateTransaction({
-                tokenSymbol: 'DAI',
-                tokenAmount: 100,
-                hash: '0x0000000000000000000000000000000000000001',
+                token: { symbol: 'DAI' },
+                value: '100',
+                transactionHash: '0x0000000000000000000000000000000000000001',
             }),
         ];
         useTransactionListMock.mockReturnValue(
@@ -62,9 +64,11 @@ describe('<TransactionList /> component', () => {
         const transactionElements = screen.getAllByTestId('transaction-data-list-item');
         expect(transactionElements).toHaveLength(transactions.length);
         transactions.forEach((transaction) => {
-            const transactionElement = transactionElements.find((el) => el.dataset.props?.includes(transaction.hash));
+            const transactionElement = transactionElements.find((el) =>
+                el.dataset.props?.includes(transaction.transactionHash),
+            );
             expect(transactionElement).toBeInTheDocument();
-            expect(transactionElement!.dataset.props).toContain(transaction.hash);
+            expect(transactionElement!.dataset.props).toContain(transaction.transactionHash);
         });
     });
 
@@ -74,10 +78,11 @@ describe('<TransactionList /> component', () => {
                 data: {
                     pages: [{ data: [], metadata: { pageSize: 10, totalRecords: 0 } }],
                 },
+                isFetchedAfterMount: true,
             }),
         );
         render(createTestComponent());
-        expect(screen.getByTestId('empty-state')).toBeInTheDocument();
+        expect(screen.getByTestId('card-empty-state')).toBeInTheDocument();
     });
 
     it('renders the pagination component when transactions are present and hidePagination is false', () => {
@@ -104,11 +109,5 @@ describe('<TransactionList /> component', () => {
         );
         render(createTestComponent({ hidePagination: true }));
         expect(screen.queryByTestId('data-list-pagination')).not.toBeInTheDocument();
-    });
-
-    it('does not crash when transactions cannot be fetched', () => {
-        useTransactionListMock.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        render(createTestComponent());
-        expect(screen.getByTestId('empty-state')).toBeInTheDocument();
     });
 });

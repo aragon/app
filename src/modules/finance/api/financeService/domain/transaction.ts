@@ -16,25 +16,22 @@ export const transactionTypeToDataListType: Record<TransactionType, DataListTran
 };
 
 interface Token {
-  address: string;
-  symbol: string;
-  name: string;
-  type: string;
-  logo: string | null;
+  address?: string;
+  symbol?: string;
+  name?: string;
+  type?: string;
+  logo?: string | null;
 }
 
 export interface ITransaction {
   // awaiting chainId from backend to include type, required
+  network?: string;
   blockNumber?: number;
   blockTimestamp?: number;
-  category?: string;
-  daoAddress?: string;
   fromAddress?: string;
-  network?: string;
   toAddress?: string;
   token?: Token;
-  tokenAddress?: string;
-  transactionHash: `0x${string}`;
-  type: keyof typeof transactionTypeToDataListType;
   value?: string;
+  type: keyof typeof transactionTypeToDataListType;
+  transactionHash: `0x${string}`;
 }

@@ -42,8 +42,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
     } = useTransactionList({ queryParams: { address, network } });
 
     const transactionList = transactionListData?.pages.flatMap((page) => page.data);
-
-    console.log('single data', transactionList);
+    console.log('transactionList', transactionList);
 
     return (
         <DataListRoot
@@ -63,14 +62,14 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                             chainId={1}
                             hash={transaction.transactionHash}
                             key={transaction.transactionHash}
-                            // TODO: needs to updated when block timestamp & formatter is available
+                            // TODO: needs to updated when formatter is available
                             date={new Date(transaction.blockTimestamp! * 1000).toLocaleString()}
                             type={transactionTypeToDataListType[transaction.type]}
                             status={TransactionStatus.SUCCESS}
                             tokenSymbol={transaction.token?.symbol ?? ''}
                             tokenAmount={transaction.value}
+                            // TODO: needs to updated when backend pricing is available
                             tokenPrice={0}
-                            tokenAddress={transaction.tokenAddress}
                         />
                     ))}
                 {transactionList && transactionList.length === 0 && isFetchedAfterMount && (
