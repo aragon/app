@@ -25,7 +25,7 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     return (
         <Page.Container queryClient={queryClient}>
             <Page.Content>
-                <DaoMembersPageClient daoId={params.id} initialParams={memberListParams} />
+                <DaoMembersPageClient initialParams={memberListParams} />
             </Page.Content>
         </Page.Container>
     );

@@ -12,10 +12,6 @@ export interface IDaoMemberListProps {
      */
     initialParams: IGetMemberListParams;
     /**
-     * ID of the DAO to display the members for.
-     */
-    daoId: string;
-    /**
      * Hides the pagination when set to true.
      */
     hidePagination?: boolean;
@@ -26,13 +22,18 @@ export interface IDaoMemberListProps {
 }
 
 export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
-    const { daoId, ...otherProps } = props;
+    const { initialParams, ...otherProps } = props;
 
-    const useDaoParams = { id: daoId };
+    const useDaoParams = { id: initialParams.queryParams.daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
     const pluginIds = dao?.plugins.map((plugin) => plugin.subdomain) ?? [];
 
     return (
-        <PluginComponent slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST} pluginIds={pluginIds} {...otherProps} />
+        <PluginComponent
+            slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
+            pluginIds={pluginIds}
+            initialParams={initialParams}
+            {...otherProps}
+        />
     );
 };

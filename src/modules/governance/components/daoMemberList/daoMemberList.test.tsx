@@ -1,0 +1,5 @@
+describe('<DaoMemberList /> component', () => {
+    it('', () => {
+        //
+    });
+});
