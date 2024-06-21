@@ -26,7 +26,7 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
                 title={t('app.finance.daoTransactionsPage.main.title')}
                 action={{ label: t('app.finance.daoTransactionsPage.main.action') }}
             >
-                <TransactionList />
+                <TransactionList address={dao?.address} network={dao?.network} />
             </Page.Main>
             <Page.Aside>
                 <FinanceDetailsList network={dao?.network} vaultAddress={dao?.address} ensAddress={dao?.ens} />

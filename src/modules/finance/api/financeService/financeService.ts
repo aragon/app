@@ -1,7 +1,7 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IBalance } from './domain';
 import type { IGetBalanceListParams } from './financeService.api';
-import { balanceListMock, transactionListMock } from './financeServiceMocks';
+import { balanceListMock } from './financeServiceMocks';
 import { type ITransaction } from '@/modules/finance/api/financeService/domain/transaction';
 
 class FinanceService extends AragonBackendService {
@@ -23,9 +23,6 @@ class FinanceService extends AragonBackendService {
     };
 
     getTransactionList = async ({ queryParams }: IGetBalanceListParams): Promise<IPaginatedResponse<ITransaction>> => {
-        if (this.mock) {
-            return transactionListMock;
-        }
 
         const result = await this.request<IPaginatedResponse<ITransaction>>(this.urls.transactionList, { queryParams });
 

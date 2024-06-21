@@ -1,8 +1,7 @@
-import { type ITransaction } from '@/modules/finance/api/financeService/domain/transaction';
+import { type TransactionType, type ITransaction } from '@/modules/finance/api/financeService/domain/transaction';
 
 export const generateTransaction = (transaction?: Partial<ITransaction>): ITransaction => ({
-      chainId: 1,
-      date: 'Unknown',
-      hash: '0x0000000000000000000000000000000000000000',
+      transactionHash: '0x0000000000000000000000000000000000000000',
+      type: 'deposit' as TransactionType,
     ...transaction,
 });
