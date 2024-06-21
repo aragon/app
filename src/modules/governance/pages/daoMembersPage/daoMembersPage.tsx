@@ -11,19 +11,21 @@ export interface IDaoMembersPageProps {
     params: IDaoPageParams;
 }
 
+const daoMembersCount = 9;
+
 export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     const { params } = props;
 
     const queryClient = new QueryClient();
 
-    const memberListQueryParams = { daoId: params.id };
+    const memberListQueryParams = { daoId: params.id, pageSize: daoMembersCount };
     const memberListParams = { queryParams: memberListQueryParams };
     await queryClient.prefetchInfiniteQuery(memberListOptions(memberListParams));
 
     return (
         <Page.Container queryClient={queryClient}>
             <Page.Content>
-                <DaoMembersPageClient daoId={params.id} />
+                <DaoMembersPageClient daoId={params.id} initialParams={memberListParams} />
             </Page.Content>
         </Page.Container>
     );

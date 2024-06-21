@@ -86,6 +86,16 @@
             "blockchain": "Blockchain"
           }
         }
+      },
+      "daoMemberList": {
+        "empty": {
+          "title": "No members found",
+          "description": "DAO has currently no members"
+        },
+        "error": {
+          "title": "Error loading members",
+          "description": "There was an error loading the DAO members, try again later."
+        }
       }
     },
     "shared": {

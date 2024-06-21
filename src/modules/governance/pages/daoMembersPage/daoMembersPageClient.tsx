@@ -3,6 +3,7 @@
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionListContainer, DefinitionListItem } from '@aragon/ods';
+import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
 
 export interface IDaoMembersPageClientProps {
@@ -10,21 +11,21 @@ export interface IDaoMembersPageClientProps {
      * ID of the DAO to display the members for.
      */
     daoId: string;
+    /**
+     * Initial parameters to use to fetch the DAO member list.
+     */
+    initialParams: IGetMemberListParams;
 }
 
-const daoMembersCount = 9;
-
 export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, initialParams } = props;
 
     const { t } = useTranslations();
-
-    const memberListParams = { queryParams: { daoId, pageSize: daoMembersCount } };
 
     return (
         <>
             <Page.Main title={t('app.governance.daoMembersPage.main.title')}>
-                <DaoMemberList initialParams={memberListParams} daoId={daoId} />
+                <DaoMemberList initialParams={initialParams} daoId={daoId} />
             </Page.Main>
             <Page.Aside>
                 <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')}>
