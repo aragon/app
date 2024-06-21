@@ -79,7 +79,11 @@
       },
       
       "transactionList": {
-        "entity": "Transactions"
+        "entity": "Transactions",
+        "emptyState" : {
+          "heading": "No transactions found",
+          "description": "This will show the DAO's onchain actions when available."
+        }
       },
       "daoTransactionsPage": {
         "main": {
