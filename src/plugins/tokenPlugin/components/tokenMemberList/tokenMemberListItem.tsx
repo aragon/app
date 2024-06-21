@@ -13,14 +13,13 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
     const { member } = props;
 
     // TODO: use DAO token decimals
-    const formattedVotingPower = formatEther(BigInt(member.votingPower));
+    const parsedVotingPower = formatEther(BigInt(member.votingPower));
 
     return (
         <MemberDataListItem.Structure
             key={member.address}
             address={member.address}
-            // TODO: update member data list item component to support string
-            votingPower={Number(formattedVotingPower)}
+            votingPower={parsedVotingPower}
             ensName={member.ens ?? undefined}
             className="min-w-0"
         />
