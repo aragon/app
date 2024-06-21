@@ -98,6 +98,20 @@
         }
       }
     },
+    "plugins": {
+      "token": {
+        "membersPageDetails": {
+          "eligibleMembers": "Eligible members",
+          "members": "Token holders"
+        }
+      },
+      "multisig": {
+        "membersPageDetails": {
+          "eligibleMembers": "Eligible members",
+          "members": "Multisig members"
+        }
+      }
+    },
     "shared": {
       "page": {
         "header": {

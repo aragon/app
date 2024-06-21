@@ -1,7 +1,7 @@
 'use client';
 
-import { useDao } from '@/shared/api/daoService';
 import { PluginComponent } from '@/shared/components/pluginComponent';
+import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import type { ReactNode } from 'react';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -23,10 +23,7 @@ export interface IDaoMemberListProps {
 
 export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
     const { initialParams, ...otherProps } = props;
-
-    const useDaoParams = { id: initialParams.queryParams.daoId };
-    const { data: dao } = useDao({ urlParams: useDaoParams });
-    const pluginIds = dao?.plugins.map((plugin) => plugin.subdomain) ?? [];
+    const pluginIds = useDaoPluginIds(initialParams.queryParams.daoId);
 
     return (
         <PluginComponent

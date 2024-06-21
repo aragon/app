@@ -1,10 +1,12 @@
 'use client';
 
 import { Page } from '@/shared/components/page';
+import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DefinitionListContainer, DefinitionListItem } from '@aragon/ods';
+import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoMembersPageClientProps {
     /**
@@ -17,6 +19,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
     const { initialParams } = props;
 
     const { t } = useTranslations();
+    const pluginIds = useDaoPluginIds(initialParams.queryParams.daoId);
 
     return (
         <>
@@ -25,11 +28,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
             </Page.Main>
             <Page.Aside>
                 <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')}>
-                    <DefinitionListContainer>
-                        <DefinitionListItem term={t('app.governance.daoMembersPage.aside.details.blockchain')}>
-                            <p className="text-neutral-500">Ethereum Mainnet</p>
-                        </DefinitionListItem>
-                    </DefinitionListContainer>
+                    <PluginComponent slotId={GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS} pluginIds={pluginIds} />
                 </Page.Section>
             </Page.Aside>
         </>

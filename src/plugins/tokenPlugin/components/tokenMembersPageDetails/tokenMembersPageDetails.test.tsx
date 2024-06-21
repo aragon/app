@@ -1,0 +1,5 @@
+describe('<TokenMemberPageDetails /> component', () => {
+    it('', () => {
+        //
+    });
+});

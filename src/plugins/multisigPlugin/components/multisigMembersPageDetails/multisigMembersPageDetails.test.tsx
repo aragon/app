@@ -1,0 +1,5 @@
+describe('<MultisigMemberPageDetails /> component', () => {
+    it('', () => {
+        //
+    });
+});
