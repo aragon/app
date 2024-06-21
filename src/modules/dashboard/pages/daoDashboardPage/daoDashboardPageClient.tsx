@@ -5,6 +5,7 @@ import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { Button, DaoAvatar, DefinitionList, Dropdown, IconType, Link, addressUtils } from '@aragon/ods';
 
@@ -34,6 +35,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
     const memberListParams = { queryParams: { daoId: id, pageSize: dashboardMembersCount } };
+
+    const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
     return (
         <>
@@ -67,7 +70,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </Button>
                         </AssetList>
                     </Page.Section>
-                    {dao?.isSupported && (
+                    {hasSupportedPlugins && (
                         <Page.Section title={t('app.dashboard.daoDashboardPage.main.members.title')}>
                             <DaoMemberList initialParams={memberListParams} daoId={id} hidePagination={true}>
                                 <Button

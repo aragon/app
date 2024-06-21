@@ -1,6 +1,6 @@
 import { MemberDataListItem } from '@aragon/ods';
 import { formatEther } from 'viem';
-import type { ITokenMember } from '../../types/tokenMember';
+import type { ITokenMember } from '../../types';
 
 export interface ITokenMemberListItemProps {
     /**

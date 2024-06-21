@@ -4,7 +4,7 @@ import { TokenMemberList } from './components/tokenMemberList';
 import { plugin } from './constants/plugin';
 
 export const initialiseTokenPlugin = () => {
-    pluginRegistryUtils.registerSlotComponent({
+    pluginRegistryUtils.registerPlugin(plugin).registerSlotComponent({
         slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
         pluginId: plugin.id,
         component: TokenMemberList,

@@ -1,7 +1,7 @@
 import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
-import type { ITokenMember } from '../../types/tokenMember';
+import type { ITokenMember } from '../../types';
 import { TokenMemberListItem } from './tokenMemberListItem';
 
 export interface ITokenMemberListProps extends IDaoMemberListProps {}
@@ -24,7 +24,9 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
                 SkeletonElement={MemberDataListItem.Skeleton}
                 emptyState={emptyState}
                 errorState={errorState}
-                layoutClassName="grid grid-cols-1 lg:grid-cols-3"
+                className={(memberList?.length ?? 0) > 0 && state !== 'error' ? 'grid grid-cols-1 lg:grid-cols-3' : ''}
+                // TODO: use the layoutClassName instead of conditional className
+                // layoutClassName='grid grid-cols-1 lg:grid-cols-3'
             >
                 {memberList?.map((member) => <TokenMemberListItem key={member.address} member={member} />)}
             </DataListContainer>

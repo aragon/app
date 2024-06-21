@@ -4,7 +4,7 @@ import { MultisigMemberList } from './components/multisigMemberList';
 import { plugin } from './constants/plugin';
 
 export const initialiseMultisigPlugin = () => {
-    pluginRegistryUtils.registerSlotComponent({
+    pluginRegistryUtils.registerPlugin(plugin).registerSlotComponent({
         slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
         pluginId: plugin.id,
         component: MultisigMemberList,
