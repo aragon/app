@@ -30,15 +30,13 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 <DefinitionList.Item term={t('app.finance.detailsList.vaultAddress')}>
                     <Link iconRight={IconType.LINK_EXTERNAL}>{addressUtils.truncateAddress(vaultAddress)}</Link>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.finance.detailsList.vaultEns')}>
-                    {ensAddress ? (
+                {ensAddress && (
+                    <DefinitionList.Item term={t('app.finance.detailsList.vaultEns')}>
                         <Link href="#" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                             {ensAddress}
                         </Link>
-                    ) : (
-                        <p className="text-neutral-500">N/A</p>
-                    )}
-                </DefinitionList.Item>
+                    </DefinitionList.Item>
+                )}
             </DefinitionList.Container>
         </Page.Section>
     );
