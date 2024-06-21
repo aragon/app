@@ -4,7 +4,7 @@ export interface ITokenMember extends IMember {
     /**
      * Type of the member.
      */
-    type: 'tokenVoting';
+    type: 'token-voting';
     /**
      * Voting power of the member.
      */
