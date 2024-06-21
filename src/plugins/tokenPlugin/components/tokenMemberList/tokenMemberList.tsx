@@ -24,9 +24,7 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
                 SkeletonElement={MemberDataListItem.Skeleton}
                 emptyState={emptyState}
                 errorState={errorState}
-                className={(memberList?.length ?? 0) > 0 && state !== 'error' ? 'grid grid-cols-1 lg:grid-cols-3' : ''}
-                // TODO: use the layoutClassName instead of conditional className
-                // layoutClassName='grid grid-cols-1 lg:grid-cols-3'
+                layoutClassName="grid grid-cols-1 lg:grid-cols-3"
             >
                 {memberList?.map((member) => <TokenMemberListItem key={member.address} member={member} />)}
             </DataListContainer>

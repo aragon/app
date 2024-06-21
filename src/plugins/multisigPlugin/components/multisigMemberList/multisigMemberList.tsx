@@ -20,9 +20,7 @@ export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) =>
         >
             <DataListContainer
                 SkeletonElement={MemberDataListItem.Skeleton}
-                className={(memberList?.length ?? 0) > 0 && state !== 'error' ? 'grid grid-cols-1 lg:grid-cols-3' : ''}
-                // TODO: use the layoutClassName instead of conditional className
-                // layoutClassName='grid grid-cols-1 lg:grid-cols-3'
+                layoutClassName="grid grid-cols-1 lg:grid-cols-3"
                 errorState={errorState}
                 emptyState={emptyState}
             >

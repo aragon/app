@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/ods": "npm:^1.0.33"
+    "@aragon/ods": "npm:^1.0.34"
     "@next/bundle-analyzer": "npm:^14.2.4"
     "@tailwindcss/typography": "npm:^0.5.13"
     "@tanstack/react-query": "npm:^5.45.1"
@@ -94,9 +94,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/ods@npm:^1.0.33":
-  version: 1.0.33
-  resolution: "@aragon/ods@npm:1.0.33"
+"@aragon/ods@npm:^1.0.34":
+  version: 1.0.34
+  resolution: "@aragon/ods@npm:1.0.34"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.1.0"
     "@radix-ui/react-alert-dialog": "npm:^1.0.0"
@@ -126,13 +126,13 @@ __metadata:
     tiptap-markdown: "npm:^0.8.10"
   peerDependencies:
     "@tailwindcss/typography": ^0.5.0
-    "@tanstack/react-query": ^5.39.0
+    "@tanstack/react-query": ^5.45.0
     react: ^18.2.0
     react-dom: ^18.2.0
     tailwindcss: ^3.4.0
-    viem: ^2.13.0
-    wagmi: ^2.9.0
-  checksum: 10c0/b4fdda16aa98fdfd5d347f145d314d8fd9b9fb3c3debd78cb47a3452a8524785613ed968395bc28a6e9137214934f7af305f73a918e4ffd1a73d92a10392f195
+    viem: ^2.14.0
+    wagmi: ^2.10.0
+  checksum: 10c0/262a1429322156e4775e300cebc1f5a21bb9d24ee8422f5fbdb62f81bfc750b06a7c6055ba441471f5a5788fce451b75c7b2bf548ad5315a54cd10a7b172d622
   languageName: node
   linkType: hard
 
