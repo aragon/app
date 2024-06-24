@@ -11,7 +11,7 @@ export interface IDaoMembersPageProps {
     params: IDaoPageParams;
 }
 
-const daoMembersCount = 9;
+export const daoMembersCount = 9;
 
 export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     const { params } = props;
