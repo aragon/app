@@ -17,11 +17,6 @@ export const useTransactionListData = (params: IGetTransactionListParams) => {
     const transactionList = transactionListData?.pages.flatMap((page) => page.data);
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
-    console.log('status', status);
-    console.log('fetchStatus', fetchStatus);
-
-    console.log('state', state);
-
     const pageSize = transactionListData?.pages[0].metadata.pageSize;
     const itemsCount = transactionListData?.pages[0].metadata.totalRecords;
 
