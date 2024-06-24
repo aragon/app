@@ -1,7 +1,7 @@
 'use client';
 
-import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList/financeDetailsList';
-import { TransactionList } from '@/modules/finance/components/transactionList/transactionList';
+import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList';
+import { TransactionList } from '@/modules/finance/components/transactionList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -22,14 +22,11 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
 
     return (
         <Page.Content>
-            <Page.Main
-                title={t('app.finance.daoTransactionsPage.main.title')}
-                action={{ label: t('app.finance.daoTransactionsPage.main.action') }}
-            >
+            <Page.Main title={t('app.finance.daoTransactionsPage.main.title')}>
                 <TransactionList address={dao?.address} network={dao?.network} />
             </Page.Main>
             <Page.Aside>
-                <FinanceDetailsList network={dao?.network} vaultAddress={dao?.address} ensAddress={dao?.ens} />
+                <FinanceDetailsList dao={dao} />
             </Page.Aside>
         </Page.Content>
     );

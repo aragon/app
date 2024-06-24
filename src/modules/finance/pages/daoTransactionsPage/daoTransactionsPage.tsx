@@ -1,12 +1,14 @@
 import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList';
 import { Page } from '@/shared/components/page';
+import { type IDaoPageParams } from '@/shared/types';
 import { QueryClient } from '@tanstack/react-query';
 import { DaoTransactionsPageClient } from './daoTransactionsPageClient';
+
 export interface IDaoTransactionsPageProps {
     /**
      * DAO page parameters.
      */
-    params: { id: string };
+    params: IDaoPageParams;
 }
 
 export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (props) => {

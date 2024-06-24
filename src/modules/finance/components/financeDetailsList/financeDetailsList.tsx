@@ -1,3 +1,4 @@
+import { type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, DefinitionList, IconType, Link, type IDefinitionListContainerProps } from '@aragon/ods';
@@ -6,34 +7,27 @@ export interface IFinanceDetailsListProps extends IDefinitionListContainerProps 
     /**
      * Network name of the DAO.
      */
-    network?: string;
-    /**
-     * Vault address of the DAO.
-     */
-    vaultAddress?: string;
-    /**
-     * ENS address of the DAO.
-     */
-    ensAddress?: string | null;
+    dao?: IDao;
 }
 
 export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) => {
-    const { network, vaultAddress, ensAddress, ...otherProps } = props;
+    const { dao, ...otherProps } = props;
+    const { network, address: vaultAddress, ens: vaultEns } = dao ?? {};
     const { t } = useTranslations();
 
     return (
-        <Page.Section title={t('app.finance.detailsList.title')}>
+        <Page.Section title={t('app.finance.financeDetailsList.title')}>
             <DefinitionList.Container {...otherProps}>
-                <DefinitionList.Item term={t('app.finance.detailsList.blockchain')}>
-                    <p className="capitalize text-neutral-500">{network ?? 'Unknown Network'}</p>
+                <DefinitionList.Item term={t('app.finance.financeDetailsList.blockchain')}>
+                    <p className="text-neutral-500">{network}</p>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.finance.detailsList.vaultAddress')}>
+                <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultAddress')}>
                     <Link iconRight={IconType.LINK_EXTERNAL}>{addressUtils.truncateAddress(vaultAddress)}</Link>
                 </DefinitionList.Item>
-                {ensAddress && (
-                    <DefinitionList.Item term={t('app.finance.detailsList.vaultEns')}>
+                {vaultEns && (
+                    <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultEns')}>
                         <Link href="#" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                            {ensAddress}
+                            {vaultEns}
                         </Link>
                     </DefinitionList.Item>
                 )}

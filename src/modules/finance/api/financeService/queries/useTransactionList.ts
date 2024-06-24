@@ -4,7 +4,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { financeService } from '../financeService';
 import type {  IGetTransactionListParams } from '../financeService.api';
 import { financeServiceKeys } from '../financeServiceKeys';
-import type { ITransaction } from '@/modules/finance/api/financeService/domain/transaction';
+import type { ITransaction } from '../domain/';
 
 export const transactionListOptions = (
     params: IGetTransactionListParams,

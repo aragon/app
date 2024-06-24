@@ -1,27 +1,11 @@
+import { IAsset } from '@/modules/finance/api/financeService/domain/asset';
+import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum/transactionType';
 import { TransactionType as DataListTransactionType } from '@aragon/ods'
-
-export enum TransactionStatus {
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-}
-
-export enum TransactionType {
-  DEPOSIT = 'deposit',
-  WITHDRAW = 'withdraw',
-}
 
 export const transactionTypeToDataListType: Record<TransactionType, DataListTransactionType> = {
   withdraw: DataListTransactionType.WITHDRAW,
   deposit: DataListTransactionType.DEPOSIT,
 };
-
-interface Token {
-  address?: string;
-  symbol?: string;
-  name?: string;
-  type?: string;
-  logo?: string | null;
-}
 
 export interface ITransaction {
   // awaiting chainId from backend to include type, required
@@ -30,8 +14,8 @@ export interface ITransaction {
   blockTimestamp?: number;
   fromAddress?: string;
   toAddress?: string;
-  token?: Token;
+  token?: IAsset;
   value?: string;
-  type: keyof typeof transactionTypeToDataListType;
+  type: TransactionType;
   transactionHash: `0x${string}`;
 }

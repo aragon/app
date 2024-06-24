@@ -6,11 +6,11 @@ export interface IGetBalanceListParams extends IRequestQueryParams<IGetBalanceLi
 
 export interface IGetTransactionListQueryParams extends IPaginatedRequest {
     /**
-     * Address of the DAO.
+     * Address to fetch transaction history.
      */
     address?: string;
     /**
-     * Network of the DAO.
+     * Network of the address to fetch transaction history.
      */
     network?: string;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList/financeDetailsList';
+import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -8,7 +8,7 @@ import { AssetList } from '../../components/assetList';
 
 export interface IDaoAssetsPageClientProps {
     /**
-     * DAO page parameters.
+     * ID of the DAO.
      */
     id: string;
 }
@@ -29,7 +29,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                 <AssetList />
             </Page.Main>
             <Page.Aside>
-                <FinanceDetailsList network={dao?.network} vaultAddress={dao?.address} ensAddress={dao?.ens} />
+                <FinanceDetailsList dao={dao} />
             </Page.Aside>
         </Page.Content>
     );

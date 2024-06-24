@@ -1,24 +1,19 @@
 'use client';
 
-import { transactionTypeToDataListType } from '@/modules/finance/api/financeService/domain/transaction';
-import { useTransactionList } from '@/modules/finance/api/financeService/queries/useTransactionList';
+import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum';
+import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
-    CardEmptyState,
     DataListContainer,
     DataListPagination,
     DataListRoot,
-    TransactionDataListItemSkeleton,
-    TransactionDataListItemStructure,
+    TransactionType as DataListTransactionType,
+    TransactionDataListItem,
     TransactionStatus,
 } from '@aragon/ods';
 import { type ComponentProps } from 'react';
 
 export interface ITransactionListProps extends ComponentProps<'div'> {
-    /**
-     * If true, the pagination will be hidden.
-     */
-    hidePagination?: boolean;
     /**
      * ID of the DAO
      */
@@ -29,36 +24,38 @@ export interface ITransactionListProps extends ComponentProps<'div'> {
     network?: string;
 }
 
+export const transactionTypeToDataListType: Record<TransactionType, DataListTransactionType> = {
+    withdraw: DataListTransactionType.WITHDRAW,
+    deposit: DataListTransactionType.DEPOSIT,
+};
+
 export const TransactionList: React.FC<ITransactionListProps> = (props) => {
-    const { hidePagination, children, address, network, ...otherProps } = props;
+    const { children, address, network, ...otherProps } = props;
     const { t } = useTranslations();
 
-    const {
-        data: transactionListData,
-        fetchNextPage,
-        isLoading,
-        isFetchingNextPage,
-        isFetchedAfterMount,
-    } = useTransactionList({ queryParams: { address, network } });
+    const queryParams = { address, network };
 
-    const transactionList = transactionListData?.pages.flatMap((page) => page.data);
-    console.log('transactionList', transactionList);
+    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, transactionList } = useTransactionListData(
+        { queryParams },
+    );
 
     return (
         <DataListRoot
             entityLabel={t('app.finance.transactionList.entity')}
-            onLoadMore={fetchNextPage}
-            state={isLoading ? 'loading' : isFetchingNextPage ? 'fetchingNextPage' : 'idle'}
-            pageSize={transactionListData?.pages[0]?.metadata.pageSize}
-            itemsCount={transactionListData?.pages[0]?.metadata.totalRecords}
+            onLoadMore={onLoadMore}
+            state={state}
+            pageSize={pageSize}
+            itemsCount={itemsCount}
             {...otherProps}
         >
-            <DataListContainer SkeletonElement={() => <TransactionDataListItemSkeleton />}>
+            <DataListContainer
+                emptyState={emptyState}
+                errorState={errorState}
+                SkeletonElement={() => <TransactionDataListItem.Skeleton />}
+            >
                 {transactionList &&
-                    transactionList.length > 0 &&
-                    !isLoading &&
                     transactionList.map((transaction) => (
-                        <TransactionDataListItemStructure
+                        <TransactionDataListItem.Structure
                             chainId={1}
                             hash={transaction.transactionHash}
                             key={transaction.transactionHash}
@@ -72,16 +69,8 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                             tokenPrice={0}
                         />
                     ))}
-                {transactionList && transactionList.length === 0 && isFetchedAfterMount && (
-                    <CardEmptyState
-                        heading={t('app.finance.transactionList.emptyState.heading')}
-                        description={t('app.finance.transactionList.emptyState.description')}
-                        humanIllustration={{ body: 'BLOCKS', hairs: 'MIDDLE', expression: 'SURPRISED' }}
-                    />
-                )}
             </DataListContainer>
-            {transactionList && transactionList.length > 0 && !hidePagination && <DataListPagination />}
-            {children}
+            <DataListPagination />
         </DataListRoot>
     );
 };

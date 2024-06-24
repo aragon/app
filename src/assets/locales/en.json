@@ -71,18 +71,21 @@
           }
         }
       },
-      "detailsList": {
+      "financeDetailsList": {
         "title": "Details",
         "blockchain": "Blockchain",
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
       },
-      
       "transactionList": {
         "entity": "Transactions",
         "emptyState" : {
           "heading": "No transactions found",
           "description": "This will show the DAO's onchain actions when available."
+        },
+        "errorState" : {
+          "heading": "Error loading transactions",
+          "description": "There was an error loading the transactions. Please try again later."
         }
       },
       "daoTransactionsPage": {
