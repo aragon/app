@@ -8,8 +8,8 @@ export const MultisigMemberPageDetails: React.FC<IMultisigMembersPageDetailsProp
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.plugins.multisig.membersPageDetails.eligibleMembers')}>
-                <p className="text-neutral-500">{t('app.plugins.multisig.membersPageDetails.members')}</p>
+            <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersPageDetails.eligibleMembers')}>
+                <p className="text-neutral-500">{t('app.plugins.multisig.multisigMembersPageDetails.members')}</p>
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

@@ -8,8 +8,8 @@ export const TokenMembersPageDetails: React.FC<ITokenMembersPageDetailsProps> = 
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.plugins.token.membersPageDetails.eligibleMembers')}>
-                <p className="text-neutral-500">{t('app.plugins.token.membersPageDetails.members')}</p>
+            <DefinitionList.Item term={t('app.plugins.token.tokenMembersPageDetails.eligibleMembers')}>
+                <p className="text-neutral-500">{t('app.plugins.token.tokenMembersPageDetails.members')}</p>
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

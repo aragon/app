@@ -100,13 +100,19 @@
     },
     "plugins": {
       "token": {
-        "membersPageDetails": {
+        "tokenMemberList": {
+          "entity": "Members"
+        },
+        "tokenMembersPageDetails": {
           "eligibleMembers": "Eligible members",
           "members": "Token holders"
         }
       },
       "multisig": {
-        "membersPageDetails": {
+        "multisigMemberList": {
+          "entity": "Members"
+        },
+        "multisigMembersPageDetails": {
           "eligibleMembers": "Eligible members",
           "members": "Multisig members"
         }
