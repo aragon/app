@@ -3,6 +3,7 @@ import { DefinitionList } from '@aragon/ods';
 
 export interface ITokenMembersPageDetailsProps {}
 
+// TODO: implement full details (APP-3324)
 export const TokenMembersPageDetails: React.FC<ITokenMembersPageDetailsProps> = () => {
     const { t } = useTranslations();
 

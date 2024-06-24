@@ -3,6 +3,7 @@ import { DefinitionList } from '@aragon/ods';
 
 export interface IMultisigMembersPageDetailsProps {}
 
+// TODO: implement full details (APP-3324)
 export const MultisigMemberPageDetails: React.FC<IMultisigMembersPageDetailsProps> = () => {
     const { t } = useTranslations();
 
