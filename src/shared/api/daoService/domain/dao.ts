@@ -1,4 +1,5 @@
 import type { Network } from '@/shared/types';
+import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
 
 export interface IDao {
@@ -31,6 +32,10 @@ export interface IDao {
      */
     avatar: string | null;
     /**
+     * Total value locked of the DAO.
+     */
+    tvlUSD: string;
+    /**
      * Defines if the DAO is setup with plugins supported by the App or not.
      */
     isSupported: boolean;
@@ -38,4 +43,8 @@ export interface IDao {
      * Governance plugins of the DAO.
      */
     plugins: IDaoPlugin[];
+    /**
+     * Metrics of the DAO.
+     */
+    metrics: IDaoMetrics;
 }

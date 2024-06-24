@@ -7,7 +7,17 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { Button, DaoAvatar, DefinitionList, Dropdown, IconType, Link, addressUtils } from '@aragon/ods';
+import {
+    Button,
+    DaoAvatar,
+    DefinitionList,
+    Dropdown,
+    IconType,
+    Link,
+    NumberFormat,
+    addressUtils,
+    formatterUtils,
+} from '@aragon/ods';
 
 export interface IDaoDashboardPageClientProps {
     /**
@@ -26,10 +36,20 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
+    const proposalsCreated = formatterUtils.formatNumber(dao?.metrics.proposalsCreated, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+
+    const membersCount = formatterUtils.formatNumber(dao?.metrics.members, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+
+    const daoTvl = formatterUtils.formatNumber(dao?.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
+
     const stats = [
-        { value: '69', label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
-        { value: '420k', label: t('app.dashboard.daoDashboardPage.header.stat.members') },
-        { value: '42.69M', label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
+        { value: proposalsCreated, label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
+        { value: membersCount, label: t('app.dashboard.daoDashboardPage.header.stat.members') },
+        { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
     ];
 
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);

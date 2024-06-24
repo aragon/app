@@ -1,4 +1,5 @@
 export * from './dao';
+export * from './daoMetrics';
 export * from './daoPlugin';
 export * from './daoSettings';
 export * from './paginatedResponse';

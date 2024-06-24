@@ -4,7 +4,7 @@ export interface IOrderedRequest {
     /**
      * Property to use to order the response.
      */
-    orderProp?: string;
+    sort?: string;
     /**
      * Order direction.
      */
