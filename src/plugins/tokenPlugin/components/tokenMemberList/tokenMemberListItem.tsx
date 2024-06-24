@@ -12,7 +12,7 @@ export interface ITokenMemberListItemProps {
 export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) => {
     const { member } = props;
 
-    // TODO: use DAO token decimals
+    // TODO: use DAO token decimals (APP-3323)
     const parsedVotingPower = formatEther(BigInt(member.votingPower));
 
     return (
