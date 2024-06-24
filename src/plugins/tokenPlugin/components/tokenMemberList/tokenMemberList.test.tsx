@@ -1,7 +1,7 @@
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateTokenMember } from '../../testUtils/generators/tokenMember';
+import { generateTokenMember } from '../../testUtils';
 import { TokenMemberList, type ITokenMemberListProps } from './tokenMemberList';
 
 describe('<TokenMemberList /> component', () => {

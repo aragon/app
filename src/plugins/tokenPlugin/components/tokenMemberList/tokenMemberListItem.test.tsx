@@ -1,6 +1,6 @@
 import { DataList, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateTokenMember } from '../../testUtils/generators/tokenMember';
+import { generateTokenMember } from '../../testUtils';
 import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
 
 describe('<TokenMemberListItem /> component', () => {
