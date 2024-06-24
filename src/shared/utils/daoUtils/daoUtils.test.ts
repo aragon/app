@@ -61,5 +61,10 @@ describe('dao utils', () => {
             const dao = generateDao({ plugins: daoPlugins });
             expect(daoUtils.hasSupportedPlugins(dao)).toBeFalsy();
         });
+
+        it('returns false when dao parameter is not defined', () => {
+            listContainsRegisteredPluginsSpy.mockReturnValue(false);
+            expect(daoUtils.hasSupportedPlugins()).toBeFalsy();
+        });
     });
 });

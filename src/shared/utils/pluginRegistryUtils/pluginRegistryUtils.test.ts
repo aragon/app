@@ -88,5 +88,11 @@ describe('pluginRegistry utils', () => {
             pluginRegistryUtils.registerPlugin(plugins[0]).registerPlugin(plugins[1]);
             expect(pluginRegistryUtils.listContainsRegisteredPlugins(list)).toBeFalsy();
         });
+
+        it('returns false when list is not defined', () => {
+            const plugins = [generatePlugin({ id: '0' })];
+            pluginRegistryUtils.registerPlugin(plugins[0]);
+            expect(pluginRegistryUtils.listContainsRegisteredPlugins()).toBeFalsy();
+        });
     });
 });

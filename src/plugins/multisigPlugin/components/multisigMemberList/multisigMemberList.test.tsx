@@ -9,7 +9,7 @@ describe('<MultisigMemberList /> component', () => {
 
     beforeEach(() => {
         useMemberListDataSpy.mockReturnValue({
-            memberList: [],
+            memberList: undefined,
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,

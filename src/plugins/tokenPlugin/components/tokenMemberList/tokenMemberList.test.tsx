@@ -9,7 +9,7 @@ describe('<TokenMemberList /> component', () => {
 
     beforeEach(() => {
         useMemberListDataSpy.mockReturnValue({
-            memberList: [],
+            memberList: undefined,
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
@@ -36,7 +36,7 @@ describe('<TokenMemberList /> component', () => {
         );
     };
 
-    it.only('fetches and renders the token member list', () => {
+    it('fetches and renders the token member list', () => {
         const members = [
             generateTokenMember({ address: '0x123', votingPower: '472797978938797846531' }),
             generateTokenMember({ address: '0x456', ens: 'member-1', votingPower: '0' }),
