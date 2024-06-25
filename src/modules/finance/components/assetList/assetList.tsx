@@ -10,6 +10,7 @@ import {
     DataListRoot,
 } from '@aragon/ods';
 import type { ComponentProps } from 'react';
+import { formatUnits } from 'viem';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
     /**
@@ -57,7 +58,7 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                         key={asset.token.address}
                         name={asset.token.name}
                         symbol={asset.token.symbol}
-                        amount={Number(asset.amount) / 10 ** asset.token.decimals}
+                        amount={formatUnits(BigInt(asset.amount), asset.token.decimals)}
                         fiatPrice={asset.token.priceUsd}
                         logoSrc={asset.token.logo}
                         priceChange={Number(asset.token.priceChangeOnDayUsd)}
