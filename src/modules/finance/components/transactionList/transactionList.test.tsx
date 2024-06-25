@@ -29,7 +29,6 @@ describe('<TransactionList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITransactionListProps>) => {
         const completeProps: ITransactionListProps = {
-            hidePagination: false,
             ...props,
         };
 
@@ -48,7 +47,13 @@ describe('<TransactionList /> component', () => {
         const transactions = [
             generateTransaction(),
             generateTransaction({
-                token: { symbol: 'DAI' },
+                token: {
+                    name: 'DAI Coin',
+                    symbol: 'DAI',
+                    address: '0xDaiCoinAddress',
+                    network: 'ethereum-mainnet',
+                    logo: 'https://example.com/dai.png',
+                },
                 value: '100',
                 transactionHash: '0x0000000000000000000000000000000000000001',
             }),
@@ -83,31 +88,5 @@ describe('<TransactionList /> component', () => {
         );
         render(createTestComponent());
         expect(screen.getByTestId('card-empty-state')).toBeInTheDocument();
-    });
-
-    it('renders the pagination component when transactions are present and hidePagination is false', () => {
-        const transactions = [generateTransaction()];
-        useTransactionListMock.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: {
-                    pages: [{ data: transactions, metadata: { pageSize: 10, totalRecords: 1 } }],
-                },
-            }),
-        );
-        render(createTestComponent());
-        expect(screen.getByTestId('data-list-pagination')).toBeInTheDocument();
-    });
-
-    it('hides the pagination component when hidePagination is true', () => {
-        const transactions = [generateTransaction()];
-        useTransactionListMock.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: {
-                    pages: [{ data: transactions, metadata: { pageSize: 10, totalRecords: 1 } }],
-                },
-            }),
-        );
-        render(createTestComponent({ hidePagination: true }));
-        expect(screen.queryByTestId('data-list-pagination')).not.toBeInTheDocument();
     });
 });

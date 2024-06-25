@@ -12,7 +12,6 @@ export const transactionListOptions = (
 ): SharedInfiniteQueryOptions<IPaginatedResponse<ITransaction>, IGetTransactionListParams> => ({
     queryKey: financeServiceKeys.transactionList(params),
     initialPageParam: params,
-    enabled: params != null,
     queryFn: ({ pageParam }) => financeService.getTransactionList(pageParam),
     getNextPageParam: financeService.getNextPageParams,
     ...options,

@@ -2,6 +2,7 @@
 
 import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum';
 import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData';
+import { networkDefinitions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     DataListContainer,
@@ -53,22 +54,21 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                 errorState={errorState}
                 SkeletonElement={() => <TransactionDataListItem.Skeleton />}
             >
-                {transactionList &&
-                    transactionList.map((transaction) => (
-                        <TransactionDataListItem.Structure
-                            chainId={1}
-                            hash={transaction.transactionHash}
-                            key={transaction.transactionHash}
-                            // TODO: needs to updated when formatter is available
-                            date={new Date(transaction.blockTimestamp! * 1000).toLocaleString()}
-                            type={transactionTypeToDataListType[transaction.type]}
-                            status={TransactionStatus.SUCCESS}
-                            tokenSymbol={transaction.token?.symbol ?? ''}
-                            tokenAmount={transaction.value}
-                            // TODO: needs to updated when backend pricing is available
-                            tokenPrice={0}
-                        />
-                    ))}
+                {transactionList?.map((transaction) => (
+                    <TransactionDataListItem.Structure
+                        chainId={networkDefinitions[transaction.network].chainId}
+                        hash={transaction.transactionHash}
+                        key={transaction.transactionHash}
+                        // TODO: needs to updated when formatter is available [APP-3330]
+                        date={new Date(transaction.blockTimestamp! * 1000).toLocaleString()}
+                        type={transactionTypeToDataListType[transaction.type]}
+                        status={TransactionStatus.SUCCESS}
+                        tokenSymbol={transaction.token?.symbol}
+                        tokenAmount={transaction.value}
+                        // TODO: needs to updated when backend pricing is available [APP-3331]
+                        tokenPrice={0}
+                    />
+                ))}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>
