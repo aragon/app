@@ -5,6 +5,7 @@ import {
     OdsModulesProvider,
     type IDataListContainerProps,
     type IDataListPaginationProps,
+    type IEmptyStateProps,
     type ITransactionDataListItemProps,
 } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
@@ -21,7 +22,7 @@ jest.mock('@aragon/ods', () => ({
     TransactionDataListItemStructure: (props: ITransactionDataListItemProps) => (
         <div data-testid="transaction-data-list-item" data-props={JSON.stringify(props)} />
     ),
-    CardEmptyState: (props: any) => <div data-testid="card-empty-state" {...props} />,
+    CardEmptyState: (props: IEmptyStateProps) => <div data-testid="card-empty-state" {...props} />,
 }));
 
 describe('<TransactionList /> component', () => {

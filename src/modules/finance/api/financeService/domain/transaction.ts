@@ -1,6 +1,6 @@
 import { type IAsset } from '@/modules/finance/api/financeService/domain/asset';
 import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum/transactionType';
-import { Network } from '@/shared/api/daoService';
+import { type Network } from '@/shared/api/daoService';
 
 /**
  * Interface representing a cryptocurrency transaction.
