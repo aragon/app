@@ -1,4 +1,4 @@
-import { type IAsset } from '@/modules/finance/api/financeService/domain/asset';
+import { type IToken } from '@/modules/finance/api/financeService/domain/asset';
 import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum/transactionType';
 import { type Network } from '@/shared/api/daoService';
 
@@ -29,7 +29,7 @@ export interface ITransaction {
   /**
    * The token involved in the transaction.
    */
-  token?: IAsset;
+  token?: IToken;
   /**
    * The value of the transaction.
    */

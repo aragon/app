@@ -6,7 +6,7 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
 
 export const useAssetListData = (params: IGetAssetListParams) => {
     const { t } = useTranslations();
-    console.log('params:', params);
+    
     const {
         data: assetListData,
         status,

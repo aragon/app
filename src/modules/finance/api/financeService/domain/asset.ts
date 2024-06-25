@@ -1,4 +1,4 @@
-export interface Token {
+export interface IToken {
     address: string;
     decimals: number;
     logo: string;
@@ -14,6 +14,6 @@ export interface IAsset {
     amountUsd: string;
     daoAddress: string;
     network: string;
-    token: Token;
+    token: IToken;
     tokenAddress: string;
 }
