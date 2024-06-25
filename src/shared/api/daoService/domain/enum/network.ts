@@ -1,11 +1,17 @@
 export enum Network {
-  ETHEREUM_MAINNET = 'ETHEREUM_MAINNET',
-  ETHEREUM_SEPOLIA = 'ETHEREUM_SEPOLIA',
-  POLYGON_MAINNET = 'POLYGON_MAINNET',
+  ETHEREUM_MAINNET = 'ethereum-mainnet',
+  ETHEREUM_SEPOLIA = 'ethereum-sepolia',
+  POLYGON_MAINNET = 'polygon-mainnet',
 }
 
 export interface INetworkDefinition {
+  /**
+   * Chain ID of the network.
+   */
   chainId: number;
+  /**
+   * Name of the network.
+   */
   name: string;
 }
 
@@ -15,7 +21,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     name: 'Ethereum Mainnet',
   },
   [Network.ETHEREUM_SEPOLIA]: { 
-    chainId: 2,
+    chainId: 11155111,
     name: 'Ethereum Sepolia',
   },
   [Network.POLYGON_MAINNET]: { 

@@ -1,5 +1,4 @@
-import type { Network } from '@/shared/types';
-
+import { type Network } from "@/shared/api/daoService/domain/enum";
 export interface IDao {
     /**
      * Identifier of the DAO.
