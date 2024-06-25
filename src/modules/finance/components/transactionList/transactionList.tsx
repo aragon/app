@@ -56,7 +56,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
             >
                 {transactionList?.map((transaction) => (
                     <TransactionDataListItem.Structure
-                        chainId={networkDefinitions[transaction.network].chainId}
+                        chainId={networkDefinitions[transaction.network]?.chainId}
                         hash={transaction.transactionHash}
                         key={transaction.transactionHash}
                         // TODO: needs to updated when formatter is available [APP-3330]

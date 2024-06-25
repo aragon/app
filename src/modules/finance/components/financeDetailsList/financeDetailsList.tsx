@@ -1,4 +1,4 @@
-import { networkDefinitions, type IDao, type Network } from '@/shared/api/daoService';
+import { networkDefinitions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, IconType, Link, addressUtils, type IDefinitionListContainerProps } from '@aragon/ods';
@@ -19,7 +19,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
         <Page.Section title={t('app.finance.financeDetailsList.title')}>
             <DefinitionList.Container {...otherProps}>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.blockchain')}>
-                    <p className="text-neutral-500">{networkDefinitions[network as Network].name}</p>
+                    <p className="text-neutral-500">{networkDefinitions[network]?.name}</p>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultAddress')}>
                     <Link iconRight={IconType.LINK_EXTERNAL}>{addressUtils.truncateAddress(vaultAddress)}</Link>
