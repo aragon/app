@@ -1,2 +1,2 @@
-export { useBalanceList } from './useBalanceList';
+export { useAssetList } from './useAssetList';
 export { useTransactionList} from './useTransactionList'

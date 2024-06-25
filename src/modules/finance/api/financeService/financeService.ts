@@ -1,23 +1,16 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { IBalance } from './domain';
-import type { IGetBalanceListParams, IGetTransactionListParams } from './financeService.api';
-import { balanceListMock } from './financeServiceMocks';
+import type { IAsset } from './domain';
+import type { IGetAssetListParams, IGetTransactionListParams } from './financeService.api';
 import { type ITransaction } from '@/modules/finance/api/financeService/';
 
 class FinanceService extends AragonBackendService {
-    private mock = true;
-
     private urls = {
-        balanceList: '/balances',
+        balanceList: '/assets',
         transactionList: '/transactions'
     };
 
-    getBalanceList = async ({ queryParams }: IGetBalanceListParams): Promise<IPaginatedResponse<IBalance>> => {
-        if (this.mock) {
-            return balanceListMock;
-        }
-
-        const result = await this.request<IPaginatedResponse<IBalance>>(this.urls.balanceList, { queryParams });
+    getAssetList = async ({ queryParams }: IGetAssetListParams): Promise<IPaginatedResponse<IAsset>> => {
+        const result = await this.request<IPaginatedResponse<IAsset>>(this.urls.balanceList, { queryParams });
 
         return result;
     };

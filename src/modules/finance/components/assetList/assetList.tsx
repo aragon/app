@@ -1,11 +1,25 @@
 'use client';
 
+import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { AssetDataListItemStructure, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
+import {
+    AssetDataListItem,
+    AssetDataListItemStructure,
+    DataListContainer,
+    DataListPagination,
+    DataListRoot,
+} from '@aragon/ods';
 import type { ComponentProps } from 'react';
-import { useBalanceList } from '../../api/financeService';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
+    /**
+     * ID of the DAO
+     */
+    daoAddress?: string;
+    /**
+     * Network of the DAO
+     */
+    network?: string;
     /**
      * Hides the pagination component when set to true.
      */
@@ -13,31 +27,40 @@ export interface IAssetListProps extends ComponentProps<'div'> {
 }
 
 export const AssetList: React.FC<IAssetListProps> = (props) => {
-    const { hidePagination, children, ...otherProps } = props;
-
+    const { daoAddress, network, hidePagination, children, ...otherProps } = props;
     const { t } = useTranslations();
 
-    const { data: assetListData, fetchNextPage, isLoading } = useBalanceList({ queryParams: {} });
+    const queryParams = { daoAddress, network };
 
-    const assetList = assetListData?.pages.flatMap((page) => page.data);
+    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } = useAssetListData({
+        queryParams,
+    });
+
+    console.log('assetList:', assetList);
 
     return (
         <DataListRoot
             entityLabel={t('app.finance.assetList.entity')}
-            onLoadMore={fetchNextPage}
-            state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={assetListData?.pages[0].metadata.pageSize}
-            itemsCount={assetListData?.pages[0].metadata.totalRecords}
+            onLoadMore={onLoadMore}
+            state={state}
+            pageSize={pageSize}
+            itemsCount={itemsCount}
             {...otherProps}
         >
-            <DataListContainer>
+            <DataListContainer
+                SkeletonElement={AssetDataListItem.Skeleton}
+                emptyState={emptyState}
+                errorState={errorState}
+            >
                 {assetList?.map((asset) => (
                     <AssetDataListItemStructure
-                        key={asset.address}
-                        name={asset.name}
-                        symbol={asset.symbol}
-                        amount={asset.balance}
-                        logoSrc={asset.logo}
+                        key={asset.token.address}
+                        name={asset.token.name}
+                        symbol={asset.token.symbol}
+                        amount={Number(asset.amount) / 10 ** asset.token.decimals}
+                        fiatPrice={asset.token.priceUsd}
+                        logoSrc={asset.token.logo}
+                        priceChange={Number(asset.token.priceChangeOnDayUsd)}
                     />
                 ))}
             </DataListContainer>

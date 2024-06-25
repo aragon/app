@@ -1,20 +1,19 @@
 import { Page } from '@/shared/components/page';
-import { type IDaoPageParams } from '@/shared/types';
 import { QueryClient } from '@tanstack/react-query';
-import { balanceListOptions } from '../../api/financeService/queries/useBalanceList';
+import { assetListOptions } from '../../api/financeService/queries/useAssetList';
 import { DaoAssetsPageClient } from './daoAssetsPageClient';
 
 export interface IDaoAssetsPageProps {
     /**
      * DAO page parameters.
      */
-    params: IDaoPageParams;
+    params: { id: string };
 }
 
 export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
     const { params } = props;
     const queryClient = new QueryClient();
-    await queryClient.prefetchInfiniteQuery(balanceListOptions({ queryParams: {} }));
+    await queryClient.prefetchInfiniteQuery(assetListOptions({ queryParams: {} }));
 
     return (
         <Page.Container queryClient={queryClient}>

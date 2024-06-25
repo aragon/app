@@ -16,17 +16,13 @@ export interface IDaoAssetsPageClientProps {
 export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) => {
     const { id } = props;
     const { t } = useTranslations();
-
     const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
     return (
         <Page.Content>
-            <Page.Main
-                title={t('app.finance.daoAssetsPage.main.title')}
-                action={{ label: t('app.finance.daoAssetsPage.main.action') }}
-            >
-                <AssetList />
+            <Page.Main title={t('app.finance.daoAssetsPage.main.title')}>
+                <AssetList daoAddress={dao?.address} network={dao?.network} />
             </Page.Main>
             <Page.Aside>
                 <FinanceDetailsList dao={dao} />

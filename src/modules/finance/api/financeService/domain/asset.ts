@@ -1,22 +1,19 @@
-export interface IAsset {
-    /**
-     * Address of the asset.
-     */
+export interface Token {
     address: string;
-    /**
-     * Network of the asset.
-     */
-    network: string;
-    /**
-     * Symbol of the asset.
-     */
-    symbol: string;
-    /**
-     * Name of the asset.
-     */
-    name: string;
-    /**
-     * Logo url.
-     */
+    decimals: number;
     logo: string;
+    name: string;
+    priceChangeOnDayUsd: string;
+    priceUsd: string;
+    symbol: string;
+    type: string;
+}
+
+export interface IAsset {
+    amount: string;
+    amountUsd: string;
+    daoAddress: string;
+    network: string;
+    token: Token;
+    tokenAddress: string;
 }
