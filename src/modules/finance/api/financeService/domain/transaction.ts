@@ -1,4 +1,4 @@
-import { IAsset } from '@/modules/finance/api/financeService/domain/asset';
+import { type Token } from '@/modules/finance/api/financeService/domain/asset';
 import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum/transactionType';
 import { TransactionType as DataListTransactionType } from '@aragon/ods'
 
@@ -14,7 +14,7 @@ export interface ITransaction {
   blockTimestamp?: number;
   fromAddress?: string;
   toAddress?: string;
-  token?: IAsset;
+  token?: Token;
   value?: string;
   type: TransactionType;
   transactionHash: `0x${string}`;
