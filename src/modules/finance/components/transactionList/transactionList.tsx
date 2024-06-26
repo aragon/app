@@ -1,7 +1,7 @@
 'use client';
 
 import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum';
-import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData';
+import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData/useTransactionListData';
 import { networkDefinitions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
