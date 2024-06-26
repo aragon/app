@@ -1,9 +1,6 @@
-'use client';
-
 import { Button, Heading, IconType } from '@aragon/ods';
 import classNames from 'classnames';
 import { type ComponentProps } from 'react';
-import { useTranslations } from '../../translationsProvider';
 import { PageContextProvider } from '../pageContext';
 
 export interface IPageMainAction {
@@ -33,8 +30,6 @@ const mainContextValues = { contentType: 'main' as const };
 export const PageMain: React.FC<IPageMainProps> = (props) => {
     const { className, children, title, action, ...otherProps } = props;
 
-    const { t } = useTranslations();
-
     return (
         <PageContextProvider value={mainContextValues}>
             <main
@@ -48,10 +43,10 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
             >
                 {title && (
                     <header className="flex flex-row justify-between gap-6">
-                        <Heading size="h1">{t(title)}</Heading>
+                        <Heading size="h1">{title}</Heading>
                         {action && (
                             <Button variant="primary" size="md" onClick={action.onClick} iconLeft={IconType.PLUS}>
-                                {t(action.label)}
+                                {action.label}
                             </Button>
                         )}
                     </header>

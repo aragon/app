@@ -53,9 +53,9 @@ describe('<NavigationDao /> component', () => {
     });
 
     it('renders the DAO links for the current DAO on desktop devices', () => {
-        const id = 'test-dao';
-        const daoLinks = navigationDaoLinks(id);
-        render(createTestComponent({ id }));
+        const dao = generateDao({ id: 'test' });
+        const daoLinks = navigationDaoLinks(dao);
+        render(createTestComponent({ id: dao.id }));
         daoLinks.forEach((link) => expect(screen.getByRole('link', { name: link.label })).toBeInTheDocument());
         // eslint-disable-next-line testing-library/no-node-access
         expect(screen.getByRole('link', { name: daoLinks[0].label }).parentElement?.className).toContain(

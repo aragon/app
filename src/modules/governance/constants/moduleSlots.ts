@@ -1,0 +1,3 @@
+export enum GovernanceSlotId {
+    GOVERNANCE_DAO_MEMBER_LIST = 'GOVERNANCE_DAO_MEMBER_LIST',
+}

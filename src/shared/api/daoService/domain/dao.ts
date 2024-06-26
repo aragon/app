@@ -1,4 +1,6 @@
 import { type Network } from "@/shared/api/daoService/domain/enum";
+import type { IDaoPlugin } from './daoPlugin';
+
 export interface IDao {
     /**
      * Identifier of the DAO.
@@ -28,4 +30,12 @@ export interface IDao {
      * Avatar of the DAO or null when DAO has no avatar.
      */
     avatar: string | null;
+    /**
+     * Defines if the DAO is setup with plugins supported by the App or not.
+     */
+    isSupported: boolean;
+    /**
+     * Governance plugins of the DAO.
+     */
+    plugins: IDaoPlugin[];
 }

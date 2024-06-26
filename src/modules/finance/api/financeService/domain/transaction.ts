@@ -13,27 +13,27 @@ export interface ITransaction {
   /**
    * The block number in which the transaction is included.
    */
-  blockNumber?: number;
+  blockNumber: number;
   /**
    * The timestamp of the block in which the transaction is included.
    */
-  blockTimestamp?: number;
+  blockTimestamp: number;
   /**
    * The address from which the transaction originates.
    */
-  fromAddress?: string;
+  fromAddress: string;
   /**
    * The address to which the transaction is sent.
    */
-  toAddress?: string;
+  toAddress: string;
   /**
    * The token involved in the transaction.
    */
-  token?: IAsset;
+  token: IAsset;
   /**
    * The value of the transaction.
    */
-  value?: string;
+  value: string;
   /**
    * The type of the transaction.
    */
@@ -42,4 +42,20 @@ export interface ITransaction {
    * The hash of the transaction.
    */
   transactionHash: `0x${string}`;
+  /**
+   * The id of the transaction.
+   */
+  id: string
+  /**
+   * The category of the transaction. Internal or external to the DAO.
+   */
+  category: string
+  /**
+   * If asset based, the token address for the asset in the transaction.
+   */
+  tokenAddress: string
+  /**
+   * The DAO address of the transaction.
+   */
+  daoAddress: string
 }
