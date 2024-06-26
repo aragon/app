@@ -1,27 +1,18 @@
-import * as financeService from '@/modules/finance/api/financeService/queries/useTransactionList';
 import { generateTransaction } from '@/modules/finance/testUtils';
-import {
-    generatePaginatedResponse,
-    generatePaginatedResponseMetadata,
-    generateReactQueryInfiniteResultError,
-    generateReactQueryInfiniteResultSuccess,
-} from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
-import { type InfiniteData } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import * as useTransactionListData from '../../hooks/useTransactionListData';
 import { TransactionList, type ITransactionListProps } from './transactionList';
 
-jest.mock('@/modules/finance/api/financeService/queries/useTransactionList', () => ({
-    __esModule: true,
-    ...jest.requireActual('@/modules/finance/api/financeService/queries/useTransactionList'),
-}));
+describe('<TransactionList /> component', () => {
+    const useTransactionListDataSpy = jest.spyOn(useTransactionListData, 'useTransactionListData');
 
-describe('<TransactionList /> component and useTransactionListData hook', () => {
-    const useTransactionListSpy = jest.spyOn(financeService, 'useTransactionList');
+    beforeEach(() => {
+        useTransactionListDataSpy.mockImplementation(jest.fn());
+    });
 
     afterEach(() => {
-        useTransactionListSpy.mockReset();
-        jest.clearAllMocks();
+        useTransactionListDataSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITransactionListProps>) => {
@@ -55,54 +46,22 @@ describe('<TransactionList /> component and useTransactionListData hook', () => 
                 transactionHash: '0x0000000000000000000000000000000000000001',
             }),
         ];
-        const transactionsMetadata = generatePaginatedResponseMetadata({
+
+        const mockResult = {
+            onLoadMore: jest.fn(),
+            transactionList: transactions,
+            state: 'idle' as const,
             pageSize: 10,
-            totalRecords: transactions.length,
-        });
-        const transactionsResponse = generatePaginatedResponse({
-            data: transactions,
-            metadata: transactionsMetadata,
-        });
-        const mockResult: InfiniteData<typeof transactionsResponse> = {
-            pages: [transactionsResponse],
-            pageParams: [],
+            itemsCount: 2,
+            emptyState: { heading: 'Empty state', description: 'No transactions found' },
+            errorState: { heading: 'Error state', description: 'An error occurred' },
         };
-        useTransactionListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: mockResult }));
+
+        useTransactionListDataSpy.mockReturnValue(mockResult);
         render(createTestComponent());
 
         transactions.forEach((transaction) => {
             expect(screen.getByText(`${transaction.value} ${transaction.token.symbol}`)).toBeInTheDocument();
         });
-    });
-
-    it('renders an empty state when no transactions are found', () => {
-        const transactionsResponse = generatePaginatedResponse({
-            data: [],
-            metadata: generatePaginatedResponseMetadata({
-                pageSize: 10,
-                totalRecords: 0,
-            }),
-        });
-        const mockResult: InfiniteData<typeof transactionsResponse> = {
-            pages: [transactionsResponse],
-            pageParams: [],
-        };
-        useTransactionListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: mockResult, isFetchedAfterMount: true }),
-        );
-        render(createTestComponent());
-
-        // Select the empty state using class selectors
-        const emptyStateContainer = screen.getByText(/app.finance.transactionList.emptyState.heading/i).closest('div');
-        expect(emptyStateContainer).toBeInTheDocument();
-    });
-
-    it('renders an error state when fetching transactions fails', () => {
-        useTransactionListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-        render(createTestComponent());
-
-        // Select the error state using class selectors
-        const errorStateContainer = screen.getByText(/app.finance.transactionList.errorState.heading/i).closest('div');
-        expect(errorStateContainer).toBeInTheDocument();
     });
 });

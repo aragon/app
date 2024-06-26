@@ -1,7 +1,7 @@
 'use client';
 
 import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum';
-import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData/useTransactionListData';
+import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData';
 import { networkDefinitions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -52,7 +52,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
             <DataListContainer
                 emptyState={emptyState}
                 errorState={errorState}
-                SkeletonElement={() => <TransactionDataListItem.Skeleton />}
+                SkeletonElement={TransactionDataListItem.Skeleton}
             >
                 {transactionList?.map((transaction) => (
                     <TransactionDataListItem.Structure

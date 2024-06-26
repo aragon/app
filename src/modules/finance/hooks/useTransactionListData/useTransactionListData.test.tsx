@@ -12,7 +12,6 @@ import { generateTransaction } from '@/modules/finance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { useTransactionListData } from './useTransactionListData';
 
-// Needed to spy usage of useTransactionList hook
 jest.mock('../../api/financeService', () => ({
     __esModule: true,
     ...jest.requireActual('../../api/financeService'),

@@ -1,1 +1,1 @@
-export * from './useTransactionListData'
+export { useTransactionListData } from './useTransactionListData';

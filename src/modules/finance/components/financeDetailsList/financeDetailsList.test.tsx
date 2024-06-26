@@ -1,4 +1,4 @@
-import { networkDefinitions, type IDao, type Network } from '@/shared/api/daoService';
+import { networkDefinitions, type IDao, type IDaoMetrics, type Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     addressUtils,
@@ -45,6 +45,8 @@ describe('<FinanceDetailsList /> component', () => {
             ens: 'dao.polygon',
             isSupported: true,
             plugins: [],
+            tvlUSD: '',
+            metrics: { proposalsCreated: 0, members: 1 },
         };
 
         const defaultProps: IFinanceDetailsListProps = {
@@ -73,6 +75,8 @@ describe('<FinanceDetailsList /> component', () => {
             ens: 'dao.polygon',
             isSupported: true,
             plugins: [],
+            tvlUSD: '',
+            metrics: { proposalsCreated: 0, members: 1 },
         };
         render(createTestComponent({ dao }));
         expect(screen.getByText(networkDefinitions[network].name)).toBeInTheDocument();
@@ -91,6 +95,8 @@ describe('<FinanceDetailsList /> component', () => {
             ens: null,
             isSupported: true,
             plugins: [],
+            tvlUSD: '',
+            metrics: {} as IDaoMetrics,
         };
         render(createTestComponent({ dao }));
         expect(screen.queryByText('dao.polygon')).not.toBeInTheDocument();
@@ -107,6 +113,8 @@ describe('<FinanceDetailsList /> component', () => {
             ens: 'dao.polygon',
             isSupported: true,
             plugins: [],
+            tvlUSD: '',
+            metrics: { proposalsCreated: 0, members: 1 },
         };
         render(createTestComponent({ dao }));
         expect(addressUtils.truncateAddress).toHaveBeenCalledWith('0xVau1t');
