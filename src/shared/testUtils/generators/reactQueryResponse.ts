@@ -1,6 +1,7 @@
 import type {
     InfiniteQueryObserverBaseResult,
     InfiniteQueryObserverLoadingErrorResult,
+    InfiniteQueryObserverLoadingResult,
     InfiniteQueryObserverSuccessResult,
     QueryObserverBaseResult,
     QueryObserverLoadingErrorResult,
@@ -114,4 +115,21 @@ export const generateReactQueryInfiniteResultError = <TData, TError>(
     isFetchNextPageError: false,
     isFetchPreviousPageError: false,
     status: 'error',
+});
+
+export const generateReactQueryInfiniteResultLoading = <TData, TError>(
+    result?: Partial<InfiniteQueryObserverLoadingResult<TData, TError>>,
+): InfiniteQueryObserverLoadingResult<TData, TError> => ({
+    ...generateReactQueryInfiniteResultBase(result),
+    data: undefined,
+    error: null,
+    isError: false,
+    isPending: true,
+    isLoading: true,
+    isLoadingError: false,
+    isRefetchError: false,
+    isSuccess: false,
+    isFetchNextPageError: false,
+    isFetchPreviousPageError: false,
+    status: 'pending',
 });

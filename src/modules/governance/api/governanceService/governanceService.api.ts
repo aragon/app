@@ -1,6 +1,6 @@
-import type { IRequestQueryParams } from '@/shared/api/aragonBackendService';
+import type { IPaginatedRequest, IRequestQueryParams } from '@/shared/api/aragonBackendService';
 
-export interface IGetMemberListQueryParams {
+export interface IGetMemberListQueryParams extends IPaginatedRequest {
     /**
      * ID of the Dao to fetch the members from.
      */

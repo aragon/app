@@ -2,6 +2,7 @@ import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultError,
+    generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
@@ -46,5 +47,12 @@ describe('useMemberListData hook', () => {
         useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
         const { result } = renderHook(() => useMemberListData({ queryParams: { daoId: '' } }));
         expect(result.current.state).toEqual('error');
+    });
+
+    it('returns the pageSize set as hook parameter when data is loading', () => {
+        useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
+        const pageSize = 6;
+        const { result } = renderHook(() => useMemberListData({ queryParams: { daoId: '', pageSize } }));
+        expect(result.current.pageSize).toEqual(pageSize);
     });
 });

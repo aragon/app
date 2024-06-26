@@ -2,6 +2,7 @@ import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultError,
+    generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
@@ -49,5 +50,12 @@ describe('useTransactionListData hook', () => {
         useTransactionListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
         const { result } = renderHook(() => useTransactionListData({ queryParams: { address: '' } }));
         expect(result.current.state).toEqual('error');
+    });
+
+    it('returns the pageSize set as hook parameter when data is loading', () => {
+        useTransactionListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
+        const pageSize = 2;
+        const { result } = renderHook(() => useTransactionListData({ queryParams: { pageSize } }));
+        expect(result.current.pageSize).toEqual(pageSize);
     });
 });

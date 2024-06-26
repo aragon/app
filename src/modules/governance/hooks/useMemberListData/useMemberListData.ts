@@ -16,7 +16,7 @@ export const useMemberListData = <TMember extends IMember = IMember>(params: IGe
     const memberList = memberListData?.pages.flatMap((page) => page.data);
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
-    const pageSize = memberListData?.pages[0].metadata.pageSize;
+    const pageSize = params.queryParams.pageSize ?? memberListData?.pages[0].metadata.pageSize;
     const itemsCount = memberListData?.pages[0].metadata.totalRecords;
 
     const errorState = {
