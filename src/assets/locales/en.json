@@ -90,7 +90,7 @@
       "daoMemberList": {
         "empty": {
           "title": "No members found",
-          "description": "DAO has currently no members"
+          "description": "DAO has currently no members."
         },
         "error": {
           "title": "Error loading members",
