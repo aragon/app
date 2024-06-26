@@ -73,6 +73,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                 avatar={<DaoAvatar src={ipfsUtils.cidToSrc(dao?.avatar)} name={dao?.name} size="2xl" />}
             >
                 <div className="flex flex-row gap-4">
+                    {/* TODO: add containerClassname property to dropdown component and set max-width there */}
                     <Dropdown.Container size="md" label={dropdownLabel}>
                         {dao?.ens != null && (
                             <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.ens!)}>
@@ -124,7 +125,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                     )}
                 </Page.Main>
                 <Page.Aside>
-                    <Page.Section title={t('app.dashboard.daoDashboardPage.aside.details.title')}>
+                    <Page.Section title={t('app.dashboard.daoDashboardPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.blockchain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao!.network].name}</p>
@@ -141,6 +142,18 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             {/* TODO: add formatted creation date */}
                         </DefinitionList.Container>
                     </Page.Section>
+                    {dao!.links.length > 0 && (
+                        <Page.Section
+                            title={t('app.dashboard.daoDashboardPage.aside.links')}
+                            className="flex flex-col gap-4"
+                        >
+                            {dao?.links.map(({ url, name }) => (
+                                <Link key={url} iconRight={IconType.LINK_EXTERNAL} description={url}>
+                                    {name}
+                                </Link>
+                            ))}
+                        </Page.Section>
+                    )}
                 </Page.Aside>
             </Page.Content>
         </>

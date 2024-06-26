@@ -27,7 +27,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
                 <DaoMemberList initialParams={initialParams} />
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')}>
+                <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')} inset={false}>
                     <PluginComponent slotId={GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS} pluginIds={pluginIds} />
                 </Page.Section>
             </Page.Aside>

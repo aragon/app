@@ -52,7 +52,8 @@
             "blockchain": "Blockchain",
             "address": "Contract address",
             "ens": "ENS name"
-          }
+          },
+          "links": "Links"
         }
       }
     },
