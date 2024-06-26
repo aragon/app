@@ -1,7 +1,8 @@
-import { daoService } from '@/shared/api/daoService';
+import { daoService, type IDao } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
 import { type Metadata } from 'next';
 import { ipfsUtils } from '../ipfsUtils';
+import { pluginRegistryUtils } from '../pluginRegistryUtils';
 
 export interface IGenerateDaoMetadataParams {
     /**
@@ -10,7 +11,7 @@ export interface IGenerateDaoMetadataParams {
     params: IDaoPageParams;
 }
 
-class DaoMetadataUtils {
+class DaoUtils {
     generateMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
         const { id } = params;
 
@@ -25,6 +26,12 @@ class DaoMetadataUtils {
             openGraph: { images: daoAvatarUrl ? [daoAvatarUrl] : undefined },
         };
     };
+
+    hasSupportedPlugins = (dao?: IDao): boolean => {
+        const pluginIds = dao?.plugins.map(({ subdomain }) => subdomain);
+
+        return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
+    };
 }
 
-export const daoMetadataUtils = new DaoMetadataUtils();
+export const daoUtils = new DaoUtils();

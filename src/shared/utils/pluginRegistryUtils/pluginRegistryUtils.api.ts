@@ -14,16 +14,6 @@ export type PluginComponent<TComponentProps = any> = ComponentType<TComponentPro
 export type SlotComponents = Record<SlotId, Record<PluginId, PluginComponent>>;
 
 /**
- * Registry of all the plugin specific components and metadata
- */
-export interface IPluginRegistry {
-    /**
-     * Registered slot components.
-     */
-    slotComponents: SlotComponents;
-}
-
-/**
  * Plugin definitions.
  */
 export interface IPlugin {
@@ -35,4 +25,18 @@ export interface IPlugin {
      * Name of the plugin.
      */
     name: string;
+}
+
+/**
+ * Registry of all the plugin specific components and metadata
+ */
+export interface IPluginRegistry {
+    /**
+     * Registered plugins.
+     */
+    plugins: IPlugin[];
+    /**
+     * Registered slot components.
+     */
+    slotComponents: SlotComponents;
 }

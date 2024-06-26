@@ -25,4 +25,16 @@ describe('<PageHeaderStat /> component', () => {
         render(createTestComponent({ suffix }));
         expect(screen.getByText(suffix)).toBeInTheDocument();
     });
+
+    it('defaults the value to 0 when undefiend', () => {
+        const value = undefined;
+        render(createTestComponent({ value }));
+        expect(screen.getByText('0')).toBeInTheDocument();
+    });
+
+    it('defaults the value to 0 when null', () => {
+        const value = null;
+        render(createTestComponent({ value }));
+        expect(screen.getByText('0')).toBeInTheDocument();
+    });
 });
