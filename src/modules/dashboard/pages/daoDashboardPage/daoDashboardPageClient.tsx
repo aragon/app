@@ -5,6 +5,7 @@ import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
@@ -16,7 +17,9 @@ import {
     Link,
     NumberFormat,
     addressUtils,
+    clipboardUtils,
     formatterUtils,
+    ssrUtils,
 } from '@aragon/ods';
 
 export interface IDaoDashboardPageClientProps {
@@ -58,6 +61,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
+    const dropdownLabel = dao?.ens ?? truncatedAddress;
+    const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
+
     return (
         <>
             <Page.Header
@@ -67,11 +73,22 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                 avatar={<DaoAvatar src={ipfsUtils.cidToSrc(dao?.avatar)} name={dao?.name} size="2xl" />}
             >
                 <div className="flex flex-row gap-4">
-                    <Button variant="secondary" size="md" disabled={true}>
-                        {t('app.dashboard.daoDashboardPage.header.action.follow')}
-                    </Button>
-                    <Dropdown.Container size="md" label="patito.dao.eth">
-                        <Dropdown.Item icon={IconType.COPY}>{truncatedAddress}</Dropdown.Item>
+                    <Dropdown.Container size="md" label={dropdownLabel}>
+                        {dao?.ens != null && (
+                            <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.ens!)}>
+                                {dao.ens}
+                            </Dropdown.Item>
+                        )}
+                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao!.address)}>
+                            {truncatedAddress}
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            icon={IconType.COPY}
+                            onClick={() => clipboardUtils.copy(pageUrl)}
+                            className="max-w-48"
+                        >
+                            {pageUrl}
+                        </Dropdown.Item>
                     </Dropdown.Container>
                 </div>
             </Page.Header>
@@ -110,11 +127,16 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                     <Page.Section title={t('app.dashboard.daoDashboardPage.aside.details.title')}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.blockchain')}>
-                                <p className="text-neutral-500">Ethereum Mainnet</p>
+                                <p className="text-neutral-500">{networkDefinitions[dao!.network].name}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
                                 <Link iconRight={IconType.LINK_EXTERNAL}>{truncatedAddress}</Link>
                             </DefinitionList.Item>
+                            {dao?.ens && (
+                                <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
+                                    <Link iconRight={IconType.LINK_EXTERNAL}>{dao.ens}</Link>
+                                </DefinitionList.Item>
+                            )}
                         </DefinitionList.Container>
                     </Page.Section>
                 </Page.Aside>
