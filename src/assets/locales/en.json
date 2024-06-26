@@ -44,6 +44,9 @@
           "assets": {
             "title": "Top assets"
           },
+          "members": {
+            "title": "Members"
+          },
           "viewAll": "View all"
         },
         "aside": {
@@ -98,6 +101,49 @@
             "title": "Details",
             "blockchain": "Blockchain"
           } 
+        }
+      }
+    },
+    "governance": {
+      "daoMembersPage": {
+        "main": {
+          "title": "Members"
+        },
+        "aside": {
+          "details": {
+            "title": "Details",
+            "blockchain": "Blockchain"
+          }
+        }
+      },
+      "daoMemberList": {
+        "empty": {
+          "title": "No members found",
+          "description": "DAO has currently no members."
+        },
+        "error": {
+          "title": "Error loading members",
+          "description": "There was an error loading the DAO members, try again later."
+        }
+      }
+    },
+    "plugins": {
+      "token": {
+        "tokenMemberList": {
+          "entity": "Members"
+        },
+        "tokenMembersPageDetails": {
+          "eligibleMembers": "Eligible members",
+          "members": "Token holders"
+        }
+      },
+      "multisig": {
+        "multisigMemberList": {
+          "entity": "Members"
+        },
+        "multisigMembersPageDetails": {
+          "eligibleMembers": "Eligible members",
+          "members": "Multisig members"
         }
       }
     },
