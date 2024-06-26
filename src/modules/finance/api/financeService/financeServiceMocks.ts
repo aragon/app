@@ -1,5 +1,5 @@
 import { generatePaginatedResponse, generatePaginatedResponseMetadata } from '@/shared/testUtils';
-import { generateBalance } from '../../testUtils';
+import { generateBalance } from './../../testUtils/';
 
 export const balanceListMock = generatePaginatedResponse({
     data: [

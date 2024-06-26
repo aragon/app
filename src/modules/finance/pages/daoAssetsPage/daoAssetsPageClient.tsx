@@ -1,14 +1,24 @@
 'use client';
 
+import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList';
+import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DefinitionList } from '@aragon/ods';
 import { AssetList } from '../../components/assetList';
 
-export interface IDaoAssetsPageClientProps {}
+export interface IDaoAssetsPageClientProps {
+    /**
+     * ID of the DAO.
+     */
+    id: string;
+}
 
-export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = () => {
+export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) => {
+    const { id } = props;
     const { t } = useTranslations();
+
+    const useDaoParams = { id };
+    const { data: dao } = useDao({ urlParams: useDaoParams });
 
     return (
         <Page.Content>
@@ -19,13 +29,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = () => {
                 <AssetList />
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.finance.daoAssetsPage.aside.details.title')}>
-                    <DefinitionList.Container>
-                        <DefinitionList.Item term={t('app.finance.daoAssetsPage.aside.details.blockchain')}>
-                            <p className="text-neutral-500">Ethereum Mainnet</p>
-                        </DefinitionList.Item>
-                    </DefinitionList.Container>
-                </Page.Section>
+                <FinanceDetailsList dao={dao} />
             </Page.Aside>
         </Page.Content>
     );

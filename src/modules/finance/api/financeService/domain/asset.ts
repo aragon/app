@@ -19,4 +19,20 @@ export interface IAsset {
      * Logo url.
      */
     logo: string;
+    /**
+     * Type of the asset.
+     */
+    type: string;
+    /**
+     * Decimals of the asset.
+     */
+    decimals: number;
+    /**
+     * Price change in the last 24 hours.
+     */
+    priceChangeOnDayUsd: string;
+    /**
+     * Current price in USD.
+     */
+    priceUsd: string;
 }

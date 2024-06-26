@@ -1,6 +1,6 @@
-import type { Network } from '@/shared/types';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
+import { type Network } from './enum';
 
 export interface IDao {
     /**
