@@ -1,4 +1,4 @@
-import { type Network } from "@/shared/api/daoService/domain/enum";
+import { type Network } from '@/shared/api/daoService/domain/enum';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
 

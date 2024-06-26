@@ -1,10 +1,10 @@
 import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList';
 import { daoOptions } from '@/shared/api/daoService';
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { type ReactNode } from 'react';
-import { DaoTransactionsPage, type IDaoTransactionsPageProps } from './daoTransactionsPage';
+import type { ReactNode } from 'react';
+import { DaoTransactionsPage, daoTransactionsCount, type IDaoTransactionsPageProps } from './daoTransactionsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual('@tanstack/react-query'),
@@ -24,8 +24,8 @@ describe('<DaoTransactionsPage /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
 
     beforeEach(() => {
+        fetchQuerySpy.mockResolvedValue(generateReactQueryResultSuccess({ data: generateDao() }));
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
-        fetchQuerySpy.mockImplementation(jest.fn());
     });
 
     afterEach(() => {
@@ -40,13 +40,12 @@ describe('<DaoTransactionsPage /> component', () => {
         return Component;
     };
 
-    it('renders the DaoTransactionsPageClient', async () => {
+    it('renders the page', async () => {
         render(await createTestComponent());
-
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
     });
 
-    it('prefetches the DAO and the Transaction List', async () => {
+    it('prefetches the DAO and its transaction list', async () => {
         const id = 'another-test-slug';
         const params = { id };
         const dao = generateDao({ id });
@@ -56,7 +55,9 @@ describe('<DaoTransactionsPage /> component', () => {
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
 
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            transactionListOptions({ queryParams: { address: dao.address, network: dao.network } }).queryKey,
+            transactionListOptions({
+                queryParams: { address: dao.address, network: dao.network, pageSize: daoTransactionsCount },
+            }).queryKey,
         );
     });
 });

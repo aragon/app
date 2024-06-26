@@ -23,7 +23,12 @@ describe('<DaoTransactionsPageClient /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<IDaoTransactionsPageClientProps>) => {
-        const completeProps: IDaoTransactionsPageClientProps = { id: 'test-id', ...props };
+        const completeProps: IDaoTransactionsPageClientProps = {
+            id: 'test-id',
+            initialParams: { queryParams: {} },
+            ...props,
+        };
+
         return <DaoTransactionsPageClient {...completeProps} />;
     };
 

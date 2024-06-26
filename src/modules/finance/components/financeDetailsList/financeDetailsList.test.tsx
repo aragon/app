@@ -1,5 +1,6 @@
-import { networkDefinitions, type IDao, type IDaoMetrics, type Network } from '@/shared/api/daoService';
+import { type IDao, type IDaoMetrics, type Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     addressUtils,
     type IDefinitionListContainerProps,

@@ -82,11 +82,11 @@
       },
       "transactionList": {
         "entity": "Transactions",
-        "emptyState" : {
+        "emptyState": {
           "heading": "No transactions found",
           "description": "This will show the DAO's onchain actions when available."
         },
-        "errorState" : {
+        "errorState": {
           "heading": "Error loading transactions",
           "description": "There was an error loading the transactions. Please try again later."
         }
@@ -96,11 +96,11 @@
           "title": "Transactions",
           "action": "New transfer"
         },
-        "aside":{
+        "aside": {
           "details": {
             "title": "Details",
             "blockchain": "Blockchain"
-          } 
+          }
         }
       }
     },
