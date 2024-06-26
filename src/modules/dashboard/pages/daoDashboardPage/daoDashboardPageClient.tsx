@@ -129,6 +129,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.blockchain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao!.network].name}</p>
                             </DefinitionList.Item>
+                            {/* TODO: add links to block explorer creation date */}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
                                 <Link iconRight={IconType.LINK_EXTERNAL}>{truncatedAddress}</Link>
                             </DefinitionList.Item>
@@ -137,6 +138,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     <Link iconRight={IconType.LINK_EXTERNAL}>{dao.ens}</Link>
                                 </DefinitionList.Item>
                             )}
+                            {/* TODO: add formatted creation date */}
                         </DefinitionList.Container>
                     </Page.Section>
                 </Page.Aside>
