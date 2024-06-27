@@ -77,7 +77,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                 avatar={<DaoAvatar src={ipfsUtils.cidToSrc(dao.avatar)} name={dao.name} size="2xl" />}
             >
                 <div className="flex flex-row gap-4">
-                    {/* TODO: add containerClassname property to dropdown component and set max-width there */}
                     <Dropdown.Container size="md" label={dropdownLabel}>
                         {dao.ens != null && (
                             <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.ens!)}>
@@ -90,6 +89,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                         <Dropdown.Item
                             icon={IconType.COPY}
                             onClick={() => clipboardUtils.copy(pageUrl)}
+                            // TODO: use containerClassname prop on dropdown component to set max width (APP-3342)
                             className="max-w-52"
                         >
                             {pageUrl}
@@ -134,7 +134,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.blockchain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao!.network].name}</p>
                             </DefinitionList.Item>
-                            {/* TODO: add links to block explorer */}
+                            {/* TODO: add links to block explorer (APP-3342) */}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
                                 <Link iconRight={IconType.LINK_EXTERNAL} href="/">
                                     {truncatedAddress}
@@ -147,7 +147,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     </Link>
                                 </DefinitionList.Item>
                             )}
-                            {/* TODO: add formatted creation date */}
+                            {/* TODO: add formatted creation date (APP-3342) */}
                         </DefinitionList.Container>
                     </Page.Section>
                     {dao.links.length > 0 && (
