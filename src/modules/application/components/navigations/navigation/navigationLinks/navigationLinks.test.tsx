@@ -35,4 +35,14 @@ describe('<Navigation.Links /> component', () => {
         // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
         expect(container.querySelector('.flex-col')).toBeInTheDocument();
     });
+
+    it('does not render the links marked as hidden', () => {
+        const links = [
+            { label: 'hidden-link', link: '/hidden' as Route<string>, icon: IconType.APP_ASSETS, hidden: true },
+            { label: 'visible-link', link: '/visible' as Route<string>, icon: IconType.APP_MEMBERS, hidden: false },
+        ];
+        render(createTestComponent({ links }));
+        expect(screen.queryByRole('link', { name: links[0].label })).not.toBeInTheDocument();
+        expect(screen.getByRole('link', { name: links[1].label })).toBeInTheDocument();
+    });
 });

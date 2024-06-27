@@ -1,19 +1,38 @@
-export interface IToken {
-    address: string;
-    decimals: number;
-    logo: string;
-    name: string;
-    priceChangeOnDayUsd: string;
-    priceUsd: string;
-    symbol: string;
-    type: string;
-}
-
 export interface IAsset {
-    amount: string;
-    amountUsd: string;
-    daoAddress: string;
+    /**
+     * Address of the asset.
+     */
+    address: string;
+    /**
+     * Network of the asset.
+     */
     network: string;
-    token: IToken;
-    tokenAddress: string;
+    /**
+     * Symbol of the asset.
+     */
+    symbol: string;
+    /**
+     * Name of the asset.
+     */
+    name: string;
+    /**
+     * Logo url.
+     */
+    logo: string;
+    /**
+     * Type of the asset.
+     */
+    type: string;
+    /**
+     * Decimals of the asset.
+     */
+    decimals: number;
+    /**
+     * Price change in the last 24 hours.
+     */
+    priceChangeOnDayUsd: string;
+    /**
+     * Current price in USD.
+     */
+    priceUsd: string;
 }

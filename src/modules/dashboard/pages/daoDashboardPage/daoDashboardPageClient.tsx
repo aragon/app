@@ -1,11 +1,23 @@
 'use client';
 
 import { AssetList } from '@/modules/finance/components/assetList';
+import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { Button, DaoAvatar, DefinitionList, Dropdown, IconType, Link, addressUtils } from '@aragon/ods';
+import {
+    Button,
+    DaoAvatar,
+    DefinitionList,
+    Dropdown,
+    IconType,
+    Link,
+    NumberFormat,
+    addressUtils,
+    formatterUtils,
+} from '@aragon/ods';
 
 export interface IDaoDashboardPageClientProps {
     /**
@@ -13,6 +25,8 @@ export interface IDaoDashboardPageClientProps {
      */
     id: string;
 }
+
+const dashboardMembersCount = 6;
 
 export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (props) => {
     const { id } = props;
@@ -22,13 +36,27 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
+    const proposalsCreated = formatterUtils.formatNumber(dao?.metrics.proposalsCreated, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+
+    const membersCount = formatterUtils.formatNumber(dao?.metrics.members, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+
+    const daoTvl = formatterUtils.formatNumber(dao?.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
+
     const stats = [
-        { value: '69', label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
-        { value: '420k', label: t('app.dashboard.daoDashboardPage.header.stat.members') },
-        { value: '42.69M', label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
+        { value: proposalsCreated, label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
+        { value: membersCount, label: t('app.dashboard.daoDashboardPage.header.stat.members') },
+        { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
     ];
 
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
+
+    const memberListParams = { queryParams: { daoId: id, pageSize: dashboardMembersCount } };
+
+    const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
     return (
         <>
@@ -56,12 +84,27 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 variant="tertiary"
                                 size="md"
                                 iconRight={IconType.CHEVRON_RIGHT}
-                                href={`/dao/${dao?.id}/assets`}
+                                href={`/dao/${id}/assets`}
                             >
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>
                         </AssetList>
                     </Page.Section>
+                    {hasSupportedPlugins && (
+                        <Page.Section title={t('app.dashboard.daoDashboardPage.main.members.title')}>
+                            <DaoMemberList initialParams={memberListParams} hidePagination={true}>
+                                <Button
+                                    className="self-start"
+                                    variant="tertiary"
+                                    size="md"
+                                    iconRight={IconType.CHEVRON_RIGHT}
+                                    href={`/dao/${id}/members`}
+                                >
+                                    {t('app.dashboard.daoDashboardPage.main.viewAll')}
+                                </Button>
+                            </DaoMemberList>
+                        </Page.Section>
+                    )}
                 </Page.Main>
                 <Page.Aside>
                     <Page.Section title={t('app.dashboard.daoDashboardPage.aside.details.title')}>

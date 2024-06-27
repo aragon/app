@@ -6,6 +6,7 @@ import type {  IGetTransactionListParams } from '../financeService.api';
 import { financeServiceKeys } from '../financeServiceKeys';
 import type { ITransaction } from '../domain/';
 
+
 export const transactionListOptions = (
     params: IGetTransactionListParams,
     options?: InfiniteQueryOptions<IPaginatedResponse<ITransaction>, IGetTransactionListParams>,

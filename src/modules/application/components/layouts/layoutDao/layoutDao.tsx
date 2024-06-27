@@ -1,4 +1,4 @@
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
@@ -23,6 +23,9 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
 
     const daoUrlParams = { id };
     await queryClient.prefetchQuery(daoOptions({ urlParams: daoUrlParams }));
+
+    const daoSettingsUrlParams = { daoId: id };
+    await queryClient.prefetchQuery(daoSettingsOptions({ urlParams: daoSettingsUrlParams }));
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

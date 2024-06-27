@@ -36,6 +36,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         name={dao.name}
                         description={dao.description}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
+                        plugin={dao.plugins.map((plugin) => plugin.subdomain).join(',')}
                     />
                 ))}
             </DataListContainer>

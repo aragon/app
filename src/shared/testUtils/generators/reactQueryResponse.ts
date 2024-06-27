@@ -1,4 +1,8 @@
 import type {
+    InfiniteQueryObserverBaseResult,
+    InfiniteQueryObserverLoadingErrorResult,
+    InfiniteQueryObserverLoadingResult,
+    InfiniteQueryObserverSuccessResult,
     QueryObserverBaseResult,
     QueryObserverLoadingErrorResult,
     QueryObserverSuccessResult,
@@ -62,4 +66,70 @@ export const generateReactQueryResultError = <TData, TError>(
     isRefetchError: false,
     isSuccess: false,
     status: 'error',
+});
+
+export const generateReactQueryInfiniteResultBase = <TData, TError>(
+    result?: Partial<InfiniteQueryObserverBaseResult<TData, TError>>,
+): InfiniteQueryObserverBaseResult<TData, TError> => ({
+    ...generateReactQueryResultBase(result),
+    fetchNextPage: jest.fn(),
+    fetchPreviousPage: jest.fn(),
+    hasNextPage: false,
+    hasPreviousPage: false,
+    isFetchNextPageError: false,
+    isFetchingNextPage: false,
+    isFetchPreviousPageError: false,
+    isFetchingPreviousPage: false,
+    ...result,
+});
+
+export const generateReactQueryInfiniteResultSuccess = <TData, TError>(
+    result?: Partial<InfiniteQueryObserverSuccessResult<TData, TError>>,
+): InfiniteQueryObserverSuccessResult<TData, TError> => ({
+    ...generateReactQueryInfiniteResultBase(result),
+    data: (result?.data ?? {}) as TData,
+    error: null,
+    isError: false,
+    isPending: false,
+    isLoading: false,
+    isLoadingError: false,
+    isRefetchError: false,
+    isSuccess: true,
+    isFetchNextPageError: false,
+    isFetchPreviousPageError: false,
+    status: 'success',
+});
+
+export const generateReactQueryInfiniteResultError = <TData, TError>(
+    result?: Partial<InfiniteQueryObserverLoadingErrorResult<TData, TError>>,
+): InfiniteQueryObserverLoadingErrorResult<TData, TError> => ({
+    ...generateReactQueryInfiniteResultBase(result),
+    data: undefined,
+    error: (result?.error ?? 'error') as TError,
+    isError: true,
+    isPending: false,
+    isLoading: false,
+    isLoadingError: true,
+    isRefetchError: false,
+    isSuccess: false,
+    isFetchNextPageError: false,
+    isFetchPreviousPageError: false,
+    status: 'error',
+});
+
+export const generateReactQueryInfiniteResultLoading = <TData, TError>(
+    result?: Partial<InfiniteQueryObserverLoadingResult<TData, TError>>,
+): InfiniteQueryObserverLoadingResult<TData, TError> => ({
+    ...generateReactQueryInfiniteResultBase(result),
+    data: undefined,
+    error: null,
+    isError: false,
+    isPending: true,
+    isLoading: true,
+    isLoadingError: false,
+    isRefetchError: false,
+    isSuccess: false,
+    isFetchNextPageError: false,
+    isFetchPreviousPageError: false,
+    status: 'pending',
 });

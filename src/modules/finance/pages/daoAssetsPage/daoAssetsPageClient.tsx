@@ -16,6 +16,7 @@ export interface IDaoAssetsPageClientProps {
 export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) => {
     const { id } = props;
     const { t } = useTranslations();
+
     const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 

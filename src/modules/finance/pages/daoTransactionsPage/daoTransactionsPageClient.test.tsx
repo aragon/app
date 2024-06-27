@@ -1,72 +1,48 @@
-import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsList/financeDetailsList';
-import { useDao } from '@/shared/api/daoService';
-import { useTranslations } from '@/shared/components/translationsProvider';
+import * as daoService from '@/shared/api/daoService';
+import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoTransactionsPageClient, type IDaoTransactionsPageClientProps } from './daoTransactionsPageClient';
 
-jest.mock('@/shared/api/daoService', () => ({
-    useDao: jest.fn(),
-}));
-
-jest.mock('@/shared/components/translationsProvider', () => ({
-    useTranslations: jest.fn(),
-}));
-
 jest.mock('@/modules/finance/components/financeDetailsList/financeDetailsList', () => ({
-    FinanceDetailsList: jest.fn(() => <div>Mocked FinanceDetailsList</div>),
+    FinanceDetailsList: jest.fn(() => <div data-testid="finance-details-list" />),
 }));
 
 jest.mock('@/modules/finance/components/transactionList/transactionList', () => ({
-    TransactionList: jest.fn(() => <div>Mocked TransactionList</div>),
-}));
-
-jest.mock('@/shared/components/page', () => ({
-    Page: {
-        Content: (props: { children: React.ReactNode }) => <div>{props.children}</div>,
-        Main: (props: { title: string; action: { label: string }; children: React.ReactNode }) => (
-            <div>{props.children}</div>
-        ),
-        Aside: (props: { children: React.ReactNode }) => <div>{props.children}</div>,
-    },
+    TransactionList: jest.fn(() => <div data-testid="finance-transactions-list" />),
 }));
 
 describe('<DaoTransactionsPageClient /> component', () => {
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+    });
+
+    afterEach(() => {
+        useDaoSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<IDaoTransactionsPageClientProps>) => {
-        const completeProps: IDaoTransactionsPageClientProps = { id: 'test-id', ...props };
+        const completeProps: IDaoTransactionsPageClientProps = {
+            id: 'test-id',
+            initialParams: { queryParams: {} },
+            ...props,
+        };
+
         return <DaoTransactionsPageClient {...completeProps} />;
     };
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        (useTranslations as jest.Mock).mockReturnValue({
-            t: jest.fn(),
-        });
-        (useDao as jest.Mock).mockReturnValue({
-            data: {
-                network: 'Ethereum',
-                address: '0x123',
-                ens: 'dao.eth',
-            },
-        });
-    });
-
-    it('renders the DaoTransactionsPageClient with the provided id', () => {
+    it('fetches the DAO with the provided id prop', () => {
         const id = 'new-test-id';
         render(createTestComponent({ id }));
-        expect(screen.getByText('Mocked TransactionList')).toBeInTheDocument();
-        expect(screen.getByText('Mocked FinanceDetailsList')).toBeInTheDocument();
-        expect(useDao).toHaveBeenCalledWith({ urlParams: { id: id } });
+        expect(useDaoSpy).toHaveBeenCalledWith({ urlParams: { id } });
     });
 
-    it('passes the correct props to FinanceDetailsList', () => {
+    it('renders the page title, Transactions List and Transaction Page details', () => {
         render(createTestComponent());
-        expect(FinanceDetailsList).toHaveBeenCalledWith(
-            {
-                network: 'Ethereum',
-                vaultAddress: '0x123',
-                ensAddress: 'dao.eth',
-            },
-            {},
-        );
+
+        expect(screen.getByText(/daoTransactionsPage.main.title/)).toBeInTheDocument();
+        expect(screen.getByTestId('finance-details-list')).toBeInTheDocument();
+        expect(screen.getByTestId('finance-transactions-list')).toBeInTheDocument();
     });
 });

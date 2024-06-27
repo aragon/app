@@ -2,8 +2,8 @@
 
 import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum';
 import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData';
-import { networkDefinitions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     DataListContainer,
     DataListPagination,
@@ -12,17 +12,13 @@ import {
     TransactionDataListItem,
     TransactionStatus,
 } from '@aragon/ods';
-import { type ComponentProps } from 'react';
+import type { IGetTransactionListParams } from '../../api/financeService';
 
-export interface ITransactionListProps extends ComponentProps<'div'> {
+export interface ITransactionListProps {
     /**
-     * ID of the DAO
+     * Initial parameters to use to fetch the DAO transaction list.
      */
-    address?: string;
-    /**
-     * Network of the DAO
-     */
-    network?: string;
+    initialParams: IGetTransactionListParams;
 }
 
 export const transactionTypeToDataListType: Record<TransactionType, DataListTransactionType> = {
@@ -31,14 +27,11 @@ export const transactionTypeToDataListType: Record<TransactionType, DataListTran
 };
 
 export const TransactionList: React.FC<ITransactionListProps> = (props) => {
-    const { children, address, network, ...otherProps } = props;
+    const { initialParams, ...otherProps } = props;
     const { t } = useTranslations();
 
-    const queryParams = { address, network };
-
-    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, transactionList } = useTransactionListData(
-        { queryParams },
-    );
+    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, transactionList } =
+        useTransactionListData(initialParams);
 
     return (
         <DataListRoot
@@ -52,7 +45,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
             <DataListContainer
                 emptyState={emptyState}
                 errorState={errorState}
-                SkeletonElement={() => <TransactionDataListItem.Skeleton />}
+                SkeletonElement={TransactionDataListItem.Skeleton}
             >
                 {transactionList?.map((transaction) => (
                     <TransactionDataListItem.Structure

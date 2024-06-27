@@ -1,5 +1,6 @@
 import * as DaoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { IconType, addressUtils, clipboardUtils } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
@@ -22,6 +23,7 @@ describe('<NavigationDao /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const copySpy = jest.spyOn(clipboardUtils, 'copy');
+    const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -30,6 +32,7 @@ describe('<NavigationDao /> component', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
+        hasSupportedPluginsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
@@ -53,14 +56,22 @@ describe('<NavigationDao /> component', () => {
     });
 
     it('renders the DAO links for the current DAO on desktop devices', () => {
-        const id = 'test-dao';
-        const daoLinks = navigationDaoLinks(id);
-        render(createTestComponent({ id }));
+        hasSupportedPluginsSpy.mockReturnValue(true);
+        const dao = generateDao({ id: 'test' });
+        const daoLinks = navigationDaoLinks(dao);
+        render(createTestComponent({ id: dao.id }));
         daoLinks.forEach((link) => expect(screen.getByRole('link', { name: link.label })).toBeInTheDocument());
         // eslint-disable-next-line testing-library/no-node-access
         expect(screen.getByRole('link', { name: daoLinks[0].label }).parentElement?.className).toContain(
             'hidden md:flex',
         );
+    });
+
+    it('hides the members and proposals links when DAO has no supported plugin', () => {
+        hasSupportedPluginsSpy.mockReturnValue(false);
+        render(createTestComponent({ id: 'test' }));
+        expect(screen.queryByRole('link', { name: /navigationDao.link.members/ })).not.toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: /navigationDao.link.proposals/ })).not.toBeInTheDocument();
     });
 
     it('renders a button to open the navigation dialog on mobile devices', async () => {
