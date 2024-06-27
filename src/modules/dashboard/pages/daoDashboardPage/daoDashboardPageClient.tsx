@@ -26,17 +26,17 @@ export interface IDaoDashboardPageClientProps {
     /**
      * ID of the DAO.
      */
-    id: string;
+    daoId: string;
 }
 
 const dashboardMembersCount = 6;
 
 export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (props) => {
-    const { id } = props;
+    const { daoId } = props;
 
     const { t } = useTranslations();
 
-    const useDaoParams = { id };
+    const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
     const proposalsCreated = formatterUtils.formatNumber(dao?.metrics.proposalsCreated, {
@@ -57,36 +57,40 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
-    const memberListParams = { queryParams: { daoId: id, pageSize: dashboardMembersCount } };
+    const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
     const dropdownLabel = dao?.ens ?? truncatedAddress;
     const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
 
+    if (dao == null) {
+        return null;
+    }
+
     return (
         <>
             <Page.Header
-                title={dao?.name}
-                description={dao?.description}
+                title={dao.name}
+                description={dao.description}
                 stats={stats}
-                avatar={<DaoAvatar src={ipfsUtils.cidToSrc(dao?.avatar)} name={dao?.name} size="2xl" />}
+                avatar={<DaoAvatar src={ipfsUtils.cidToSrc(dao.avatar)} name={dao.name} size="2xl" />}
             >
                 <div className="flex flex-row gap-4">
                     {/* TODO: add containerClassname property to dropdown component and set max-width there */}
                     <Dropdown.Container size="md" label={dropdownLabel}>
-                        {dao?.ens != null && (
+                        {dao.ens != null && (
                             <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.ens!)}>
                                 {dao.ens}
                             </Dropdown.Item>
                         )}
-                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao!.address)}>
+                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.address)}>
                             {truncatedAddress}
                         </Dropdown.Item>
                         <Dropdown.Item
                             icon={IconType.COPY}
                             onClick={() => clipboardUtils.copy(pageUrl)}
-                            className="max-w-48"
+                            className="max-w-52"
                         >
                             {pageUrl}
                         </Dropdown.Item>
@@ -102,7 +106,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 variant="tertiary"
                                 size="md"
                                 iconRight={IconType.CHEVRON_RIGHT}
-                                href={`/dao/${id}/assets`}
+                                href={`/dao/${daoId}/assets`}
                             >
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>
@@ -116,7 +120,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     variant="tertiary"
                                     size="md"
                                     iconRight={IconType.CHEVRON_RIGHT}
-                                    href={`/dao/${id}/members`}
+                                    href={`/dao/${daoId}/members`}
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
@@ -132,23 +136,27 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </DefinitionList.Item>
                             {/* TODO: add links to block explorer */}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
-                                <Link iconRight={IconType.LINK_EXTERNAL}>{truncatedAddress}</Link>
+                                <Link iconRight={IconType.LINK_EXTERNAL} href="/">
+                                    {truncatedAddress}
+                                </Link>
                             </DefinitionList.Item>
-                            {dao?.ens && (
+                            {dao.ens && (
                                 <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
-                                    <Link iconRight={IconType.LINK_EXTERNAL}>{dao.ens}</Link>
+                                    <Link iconRight={IconType.LINK_EXTERNAL} href="/">
+                                        {dao.ens}
+                                    </Link>
                                 </DefinitionList.Item>
                             )}
                             {/* TODO: add formatted creation date */}
                         </DefinitionList.Container>
                     </Page.Section>
-                    {dao!.links.length > 0 && (
+                    {dao.links.length > 0 && (
                         <Page.Section
                             title={t('app.dashboard.daoDashboardPage.aside.links')}
                             className="flex flex-col gap-4"
                         >
-                            {dao?.links.map(({ url, name }) => (
-                                <Link key={url} iconRight={IconType.LINK_EXTERNAL} description={url}>
+                            {dao.links.map(({ url, name }) => (
+                                <Link key={url} iconRight={IconType.LINK_EXTERNAL} description={url} href={url}>
                                     {name}
                                 </Link>
                             ))}

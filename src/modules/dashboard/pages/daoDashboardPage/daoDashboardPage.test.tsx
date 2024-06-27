@@ -1,5 +1,11 @@
 import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { DaoDashboardPage, type IDaoDashboardPageProps } from './daoDashboardPage';
+
+jest.mock('@tanstack/react-query', () => ({
+    ...jest.requireActual('@tanstack/react-query'),
+    HydrationBoundary: (props: { children: ReactNode }) => props.children,
+}));
 
 jest.mock('./daoDashboardPageClient', () => ({
     DaoDashboardPageClient: () => <div data-testid="page-client-mock" />,
