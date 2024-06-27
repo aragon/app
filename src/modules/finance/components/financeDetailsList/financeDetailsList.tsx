@@ -16,7 +16,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
     const { t } = useTranslations();
 
     return (
-        <Page.Section title={t('app.finance.financeDetailsList.title')}>
+        <Page.Section title={t('app.finance.financeDetailsList.title')} inset={false}>
             <DefinitionList.Container {...otherProps}>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.blockchain')}>
                     <p className="text-neutral-500">{networkDefinitions[network]?.name}</p>

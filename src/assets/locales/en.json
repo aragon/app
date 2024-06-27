@@ -35,9 +35,6 @@
             "proposals": "Proposals",
             "members": "Members",
             "treasury": "Treasury value"
-          },
-          "action": {
-            "follow": "Follow DAO"
           }
         },
         "main": {
@@ -53,8 +50,10 @@
           "details": {
             "title": "Details",
             "blockchain": "Blockchain",
-            "address": "Contract address"
-          }
+            "address": "Contract address",
+            "ens": "ENS name"
+          },
+          "links": "Links"
         }
       }
     },

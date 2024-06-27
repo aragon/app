@@ -14,7 +14,7 @@ export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = (props) => {
 
     return (
         <Page.Container>
-            <DaoDashboardPageClient id={params.id} />
+            <DaoDashboardPageClient daoId={params.id} />
         </Page.Container>
     );
 };
