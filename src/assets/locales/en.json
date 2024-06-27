@@ -61,11 +61,11 @@
     "finance": {
       "assetList": {
         "entity": "Assets",
-        "emptyState" : {
+        "emptyState": {
           "heading": "No assets found",
           "description": "This will show the DAO's onchain assets when available."
         },
-        "errorState" : {
+        "errorState": {
           "heading": "Error loading assets",
           "description": "There was an error loading the assets. Please try again later."
         }

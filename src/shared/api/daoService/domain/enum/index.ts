@@ -1,1 +1,1 @@
-export { networkDefinitions, Network, type INetworkDefinition } from './network';
+export { Network, networkDefinitions, type INetworkDefinition } from './network';

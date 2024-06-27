@@ -1,1 +1,1 @@
-export { useAssetListData } from './useAssetListData'
+export { useAssetListData } from './useAssetListData';

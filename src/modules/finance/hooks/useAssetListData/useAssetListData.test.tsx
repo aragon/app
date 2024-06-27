@@ -55,7 +55,7 @@ describe('useAssetListData hook', () => {
         useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
         const pageSize = 2;
         const { result } = renderHook(() => useAssetListData({ queryParams: { pageSize } }));
-        console.log('result', result);
+
         expect(result.current.pageSize).toEqual(pageSize);
     });
 });

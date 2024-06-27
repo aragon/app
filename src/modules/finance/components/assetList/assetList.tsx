@@ -37,8 +37,6 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
         queryParams,
     });
 
-    console.log('assetList:', assetList);
-
     return (
         <DataListRoot
             entityLabel={t('app.finance.assetList.entity')}

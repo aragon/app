@@ -1,13 +1,12 @@
 import { type ITransaction } from '@/modules/finance/api/financeService/';
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { IAsset, IBalance } from './domain';
+import type { IBalance } from './domain';
 import type { IGetAssetListParams, IGetTransactionListParams } from './financeService.api';
-
 
 class FinanceService extends AragonBackendService {
     private urls = {
         balanceList: '/assets',
-        transactionList: '/transactions'
+        transactionList: '/transactions',
     };
 
     getAssetList = async ({ queryParams }: IGetAssetListParams): Promise<IPaginatedResponse<IBalance>> => {

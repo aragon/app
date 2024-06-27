@@ -8,11 +8,11 @@ export interface IBalance {
     /**
      * Amount of the asset in USD.
      */
-    amountUsd: string; 
+    amountUsd: string;
     /**
      * DAO address.
      */
-    daoAddress: `0x${string}`; 
+    daoAddress: `0x${string}`;
     /**
      * Network of the asset.
      */
@@ -24,5 +24,5 @@ export interface IBalance {
     /**
      * Address of the token.
      */
-    tokenAddress: `0x${string}`; 
+    tokenAddress: `0x${string}`;
 }

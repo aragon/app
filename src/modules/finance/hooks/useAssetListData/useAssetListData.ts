@@ -3,17 +3,10 @@ import { type IGetAssetListParams, useAssetList } from '@/modules/finance/api/fi
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 
-
 export const useAssetListData = (params: IGetAssetListParams) => {
     const { t } = useTranslations();
-    console.log('params:', params)
-    const {
-        data: assetListData,
-        status,
-        fetchStatus,
-        isFetchingNextPage,
-        fetchNextPage,
-    } = useAssetList(params);
+
+    const { data: assetListData, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useAssetList(params);
 
     const assetList = assetListData?.pages.flatMap((page) => page.data);
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });

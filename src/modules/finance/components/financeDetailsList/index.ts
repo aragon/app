@@ -1,1 +1,1 @@
-export { FinanceDetailsList, type IFinanceDetailsListProps} from './financeDetailsList';
+export { FinanceDetailsList, type IFinanceDetailsListProps } from './financeDetailsList';

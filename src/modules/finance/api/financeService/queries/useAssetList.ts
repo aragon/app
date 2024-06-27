@@ -1,7 +1,7 @@
 import { type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { InfiniteQueryOptions, SharedInfiniteQueryOptions } from '@/shared/types';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import type { IAsset, IBalance } from '../domain';
+import type { IBalance } from '../domain';
 import { financeService } from '../financeService';
 import type { IGetAssetListParams } from '../financeService.api';
 import { financeServiceKeys } from '../financeServiceKeys';
