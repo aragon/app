@@ -1,4 +1,4 @@
-import { IGetAssetListParams, useAssetList } from '@/modules/finance/api/financeService';
+import { type IGetAssetListParams, useAssetList } from '@/modules/finance/api/financeService';
 
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
@@ -6,7 +6,7 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
 
 export const useAssetListData = (params: IGetAssetListParams) => {
     const { t } = useTranslations();
-    
+    console.log('params:', params)
     const {
         data: assetListData,
         status,

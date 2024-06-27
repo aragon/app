@@ -1,6 +1,6 @@
 'use client';
 
-import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
+import { useAssetListData } from '@/modules/finance/hooks/useAssetListData/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     AssetDataListItem,

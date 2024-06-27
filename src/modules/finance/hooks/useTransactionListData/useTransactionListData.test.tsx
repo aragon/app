@@ -7,7 +7,6 @@ import {
 } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import * as financeService from '../../api/financeService';
-
 import { generateTransaction } from '@/modules/finance/testUtils';
 import { useTransactionListData } from './useTransactionListData';
 
