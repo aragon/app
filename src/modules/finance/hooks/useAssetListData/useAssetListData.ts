@@ -11,7 +11,7 @@ export const useAssetListData = (params: IGetAssetListParams) => {
     const assetList = assetListData?.pages.flatMap((page) => page.data);
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
-    const pageSize = assetListData?.pages[0].metadata.pageSize;
+    const pageSize = params.queryParams.pageSize ?? assetListData?.pages[0].metadata.pageSize;
     const itemsCount = assetListData?.pages[0].metadata.totalRecords;
 
     const errorState = {
