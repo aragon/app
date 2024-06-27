@@ -132,7 +132,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                     <Page.Section title={t('app.dashboard.daoDashboardPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.blockchain')}>
-                                <p className="text-neutral-500">{networkDefinitions[dao!.network].name}</p>
+                                <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                             </DefinitionList.Item>
                             {/* TODO: add links to block explorer (APP-3342) */}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
