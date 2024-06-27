@@ -5,12 +5,12 @@ import type { IGetAssetListParams, IGetTransactionListParams } from './financeSe
 
 class FinanceService extends AragonBackendService {
     private urls = {
-        balanceList: '/assets',
+        assetList: '/assets',
         transactionList: '/transactions',
     };
 
     getAssetList = async ({ queryParams }: IGetAssetListParams): Promise<IPaginatedResponse<IBalance>> => {
-        const result = await this.request<IPaginatedResponse<IBalance>>(this.urls.balanceList, { queryParams });
+        const result = await this.request<IPaginatedResponse<IBalance>>(this.urls.assetList, { queryParams });
 
         return result;
     };
