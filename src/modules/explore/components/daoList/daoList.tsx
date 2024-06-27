@@ -1,5 +1,6 @@
 'use client';
 
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoDataListItemStructure, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
 import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService';
@@ -35,6 +36,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         address={dao.address}
                         name={dao.name}
                         description={dao.description}
+                        network={networkDefinitions[dao.network].name}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
                         plugin={dao.plugins.map((plugin) => plugin.subdomain).join(',')}
                     />

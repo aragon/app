@@ -13,5 +13,6 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     isSupported: true,
     tvlUSD: '0',
     metrics: generateDaoMetrics(),
+    links: [],
     ...dao,
 });
