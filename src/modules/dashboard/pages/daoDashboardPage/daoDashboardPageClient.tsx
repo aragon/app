@@ -27,6 +27,7 @@ export interface IDaoDashboardPageClientProps {
 }
 
 const dashboardMembersCount = 6;
+const dashboardAssetsCount = 3;
 
 export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (props) => {
     const { id } = props;
@@ -78,7 +79,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             <Page.Content>
                 <Page.Main>
                     <Page.Section title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
-                        <AssetList daoAddress={dao?.address} network={dao?.network} hidePagination={true}>
+                        <AssetList
+                            daoAddress={dao?.address}
+                            network={dao?.network}
+                            assetCap={dashboardAssetsCount}
+                            hidePagination={true}
+                        >
                             <Button
                                 className="self-start"
                                 variant="tertiary"

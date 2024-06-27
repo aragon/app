@@ -22,16 +22,20 @@ export interface IAssetListProps extends ComponentProps<'div'> {
      */
     network?: string;
     /**
+     * Maximum number of assets to display.
+     */
+    assetCap?: number;
+    /**
      * Hides the pagination component when set to true.
      */
     hidePagination?: boolean;
 }
 
 export const AssetList: React.FC<IAssetListProps> = (props) => {
-    const { daoAddress, network, hidePagination, children, ...otherProps } = props;
+    const { daoAddress, network, assetCap, hidePagination, children, ...otherProps } = props;
     const { t } = useTranslations();
 
-    const queryParams = { daoAddress, network };
+    const queryParams = { daoAddress, network, pageSize: assetCap };
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } = useAssetListData({
         queryParams,
