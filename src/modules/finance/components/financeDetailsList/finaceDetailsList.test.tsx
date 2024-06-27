@@ -1,81 +1,39 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    addressUtils,
-    type IDefinitionListContainerProps,
-    type IDefinitionListItemProps,
-    type ILinkProps,
-} from '@aragon/ods';
+import { Network } from '@/shared/api/daoService';
+import { Page } from '@/shared/components/page';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { generateDao } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { FinanceDetailsList, type IFinanceDetailsListProps } from './financeDetailsList';
 
-jest.mock('@/shared/components/translationsProvider', () => ({
-    useTranslations: jest.fn(),
-}));
-
-jest.mock('@/shared/components/page', () => ({
-    Page: {
-        Section: (props: { title: string; children: React.ReactNode }) => <div {...props} />,
-    },
-}));
-
-jest.mock('@aragon/ods', () => ({
-    ...jest.requireActual('@aragon/ods'),
-    DefinitionList: {
-        Container: (props: IDefinitionListContainerProps) => <dl {...props} />,
-        Item: (props: IDefinitionListItemProps) => <div {...props} />,
-    },
-    Link: ({ children, iconRight, ...otherProps }: ILinkProps) => <a {...otherProps}>{children}</a>,
-    addressUtils: {
-        truncateAddress: jest.fn((address: string) => `truncated-${address}`),
-    },
-}));
-
 describe('<FinanceDetailsList /> component', () => {
-    const useTranslationsMock = useTranslations as jest.Mock;
-
-    const createTestComponent = (props?: Partial<IFinanceDetailsListProps>) => {
-        const defaultProps: IFinanceDetailsListProps = {
-            network: 'Ethereum',
-            vaultAddress: '0x123',
-            ensAddress: 'dao.eth',
+    const createTestComponent = (props: Partial<IFinanceDetailsListProps>) => {
+        const completeProps: IFinanceDetailsListProps = {
+            dao: generateDao(),
             ...props,
         };
 
-        return <FinanceDetailsList {...defaultProps} />;
+        return (
+            <Page.Main>
+                <FinanceDetailsList {...completeProps} />
+            </Page.Main>
+        );
     };
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        useTranslationsMock.mockReturnValue({
-            t: (key: string) => key,
+    it('renders the finance details list based on the provided dao', () => {
+        const dao = generateDao({
+            network: Network.POLYGON_MAINNET,
+            address: '0x1b765393c3E2f3d25c44eb9Cf6B864B3fD250cDB',
+            ens: 'dao.polygon',
         });
+        render(createTestComponent({ dao }));
+        expect(screen.getByText(networkDefinitions[dao.network].name)).toBeInTheDocument();
+        expect(screen.getByText('0x1b…0cDB')).toBeInTheDocument();
+        expect(screen.getByText('dao.polygon')).toBeInTheDocument();
     });
 
-    it('renders the finance details list with all provided props', () => {
-        const network = 'Polygon';
-        const vaultAddress = '0x321';
-        const ensAddress = 'dao.polygon';
-        render(createTestComponent({ network, vaultAddress, ensAddress }));
-        expect(screen.getByText(network)).toBeInTheDocument();
-        expect(screen.getByText(`truncated-${vaultAddress}`)).toBeInTheDocument();
-        expect(screen.getByText(ensAddress)).toBeInTheDocument();
-    });
-
-    it('renders the finance details list with missing ensAddress', () => {
-        const ensAddress = null;
-        render(createTestComponent({ ensAddress }));
-        expect(screen.getByText('N/A')).toBeInTheDocument();
-    });
-
-    it('renders the finance details list with missing network', () => {
-        const network = undefined;
-        render(createTestComponent({ network }));
-        expect(screen.getByText('Unknown Network')).toBeInTheDocument();
-    });
-
-    it('calls addressUtils.truncateAddress with the correct address', () => {
-        const vaultAddress = '0xVau1t';
-        render(createTestComponent({ vaultAddress }));
-        expect(addressUtils.truncateAddress).toHaveBeenCalledWith(vaultAddress);
+    it('does not render the DAO ens when missing', () => {
+        const dao = generateDao({ ens: undefined });
+        render(createTestComponent({ dao }));
+        expect(screen.queryByText('dao.polygon')).not.toBeInTheDocument();
     });
 });
