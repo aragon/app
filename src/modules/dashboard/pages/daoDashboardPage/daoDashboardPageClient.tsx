@@ -59,6 +59,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
     const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
+    const assetListParams = { queryParams: {
+            daoAddress: dao?.address,
+            network: dao?.network,
+            pageSize: dashboardAssetsCount,
+        }
+    };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
@@ -101,12 +107,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             <Page.Content>
                 <Page.Main>
                     <Page.Section title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
-                        <AssetList
-                            daoAddress={dao?.address}
-                            network={dao?.network}
-                            assetCap={dashboardAssetsCount}
-                            hidePagination={true}
-                        >
+                        <AssetList initialParams={assetListParams} hidePagination={true}>
                             <Button
                                 className="self-start"
                                 variant="tertiary"

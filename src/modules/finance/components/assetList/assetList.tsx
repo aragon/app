@@ -1,5 +1,6 @@
 'use client';
 
+import { IGetAssetListParams } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -14,17 +15,9 @@ import { formatUnits } from 'viem';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
     /**
-     * ID of the DAO
+     * Inital params to fetch the asset list.
      */
-    daoAddress?: string;
-    /**
-     * Network of the DAO
-     */
-    network?: string;
-    /**
-     * Maximum number of assets to display.
-     */
-    assetCap?: number;
+    initialParams: IGetAssetListParams;
     /**
      * Hides the pagination component when set to true.
      */
@@ -32,14 +25,11 @@ export interface IAssetListProps extends ComponentProps<'div'> {
 }
 
 export const AssetList: React.FC<IAssetListProps> = (props) => {
-    const { daoAddress, network, assetCap, hidePagination, children, ...otherProps } = props;
+    const { initialParams, hidePagination, children, ...otherProps } = props;
     const { t } = useTranslations();
 
-    const queryParams = { daoAddress, network, pageSize: assetCap };
-
-    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } = useAssetListData({
-        queryParams,
-    });
+    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
+        useAssetListData(initialParams);
 
     return (
         <DataListRoot
