@@ -1,10 +1,7 @@
-import { type IAsset } from '@/modules/finance/api/financeService/domain/asset';
 import { type TransactionType } from '@/modules/finance/api/financeService/domain/enum/transactionType';
 import { type Network } from '@/shared/api/daoService';
+import { type IToken } from './token';
 
-/**
- * Interface representing a cryptocurrency transaction.
- */
 export interface ITransaction {
     /**
      * The network identifier for the transaction.
@@ -29,7 +26,7 @@ export interface ITransaction {
     /**
      * The token involved in the transaction.
      */
-    token: IAsset;
+    token: IToken;
     /**
      * The value of the transaction.
      */

@@ -20,10 +20,17 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
     const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
+    const assetListParams = {
+        queryParams: {
+            daoAddress: dao?.address,
+            network: dao?.network,
+        },
+    };
+
     return (
         <Page.Content>
             <Page.Main title={t('app.finance.daoAssetsPage.main.title')}>
-                <AssetList daoAddress={dao?.address} network={dao?.network} />
+                <AssetList initialParams={assetListParams} />
             </Page.Main>
             <Page.Aside>
                 <FinanceDetailsList dao={dao} />

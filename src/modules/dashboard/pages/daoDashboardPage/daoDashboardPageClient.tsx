@@ -59,11 +59,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
     const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
-    const assetListParams = { queryParams: {
+    const assetListParams = {
+        queryParams: {
             daoAddress: dao?.address,
             network: dao?.network,
             pageSize: dashboardAssetsCount,
-        }
+        },
     };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);

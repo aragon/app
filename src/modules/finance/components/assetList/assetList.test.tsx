@@ -17,8 +17,7 @@ describe('<AssetList /> component', () => {
 
     const createTestComponent = (props?: Partial<IAssetListProps>) => {
         const completeProps: IAssetListProps = {
-            daoAddress: '0xDAO',
-            network: 'ethereum-mainnet',
+            initialParams: { queryParams: { daoAddress: '0x123', network: 'mainnet' } },
             hidePagination: false,
             ...props,
         };

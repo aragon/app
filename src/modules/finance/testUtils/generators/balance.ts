@@ -1,7 +1,7 @@
-import type { IAsset, IBalance } from '../../api/financeService';
+import type { IAsset } from '../../api/financeService';
 import { generateAsset } from './asset';
 
-export const generateBalance = (balance?: Partial<IBalance>, asset?: Partial<IAsset>): IBalance => ({
+export const generateBalance = (balance?: Partial<IAsset>, asset?: Partial<IAsset>): IAsset => ({
     ...generateAsset(balance),
     amount: '0',
     amountUsd: '0.00',

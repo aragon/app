@@ -1,6 +1,6 @@
-import type { IAsset } from '../../api/financeService';
+import type { IToken } from '../../api/financeService';
 
-export const generateAsset = (asset?: Partial<IAsset & { address?: string }>): IAsset => ({
+export const generateAsset = (asset?: Partial<IToken & { address?: string }>): IToken => ({
     address: '0xTestAddress',
     network: 'ethereum-mainnet',
     symbol: 'ETH',

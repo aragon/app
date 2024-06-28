@@ -71,8 +71,7 @@
       },
       "daoAssetsPage": {
         "main": {
-          "title": "Assets",
-          "action": "New transfer"
+          "title": "Assets"
         },
         "aside": {
           "details": {
@@ -100,8 +99,7 @@
       },
       "daoTransactionsPage": {
         "main": {
-          "title": "Transactions",
-          "action": "New transfer"
+          "title": "Transactions"
         },
         "aside": {
           "details": {

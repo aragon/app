@@ -25,6 +25,7 @@ describe('<FinanceDetailsList /> component', () => {
             address: '0x1b765393c3E2f3d25c44eb9Cf6B864B3fD250cDB',
             ens: 'dao.polygon',
         });
+
         render(createTestComponent({ dao }));
         expect(screen.getByText(networkDefinitions[dao.network].name)).toBeInTheDocument();
         expect(screen.getByText('0x1b…0cDB')).toBeInTheDocument();

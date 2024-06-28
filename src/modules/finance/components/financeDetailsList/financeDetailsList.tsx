@@ -1,6 +1,7 @@
-import { networkDefinitions, type IDao } from '@/shared/api/daoService';
+import { type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { DefinitionList, IconType, Link, addressUtils, type IDefinitionListContainerProps } from '@aragon/ods';
 
 export interface IFinanceDetailsListProps extends IDefinitionListContainerProps {
@@ -12,7 +13,7 @@ export interface IFinanceDetailsListProps extends IDefinitionListContainerProps 
 
 export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) => {
     const { dao, ...otherProps } = props;
-    const { network, address: vaultAddress, ens: vaultEns } = dao!; //TODO: Remove bang
+    const { network, address: vaultAddress, ens: vaultEns } = dao!;
     const { t } = useTranslations();
 
     return (

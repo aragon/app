@@ -1,4 +1,4 @@
-import { Network } from '../api/daoService';
+import { Network } from '@/shared/api/daoService';
 
 export interface INetworkDefinition {
     /**

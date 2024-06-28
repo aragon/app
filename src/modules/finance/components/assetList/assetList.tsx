@@ -1,6 +1,6 @@
 'use client';
 
-import { IGetAssetListParams } from '@/modules/finance/api/financeService';
+import { type IGetAssetListParams } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -15,7 +15,7 @@ import { formatUnits } from 'viem';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
     /**
-     * Inital params to fetch the asset list.
+     * Initial params to fetch the asset list.
      */
     initialParams: IGetAssetListParams;
     /**

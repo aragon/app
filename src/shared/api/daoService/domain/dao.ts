@@ -1,4 +1,4 @@
-import { IDaoLink } from './daoLink';
+import { type IDaoLink } from './daoLink';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
 import { type Network } from './enum';

@@ -1,38 +1,28 @@
+import type { IToken } from './token';
+
 export interface IAsset {
     /**
-     * Address of the asset.
+     * Amount of the asset.
      */
-    address: string;
+    amount: string;
+    /**
+     * Amount of the asset in USD.
+     */
+    amountUsd: string;
+    /**
+     * DAO address.
+     */
+    daoAddress: `0x${string}`;
     /**
      * Network of the asset.
      */
     network: string;
     /**
-     * Symbol of the asset.
+     * Token involved in the balance.
      */
-    symbol: string;
+    token: IToken;
     /**
-     * Name of the asset.
+     * Address of the token.
      */
-    name: string;
-    /**
-     * Logo url.
-     */
-    logo: string;
-    /**
-     * Type of the asset.
-     */
-    type: string;
-    /**
-     * Decimals of the asset.
-     */
-    decimals: number;
-    /**
-     * Price change in the last 24 hours.
-     */
-    priceChangeOnDayUsd: string;
-    /**
-     * Current price in USD.
-     */
-    priceUsd: string;
+    tokenAddress: `0x${string}`;
 }

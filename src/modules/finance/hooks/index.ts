@@ -1,2 +1,2 @@
-export * from './useAssetListData/useAssetListData';
+export * from './useAssetListData';
 export * from './useTransactionListData';
