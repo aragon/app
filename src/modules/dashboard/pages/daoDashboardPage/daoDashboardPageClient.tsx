@@ -10,7 +10,9 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     Button,
+    ChainEntityType,
     DaoAvatar,
+    DateFormat,
     DefinitionList,
     Dropdown,
     IconType,
@@ -66,12 +68,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
     const { getChainEntityUrl } = useBlockExplorer();
     const daoAddressLink = getChainEntityUrl({
-        type: 'address',
+        type: ChainEntityType.ADDRESS,
         chainId: networkDefinitions[dao?.network ?? Network.ETHEREUM_MAINNET].chainId,
-        id: dao?.address ?? '',
+        id: dao?.address,
     });
 
-    // const createdAt = formatterUtils.formatDate(dao?.blockTimestamp, { format: 'YEAR_MONTH' as DateFormat });
+    const daoLaunchedAt = formatterUtils.formatDate(dao?.blockTimestamp, { format: DateFormat.YEAR_MONTH });
 
     if (dao == null) {
         return null;
@@ -158,7 +160,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             )}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.launched')}>
                                 <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink}>
-                                    {createdAt}
+                                    {daoLaunchedAt}
                                 </Link>
                             </DefinitionList.Item>
                         </DefinitionList.Container>

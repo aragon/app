@@ -9,7 +9,7 @@ import {
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { addressUtils, clipboardUtils, ssrUtils } from '@aragon/ods';
+import { addressUtils, clipboardUtils, OdsModulesProvider, ssrUtils } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -51,7 +51,11 @@ describe('<DaoDashboardPageClient /> component', () => {
             ...props,
         };
 
-        return <DaoDashboardPageClient {...completeProps} />;
+        return (
+            <OdsModulesProvider>
+                <DaoDashboardPageClient {...completeProps} />
+            </OdsModulesProvider>
+        );
     };
 
     it('fetches and renders the dao name, description and avatar', () => {
