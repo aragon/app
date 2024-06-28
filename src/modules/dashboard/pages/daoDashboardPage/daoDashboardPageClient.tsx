@@ -2,7 +2,7 @@
 
 import { AssetList } from '@/modules/finance/components/assetList';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
-import { useDao } from '@/shared/api/daoService';
+import { Network, useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -20,6 +20,7 @@ import {
     clipboardUtils,
     formatterUtils,
     ssrUtils,
+    useBlockExplorer,
 } from '@aragon/ods';
 
 export interface IDaoDashboardPageClientProps {
@@ -36,7 +37,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const { t } = useTranslations();
 
-    const useDaoParams = { id: daoId };
+    const useDaoParams = { id: daoId ?? '' };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
     const proposalsCreated = formatterUtils.formatNumber(dao?.metrics.proposalsCreated, {
@@ -63,6 +64,14 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const dropdownLabel = dao?.ens ?? truncatedAddress;
     const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
+    const { getChainEntityUrl } = useBlockExplorer();
+    const daoAddressLink = getChainEntityUrl({
+        type: 'address',
+        chainId: networkDefinitions[dao?.network ?? Network.ETHEREUM_MAINNET].chainId,
+        id: dao?.address ?? '',
+    });
+
+    // const createdAt = formatterUtils.formatDate(dao?.blockTimestamp, { format: 'YEAR_MONTH' as DateFormat });
 
     if (dao == null) {
         return null;
@@ -77,7 +86,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                 avatar={<DaoAvatar src={ipfsUtils.cidToSrc(dao.avatar)} name={dao.name} size="2xl" />}
             >
                 <div className="flex flex-row gap-4">
-                    <Dropdown.Container size="md" label={dropdownLabel}>
+                    <Dropdown.Container
+                        contentClassNames="max-w-52"
+                        constrainContentWidth={false}
+                        size="md"
+                        label={dropdownLabel}
+                    >
                         {dao.ens != null && (
                             <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.ens!)}>
                                 {dao.ens}
@@ -86,12 +100,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                         <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.address)}>
                             {truncatedAddress}
                         </Dropdown.Item>
-                        <Dropdown.Item
-                            icon={IconType.COPY}
-                            onClick={() => clipboardUtils.copy(pageUrl)}
-                            // TODO: use containerClassname prop on dropdown component to set max width (APP-3342)
-                            className="max-w-52"
-                        >
+                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(pageUrl)}>
                             {pageUrl}
                         </Dropdown.Item>
                     </Dropdown.Container>
@@ -136,18 +145,22 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </DefinitionList.Item>
                             {/* TODO: add links to block explorer (APP-3342) */}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
-                                <Link iconRight={IconType.LINK_EXTERNAL} href="/">
+                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink}>
                                     {truncatedAddress}
                                 </Link>
                             </DefinitionList.Item>
                             {dao.ens && (
                                 <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
-                                    <Link iconRight={IconType.LINK_EXTERNAL} href="/">
+                                    <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink}>
                                         {dao.ens}
                                     </Link>
                                 </DefinitionList.Item>
                             )}
-                            {/* TODO: add formatted creation date (APP-3342) */}
+                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.launched')}>
+                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink}>
+                                    {createdAt}
+                                </Link>
+                            </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.Section>
                     {dao.links.length > 0 && (

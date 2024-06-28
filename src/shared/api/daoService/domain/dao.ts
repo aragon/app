@@ -52,4 +52,8 @@ export interface IDao {
      * Links of the DAO.
      */
     links: IDaoLink[];
+    /**
+     * DAO creation date by block timestamp.
+     */
+    blockTimestamp: number;
 }
