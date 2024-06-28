@@ -1,14 +1,12 @@
-import type { IToken } from '../../api/financeService';
+import type { IAsset } from '../../api/financeService';
+import { generateToken } from './token';
 
-export const generateAsset = (asset?: Partial<IToken & { address?: string }>): IToken => ({
-    address: '0xTestAddress',
+export const generateAsset = (asset?: Partial<IAsset>): IAsset => ({
+    amount: '0',
+    amountUsd: '0.00',
+    daoAddress: `0xTestDaoAddress`,
     network: 'ethereum-mainnet',
-    symbol: 'ETH',
-    logo: 'https://test.com',
-    name: 'Ethereum',
-    type: 'ERC-20',
-    decimals: 0,
-    priceChangeOnDayUsd: '0.00',
-    priceUsd: '0.00',
+    token: { ...generateToken(asset) },
+    tokenAddress: '0xTestTokenAddress',
     ...asset,
 });

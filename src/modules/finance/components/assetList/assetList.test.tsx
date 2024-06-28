@@ -1,6 +1,6 @@
 import { AssetList, type IAssetListProps } from '@/modules/finance/components/assetList';
 import * as useAssetListData from '@/modules/finance/hooks/useAssetListData/useAssetListData';
-import { generateBalance } from '@/modules/finance/testUtils';
+import { generateAsset } from '@/modules/finance/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 
@@ -30,8 +30,8 @@ describe('<AssetList /> component', () => {
     };
 
     it('renders the asset list with multiple items when data is available', () => {
-        const balances = [
-            generateBalance({
+        const assets = [
+            generateAsset({
                 token: {
                     symbol: 'ABC',
                     address: '0xABC',
@@ -45,7 +45,7 @@ describe('<AssetList /> component', () => {
                 },
                 amount: '100',
             }),
-            generateBalance({
+            generateAsset({
                 token: {
                     symbol: 'DEF',
                     address: '0xDEF',
@@ -62,7 +62,7 @@ describe('<AssetList /> component', () => {
         ];
         useAssetListDataSpy.mockReturnValue({
             onLoadMore: jest.fn(),
-            assetList: balances,
+            assetList: assets,
             state: 'idle' as const,
             pageSize: 10,
             itemsCount: 2,
@@ -72,7 +72,7 @@ describe('<AssetList /> component', () => {
 
         render(createTestComponent());
 
-        balances.forEach((balance) => {
+        assets.forEach((balance) => {
             expect(screen.getByText(Number(balance.amount) / 10 ** balance.token.decimals)).toBeInTheDocument();
             expect(screen.getByText(balance.token.symbol)).toBeInTheDocument();
         });

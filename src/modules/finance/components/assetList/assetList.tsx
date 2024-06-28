@@ -1,7 +1,7 @@
 'use client';
 
 import { type IGetAssetListParams } from '@/modules/finance/api/financeService';
-import { useAssetListData } from '@/modules/finance/hooks/useAssetListData/useAssetListData';
+import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     AssetDataListItem,

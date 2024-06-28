@@ -20,10 +20,13 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
     const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
+    const pageSize = 6;
+
     const assetListParams = {
         queryParams: {
             daoAddress: dao?.address,
             network: dao?.network,
+            pageSize,
         },
     };
 

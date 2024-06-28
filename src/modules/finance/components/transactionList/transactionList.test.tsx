@@ -1,4 +1,4 @@
-import { generateAsset, generateTransaction } from '@/modules/finance/testUtils';
+import { generateToken, generateTransaction } from '@/modules/finance/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import * as useTransactionListData from '../../hooks/useTransactionListData';
@@ -30,8 +30,8 @@ describe('<TransactionList /> component', () => {
 
     it('renders the transaction list with multiple items when data is available', () => {
         const transactions = [
-            generateTransaction({ token: generateAsset({ symbol: 'ABC' }), value: '100', transactionHash: '0x1' }),
-            generateTransaction({ token: generateAsset({ symbol: 'DEF' }), value: '200', transactionHash: '0x2' }),
+            generateTransaction({ token: generateToken({ symbol: 'ABC' }), value: '100', transactionHash: '0x1' }),
+            generateTransaction({ token: generateToken({ symbol: 'DEF' }), value: '200', transactionHash: '0x2' }),
         ];
         useTransactionListDataSpy.mockReturnValue({
             onLoadMore: jest.fn(),

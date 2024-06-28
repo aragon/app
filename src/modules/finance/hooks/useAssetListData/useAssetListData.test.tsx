@@ -1,5 +1,5 @@
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
-import { generateAsset, generateBalance } from '@/modules/finance/testUtils';
+import { generateAsset, generateToken } from '@/modules/finance/testUtils';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -23,7 +23,7 @@ describe('useAssetListData hook', () => {
     });
 
     it('fetches and returns the data needed to display the asset list', () => {
-        const balances = [generateBalance({ token: generateAsset(), amount: '1000' })];
+        const balances = [generateAsset({ token: generateToken(), amount: '1000' })];
         const balancesMetadata = generatePaginatedResponseMetadata({
             pageSize: 20,
             totalRecords: balances.length,
