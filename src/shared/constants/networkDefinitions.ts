@@ -24,4 +24,20 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         chainId: 137,
         name: 'Polygon Mainnet',
     },
+    [Network.BASE_MAINNET]: {
+        chainId: 8453,
+        name: 'Base Mainnet',
+    },
+    [Network.ARBITRUM_MAINNET]: {
+        chainId: 42161,
+        name: 'Arbitrum Mainnet',
+    },
+    [Network.ZKSYNC_MAINNET]: {
+        chainId: 324,
+        name: 'zkSync Mainnet',
+    },
+    [Network.ZKSYNC_SEPOLIA]: {
+        chainId: 300,
+        name: 'zkSync Sepolia',
+    },
 };
