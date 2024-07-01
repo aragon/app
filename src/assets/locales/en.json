@@ -51,7 +51,8 @@
             "title": "Details",
             "blockchain": "Blockchain",
             "address": "Contract address",
-            "ens": "ENS name"
+            "ens": "ENS name",
+            "launched": "Launched at"
           },
           "links": "Links"
         }

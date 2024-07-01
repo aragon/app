@@ -84,7 +84,7 @@ describe('<NavigationDao /> component', () => {
     });
 
     it('renders the dao information on the navigation dialog', async () => {
-        const dao = generateDao({ name: 'dao name', ens: 'dao ens' });
+        const dao = generateDao({ name: 'dao name', subdomain: 'my-dao' });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
         await userEvent.click(screen.getByTestId('nav-trigger-mock'));
@@ -92,11 +92,11 @@ describe('<NavigationDao /> component', () => {
         const withinDialog = within(screen.getByRole('dialog'));
         expect(withinDialog.getByTestId('dao-avatar-mock')).toBeInTheDocument();
         expect(withinDialog.getByText(dao.name)).toBeInTheDocument();
-        expect(withinDialog.getByText(dao.ens!)).toBeInTheDocument();
+        expect(withinDialog.getByText(daoUtils.getDaoEns(dao)!)).toBeInTheDocument();
     });
 
     it('renders the truncated address on the navigation dialog when dao has no ENS', async () => {
-        const dao = generateDao({ address: '0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722', ens: undefined });
+        const dao = generateDao({ address: '0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722', subdomain: null });
         const truncatedAddress = addressUtils.truncateAddress(dao.address);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());

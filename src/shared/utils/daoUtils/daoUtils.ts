@@ -32,6 +32,9 @@ class DaoUtils {
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };
+
+    getDaoEns = (dao?: IDao): string | undefined =>
+        dao?.subdomain != null && dao.subdomain !== '' ? `${dao.subdomain}.dao.eth` : undefined;
 }
 
 export const daoUtils = new DaoUtils();

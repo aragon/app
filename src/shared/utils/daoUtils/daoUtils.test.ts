@@ -67,4 +67,22 @@ describe('dao utils', () => {
             expect(daoUtils.hasSupportedPlugins()).toBeFalsy();
         });
     });
+
+    describe('getDaoEns', () => {
+        it('returns the full DAO ens from the given subdomain', () => {
+            const dao = generateDao({ subdomain: 'my-dao' });
+            expect(daoUtils.getDaoEns(dao)).toEqual('my-dao.dao.eth');
+        });
+
+        it('returns undefined when dao parameter is not defined', () => {
+            expect(daoUtils.getDaoEns(undefined)).toBeUndefined();
+        });
+
+        it('returns undefined when dao subdomain is null or empty string', () => {
+            const nullSubdomain = generateDao({ subdomain: null });
+            const emptySubdomain = generateDao({ subdomain: '' });
+            expect(daoUtils.getDaoEns(nullSubdomain)).toBeUndefined();
+            expect(daoUtils.getDaoEns(emptySubdomain)).toBeUndefined();
+        });
+    });
 });

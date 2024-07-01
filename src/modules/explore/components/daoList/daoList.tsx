@@ -1,6 +1,7 @@
 'use client';
 
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoDataListItemStructure, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
 import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService';
@@ -32,7 +33,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                     <DaoDataListItemStructure
                         key={dao.id}
                         href={`/dao/${dao.id}/dashboard`}
-                        ens={dao.ens ?? undefined}
+                        ens={daoUtils.getDaoEns(dao)}
                         address={dao.address}
                         name={dao.name}
                         description={dao.description}

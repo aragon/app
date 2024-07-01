@@ -1,4 +1,4 @@
-import { type IDaoLink } from './daoLink';
+import type { IDaoLink } from './daoLink';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
 import { type Network } from './enum';
@@ -25,9 +25,9 @@ export interface IDao {
      */
     description: string;
     /**
-     * ENS of the DAO or null when DAO has no ENS linked.
+     * ENS of the DAO under the dao.eth subdomain.
      */
-    ens: string | null;
+    subdomain: string | null;
     /**
      * Avatar of the DAO or null when DAO has no avatar.
      */
@@ -52,4 +52,12 @@ export interface IDao {
      * Links of the DAO.
      */
     links: IDaoLink[];
+    /**
+     * DAO creation date by block timestamp (in seconds).
+     */
+    blockTimestamp: number;
+    /**
+     * Transaction hash of the DAO creation.
+     */
+    transactionHash: string;
 }
