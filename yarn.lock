@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/ods": "npm:1.0.36"
+    "@aragon/ods": "npm:^1.0.36"
     "@next/bundle-analyzer": "npm:^14.2.4"
     "@tailwindcss/typography": "npm:^0.5.13"
     "@tanstack/react-query": "npm:^5.45.1"
@@ -95,7 +95,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/ods@npm:1.0.36":
+"@aragon/ods@npm:^1.0.36":
   version: 1.0.36
   resolution: "@aragon/ods@npm:1.0.36"
   dependencies:

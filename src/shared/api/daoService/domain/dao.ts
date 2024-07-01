@@ -1,4 +1,4 @@
-import { IDaoLink } from './daoLink';
+import type { IDaoLink } from './daoLink';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
 import { type Network } from './enum';
@@ -53,7 +53,11 @@ export interface IDao {
      */
     links: IDaoLink[];
     /**
-     * DAO creation date by block timestamp.
+     * DAO creation date by block timestamp (in seconds).
      */
     blockTimestamp: number;
+    /**
+     * Transaction hash of the DAO creation.
+     */
+    transactionHash: string;
 }

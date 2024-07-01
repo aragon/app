@@ -166,6 +166,8 @@ describe('<DaoDashboardPageClient /> component', () => {
             network: Network.POLYGON_MAINNET,
             address: '0xeed34C7B9B9A7B16B26125650C0f7202D4018620',
             ens: 'aa-dao',
+            blockTimestamp: 1702526946,
+            transactionHash: '0x978465132',
         });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
@@ -173,10 +175,21 @@ describe('<DaoDashboardPageClient /> component', () => {
         expect(screen.getByText(/daoDashboardPage.aside.details.title/)).toBeInTheDocument();
         expect(screen.getByText(/daoDashboardPage.aside.details.blockchain/)).toBeInTheDocument();
         expect(screen.getByText(networkDefinitions[dao.network].name)).toBeInTheDocument();
+
         expect(screen.getByText(/daoDashboardPage.aside.details.address/)).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: addressUtils.truncateAddress(dao.address) })).toBeInTheDocument();
+        const daoAddressLink = screen.getByRole('link', { name: addressUtils.truncateAddress(dao.address) });
+        expect(daoAddressLink).toBeInTheDocument();
+        expect(daoAddressLink).toHaveAttribute('href', expect.stringMatching(dao.address));
+
         expect(screen.getByText(/daoDashboardPage.aside.details.ens/)).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: dao.ens! })).toBeInTheDocument();
+        const daoEnsLink = screen.getByRole('link', { name: dao.ens! });
+        expect(daoEnsLink).toBeInTheDocument();
+        expect(daoEnsLink).toHaveAttribute('href', expect.stringMatching(dao.address));
+
+        expect(screen.getByText(/daoDashboardPage.aside.details.launched/)).toBeInTheDocument();
+        const daoCreationLink = screen.getByRole('link', { name: 'December 2023' });
+        expect(daoCreationLink).toBeInTheDocument();
+        expect(daoCreationLink).toHaveAttribute('href', expect.stringMatching(dao.transactionHash));
     });
 
     it('renders the dao links', () => {

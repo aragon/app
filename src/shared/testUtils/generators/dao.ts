@@ -14,6 +14,7 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     tvlUSD: '0',
     metrics: generateDaoMetrics(),
     links: [],
-    blockTimestamp: +new Date(),
+    blockTimestamp: 0,
+    transactionHash: '',
     ...dao,
 });

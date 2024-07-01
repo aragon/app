@@ -2,7 +2,7 @@
 
 import { AssetList } from '@/modules/finance/components/assetList';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
-import { Network, useDao } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -38,8 +38,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const { daoId } = props;
 
     const { t } = useTranslations();
+    const { getChainEntityUrl } = useBlockExplorer();
 
-    const useDaoParams = { id: daoId ?? '' };
+    const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
     const proposalsCreated = formatterUtils.formatNumber(dao?.metrics.proposalsCreated, {
@@ -66,14 +67,22 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const dropdownLabel = dao?.ens ?? truncatedAddress;
     const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
-    const { getChainEntityUrl } = useBlockExplorer();
+
     const daoAddressLink = getChainEntityUrl({
         type: ChainEntityType.ADDRESS,
-        chainId: networkDefinitions[dao?.network ?? Network.ETHEREUM_MAINNET].chainId,
+        chainId: dao ? networkDefinitions[dao.network].chainId : undefined,
         id: dao?.address,
     });
 
-    const daoLaunchedAt = formatterUtils.formatDate(dao?.blockTimestamp, { format: DateFormat.YEAR_MONTH });
+    const daoCreationLink = getChainEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        chainId: dao ? networkDefinitions[dao.network].chainId : undefined,
+        id: dao?.transactionHash,
+    });
+
+    const daoLaunchedAt = formatterUtils.formatDate((dao?.blockTimestamp ?? 0) * 1000, {
+        format: DateFormat.YEAR_MONTH,
+    });
 
     if (dao == null) {
         return null;
@@ -145,7 +154,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.blockchain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                             </DefinitionList.Item>
-                            {/* TODO: add links to block explorer (APP-3342) */}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
                                 <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink}>
                                     {truncatedAddress}
@@ -159,7 +167,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.launched')}>
-                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink}>
+                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoCreationLink}>
                                     {daoLaunchedAt}
                                 </Link>
                             </DefinitionList.Item>
