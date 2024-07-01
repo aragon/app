@@ -1,4 +1,4 @@
-import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList';
+import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IDaoPageParams } from '@/shared/types';
@@ -17,9 +17,10 @@ export const daoTransactionsCount = 6;
 export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (props) => {
     const { params } = props;
     const id = params.id;
-    const useDaoParams = { id };
+
     const queryClient = new QueryClient();
 
+    const useDaoParams = { id };
     const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
 
     const transactionsQueryParams = { address: dao.address, network: dao.network, pageSize: daoTransactionsCount };

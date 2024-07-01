@@ -1,10 +1,10 @@
-import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
+import { assetListOptions } from '@/modules/finance/api/financeService/queries/useAssetList';
 import { daoOptions } from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { DaoTransactionsPage, daoTransactionsCount, type IDaoTransactionsPageProps } from './daoTransactionsPage';
+import { DaoAssetsPage, daoAssetsCount, type IDaoAssetsPageProps } from './daoAssetsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual('@tanstack/react-query'),
@@ -15,11 +15,11 @@ jest.mock('@tanstack/react-query', () => ({
     ),
 }));
 
-jest.mock('./daoTransactionsPageClient', () => ({
-    DaoTransactionsPageClient: () => <div data-testid="page-client-mock" />,
+jest.mock('./daoAssetsPageClient', () => ({
+    DaoAssetsPageClient: () => <div data-testid="page-client-mock" />,
 }));
 
-describe('<DaoTransactionsPage /> component', () => {
+describe('<DaoAssetsPage /> component', () => {
     const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
 
@@ -33,9 +33,9 @@ describe('<DaoTransactionsPage /> component', () => {
         fetchQuerySpy.mockReset();
     });
 
-    const createTestComponent = async (props?: Partial<IDaoTransactionsPageProps>) => {
-        const completeProps: IDaoTransactionsPageProps = { params: { id: 'test-slug' }, ...props };
-        const Component = await DaoTransactionsPage(completeProps);
+    const createTestComponent = async (props?: Partial<IDaoAssetsPageProps>) => {
+        const completeProps: IDaoAssetsPageProps = { params: { id: 'test-slug' }, ...props };
+        const Component = await DaoAssetsPage(completeProps);
 
         return Component;
     };
@@ -45,7 +45,7 @@ describe('<DaoTransactionsPage /> component', () => {
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
     });
 
-    it('prefetches the DAO and its transaction list', async () => {
+    it('prefetches the DAO and its asset list', async () => {
         const id = 'another-test-slug';
         const params = { id };
         const dao = generateDao({ id });
@@ -54,9 +54,9 @@ describe('<DaoTransactionsPage /> component', () => {
         render(await createTestComponent({ params }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
 
-        const expectedParams = { address: dao.address, network: dao.network, pageSize: daoTransactionsCount };
+        const expectedParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            transactionListOptions({ queryParams: expectedParams }).queryKey,
+            assetListOptions({ queryParams: expectedParams }).queryKey,
         );
     });
 });

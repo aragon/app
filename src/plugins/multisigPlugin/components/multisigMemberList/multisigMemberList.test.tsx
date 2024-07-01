@@ -65,6 +65,7 @@ describe('<MultisigMemberList /> component', () => {
             errorState: { heading: '', description: '' },
         });
         render(createTestComponent({ hidePagination }));
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
     it('renders the children property', () => {

@@ -1,8 +1,17 @@
 import type { IPaginatedRequest, IRequestQueryParams } from '@/shared/api/aragonBackendService';
 
-export interface IGetBalanceListQueryParams extends IPaginatedRequest {}
+export interface IGetAssetListQueryParams extends IPaginatedRequest {
+    /**
+     * Address to fetch assets.
+     */
+    address?: string;
+    /**
+     * Network of the address to fetch assets.
+     */
+    network?: string;
+}
 
-export interface IGetBalanceListParams extends IRequestQueryParams<IGetBalanceListQueryParams> {}
+export interface IGetAssetListParams extends IRequestQueryParams<IGetAssetListQueryParams> {}
 
 export interface IGetTransactionListQueryParams extends IPaginatedRequest {
     /**

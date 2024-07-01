@@ -1,3 +1,3 @@
 export { generateAsset } from './asset';
-export { generateBalance } from './balance';
+export { generateToken } from './token';
 export { generateTransaction } from './transaction';

@@ -29,6 +29,7 @@ describe('<FinanceDetailsList /> component', () => {
             address: '0x1b765393c3E2f3d25c44eb9Cf6B864B3fD250cDB',
             subdomain: 'poly-dao',
         });
+
         render(createTestComponent({ dao }));
         expect(screen.getByText(networkDefinitions[dao.network].name)).toBeInTheDocument();
 

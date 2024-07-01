@@ -60,12 +60,19 @@
     },
     "finance": {
       "assetList": {
-        "entity": "Assets"
+        "entity": "Assets",
+        "emptyState": {
+          "heading": "No assets found",
+          "description": "This will show the DAO's onchain assets when available."
+        },
+        "errorState": {
+          "heading": "Error loading assets",
+          "description": "There was an error loading the assets. Please try again later."
+        }
       },
       "daoAssetsPage": {
         "main": {
-          "title": "Assets",
-          "action": "New transfer"
+          "title": "Assets"
         },
         "aside": {
           "details": {
@@ -93,8 +100,7 @@
       },
       "daoTransactionsPage": {
         "main": {
-          "title": "Transactions",
-          "action": "New transfer"
+          "title": "Transactions"
         },
         "aside": {
           "details": {

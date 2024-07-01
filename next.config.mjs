@@ -29,6 +29,11 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'logos.covalenthq.com',
+                port: '',
+            },
+            {
+                protocol: 'https',
                 hostname: 'i.seadn.io',
                 port: '',
             },
