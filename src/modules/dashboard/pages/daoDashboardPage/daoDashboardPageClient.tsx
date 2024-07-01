@@ -59,13 +59,14 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
     ];
 
+    const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
     const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
-    const dropdownLabel = dao?.ens ?? truncatedAddress;
+    const dropdownLabel = daoEns ?? truncatedAddress;
     const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
 
     const daoAddressLink = getChainEntityUrl({
@@ -103,9 +104,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                         size="md"
                         label={dropdownLabel}
                     >
-                        {dao.ens != null && (
-                            <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.ens!)}>
-                                {dao.ens}
+                        {daoEns != null && (
+                            <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(daoEns)}>
+                                {daoEns}
                             </Dropdown.Item>
                         )}
                         <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.address)}>
@@ -155,19 +156,19 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
-                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink}>
+                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
                                     {truncatedAddress}
                                 </Link>
                             </DefinitionList.Item>
-                            {dao.ens && (
+                            {daoEns != null && (
                                 <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
-                                    <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink}>
-                                        {dao.ens}
+                                    <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
+                                        {daoEns}
                                     </Link>
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.launched')}>
-                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoCreationLink}>
+                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoCreationLink} target="_blank">
                                     {daoLaunchedAt}
                                 </Link>
                             </DefinitionList.Item>

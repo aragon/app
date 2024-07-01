@@ -1,6 +1,7 @@
 'use client';
 
 import { useDao } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { Button, DaoAvatar, IconType, addressUtils, clipboardUtils } from '@aragon/ods';
 import classNames from 'classnames';
@@ -27,7 +28,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
     const links = navigationDaoLinks(dao);
-    const dialogSubtitle = dao?.ens != null ? dao.ens : addressUtils.truncateAddress(dao?.address);
+    const dialogSubtitle = daoUtils.getDaoEns(dao) ?? addressUtils.truncateAddress(dao?.address);
 
     return (
         <Navigation.Container

@@ -25,9 +25,9 @@ export interface IDao {
      */
     description: string;
     /**
-     * ENS of the DAO or null when DAO has no ENS linked.
+     * ENS of the DAO under the dao.eth subdomain.
      */
-    ens: string | null;
+    subdomain: string | null;
     /**
      * Avatar of the DAO or null when DAO has no avatar.
      */

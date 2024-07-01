@@ -104,18 +104,18 @@ describe('<DaoDashboardPageClient /> component', () => {
     });
 
     it('renders a dropdown with some DAO information to copy on the clipboard', async () => {
-        const dao = generateDao({ address: '0xCbC0eC10e302DD29C25dff712BC0d300978F26cE', ens: 'dao-ens-name' });
+        const dao = generateDao({ address: '0xCbC0eC10e302DD29C25dff712BC0d300978F26cE', subdomain: 'subdomain' });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
 
-        const dropdownButton = screen.getByRole('button', { name: dao.ens! });
+        const dropdownButton = screen.getByRole('button', { name: daoUtils.getDaoEns(dao) });
         expect(dropdownButton).toBeInTheDocument();
 
         await userEvent.click(dropdownButton);
-        const ensItem = screen.getByRole('menuitem', { name: dao.ens! });
+        const ensItem = screen.getByRole('menuitem', { name: daoUtils.getDaoEns(dao) });
         expect(ensItem).toBeInTheDocument();
         await userEvent.click(ensItem);
-        expect(clipboardCopySpy).toHaveBeenCalledWith(dao.ens);
+        expect(clipboardCopySpy).toHaveBeenCalledWith(daoUtils.getDaoEns(dao));
 
         await userEvent.click(dropdownButton);
         const addressItem = screen.getByRole('menuitem', { name: addressUtils.truncateAddress(dao.address) });
@@ -165,7 +165,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         const dao = generateDao({
             network: Network.POLYGON_MAINNET,
             address: '0xeed34C7B9B9A7B16B26125650C0f7202D4018620',
-            ens: 'aa-dao',
+            subdomain: 'aa-dao',
             blockTimestamp: 1702526946,
             transactionHash: '0x978465132',
         });
@@ -182,7 +182,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         expect(daoAddressLink).toHaveAttribute('href', expect.stringMatching(dao.address));
 
         expect(screen.getByText(/daoDashboardPage.aside.details.ens/)).toBeInTheDocument();
-        const daoEnsLink = screen.getByRole('link', { name: dao.ens! });
+        const daoEnsLink = screen.getByRole('link', { name: daoUtils.getDaoEns(dao) });
         expect(daoEnsLink).toBeInTheDocument();
         expect(daoEnsLink).toHaveAttribute('href', expect.stringMatching(dao.address));
 

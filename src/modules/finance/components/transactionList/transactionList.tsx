@@ -49,14 +49,14 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
             >
                 {transactionList?.map((transaction) => (
                     <TransactionDataListItem.Structure
-                        chainId={networkDefinitions[transaction.network]?.chainId}
+                        chainId={networkDefinitions[transaction.network].chainId}
                         hash={transaction.transactionHash}
                         key={transaction.transactionHash}
                         // TODO: needs to updated when formatter is available [APP-3330]
                         date={new Date(transaction.blockTimestamp! * 1000).toLocaleString()}
                         type={transactionTypeToDataListType[transaction.type]}
                         status={TransactionStatus.SUCCESS}
-                        tokenSymbol={transaction.token?.symbol}
+                        tokenSymbol={transaction.token.symbol}
                         tokenAmount={transaction.value}
                         // TODO: needs to updated when backend pricing is available [APP-3331]
                         tokenPrice={0}
