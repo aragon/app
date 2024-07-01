@@ -47,7 +47,7 @@ describe('useAssetListData hook', () => {
 
     it('returns error state if fetching assets fails', () => {
         useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-        const { result } = renderHook(() => useAssetListData({ queryParams: { daoAddress: '' } }));
+        const { result } = renderHook(() => useAssetListData({ queryParams: { address: '' } }));
         expect(result.current.state).toEqual('error');
     });
 

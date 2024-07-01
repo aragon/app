@@ -5,20 +5,18 @@ import type { IGetAssetListParams, IGetTransactionListParams } from './financeSe
 
 class FinanceService extends AragonBackendService {
     private urls = {
-        assetList: '/assets',
-        transactionList: '/transactions',
+        assets: '/assets',
+        transactions: '/transactions',
     };
 
-    getAssetList = async ({ queryParams }: IGetAssetListParams): Promise<IPaginatedResponse<IAsset>> => {
-        const result = await this.request<IPaginatedResponse<IAsset>>(this.urls.assetList, { queryParams });
+    getAssetList = async (params: IGetAssetListParams): Promise<IPaginatedResponse<IAsset>> => {
+        const result = await this.request<IPaginatedResponse<IAsset>>(this.urls.assets, params);
 
         return result;
     };
 
-    getTransactionList = async ({
-        queryParams,
-    }: IGetTransactionListParams): Promise<IPaginatedResponse<ITransaction>> => {
-        const result = await this.request<IPaginatedResponse<ITransaction>>(this.urls.transactionList, { queryParams });
+    getTransactionList = async (params: IGetTransactionListParams): Promise<IPaginatedResponse<ITransaction>> => {
+        const result = await this.request<IPaginatedResponse<ITransaction>>(this.urls.transactions, params);
 
         return result;
     };

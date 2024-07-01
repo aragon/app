@@ -1,4 +1,4 @@
-import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList';
+import { transactionListOptions } from '@/modules/finance/api/financeService/queries/useTransactionList/useTransactionList';
 import { daoOptions } from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { QueryClient } from '@tanstack/react-query';
@@ -40,7 +40,7 @@ describe('<DaoTransactionsPage /> component', () => {
         return Component;
     };
 
-    it('renders the page', async () => {
+    it('renders the page client', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
     });
@@ -54,10 +54,9 @@ describe('<DaoTransactionsPage /> component', () => {
         render(await createTestComponent({ params }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
 
+        const expectedParams = { address: dao.address, network: dao.network, pageSize: daoTransactionsCount };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            transactionListOptions({
-                queryParams: { address: dao.address, network: dao.network, pageSize: daoTransactionsCount },
-            }).queryKey,
+            transactionListOptions({ queryParams: expectedParams }).queryKey,
         );
     });
 });

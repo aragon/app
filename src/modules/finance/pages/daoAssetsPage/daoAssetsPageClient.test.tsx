@@ -25,6 +25,7 @@ describe('<DaoAssetsPageClient /> component', () => {
     const createTestComponent = (props?: Partial<IDaoAssetsPageClientProps>) => {
         const completeProps: IDaoAssetsPageClientProps = {
             id: 'test-id',
+            initialParams: { queryParams: {} },
             ...props,
         };
 

@@ -4,6 +4,7 @@ import { FinanceDetailsList } from '@/modules/finance/components/financeDetailsL
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IGetAssetListParams } from '../../api/financeService';
 import { AssetList } from '../../components/assetList';
 
 export interface IDaoAssetsPageClientProps {
@@ -11,29 +12,23 @@ export interface IDaoAssetsPageClientProps {
      * ID of the DAO.
      */
     id: string;
+    /**
+     * Initial parameters to use to fetch the DAO assets list.
+     */
+    initialParams: IGetAssetListParams;
 }
 
 export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) => {
-    const { id } = props;
+    const { id, initialParams } = props;
     const { t } = useTranslations();
 
     const useDaoParams = { id };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
-    const pageSize = 6;
-
-    const assetListParams = {
-        queryParams: {
-            daoAddress: dao?.address,
-            network: dao?.network,
-            pageSize,
-        },
-    };
-
     return (
         <Page.Content>
             <Page.Main title={t('app.finance.daoAssetsPage.main.title')}>
-                <AssetList initialParams={assetListParams} />
+                <AssetList initialParams={initialParams} />
             </Page.Main>
             <Page.Aside>
                 <FinanceDetailsList dao={dao} />

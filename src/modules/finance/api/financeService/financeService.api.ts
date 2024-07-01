@@ -2,11 +2,11 @@ import type { IPaginatedRequest, IRequestQueryParams } from '@/shared/api/aragon
 
 export interface IGetAssetListQueryParams extends IPaginatedRequest {
     /**
-     * Address to fetch balances.
+     * Address to fetch assets.
      */
-    daoAddress?: string;
+    address?: string;
     /**
-     * Network of the address to fetch balances.
+     * Network of the address to fetch assets.
      */
     network?: string;
 }

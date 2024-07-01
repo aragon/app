@@ -10,19 +10,7 @@ export interface IAsset {
      */
     amountUsd: string;
     /**
-     * DAO address.
-     */
-    daoAddress: `0x${string}`;
-    /**
-     * Network of the asset.
-     */
-    network: string;
-    /**
      * Token involved in the balance.
      */
     token: IToken;
-    /**
-     * Address of the token.
-     */
-    tokenAddress: `0x${string}`;
 }

@@ -12,20 +12,25 @@ export interface IDaoAssetsPageProps {
     params: IDaoPageParams;
 }
 
+export const daoAssetsCount = 6;
+
 export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
     const { params } = props;
     const id = params.id;
-    const useDaoParams = { id };
+
     const queryClient = new QueryClient();
+
+    const useDaoParams = { id };
     const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
 
-    await queryClient.prefetchInfiniteQuery(
-        assetListOptions({ queryParams: { daoAddress: dao?.address, network: dao?.network } }),
-    );
+    const assetsQueryParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };
+    const assetsParams = { queryParams: assetsQueryParams };
+
+    await queryClient.prefetchInfiniteQuery(assetListOptions(assetsParams));
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoAssetsPageClient id={params.id} />
+            <DaoAssetsPageClient id={params.id} initialParams={assetsParams} />
         </Page.Container>
     );
 };

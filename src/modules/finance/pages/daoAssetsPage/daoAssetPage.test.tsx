@@ -4,7 +4,7 @@ import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { DaoAssetsPage, type IDaoAssetsPageProps } from './daoAssetsPage';
+import { DaoAssetsPage, daoAssetsCount, type IDaoAssetsPageProps } from './daoAssetsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual('@tanstack/react-query'),
@@ -40,7 +40,7 @@ describe('<DaoAssetsPage /> component', () => {
         return Component;
     };
 
-    it('renders the page', async () => {
+    it('renders the page client', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
     });
@@ -54,10 +54,9 @@ describe('<DaoAssetsPage /> component', () => {
         render(await createTestComponent({ params }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
 
+        const expectedParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            assetListOptions({
-                queryParams: { daoAddress: dao.address, network: dao.network },
-            }).queryKey,
+            assetListOptions({ queryParams: expectedParams }).queryKey,
         );
     });
 });
