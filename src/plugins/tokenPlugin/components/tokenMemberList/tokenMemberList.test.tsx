@@ -2,7 +2,14 @@ import * as useMemberListData from '@/modules/governance/hooks/useMemberListData
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateTokenMember } from '../../testUtils';
+import type { ITokenMember } from '../../types';
 import { TokenMemberList, type ITokenMemberListProps } from './tokenMemberList';
+
+jest.mock('./tokenMemberListItem', () => ({
+    TokenMemberListItem: (props: { member: ITokenMember }) => (
+        <div data-testid="member-mock">{props.member.address}</div>
+    ),
+}));
 
 describe('<TokenMemberList /> component', () => {
     const useMemberListDataSpy = jest.spyOn(useMemberListData, 'useMemberListData');
@@ -37,10 +44,7 @@ describe('<TokenMemberList /> component', () => {
     };
 
     it('fetches and renders the token member list', () => {
-        const members = [
-            generateTokenMember({ address: '0x123', votingPower: '472797978938797846531' }),
-            generateTokenMember({ address: '0x456', ens: 'member-1', votingPower: '0' }),
-        ];
+        const members = [generateTokenMember({ address: '0x123' }), generateTokenMember({ address: '0x456' })];
         useMemberListDataSpy.mockReturnValue({
             memberList: members,
             onLoadMore: jest.fn(),
@@ -51,10 +55,9 @@ describe('<TokenMemberList /> component', () => {
             errorState: { heading: '', description: '' },
         });
         render(createTestComponent());
+        expect(screen.getAllByTestId('member-mock')).toHaveLength(2);
         expect(screen.getByText(members[0].address)).toBeInTheDocument();
-        expect(screen.getByRole('heading', { level: 2, name: /472.8 Voting Power/ })).toBeInTheDocument();
-        expect(screen.getByText(members[1].ens!)).toBeInTheDocument();
-        expect(screen.getByRole('heading', { level: 2, name: /0 Voting Power/ })).toBeInTheDocument();
+        expect(screen.getByText(members[1].address)).toBeInTheDocument();
         expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 

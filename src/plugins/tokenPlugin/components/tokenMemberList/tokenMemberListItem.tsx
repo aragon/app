@@ -1,19 +1,27 @@
+import { useDaoSettings } from '@/shared/api/daoService';
 import { MemberDataListItem } from '@aragon/ods';
-import { formatEther } from 'viem';
-import type { ITokenMember } from '../../types';
+import { formatUnits } from 'viem';
+import type { IDaoTokenSettings, ITokenMember } from '../../types';
 
 export interface ITokenMemberListItemProps {
     /**
      * Member to display the information for.
      */
     member: ITokenMember;
+    /**
+     * ID of the DAO the user is member of.
+     */
+    daoId: string;
 }
 
 export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) => {
-    const { member } = props;
+    const { member, daoId } = props;
 
-    // TODO: use DAO token decimals (APP-3323)
-    const parsedVotingPower = formatEther(BigInt(member.votingPower));
+    const daoSettingsParams = { daoId };
+    const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
+
+    const tokenDecimals = settings?.token.decimals ?? 0;
+    const parsedVotingPower = formatUnits(BigInt(member.votingPower), tokenDecimals);
 
     return (
         <MemberDataListItem.Structure

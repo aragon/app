@@ -29,7 +29,9 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
                 errorState={errorState}
                 layoutClassName="grid grid-cols-1 lg:grid-cols-3"
             >
-                {memberList?.map((member) => <TokenMemberListItem key={member.address} member={member} />)}
+                {memberList?.map((member) => (
+                    <TokenMemberListItem key={member.address} member={member} daoId={initialParams.queryParams.daoId} />
+                ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
             {children}
