@@ -4,7 +4,7 @@ import type { IGetMemberListParams } from './governanceService.api';
 
 class GovernanceService extends AragonBackendService {
     private urls = {
-        members: '/members',
+        members: '/members/active',
     };
 
     getMemberList = async <TMember extends IMember = IMember>(
