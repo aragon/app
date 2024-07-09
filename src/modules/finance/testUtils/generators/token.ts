@@ -1,8 +1,9 @@
+import { Network } from '@/shared/api/daoService';
 import type { IToken } from '../../api/financeService';
 
 export const generateToken = (token?: Partial<IToken>): IToken => ({
     address: '0xTestAddress',
-    network: 'ethereum-mainnet',
+    network: Network.ETHEREUM_MAINNET,
     symbol: 'ETH',
     logo: 'https://test.com',
     name: 'Ethereum',
