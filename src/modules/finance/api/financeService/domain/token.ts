@@ -1,3 +1,5 @@
+import type { Network } from '@/shared/api/daoService';
+
 export interface IToken {
     /**
      * Address of the asset.
@@ -6,7 +8,7 @@ export interface IToken {
     /**
      * Network of the asset.
      */
-    network: string;
+    network: Network;
     /**
      * Symbol of the asset.
      */

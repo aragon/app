@@ -3,12 +3,15 @@
 import { type IGetAssetListParams } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     AssetDataListItem,
     AssetDataListItemStructure,
+    ChainEntityType,
     DataListContainer,
     DataListPagination,
     DataListRoot,
+    useBlockExplorer,
 } from '@aragon/ods';
 import type { ComponentProps } from 'react';
 import { formatUnits } from 'viem';
@@ -28,6 +31,8 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
     const { initialParams, hidePagination, children, ...otherProps } = props;
     const { t } = useTranslations();
 
+    const { getChainEntityUrl } = useBlockExplorer();
+
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
 
@@ -45,15 +50,21 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                 emptyState={emptyState}
                 errorState={errorState}
             >
-                {assetList?.map((asset) => (
+                {assetList?.map(({ amount, token }) => (
                     <AssetDataListItemStructure
-                        key={asset.token.address}
-                        name={asset.token.name}
-                        symbol={asset.token.symbol}
-                        amount={formatUnits(BigInt(asset.amount), asset.token.decimals)}
-                        fiatPrice={asset.token.priceUsd}
-                        logoSrc={asset.token.logo}
-                        priceChange={Number(asset.token.priceChangeOnDayUsd)}
+                        key={token.address}
+                        name={token.name}
+                        symbol={token.symbol}
+                        amount={formatUnits(BigInt(amount), token.decimals)}
+                        fiatPrice={token.priceUsd}
+                        logoSrc={token.logo}
+                        priceChange={Number(token.priceChangeOnDayUsd)}
+                        target="_blank"
+                        href={getChainEntityUrl({
+                            type: ChainEntityType.TOKEN,
+                            chainId: networkDefinitions[token.network].chainId,
+                            id: token.address,
+                        })}
                     />
                 ))}
             </DataListContainer>
