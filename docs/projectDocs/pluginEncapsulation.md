@@ -93,6 +93,16 @@ export const initialiseMultisigPlugin = () => {
 };
 ```
 
+#### Rendering of Slot Components
+
+The `<PluginComponent />` React component is located under the `/shared/components` folder and renders a Slot Component
+from a given Slot ID and a list of Plugin IDs. As the Application does not currently support multiple Plugins installed
+on the same DAO, the component renders the first Slot Component found from the given Plugin IDs.
+
+**NOTE**: In order to render multiple Slot Components, a new `PluginComponentTabs` might be introduced which renders
+every React component registered for the given Plugin IDs. The Plugin-specific Tabs label can be specified by a new
+`metadata` field attached to the Slot Component during its registration.
+
 ## How to Support a New Plugin
 
 To support a new Plugin in the Application, add the Plugin definitions and implement all the required Slot Components
