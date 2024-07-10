@@ -4,19 +4,19 @@ In order to keep logic of Plugins isolated, every service, component, utility an
 implemented under the `/plugins` folder. This allows us to easily add, change and remove supported Plugins.
 
 The Plugin Encapsulation logic is currently implemented through the `pluginRegistryUtils` utility file and
-`PluginComponent` React component, both implemented under the `/shared` folder.
+`PluginComponent` React component, both located under the `/shared` folder.
 
 ## Glossary
 
--   **Plugin**: Defines the governance, asset management and / or membership of a DAO. A DAO can have one or more
-    plugins installed depending on their governance needs. (More info about the plugins implementation at smart-contract
-    level [here](https://devs.aragon.org/osx/how-it-works/core/plugins/))
+-   **Plugin**: Defines the governance, asset management and/or membership of a DAO. A DAO can have one or more plugins
+    installed depending on their governance needs. More info about the plugins' implementation at smart-contract level
+    can be found [here](https://devs.aragon.org/osx/how-it-works/core/plugins/).
 
--   **Plugin Registry**: A registry that collects the informations about the Plugins and how to display plugin-specific
+-   **Plugin Registry**: A registry that collects the information about the Plugins and how to display plugin-specific
     data on the UI.
 
--   **Slot**: It is identified by an ID (e.g. `GOVERNANCE_DAO_MEMBER_LIST`) and defines a section of the Application
-    that changes depending on the DAO Plugin.
+-   **Slot**: Identified by an ID (e.g. `GOVERNANCE_DAO_MEMBER_LIST`), it defines a section of the Application that
+    changes depending on the DAO Plugin.
 
 -   **Slot Component**: A plugin-specific React component used by the Application to render any kind of data on a
     specific Slot.
@@ -26,8 +26,8 @@ The Plugin Encapsulation logic is currently implemented through the `pluginRegis
 ### Plugin
 
 A Plugin is identified by an ID and registered at startup through the `registerPlugin` function of the
-`pluginRegistryUtils`. The Plugin Registry then uses the Plugin information to check if a specific Plugin of a DAO is
-supported by the Application.
+`pluginRegistryUtils` utility. The Plugin Registry then uses the Plugin information to check if a specific Plugin of a
+DAO is supported by the Application.
 
 Example of Plugin definition:
 
@@ -50,18 +50,18 @@ export const initialiseMultisigPlugin = () => {
 
 ### Plugin Registry
 
-The Plugin Registry is a simple record containing informations about the available plugins and their Slot Components.
-The Plugin Registry is currently implemented as a JavaScript class by the `pluginRegistryUtils` file and populated on
-the client side at startup by the `<Providers />` component of the Application module. The `<Providers />` component
-imports and triggers the `initialisePlugins` function which initilises all the supported plugins by registering the
-Plugin informations and their Slot Components.
+The Plugin Registry is a record containing information about the available Plugins and their Slot Components. It is
+implemented as a JavaScript class in the `pluginRegistryUtils` file and populated on the client side at startup by the
+`<Providers />` component of the Application module. The `<Providers />` component imports and triggers the
+`initialisePlugins` function which initilises all the supported plugins by registering the Plugin informations and their
+Slot Components.
 
 ### Slot
 
-A Slot is identified by an ID, every Plugin can register their own Slots to customise how the Application display or act
-depending on the Plugin of the DAO. We can have different types of Slots depending on the customisation needs of the
-Application. For instance, we can introduce a `SlotFunction` type that is used by the Application to prefetech data on
-the server side or a `SlotMetadata` that only sets some strings needed by the Application to render some Plugin
+A Slot is identified by an ID. Every Plugin can register its own Slots to customise how the Application display or act
+depending on the Plugin of the DAO. Different types of Slots can be supported depending on the customisation needs of
+the Application. For instance, a `SlotFunction` type can be used by the Application to prefetech data on the server
+side, or a `SlotMetadata` can be used to only sets some strings needed by the Application to render some Plugin
 information.
 
 The Slot id is prefixed by the module name to easily identify the scope of the Slot.
@@ -77,8 +77,8 @@ export enum GovernanceSlotId {
 
 ### Slot Components
 
-A Slot Component is a type of Slot that specify a Component to be rendered on the Application. Slot Components are
-implemented under the related Plugin folder and registered on the Plugin Registry through the `registerSlotComponent`
+A Slot Component is a type of Slot that specifies a Component to be rendered in the Application. Slot Components are
+implemented under the related Plugin folder and registered in the Plugin Registry through the `registerSlotComponent`
 function.
 
 Example of Slot Component registration:
@@ -95,4 +95,29 @@ export const initialiseMultisigPlugin = () => {
 
 ## How to Support a New Plugin
 
-TODO
+To support a new Plugin in the Application, add the Plugin definitions and implement all the required Slot Components
+under a new folder inside the `/src/plugins` folder (e.g. `/src/plugins/gaslessPlugin`). Inside this folder, create an
+index file that exports a function to initialise the Plugin by registering the Plugin definitions and its slot
+components, e.g.:
+
+```typescript
+export const initialiseGaslessPlugin = () => {
+    pluginRegistryUtils
+        .registerPlugin(plugin)
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
+            pluginId: plugin.id,
+            component: GaslessMemberList,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
+            pluginId: plugin.id,
+            component: GaslessMembersPageDetails,
+        });
+};
+```
+
+Make sure to update the `initialisePlugins` function on the `/plugins/index.ts` file to initialise the new plugin as
+well.
+
+All the available Slot Components are defined under a `/constants/moduleSlots.ts` file inside each module.
