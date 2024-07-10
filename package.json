@@ -22,8 +22,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/ods": "^1.0.37",
     "@tanstack/react-query": "^5.50.1",
+    "@aragon/ods": "^1.0.37",
     "classnames": "^2.5.1",
     "next": "^14.2.4",
     "react": "^18.3.1",

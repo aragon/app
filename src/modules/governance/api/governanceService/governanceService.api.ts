@@ -8,3 +8,12 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
 }
 
 export interface IGetMemberListParams extends IRequestQueryParams<IGetMemberListQueryParams> {}
+
+export interface IGetProposalListQueryParams extends IPaginatedRequest {
+    /**
+     * ID of the Dao to fetch the proposals from.
+     */
+    daoId: string;
+}
+
+export interface IGetProposalListParams extends IRequestQueryParams<IGetProposalListQueryParams> {}

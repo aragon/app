@@ -131,6 +131,26 @@
           "title": "Error loading members",
           "description": "There was an error loading the DAO members, try again later."
         }
+      },
+      "daoProposalsPage": {
+        "main": {
+          "title": "Proposals"
+        },
+        "aside": {
+          "details": {
+            "title": "Details"
+          }
+        }
+      },
+      "daoProposalList": {
+        "empty": {
+          "title": "No proposals found",
+          "description": "DAO has currently no proposals."
+        },
+        "error": {
+          "title": "Error loading proposals",
+          "description": "There was an error loading the DAO proposals, try again later."
+        }
       }
     },
     "plugins": {
@@ -141,6 +161,21 @@
         "tokenMembersPageDetails": {
           "eligibleMembers": "Eligible members",
           "members": "Token holders"
+        },
+        "tokenProposalList": {
+          "entity": "Proposals"
+        },
+        "tokenProposalsPageDetails": {
+          "contract": "Contract",
+          "supportThreshold": "Support threshold",
+          "minimumParticipation": "Minimum participation",
+          "minimumDuration": "Minimum duration",
+          "earlyExecution": "Early execution",
+          "voteChange": "Vote change",
+          "proposalCreation": "Proposal creation",
+          "yes": "Yes",
+          "no": "No",
+          "proposalCreationAccess": "Members with ≥ {{balance}} voting power or balance"
         }
       },
       "multisig": {
@@ -149,6 +184,16 @@
         },
         "multisigMembersPageDetails": {
           "eligibleMembers": "Eligible members",
+          "members": "Multisig members"
+        },
+        "multisigProposalList": {
+          "entity": "Proposals"
+        },
+        "multisigProposalsPageDetails": {
+          "contract": "Contract",
+          "minimumApproval": "Minimum approval",
+          "proposalCreation": "Proposal creation",
+          "minimumApprovalMembers": "{{count}} of {{total}} Members",
           "members": "Multisig members"
         }
       }

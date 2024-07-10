@@ -1,4 +1,4 @@
-import { generateMember } from '../../testUtils';
+import { generateMember, generateProposal } from '../../testUtils';
 import { governanceService } from './governanceService';
 
 describe('governance service', () => {
@@ -17,5 +17,16 @@ describe('governance service', () => {
 
         expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].members, params);
         expect(result).toEqual(members);
+    });
+
+    it('getProposalList fetches proposals of the specified DAO', async () => {
+        const proposals = [generateProposal({ id: '0' }), generateProposal({ id: '1' })];
+        const params = { queryParams: { daoId: 'dao-id-test' } };
+
+        requestSpy.mockResolvedValue(proposals);
+        const result = await governanceService.getProposalList(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposals, params);
+        expect(result).toEqual(proposals);
     });
 });
