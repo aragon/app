@@ -37,7 +37,10 @@ describe('<MultisigProposalList /> component', () => {
     };
 
     it('fetches and renders the multisig proposal list', () => {
-        const proposals = [generateProposal({ title: 'First' }), generateProposal({ title: 'Second' })];
+        const proposals = [
+            generateProposal({ title: 'First', id: '1' }),
+            generateProposal({ title: 'Second', id: '2' }),
+        ];
         useProposalListDataSpy.mockReturnValue({
             proposalList: proposals,
             onLoadMore: jest.fn(),

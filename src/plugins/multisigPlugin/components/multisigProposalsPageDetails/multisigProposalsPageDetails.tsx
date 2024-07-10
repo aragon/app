@@ -46,10 +46,10 @@ export const MultisigProposalsPageDetails: React.FC<IMultisigProposalsPageDetail
                 >
                     {daoUtils.formatPluginName(settings.pluginSubdomain)}
                 </Link>
-                <p>{addressUtils.truncateAddress(settings.pluginAddress)}</p>
+                <p className="text-neutral-500">{addressUtils.truncateAddress(settings.pluginAddress)}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.multisig.multisigProposalsPageDetails.minimumApproval')}>
-                <p>
+                <p className="text-neutral-500">
                     {t('app.plugins.multisig.multisigProposalsPageDetails.minimumApprovalMembers', {
                         count: settings.settings.minApprovals,
                         total: dao.metrics.members,
@@ -57,7 +57,7 @@ export const MultisigProposalsPageDetails: React.FC<IMultisigProposalsPageDetail
                 </p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.multisig.multisigProposalsPageDetails.proposalCreation')}>
-                <p>{t('app.plugins.multisig.multisigProposalsPageDetails.members')}</p>
+                <p className="text-neutral-500">{t('app.plugins.multisig.multisigProposalsPageDetails.members')}</p>
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

@@ -2,23 +2,17 @@ import { generateToken } from '@/modules/finance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
-import { render, screen, waitFor } from '@testing-library/react';
-import { TokenProposalsPageDetails } from '.';
+import { render, screen } from '@testing-library/react';
 import { generateDaoTokenSettings } from '../../testUtils';
 import { DaoTokenVotingMode } from '../../types';
-import { type ITokenProposalsPageDetailsProps } from './tokenProposalsPageDetails';
+import { TokenProposalsPageDetails, type ITokenProposalsPageDetailsProps } from './tokenProposalsPageDetails';
 
 describe('<TokenProposalsPageDetails /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoSettingsSpy = jest.spyOn(DaoService, 'useDaoSettings');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: generateDao(),
-            }),
-        );
-
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
     });
 
@@ -40,20 +34,16 @@ describe('<TokenProposalsPageDetails /> component', () => {
         );
     };
 
-    it('renders contract info', async () => {
-        const settings = generateDaoTokenSettings({
-            pluginSubdomain: 'token-voting',
-        });
+    it('renders contract info', () => {
+        const settings = generateDaoTokenSettings({ pluginSubdomain: 'token-voting' });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
 
         render(createTestComponent());
-        await waitFor(() => {
-            expect(screen.getByText(/tokenProposalsPageDetails.contract/)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/tokenProposalsPageDetails.contract/)).toBeInTheDocument();
         expect(screen.getByText('Token Voting')).toBeInTheDocument();
     });
 
-    it('renders support threshold', async () => {
+    it('renders support threshold', () => {
         const settings = generateDaoTokenSettings({
             settings: {
                 ...generateDaoTokenSettings().settings,
@@ -63,13 +53,11 @@ describe('<TokenProposalsPageDetails /> component', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
 
         render(createTestComponent());
-        await waitFor(() => {
-            expect(screen.getByText(/tokenProposalsPageDetails.supportThreshold/)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/tokenProposalsPageDetails.supportThreshold/)).toBeInTheDocument();
         expect(screen.getByText('> 51%')).toBeInTheDocument();
     });
 
-    it('renders minimum participation', async () => {
+    it('renders minimum participation', () => {
         const settings = generateDaoTokenSettings({
             settings: {
                 ...generateDaoTokenSettings().settings,
@@ -79,13 +67,11 @@ describe('<TokenProposalsPageDetails /> component', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
 
         render(createTestComponent());
-        await waitFor(() => {
-            expect(screen.getByText(/tokenProposalsPageDetails.minimumParticipation/)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/tokenProposalsPageDetails.minimumParticipation/)).toBeInTheDocument();
         expect(screen.getByText('≥ 5%')).toBeInTheDocument();
     });
 
-    it('renders minimum duration', async () => {
+    it('renders minimum duration', () => {
         const settings = generateDaoTokenSettings({
             settings: {
                 ...generateDaoTokenSettings().settings,
@@ -95,9 +81,7 @@ describe('<TokenProposalsPageDetails /> component', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
 
         render(createTestComponent());
-        await waitFor(() => {
-            expect(screen.getByText(/tokenProposalsPageDetails.minimumDuration/)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/tokenProposalsPageDetails.minimumDuration/)).toBeInTheDocument();
         expect(screen.getByText('1 day')).toBeInTheDocument();
     });
 
@@ -111,13 +95,11 @@ describe('<TokenProposalsPageDetails /> component', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
 
         render(createTestComponent());
-        await waitFor(() => {
-            expect(screen.getByText(/tokenProposalsPageDetails.earlyExecution/)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/tokenProposalsPageDetails.earlyExecution/)).toBeInTheDocument();
         expect(screen.getByText(/tokenProposalsPageDetails.yes/)).toBeInTheDocument();
     });
 
-    it('renders vote change', async () => {
+    it('renders vote change', () => {
         const settings = generateDaoTokenSettings({
             settings: {
                 ...generateDaoTokenSettings().settings,
@@ -127,13 +109,11 @@ describe('<TokenProposalsPageDetails /> component', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
 
         render(createTestComponent());
-        await waitFor(() => {
-            expect(screen.getByText(/tokenProposalsPageDetails.voteChange/)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/tokenProposalsPageDetails.voteChange/)).toBeInTheDocument();
         expect(screen.getByText(/tokenProposalsPageDetails.yes/)).toBeInTheDocument();
     });
 
-    it('renders info regarding who can create proposals', async () => {
+    it('renders info regarding who can create proposals', () => {
         const token = generateToken({
             symbol: 'test',
             decimals: 18,
@@ -147,15 +127,9 @@ describe('<TokenProposalsPageDetails /> component', () => {
         });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
         render(createTestComponent());
-        await waitFor(() => {
-            expect(
-                screen.getByText('app.plugins.token.tokenProposalsPageDetails.proposalCreation'),
-            ).toBeInTheDocument();
-        });
+        expect(screen.getByText(/tokenProposalsPageDetails.proposalCreation$/)).toBeInTheDocument();
         expect(
-            screen.getByText(
-                `app.plugins.token.tokenProposalsPageDetails.proposalCreationAccess (balance=500,000 $test)`,
-            ),
+            screen.getByText(/tokenProposalsPageDetails.proposalCreationAccess \(balance=500,000 \$test\)/),
         ).toBeInTheDocument();
     });
 });

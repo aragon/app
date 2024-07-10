@@ -10,11 +10,7 @@ describe('<MultisigProposalsPageDetails /> component', () => {
     const useDaoSettingsSpy = jest.spyOn(DaoService, 'useDaoSettings');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: generateDao(),
-            }),
-        );
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoMultisigSettings() }));
     });
 
@@ -37,9 +33,7 @@ describe('<MultisigProposalsPageDetails /> component', () => {
     };
 
     it('renders contract info', () => {
-        const settings = generateDaoMultisigSettings({
-            pluginSubdomain: 'multisig',
-        });
+        const settings = generateDaoMultisigSettings({ pluginSubdomain: 'multisig' });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
 
         render(createTestComponent());
@@ -49,16 +43,9 @@ describe('<MultisigProposalsPageDetails /> component', () => {
 
     it('renders minimum approval info', () => {
         const dao = generateDao({
-            metrics: {
-                ...generateDao().metrics,
-                members: 5,
-            },
+            metrics: { ...generateDao().metrics, members: 5 },
         });
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: dao,
-            }),
-        );
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
         const settings = generateDaoMultisigSettings({
             pluginSubdomain: 'multisig',
@@ -70,13 +57,9 @@ describe('<MultisigProposalsPageDetails /> component', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: settings }));
 
         render(createTestComponent());
+        expect(screen.getByText(/multisigProposalsPageDetails.minimumApproval$/)).toBeInTheDocument();
         expect(
-            screen.getByText('app.plugins.multisig.multisigProposalsPageDetails.minimumApproval'),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(
-                `app.plugins.multisig.multisigProposalsPageDetails.minimumApprovalMembers (count=2,total=5)`,
-            ),
+            screen.getByText(/multisigProposalsPageDetails.minimumApprovalMembers \(count=2,total=5\)/),
         ).toBeInTheDocument();
     });
 

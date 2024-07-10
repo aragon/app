@@ -52,8 +52,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                         chainId={networkDefinitions[transaction.network].chainId}
                         hash={transaction.transactionHash}
                         key={transaction.transactionHash}
-                        // TODO: needs to updated when formatter is available [APP-3330]
-                        date={new Date(transaction.blockTimestamp! * 1000).toLocaleString()}
+                        date={transaction.blockTimestamp * 1000}
                         type={transactionTypeToDataListType[transaction.type]}
                         status={TransactionStatus.SUCCESS}
                         tokenSymbol={transaction.token.symbol}

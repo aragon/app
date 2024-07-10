@@ -20,6 +20,10 @@ jest.mock('@aragon/ods', () => ({
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
 }));
 
+jest.mock('@/modules/governance/components/daoProposalList', () => ({
+    DaoProposalList: (props: { children: ReactNode }) => <div data-testid="proposal-list-mock">{props.children}</div>,
+}));
+
 jest.mock('@/modules/governance/components/daoMemberList', () => ({
     DaoMemberList: (props: { children: ReactNode }) => <div data-testid="member-list-mock">{props.children}</div>,
 }));
@@ -128,6 +132,18 @@ describe('<DaoDashboardPageClient /> component', () => {
         expect(daoLinkItem).toBeInTheDocument();
         await userEvent.click(daoLinkItem);
         expect(clipboardCopySpy).toHaveBeenCalledWith('localhost/');
+    });
+
+    it('renders the DAO proposal list with a button to redirect to the proposals page', () => {
+        const daoId = 'my-dao';
+        render(createTestComponent({ daoId }));
+        const proposalList = screen.getByTestId('proposal-list-mock');
+        expect(proposalList).toBeInTheDocument();
+        const proposalPageLink = within(proposalList).getByRole<HTMLAnchorElement>('link', {
+            name: /daoDashboardPage.main.viewAll/,
+        });
+        expect(proposalPageLink).toBeInTheDocument();
+        expect(proposalPageLink.href).toMatch(new RegExp(`dao/${daoId}/proposals`));
     });
 
     it('renders the DAO asset list with a button to redirect to the asset page', () => {

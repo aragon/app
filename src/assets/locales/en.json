@@ -38,6 +38,9 @@
           }
         },
         "main": {
+          "proposals": {
+            "title": "Latest proposals"
+          },
           "assets": {
             "title": "Top assets"
           },

@@ -30,15 +30,10 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
     const { t } = useTranslations();
 
     const daoParams = { id: daoId };
-    const { data: dao } = useDao({
-        urlParams: daoParams,
-    });
+    const { data: dao } = useDao({ urlParams: daoParams });
 
     const daoSettingsParams = { daoId };
-    const settingsQuery = useDaoSettings<IDaoTokenSettings>({
-        urlParams: daoSettingsParams,
-    });
-    const { data: settings } = settingsQuery;
+    const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
 
     const { getChainEntityUrl } = useBlockExplorer();
 
@@ -76,23 +71,23 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
                 >
                     {daoUtils.formatPluginName(settings.pluginSubdomain)}
                 </Link>
-                <p>{addressUtils.truncateAddress(settings.pluginAddress)}</p>
+                <p className="text-neutral-500">{addressUtils.truncateAddress(settings.pluginAddress)}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.supportThreshold')}>
-                {`> ${formattedSupportThresholdPercentage}`}
+                <p className="text-neutral-500">{`> ${formattedSupportThresholdPercentage}`}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.minimumParticipation')}>
-                {`≥ ${formattedMinParticipationPercentage}`}
+                <p className="text-neutral-500">{`≥ ${formattedMinParticipationPercentage}`}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.minimumDuration')}>
-                <p>
+                <p className="text-neutral-500">
                     {formatterUtils.formatDate(Date.now() - settings.settings.minDuration * 1000, {
                         format: DateFormat.DURATION,
                     })}
                 </p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.earlyExecution')}>
-                <p>
+                <p className="text-neutral-500">
                     {t(
                         settings.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION
                             ? 'app.plugins.token.tokenProposalsPageDetails.yes'
@@ -101,7 +96,7 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
                 </p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.voteChange')}>
-                <p>
+                <p className="text-neutral-500">
                     {t(
                         settings.settings.votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT
                             ? 'app.plugins.token.tokenProposalsPageDetails.yes'
@@ -110,9 +105,11 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
                 </p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.proposalCreation')}>
-                {t('app.plugins.token.tokenProposalsPageDetails.proposalCreationAccess', {
-                    balance: formattedMinBalance,
-                })}
+                <p className="text-neutral-500">
+                    {t('app.plugins.token.tokenProposalsPageDetails.proposalCreationAccess', {
+                        balance: formattedMinBalance,
+                    })}
+                </p>
             </DefinitionList.Item>
         </DefinitionList.Container>
     );
