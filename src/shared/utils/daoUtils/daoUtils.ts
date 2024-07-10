@@ -35,6 +35,12 @@ class DaoUtils {
 
     getDaoEns = (dao?: IDao): string | undefined =>
         dao?.subdomain != null && dao.subdomain !== '' ? `${dao.subdomain}.dao.eth` : undefined;
+
+    formatPluginName = (pluginSubdomain: string): string => {
+        const parts = pluginSubdomain.split('-');
+
+        return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+    };
 }
 
 export const daoUtils = new DaoUtils();

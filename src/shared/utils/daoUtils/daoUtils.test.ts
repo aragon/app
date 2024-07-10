@@ -85,4 +85,10 @@ describe('dao utils', () => {
             expect(daoUtils.getDaoEns(emptySubdomain)).toBeUndefined();
         });
     });
+
+    describe('formatPluginName', () => {
+        it('formats plugin subdomain', () => {
+            expect(daoUtils.formatPluginName('token-voting')).toEqual('Token Voting');
+        });
+    });
 });

@@ -2,6 +2,8 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenMembersPageDetails } from './components/tokenMembersPageDetails';
+import { TokenProposalList } from './components/tokenProposalList';
+import { TokenProposalsPageDetails } from './components/tokenProposalsPageDetails';
 import { plugin } from './constants/plugin';
 
 export const initialiseTokenPlugin = () => {
@@ -16,5 +18,15 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
             pluginId: plugin.id,
             component: TokenMembersPageDetails,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
+            pluginId: plugin.id,
+            component: TokenProposalList,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_PROPOSALS_PAGE_DETAILS,
+            pluginId: plugin.id,
+            component: TokenProposalsPageDetails,
         });
 };

@@ -1,5 +1,6 @@
-import type { IToken } from '@/modules/finance/api/financeService';
+import { type IToken } from '@/modules/finance/api/financeService';
 import type { IDaoSettings } from '@/shared/api/daoService';
+import { type DaoTokenVotingMode } from './enum';
 
 export interface IDaoTokenSettings extends IDaoSettings {
     /**
@@ -26,5 +27,9 @@ export interface IDaoTokenSettings extends IDaoSettings {
          * Amount of tokens a member needs to hold in order to create a proposal.
          */
         minProposerVotingPower: string;
+        /**
+         * Voting mode of the DAO.
+         */
+        votingMode: DaoTokenVotingMode;
     };
 }
