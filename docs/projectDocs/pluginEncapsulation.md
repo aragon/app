@@ -18,7 +18,7 @@ The Plugin Encapsulation logic is currently implemented through the `pluginRegis
 -   **Slot**: Identified by an ID (e.g., `GOVERNANCE_DAO_MEMBER_LIST`), it defines a section of the Application that
     changes depending on the DAO Plugin.
 
--   **Slot Component**: A plugin-specific React component used by the Application to render any kind of data in a
+-   **Slot Component**: A Plugin-specific React component used by the Application to render any kind of data in a
     specific Slot.
 
 ## Implementation Details
@@ -100,34 +100,38 @@ from a given Slot ID and a list of Plugin IDs. As the Application does not curre
 on the same DAO, the component renders the first Slot Component found from the given Plugin IDs.
 
 **NOTE**: To render multiple Slot Components, a new `PluginComponentTabs` React component can be implemented to render
-every Slot Component registered given a list of Plugin IDs. The Plugin-specific Tabs label can be specified by a new
-`metadata` field attached to the Slot Component during its registration.
+all the Slot Components registered for the specified Plugin IDs list inside tabs. The Plugin-specific Tabs label can be
+specified by a new `metadata` field attached to the Slot Component during its registration.
 
 ## How to Support a New Plugin
 
-To support a new Plugin in the Application, add the Plugin definitions and implement all the required Slot Components
-under a new folder inside the `/src/plugins` folder (e.g., `/src/plugins/gaslessPlugin`). Inside this folder, create an
-index file that exports a function to initialize the Plugin by registering the Plugin definitions and its Slot
-Components, e.g.:
+To support a new Plugin in the Application, make sure to:
 
-```typescript
-export const initialiseGaslessPlugin = () => {
-    pluginRegistryUtils
-        .registerPlugin(plugin)
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
-            pluginId: plugin.id,
-            component: GaslessMemberList,
-        })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
-            pluginId: plugin.id,
-            component: GaslessMembersPageDetails,
-        });
-};
-```
+1.  Create a new subfolder under the `/src/plugins` folder (e.g., `/src/plugins/gaslessPlugin`);
 
-Make sure to update the `initialisePlugins` function in the `/plugins/index.ts` file to initialize the new plugin as
-well.
+2.  Implement the Plugin definitions on a `/constants/plugin.ts` file by following the `IPlugin` interface.
 
-All the available Slot Components are defined under a `/constants/moduleSlots.ts` file inside each module.
+3.  Implement all the required Slot Components for the new plugin. All the available Slot Components are defined under a
+    `/constants/moduleSlots.ts` file inside each module (e.g., `/modules/governance/constants/moduleSlots.ts`).
+
+4.  Create an `index.ts` file under the new Plugin folder exporting a function which initialises the Plugin by
+    registering its Plugin definitions and Slot Components, e.g.:
+
+         ```typescript
+         export const initialiseGaslessPlugin = () => {
+             pluginRegistryUtils
+                 .registerPlugin(plugin)
+                 .registerSlotComponent({
+                     slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
+                     pluginId: plugin.id,
+                     component: GaslessMemberList,
+                 })
+                 .registerSlotComponent({
+                     slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
+                     pluginId: plugin.id,
+                     component: GaslessMembersPageDetails,
+                 });
+         };
+         ```
+
+5.  Update the `initialisePlugins` funciton in the `/plugins/index.ts` file to initialise the new Plugin.
