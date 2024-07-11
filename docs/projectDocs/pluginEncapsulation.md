@@ -9,8 +9,8 @@ The Plugin Encapsulation logic is currently implemented through the `pluginRegis
 ## Glossary
 
 -   **Plugin**: Defines the governance, asset management, and/or membership of a DAO. A DAO can have one or more plugins
-    installed depending on their governance needs. More information about the plugins' implementation at smart-contract
-    level can be found [here](https://devs.aragon.org/osx/how-it-works/core/plugins/).
+    installed depending on their governance needs. More information about the plugins' implementation at the
+    smart-contract level can be found [here](https://devs.aragon.org/osx/how-it-works/core/plugins/).
 
 -   **Plugin Registry**: A registry that collects information about the Plugins and how to display Plugin-specific data
     on the UI.
@@ -54,7 +54,7 @@ The Plugin Registry is a record containing information about the available Plugi
 implemented as a JavaScript class in the
 [pluginRegistryUtils](https://github.com/aragon/app-next/blob/develop/src/shared/utils/pluginRegistryUtils/pluginRegistryUtils.ts)
 file and populated on the client side at startup by the
-[<Providers />](https://github.com/aragon/app-next/blob/develop/src/modules/application/components/providers/providers.tsx)
+[`<Providers />`](https://github.com/aragon/app-next/blob/develop/src/modules/application/components/providers/providers.tsx)
 component of the Application module. The `<Providers />` component imports and triggers the
 [initialisePlugins](https://github.com/aragon/app-next/blob/develop/src/plugins/index.ts) function, which initializes
 all the supported plugins by registering the Plugin information and their Slot Components.
@@ -113,29 +113,29 @@ To support a new Plugin in the Application, make sure to:
 
 1.  Create a new subfolder under the `/src/plugins` folder (e.g., `/src/plugins/gaslessPlugin`);
 
-2.  Implement the Plugin definitions on a `/constants/plugin.ts` file by following the `IPlugin` interface.
+2.  Implement the Plugin definitions in a `/constants/plugin.ts` file by following the `IPlugin` interface.
 
-3.  Implement all the required Slot Components for the new plugin. All the available Slot Components are defined under a
+3.  Implement all the required Slot Components for the new Plugin. All the available Slot Components are defined under a
     `/constants/moduleSlots.ts` file inside each module (e.g., `/modules/governance/constants/moduleSlots.ts`).
 
 4.  Create an `index.ts` file under the new Plugin folder exporting a function which initialises the Plugin by
     registering its Plugin definitions and Slot Components, e.g.:
 
-         ```typescript
-         export const initialiseGaslessPlugin = () => {
-             pluginRegistryUtils
-                 .registerPlugin(plugin)
-                 .registerSlotComponent({
-                     slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
-                     pluginId: plugin.id,
-                     component: GaslessMemberList,
-                 })
-                 .registerSlotComponent({
-                     slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
-                     pluginId: plugin.id,
-                     component: GaslessMembersPageDetails,
-                 });
-         };
-         ```
+    ```typescript
+    export const initialiseGaslessPlugin = () => {
+        pluginRegistryUtils
+            .registerPlugin(plugin)
+            .registerSlotComponent({
+                slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
+                pluginId: plugin.id,
+                component: GaslessMemberList,
+            })
+            .registerSlotComponent({
+                slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
+                pluginId: plugin.id,
+                component: GaslessMembersPageDetails,
+            });
+    };
+    ```
 
-5.  Update the `initialisePlugins` funciton in the `/plugins/index.ts` file to initialise the new Plugin.
+5.  Update the `initialisePlugins` function in the `/plugins/index.ts` file to initialise the new Plugin.
