@@ -68,6 +68,7 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
                         chainId: networkDefinitions[dao.network].chainId,
                         id: settings.pluginAddress,
                     })}
+                    target="_blank"
                 >
                     {daoUtils.formatPluginName(settings.pluginSubdomain)}
                 </Link>

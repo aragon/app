@@ -43,6 +43,7 @@ export const MultisigProposalsPageDetails: React.FC<IMultisigProposalsPageDetail
                         chainId: networkDefinitions[dao.network].chainId,
                         id: settings.pluginAddress,
                     })}
+                    target="_blank"
                 >
                     {daoUtils.formatPluginName(settings.pluginSubdomain)}
                 </Link>
