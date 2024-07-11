@@ -51,10 +51,13 @@ export const initialiseMultisigPlugin = () => {
 ### Plugin Registry
 
 The Plugin Registry is a record containing information about the available Plugins and their Slot Components. It is
-implemented as a JavaScript class in the `pluginRegistryUtils` file and populated on the client side at startup by the
-`<Providers />` component of the Application module. The `<Providers />` component imports and triggers the
-`initialisePlugins` function, which initializes all the supported plugins by registering the Plugin information and
-their Slot Components.
+implemented as a JavaScript class in the
+[pluginRegistryUtils](https://github.com/aragon/app-next/blob/develop/src/shared/utils/pluginRegistryUtils/pluginRegistryUtils.ts)
+file and populated on the client side at startup by the
+[<Providers />](https://github.com/aragon/app-next/blob/develop/src/modules/application/components/providers/providers.tsx)
+component of the Application module. The `<Providers />` component imports and triggers the
+[initialisePlugins](https://github.com/aragon/app-next/blob/develop/src/plugins/index.ts) function, which initializes
+all the supported plugins by registering the Plugin information and their Slot Components.
 
 ### Slot
 
@@ -95,9 +98,10 @@ export const initialiseMultisigPlugin = () => {
 
 #### Rendering of Slot Components
 
-The `<PluginComponent />` React component is located under the `/shared/components` folder and renders a Slot Component
-from a given Slot ID and a list of Plugin IDs. As the Application does not currently support multiple Plugins installed
-on the same DAO, the component renders the first Slot Component found from the given Plugin IDs.
+The [`<PluginComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginComponent) React
+component is located under the `/shared/components` folder and renders a Slot Component from a given Slot ID and a list
+of Plugin IDs. As the Application does not currently support multiple Plugins installed on the same DAO, the component
+renders the first Slot Component found from the given Plugin IDs.
 
 **NOTE**: To render multiple Slot Components, a new `PluginComponentTabs` React component can be implemented to render
 all the Slot Components registered for the specified Plugin IDs list inside tabs. The Plugin-specific Tabs label can be
