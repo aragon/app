@@ -1,11 +1,8 @@
+import { createClient } from 'viem';
 import { createConfig, http } from 'wagmi';
-import { mainnet, polygon, sepolia } from 'wagmi/chains';
+import { arbitrum, base, mainnet, polygon, sepolia, zkSync, zkSyncSepoliaTestnet } from 'wagmi/chains';
 
 export const wagmiConfig = createConfig({
-    chains: [mainnet, sepolia, polygon],
-    transports: {
-        [mainnet.id]: http(),
-        [sepolia.id]: http(),
-        [polygon.id]: http(),
-    },
+    chains: [arbitrum, base, mainnet, polygon, sepolia, zkSync, zkSyncSepoliaTestnet],
+    client: ({ chain }) => createClient({ chain, transport: http() }),
 });
