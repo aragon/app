@@ -29,4 +29,15 @@ describe('governance service', () => {
         expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposals, params);
         expect(result).toEqual(proposals);
     });
+
+    it('getMember fetches the members of the specified DAO by address', async () => {
+        const member = generateMember({ address: '0x123' });
+        const params = { urlParams: { address: member.address }, queryParams: { daoId: 'dao-id-test' } };
+
+        requestSpy.mockResolvedValue(member);
+        const result = await governanceService.getMember(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].member, params);
+        expect(result).toEqual(member);
+    });
 });

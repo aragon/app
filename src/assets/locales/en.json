@@ -172,58 +172,77 @@
           "title": "Error loading proposals",
           "description": "There was an error loading the DAO proposals, try again later."
         }
-      }
-    },
-    "plugins": {
-      "token": {
-        "tokenMemberList": {
-          "entity": "Members"
-        },
-        "tokenMembersPageDetails": {
-          "eligibleMembers": "Eligible members",
-          "members": "Token holders"
-        },
-        "tokenProposalList": {
-          "entity": "Proposals"
-        },
-        "tokenProposalsPageDetails": {
-          "contract": "Contract",
-          "supportThreshold": "Support threshold",
-          "minimumParticipation": "Minimum participation",
-          "minimumDuration": "Minimum duration",
-          "earlyExecution": "Early execution",
-          "voteChange": "Vote change",
-          "proposalCreation": "Proposal creation",
-          "yes": "Yes",
-          "no": "No",
-          "proposalCreationAccess": "Members with ≥ {{balance}} voting power or balance"
+      },
+      "daoMemberPage": {
+        "aside": {
+          "details": {
+            "title": "Details",
+            "address": "Address",
+            "ens": "ENS",
+            "firstActivity": "First activity"
+          }
         }
       },
-      "multisig": {
-        "multisigMemberList": {
-          "entity": "Members"
+      "plugins": {
+        "token": {
+          "tokenMemberList": {
+            "entity": "Members"
+          },
+          "tokenMembersPageDetails": {
+            "eligibleMembers": "Eligible members",
+            "members": "Token holders"
+          },
+          "tokenProposalList": {
+            "entity": "Proposals"
+          },
+          "tokenProposalsPageDetails": {
+            "contract": "Contract",
+            "supportThreshold": "Support threshold",
+            "minimumParticipation": "Minimum participation",
+            "minimumDuration": "Minimum duration",
+            "earlyExecution": "Early execution",
+            "voteChange": "Vote change",
+            "proposalCreation": "Proposal creation",
+            "yes": "Yes",
+            "no": "No",
+            "proposalCreationAccess": "Members with ≥ {{balance}} voting power or balance"
+          },
+          "tokenMemberStats": {
+            "votingPower": "Voting power",
+            "tokenBalance": "Token balance",
+            "delegations": "Delegations",
+            "latestActivity": "Latest activity"
+          }
         },
-        "multisigMembersPageDetails": {
-          "eligibleMembers": "Eligible members",
-          "members": "Multisig members"
-        },
-        "multisigProposalList": {
-          "entity": "Proposals"
-        },
-        "multisigProposalsPageDetails": {
-          "contract": "Contract",
-          "minimumApproval": "Minimum approval",
-          "proposalCreation": "Proposal creation",
-          "minimumApprovalMembers": "{{count}} of {{total}} Members",
-          "members": "Multisig members"
+        "multisig": {
+          "multisigMemberList": {
+            "entity": "Members"
+          },
+          "multisigMembersPageDetails": {
+            "eligibleMembers": "Eligible members",
+            "members": "Multisig members"
+          },
+          "multisigProposalList": {
+            "entity": "Proposals"
+          },
+          "multisigProposalsPageDetails": {
+            "contract": "Contract",
+            "minimumApproval": "Minimum approval",
+            "proposalCreation": "Proposal creation",
+            "minimumApprovalMembers": "{{count}} of {{total}} Members",
+            "members": "Multisig members"
+          },
+          "multisigMemberStats": {
+            "latestActivity": "Latest activity"
+          }
         }
-      }
-    },
-    "shared": {
-      "page": {
-        "header": {
-          "readMore": "Read more",
-          "readLess": "Read less"
+      },
+      "shared": {
+        "page": {
+          "header": {
+            "readMore": "Read more",
+            "readLess": "Read less"
+          }
         }
       }
     }

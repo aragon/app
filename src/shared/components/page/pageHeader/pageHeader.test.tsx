@@ -14,6 +14,12 @@ describe('<Page.Header /> component', () => {
         expect(screen.getByRole('heading', { name: title, level: 1 })).toBeInTheDocument();
     });
 
+    it('renders navigation when defined', () => {
+        const navigation = 'page-navigation';
+        render(createTestComponent({ navigation }));
+        expect(screen.getByText(navigation)).toBeInTheDocument();
+    });
+
     it('renders the description property when defined', () => {
         const description = 'page-description';
         render(createTestComponent({ description }));

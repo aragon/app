@@ -37,6 +37,11 @@ const nextConfig = {
                 hostname: 'i.seadn.io',
                 port: '',
             },
+            {
+                protocol: 'https',
+                hostname: 'clonex-assets.rtfkt.com',
+                port: '',
+            },
         ],
     },
     experimental: {

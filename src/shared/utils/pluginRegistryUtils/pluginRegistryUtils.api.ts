@@ -13,6 +13,13 @@ export type PluginComponent<TComponentProps = any> = ComponentType<TComponentPro
 // Record of slot components
 export type SlotComponents = Record<SlotId, Record<PluginId, PluginComponent>>;
 
+// Plugin function registered for a specific SlotId
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type PluginFunction<TParams = any, TResult = any> = (params: TParams) => TResult;
+
+// Record of slot functions
+export type SlotFunctions = Record<SlotId, Record<PluginId, PluginFunction>>;
+
 /**
  * Plugin definitions.
  */
@@ -39,4 +46,8 @@ export interface IPluginRegistry {
      * Registered slot components.
      */
     slotComponents: SlotComponents;
+    /**
+     * Registered slot functions.
+     */
+    slotFunctions: SlotFunctions;
 }

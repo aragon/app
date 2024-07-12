@@ -74,6 +74,59 @@ describe('pluginRegistry utils', () => {
         });
     });
 
+    describe('registerSlotFunction', () => {
+        it('registers the specified slot function', () => {
+            const params = { slotId: 'slot-id', pluginId: 'plugin-id', function: () => null };
+            pluginRegistryUtils.registerSlotFunction(params);
+            expect(pluginRegistryUtils.getSlotFunction({ slotId: params.slotId, pluginId: params.pluginId })).toEqual(
+                params.function,
+            );
+        });
+
+        it('returns the class instance', () => {
+            const params = { slotId: 's', pluginId: 'p', function: () => null };
+            const result = pluginRegistryUtils.registerSlotFunction(params);
+            expect(result).toEqual(pluginRegistryUtils);
+        });
+
+        it('overrides the previous registered slotFunction when passing slot-functions with same slot and plugin ids', () => {
+            const slotId = 'governance-member-list';
+            const pluginId = 'mulsisig';
+            const firstFunction = () => 'first';
+            const secondFunction = () => 'second';
+
+            pluginRegistryUtils
+                .registerSlotFunction({ slotId, pluginId, function: firstFunction })
+                .registerSlotFunction({ slotId, pluginId, function: secondFunction });
+
+            expect(pluginRegistryUtils.getSlotFunction({ slotId, pluginId })).toEqual(secondFunction);
+        });
+    });
+
+    describe('getSlotFunction', () => {
+        it('returns undefined when no function is registered for the given plugin id', () => {
+            const slotId = 'slot-id';
+            const registeredPluginId = 'multisig';
+            const unregisteredPluginId = 'tokenVoting';
+            pluginRegistryUtils.registerSlotFunction({ slotId, pluginId: registeredPluginId, function: () => null });
+            expect(pluginRegistryUtils.getSlotFunction({ slotId, pluginId: unregisteredPluginId })).toBeUndefined();
+        });
+
+        it('returns undefined when no function is registered for the given slot id', () => {
+            const registeredSlotId = 'member-list';
+            const unregisteredSlotId = 'settings';
+            const pluginId = 'tokenVoting';
+            pluginRegistryUtils.registerSlotFunction({
+                slotId: registeredSlotId,
+                pluginId: pluginId,
+                function: () => null,
+            });
+            expect(
+                pluginRegistryUtils.getSlotFunction({ slotId: unregisteredSlotId, pluginId: pluginId }),
+            ).toBeUndefined();
+        });
+    });
+
     describe('listContainsRegisteredPlugins', () => {
         it('returns true when list contains a registered plugin', () => {
             const plugins = [generatePlugin({ id: '1' }), generatePlugin({ id: '2' })];
