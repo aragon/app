@@ -175,6 +175,9 @@
       },
       "daoMemberPage": {
         "header": {
+          "breadcrumb": {
+            "members": "Members"
+          },
           "stat": {
             "latestActivity": "Latest activity"
           }
