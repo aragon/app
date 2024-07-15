@@ -49,6 +49,10 @@ export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHe
         format: NumberFormat.GENERIC_SHORT,
     });
 
+    const formattedDelegations = formatterUtils.formatNumber(member.metrics.delegateReceivedCount, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+
     return [
         {
             label: t('app.governance.plugins.token.tokenMemberStats.votingPower'),
@@ -62,7 +66,7 @@ export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHe
         },
         {
             label: t('app.governance.plugins.token.tokenMemberStats.delegations'),
-            value: member.metrics.delegateReceivedCount,
+            value: formattedDelegations,
         },
     ];
 };
