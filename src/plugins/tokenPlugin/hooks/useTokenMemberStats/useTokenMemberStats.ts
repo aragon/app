@@ -6,7 +6,7 @@ import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import { type IDaoTokenSettings, type ITokenMember } from '../../types';
 
-interface ITokenMemberParams {
+interface IUseTokenMemberStatsParams {
     /**
      * ID of the DAO.
      */
@@ -17,7 +17,7 @@ interface ITokenMemberParams {
     address: string;
 }
 
-export const useTokenMemberStats = (params: ITokenMemberParams): IPageHeaderStat[] => {
+export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHeaderStat[] => {
     const { address, daoId } = params;
     const { t } = useTranslations();
 
