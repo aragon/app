@@ -34,7 +34,7 @@ describe('useTokenMemberStats hook', () => {
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 
         const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
-        const [votingPower, tokenBalance, delegates, latestActivity] = result.current;
+        const [votingPower, tokenBalance, delegates] = result.current;
 
         expect(votingPower.label).toBe('app.governance.plugins.token.tokenMemberStats.votingPower');
         expect(votingPower.value).toBe('47.93M');
@@ -44,7 +44,5 @@ describe('useTokenMemberStats hook', () => {
 
         expect(delegates.label).toBe('app.governance.plugins.token.tokenMemberStats.delegations');
         expect(delegates.value).toBe(member.metrics.delegateReceivedCount);
-
-        expect(latestActivity.label).toBe('app.governance.plugins.token.tokenMemberStats.latestActivity');
     });
 });

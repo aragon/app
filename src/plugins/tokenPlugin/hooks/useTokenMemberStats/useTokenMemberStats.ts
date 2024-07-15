@@ -64,11 +64,5 @@ export const useTokenMemberStats = (params: ITokenMemberParams): IPageHeaderStat
             label: t('app.governance.plugins.token.tokenMemberStats.delegations'),
             value: member.metrics.delegateReceivedCount,
         },
-        {
-            // TODO: Display real last activity date (APP-3405)
-            label: t('app.governance.plugins.token.tokenMemberStats.latestActivity'),
-            value: 3,
-            suffix: 'days ago',
-        },
     ];
 };
