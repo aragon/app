@@ -1,7 +1,7 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import * as daoService from '@/shared/api/daoService';
-import { generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import { generateDaoTokenSettings, generateTokenMember } from '../../testUtils';
 import { useTokenMemberStats } from './useTokenMemberStats';
@@ -18,6 +18,7 @@ describe('useTokenMemberStats hook', () => {
 
     afterEach(() => {
         useMemberSpy.mockReset();
+        useDaoSettingsSpy.mockReset();
     });
 
     it('returns token member stats', () => {
@@ -50,5 +51,31 @@ describe('useTokenMemberStats hook', () => {
 
         expect(delegates.label).toBe('app.governance.plugins.token.tokenMemberStats.delegations');
         expect(delegates.value).toBe('47.93M');
+    });
+
+    it('returns empty list when member is null', () => {
+        const memberStatsParams = {
+            address: '0x1234567890123456789012345678901234567890',
+            daoId: 'dao-id',
+        };
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+
+        const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
+
+        expect(result.current).toEqual([]);
+    });
+
+    it('returns empty list when daoSettings is null', () => {
+        const memberStatsParams = {
+            address: '0x1234567890123456789012345678901234567890',
+            daoId: 'dao-id',
+        };
+
+        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+
+        const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
+
+        expect(result.current).toEqual([]);
     });
 });
