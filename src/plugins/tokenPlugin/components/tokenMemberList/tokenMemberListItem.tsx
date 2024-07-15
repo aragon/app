@@ -30,7 +30,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
             votingPower={parsedVotingPower}
             ensName={member.ens ?? undefined}
             className="min-w-0"
-            href={`members/${member.address}`}
+            href={`/dao/${daoId}/members/${member.address}`}
         />
     );
 };
