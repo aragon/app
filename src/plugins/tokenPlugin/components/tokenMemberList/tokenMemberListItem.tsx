@@ -13,7 +13,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
     const { member } = props;
 
     // TODO: use DAO token decimals (APP-3323)
-    const parsedVotingPower = formatEther(BigInt(member.votingPower));
+    const parsedVotingPower = member?.votingPower != null ? formatEther(BigInt(member.votingPower)) : undefined;
 
     return (
         <MemberDataListItem.Structure
