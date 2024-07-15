@@ -109,7 +109,7 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
                 ]}
                 stats={stats}
                 title={memberName}
-                avatar={ens && <MemberAvatar size="2xl" ensName={ens} address={address} />}
+                avatar={<MemberAvatar size="2xl" ensName={ens ?? undefined} address={address} />}
             >
                 <div className="flex flex-row gap-4">
                     <Dropdown.Container
