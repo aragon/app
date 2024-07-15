@@ -19,6 +19,7 @@ import {
     ssrUtils,
     useBlockExplorer,
 } from '@aragon/ods';
+import { useChains } from 'wagmi';
 import { useMember } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
@@ -64,6 +65,8 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
             pluginId: pluginIds[0],
         })?.(memberStatsParams) ?? [];
 
+    const chains = useChains();
+
     const stats = [
         ...pluginSpecificStats,
         {
@@ -77,6 +80,10 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
     if (member == null || dao == null) {
         return null;
     }
+
+    const { chainId } = networkDefinitions[dao.network];
+    const chain = chains.find((chain) => chain.id === chainId);
+    const blockExplorerName = chain?.blockExplorers?.default.name;
 
     const truncatedAddress = addressUtils.truncateAddress(address);
     const { ens } = member;
@@ -122,9 +129,9 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
                         <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(pageUrl)}>
                             {pageUrl}
                         </Dropdown.Item>
-                        {addressUrl && (
+                        {addressUrl && blockExplorerName && (
                             <Dropdown.Item icon={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
-                                Etherscan
+                                {blockExplorerName}
                             </Dropdown.Item>
                         )}
                     </Dropdown.Container>
