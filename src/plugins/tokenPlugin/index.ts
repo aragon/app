@@ -5,7 +5,7 @@ import { TokenMembersPageDetails } from './components/tokenMembersPageDetails';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalsPageDetails } from './components/tokenProposalsPageDetails';
 import { plugin } from './constants/plugin';
-import { useTokenMemberStats } from './hooks/useMultisigMemberStats';
+import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils

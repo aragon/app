@@ -2,6 +2,7 @@
 
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
@@ -58,10 +59,21 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
         daoId,
         address,
     };
-    const stats = pluginRegistryUtils.getSlotFunction({
-        slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
-        pluginId: pluginIds[0],
-    })?.(memberStatsParams);
+    const pluginSpecificStats: IPageHeaderStat[] =
+        pluginRegistryUtils.getSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
+            pluginId: pluginIds[0],
+        })?.(memberStatsParams) ?? [];
+
+    const stats = [
+        ...pluginSpecificStats,
+        {
+            // TODO: Display real last activity date (APP-3405)
+            label: t('app.governance.daoMemberPage.header.stat.latestActivity'),
+            value: 3,
+            suffix: 'days ago',
+        },
+    ];
 
     if (member == null) {
         return null;

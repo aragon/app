@@ -5,7 +5,6 @@ import { MultisigMembersPageDetails } from './components/multisigMembersPageDeta
 import { MultisigProposalList } from './components/multisigProposalList';
 import { MultisigProposalsPageDetails } from './components/multisigProposalsPageDetails/multisigProposalsPageDetails';
 import { plugin } from './constants/plugin';
-import { useMultisigMemberStats } from './hooks/useMultisigMemberStats';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -19,11 +18,6 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
             pluginId: plugin.id,
             component: MultisigMembersPageDetails,
-        })
-        .registerSlotFunction({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
-            pluginId: plugin.id,
-            function: useMultisigMemberStats,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,

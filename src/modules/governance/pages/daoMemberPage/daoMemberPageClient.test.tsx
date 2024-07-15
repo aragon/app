@@ -134,4 +134,10 @@ describe('<DaoMemberPageClient /> component', () => {
 
         expect(screen.getByText(/daoMemberPage.aside.details.firstActivity/)).toBeInTheDocument();
     });
+
+    it('renders the formatted member stats', () => {
+        render(createTestComponent());
+
+        expect(screen.getByText(/daoMemberPage.header.stat.latestActivity/)).toBeInTheDocument();
+    });
 });
