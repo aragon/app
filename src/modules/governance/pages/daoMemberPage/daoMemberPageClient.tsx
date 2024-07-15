@@ -74,7 +74,7 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
         },
     ];
 
-    if (member == null) {
+    if (member == null || dao == null) {
         return null;
     }
 
@@ -82,13 +82,11 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
     const { ens } = member;
     const memberName = ens ?? truncatedAddress;
 
-    const addressUrl = dao
-        ? getChainEntityUrl({
-              type: ChainEntityType.ADDRESS,
-              chainId: networkDefinitions[dao.network].chainId,
-              id: address,
-          })
-        : undefined;
+    const addressUrl = getChainEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        chainId: networkDefinitions[dao.network].chainId,
+        id: address,
+    });
 
     return (
         <>
