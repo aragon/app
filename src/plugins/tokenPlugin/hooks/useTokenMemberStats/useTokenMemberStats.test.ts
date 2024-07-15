@@ -30,7 +30,13 @@ describe('useTokenMemberStats hook', () => {
         const daoTokenSettings = generateDaoTokenSettings({ token });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoTokenSettings }));
 
-        const member = generateTokenMember({ votingPower: '47928374987234', tokenBalance: '123456123456' });
+        const member = generateTokenMember({
+            votingPower: '47928374987234',
+            tokenBalance: '123456123456',
+            metrics: {
+                delegateReceivedCount: 47928374,
+            },
+        });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 
         const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
@@ -43,6 +49,6 @@ describe('useTokenMemberStats hook', () => {
         expect(tokenBalance.value).toBe('123.46K');
 
         expect(delegates.label).toBe('app.governance.plugins.token.tokenMemberStats.delegations');
-        expect(delegates.value).toBe(member.metrics.delegateReceivedCount);
+        expect(delegates.value).toBe('47.93M');
     });
 });
