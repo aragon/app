@@ -26,6 +26,16 @@
           "transactions": "Transactions",
           "settings": "Settings"
         }
+      },
+      "notFoundBase": {
+        "title": "Page not found",
+        "description": "We couldn't find the page that you're looking for.",
+        "action": "Explore DAO's"
+      },
+      "notFoundDao": {
+        "title": "Page not found",
+        "description": "We couldn't find the page that you're looking for.",
+        "action": "Go to dashboard"
       }
     },
     "dashboard": {
