@@ -1,5 +1,5 @@
 import { Page } from '@/shared/components/page';
-import { type IDaoMemberPageParams } from '@/shared/types/daoMemberPageParams';
+import { type IDaoMemberPageParams } from '../../types';
 import { DaoMemberPageClient } from './daoMemberPageClient';
 
 export interface IDaoMemberPageProps {

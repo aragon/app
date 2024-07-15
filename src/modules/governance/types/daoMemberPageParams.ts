@@ -1,4 +1,4 @@
-import { type IDaoPageParams } from './daoPageParams';
+import { type IDaoPageParams } from '@/shared/types';
 
 export interface IDaoMemberPageParams extends IDaoPageParams {
     /**
