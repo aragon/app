@@ -2,7 +2,7 @@ import { useMember } from '@/modules/governance/api/governanceService';
 import { useDaoSettings } from '@/shared/api/daoService';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { formatterUtils } from '@aragon/ods';
+import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import { type IDaoTokenSettings, type ITokenMember } from '../../types';
 
@@ -42,10 +42,12 @@ export const useTokenMemberStats = (params: ITokenMemberParams): IPageHeaderStat
     const { token } = daoSettings;
 
     const parsedVotingPower = formatUnits(BigInt(member.votingPower), token.decimals);
-    const formattedVotingPower = formatterUtils.formatNumber(parsedVotingPower);
+    const formattedVotingPower = formatterUtils.formatNumber(parsedVotingPower, { format: NumberFormat.GENERIC_SHORT });
 
     const parsedTokenBalance = formatUnits(BigInt(member.tokenBalance), token.decimals);
-    const formattedTokenBalance = formatterUtils.formatNumber(parsedTokenBalance);
+    const formattedTokenBalance = formatterUtils.formatNumber(parsedTokenBalance, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
 
     return [
         {

@@ -30,7 +30,7 @@ describe('useTokenMemberStats hook', () => {
         const daoTokenSettings = generateDaoTokenSettings({ token });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoTokenSettings }));
 
-        const member = generateTokenMember({ votingPower: '47928374987234', tokenBalance: '123456' });
+        const member = generateTokenMember({ votingPower: '47928374987234', tokenBalance: '123456123456' });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 
         const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
