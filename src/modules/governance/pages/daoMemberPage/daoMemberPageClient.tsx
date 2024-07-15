@@ -2,14 +2,13 @@
 
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
+import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     addressUtils,
-    Breadcrumbs,
     ChainEntityType,
     clipboardUtils,
     DefinitionList,
@@ -94,19 +93,15 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
     return (
         <>
             <Page.Header
-                navigation={
-                    <Breadcrumbs
-                        links={[
-                            {
-                                href: `/dao/${daoId}/members`,
-                                label: 'Members',
-                            },
-                            {
-                                label: memberName,
-                            },
-                        ]}
-                    />
-                }
+                breadcrumbs={[
+                    {
+                        href: `/dao/${daoId}/members`,
+                        label: 'Members',
+                    },
+                    {
+                        label: memberName,
+                    },
+                ]}
                 stats={stats}
                 title={memberName}
                 avatar={ens && <MemberAvatar size="2xl" ensName={ens} address={address} />}

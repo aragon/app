@@ -14,10 +14,12 @@ describe('<Page.Header /> component', () => {
         expect(screen.getByRole('heading', { name: title, level: 1 })).toBeInTheDocument();
     });
 
-    it('renders navigation when defined', () => {
-        const navigation = 'page-navigation';
-        render(createTestComponent({ navigation }));
-        expect(screen.getByText(navigation)).toBeInTheDocument();
+    it('renders breadcrumbs when provided', () => {
+        const breadcrumbs = [{ label: 'daos', value: '/daos' }, { label: 'DAP' }];
+        render(createTestComponent({ breadcrumbs }));
+        breadcrumbs.forEach(({ label }) => {
+            expect(screen.getByText(label)).toBeInTheDocument();
+        });
     });
 
     it('renders the description property when defined', () => {
