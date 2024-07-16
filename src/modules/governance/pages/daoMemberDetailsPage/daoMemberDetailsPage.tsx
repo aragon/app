@@ -2,16 +2,16 @@ import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
 import { memberOptions } from '../../api/governanceService';
 import { type IDaoMemberPageParams } from '../../types';
-import { DaoMemberPageClient } from './daoMemberPageClient';
+import { DaoMemberDetailsPageClient } from './daoMemberDetailsPageClient';
 
-export interface IDaoMemberPageProps {
+export interface IDaoMemberDetailsPageProps {
     /**
      * DAO member page parameters.
      */
     params: IDaoMemberPageParams;
 }
 
-export const DaoMemberPage: React.FC<IDaoMemberPageProps> = async (props) => {
+export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async (props) => {
     const { params } = props;
     const { address, id: daoId } = params;
 
@@ -19,15 +19,12 @@ export const DaoMemberPage: React.FC<IDaoMemberPageProps> = async (props) => {
 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
-    const memberParams = {
-        urlParams: memberUrlParams,
-        queryParams: memberQueryParams,
-    };
+    const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
     await queryClient.prefetchQuery(memberOptions(memberParams));
 
     return (
-        <Page.Container>
-            <DaoMemberPageClient address={address} daoId={daoId} />
+        <Page.Container queryClient={queryClient}>
+            <DaoMemberDetailsPageClient address={address} daoId={daoId} />
         </Page.Container>
     );
 };

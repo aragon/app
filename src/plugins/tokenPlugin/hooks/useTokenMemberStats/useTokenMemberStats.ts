@@ -23,17 +23,10 @@ export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHe
 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
-    const { data: member } = useMember<ITokenMember>({
-        urlParams: memberUrlParams,
-        queryParams: memberQueryParams,
-    });
+    const { data: member } = useMember<ITokenMember>({ urlParams: memberUrlParams, queryParams: memberQueryParams });
 
-    const daoSettingsParams = {
-        daoId,
-    };
-    const { data: daoSettings } = useDaoSettings<IDaoTokenSettings>({
-        urlParams: daoSettingsParams,
-    });
+    const daoSettingsParams = { daoId };
+    const { data: daoSettings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
 
     if (member == null || daoSettings == null) {
         return [];

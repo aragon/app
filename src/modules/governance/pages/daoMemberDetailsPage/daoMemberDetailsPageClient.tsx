@@ -6,7 +6,7 @@ import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHe
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import {
     addressUtils,
     ChainEntityType,
@@ -23,7 +23,7 @@ import { useChains } from 'wagmi';
 import { useMember } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
-export interface IDaoMemberPageClientProps {
+export interface IDaoMemberDetailsPageClientProps {
     /**
      * The DAO ID.
      */
@@ -34,20 +34,17 @@ export interface IDaoMemberPageClientProps {
     address: string;
 }
 
-export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) => {
+export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientProps> = (props) => {
     const { address, daoId } = props;
 
     const { t } = useTranslations();
+    const { getChainEntityUrl } = useBlockExplorer();
+    const chains = useChains();
 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
-    const memberParams = {
-        urlParams: memberUrlParams,
-        queryParams: memberQueryParams,
-    };
+    const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
     const { data: member } = useMember(memberParams);
-
-    const { getChainEntityUrl } = useBlockExplorer();
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -55,26 +52,17 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
     const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
 
     const pluginIds = useDaoPluginIds(daoId);
-    const memberStatsParams = {
-        daoId,
-        address,
-    };
-    const pluginSpecificStats: IPageHeaderStat[] =
-        pluginRegistryUtils.getSlotFunction({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
-            pluginId: pluginIds[0],
-        })?.(memberStatsParams) ?? [];
+    const memberStatsParams = { daoId, address };
+    const pluginStats = useSlotFunction<IPageHeaderStat[]>({
+        params: memberStatsParams,
+        slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
+        pluginIds,
+    });
 
-    const chains = useChains();
-
+    // TODO: Display real last activity date (APP-3405)
     const stats = [
-        ...pluginSpecificStats,
-        {
-            // TODO: Display real last activity date (APP-3405)
-            label: t('app.governance.daoMemberPage.header.stat.latestActivity'),
-            value: 3,
-            suffix: 'days ago',
-        },
+        ...(pluginStats ?? []),
+        { label: t('app.governance.daoMemberPage.header.stat.latestActivity'), value: 3, suffix: 'days ago' },
     ];
 
     if (member == null || dao == null) {
@@ -85,8 +73,8 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
     const chain = chains.find((chain) => chain.id === chainId);
     const blockExplorerName = chain?.blockExplorers?.default.name;
 
-    const truncatedAddress = addressUtils.truncateAddress(address);
     const { ens } = member;
+    const truncatedAddress = addressUtils.truncateAddress(address);
     const memberName = ens ?? truncatedAddress;
 
     const addressUrl = getChainEntityUrl({
@@ -95,18 +83,15 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
         id: address,
     });
 
+    const pageBreadcrumbs = [
+        { href: `/dao/${daoId}/members`, label: t('app.governance.daoMemberPage.header.breadcrumb.members') },
+        { label: memberName },
+    ];
+
     return (
         <>
             <Page.Header
-                breadcrumbs={[
-                    {
-                        href: `/dao/${daoId}/members`,
-                        label: t('app.governance.daoMemberPage.header.breadcrumb.members'),
-                    },
-                    {
-                        label: memberName,
-                    },
-                ]}
+                breadcrumbs={pageBreadcrumbs}
                 stats={stats}
                 title={memberName}
                 avatar={<MemberAvatar size="2xl" ensName={ens ?? undefined} address={address} />}
@@ -157,9 +142,7 @@ export const DaoMemberPageClient: React.FC<IDaoMemberPageClientProps> = (props) 
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item term={t('app.governance.daoMemberPage.aside.details.firstActivity')}>
-                                {
-                                    // TODO: Display real first activity date (APP-3405)
-                                }
+                                {/* TODO: Display real first activity date (APP-3405) */}
                                 <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
                                     October 23, 2024
                                 </Link>

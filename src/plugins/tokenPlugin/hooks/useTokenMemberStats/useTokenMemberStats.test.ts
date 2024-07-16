@@ -12,7 +12,6 @@ describe('useTokenMemberStats hook', () => {
 
     beforeEach(() => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
-
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateTokenMember() }));
     });
 
@@ -54,28 +53,14 @@ describe('useTokenMemberStats hook', () => {
     });
 
     it('returns empty list when member is null', () => {
-        const memberStatsParams = {
-            address: '0x1234567890123456789012345678901234567890',
-            daoId: 'dao-id',
-        };
-
         useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-
-        const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
-
+        const { result } = renderHook(() => useTokenMemberStats({ address: '0x123', daoId: '1' }));
         expect(result.current).toEqual([]);
     });
 
     it('returns empty list when daoSettings is null', () => {
-        const memberStatsParams = {
-            address: '0x1234567890123456789012345678901234567890',
-            daoId: 'dao-id',
-        };
-
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-
-        const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
-
+        const { result } = renderHook(() => useTokenMemberStats({ address: '0x123', daoId: '2' }));
         expect(result.current).toEqual([]);
     });
 });

@@ -6,14 +6,14 @@ import * as governanceService from '../../api/governanceService';
 
 import { userEvent } from '@testing-library/user-event';
 import { generateMember } from '../../testUtils';
-import { DaoMemberPageClient, type IDaoMemberPageClientProps } from './daoMemberPageClient';
+import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
 
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
     MemberAvatar: (props: { src: string }) => <div data-testid="avatar-mock" data-src={props.src} />,
 }));
 
-describe('<DaoMemberPageClient /> component', () => {
+describe('<DaoMemberDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
@@ -31,8 +31,8 @@ describe('<DaoMemberPageClient /> component', () => {
         isServerSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IDaoMemberPageClientProps>) => {
-        const completeProps: IDaoMemberPageClientProps = {
+    const createTestComponent = (props?: Partial<IDaoMemberDetailsPageClientProps>) => {
+        const completeProps: IDaoMemberDetailsPageClientProps = {
             daoId: 'dao-id',
             address: '0x1234567890123456789012345678901234567890',
             ...props,
@@ -40,7 +40,7 @@ describe('<DaoMemberPageClient /> component', () => {
 
         return (
             <OdsModulesProvider>
-                <DaoMemberPageClient {...completeProps} />
+                <DaoMemberDetailsPageClient {...completeProps} />
             </OdsModulesProvider>
         );
     };

@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { memberOptions } from '../../api/governanceService';
-import { DaoMemberPage, type IDaoMemberPageProps } from './daoMemberPage';
+import { DaoMemberDetailsPage, type IDaoMemberDetailsPageProps } from './daoMemberDetailsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual('@tanstack/react-query'),
@@ -17,7 +17,7 @@ jest.mock('./daoMemberPageClient', () => ({
     DaoMemberPageClient: () => <div data-testid="page-client-mock" />,
 }));
 
-describe('<DaoMemberPage /> component', () => {
+describe('<DaoMemberDetailsPage /> component', () => {
     const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
 
     beforeEach(() => {
@@ -28,12 +28,12 @@ describe('<DaoMemberPage /> component', () => {
         prefetchQuerySpy.mockReset();
     });
 
-    const createTestComponent = async (props?: Partial<IDaoMemberPageProps>) => {
-        const completeProps: IDaoMemberPageProps = {
+    const createTestComponent = async (props?: Partial<IDaoMemberDetailsPageProps>) => {
+        const completeProps: IDaoMemberDetailsPageProps = {
             params: { address: 'test-address', id: 'dao-id' },
             ...props,
         };
-        const Component = await DaoMemberPage(completeProps);
+        const Component = await DaoMemberDetailsPage(completeProps);
 
         return Component;
     };
