@@ -1,5 +1,6 @@
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { generateAsset, generateToken } from '@/modules/finance/testUtils';
+import { Network } from '@/shared/api/daoService';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -29,7 +30,7 @@ describe('useAssetListData hook', () => {
             totalRecords: balances.length,
         });
         const assetsResponse = generatePaginatedResponse({ data: balances, metadata: balancesMetadata });
-        const params = { queryParams: { daoAddress: 'dao-test', network: 'polygon-mainnet' } };
+        const params = { queryParams: { daoAddress: 'dao-test', network: Network.POLYGON_MAINNET } };
         useAssetListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [assetsResponse], pageParams: [] } }),
         );

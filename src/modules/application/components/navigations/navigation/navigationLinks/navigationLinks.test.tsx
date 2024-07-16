@@ -1,9 +1,16 @@
 import { IconType } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import type { Route } from 'next';
+import * as NextNavigation from 'next/navigation';
 import { NavigationLinks, type INavigationLinksProps } from './navigationLinks';
 
 describe('<Navigation.Links /> component', () => {
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+
+    beforeEach(() => {
+        usePathnameSpy.mockReturnValue('');
+    });
+
     const createTestComponent = (props?: Partial<INavigationLinksProps<string>>) => {
         const completeProps: INavigationLinksProps<string> = {
             links: [],

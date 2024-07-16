@@ -68,8 +68,9 @@ describe('<AssetList /> component', () => {
     });
 
     it('correctly set the link of the assets', () => {
+        const initialParams = { queryParams: { network: Network.POLYGON_MAINNET } };
         const assets = [
-            generateAsset({ token: generateToken({ network: Network.POLYGON_MAINNET, address: '0x123' }) }),
+            generateAsset({ token: generateToken({ network: initialParams.queryParams.network, address: '0x123' }) }),
         ];
         useAssetListDataSpy.mockReturnValue({
             onLoadMore: jest.fn(),
@@ -81,7 +82,7 @@ describe('<AssetList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
-        render(createTestComponent());
+        render(createTestComponent({ initialParams }));
         expect(screen.getByRole('link').getAttribute('href')).toEqual('https://polygonscan.com/token/0x123');
     });
 

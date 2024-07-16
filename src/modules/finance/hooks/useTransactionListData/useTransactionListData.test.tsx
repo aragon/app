@@ -1,4 +1,5 @@
 import { generateTransaction } from '@/modules/finance/testUtils';
+import { Network } from '@/shared/api/daoService';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -29,7 +30,7 @@ describe('useTransactionListData hook', () => {
             totalRecords: transactions.length,
         });
         const transactionsResponse = generatePaginatedResponse({ data: transactions, metadata: transactionsMetadata });
-        const params = { queryParams: { address: 'dao-test', network: 'polygon-mainnet' } };
+        const params = { queryParams: { address: 'dao-test', network: Network.POLYGON_MAINNET } };
         useTransactionListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [transactionsResponse], pageParams: [] } }),
         );

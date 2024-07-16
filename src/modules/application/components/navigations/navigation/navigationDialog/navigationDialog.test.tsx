@@ -3,12 +3,19 @@ import { IconType } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { Route } from 'next';
+import * as NextNavigation from 'next/navigation';
 import { NavigationDialog, type INavigationDialogProps } from './navigationDialog';
 
 jest.mock('../../../aragonLogo', () => ({ AragonLogo: () => <div data-testid="aragon-logo-mock" /> }));
 jest.mock('../../../applicationTags', () => ({ ApplicationTags: () => <div data-testid="app-tags-mock" /> }));
 
 describe('<Navigation.Dialog /> component', () => {
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+
+    beforeEach(() => {
+        usePathnameSpy.mockReturnValue('');
+    });
+
     const createTestComponent = (props?: Partial<INavigationDialogProps<string>>) => {
         const completeProps: INavigationDialogProps<string> = { links: [], ...props };
 

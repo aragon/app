@@ -13,8 +13,8 @@ jest.mock('@tanstack/react-query', () => ({
     ),
 }));
 
-jest.mock('./daoMemberPageClient', () => ({
-    DaoMemberPageClient: () => <div data-testid="page-client-mock" />,
+jest.mock('./daoMemberDetailsPageClient', () => ({
+    DaoMemberDetailsPageClient: () => <div data-testid="page-client-mock" />,
 }));
 
 describe('<DaoMemberDetailsPage /> component', () => {

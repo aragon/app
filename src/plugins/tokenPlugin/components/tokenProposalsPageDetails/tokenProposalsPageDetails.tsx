@@ -35,7 +35,8 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
     const daoSettingsParams = { daoId };
     const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
 
-    const { getChainEntityUrl } = useBlockExplorer();
+    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     if (dao == null || settings == null) {
         return null;
@@ -63,11 +64,7 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.contract')}>
                 <Link
                     iconRight={IconType.LINK_EXTERNAL}
-                    href={getChainEntityUrl({
-                        type: ChainEntityType.ADDRESS,
-                        chainId: networkDefinitions[dao.network].chainId,
-                        id: settings.pluginAddress,
-                    })}
+                    href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: settings.pluginAddress })}
                     target="_blank"
                 >
                     {daoUtils.formatPluginName(settings.pluginSubdomain)}

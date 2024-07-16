@@ -19,7 +19,6 @@ import {
     ssrUtils,
     useBlockExplorer,
 } from '@aragon/ods';
-import { useChains } from 'wagmi';
 import { useMember } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
@@ -38,8 +37,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { address, daoId } = props;
 
     const { t } = useTranslations();
-    const { getChainEntityUrl } = useBlockExplorer();
-    const chains = useChains();
 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
@@ -59,6 +56,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         pluginIds,
     });
 
+    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
+    const { blockExplorer, buildEntityUrl } = useBlockExplorer({ chainId });
+
     // TODO: Display real last activity date (APP-3405)
     const stats = [
         ...(pluginStats ?? []),
@@ -69,19 +69,11 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         return null;
     }
 
-    const { chainId } = networkDefinitions[dao.network];
-    const chain = chains.find((chain) => chain.id === chainId);
-    const blockExplorerName = chain?.blockExplorers?.default.name;
-
     const { ens } = member;
     const truncatedAddress = addressUtils.truncateAddress(address);
     const memberName = ens ?? truncatedAddress;
 
-    const addressUrl = getChainEntityUrl({
-        type: ChainEntityType.ADDRESS,
-        chainId: networkDefinitions[dao.network].chainId,
-        id: address,
-    });
+    const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
 
     const pageBreadcrumbs = [
         { href: `/dao/${daoId}/members`, label: t('app.governance.daoMemberPage.header.breadcrumb.members') },
@@ -114,9 +106,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                         <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(pageUrl)}>
                             {pageUrl}
                         </Dropdown.Item>
-                        {addressUrl && blockExplorerName && (
+                        {addressUrl && blockExplorer && (
                             <Dropdown.Item icon={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
-                                {blockExplorerName}
+                                {blockExplorer.name}
                             </Dropdown.Item>
                         )}
                     </Dropdown.Container>

@@ -15,7 +15,7 @@ describe('<Page.Header /> component', () => {
     });
 
     it('renders breadcrumbs when provided', () => {
-        const breadcrumbs = [{ label: 'daos', value: '/daos' }, { label: 'DAP' }];
+        const breadcrumbs = [{ label: 'daos', link: '/daos' }];
         render(createTestComponent({ breadcrumbs }));
         breadcrumbs.forEach(({ label }) => {
             expect(screen.getByText(label)).toBeInTheDocument();
