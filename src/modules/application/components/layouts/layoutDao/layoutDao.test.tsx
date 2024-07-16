@@ -17,15 +17,22 @@ jest.mock('../../navigations/navigationDao', () => ({
     NavigationDao: () => <div data-testid="navigation-dao-mock" />,
 }));
 
+jest.mock('@/modules/application/components/errorBoundary/errorFallback', () => ({
+    ErrorFallback: () => <div>Error fallback</div>,
+}));
+
 describe('<LayoutDao /> component', () => {
     const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
+    const consoleErrorSpy = jest.spyOn(console, 'error');
 
     beforeEach(() => {
+        consoleErrorSpy.mockImplementation(jest.fn());
         prefetchQuerySpy.mockImplementation(jest.fn());
     });
 
     afterEach(() => {
         prefetchQuerySpy.mockReset();
+        consoleErrorSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
@@ -58,5 +65,27 @@ describe('<LayoutDao /> component', () => {
     it('dehydrates the query client state', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('hydration-mock')).toBeInTheDocument();
+    });
+
+    describe('error handling', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error');
+
+        beforeEach(() => {
+            consoleErrorSpy.mockImplementation(jest.fn());
+        });
+
+        afterEach(() => {
+            consoleErrorSpy.mockReset();
+        });
+
+        it('displays an error feedback if an error is thrown by a children component', async () => {
+            const ThrowErrorComponent = () => {
+                throw new Error('Test error');
+            };
+
+            render(await createTestComponent({ children: <ThrowErrorComponent /> }));
+
+            expect(screen.getByText('Error fallback')).toBeInTheDocument();
+        });
     });
 });

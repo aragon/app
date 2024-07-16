@@ -12,6 +12,10 @@ jest.mock('../../providers', () => ({
     ),
 }));
 
+jest.mock('@/modules/application/components/errorBoundary/errorFallback', () => ({
+    ErrorFallback: () => <div>Error fallback</div>,
+}));
+
 describe('<LayoutRoot /> component', () => {
     const createTestComponent = async (props?: Partial<ILayoutRootProps>) => {
         const completeProps: ILayoutRootProps = { ...props };
@@ -39,5 +43,27 @@ describe('<LayoutRoot /> component', () => {
         const providers = screen.getByTestId('providers-mock');
         expect(providers).toBeInTheDocument();
         expect(providers.dataset.translations).toEqual(JSON.stringify(assets));
+    });
+
+    describe('error handling', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error');
+
+        beforeEach(() => {
+            consoleErrorSpy.mockImplementation(jest.fn());
+        });
+
+        afterEach(() => {
+            consoleErrorSpy.mockReset();
+        });
+
+        it('displays an error feedback if an error is thrown by a children component', async () => {
+            const ThrowErrorComponent = () => {
+                throw new Error('Test error');
+            };
+
+            render(await createTestComponent({ children: <ThrowErrorComponent /> }));
+
+            expect(screen.getByText('Error fallback')).toBeInTheDocument();
+        });
     });
 });

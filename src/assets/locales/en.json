@@ -36,6 +36,12 @@
         "title": "Page not found",
         "description": "We couldn't find the page that you're looking for.",
         "action": "Go to dashboard"
+      },
+      "errorFallback": {
+        "title": "Something went wrong",
+        "description": "If you’d like to help, please report the issue to our team.",
+        "explore": "Explore DAOs",
+        "report": "Report issue"
       }
     },
     "dashboard": {
