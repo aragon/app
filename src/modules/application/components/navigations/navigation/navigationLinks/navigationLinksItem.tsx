@@ -26,7 +26,7 @@ export const NavigationLinksItem = (props: INavigationLinksItemProps) => {
     const { href, variant, icon, children, className, ...otherProps } = props;
 
     const pathname = usePathname();
-    const isActive = pathname === href;
+    const isActive = href != null && pathname.includes(href);
 
     return (
         <Link

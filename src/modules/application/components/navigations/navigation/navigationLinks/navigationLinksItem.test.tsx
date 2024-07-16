@@ -6,6 +6,10 @@ import { NavigationLinksItem, type INavigationLinksItemProps } from './navigatio
 describe('<NavigationLinksItem /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
 
+    beforeEach(() => {
+        usePathnameSpy.mockReturnValue('');
+    });
+
     afterEach(() => {
         usePathnameSpy.mockReset();
     });
@@ -49,6 +53,15 @@ describe('<NavigationLinksItem /> component', () => {
         usePathnameSpy.mockReturnValue(href);
         render(createTestComponent({ variant, href }));
         expect(screen.getByRole('link').getAttribute('aria-current')).toEqual('page');
+        expect(screen.getByRole('link').className).toContain('border-b-2');
+    });
+
+    it('renders a link as active when pathname is a subpath of href', () => {
+        const href = '/members';
+        const pathname = '/members/0x123';
+        const variant = 'columns';
+        usePathnameSpy.mockReturnValue(pathname);
+        render(createTestComponent({ variant, href }));
         expect(screen.getByRole('link').className).toContain('border-b-2');
     });
 });
