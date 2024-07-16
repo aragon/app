@@ -55,17 +55,17 @@ export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHe
 
     return [
         {
-            label: t('app.governance.plugins.token.tokenMemberStats.votingPower'),
+            label: t('app.plugins.token.tokenMemberStats.votingPower'),
             value: formattedVotingPower,
             suffix: token.symbol,
         },
         {
-            label: t('app.governance.plugins.token.tokenMemberStats.tokenBalance'),
+            label: t('app.plugins.token.tokenMemberStats.tokenBalance'),
             value: formattedTokenBalance,
             suffix: token.symbol,
         },
         {
-            label: t('app.governance.plugins.token.tokenMemberStats.delegations'),
+            label: t('app.plugins.token.tokenMemberStats.delegations'),
             value: formattedDelegations,
         },
     ];

@@ -43,13 +43,13 @@ describe('useTokenMemberStats hook', () => {
         const { result } = renderHook(() => useTokenMemberStats(memberStatsParams));
         const [votingPower, tokenBalance, delegates] = result.current;
 
-        expect(votingPower.label).toBe('app.governance.plugins.token.tokenMemberStats.votingPower');
+        expect(votingPower.label).toBe('app.plugins.token.tokenMemberStats.votingPower');
         expect(votingPower.value).toBe('47.93M');
 
-        expect(tokenBalance.label).toBe('app.governance.plugins.token.tokenMemberStats.tokenBalance');
+        expect(tokenBalance.label).toBe('app.plugins.token.tokenMemberStats.tokenBalance');
         expect(tokenBalance.value).toBe('123.46K');
 
-        expect(delegates.label).toBe('app.governance.plugins.token.tokenMemberStats.delegations');
+        expect(delegates.label).toBe('app.plugins.token.tokenMemberStats.delegations');
         expect(delegates.value).toBe('47.93M');
     });
 
