@@ -23,7 +23,7 @@ interface ProposalActionsProviderProps {
 }
 
 export const ProposalActionsProvider: React.FC<ProposalActionsProviderProps> = ({ children }) => {
-    const [activeTab, setActiveTab] = useState<string>('composer');
+    const [activeTab, setActiveTab] = useState<string>('basic');
 
     return (
         <ProposalActionsContext.Provider value={{ activeTab, setActiveTab }}>
