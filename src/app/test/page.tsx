@@ -1,3 +1,3 @@
-import { ProposalActions } from '@/modules/proposalActions/proposalActionsContainer/proposalActionsContainer';
+import { UsageExample } from '@/modules/proposalActions/usageExample';
 
-export default ProposalActions;
+export default UsageExample;
