@@ -12,10 +12,6 @@ jest.mock('../../providers', () => ({
     ),
 }));
 
-jest.mock('@/modules/application/components/errorBoundary/errorFallback', () => ({
-    ErrorFallback: () => <div>Error fallback</div>,
-}));
-
 describe('<LayoutRoot /> component', () => {
     const createTestComponent = async (props?: Partial<ILayoutRootProps>) => {
         const completeProps: ILayoutRootProps = { ...props };
@@ -45,25 +41,14 @@ describe('<LayoutRoot /> component', () => {
         expect(providers.dataset.translations).toEqual(JSON.stringify(assets));
     });
 
-    describe('error handling', () => {
-        const consoleErrorSpy = jest.spyOn(console, 'error');
+    it('displays an error feedback but displays the footer if an error is thrown by a children component', async () => {
+        testLogger.suppressErrors();
+        const Children = () => {
+            throw new Error('Test error');
+        };
 
-        beforeEach(() => {
-            consoleErrorSpy.mockImplementation(jest.fn());
-        });
-
-        afterEach(() => {
-            consoleErrorSpy.mockReset();
-        });
-
-        it('displays an error feedback if an error is thrown by a children component', async () => {
-            const ThrowErrorComponent = () => {
-                throw new Error('Test error');
-            };
-
-            render(await createTestComponent({ children: <ThrowErrorComponent /> }));
-
-            expect(screen.getByText('Error fallback')).toBeInTheDocument();
-        });
+        render(await createTestComponent({ children: <Children /> }));
+        expect(screen.getByText(/footer.link.explore/)).toBeInTheDocument();
+        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
     });
 });

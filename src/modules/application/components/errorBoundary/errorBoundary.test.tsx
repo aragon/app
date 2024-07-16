@@ -1,42 +1,28 @@
+import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
 import { ErrorBoundary, type IErrorBoundaryProps } from './errorBoundary';
 
-jest.mock('./errorFallback', () => ({
-    ErrorFallback: () => <div>Error fallback</div>,
-}));
-
 describe('<ErrorBoundary /> component', () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error');
-
     const createTestComponent = (props?: Partial<IErrorBoundaryProps>) => {
-        const completeProps: IErrorBoundaryProps = { children: <div>Child component</div>, ...props };
+        const completeProps: IErrorBoundaryProps = { ...props };
 
         return <ErrorBoundary {...completeProps} />;
     };
 
-    beforeEach(() => {
-        consoleErrorSpy.mockImplementation(jest.fn());
-    });
-
-    afterEach(() => {
-        consoleErrorSpy.mockReset();
-    });
-
-    const ThrowErrorComponent = () => {
-        throw new Error('Test error');
-    };
-
-    it('renders children when no error occurs', () => {
-        const children = <div>Child Component</div>;
+    it('renders the children property when no error occurs', () => {
+        const children = 'child-component';
         render(createTestComponent({ children }));
-
-        expect(screen.getByText('Child Component')).toBeInTheDocument();
+        expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('renders ErrorFallback when an error occurs', () => {
-        const children = <ThrowErrorComponent />;
-        render(createTestComponent({ children }));
+    it('renders an error feedback when an error occurs on a children component', () => {
+        testLogger.suppressErrors();
 
-        expect(screen.getByText('Error fallback')).toBeInTheDocument();
+        const Children = () => {
+            throw new Error('Test error');
+        };
+
+        render(createTestComponent({ children: <Children /> }));
+        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
     });
 });

@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
-import { ErrorFallback } from './errorFallback';
+import { Component, type ReactNode } from 'react';
+import { ErrorBoundaryFeedback } from './errorBoundaryFeedback';
 
-interface IErrorBoundaryState {
+export interface IErrorBoundaryState {
     /**
      * Indicates if an error has occurred.
      */
@@ -18,10 +18,10 @@ export interface IErrorBoundaryProps {
     /**
      * The children to render.
      */
-    children: React.ReactNode;
+    children?: ReactNode;
 }
 
-export class ErrorBoundary extends React.Component<IErrorBoundaryProps, IErrorBoundaryState> {
+export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundaryState> {
     constructor(props: IErrorBoundaryProps) {
         super(props);
         this.state = { hasError: false };
@@ -38,7 +38,7 @@ export class ErrorBoundary extends React.Component<IErrorBoundaryProps, IErrorBo
 
     render() {
         if (this.state.hasError) {
-            return <ErrorFallback />;
+            return <ErrorBoundaryFeedback />;
         }
 
         return this.props.children;

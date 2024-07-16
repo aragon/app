@@ -1,4 +1,5 @@
 import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
+import { testLogger } from '@/test/utils';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -15,10 +16,6 @@ jest.mock('@tanstack/react-query', () => ({
 
 jest.mock('../../navigations/navigationDao', () => ({
     NavigationDao: () => <div data-testid="navigation-dao-mock" />,
-}));
-
-jest.mock('@/modules/application/components/errorBoundary/errorFallback', () => ({
-    ErrorFallback: () => <div>Error fallback</div>,
 }));
 
 describe('<LayoutDao /> component', () => {
@@ -67,25 +64,14 @@ describe('<LayoutDao /> component', () => {
         expect(screen.getByTestId('hydration-mock')).toBeInTheDocument();
     });
 
-    describe('error handling', () => {
-        const consoleErrorSpy = jest.spyOn(console, 'error');
+    it('displays an error feedback but displays the DAO navigation if an error is thrown by a children component', async () => {
+        testLogger.suppressErrors();
+        const Children = () => {
+            throw new Error('Test error');
+        };
 
-        beforeEach(() => {
-            consoleErrorSpy.mockImplementation(jest.fn());
-        });
-
-        afterEach(() => {
-            consoleErrorSpy.mockReset();
-        });
-
-        it('displays an error feedback if an error is thrown by a children component', async () => {
-            const ThrowErrorComponent = () => {
-                throw new Error('Test error');
-            };
-
-            render(await createTestComponent({ children: <ThrowErrorComponent /> }));
-
-            expect(screen.getByText('Error fallback')).toBeInTheDocument();
-        });
+        render(await createTestComponent({ children: <Children /> }));
+        expect(screen.getByTestId('navigation-dao-mock')).toBeInTheDocument();
+        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
     });
 });
