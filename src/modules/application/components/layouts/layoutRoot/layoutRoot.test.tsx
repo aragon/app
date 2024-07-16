@@ -40,4 +40,15 @@ describe('<LayoutRoot /> component', () => {
         expect(providers).toBeInTheDocument();
         expect(providers.dataset.translations).toEqual(JSON.stringify(assets));
     });
+
+    it('displays an error feedback but displays the footer if an error is thrown by a children component', async () => {
+        testLogger.suppressErrors();
+        const Children = () => {
+            throw new Error('Test error');
+        };
+
+        render(await createTestComponent({ children: <Children /> }));
+        expect(screen.getByText(/footer.link.explore/)).toBeInTheDocument();
+        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
+    });
 });

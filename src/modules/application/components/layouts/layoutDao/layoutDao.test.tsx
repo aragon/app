@@ -1,4 +1,5 @@
 import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
+import { testLogger } from '@/test/utils';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -19,13 +20,16 @@ jest.mock('../../navigations/navigationDao', () => ({
 
 describe('<LayoutDao /> component', () => {
     const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
+    const consoleErrorSpy = jest.spyOn(console, 'error');
 
     beforeEach(() => {
+        consoleErrorSpy.mockImplementation(jest.fn());
         prefetchQuerySpy.mockImplementation(jest.fn());
     });
 
     afterEach(() => {
         prefetchQuerySpy.mockReset();
+        consoleErrorSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
@@ -58,5 +62,16 @@ describe('<LayoutDao /> component', () => {
     it('dehydrates the query client state', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('hydration-mock')).toBeInTheDocument();
+    });
+
+    it('displays an error feedback but displays the DAO navigation if an error is thrown by a children component', async () => {
+        testLogger.suppressErrors();
+        const Children = () => {
+            throw new Error('Test error');
+        };
+
+        render(await createTestComponent({ children: <Children /> }));
+        expect(screen.getByTestId('navigation-dao-mock')).toBeInTheDocument();
+        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
     });
 });
