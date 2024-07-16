@@ -172,6 +172,24 @@
           "title": "Error loading proposals",
           "description": "There was an error loading the DAO proposals, try again later."
         }
+      },
+      "daoMemberPage": {
+        "header": {
+          "breadcrumb": {
+            "members": "Members"
+          },
+          "stat": {
+            "latestActivity": "Latest activity"
+          }
+        },
+        "aside": {
+          "details": {
+            "title": "Details",
+            "address": "Address",
+            "ens": "ENS",
+            "firstActivity": "First activity"
+          }
+        }
       }
     },
     "plugins": {
@@ -197,6 +215,11 @@
           "yes": "Yes",
           "no": "No",
           "proposalCreationAccess": "Members with ≥ {{balance}} voting power or balance"
+        },
+        "tokenMemberStats": {
+          "votingPower": "Voting power",
+          "tokenBalance": "Token balance",
+          "delegations": "Delegations"
         }
       },
       "multisig": {

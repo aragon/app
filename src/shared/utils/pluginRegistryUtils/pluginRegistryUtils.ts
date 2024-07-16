@@ -1,4 +1,11 @@
-import type { IPlugin, IPluginRegistry, PluginComponent, PluginId, SlotId } from './pluginRegistryUtils.api';
+import type {
+    IPlugin,
+    IPluginRegistry,
+    PluginComponent,
+    PluginFunction,
+    PluginId,
+    SlotId,
+} from './pluginRegistryUtils.api';
 
 export interface IRegisterSlotComponentParams {
     /**
@@ -15,7 +22,33 @@ export interface IRegisterSlotComponentParams {
     component: PluginComponent;
 }
 
+export interface IRegisterSlotFunctionParams {
+    /**
+     * Id of the slot.
+     */
+    slotId: SlotId;
+    /**
+     * Id of the plugin.
+     */
+    pluginId: PluginId;
+    /**
+     * Function to register.
+     */
+    function: PluginFunction;
+}
+
 export interface IGetSlotComponentParams {
+    /**
+     * Id of the slot.
+     */
+    slotId: SlotId;
+    /**
+     * Id of the plugin.
+     */
+    pluginId: PluginId;
+}
+
+export interface IGetSlotFunctionParams {
     /**
      * Id of the slot.
      */
@@ -30,12 +63,36 @@ export class PluginRegistryUtils {
     private pluginRegistry: IPluginRegistry = {
         plugins: [],
         slotComponents: {},
+        slotFunctions: {},
     };
 
     registerPlugin = (plugin: IPlugin): PluginRegistryUtils => {
         this.pluginRegistry.plugins.push(plugin);
 
         return this;
+    };
+
+    registerSlotFunction = (params: IRegisterSlotFunctionParams): PluginRegistryUtils => {
+        const { slotId, pluginId, function: func } = params;
+        this.pluginRegistry = {
+            ...this.pluginRegistry,
+            slotFunctions: {
+                ...this.pluginRegistry.slotFunctions,
+                [slotId]: {
+                    ...this.pluginRegistry.slotFunctions[slotId],
+                    [pluginId]: func,
+                },
+            },
+        };
+
+        return this;
+    };
+
+    getSlotFunction = (params: IGetSlotFunctionParams): PluginFunction | undefined => {
+        const { slotId, pluginId } = params;
+        const func = this.pluginRegistry.slotFunctions[slotId]?.[pluginId];
+
+        return func;
     };
 
     registerSlotComponent = (params: IRegisterSlotComponentParams): PluginRegistryUtils => {

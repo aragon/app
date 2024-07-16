@@ -1,4 +1,4 @@
-import { Collapsible, Heading } from '@aragon/ods';
+import { Breadcrumbs, Collapsible, Heading, IBreadcrumbsProps } from '@aragon/ods';
 import classNames from 'classnames';
 import type { ComponentProps, ReactNode } from 'react';
 import { Container } from '../../container';
@@ -6,6 +6,10 @@ import { useTranslations } from '../../translationsProvider';
 import { PageHeaderStat, type IPageHeaderStat } from './pageHeaderStat';
 
 export interface IPageHeaderProps extends ComponentProps<'header'> {
+    /**
+     * Optional breadcrumbs for navigation.
+     */
+    breadcrumbs?: IBreadcrumbsProps['links'];
     /**
      * Title of the page.
      */
@@ -25,7 +29,7 @@ export interface IPageHeaderProps extends ComponentProps<'header'> {
 }
 
 export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
-    const { title, description, stats, avatar, children, className, ...otherProps } = props;
+    const { title, description, stats, avatar, breadcrumbs, children, className, ...otherProps } = props;
 
     const { t } = useTranslations();
 
@@ -35,6 +39,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
             {...otherProps}
         >
             <Container inset={true} className="flex flex-col gap-6">
+                {breadcrumbs && <Breadcrumbs links={breadcrumbs} />}
                 <div className="flex flex-row gap-12">
                     <div className="flex w-full max-w-[800px] flex-col gap-4">
                         <Heading size="h1">{title}</Heading>

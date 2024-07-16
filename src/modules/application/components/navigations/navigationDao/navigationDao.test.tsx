@@ -5,6 +5,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { IconType, addressUtils, clipboardUtils } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import * as NextNavigation from 'next/navigation';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
@@ -24,9 +25,11 @@ describe('<NavigationDao /> component', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const copySpy = jest.spyOn(clipboardUtils, 'copy');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        usePathnameSpy.mockReturnValue('');
     });
 
     afterEach(() => {

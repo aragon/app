@@ -31,7 +31,9 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
     const { initialParams, hidePagination, children, ...otherProps } = props;
     const { t } = useTranslations();
 
-    const { getChainEntityUrl } = useBlockExplorer();
+    const { network } = initialParams.queryParams;
+    const chainId = network ? networkDefinitions[network].chainId : undefined;
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
@@ -60,11 +62,7 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                         logoSrc={token.logo}
                         priceChange={Number(token.priceChangeOnDayUsd)}
                         target="_blank"
-                        href={getChainEntityUrl({
-                            type: ChainEntityType.TOKEN,
-                            chainId: networkDefinitions[token.network].chainId,
-                            id: token.address,
-                        })}
+                        href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address })}
                     />
                 ))}
             </DataListContainer>

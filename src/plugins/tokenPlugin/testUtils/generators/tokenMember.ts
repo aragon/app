@@ -5,5 +5,6 @@ export const generateTokenMember = (member?: Partial<ITokenMember>): ITokenMembe
     ...generateMember(),
     type: 'token-voting',
     votingPower: '0',
+    tokenBalance: '0',
     ...member,
 });

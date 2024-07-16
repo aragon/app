@@ -41,7 +41,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const { daoId } = props;
 
     const { t } = useTranslations();
-    const { getChainEntityUrl } = useBlockExplorer();
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
@@ -76,17 +75,11 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const dropdownLabel = daoEns ?? truncatedAddress;
     const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
 
-    const daoAddressLink = getChainEntityUrl({
-        type: ChainEntityType.ADDRESS,
-        chainId: dao ? networkDefinitions[dao.network].chainId : undefined,
-        id: dao?.address,
-    });
+    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
 
-    const daoCreationLink = getChainEntityUrl({
-        type: ChainEntityType.TRANSACTION,
-        chainId: dao ? networkDefinitions[dao.network].chainId : undefined,
-        id: dao?.transactionHash,
-    });
+    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao?.address });
+    const daoCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: dao?.transactionHash });
 
     const daoLaunchedAt = formatterUtils.formatDate((dao?.blockTimestamp ?? 0) * 1000, {
         format: DateFormat.YEAR_MONTH,

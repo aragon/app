@@ -14,6 +14,14 @@ describe('<Page.Header /> component', () => {
         expect(screen.getByRole('heading', { name: title, level: 1 })).toBeInTheDocument();
     });
 
+    it('renders breadcrumbs when provided', () => {
+        const breadcrumbs = [{ label: 'daos', link: '/daos' }];
+        render(createTestComponent({ breadcrumbs }));
+        breadcrumbs.forEach(({ label }) => {
+            expect(screen.getByText(label)).toBeInTheDocument();
+        });
+    });
+
     it('renders the description property when defined', () => {
         const description = 'page-description';
         render(createTestComponent({ description }));

@@ -27,7 +27,8 @@ export const MultisigProposalsPageDetails: React.FC<IMultisigProposalsPageDetail
         urlParams: daoSettingsParams,
     });
 
-    const { getChainEntityUrl } = useBlockExplorer();
+    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     if (dao == null || settings == null) {
         return null;
@@ -38,11 +39,7 @@ export const MultisigProposalsPageDetails: React.FC<IMultisigProposalsPageDetail
             <DefinitionList.Item term={t('app.plugins.multisig.multisigProposalsPageDetails.contract')}>
                 <Link
                     iconRight={IconType.LINK_EXTERNAL}
-                    href={getChainEntityUrl({
-                        type: ChainEntityType.ADDRESS,
-                        chainId: networkDefinitions[dao.network].chainId,
-                        id: settings.pluginAddress,
-                    })}
+                    href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: settings.pluginAddress })}
                     target="_blank"
                 >
                     {daoUtils.formatPluginName(settings.pluginSubdomain)}

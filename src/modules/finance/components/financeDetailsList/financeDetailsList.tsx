@@ -25,13 +25,9 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
     const { network, address } = dao!;
 
     const { t } = useTranslations();
-    const { getChainEntityUrl } = useBlockExplorer();
 
-    const daoAddressLink = getChainEntityUrl({
-        type: ChainEntityType.ADDRESS,
-        chainId: networkDefinitions[dao!.network].chainId,
-        id: dao?.address,
-    });
+    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao!.network].chainId });
+    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao?.address });
 
     const daoEns = daoUtils.getDaoEns(dao);
 

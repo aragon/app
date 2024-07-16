@@ -9,4 +9,8 @@ export interface ITokenMember extends IMember {
      * Voting power of the member.
      */
     votingPower: string;
+    /**
+     * Token balance of the member.
+     */
+    tokenBalance: string;
 }

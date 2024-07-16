@@ -33,6 +33,7 @@ export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) =>
                         address={member.address}
                         ensName={member.ens ?? undefined}
                         className="min-w-0"
+                        href={`/dao/${initialParams.queryParams.daoId}/members/${member.address}`}
                     />
                 ))}
             </DataListContainer>
