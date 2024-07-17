@@ -1,6 +1,6 @@
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { addressUtils, clipboardUtils, OdsModulesProvider, ssrUtils } from '@aragon/ods';
+import { addressUtils, clipboardUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 
@@ -17,7 +17,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
-    const isServerSpy = jest.spyOn(ssrUtils, 'isServer');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -28,7 +27,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useDaoSpy.mockReset();
         useMemberSpy.mockReset();
         clipboardCopySpy.mockReset();
-        isServerSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoMemberDetailsPageClientProps>) => {
@@ -68,16 +66,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
-    });
-
-    it('does not crash on server environment', () => {
-        const ens = 'member.eth';
-        const member = generateMember({ ens });
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-        isServerSpy.mockReturnValue(true);
-        render(createTestComponent());
-        const ensHeading = screen.getByRole('heading', { level: 1, name: ens });
-        expect(ensHeading).toBeInTheDocument();
     });
 
     it('renders a dropdown with some member information to copy on the clipboard', async () => {

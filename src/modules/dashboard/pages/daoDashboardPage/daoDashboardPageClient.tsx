@@ -7,6 +7,7 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
@@ -22,7 +23,6 @@ import {
     addressUtils,
     clipboardUtils,
     formatterUtils,
-    ssrUtils,
     useBlockExplorer,
 } from '@aragon/ods';
 
@@ -41,6 +41,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const { daoId } = props;
 
     const { t } = useTranslations();
+    const pageUrl = useCurrentUrl();
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
@@ -73,7 +74,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
     const dropdownLabel = daoEns ?? truncatedAddress;
-    const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
 
     const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
