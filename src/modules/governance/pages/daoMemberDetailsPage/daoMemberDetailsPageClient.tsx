@@ -5,6 +5,7 @@ import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import {
@@ -16,7 +17,6 @@ import {
     IconType,
     Link,
     MemberAvatar,
-    ssrUtils,
     useBlockExplorer,
 } from '@aragon/ods';
 import { useMember } from '../../api/governanceService';
@@ -37,6 +37,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { address, daoId } = props;
 
     const { t } = useTranslations();
+    const pageUrl = useCurrentUrl();
 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
@@ -45,8 +46,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
-
-    const pageUrl = ssrUtils.isServer() ? '' : window.location.href.replace(/(http(s?)):\/\//, '');
 
     const pluginIds = useDaoPluginIds(daoId);
     const memberStatsParams = { daoId, address };

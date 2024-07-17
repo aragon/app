@@ -9,7 +9,7 @@ import {
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { addressUtils, clipboardUtils, OdsModulesProvider, ssrUtils } from '@aragon/ods';
+import { addressUtils, clipboardUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -36,7 +36,6 @@ describe('<DaoDashboardPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
-    const isServerSpy = jest.spyOn(ssrUtils, 'isServer');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -46,7 +45,6 @@ describe('<DaoDashboardPageClient /> component', () => {
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
         hasSupportedPluginsSpy.mockReset();
-        isServerSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoDashboardPageClientProps>) => {
@@ -81,14 +79,6 @@ describe('<DaoDashboardPageClient /> component', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
-    });
-
-    it('does not crash on server environment', () => {
-        const dao = generateDao({ name: 'dao-name' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-        isServerSpy.mockReturnValue(true);
-        render(createTestComponent());
-        expect(screen.getByText(dao.name)).toBeInTheDocument();
     });
 
     it('renders the formatted DAO stats', () => {
