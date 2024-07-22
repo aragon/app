@@ -1,3 +1,5 @@
+'use client';
+
 import { usePathname } from 'next/navigation';
 import { ErrorBoundaryClass, type IErrorBoundaryClassProps } from './errorBoundaryClass';
 

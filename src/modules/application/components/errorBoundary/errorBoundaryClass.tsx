@@ -1,5 +1,3 @@
-'use client';
-
 import { Component, type ReactNode } from 'react';
 import { ErrorBoundaryFeedback } from './errorBoundaryFeedback';
 
