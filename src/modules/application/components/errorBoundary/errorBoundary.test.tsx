@@ -1,28 +1,33 @@
-import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
+import * as NextNavigation from 'next/navigation';
 import { ErrorBoundary, type IErrorBoundaryProps } from './errorBoundary';
+import type { IErrorBoundaryClassProps } from './errorBoundaryClass';
+
+jest.mock('./errorBoundaryClass', () => ({
+    ErrorBoundaryClass: (props: IErrorBoundaryClassProps) => <div data-pathname={props.pathname}>{props.children}</div>,
+}));
 
 describe('<ErrorBoundary /> component', () => {
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+
+    afterEach(() => {
+        usePathnameSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<IErrorBoundaryProps>) => {
         const completeProps: IErrorBoundaryProps = { ...props };
 
         return <ErrorBoundary {...completeProps} />;
     };
 
-    it('renders the children property when no error occurs', () => {
-        const children = 'child-component';
+    it('gets current pathname and passes it to the ErrorBoundaryClass component', () => {
+        const pathname = '/test';
+        const children = 'test-child';
+        usePathnameSpy.mockReturnValue(pathname);
         render(createTestComponent({ children }));
-        expect(screen.getByText(children)).toBeInTheDocument();
-    });
 
-    it('renders an error feedback when an error occurs on a children component', () => {
-        testLogger.suppressErrors();
-
-        const Children = () => {
-            throw new Error('Test error');
-        };
-
-        render(createTestComponent({ children: <Children /> }));
-        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
+        const child = screen.getByText(children);
+        expect(child).toBeInTheDocument();
+        expect(child.dataset.pathname).toEqual(pathname);
     });
 });
