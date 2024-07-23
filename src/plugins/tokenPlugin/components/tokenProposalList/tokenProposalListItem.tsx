@@ -6,10 +6,14 @@ export interface ITokenProposalListItemProps {
      * Proposal to display the information for.
      */
     proposal: ITokenProposal;
+    /**
+     * ID of the DAO for this proposa.
+     */
+    daoId: string;
 }
 
 export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (props) => {
-    const { proposal } = props;
+    const { proposal, daoId } = props;
 
     return (
         <ProposalDataListItem.Structure
@@ -18,6 +22,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             title={proposal.title}
             summary={proposal.summary}
             date={proposal.endDate * 1000}
+            href={`/dao/${daoId}/proposals/${proposal.id}`}
             // TODO: provide the correct status (APP-3393)
             status="draft"
             type="majorityVoting"

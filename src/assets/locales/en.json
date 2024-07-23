@@ -190,6 +190,33 @@
             "firstActivity": "First activity"
           }
         }
+      },
+      "daoProposalDetailsPage": {
+        "header": {
+          "breadcrumb": {
+            "proposals": "Proposals"
+          },
+          "action": {
+            "share": "Share"
+          }
+        },
+        "main": {
+          "proposal": "Proposal",
+          "readMore": "Read more",
+          "readLess": "Read less"
+        },
+        "aside": {
+          "details": {
+            "title": "Details",
+            "id": "ID",
+            "published": "Published",
+            "creator": "Proposed by",
+            "status": "Status"
+          },
+          "links": {
+            "title": "Links"
+          }
+        }
       }
     },
     "plugins": {

@@ -6,5 +6,8 @@ export const generateTokenMember = (member?: Partial<ITokenMember>): ITokenMembe
     type: 'token-voting',
     votingPower: '0',
     tokenBalance: '0',
+    metrics: {
+        delegateReceivedCount: 0,
+    },
     ...member,
 });

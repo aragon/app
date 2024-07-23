@@ -1,18 +1,30 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IMember, IProposal } from './domain';
-import type { IGetMemberListParams, IGetMemberParams, IGetProposalListParams } from './governanceService.api';
+import type {
+    IGetMemberListParams,
+    IGetMemberParams,
+    IGetProposalListParams,
+    IGetProposalParams,
+} from './governanceService.api';
 
 class GovernanceService extends AragonBackendService {
     private urls = {
         members: '/members/active',
-        proposals: '/proposals',
         member: '/members/active/:address',
+        proposals: '/proposals',
+        proposal: '/proposals/:id',
     };
 
     getMemberList = async <TMember extends IMember = IMember>(
         params: IGetMemberListParams,
     ): Promise<IPaginatedResponse<TMember>> => {
         const result = await this.request<IPaginatedResponse<TMember>>(this.urls.members, params);
+
+        return result;
+    };
+
+    getMember = async <TMember extends IMember = IMember>(params: IGetMemberParams): Promise<TMember> => {
+        const result = await this.request<TMember>(this.urls.member, params);
 
         return result;
     };
@@ -25,8 +37,8 @@ class GovernanceService extends AragonBackendService {
         return result;
     };
 
-    getMember = async <TMember extends IMember = IMember>(params: IGetMemberParams): Promise<TMember> => {
-        const result = await this.request<TMember>(this.urls.member, params);
+    getProposal = async <TProposal extends IProposal = IProposal>(params: IGetProposalParams): Promise<TProposal> => {
+        const result = await this.request<TProposal>(this.urls.proposal, params);
 
         return result;
     };

@@ -11,11 +11,4 @@ export interface IMember {
      * Type of the member.
      */
     type: string;
-
-    metrics: {
-        /**
-         * Number of delegations received by the member.
-         */
-        delegateReceivedCount: number;
-    };
 }
