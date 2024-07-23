@@ -1,3 +1,6 @@
+import type { Network } from '@/shared/api/daoService';
+import type { IProposalResource } from './proposalResource';
+
 export interface IProposal {
     /**
      * Id of the proposal in DaoAddress-PluginAddress-ProposalId format.
@@ -11,6 +14,10 @@ export interface IProposal {
      * Title of the proposal.
      */
     title: string;
+    /**
+     * Network of the proposal.
+     */
+    network: Network;
     /**
      * Creation date of the proposal.
      */
@@ -39,4 +46,8 @@ export interface IProposal {
      * Transaction hash of the proposal creation.
      */
     transactionHash: string;
+    /**
+     * Array of resources of the proposal.
+     */
+    resources: IProposalResource[];
 }

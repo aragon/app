@@ -1,6 +1,5 @@
 'use client';
 
-import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -42,24 +41,23 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
 
-    const daoUrlParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
-
-    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
+    const chainId = proposal ? networkDefinitions[proposal.network].chainId : undefined;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     if (proposal == null) {
         return null;
     }
 
-    const formattedCreationDate = formatterUtils.formatDate(proposal.blockTimestamp * 1000, {
+    const { description, blockTimestamp, creatorAddress, transactionHash, summary, title, resources } = proposal;
+
+    const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
     });
 
-    const creatorName = addressUtils.truncateAddress(proposal.creatorAddress);
+    const creatorName = addressUtils.truncateAddress(creatorAddress);
 
-    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: proposal.creatorAddress });
-    const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: proposal.transactionHash });
+    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress });
+    const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const pageBreadcrumbs = [
         {
@@ -71,7 +69,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     return (
         <>
-            <Page.Header breadcrumbs={pageBreadcrumbs} title={proposal.title} description={proposal.summary}>
+            <Page.Header breadcrumbs={pageBreadcrumbs} title={title} description={summary}>
                 <div className="flex flex-row gap-4">
                     <Button
                         variant="tertiary"
@@ -85,13 +83,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             </Page.Header>
             <Page.Content>
                 <Page.Main>
-                    {proposal.description && (
+                    {description && (
                         <Page.Section title={t('app.governance.daoProposalDetailsPage.main.proposal')}>
                             <CardCollapsible
                                 buttonLabelClosed={t('app.governance.daoProposalDetailsPage.main.readMore')}
                                 buttonLabelOpened={t('app.governance.daoProposalDetailsPage.main.readLess')}
                             >
-                                <DocumentParser document={proposal.description} />
+                                <DocumentParser document={description} />
                             </CardCollapsible>
                         </Page.Section>
                     )}
@@ -118,6 +116,24 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.Section>
+                    {/* TODO: remove optional chaining when backend is updated to always return resources */}
+                    {resources?.length > 0 && (
+                        <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.links.title')}>
+                            <div className="flex flex-col gap-4">
+                                {resources.map((resource) => (
+                                    <Link
+                                        key={resource.name}
+                                        href={resource.url}
+                                        target="_blank"
+                                        iconRight={IconType.LINK_EXTERNAL}
+                                        description={resource.url}
+                                    >
+                                        {resource.name}
+                                    </Link>
+                                ))}
+                            </div>
+                        </Page.Section>
+                    )}
                 </Page.Aside>
             </Page.Content>
         </>
