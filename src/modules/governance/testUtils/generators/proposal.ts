@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import type { IProposal } from '../../api/governanceService';
 
 export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
@@ -12,5 +13,6 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     daoAddress: '0x123',
     transactionHash: '0x123',
     resources: [],
+    network: Network.ARBITRUM_MAINNET,
     ...proposal,
 });

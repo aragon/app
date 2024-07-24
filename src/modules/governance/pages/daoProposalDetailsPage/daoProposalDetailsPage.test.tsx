@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { memberOptions } from '../../api/governanceService';
+import { proposalOptions } from '../../api/governanceService';
 import { DaoProposalDetailsPage, type IDaoProposalDetailsPageProps } from './daoProposalDetailsPage';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -30,7 +30,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoProposalDetailsPageProps>) => {
         const completeProps: IDaoProposalDetailsPageProps = {
-            params: { address: 'test-address', id: 'dao-id' },
+            params: { proposalId: 'proposal-id', id: 'dao-id' },
             ...props,
         };
         const Component = await DaoProposalDetailsPage(completeProps);
@@ -38,14 +38,13 @@ describe('<DaoProposalDetailsPage /> component', () => {
         return Component;
     };
 
-    it('prefetches the DAO member data from the given address and dao ID', async () => {
-        const params = { address: 'test-address', id: 'my-dao' };
-        const memberParams = {
-            urlParams: { address: params.address },
-            queryParams: { daoId: params.id },
+    it('prefetches the proposal from the given proposal ID', async () => {
+        const params = { id: 'dao-id', proposalId: 'test-proposal-id' };
+        const proposalParams = {
+            urlParams: { id: params.proposalId },
         };
         render(await createTestComponent({ params }));
-        expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(memberOptions(memberParams).queryKey);
+        expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalOptions(proposalParams).queryKey);
     });
 
     it('renders the page client component', async () => {
