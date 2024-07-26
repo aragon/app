@@ -103,7 +103,12 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}
                             >
-                                <Link href={creationBlockLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                                <Link
+                                    href={creationBlockLink}
+                                    target="_blank"
+                                    iconRight={IconType.LINK_EXTERNAL}
+                                    className="first-letter:capitalize"
+                                >
                                     {formattedCreationDate}
                                 </Link>
                             </DefinitionList.Item>
@@ -116,8 +121,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.Section>
-                    {/* TODO: remove optional chaining when backend is updated to always return resources */}
-                    {resources?.length > 0 && (
+                    {resources.length > 0 && (
                         <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.links.title')}>
                             <div className="flex flex-col gap-4">
                                 {resources.map((resource) => (

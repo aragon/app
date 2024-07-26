@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { clipboardUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
@@ -79,6 +80,64 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByText(/daoProposalDetailsPage.main.proposal/)).toBeInTheDocument();
-        screen.debug(undefined, 9999999999);
+        expect(screen.getByTestId('doc-parser')).toBeInTheDocument();
+        expect(screen.getByText(proposal.description!)).toBeInTheDocument();
+    });
+
+    it('renders the proposal info', () => {
+        const proposal = generateProposal({
+            proposalId: '123',
+            blockTimestamp: 1690367967,
+            creatorAddress: '0x123',
+            network: Network.ETHEREUM_SEPOLIA,
+            transactionHash: '0x4654',
+        });
+        useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+        render(createTestComponent());
+
+        const detailsTitle = screen.getByText(/daoProposalDetailsPage.aside.details.title/);
+        // eslint-disable-next-line testing-library/no-node-access
+        const detailsContainer = detailsTitle.parentElement!.parentElement!;
+
+        expect(detailsTitle).toBeInTheDocument();
+        expect(screen.getByText(/daoProposalDetailsPage.aside.details.id/)).toBeInTheDocument();
+        expect(within(detailsContainer).getByText(proposal.proposalId)).toBeInTheDocument();
+
+        expect(screen.getByText(/daoProposalDetailsPage.aside.details.published/)).toBeInTheDocument();
+        const creationBlockLink = screen.getByRole('link', { name: 'July 26, 2023' });
+        expect(creationBlockLink).toBeInTheDocument();
+        expect(creationBlockLink.getAttribute('href')).toEqual('https://sepolia.etherscan.io/tx/0x4654');
+
+        expect(screen.getByText(/daoProposalDetailsPage.aside.details.creator/)).toBeInTheDocument();
+        const creatorLink = screen.getByRole('link', { name: proposal.creatorAddress });
+        expect(creatorLink).toBeInTheDocument();
+        expect(creatorLink.getAttribute('href')).toEqual('https://sepolia.etherscan.io/address/0x123');
+    });
+
+    it('renders the proposal resources as external links', () => {
+        const resources = [
+            { name: 'Twitter', url: 'https://test.com' },
+            { name: 'Website', url: 'https://w.com' },
+        ];
+        const proposal = generateProposal({ resources });
+        useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+        render(createTestComponent());
+
+        expect(screen.getByText(/daoProposalDetailsPage.aside.links.title/)).toBeInTheDocument();
+
+        resources.forEach((resource) => {
+            const link = screen.getByRole('link', { name: new RegExp(resource.name) });
+            expect(link).toBeInTheDocument();
+            expect(screen.getByText(resource.url)).toBeInTheDocument();
+            expect(link.getAttribute('href')).toEqual(resource.url);
+            expect(link.getAttribute('target')).toEqual('_blank');
+        });
+    });
+
+    it('does not render the links section when proposal has no resources', () => {
+        const proposal = generateProposal({ resources: [] });
+        useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+        render(createTestComponent());
+        expect(screen.queryByText(/daoProposalDetailsPage.aside.links.title/)).not.toBeInTheDocument();
     });
 });
