@@ -7,6 +7,7 @@ describe('<TokenProposalListItem /> component', () => {
     const createTestComponent = (props?: Partial<ITokenProposalListItemProps>) => {
         const completeProps: ITokenProposalListItemProps = {
             proposal: generateTokenProposal(),
+            daoId: 'dao-id',
             ...props,
         };
 
@@ -23,5 +24,12 @@ describe('<TokenProposalListItem /> component', () => {
         const proposal = generateTokenProposal();
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
+    });
+
+    it('sets the correct link for proposal page', () => {
+        const proposal = generateTokenProposal({ id: 'proposal-id' });
+        const daoId = 'dao-id';
+        render(createTestComponent({ proposal }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/${proposal.id}`);
     });
 });
