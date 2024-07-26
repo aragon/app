@@ -222,6 +222,16 @@
       "proposalVotingTerminal": {
         "title": "Voting",
         "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute."
+      },
+      "voteList": {
+        "empty": {
+          "title": "No votes found",
+          "description": "No votes have been found."
+        },
+        "error": {
+          "title": "Error loading votes",
+          "description": "There was an error loading the votes, try again later."
+        }
       }
     },
     "plugins": {
@@ -266,6 +276,9 @@
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "yes": "Yes",
           "no": "No"
+        },
+        "tokenVoteList": {
+          "entity": "Votes"
         }
       },
       "multisig": {

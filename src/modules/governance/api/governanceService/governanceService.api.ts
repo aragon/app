@@ -47,3 +47,12 @@ export interface IGetProposalUrlParams {
 }
 
 export interface IGetProposalParams extends IRequestUrlParams<IGetProposalUrlParams> {}
+
+export interface IGetVoteListQueryParams extends IPaginatedRequest {
+    /**
+     * ID of the proposal to fetch the votes for.
+     */
+    proposalId?: string;
+}
+
+export interface IGetVoteListParams extends IRequestQueryParams<IGetVoteListQueryParams> {}
