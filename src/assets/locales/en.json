@@ -227,7 +227,6 @@
           "distribution": "Distribution",
           "supply": "Supply",
           "members": "Members",
-          "multisigMembers": "Multisig members",
           "tokenHolders": "Token holders",
           "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
           "tokenDistribution": "{{count}} token holders",
@@ -257,7 +256,6 @@
           "eligibleVoters": "Eligible voters",
           "members": "Members",
           "multisigMembers": "Multisig members",
-          "tokenHolders": "Token holders",
           "linkDescription": "View all members",
           "membersCount": "See {{count}} addresses"
         }

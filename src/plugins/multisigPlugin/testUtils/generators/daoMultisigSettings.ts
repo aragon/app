@@ -5,6 +5,7 @@ export const generateDaoMultisigSettings = (settings?: Partial<IDaoMultisigSetti
     ...generateDaoSettings(),
     settings: {
         minApprovals: 2,
+        onlyListed: false,
     },
     ...settings,
 });

@@ -30,11 +30,6 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     const { data: daoSettings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
 
     const distribution = memberList?.pages[0].metadata.totalRecords;
-    const eligibleVoters =
-        daoSettings?.pluginSubdomain === 'token-voting'
-            ? t('app.plugins.multisig.multisigMembersInfo.tokenHolders')
-            : t('app.plugins.multisig.multisigMembersInfo.multisigMembers');
-
     const formattedTotalSupply = formatterUtils.formatNumber(daoSettings?.token.totalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
     });
@@ -43,7 +38,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.eligibleVoters')}>
-                <p>{eligibleVoters}</p>
+                <p>{t('app.plugins.multisig.multisigMembersInfo.tokenHolders')}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.token')}>
                 <Link
