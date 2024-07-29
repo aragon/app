@@ -1,3 +1,4 @@
+import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { clipboardUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
@@ -80,5 +81,24 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
         expect(screen.getByText(/daoProposalDetailsPage.main.proposal/)).toBeInTheDocument();
         screen.debug(undefined, 9999999999);
+    });
+
+    it('renders the proposal actions when defined', () => {
+        const actions = [
+            generateProposalActionChangeMembers({
+                inputData: { function: 'test1', contract: 'test', parameters: [{ type: 'argument', value: '1' }] },
+            }),
+            generateProposalActionChangeMembers({
+                inputData: { function: 'test2', contract: 'test', parameters: [{ type: 'argument', value: '1' }] },
+            }),
+        ];
+        const proposal = generateProposal({ actions });
+        useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+        render(createTestComponent());
+
+        expect(screen.getByText(/daoProposalDetailsPage.main.actions.header/)).toBeInTheDocument();
+        actions.forEach((action) => {
+            expect(screen.getByText(action.inputData!.function)).toBeInTheDocument();
+        });
     });
 });
