@@ -1,63 +1,79 @@
 'use client';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DefinitionList, IconType, Link } from '@aragon/ods';
+import {
+    addressUtils,
+    ChainEntityType,
+    DefinitionList,
+    formatterUtils,
+    IconType,
+    Link,
+    NumberFormat,
+    useBlockExplorer,
+} from '@aragon/ods';
+import { useMemberList } from '../../api/governanceService';
+import { useDaoSettings } from '@/shared/api/daoService';
+import type { IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
 
 export interface ITokenMemberInfoProps {
     /**
-     * Eligible voters (Multisig members | Token holders).
+     * ID of the Dao.
      */
-    eligibleVoters: string;
-    /**
-     * Token information.
-     */
-    token: {
-        name: string;
-        symbol: string;
-        address: string;
-        link: string;
-    };
-    /**
-     * Number of token holders.
-     */
-    distribution: number;
-    /**
-     * Total supply.
-     */
-    supply: number;
+    daoId: string;
 }
 
 export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
-    const { eligibleVoters, token, distribution, supply } = props;
+    const { daoId } = props;
     const { t } = useTranslations();
+    const daoSettingsParams = { daoId };
 
-    const eligibleVotersType =
-        eligibleVoters === 'Token Holders'
-            ? t('app.plugins.token.tokenMemberInfo.tokenHolders')
-            : t('app.plugins.token.tokenMemberInfo.multisigMembers');
+    const { data: memberList } = useMemberList({ queryParams: daoSettingsParams });
+    const { data: daoSettings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
+
+    const distribution = memberList?.pages[0].metadata.totalRecords;
+    const eligibleVoters =
+        daoSettings?.pluginSubdomain === 'token-voting'
+            ? t('app.plugins.multisig.multisigMembersInfo.tokenHolders')
+            : t('app.plugins.multisig.multisigMembersInfo.multisigMembers');
+
+    const formattedTotalSupply = formatterUtils.formatNumber(daoSettings?.token.totalSupply, {
+        format: NumberFormat.TOKEN_AMOUNT_LONG,
+    });
+    const { buildEntityUrl } = useBlockExplorer();
+
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.eligibleVoters')}>
-                <p>{eligibleVotersType}</p>
+                <p>{eligibleVoters}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.token')}>
                 <Link
                     description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
                     iconRight={IconType.LINK_EXTERNAL}
-                    href={'./members'}
+                    href="./members"
                 >
                     {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
-                        tokenName: token.name,
-                        tokenSymbol: token.symbol,
+                        tokenName: daoSettings?.token.name,
+                        tokenSymbol: daoSettings?.token.symbol,
                     })}
                 </Link>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.distribution')}>
-                <Link description={token.address} iconRight={IconType.LINK_EXTERNAL} href={token.link} target="_blank">
+                <Link
+                    description={addressUtils.truncateAddress(daoSettings?.token.address)}
+                    iconRight={IconType.LINK_EXTERNAL}
+                    href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: daoSettings?.token.address })}
+                    target="_blank"
+                >
                     {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
                 </Link>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.supply')}>
-                <p>{t('app.plugins.token.tokenMemberInfo.tokenSupply', { supply: supply, symbol: token.symbol })}</p>
+                <p>
+                    {t('app.plugins.token.tokenMemberInfo.tokenSupply', {
+                        supply: formattedTotalSupply,
+                        symbol: daoSettings?.token.symbol,
+                    })}
+                </p>
             </DefinitionList.Item>
         </DefinitionList.Container>
     );
