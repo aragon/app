@@ -33,7 +33,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     const formattedTotalSupply = formatterUtils.formatNumber(daoSettings?.token.totalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
     });
-    const { buildEntityUrl } = useBlockExplorer();
+    //const { buildEntityUrl } = useBlockExplorer();
 
     return (
         <DefinitionList.Container>
@@ -56,7 +56,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 <Link
                     description={addressUtils.truncateAddress(daoSettings?.token.address)}
                     iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: daoSettings?.token.address })}
+                    //href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: daoSettings?.token.address })}
                     target="_blank"
                 >
                     {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
