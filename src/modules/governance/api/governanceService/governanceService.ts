@@ -1,3 +1,4 @@
+import { proposalActionsMock } from '@/modules/governance/testUtils/mocks/proposalActions';
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IMember, IProposal } from './domain';
 import type {
@@ -6,7 +7,6 @@ import type {
     IGetProposalListParams,
     IGetProposalParams,
 } from './governanceService.api';
-import { proposalActionsMock } from '@/modules/governance/testUtils/mocks/proposalActions';
 
 class GovernanceService extends AragonBackendService {
     private urls = {
@@ -42,7 +42,7 @@ class GovernanceService extends AragonBackendService {
         const result = await this.request<TProposal>(this.urls.proposal, params);
 
         //TODO: needs to be removed when the backend is ready
-        result.actions = proposalActionsMock ; 
+        result.actions = proposalActionsMock;
 
         return result;
     };

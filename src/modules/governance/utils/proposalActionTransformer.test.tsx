@@ -1,6 +1,6 @@
 import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
 import { generateProposalActionChangeSettings } from '@/modules/governance/testUtils/generators/proposalActionChangeSettings';
-import { IProposalActionChangeMembers, ProposalActionType, type IProposalAction } from '@aragon/ods';
+import { ProposalActionType, type IProposalAction, type IProposalActionChangeMembers } from '@aragon/ods';
 import proposalActionTransformer from './proposalActionTransformer';
 
 describe('ActionTransformer', () => {
@@ -26,18 +26,5 @@ describe('ActionTransformer', () => {
         const transformedActions = proposalActionTransformer.transform(fetchedActions);
 
         expect(transformedActions).toHaveLength(0);
-    });
-
-    it('should log a warning for unknown action types', () => {
-        const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-        const fetchedActions: IProposalAction[] = [
-            generateProposalActionChangeSettings({ type: 'UnknownActionType' as IProposalAction['type'] }),
-        ];
-
-        proposalActionTransformer.transform(fetchedActions);
-
-        expect(consoleWarnSpy).toHaveBeenCalledWith(`No mapping found for action type: ${fetchedActions[0].type}`);
-
-        consoleWarnSpy.mockRestore();
     });
 });

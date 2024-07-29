@@ -1,5 +1,4 @@
-import { type IProposalActionChangeSettings } from "@aragon/ods";
-
+import { type IProposalActionChangeSettings } from '@aragon/ods';
 
 export const generateProposalActionChangeSettings = (
     action?: Partial<IProposalActionChangeSettings>,
