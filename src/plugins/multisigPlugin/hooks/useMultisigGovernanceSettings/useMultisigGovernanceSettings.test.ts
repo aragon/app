@@ -14,6 +14,7 @@ import { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
 describe('useMultisigGovernanceSettings', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
     const useMemberListSpy = jest.spyOn(governanceService, 'getMemberList');
+
     beforeEach(() => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoMultisigSettings() }));
     });
@@ -120,7 +121,7 @@ describe('useMultisigGovernanceSettings', () => {
         expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
     });
 
-    it('correctly correctly handles only members', () => {
+    it('correctly handles only members', () => {
         const baseSettings = generateDaoMultisigSettings();
         const mockSettings = {
             ...baseSettings,

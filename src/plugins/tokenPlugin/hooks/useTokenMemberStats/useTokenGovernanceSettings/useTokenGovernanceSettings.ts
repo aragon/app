@@ -83,7 +83,10 @@ export const useTokenGovernanceSettings = (
         },
         {
             term: t('app.plugins.token.tokenGovernanceSettings.voteChange'),
-            definition: `${processedSettings.settings.votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT ? t('app.plugins.token.tokenGovernanceSettings.yes') : t('app.plugins.token.tokenGovernanceSettings.no')}`,
+            definition:
+                processedSettings.settings.votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT
+                    ? t('app.plugins.token.tokenGovernanceSettings.yes')
+                    : t('app.plugins.token.tokenGovernanceSettings.no'),
         },
         {
             term: t('app.plugins.token.tokenGovernanceSettings.proposalThreshold'),
