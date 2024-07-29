@@ -38,7 +38,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.eligibleVoters')}>
-                <p>{t('app.plugins.multisig.multisigMembersInfo.tokenHolders')}</p>
+                <p>{t('app.plugins.token.tokenMemberInfo.tokenHolders')}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.token')}>
                 <Link

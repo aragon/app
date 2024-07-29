@@ -1,11 +1,13 @@
 import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
-import { generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generatePaginatedResponse, generateReactQueryResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
-import { governanceService } from '../../api/governanceService';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import { governanceService, useMemberList } from '../../api/governanceService';
 import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
+import { generateMember } from '../../testUtils';
+import { IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
 
 describe('<TokenMemberInfo /> component', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
@@ -36,8 +38,42 @@ describe('<TokenMemberInfo /> component', () => {
         );
     };
 
-    it('renders the component with the correct eligible voters and members info', () => {
+    it('renders the component with the correct eligible voters and members info', async () => {
+        const membersResult = generatePaginatedResponse({ data: [generateMember()] });
+        const mockMembers = {
+            ...membersResult,
+            metadata: {
+                ...membersResult.metadata,
+                totalRecords: 5,
+            },
+        };
+
+        useMemberListSpy.mockResolvedValue(mockMembers);
+
+        const { result: membersHookResult } = renderHook(() => useMemberList({ queryParams: { daoId: 'test-id' } }), {
+            wrapper: ReactQueryWrapper,
+        });
         render(createTestComponent());
+        await waitFor(() => {
+            expect(membersHookResult.current.data?.pages[0].metadata.totalRecords).toBe(
+                mockMembers.metadata.totalRecords,
+            );
+        });
+
         expect(screen.getByText('app.plugins.token.tokenMemberInfo.eligibleVoters')).toBeInTheDocument();
+        expect(screen.getByText('app.plugins.token.tokenMemberInfo.tokenHolders')).toBeInTheDocument();
+        expect(screen.getByText('app.plugins.token.tokenMemberInfo.token')).toBeInTheDocument();
+        expect(screen.getByText('app.plugins.token.tokenMemberInfo.tokenLinkDescription')).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Ethereum,tokenSymbol=ETH)',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.getByText('app.plugins.token.tokenMemberInfo.distribution')).toBeInTheDocument();
+        expect(screen.getByText('app.plugins.token.tokenMemberInfo.tokenDistribution (count=5)')).toBeInTheDocument();
+        expect(screen.getByText('app.plugins.token.tokenMemberInfo.supply')).toBeInTheDocument();
+        expect(
+            screen.getByText('app.plugins.token.tokenMemberInfo.tokenSupply (supply=0,symbol=ETH)'),
+        ).toBeInTheDocument();
     });
 });
