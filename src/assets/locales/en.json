@@ -203,7 +203,8 @@
         "main": {
           "proposal": "Proposal",
           "readMore": "Read more",
-          "readLess": "Read less"
+          "readLess": "Read less",
+          "governance": "Governance"
         },
         "aside": {
           "details": {

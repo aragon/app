@@ -1,0 +1,5 @@
+describe('<ProposalVotingTerminal /> component', () => {
+    it('', () => {
+        //
+    });
+});

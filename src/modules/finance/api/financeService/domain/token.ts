@@ -38,7 +38,7 @@ export interface IToken {
      */
     priceUsd: string;
     /**
-     * Total supply of token.
+     * Total supply of the token.
      */
     totalSupply: string;
 }

@@ -1,0 +1,5 @@
+describe('<MultisigProposalVotingBreakdown /> component', () => {
+    it('', () => {
+        //
+    });
+});
