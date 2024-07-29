@@ -305,6 +305,9 @@
           "members": "Multisig members",
           "anyWallet": "Any wallet",
           "approvals": "{{min}} of {{max}} authorized addresses"
+        },
+        "multisigVoteList": {
+          "entity": "Votes"
         }
       }
     },
