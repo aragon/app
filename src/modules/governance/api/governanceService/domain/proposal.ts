@@ -1,5 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
 import type { IProposalResource } from './proposalResource';
+import { IProposalAction } from '@aragon/ods';
 
 export interface IProposal {
     /**
@@ -46,6 +47,10 @@ export interface IProposal {
      * Transaction hash of the proposal creation.
      */
     transactionHash: string;
+    /**
+     * Array of actions of the proposal.
+     */
+    actions: IProposalAction[];
     /**
      * Array of resources of the proposal.
      */
