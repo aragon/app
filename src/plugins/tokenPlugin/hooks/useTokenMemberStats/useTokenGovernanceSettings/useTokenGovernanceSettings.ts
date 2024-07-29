@@ -62,15 +62,15 @@ export const useTokenGovernanceSettings = (
         {
             term: t('app.plugins.token.tokenGovernanceSettings.approvalThreshold'),
             definition: t('app.plugins.token.tokenGovernanceSettings.approval', {
-                approvalThreshold: formattedApproveThreshold ?? '',
-                tokenValue: formattedMinParticipationToken ?? '',
+                approvalThreshold: formattedApproveThreshold,
+                tokenValue: formattedMinParticipationToken,
                 tokenSymbol,
             }),
         },
         {
             term: t('app.plugins.token.tokenGovernanceSettings.minimumParticipation'),
             definition: t('app.plugins.token.tokenGovernanceSettings.participation', {
-                participation: formattedMinParticipation ?? '',
+                participation: formattedMinParticipation,
             }),
         },
         { term: t('app.plugins.token.tokenGovernanceSettings.minimumDuration'), definition: formattedDuration },
@@ -88,7 +88,7 @@ export const useTokenGovernanceSettings = (
         {
             term: t('app.plugins.token.tokenGovernanceSettings.proposalThreshold'),
             definition: t('app.plugins.token.tokenGovernanceSettings.proposalAccess', {
-                balance: formattedProposerVotingPower ?? '',
+                balance: formattedProposerVotingPower,
                 symbol: tokenSymbol,
             }),
         },

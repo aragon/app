@@ -4,7 +4,7 @@ export type ITFuncOptions = {
     /**
      * Values to be replaced on the translation.
      */
-    [key: string]: string | number | undefined;
+    [key: string]: string | number | undefined | null;
 };
 
 export type Translations = Awaited<ReturnType<(typeof translations)['en']>>;
@@ -30,10 +30,10 @@ class TranslationsUtils {
 
             const valueKeys = Object.keys(options);
 
-            return valueKeys.reduce(
-                (acc: string, current: string) => acc.replace(new RegExp(`{{${current}}}`), options[current] as string),
-                value as string,
-            );
+            return valueKeys.reduce((acc: string, current: string) => {
+                const replaceValue = options[current] != null ? String(options[current]) : '';
+                return acc.replace(new RegExp(`{{${current}}}`, 'g'), replaceValue);
+            }, value as string);
         };
 }
 
