@@ -33,9 +33,32 @@ describe('useMultisigGovernanceSettings', () => {
 
     it('fetches the specified DAO terms and definitions for multisig Dao', async () => {
         const mockSettings = generateDaoMultisigSettings();
+        const membersResult = generatePaginatedResponse({ data: [generateMember()] });
+        const mockMembers = {
+            ...membersResult,
+            metadata: {
+                ...membersResult.metadata,
+                totalRecords: 3,
+            },
+        };
+
+        useMemberListSpy.mockResolvedValue(mockMembers);
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
+
+        const { result: membersHookResult } = renderHook(
+            () => useMemberList({ queryParams: { daoId: 'multisig-test-id' } }),
+            {
+                wrapper: ReactQueryWrapper,
+            },
+        );
         const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
             wrapper: ReactQueryWrapper,
+        });
+
+        await waitFor(() => {
+            expect(membersHookResult.current.data?.pages[0].metadata.totalRecords).toBe(
+                mockMembers.metadata.totalRecords,
+            );
         });
 
         expect(useDaoSettingsSpy).toHaveBeenCalledWith(
@@ -45,17 +68,43 @@ describe('useMultisigGovernanceSettings', () => {
 
         const [minimumApproval, proposalCreation] = result.current;
         expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-        expect(minimumApproval.definition).toContain('app.plugins.multisig.multisigGovernanceSettings.approvals');
+        expect(minimumApproval.definition).toBe(
+            `app.plugins.multisig.multisigGovernanceSettings.approvals (min=2,max=${mockMembers.metadata.totalRecords})`,
+        );
         expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
-        expect(proposalCreation.definition).toContain('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
+        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
     });
 
-    it('handles settings being passed passed directly to the hook', async () => {
+    it('handles settings being passed directly to the hook', async () => {
         const mockSettings = generateDaoMultisigSettings();
+        const membersResult = generatePaginatedResponse({ data: [generateMember()] });
+        const mockMembers = {
+            ...membersResult,
+            metadata: {
+                ...membersResult.metadata,
+                totalRecords: 5,
+            },
+        };
+
+        useMemberListSpy.mockResolvedValue(mockMembers);
+
+        const { result: membersHookResult } = renderHook(
+            () => useMemberList({ queryParams: { daoId: 'multisig-test-id' } }),
+            {
+                wrapper: ReactQueryWrapper,
+            },
+        );
+
         const { result } = renderHook(
             () => useMultisigGovernanceSettings({ daoId: 'multisig-test-id', settings: mockSettings }),
             { wrapper: ReactQueryWrapper },
         );
+
+        await waitFor(() => {
+            expect(membersHookResult.current.data?.pages[0].metadata.totalRecords).toBe(
+                mockMembers.metadata.totalRecords,
+            );
+        });
 
         expect(useDaoSettingsSpy).toHaveBeenCalledWith(
             { urlParams: { daoId: 'multisig-test-id' } },
@@ -64,9 +113,11 @@ describe('useMultisigGovernanceSettings', () => {
 
         const [minimumApproval, proposalCreation] = result.current;
         expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-        expect(minimumApproval.definition).toContain('app.plugins.multisig.multisigGovernanceSettings.approvals');
+        expect(minimumApproval.definition).toBe(
+            `app.plugins.multisig.multisigGovernanceSettings.approvals (min=2,max=${mockMembers.metadata.totalRecords})`,
+        );
         expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
-        expect(proposalCreation.definition).toContain('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
+        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
     });
 
     it('correctly correctly handles only members', () => {
@@ -86,7 +137,7 @@ describe('useMultisigGovernanceSettings', () => {
 
         const [, proposalCreation] = result.current;
 
-        expect(proposalCreation.definition).toContain('app.plugins.multisig.multisigGovernanceSettings.members');
+        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.members');
     });
 
     it('Renders the correct total members of the DAO', async () => {

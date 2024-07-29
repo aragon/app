@@ -51,17 +51,25 @@ describe('useTokenGovernanceSettings', () => {
         ] = result.current;
 
         expect(approvalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.approvalThreshold');
-        expect(approvalThreshold.definition).toContain('app.plugins.token.tokenGovernanceSettings.approval');
+        expect(approvalThreshold.definition).toBe(
+            'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=50%,tokenValue=0.5,tokenSymbol=ETH)',
+        );
         expect(minimumParticipation.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumParticipation');
-        expect(minimumParticipation.definition).toContain('app.plugins.token.tokenGovernanceSettings.participation');
+        expect(minimumParticipation.definition).toBe(
+            'app.plugins.token.tokenGovernanceSettings.participation (participation=50%)',
+        );
         expect(minimumDuration.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
-        expect(minimumDuration.definition).toContain('app.plugins.token.tokenGovernanceSettings.duration');
+        expect(minimumDuration.definition).toBe(
+            'app.plugins.token.tokenGovernanceSettings.duration (days=7,hours=0,minutes=0)',
+        );
         expect(earlyExecution.term).toBe('app.plugins.token.tokenGovernanceSettings.earlyExecution');
         expect(earlyExecution.definition).toBe('app.plugins.token.tokenGovernanceSettings.yes');
         expect(voteChange.term).toBe('app.plugins.token.tokenGovernanceSettings.voteChange');
-        expect(voteChange.definition).toContain('app.plugins.token.tokenGovernanceSettings.no');
+        expect(voteChange.definition).toBe('app.plugins.token.tokenGovernanceSettings.no');
         expect(proposalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.proposalThreshold');
-        expect(proposalThreshold.definition).toContain('app.plugins.token.tokenGovernanceSettings.proposalAccess');
+        expect(proposalThreshold.definition).toBe(
+            'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=1,symbol=ETH)',
+        );
     });
 
     it('handles settings object being passed directly to the hook', async () => {
@@ -93,17 +101,25 @@ describe('useTokenGovernanceSettings', () => {
         ] = result.current;
 
         expect(approvalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.approvalThreshold');
-        expect(approvalThreshold.definition).toContain('app.plugins.token.tokenGovernanceSettings.approval');
+        expect(approvalThreshold.definition).toBe(
+            'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=50%,tokenValue=0.5,tokenSymbol=ETH)',
+        );
         expect(minimumParticipation.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumParticipation');
-        expect(minimumParticipation.definition).toContain('app.plugins.token.tokenGovernanceSettings.participation');
+        expect(minimumParticipation.definition).toBe(
+            'app.plugins.token.tokenGovernanceSettings.participation (participation=50%)',
+        );
         expect(minimumDuration.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
-        expect(minimumDuration.definition).toContain('app.plugins.token.tokenGovernanceSettings.duration');
+        expect(minimumDuration.definition).toBe(
+            'app.plugins.token.tokenGovernanceSettings.duration (days=7,hours=0,minutes=0)',
+        );
         expect(earlyExecution.term).toBe('app.plugins.token.tokenGovernanceSettings.earlyExecution');
         expect(earlyExecution.definition).toBe('app.plugins.token.tokenGovernanceSettings.yes');
         expect(voteChange.term).toBe('app.plugins.token.tokenGovernanceSettings.voteChange');
-        expect(voteChange.definition).toContain('app.plugins.token.tokenGovernanceSettings.no');
+        expect(voteChange.definition).toBe('app.plugins.token.tokenGovernanceSettings.no');
         expect(proposalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.proposalThreshold');
-        expect(proposalThreshold.definition).toContain('app.plugins.token.tokenGovernanceSettings.proposalAccess');
+        expect(proposalThreshold.definition).toBe(
+            'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=1,symbol=ETH)',
+        );
     });
 
     it('correctly handles different voting modes', () => {
@@ -124,6 +140,6 @@ describe('useTokenGovernanceSettings', () => {
         const [, , , earlyExecution, voteChange] = result.current;
 
         expect(earlyExecution.definition).toBe('app.plugins.token.tokenGovernanceSettings.no');
-        expect(voteChange.definition).toContain('app.plugins.token.tokenGovernanceSettings.yes');
+        expect(voteChange.definition).toBe('app.plugins.token.tokenGovernanceSettings.yes');
     });
 });
