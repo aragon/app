@@ -1,4 +1,4 @@
-import type { IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
+import { DaoTokenVotingMode, type IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
 import { useDaoSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
@@ -38,10 +38,10 @@ export const useTokenGovernanceSettings = (
 
     const tokenSymbol = processedSettings.token.symbol;
     const formattedApproveThreshold = formatterUtils.formatNumber(processedSettings.settings.supportThreshold, {
-        format: NumberFormat.PERCENTAGE_LONG,
+        format: NumberFormat.PERCENTAGE_SHORT,
     });
     const formattedMinParticipation = formatterUtils.formatNumber(processedSettings.settings.supportThreshold, {
-        format: NumberFormat.PERCENTAGE_LONG,
+        format: NumberFormat.PERCENTAGE_SHORT,
     });
     const formattedMinParticipationToken = formatterUtils.formatNumber(processedSettings.settings.minParticipation, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
@@ -77,13 +77,13 @@ export const useTokenGovernanceSettings = (
         {
             term: t('app.plugins.token.tokenGovernanceSettings.earlyExecution'),
             definition:
-                processedSettings.settings.votingMode === 1
+                processedSettings.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION
                     ? t('app.plugins.token.tokenGovernanceSettings.yes')
                     : t('app.plugins.token.tokenGovernanceSettings.no'),
         },
         {
             term: t('app.plugins.token.tokenGovernanceSettings.voteChange'),
-            definition: `${processedSettings.settings.votingMode === 2 ? t('app.plugins.token.tokenGovernanceSettings.yes') : t('app.plugins.token.tokenGovernanceSettings.no')}`,
+            definition: `${processedSettings.settings.votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT ? t('app.plugins.token.tokenGovernanceSettings.yes') : t('app.plugins.token.tokenGovernanceSettings.no')}`,
         },
         {
             term: t('app.plugins.token.tokenGovernanceSettings.proposalThreshold'),
