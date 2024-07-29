@@ -35,6 +35,12 @@ describe('useTokenGovernanceSettings', () => {
         const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }), {
             wrapper: ReactQueryWrapper,
         });
+
+        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
+            { urlParams: { daoId: 'token-test-id' } },
+            expect.objectContaining({ enabled: true }),
+        );
+
         const [
             approvalThreshold,
             minimumParticipation,
@@ -71,6 +77,12 @@ describe('useTokenGovernanceSettings', () => {
         const { result } = renderHook(() =>
             useTokenGovernanceSettings({ daoId: 'token-test-id', settings: mockSettings }),
         );
+
+        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
+            { urlParams: { daoId: 'token-test-id' } },
+            expect.objectContaining({ enabled: false }),
+        );
+
         const [
             approvalThreshold,
             minimumParticipation,

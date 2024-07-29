@@ -29,6 +29,12 @@ describe('useMultisigGovernanceSettings', () => {
         const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
             wrapper: ReactQueryWrapper,
         });
+
+        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
+            { urlParams: { daoId: 'multisig-test-id' } },
+            expect.objectContaining({ enabled: true }),
+        );
+
         const [minimumApproval, proposalCreation] = result.current;
         expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
         expect(minimumApproval.definition).toContain('app.plugins.multisig.multisigGovernanceSettings.approvals');
@@ -42,6 +48,12 @@ describe('useMultisigGovernanceSettings', () => {
             () => useMultisigGovernanceSettings({ daoId: 'multisig-test-id', settings: mockSettings }),
             { wrapper: ReactQueryWrapper },
         );
+
+        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
+            { urlParams: { daoId: 'multisig-test-id' } },
+            expect.objectContaining({ enabled: false }),
+        );
+
         const [minimumApproval, proposalCreation] = result.current;
         expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
         expect(minimumApproval.definition).toContain('app.plugins.multisig.multisigGovernanceSettings.approvals');
