@@ -40,7 +40,7 @@ export const useMultisigGovernanceSettings = (
             definition: t('app.plugins.multisig.multisigGovernanceSettings.approvals', {
                 min: processedSettings?.settings.minApprovals,
                 // TODO: Grab this from Dao settings when available [APP-3470]
-                max: memberList?.pages.length,
+                max: memberList?.pages[0].metadata.totalRecords,
                 authorized: processedSettings?.settings.onlyListed ? 'authorized' : '',
             }),
         },
