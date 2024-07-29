@@ -1,18 +1,26 @@
 import { generateDaoMultisigSettings } from '@/plugins/multisigPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
-import { generateReactQueryResultError, generateReactQueryResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
+import {
+    generatePaginatedResponse,
+    generateReactQueryResultError,
+    generateReactQueryResultSuccess,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
+import { governanceService, useMemberList } from '@/modules/governance/api/governanceService';
+import { generateMember } from '@/modules/governance/testUtils';
 
 describe('useMultisigGovernanceSettings', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
-
+    const useMemberListSpy = jest.spyOn(governanceService, 'getMemberList');
     beforeEach(() => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoMultisigSettings() }));
     });
 
     afterEach(() => {
         useDaoSettingsSpy.mockReset();
+        useMemberListSpy.mockReset();
     });
 
     it('returns empty array when daoSettings is null', () => {
@@ -79,5 +87,15 @@ describe('useMultisigGovernanceSettings', () => {
         const [, proposalCreation] = result.current;
 
         expect(proposalCreation.definition).toContain('app.plugins.multisig.multisigGovernanceSettings.members');
+    });
+
+    it('Renders the correct total members of the DAO', async () => {
+        const params = { daoId: 'dao-id-test' };
+        const membersResult = generatePaginatedResponse({ data: [generateMember()] });
+        useMemberListSpy.mockResolvedValue(membersResult);
+        const { result } = renderHook(() => useMemberList({ queryParams: params }), { wrapper: ReactQueryWrapper });
+        await waitFor(() =>
+            expect(result.current.data?.pages[0].metadata.totalRecords).toEqual(membersResult.metadata.totalRecords),
+        );
     });
 });
