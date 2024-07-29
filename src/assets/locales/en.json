@@ -259,7 +259,7 @@
           "proposalCreation": "Proposal creation",
           "members": "Multisig members",
           "anyWallet": "Any wallet",
-          "approvals": "{{min}} of {{max}} {{authorized}} addresses"
+          "approvals": "{{min}} of {{max}} authorized addresses"
         }
       }
     },
