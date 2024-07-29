@@ -1,3 +1,5 @@
+import { governanceService, useMemberList } from '@/modules/governance/api/governanceService';
+import { generateMember } from '@/modules/governance/testUtils';
 import { generateDaoMultisigSettings } from '@/plugins/multisigPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import {
@@ -8,8 +10,6 @@ import {
 } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
-import { governanceService, useMemberList } from '@/modules/governance/api/governanceService';
-import { generateMember } from '@/modules/governance/testUtils';
 
 describe('useMultisigGovernanceSettings', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
