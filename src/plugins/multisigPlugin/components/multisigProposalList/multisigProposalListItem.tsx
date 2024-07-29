@@ -6,10 +6,14 @@ export interface IMultisigProposalListItemProps {
      * Proposal to display the information for.
      */
     proposal: IMultisigProposal;
+    /**
+     * ID of the DAO for this proposal.
+     */
+    daoId: string;
 }
 
 export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> = (props) => {
-    const { proposal } = props;
+    const { proposal, daoId } = props;
 
     return (
         <ProposalDataListItem.Structure
@@ -18,6 +22,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             title={proposal.title}
             summary={proposal.summary}
             date={proposal.endDate * 1000}
+            href={`/dao/${daoId}/proposals/${proposal.id}`}
             // TODO: provide the correct status (APP-3393)
             status="draft"
             type="approvalThreshold"

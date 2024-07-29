@@ -13,4 +13,13 @@ export interface ITokenMember extends IMember {
      * Token balance of the member.
      */
     tokenBalance: string;
+    /**
+     * Metrics for the token member.
+     */
+    metrics: {
+        /**
+         * Number of delegations received by the member.
+         */
+        delegateReceivedCount: number;
+    };
 }
