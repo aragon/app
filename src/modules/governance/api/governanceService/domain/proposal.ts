@@ -1,6 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
 import type { IProposalResource } from './proposalResource';
-import { IProposalAction } from '@aragon/ods';
+import type { IProposalAction } from '@aragon/ods';
 
 export interface IProposal {
     /**
