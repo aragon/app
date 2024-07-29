@@ -56,7 +56,7 @@ __metadata:
     "@testing-library/react": "npm:^16.0.0"
     "@testing-library/user-event": "npm:^14.5.2"
     "@types/jest": "npm:^29.5.12"
-    "@types/luxon": "npm:^3"
+    "@types/luxon": "npm:^3.4.2"
     "@types/node": "npm:^20.14.11"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
@@ -3529,7 +3529,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:^3":
+"@types/luxon@npm:^3.4.2":
   version: 3.4.2
   resolution: "@types/luxon@npm:3.4.2"
   checksum: 10c0/d835467de3daf7e17ba78b50bb5a14efd94272439ca067990d71332a54b311544459c69623eddd243b511b28d70194c9591a9ee8cf9c038962c965f991affd7e
