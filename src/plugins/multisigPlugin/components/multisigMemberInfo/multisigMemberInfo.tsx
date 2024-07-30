@@ -13,9 +13,9 @@ export interface IMultisigMemberInfoProps {
 export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) => {
     const { daoId } = props;
     const { t } = useTranslations();
-    const daoSettingsParams = { daoId };
+    const memberParams = { daoId };
 
-    const { data: memberList } = useMemberList({ queryParams: daoSettingsParams });
+    const { data: memberList } = useMemberList({ queryParams: memberParams });
 
     const memberCount = memberList?.pages[0].metadata.totalRecords;
 
