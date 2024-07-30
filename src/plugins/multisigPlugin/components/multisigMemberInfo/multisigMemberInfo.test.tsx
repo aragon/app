@@ -75,6 +75,6 @@ describe('<MultisigMemberInfo /> component', () => {
         );
         render(createTestComponent());
         const linkElement = screen.getByRole('link');
-        expect(linkElement).toHaveAttribute('href', './members');
+        expect(linkElement).toHaveAttribute('href', '/dao/test-id/members');
     });
 });

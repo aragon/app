@@ -164,6 +164,6 @@ describe('<TokenMemberInfo /> component', () => {
         const linkElement = screen.getByRole('link', {
             name: 'app.plugins.token.tokenMemberInfo.tokenDistribution (count=5) 0xTestAddress',
         });
-        expect(linkElement).toHaveAttribute('href', './members');
+        expect(linkElement).toHaveAttribute('href', '/dao/test-id/members');
     });
 });
