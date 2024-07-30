@@ -123,7 +123,7 @@ describe('useTokenGovernanceSettings', () => {
         expect(voteChange.definition).toBe('app.plugins.token.tokenGovernanceSettings.no');
         expect(proposalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.proposalThreshold');
         expect(proposalThreshold.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=0.01,symbol=ETH)',
+            'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=0.1,symbol=ETH)',
         );
     });
 
