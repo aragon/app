@@ -1,9 +1,9 @@
+import { generateToken } from '@/modules/finance/testUtils';
 import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { generateReactQueryResultError, generateReactQueryResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import { useTokenGovernanceSettings } from './useTokenGovernanceSettings';
-import { generateToken } from '@/modules/finance/testUtils';
 
 describe('useTokenGovernanceSettings', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');

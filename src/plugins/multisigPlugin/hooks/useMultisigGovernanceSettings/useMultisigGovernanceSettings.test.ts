@@ -33,12 +33,12 @@ describe('useMultisigGovernanceSettings', () => {
     });
 
     it('returns empty array when daoSettings is null', () => {
-            useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-            const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
-                wrapper: ReactQueryWrapper,
-            });
-            expect(result.current).toEqual([]);
+        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
+            wrapper: ReactQueryWrapper,
         });
+        expect(result.current).toEqual([]);
+    });
 
     it('fetches the specified DAO terms and definitions for multisig Dao', async () => {
         const baseSettings = generateDaoMultisigSettings();
