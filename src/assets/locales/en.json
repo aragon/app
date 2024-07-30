@@ -231,6 +231,14 @@
             "readLess": "Read less",
             "notChangeable": "Not changeable"
           }
+        },
+        "aside": {
+          "daoVersionInfo": {
+            "app": "App",
+            "os": "Operating system",
+            "governance": "Governance",
+            "governanceLabel": "{{name}} v{{release}}.{{build}}"
+          }
         }
       }
     },

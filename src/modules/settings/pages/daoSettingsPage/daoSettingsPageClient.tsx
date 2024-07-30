@@ -1,9 +1,9 @@
 'use client';
 import { DaoDefinitionList } from '@/modules/governance/components/daoDefinitionList/daoDefinitionList';
+import { DaoVersionInfoDefinitionList } from '@/modules/governance/components/daoVersionInfoDefinitionList';
 import { type IGetDaoParams, useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Heading } from '@aragon/ods';
 
 export interface IDaoSettingsPageClientProps {
     /**
@@ -21,11 +21,10 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     return (
         <>
             <Page.Main title={t('app.governance.daoSettingsPage.main.title')}>
-                <Heading size="h3">DAO</Heading>
                 <DaoDefinitionList dao={dao} />
             </Page.Main>
             <Page.Aside>
-                <p>Aside</p>
+                <DaoVersionInfoDefinitionList dao={dao} />
             </Page.Aside>
         </>
     );
