@@ -222,6 +222,29 @@
       "proposalVotingTerminal": {
         "title": "Voting",
         "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute."
+      },
+      "daoSettingsPage": {
+        "main": {
+          "title": "Settings",
+          "daoDefinitionList": {
+            "name": "Name",
+            "blockchain": "Blockchain",
+            "ens": "ENS name",
+            "summary": "summary",
+            "links": "Links",
+            "readMore": "Read more",
+            "readLess": "Read less",
+            "notChangeable": "Not changeable"
+          }
+        },
+        "aside": {
+          "daoVersionInfo": {
+            "app": "App",
+            "os": "Operating system",
+            "governance": "Governance",
+            "governanceLabel": "{{name}} v{{release}}.{{build}}"
+          }
+        }
       }
     },
     "plugins": {
