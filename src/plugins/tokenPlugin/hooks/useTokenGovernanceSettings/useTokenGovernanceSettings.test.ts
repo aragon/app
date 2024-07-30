@@ -26,16 +26,13 @@ describe('useTokenGovernanceSettings', () => {
         const tokenSettings = generateToken();
         const mockSettings = generateDaoTokenSettings({
             settings: {
-                supportThreshold: 0.3,
-                minParticipation: 0.2,
+                supportThreshold: 300000,
+                minParticipation: 200000,
                 minDuration: 604800,
-                minProposerVotingPower: '1',
+                minProposerVotingPower: '100',
                 votingMode: 1,
             },
-            token: {
-                ...tokenSettings,
-                totalSupply: '200000',
-            },
+            token: { ...tokenSettings, decimals: 2, totalSupply: '200000' },
         });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
         const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }), {
@@ -62,7 +59,7 @@ describe('useTokenGovernanceSettings', () => {
         );
         expect(minimumParticipation.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumParticipation');
         expect(minimumParticipation.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.participation (participation=30%,tokenValue=400,tokenSymbol=ETH)',
+            'app.plugins.token.tokenGovernanceSettings.participation (participation=20%,tokenValue=400,tokenSymbol=ETH)',
         );
         expect(minimumDuration.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
         expect(minimumDuration.definition).toBe(
@@ -82,16 +79,13 @@ describe('useTokenGovernanceSettings', () => {
         const tokenSettings = generateToken();
         const mockSettings = generateDaoTokenSettings({
             settings: {
-                supportThreshold: 0.5,
-                minParticipation: 0.1,
+                supportThreshold: 500000,
+                minParticipation: 100000,
                 minDuration: 604800,
                 minProposerVotingPower: '1',
                 votingMode: 1,
             },
-            token: {
-                ...tokenSettings,
-                totalSupply: '10000',
-            },
+            token: { ...tokenSettings, decimals: 1, totalSupply: '10000' },
         });
         const { result } = renderHook(() =>
             useTokenGovernanceSettings({ daoId: 'token-test-id', settings: mockSettings }),
@@ -117,7 +111,7 @@ describe('useTokenGovernanceSettings', () => {
         );
         expect(minimumParticipation.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumParticipation');
         expect(minimumParticipation.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.participation (participation=50%,tokenValue=10,tokenSymbol=ETH)',
+            'app.plugins.token.tokenGovernanceSettings.participation (participation=10%,tokenValue=100,tokenSymbol=ETH)',
         );
         expect(minimumDuration.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
         expect(minimumDuration.definition).toBe(
@@ -129,19 +123,13 @@ describe('useTokenGovernanceSettings', () => {
         expect(voteChange.definition).toBe('app.plugins.token.tokenGovernanceSettings.no');
         expect(proposalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.proposalThreshold');
         expect(proposalThreshold.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=1,symbol=ETH)',
+            'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=0.01,symbol=ETH)',
         );
     });
 
     it('correctly handles different voting modes', () => {
         const baseSettings = generateDaoTokenSettings();
-        const mockSettings = {
-            ...baseSettings,
-            settings: {
-                ...baseSettings.settings,
-                votingMode: 2,
-            },
-        };
+        const mockSettings = { ...baseSettings, settings: { ...baseSettings.settings, votingMode: 2 } };
 
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
         const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }), {
