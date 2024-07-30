@@ -10,7 +10,7 @@ export interface IDaVersionInfoDefinitionListProps {
     initialParams: IGetDaoParams;
 }
 
-const envLabel: Record<string, string | undefined> = {
+export const envLabel: Record<string, string | undefined> = {
     development: 'DEV',
     staging: 'STG',
 };
@@ -40,7 +40,7 @@ export const DaoVersionInfoDefinitionList: React.FC<IDaVersionInfoDefinitionList
                     </Link>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.os')}>
-                    {/* TODO: Fetch this operating system value from backend when available */}
+                    {/* TODO: Fetch this operating system value from backend when available (APP-3484) */}
                     <Link
                         description={addressUtils.truncateAddress(dao?.address)}
                         iconRight={IconType.LINK_EXTERNAL}
