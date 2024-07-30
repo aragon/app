@@ -8,6 +8,7 @@ import { governanceService, useMemberList } from '../../api/governanceService';
 import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 import { generateMember } from '../../testUtils';
 import { IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
+import { generateToken } from '@/modules/finance/testUtils';
 
 describe('<TokenMemberInfo /> component', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
@@ -50,10 +51,30 @@ describe('<TokenMemberInfo /> component', () => {
 
         useMemberListSpy.mockResolvedValue(mockMembers);
 
+        const baseSettings = generateDaoTokenSettings();
+        const baseTokenSettings = generateToken();
+        const mockSettings = {
+            ...baseSettings,
+            settings: {
+                ...baseSettings.settings,
+                votingMode: 2,
+            },
+            token: {
+                ...baseTokenSettings,
+                symbol: 'BTC',
+                name: 'Bitcoin',
+                totalSupply: 300,
+            },
+        };
+
+        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
+
         const { result: membersHookResult } = renderHook(() => useMemberList({ queryParams: { daoId: 'test-id' } }), {
             wrapper: ReactQueryWrapper,
         });
+
         render(createTestComponent());
+
         await waitFor(() => {
             expect(membersHookResult.current.data?.pages[0].metadata.totalRecords).toBe(
                 mockMembers.metadata.totalRecords,
@@ -66,14 +87,14 @@ describe('<TokenMemberInfo /> component', () => {
         expect(screen.getByText('app.plugins.token.tokenMemberInfo.tokenLinkDescription')).toBeInTheDocument();
         expect(
             screen.getByText(
-                'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Ethereum,tokenSymbol=ETH)',
+                'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Bitcoin,tokenSymbol=BTC)',
             ),
         ).toBeInTheDocument();
         expect(screen.getByText('app.plugins.token.tokenMemberInfo.distribution')).toBeInTheDocument();
         expect(screen.getByText('app.plugins.token.tokenMemberInfo.tokenDistribution (count=5)')).toBeInTheDocument();
         expect(screen.getByText('app.plugins.token.tokenMemberInfo.supply')).toBeInTheDocument();
         expect(
-            screen.getByText('app.plugins.token.tokenMemberInfo.tokenSupply (supply=0,symbol=ETH)'),
+            screen.getByText('app.plugins.token.tokenMemberInfo.tokenSupply (supply=300,symbol=BTC)'),
         ).toBeInTheDocument();
     });
 });
