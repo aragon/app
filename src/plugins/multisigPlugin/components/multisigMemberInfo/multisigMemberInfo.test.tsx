@@ -1,28 +1,37 @@
-import { generatePaginatedResponse } from '@/shared/testUtils';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
-import { governanceService } from '../../../../modules/governance/api/governanceService';
+import {
+    generatePaginatedResponse,
+    generatePaginatedResponseMetadata,
+    generateReactQueryInfiniteResultSuccess,
+} from '@/shared/testUtils';
+import { OdsModulesProvider } from '@aragon/ods';
+import { render, screen } from '@testing-library/react';
+import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { generateMember } from '../../../../modules/governance/testUtils';
 import { type IMultisigMemberInfoProps, MultisigMemberInfo } from './multisigMemberInfo';
 
+// Needed to spy usage of useMemberList hook
+jest.mock('../../../../modules/governance/api/governanceService', () => ({
+    __esModule: true,
+    ...jest.requireActual('../../../../modules/governance/api/governanceService'),
+}));
+
 describe('<MultisigMemberInfo /> component', () => {
-    const useMemberListSpy = jest.spyOn(governanceService, 'getMemberList');
+    const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
 
     afterEach(() => {
         useMemberListSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IMultisigMemberInfoProps>) => {
-        const client = new QueryClient();
         const completeProps: IMultisigMemberInfoProps = {
             daoId: 'test-id',
             ...props,
         };
 
         return (
-            <QueryClientProvider client={client}>
+            <OdsModulesProvider>
                 <MultisigMemberInfo {...completeProps} />
-            </QueryClientProvider>
+            </OdsModulesProvider>
         );
     };
 
@@ -33,27 +42,37 @@ describe('<MultisigMemberInfo /> component', () => {
     });
 
     it('displays the correct number of members', async () => {
-        const membersResult = generatePaginatedResponse({ data: [generateMember()] });
-        const mockMembers = {
-            ...membersResult,
-            metadata: {
-                ...membersResult.metadata,
-                totalRecords: 3,
-            },
-        };
+        const members = [
+            generateMember({ address: '0x123' }),
+            generateMember({ address: '0x123' }),
+            generateMember({ address: '0x123' }),
+        ];
+        const membersMetadata = generatePaginatedResponseMetadata({
+            pageSize: 20,
+            totalRecords: members.length,
+        });
+        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
 
-        useMemberListSpy.mockResolvedValue(mockMembers);
+        useMemberListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
+        );
 
         render(createTestComponent());
 
-        await waitFor(() => {
-            expect(
-                screen.getByText('app.plugins.multisig.multisigMembersInfo.membersCount (count=3)'),
-            ).toBeInTheDocument();
-        });
+        expect(screen.getByText('app.plugins.multisig.multisigMembersInfo.membersCount (count=3)')).toBeInTheDocument();
     });
 
     it('contains a link to the members page', () => {
+        const members = [generateMember({ address: '0x123' })];
+        const membersMetadata = generatePaginatedResponseMetadata({
+            pageSize: 20,
+            totalRecords: members.length,
+        });
+        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
+
+        useMemberListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
+        );
         render(createTestComponent());
         const linkElement = screen.getByRole('link');
         expect(linkElement).toHaveAttribute('href', './members');
