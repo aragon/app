@@ -1,4 +1,5 @@
 import { PluginComponent } from '@/shared/components/pluginComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
@@ -18,12 +19,13 @@ export interface IProposalVotingTerminalProps {
 export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
     const { proposal, daoId } = props;
 
+    const { t } = useTranslations();
     const pluginIds = useDaoPluginIds(daoId);
 
     return (
         <ProposalVoting.Container
-            title="Voting"
-            description="The proposal must pass the voting to be accepted and potential onchain actions to execute."
+            title={t('app.governance.proposalVotingTerminal.title')}
+            description={t('app.governance.proposalVotingTerminal.description')}
         >
             <ProposalVoting.Stage
                 status={ProposalVotingStatus.PENDING}

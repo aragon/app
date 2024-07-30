@@ -218,6 +218,10 @@
             "title": "Links"
           }
         }
+      },
+      "proposalVotingTerminal": {
+        "title": "Voting",
+        "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute."
       }
     },
     "plugins": {
