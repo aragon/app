@@ -3,7 +3,7 @@ import { useDaoSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { Duration } from 'luxon';
-import type { IDaoSettingTermAndDefinition } from '../../../../../modules/settings/types';
+import type { IDaoSettingTermAndDefinition } from '../../../../modules/settings/types';
 
 interface IUseTokenGovernanceSettingsParams {
     /**
