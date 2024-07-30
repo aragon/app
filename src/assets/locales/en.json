@@ -259,6 +259,20 @@
           "tokenDistribution": "{{count}} token holders",
           "tokenLinkDescription": "View all token holders",
           "tokenSupply": "{{supply}} {{symbol}}"
+        },
+        "tokenGovernanceSettings": {
+          "approvalThreshold": "Approval threshold",
+          "approval": "> {{approvalThreshold}}",
+          "minimumParticipation": "Minimum participation",
+          "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
+          "minimumDuration": "Minimum duration",
+          "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "earlyExecution": "Early execution",
+          "voteChange": "Vote change",
+          "proposalThreshold": "Proposal threshold",
+          "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
+          "yes": "Yes",
+          "no": "No"
         }
       },
       "multisig": {
@@ -285,6 +299,13 @@
           "multisigMembers": "Multisig members",
           "linkDescription": "View all members",
           "membersCount": "See {{count}} addresses"
+        },
+        "multisigGovernanceSettings": {
+          "minimumApproval": "Minimum approval",
+          "proposalCreation": "Proposal creation",
+          "members": "Multisig members",
+          "anyWallet": "Any wallet",
+          "approvals": "{{min}} of {{max}} authorized addresses"
         }
       }
     },
