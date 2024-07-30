@@ -2,6 +2,7 @@ import type { IDaoProposalListProps } from '@/modules/governance/components/daoP
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/ods';
+import type { IMultisigProposal } from '../../types';
 import { MultisigProposalListItem } from './multisigProposalListItem';
 
 export interface IMultisigProposalListProps extends IDaoProposalListProps {}
@@ -12,7 +13,7 @@ export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
-        useProposalListData(initialParams);
+        useProposalListData<IMultisigProposal>(initialParams);
 
     return (
         <DataListRoot

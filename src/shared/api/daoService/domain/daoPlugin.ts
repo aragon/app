@@ -40,5 +40,3 @@ export interface IDaoPlugin {
      */
     build: string;
 }
-
-

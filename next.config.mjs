@@ -18,28 +18,7 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'aragon-1.mypinata.cloud',
-                port: '',
-                pathname: '/ipfs/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 's2.coinmarketcap.com',
-                port: '',
-            },
-            {
-                protocol: 'https',
-                hostname: 'logos.covalenthq.com',
-                port: '',
-            },
-            {
-                protocol: 'https',
-                hostname: 'i.seadn.io',
-                port: '',
-            },
-            {
-                protocol: 'https',
-                hostname: 'clonex-assets.rtfkt.com',
+                hostname: '**',
                 port: '',
             },
         ],

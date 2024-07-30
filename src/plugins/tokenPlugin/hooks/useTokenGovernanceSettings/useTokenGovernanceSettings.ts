@@ -3,7 +3,9 @@ import { useDaoSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { Duration } from 'luxon';
+import { formatUnits } from 'viem';
 import type { IDaoSettingTermAndDefinition } from '../../../../modules/settings/types';
+import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 
 interface IUseTokenGovernanceSettingsParams {
     /**
@@ -24,7 +26,6 @@ export const useTokenGovernanceSettings = (
     const { t } = useTranslations();
 
     const daoSettingsParams = { daoId };
-
     const { data: currentSettings } = useDaoSettings<IDaoTokenSettings>(
         { urlParams: daoSettingsParams },
         { enabled: settings == null },
@@ -36,31 +37,36 @@ export const useTokenGovernanceSettings = (
         return [];
     }
 
-    const tokenSymbol = processedSettings.token.symbol;
-    const tokenSupply = Number(processedSettings.token.totalSupply);
+    const { supportThreshold, minParticipation, minDuration, minProposerVotingPower } = processedSettings.settings;
+    const { symbol: tokenSymbol, totalSupply, decimals } = processedSettings.token;
 
-    const formattedApproveThreshold = formatterUtils.formatNumber(processedSettings.settings.supportThreshold, {
-        format: NumberFormat.PERCENTAGE_SHORT,
-    });
-    const formattedMinParticipation = formatterUtils.formatNumber(processedSettings.settings.supportThreshold, {
+    const parsedSupportThreshold = tokenSettingsUtils.parsePercentageSetting(supportThreshold);
+    const formattedApproveThreshold = formatterUtils.formatNumber(parsedSupportThreshold / 100, {
         format: NumberFormat.PERCENTAGE_SHORT,
     });
 
-    const minParticipationTokenValue = (tokenSupply * processedSettings.settings.minParticipation) / 100;
-    const formattedMinParticipationToken = formatterUtils.formatNumber(minParticipationTokenValue, {
+    const parsedMinParticipation = tokenSettingsUtils.parsePercentageSetting(minParticipation);
+    const formattedMinParticipation = formatterUtils.formatNumber(parsedMinParticipation / 100, {
+        format: NumberFormat.PERCENTAGE_SHORT,
+    });
+
+    const minParticipationToken = (Number(totalSupply) * parsedMinParticipation) / 100;
+    const parsedMinParticipationToken = formatUnits(BigInt(minParticipationToken), decimals);
+    const formattedMinParticipationToken = formatterUtils.formatNumber(parsedMinParticipationToken, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
     });
-    const durationInSeconds = processedSettings.settings.minDuration ?? 0;
-    const duration = Duration.fromObject({ seconds: durationInSeconds }).shiftTo('days', 'hours', 'minutes');
+
+    const duration = Duration.fromObject({ seconds: minDuration }).shiftTo('days', 'hours', 'minutes');
     const formattedDuration = t('app.plugins.token.tokenGovernanceSettings.duration', {
         days: duration.days,
         hours: duration.hours,
         minutes: duration.minutes,
     });
-    const formattedProposerVotingPower = formatterUtils.formatNumber(
-        processedSettings.settings.minProposerVotingPower,
-        { format: NumberFormat.TOKEN_AMOUNT_LONG },
-    );
+
+    const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPower), decimals);
+    const formattedProposerVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, {
+        format: NumberFormat.TOKEN_AMOUNT_LONG,
+    });
 
     return [
         {

@@ -19,6 +19,7 @@ import {
     useBlockExplorer,
 } from '@aragon/ods';
 import { useProposal } from '../../api/governanceService';
+import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -93,6 +94,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             </CardCollapsible>
                         </Page.Section>
                     )}
+                    <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
+                        <ProposalVotingTerminal proposal={proposal} daoId={daoId} />
+                    </Page.Section>
                 </Page.Main>
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
