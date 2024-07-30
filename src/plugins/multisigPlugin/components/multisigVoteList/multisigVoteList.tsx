@@ -1,6 +1,7 @@
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     ChainEntityType,
     DataListContainer,
@@ -38,8 +39,11 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                 {voteList?.map((vote) => (
                     <VoteDataListItem.Structure
                         key={vote.transactionHash}
-                        // TODO: pass chain-id parameter when buildEntityUrl is updated
-                        href={buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: vote.transactionHash })}
+                        href={buildEntityUrl({
+                            type: ChainEntityType.TRANSACTION,
+                            id: vote.transactionHash,
+                            chainId: networkDefinitions[vote.network].chainId,
+                        })}
                         target="_blank"
                         voteIndicator="approve"
                         voter={{ address: vote.memberAddress }}

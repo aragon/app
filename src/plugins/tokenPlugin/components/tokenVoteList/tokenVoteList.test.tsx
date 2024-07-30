@@ -54,7 +54,11 @@ describe('<TokenVoteList /> component', () => {
             errorState: { heading: '', description: '' },
         });
         render(createTestComponent());
-        // TODO: test correct link role & href
+
+        const links = screen.getAllByRole('link');
+        expect(links).toHaveLength(2);
+        expect(links[0].getAttribute('href')).toMatch(votes[0].transactionHash);
+        expect(links[1].getAttribute('href')).toMatch(votes[1].transactionHash);
 
         expect(screen.getByText(addressUtils.truncateAddress(votes[0].memberAddress))).toBeInTheDocument();
         expect(screen.getByText('978.65M ABC')).toBeInTheDocument();

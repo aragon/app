@@ -1,3 +1,5 @@
+import type { Network } from '@/shared/api/daoService';
+
 export interface IVote {
     /**
      * Hash of the transaction including the user vote.
@@ -11,4 +13,8 @@ export interface IVote {
      * Address of the member casting the vote.
      */
     memberAddress: string;
+    /**
+     * Network where the vote has been casted.
+     */
+    network: Network;
 }
