@@ -7,9 +7,6 @@ export const generateTokenProposal = (proposal?: Partial<ITokenProposal>): IToke
     ...generateProposal(),
     settings: generateDaoTokenSettings().settings,
     token: generateToken(),
-    metrics: {
-        totalVotes: 0,
-        votesByOption: [],
-    },
+    metrics: { votesByOption: [] },
     ...proposal,
 });

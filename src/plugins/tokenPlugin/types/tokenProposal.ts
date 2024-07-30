@@ -28,10 +28,6 @@ export interface ITokenProposal extends IProposal {
      */
     metrics: {
         /**
-         * Number of members that votes on the proposal.
-         */
-        totalVotes: number;
-        /**
          * Overview of each vote option.
          */
         votesByOption: ITokenProposalOptionVotes[];
