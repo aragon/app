@@ -3,6 +3,7 @@ import * as daoService from '@/shared/api/daoService';
 import { generateReactQueryResultError, generateReactQueryResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import { useTokenGovernanceSettings } from './useTokenGovernanceSettings';
+import { generateToken } from '@/modules/finance/testUtils';
 
 describe('useTokenGovernanceSettings', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
@@ -22,13 +23,18 @@ describe('useTokenGovernanceSettings', () => {
     });
 
     it('fetches the specified DAO terms and definitions for token Dao', async () => {
+        const tokenSettings = generateToken();
         const mockSettings = generateDaoTokenSettings({
             settings: {
-                supportThreshold: 0.5,
-                minParticipation: 0.5,
+                supportThreshold: 0.3,
+                minParticipation: 0.2,
                 minDuration: 604800,
                 minProposerVotingPower: '1',
                 votingMode: 1,
+            },
+            token: {
+                ...tokenSettings,
+                totalSupply: '200000',
             },
         });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
@@ -52,11 +58,11 @@ describe('useTokenGovernanceSettings', () => {
 
         expect(approvalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.approvalThreshold');
         expect(approvalThreshold.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=50%,tokenValue=0.5,tokenSymbol=ETH)',
+            'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=30%)',
         );
         expect(minimumParticipation.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumParticipation');
         expect(minimumParticipation.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.participation (participation=50%)',
+            'app.plugins.token.tokenGovernanceSettings.participation (participation=30%,tokenValue=400,tokenSymbol=ETH)',
         );
         expect(minimumDuration.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
         expect(minimumDuration.definition).toBe(
@@ -73,13 +79,18 @@ describe('useTokenGovernanceSettings', () => {
     });
 
     it('handles settings object being passed directly to the hook', async () => {
+        const tokenSettings = generateToken();
         const mockSettings = generateDaoTokenSettings({
             settings: {
                 supportThreshold: 0.5,
-                minParticipation: 0.5,
+                minParticipation: 0.1,
                 minDuration: 604800,
                 minProposerVotingPower: '1',
                 votingMode: 1,
+            },
+            token: {
+                ...tokenSettings,
+                totalSupply: '10000',
             },
         });
         const { result } = renderHook(() =>
@@ -102,11 +113,11 @@ describe('useTokenGovernanceSettings', () => {
 
         expect(approvalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.approvalThreshold');
         expect(approvalThreshold.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=50%,tokenValue=0.5,tokenSymbol=ETH)',
+            'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=50%)',
         );
         expect(minimumParticipation.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumParticipation');
         expect(minimumParticipation.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.participation (participation=50%)',
+            'app.plugins.token.tokenGovernanceSettings.participation (participation=50%,tokenValue=10,tokenSymbol=ETH)',
         );
         expect(minimumDuration.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
         expect(minimumDuration.definition).toBe(

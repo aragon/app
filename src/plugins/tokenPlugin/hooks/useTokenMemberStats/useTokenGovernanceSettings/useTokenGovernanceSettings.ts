@@ -37,13 +37,17 @@ export const useTokenGovernanceSettings = (
     }
 
     const tokenSymbol = processedSettings.token.symbol;
+    const tokenSupply = Number(processedSettings.token.totalSupply);
+
     const formattedApproveThreshold = formatterUtils.formatNumber(processedSettings.settings.supportThreshold, {
         format: NumberFormat.PERCENTAGE_SHORT,
     });
     const formattedMinParticipation = formatterUtils.formatNumber(processedSettings.settings.supportThreshold, {
         format: NumberFormat.PERCENTAGE_SHORT,
     });
-    const formattedMinParticipationToken = formatterUtils.formatNumber(processedSettings.settings.minParticipation, {
+
+    const minParticipationTokenValue = (tokenSupply * processedSettings.settings.minParticipation) / 100;
+    const formattedMinParticipationToken = formatterUtils.formatNumber(minParticipationTokenValue, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
     });
     const durationInSeconds = processedSettings.settings.minDuration ?? 0;
@@ -63,14 +67,14 @@ export const useTokenGovernanceSettings = (
             term: t('app.plugins.token.tokenGovernanceSettings.approvalThreshold'),
             definition: t('app.plugins.token.tokenGovernanceSettings.approval', {
                 approvalThreshold: formattedApproveThreshold,
-                tokenValue: formattedMinParticipationToken,
-                tokenSymbol,
             }),
         },
         {
             term: t('app.plugins.token.tokenGovernanceSettings.minimumParticipation'),
             definition: t('app.plugins.token.tokenGovernanceSettings.participation', {
                 participation: formattedMinParticipation,
+                tokenValue: formattedMinParticipationToken,
+                tokenSymbol,
             }),
         },
         { term: t('app.plugins.token.tokenGovernanceSettings.minimumDuration'), definition: formattedDuration },

@@ -223,9 +223,9 @@
         },
         "tokenGovernanceSettings": {
           "approvalThreshold": "Approval threshold",
-          "approval": "> {{approvalThreshold}} (≥ {{tokenValue}} {{tokenSymbol}})",
+          "approval": "> {{approvalThreshold}}",
           "minimumParticipation": "Minimum participation",
-          "participation": "≥ {{participation}}",
+          "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "minimumDuration": "Minimum duration",
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "earlyExecution": "Early execution",
