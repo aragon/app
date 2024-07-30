@@ -40,5 +40,5 @@ export interface IToken {
     /**
      * Total supply of token.
      */
-    totalSupply: number;
+    totalSupply: string;
 }
