@@ -1,6 +1,5 @@
 import { useDao, useDaoSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { percentageDecimals } from '@/shared/constants/decimals';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -16,6 +15,7 @@ import {
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import { DaoTokenVotingMode, type IDaoTokenSettings } from '../../types';
+import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 
 export interface ITokenProposalsPageDetailsProps {
     /**
@@ -43,13 +43,13 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
     }
 
     const { supportThreshold, minParticipation, minProposerVotingPower } = settings.settings;
-    const supportThresholdPercentage = formatUnits(BigInt(supportThreshold), percentageDecimals);
+    const supportThresholdPercentage = tokenSettingsUtils.parsePercentageSetting(supportThreshold) / 100;
     const formattedSupportThresholdPercentage = formatterUtils.formatNumber(supportThresholdPercentage, {
         isPercentage: true,
         format: NumberFormat.PERCENTAGE_SHORT,
     });
 
-    const minParticipationPercentage = formatUnits(BigInt(minParticipation), percentageDecimals);
+    const minParticipationPercentage = tokenSettingsUtils.parsePercentageSetting(minParticipation) / 100;
     const formattedMinParticipationPercentage = formatterUtils.formatNumber(minParticipationPercentage, {
         isPercentage: true,
         format: NumberFormat.PERCENTAGE_SHORT,

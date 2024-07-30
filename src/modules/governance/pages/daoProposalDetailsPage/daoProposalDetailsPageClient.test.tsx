@@ -7,6 +7,10 @@ import * as governanceService from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
 import { DaoProposalDetailsPageClient, type IDaoProposalDetailsPageClientProps } from './daoProposalDetailsPageClient';
 
+jest.mock('../../components/proposalVotingTerminal', () => ({
+    ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
+}));
+
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
@@ -139,5 +143,11 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
         expect(screen.queryByText(/daoProposalDetailsPage.aside.links.title/)).not.toBeInTheDocument();
+    });
+
+    it('renders the proposal voting terminal', () => {
+        render(createTestComponent());
+        expect(screen.getByText(/daoProposalDetailsPage.main.governance/)).toBeInTheDocument();
+        expect(screen.getByTestId('voting-terminal-mock')).toBeInTheDocument();
     });
 });

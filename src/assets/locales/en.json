@@ -203,7 +203,8 @@
         "main": {
           "proposal": "Proposal",
           "readMore": "Read more",
-          "readLess": "Read less"
+          "readLess": "Read less",
+          "governance": "Governance"
         },
         "aside": {
           "details": {
@@ -217,6 +218,10 @@
             "title": "Links"
           }
         }
+      },
+      "proposalVotingTerminal": {
+        "title": "Voting",
+        "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute."
       }
     },
     "plugins": {
