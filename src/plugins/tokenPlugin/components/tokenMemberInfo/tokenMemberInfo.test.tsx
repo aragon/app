@@ -1,7 +1,6 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
-import * as governanceService from '../../../../modules/governance/api/governanceService';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -10,6 +9,7 @@ import {
 } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
+import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { generateMember } from '../../../../modules/governance/testUtils';
 import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 
