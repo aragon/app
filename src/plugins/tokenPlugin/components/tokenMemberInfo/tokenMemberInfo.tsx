@@ -13,7 +13,7 @@ import {
     NumberFormat,
     useBlockExplorer,
 } from '@aragon/ods';
-import { useMemberList } from '../../api/governanceService';
+import { useMemberList } from '../../../../modules/governance/api/governanceService';
 
 export interface ITokenMemberInfoProps {
     /**

@@ -1,8 +1,8 @@
 import { generatePaginatedResponse } from '@/shared/testUtils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import { governanceService } from '../../api/governanceService';
-import { generateMember } from '../../testUtils';
+import { governanceService } from '../../../../modules/governance/api/governanceService';
+import { generateMember } from '../../../../modules/governance/testUtils';
 import { type IMultisigMemberInfoProps, MultisigMemberInfo } from './multisigMemberInfo';
 
 describe('<MultisigMemberInfo /> component', () => {

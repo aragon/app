@@ -5,8 +5,8 @@ import { generatePaginatedResponse, generateReactQueryResultSuccess, ReactQueryW
 import { OdsModulesProvider } from '@aragon/ods';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
-import { governanceService, useMemberList } from '../../api/governanceService';
-import { generateMember } from '../../testUtils';
+import { governanceService, useMemberList } from '../../../../modules/governance/api/governanceService';
+import { generateMember } from '../../../../modules/governance/testUtils';
 import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 
 describe('<TokenMemberInfo /> component', () => {

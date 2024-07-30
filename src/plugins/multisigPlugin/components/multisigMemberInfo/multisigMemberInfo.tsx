@@ -1,7 +1,7 @@
 'use client';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, IconType, Link } from '@aragon/ods';
-import { useMemberList } from '../../api/governanceService';
+import { useMemberList } from '../../../../modules/governance/api/governanceService';
 
 export interface IMultisigMemberInfoProps {
     /**
