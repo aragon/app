@@ -97,4 +97,20 @@ describe('<TokenMemberInfo /> component', () => {
             screen.getByText('app.plugins.token.tokenMemberInfo.tokenSupply (supply=300,symbol=BTC)'),
         ).toBeInTheDocument();
     });
+
+        it('contains a link to the block explorer', () => {
+            render(createTestComponent());
+            const linkElement = screen.getByRole('link', {
+                name: 'app.plugins.token.tokenMemberInfo.tokenDistribution (count=5) 0xTestAddress',
+            });
+            expect(linkElement).toHaveAttribute('href', 'https://etherscan.io/token/0xTestAddress');
+        });
+
+        it('contains a link to the members page', () => {
+            render(createTestComponent());
+            const linkElement = screen.getByRole('link', {
+                name: 'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Ethereum,tokenSymbol=ETH) app.plugins.token.tokenMemberInfo.tokenLinkDescription',
+            });
+            expect(linkElement).toHaveAttribute('href', './members');
+        });
 });

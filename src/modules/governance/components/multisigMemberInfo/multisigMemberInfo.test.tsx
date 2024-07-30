@@ -53,7 +53,7 @@ describe('<MultisigMemberInfo /> component', () => {
         });
     });
 
-    it('contains a link to the members page with correct description', () => {
+    it('contains a link to the members page', () => {
         render(createTestComponent());
         const linkElement = screen.getByRole('link');
         expect(linkElement).toHaveAttribute('href', './members');
