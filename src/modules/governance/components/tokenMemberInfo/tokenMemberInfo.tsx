@@ -1,5 +1,8 @@
 'use client';
+import type { IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
+import { useDaoSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     addressUtils,
     ChainEntityType,
@@ -11,9 +14,6 @@ import {
     useBlockExplorer,
 } from '@aragon/ods';
 import { useMemberList } from '../../api/governanceService';
-import { useDaoSettings } from '@/shared/api/daoService';
-import type { IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 export interface ITokenMemberInfoProps {
     /**

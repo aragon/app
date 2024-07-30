@@ -1,3 +1,4 @@
+import { generateToken } from '@/modules/finance/testUtils';
 import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { generatePaginatedResponse, generateReactQueryResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
@@ -5,10 +6,8 @@ import { OdsModulesProvider } from '@aragon/ods';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import { governanceService, useMemberList } from '../../api/governanceService';
-import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 import { generateMember } from '../../testUtils';
-import { IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
-import { generateToken } from '@/modules/finance/testUtils';
+import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 
 describe('<TokenMemberInfo /> component', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
@@ -98,19 +97,19 @@ describe('<TokenMemberInfo /> component', () => {
         ).toBeInTheDocument();
     });
 
-        it('contains a link to the block explorer', () => {
-            render(createTestComponent());
-            const linkElement = screen.getByRole('link', {
-                name: 'app.plugins.token.tokenMemberInfo.tokenDistribution (count=5) 0xTestAddress',
-            });
-            expect(linkElement).toHaveAttribute('href', 'https://etherscan.io/token/0xTestAddress');
+    it('contains a link to the block explorer', () => {
+        render(createTestComponent());
+        const linkElement = screen.getByRole('link', {
+            name: 'app.plugins.token.tokenMemberInfo.tokenDistribution (count=5) 0xTestAddress',
         });
+        expect(linkElement).toHaveAttribute('href', 'https://etherscan.io/token/0xTestAddress');
+    });
 
-        it('contains a link to the members page', () => {
-            render(createTestComponent());
-            const linkElement = screen.getByRole('link', {
-                name: 'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Ethereum,tokenSymbol=ETH) app.plugins.token.tokenMemberInfo.tokenLinkDescription',
-            });
-            expect(linkElement).toHaveAttribute('href', './members');
+    it('contains a link to the members page', () => {
+        render(createTestComponent());
+        const linkElement = screen.getByRole('link', {
+            name: 'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Ethereum,tokenSymbol=ETH) app.plugins.token.tokenMemberInfo.tokenLinkDescription',
         });
+        expect(linkElement).toHaveAttribute('href', './members');
+    });
 });
