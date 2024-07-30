@@ -1,4 +1,9 @@
-import type { IPaginatedRequest, IRequestQueryParams, IRequestUrlQueryParams } from '@/shared/api/aragonBackendService';
+import type {
+    IPaginatedRequest,
+    IRequestQueryParams,
+    IRequestUrlParams,
+    IRequestUrlQueryParams,
+} from '@/shared/api/aragonBackendService';
 
 export interface IGetProposalListQueryParams extends IPaginatedRequest {
     /**
@@ -31,4 +36,14 @@ export interface IGetMemberQueryParams {
      */
     daoId: string;
 }
+
 export interface IGetMemberParams extends IRequestUrlQueryParams<IGetMemberUrlParams, IGetMemberQueryParams> {}
+
+export interface IGetProposalUrlParams {
+    /**
+     * ID of the proposal to fetch.
+     */
+    id: string;
+}
+
+export interface IGetProposalParams extends IRequestUrlParams<IGetProposalUrlParams> {}

@@ -29,7 +29,13 @@ export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
                 errorState={errorState}
                 layoutClassName="grid grid-cols-1"
             >
-                {proposalList?.map((proposal) => <TokenProposalListItem key={proposal.id} proposal={proposal} />)}
+                {proposalList?.map((proposal) => (
+                    <TokenProposalListItem
+                        key={proposal.id}
+                        proposal={proposal}
+                        daoId={initialParams.queryParams.daoId}
+                    />
+                ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
             {children}

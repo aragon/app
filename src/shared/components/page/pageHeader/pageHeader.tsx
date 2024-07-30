@@ -1,4 +1,4 @@
-import { Breadcrumbs, Collapsible, Heading, IBreadcrumbsProps } from '@aragon/ods';
+import { Breadcrumbs, Collapsible, Heading, type IBreadcrumbsProps } from '@aragon/ods';
 import classNames from 'classnames';
 import type { ComponentProps, ReactNode } from 'react';
 import { Container } from '../../container';
@@ -46,7 +46,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                         <Collapsible
                             buttonLabelClosed={t('app.shared.page.header.readMore')}
                             buttonLabelOpened={t('app.shared.page.header.readLess')}
-                            customCollapsedHeight={46}
+                            customCollapsedHeight={48}
                             className="text-neutral-500"
                         >
                             {description}

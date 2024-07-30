@@ -28,7 +28,13 @@ export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props
                 errorState={errorState}
                 emptyState={emptyState}
             >
-                {proposalList?.map((proposal) => <MultisigProposalListItem key={proposal.id} proposal={proposal} />)}
+                {proposalList?.map((proposal) => (
+                    <MultisigProposalListItem
+                        key={proposal.id}
+                        proposal={proposal}
+                        daoId={initialParams.queryParams.daoId}
+                    />
+                ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
             {children}
