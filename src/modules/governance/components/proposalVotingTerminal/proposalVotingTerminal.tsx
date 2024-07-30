@@ -1,6 +1,9 @@
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -27,6 +30,13 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
 
     const voteListParams = { queryParams: { proposalId: proposal.id, pageSize: votesPerPage } };
 
+    const settingsObject = { settings: proposal.settings, token: (proposal as any).token };
+    const proposalSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
+        params: { daoId, settings: settingsObject },
+        slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
+        pluginIds,
+    });
+
     return (
         <ProposalVoting.Container
             title={t('app.governance.proposalVotingTerminal.title')}
@@ -45,7 +55,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                 <ProposalVoting.Votes>
                     <VoteList initialParams={voteListParams} daoId={daoId} />
                 </ProposalVoting.Votes>
-                <ProposalVoting.Details />
+                <ProposalVoting.Details settings={proposalSettings} />
             </ProposalVoting.Stage>
         </ProposalVoting.Container>
     );

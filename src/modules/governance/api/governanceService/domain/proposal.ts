@@ -1,7 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import type { IProposalResource } from './proposalResource';
 
-export interface IProposal {
+export interface IProposal<TSettings = unknown> {
     /**
      * Id of the proposal in DaoAddress-PluginAddress-ProposalId format.
      */
@@ -54,4 +54,8 @@ export interface IProposal {
      * Array of resources of the proposal.
      */
     resources: IProposalResource[];
+    /**
+     * Settings of the DAO when the proposal was created.
+     */
+    settings: TSettings;
 }

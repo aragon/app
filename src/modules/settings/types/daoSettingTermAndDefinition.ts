@@ -6,5 +6,5 @@ export interface IDaoSettingTermAndDefinition {
     /**
      * The definition of the setting.
      */
-    definition: string | number;
+    definition: string;
 }
