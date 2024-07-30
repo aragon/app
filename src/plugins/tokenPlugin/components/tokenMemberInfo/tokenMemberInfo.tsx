@@ -46,7 +46,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 <Link
                     description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
                     iconRight={IconType.LINK_EXTERNAL}
-                    href="./members"
+                    href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: daoSettings?.token.address })}
                 >
                     {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
                         tokenName: daoSettings?.token.name,
@@ -58,7 +58,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 <Link
                     description={addressUtils.truncateAddress(daoSettings?.token.address)}
                     iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: daoSettings?.token.address })}
+                    href="./members"
                     target="_blank"
                 >
                     {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
