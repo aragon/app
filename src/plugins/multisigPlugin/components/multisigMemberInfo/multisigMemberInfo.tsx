@@ -28,7 +28,7 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
                 <Link
                     description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
                     iconRight={IconType.LINK_EXTERNAL}
-                    href="./members"
+                    href={`/dao/${daoId}/members`}
                 >
                     {t('app.plugins.multisig.multisigMembersInfo.membersCount', { count: memberCount })}
                 </Link>
