@@ -217,6 +217,21 @@
             "title": "Links"
           }
         }
+      },
+      "daoSettingsPage": {
+        "main": {
+          "title": "Settings",
+          "daoDefinitionList": {
+            "name": "Name",
+            "blockchain": "Blockchain",
+            "ens": "ENS name",
+            "summary": "summary",
+            "links": "Links",
+            "readMore": "Read more",
+            "readLess": "Read less",
+            "notChangeable": "Not changeable"
+          }
+        }
       }
     },
     "plugins": {
