@@ -3,6 +3,7 @@ import { ProposalVoting } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import type { ITokenProposal } from '../../types';
 import { VoteOption } from '../../types/enum/voteOption';
+import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 
 export interface ITokenProposalVotingBreakdownProps {
     /**
@@ -10,6 +11,16 @@ export interface ITokenProposalVotingBreakdownProps {
      */
     proposalId: string;
 }
+
+const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
+    const votes = proposal.metrics.votesByOption.find((vote) => vote.type === option);
+
+    // TODO: to be removed when backend returns numbers without scientific notation (APP-3480)
+    const fullNumber = Number(votes?.totalVotingPower ?? '0').toLocaleString('fullwide', { useGrouping: false });
+    const parsedVotingPower = formatUnits(BigInt(fullNumber), proposal.token.decimals);
+
+    return parsedVotingPower;
+};
 
 export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdownProps> = (props) => {
     const { proposalId } = props;
@@ -22,27 +33,22 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
         return null;
     }
 
-    const { decimals, symbol, totalSupply } = proposal.token;
+    const { symbol, totalSupply } = proposal.token;
     const { minParticipation, supportThreshold } = proposal.settings;
 
-    const yesVotes = proposal.metrics.votesByOption.find((vote) => vote.type === VoteOption.YES);
-    const parsedYesVotes = formatUnits(BigInt(yesVotes?.totalVotingPower ?? '0'), decimals);
-
-    const noVotes = proposal.metrics.votesByOption.find((vote) => vote.type === VoteOption.NO);
-    const parsedNoVotes = formatUnits(BigInt(noVotes?.totalVotingPower ?? '0'), decimals);
-
-    const abstainVotes = proposal.metrics.votesByOption.find((vote) => vote.type === VoteOption.ABSTAIN);
-    const parsedAbstainVotes = formatUnits(BigInt(abstainVotes?.totalVotingPower ?? '0'), decimals);
+    const yesVotes = getOptionVotingPower(proposal, VoteOption.YES);
+    const noVotes = getOptionVotingPower(proposal, VoteOption.NO);
+    const abstainVotes = getOptionVotingPower(proposal, VoteOption.ABSTAIN);
 
     return (
         <ProposalVoting.BreakdownToken
-            totalYes={parsedYesVotes}
-            totalNo={parsedNoVotes}
-            totalAbstain={parsedAbstainVotes}
-            minParticipation={minParticipation}
-            supportThreshold={supportThreshold}
+            totalYes={yesVotes}
+            totalNo={noVotes}
+            totalAbstain={abstainVotes}
+            minParticipation={tokenSettingsUtils.parsePercentageSetting(minParticipation)}
+            supportThreshold={tokenSettingsUtils.parsePercentageSetting(supportThreshold)}
             tokenSymbol={symbol}
-            tokenTotalSupply={totalSupply}
+            tokenTotalSupply={formatUnits(BigInt(totalSupply), proposal.token.decimals)}
         />
     );
 };
