@@ -1,5 +1,6 @@
 import { useProposal } from '@/modules/governance/api/governanceService';
 import { ProposalVoting } from '@aragon/ods';
+import { formatUnits } from 'viem';
 import type { ITokenProposal } from '../../types';
 import { VoteOption } from '../../types/enum/voteOption';
 
@@ -21,19 +22,27 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
         return null;
     }
 
+    const { decimals, symbol, totalSupply } = proposal.token;
+    const { minParticipation, supportThreshold } = proposal.settings;
+
     const yesVotes = proposal.metrics.votesByOption.find((vote) => vote.type === VoteOption.YES);
+    const parsedYesVotes = formatUnits(BigInt(yesVotes?.totalVotingPower ?? '0'), decimals);
+
     const noVotes = proposal.metrics.votesByOption.find((vote) => vote.type === VoteOption.NO);
+    const parsedNoVotes = formatUnits(BigInt(noVotes?.totalVotingPower ?? '0'), decimals);
+
     const abstainVotes = proposal.metrics.votesByOption.find((vote) => vote.type === VoteOption.ABSTAIN);
+    const parsedAbstainVotes = formatUnits(BigInt(abstainVotes?.totalVotingPower ?? '0'), decimals);
 
     return (
         <ProposalVoting.BreakdownToken
-            totalYes={yesVotes?.totalVotingPower ?? '0'}
-            totalNo={noVotes?.totalVotingPower ?? '0'}
-            totalAbstain={abstainVotes?.totalVotingPower ?? '0'}
-            minParticipation={proposal.settings.minParticipation}
-            supportThreshold={proposal.settings.supportThreshold}
-            tokenSymbol={proposal.token.symbol}
-            tokenTotalSupply={proposal.token.totalSupply}
+            totalYes={parsedYesVotes}
+            totalNo={parsedNoVotes}
+            totalAbstain={parsedAbstainVotes}
+            minParticipation={minParticipation}
+            supportThreshold={supportThreshold}
+            tokenSymbol={symbol}
+            tokenTotalSupply={totalSupply}
         />
     );
 };

@@ -3,8 +3,8 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigMemberList } from './components/multisigMemberList';
 import { MultisigMembersPageDetails } from './components/multisigMembersPageDetails';
 import { MultisigProposalList } from './components/multisigProposalList';
-import { MultisigProposalsPageDetails } from './components/multisigProposalsPageDetails/multisigProposalsPageDetails';
-import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown';
+import { MultisigProposalsPageDetails } from './components/multisigProposalsPageDetails';
+import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
 import { plugin } from './constants/plugin';
 
 export const initialiseMultisigPlugin = () => {

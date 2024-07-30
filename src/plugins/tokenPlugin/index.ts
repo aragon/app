@@ -4,6 +4,7 @@ import { TokenMemberList } from './components/tokenMemberList';
 import { TokenMembersPageDetails } from './components/tokenMembersPageDetails';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalsPageDetails } from './components/tokenProposalsPageDetails';
+import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
 import { plugin } from './constants/plugin';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 
@@ -34,5 +35,10 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSALS_PAGE_DETAILS,
             pluginId: plugin.id,
             component: TokenProposalsPageDetails,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,
+            pluginId: plugin.id,
+            component: TokenProposalVotingBreakdown,
         });
 };
