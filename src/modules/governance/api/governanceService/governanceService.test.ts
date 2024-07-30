@@ -19,6 +19,17 @@ describe('governance service', () => {
         expect(result).toEqual(members);
     });
 
+    it('getMember fetches the member of the specified DAO by address', async () => {
+        const member = generateMember({ address: '0x123' });
+        const params = { urlParams: { address: member.address }, queryParams: { daoId: 'dao-id-test' } };
+
+        requestSpy.mockResolvedValue(member);
+        const result = await governanceService.getMember(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].member, params);
+        expect(result).toEqual(member);
+    });
+
     it('getProposalList fetches proposals of the specified DAO', async () => {
         const proposals = [generateProposal({ id: '0' }), generateProposal({ id: '1' })];
         const params = { queryParams: { daoId: 'dao-id-test' } };
@@ -30,14 +41,14 @@ describe('governance service', () => {
         expect(result).toEqual(proposals);
     });
 
-    it('getMember fetches the members of the specified DAO by address', async () => {
-        const member = generateMember({ address: '0x123' });
-        const params = { urlParams: { address: member.address }, queryParams: { daoId: 'dao-id-test' } };
+    it('getProposal fetches the proposal with the specified ID', async () => {
+        const proposal = generateProposal({ id: '001' });
+        const params = { urlParams: { id: proposal.id } };
 
-        requestSpy.mockResolvedValue(member);
-        const result = await governanceService.getMember(params);
+        requestSpy.mockResolvedValue(proposal);
+        const result = await governanceService.getProposal(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].member, params);
-        expect(result).toEqual(member);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposal, params);
+        expect(result).toEqual(proposal);
     });
 });

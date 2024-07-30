@@ -27,7 +27,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
         <MemberDataListItem.Structure
             key={member.address}
             address={member.address}
-            votingPower={parsedVotingPower}
+            tokenAmount={parsedVotingPower}
             ensName={member.ens ?? undefined}
             className="min-w-0"
             href={`/dao/${daoId}/members/${member.address}`}
