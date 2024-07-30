@@ -1,13 +1,13 @@
-import type { IDao } from '@/shared/api/daoService';
+import { useDao, type IGetDaoParams } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, Heading, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
 export interface IDaVersionInfoDefinitionListProps {
     /**
-     * Dao data for version info definition list.
+     * Initial parameters to use to fetch the DAO information.
      */
-    dao?: IDao;
+    initialParams: IGetDaoParams;
 }
 
 const envLabel: Record<string, string | undefined> = {
@@ -16,7 +16,10 @@ const envLabel: Record<string, string | undefined> = {
 };
 
 export const DaoVersionInfoDefinitionList: React.FC<IDaVersionInfoDefinitionListProps> = (props) => {
-    const { dao } = props;
+    const { initialParams } = props;
+
+    const { data: dao } = useDao(initialParams);
+
     const { t } = useTranslations();
 
     const version = process.env.version!;

@@ -1,4 +1,4 @@
-import type { IDao } from '@/shared/api/daoService';
+import { useDao, type IGetDaoParams } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -17,13 +17,15 @@ import {
 
 export interface IDaoDefinitionListProps {
     /**
-     * Dao data for definition list.
+     * Initial parameters to use to fetch the DAO information.
      */
-    dao?: IDao;
+    initialParams: IGetDaoParams;
 }
 
 export const DaoDefinitionList: React.FC<IDaoDefinitionListProps> = (props) => {
-    const { dao } = props;
+    const { initialParams } = props;
+
+    const { data: dao } = useDao(initialParams);
 
     const { t } = useTranslations();
 
