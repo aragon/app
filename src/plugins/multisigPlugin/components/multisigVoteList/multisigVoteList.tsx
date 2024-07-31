@@ -1,24 +1,15 @@
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import {
-    ChainEntityType,
-    DataListContainer,
-    DataListPagination,
-    DataListRoot,
-    useBlockExplorer,
-    VoteDataListItem,
-} from '@aragon/ods';
+import { DataListContainer, DataListPagination, DataListRoot, VoteDataListItem } from '@aragon/ods';
 import { type IMultisigVote } from '../../types';
 
-export interface IMultisigVoteListProps extends Pick<IVoteListProps, 'initialParams'> {}
+export interface IMultisigVoteListProps extends IVoteListProps {}
 
 export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
-    const { initialParams } = props;
+    const { initialParams, daoId } = props;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, voteList } =
         useVoteListData<IMultisigVote>(initialParams);
@@ -39,11 +30,7 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                 {voteList?.map((vote) => (
                     <VoteDataListItem.Structure
                         key={vote.transactionHash}
-                        href={buildEntityUrl({
-                            type: ChainEntityType.TRANSACTION,
-                            id: vote.transactionHash,
-                            chainId: networkDefinitions[vote.network].chainId,
-                        })}
+                        href={`/dao/${daoId}/members/${vote.memberAddress}`}
                         target="_blank"
                         voteIndicator="approve"
                         voter={{ address: vote.memberAddress }}
