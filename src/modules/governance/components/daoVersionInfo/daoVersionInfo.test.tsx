@@ -4,6 +4,10 @@ import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo } from './daoVersionInfo';
 
+jest.mock('@/shared/utils/pluginRegistryUtils', () => ({
+    getPlugin: jest.fn(),
+}));
+
 describe('<DaoVersionInfo /> component', () => {
     const createTestComponent = (props: { dao: IDao } = { dao: generateDao({ plugins: [generateDaoPlugin()] }) }) => {
         const { dao } = props;

@@ -2,6 +2,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { ApplicationVersion } from '@/shared/components/applicationVersion';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, ChainEntityType, DefinitionList, Heading, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
 export interface IDaVersionInfoProps {
@@ -17,6 +18,8 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
 
     const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
+
+    const supportedPlugin = dao.plugins.find((plugin) => pluginRegistryUtils.getPlugin(plugin.subdomain) != null);
 
     return (
         <div className="flex w-full flex-col gap-2">
@@ -40,19 +43,23 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
                         })}
                     </Link>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceLabel')}>
-                    <Link
-                        description={addressUtils.truncateAddress(dao.plugins[0].address)}
-                        iconRight={IconType.LINK_EXTERNAL}
-                        href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.plugins[0].address })}
+                {supportedPlugin && (
+                    <DefinitionList.Item
+                        term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceLabel')}
                     >
-                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceValue', {
-                            name: dao.plugins[0].subdomain,
-                            release: dao.plugins[0].release,
-                            build: dao.plugins[0].build,
-                        })}
-                    </Link>
-                </DefinitionList.Item>
+                        <Link
+                            description={addressUtils.truncateAddress(supportedPlugin.address)}
+                            iconRight={IconType.LINK_EXTERNAL}
+                            href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: supportedPlugin.address })}
+                        >
+                            {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceValue', {
+                                name: supportedPlugin.subdomain,
+                                release: supportedPlugin.release,
+                                build: supportedPlugin.build,
+                            })}
+                        </Link>
+                    </DefinitionList.Item>
+                )}
             </DefinitionList.Container>
         </div>
     );
