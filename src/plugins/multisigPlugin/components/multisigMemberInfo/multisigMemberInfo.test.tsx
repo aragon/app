@@ -73,8 +73,8 @@ describe('<MultisigMemberInfo /> component', () => {
         useMemberListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
-        render(createTestComponent());
+        render(createTestComponent({ daoId: 'dao-with-links' }));
         const linkElement = screen.getByRole('link');
-        expect(linkElement).toHaveAttribute('href', '/dao/test-id/members');
+        expect(linkElement).toHaveAttribute('href', '/dao/dao-with-links/members');
     });
 });
