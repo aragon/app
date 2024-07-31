@@ -15,7 +15,7 @@ import {
 
 export interface IFinanceDetailsListProps extends IDefinitionListContainerProps {
     /**
-     * Network name of the DAO.
+     * DAO to display the details for.
      */
     dao?: IDao;
 }
@@ -26,8 +26,8 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
 
     const { t } = useTranslations();
 
-    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[dao!.network].chainId });
-    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao?.address });
+    const { buildEntityUrl } = useBlockExplorer({ chainId: networkDefinitions[network].chainId });
+    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
 
     const daoEns = daoUtils.getDaoEns(dao);
 

@@ -36,14 +36,12 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { daoId, proposalId } = props;
 
     const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer();
     const pageUrl = useCurrentUrl();
 
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
-
-    const chainId = proposal ? networkDefinitions[proposal.network].chainId : undefined;
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     if (proposal == null) {
         return null;
@@ -57,8 +55,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const creatorName = addressUtils.truncateAddress(creatorAddress);
 
-    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress });
-    const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
+    const { chainId } = networkDefinitions[proposal.network];
+    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
+    const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
     const pageBreadcrumbs = [
         {
