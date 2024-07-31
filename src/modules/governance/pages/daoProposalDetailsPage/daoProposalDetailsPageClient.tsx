@@ -1,6 +1,6 @@
 'use client';
 
-import proposalActionTransformer from '@/modules/governance/utils/proposalActionTransformer';
+import proposalActionUtils from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -53,7 +53,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { blockTimestamp, creatorAddress, transactionHash, summary, title, description, actions, resources } =
         proposal;
 
-    const transformedProposalActions = proposalActionTransformer.transform(actions);
+    const normalizedProposalActions = proposalActionUtils.normalizeActions(actions);
 
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
@@ -88,21 +88,21 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             </Page.Header>
             <Page.Content>
                 <Page.Main>
-                    <Page.Section title={t('app.governance.daoProposalDetailsPage.main.proposal')}>
-                        {description && (
+                    {description && (
+                        <Page.Section title={t('app.governance.daoProposalDetailsPage.main.proposal')}>
                             <CardCollapsible
                                 buttonLabelClosed={t('app.governance.daoProposalDetailsPage.main.readMore')}
                                 buttonLabelOpened={t('app.governance.daoProposalDetailsPage.main.readLess')}
                             >
                                 <DocumentParser document={description} />
                             </CardCollapsible>
-                        )}
-                    </Page.Section>
+                        </Page.Section>
+                    )}
                     <Page.Section
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                     >
-                        <ProposalActions actions={transformedProposalActions} />
+                        <ProposalActions actions={normalizedProposalActions} />
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>

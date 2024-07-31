@@ -1,16 +1,16 @@
 import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
 import { generateProposalActionChangeSettings } from '@/modules/governance/testUtils/generators/proposalActionChangeSettings';
 import { ProposalActionType, type IProposalAction, type IProposalActionChangeMembers } from '@aragon/ods';
-import proposalActionTransformer from './proposalActionTransformer';
+import proposalActionUtils from './proposalActionUtils';
 
-describe('ActionTransformer', () => {
+describe('ProposalActionUtils', () => {
     it('should map known action types correctly', () => {
         const fetchedActions: IProposalAction[] = [
             generateProposalActionChangeMembers({ type: 'MultisigAddMembers' as IProposalActionChangeMembers['type'] }),
             generateProposalActionChangeSettings({ type: 'UpdateMultiSigSettings' }),
         ];
 
-        const transformedActions = proposalActionTransformer.transform(fetchedActions);
+        const transformedActions = proposalActionUtils.normalizeActions(fetchedActions);
 
         expect(transformedActions).toHaveLength(2);
         expect(transformedActions[0].type).toEqual(ProposalActionType.ADD_MEMBERS);
@@ -23,7 +23,7 @@ describe('ActionTransformer', () => {
             generateProposalActionChangeSettings({ type: 'UnknownActionType' }),
         ];
 
-        const transformedActions = proposalActionTransformer.transform(fetchedActions);
+        const transformedActions = proposalActionUtils.normalizeActions(fetchedActions);
 
         expect(transformedActions).toHaveLength(0);
     });

@@ -141,6 +141,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         render(createTestComponent());
         expect(screen.queryByText(/daoProposalDetailsPage.aside.links.title/)).not.toBeInTheDocument();
     });
+    
     it('renders the proposal actions when defined', () => {
         const actions = [
             generateProposalActionChangeMembers({
