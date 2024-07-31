@@ -20,7 +20,18 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
     const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
-    await queryClient.prefetchQuery(memberOptions(memberParams));
+
+    try {
+        await queryClient.fetchQuery(memberOptions(memberParams));
+    } catch (error: unknown) {
+        return (
+            <Page.Error
+                error={JSON.parse(JSON.stringify(error))}
+                actionLink={`/dao/${daoId}/members`}
+                notFoundNamespace="app.governance.daoMemberDetailsPage"
+            />
+        );
+    }
 
     return (
         <Page.Container queryClient={queryClient}>
