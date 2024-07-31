@@ -30,9 +30,12 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
 
     const voteListParams = { queryParams: { proposalId: proposal.id, pageSize: votesPerPage } };
 
-    // TODO: remove workaround when settings interface is cleaned up (APP-3483)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const settingsObject = { settings: proposal.settings, token: (proposal as any).token };
+    // TODO: remove custom settings object and plugin-specific logic when settings interface is cleaned up (APP-3483)
+    const settingsObject = {
+        settings: proposal.settings,
+        token: (proposal as unknown as Record<string, unknown>).token,
+    };
+
     const proposalSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
         params: { daoId, settings: settingsObject },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,

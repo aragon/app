@@ -1,4 +1,6 @@
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
+import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -17,6 +19,7 @@ jest.mock('../voteList', () => ({
 
 describe('<ProposalVotingTerminal /> component', () => {
     const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
+    const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
 
     beforeEach(() => {
         useDaoPluginIdsSpy.mockReturnValue([]);
@@ -24,6 +27,7 @@ describe('<ProposalVotingTerminal /> component', () => {
 
     afterEach(() => {
         useDaoPluginIdsSpy.mockReset();
+        useSlotFunctionSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IProposalVotingTerminalProps>) => {
@@ -55,5 +59,25 @@ describe('<ProposalVotingTerminal /> component', () => {
         render(createTestComponent());
         await userEvent.click(screen.getByRole('tab', { name: 'Votes' }));
         expect(screen.getByTestId('vote-list-mock')).toBeInTheDocument();
+    });
+
+    it('renders the proposal settings', () => {
+        const pluginIds = ['plugin-id'];
+        const daoId = 'test-id';
+        const settings = { pluginConfig: 'pluginValue' };
+        const parsedSettings = { term: 'plugin-term', definition: 'plugin-value' };
+        const proposal = generateProposal({ settings });
+
+        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
+        useSlotFunctionSpy.mockReturnValue([parsedSettings]);
+
+        render(createTestComponent({ daoId, proposal }));
+        expect(useSlotFunctionSpy).toHaveBeenCalledWith({
+            params: { daoId, settings: { settings: proposal.settings, token: undefined } },
+            pluginIds,
+            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
+        });
+        expect(screen.getByText(parsedSettings.term)).toBeInTheDocument();
+        expect(screen.getByText(parsedSettings.definition)).toBeInTheDocument();
     });
 });

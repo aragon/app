@@ -1,6 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import type { IProposalResource } from './proposalResource';
 
+// TODO: TSettings generic type should extends IDaoSettings interface after sync with backend (APP-3483)
 export interface IProposal<TSettings = unknown> {
     /**
      * Id of the proposal in DaoAddress-PluginAddress-ProposalId format.
@@ -55,7 +56,7 @@ export interface IProposal<TSettings = unknown> {
      */
     resources: IProposalResource[];
     /**
-     * Settings of the DAO when the proposal was created.
+     * DAO settings when the proposal was created.
      */
     settings: TSettings;
 }
