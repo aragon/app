@@ -14,6 +14,7 @@ import {
     useBlockExplorer,
 } from '@aragon/ods';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
+import { formatUnits } from 'viem';
 
 export interface ITokenMemberInfoProps {
     /**
@@ -31,11 +32,18 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     const { data: daoSettings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
 
     const distribution = memberList?.pages[0].metadata.totalRecords;
-    const formattedTotalSupply = formatterUtils.formatNumber(daoSettings?.token.totalSupply, {
-        format: NumberFormat.TOKEN_AMOUNT_LONG,
-    });
+
     const chainId = daoSettings ? networkDefinitions[daoSettings.token.network].chainId : undefined;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
+
+    if (daoSettings == null) {
+        return null;
+    }
+
+    const parsedTotalSupply = formatUnits(BigInt(daoSettings?.token.totalSupply), daoSettings?.token.decimals);
+    const formattedTotalSupply = formatterUtils.formatNumber(parsedTotalSupply, {
+        format: NumberFormat.TOKEN_AMOUNT_LONG,
+    });
 
     return (
         <DefinitionList.Container>
@@ -46,18 +54,18 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 <Link
                     description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
                     iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: daoSettings?.token.address })}
+                    href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: daoSettings.token.address })}
                     target="_blank"
                 >
                     {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
-                        tokenName: daoSettings?.token.name,
-                        tokenSymbol: daoSettings?.token.symbol,
+                        tokenName: daoSettings.token.name,
+                        tokenSymbol: daoSettings.token.symbol,
                     })}
                 </Link>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.distribution')}>
                 <Link
-                    description={addressUtils.truncateAddress(daoSettings?.token.address)}
+                    description={addressUtils.truncateAddress(daoSettings.token.address)}
                     iconRight={IconType.LINK_EXTERNAL}
                     href={`/dao/${daoId}/members`}
                 >
@@ -68,7 +76,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 <p>
                     {t('app.plugins.token.tokenMemberInfo.tokenSupply', {
                         supply: formattedTotalSupply,
-                        symbol: daoSettings?.token.symbol,
+                        symbol: daoSettings.token.symbol,
                     })}
                 </p>
             </DefinitionList.Item>
