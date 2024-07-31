@@ -28,15 +28,13 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
     const { daoId } = props;
 
     const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer();
 
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
 
     const daoSettingsParams = { daoId };
     const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
-
-    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     if (dao == null || settings == null) {
         return null;
@@ -59,14 +57,13 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
     const minProposerAmount = formatUnits(BigInt(Number(minProposerVotingPower)), token.decimals);
     const formattedMinBalance = `${formatterUtils.formatNumber(minProposerAmount)} $${token.symbol}`;
 
+    const { chainId } = networkDefinitions[dao.network];
+    const pluginLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: settings.pluginAddress, chainId });
+
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.contract')}>
-                <Link
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: settings.pluginAddress })}
-                    target="_blank"
-                >
+                <Link iconRight={IconType.LINK_EXTERNAL} href={pluginLink} target="_blank">
                     {daoUtils.formatPluginName(settings.pluginSubdomain)}
                 </Link>
                 <p className="text-neutral-500">{addressUtils.truncateAddress(settings.pluginAddress)}</p>

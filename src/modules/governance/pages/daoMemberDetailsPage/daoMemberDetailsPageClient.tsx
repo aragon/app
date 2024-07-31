@@ -37,6 +37,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { address, daoId } = props;
 
     const { t } = useTranslations();
+    const { getBlockExplorer, buildEntityUrl } = useBlockExplorer();
     const pageUrl = useCurrentUrl();
 
     const memberUrlParams = { address };
@@ -55,9 +56,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         pluginIds,
     });
 
-    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
-    const { blockExplorer, buildEntityUrl } = useBlockExplorer({ chainId });
-
     // TODO: Display real last activity date (APP-3405)
     const stats = [
         ...(pluginStats ?? []),
@@ -72,7 +70,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const truncatedAddress = addressUtils.truncateAddress(address);
     const memberName = ens ?? truncatedAddress;
 
-    const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address });
+    const { chainId } = networkDefinitions[dao.network];
+    const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
+    const blockExplorer = getBlockExplorer(chainId);
 
     const pageBreadcrumbs = [
         { href: `/dao/${daoId}/members`, label: t('app.governance.daoMemberPage.header.breadcrumb.members') },
