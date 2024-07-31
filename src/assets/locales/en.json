@@ -244,8 +244,8 @@
             "app": "App",
             "osLabel": "Operating system",
             "osValue": "{{os}}",
-            "governance": "Governance",
-            "governanceLabel": "{{name}} v{{release}}.{{build}}"
+            "governanceLabel": "Governance",
+            "governanceValue": "{{name}} v{{release}}.{{build}}"
           }
         }
       }

@@ -44,17 +44,25 @@ describe('<DaoSettingsInfo /> component', () => {
 
     it('renders the correct terms', () => {
         render(createTestComponent());
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.name')).toBeInTheDocument();
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.blockchain')).toBeInTheDocument();
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.ens')).toBeInTheDocument();
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.summary')).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.name/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.blockchain/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.summary/)).toBeInTheDocument();
+    });
+
+    it('renders the ens term and value if present', () => {
+        const dao = generateDao({ subdomain: 'dao.eth' });
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        render(createTestComponent());
+
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.ens/)).toBeInTheDocument();
+        expect(screen.getByText('dao.eth')).toBeInTheDocument();
     });
 
     it('renders the links term if links are present', () => {
         const dao = generateDao({ links: [{ name: 'link', url: 'link' }] });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.links')).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.links/)).toBeInTheDocument();
     });
 
     it('renders the correct definition values of the dao', () => {

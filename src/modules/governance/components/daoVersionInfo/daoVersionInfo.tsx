@@ -52,13 +52,13 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
                         })}
                     </Link>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governance')}>
+                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceLabel')}>
                     <Link
                         description={addressUtils.truncateAddress(dao?.plugins[0].address)}
                         iconRight={IconType.LINK_EXTERNAL}
                         href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao?.plugins[0].address })}
                     >
-                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceLabel', {
+                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceValue', {
                             name: dao?.plugins[0].subdomain,
                             release: dao?.plugins[0].release,
                             build: dao?.plugins[0].build,
