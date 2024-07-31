@@ -1,4 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { envLabel } from '@/shared/constants/envLabel';
 import { Tag, type ITagProps } from '@aragon/ods';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
@@ -10,11 +11,6 @@ export interface IApplicationTagsProps extends ComponentProps<'div'> {
      */
     variant?: ITagProps['variant'];
 }
-
-const envLabel: Record<string, string | undefined> = {
-    development: 'DEV',
-    staging: 'STG',
-};
 
 export const ApplicationTags: React.FC<IApplicationTagsProps> = (props) => {
     const { variant = 'primary', className, ...otherProps } = props;

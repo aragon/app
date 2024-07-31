@@ -1,5 +1,6 @@
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { envLabel } from '@/shared/constants/envLabel';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, Heading, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
@@ -9,11 +10,6 @@ export interface IDaVersionInfoProps {
      */
     daoId: string;
 }
-
-export const envLabel: Record<string, string | undefined> = {
-    development: 'DEV',
-    staging: 'STG',
-};
 
 export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
     const { daoId } = props;
