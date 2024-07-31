@@ -24,7 +24,7 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
             <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.eligibleVoters')}>
                 <p>{t('app.plugins.multisig.multisigMembersInfo.multisigMembers')}</p>
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.members')}>
+            <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}>
                 <Link
                     description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
                     iconRight={IconType.LINK_EXTERNAL}

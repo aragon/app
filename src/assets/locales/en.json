@@ -250,7 +250,7 @@
         },
         "tokenMemberInfo": {
           "eligibleVoters": "Eligible voters",
-          "token": "Token",
+          "tokenLabel": "Token",
           "distribution": "Distribution",
           "supply": "Supply",
           "members": "Members",
@@ -295,7 +295,7 @@
         },
         "multisigMembersInfo": {
           "eligibleVoters": "Eligible voters",
-          "members": "Members",
+          "membersLabel": "Members",
           "multisigMembers": "Multisig members",
           "linkDescription": "View all members",
           "membersCount": "See {{count}} addresses"

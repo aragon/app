@@ -37,8 +37,8 @@ describe('<MultisigMemberInfo /> component', () => {
 
     it('renders the component with the correct eligible voters and members info', () => {
         render(createTestComponent());
-        expect(screen.getByText('app.plugins.multisig.multisigMembersInfo.eligibleVoters')).toBeInTheDocument();
-        expect(screen.getByText('app.plugins.multisig.multisigMembersInfo.members')).toBeInTheDocument();
+        expect(screen.getByText(/multisigMembersInfo.eligibleVoters/)).toBeInTheDocument();
+        expect(screen.getByText(/multisigMembersInfo.membersLabel/)).toBeInTheDocument();
     });
 
     it('displays the correct number of members', async () => {
@@ -59,7 +59,7 @@ describe('<MultisigMemberInfo /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('app.plugins.multisig.multisigMembersInfo.membersCount (count=3)')).toBeInTheDocument();
+        expect(screen.getByText(/multisigMembersInfo.membersCount \(count=3\)/)).toBeInTheDocument();
     });
 
     it('contains a link to the members page', () => {

@@ -13,8 +13,8 @@ import {
     NumberFormat,
     useBlockExplorer,
 } from '@aragon/ods';
-import { useMemberList } from '../../../../modules/governance/api/governanceService';
 import { formatUnits } from 'viem';
+import { useMemberList } from '../../../../modules/governance/api/governanceService';
 
 export interface ITokenMemberInfoProps {
     /**
@@ -50,7 +50,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.eligibleVoters')}>
                 <p>{t('app.plugins.token.tokenMemberInfo.tokenHolders')}</p>
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.token')}>
+            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.tokenLabel')}>
                 <Link
                     description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
                     iconRight={IconType.LINK_EXTERNAL}

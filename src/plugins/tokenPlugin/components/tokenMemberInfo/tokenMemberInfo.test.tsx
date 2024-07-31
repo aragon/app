@@ -46,21 +46,11 @@ describe('<TokenMemberInfo /> component', () => {
     };
 
     it('renders the component with the correct eligible voters and members info', async () => {
-        const baseSettings = generateDaoTokenSettings();
-        const baseTokenSettings = generateToken();
-        const mockSettings = {
-            ...baseSettings,
-            settings: {
-                ...baseSettings.settings,
-                votingMode: 2,
-            },
-            token: {
-                ...baseTokenSettings,
-                symbol: 'BTC',
-                name: 'Bitcoin',
-                totalSupply: 300,
-            },
-        };
+        const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300' });
+        const mockSettings = generateDaoTokenSettings({
+            settings: { ...generateDaoTokenSettings().settings, votingMode: 2 },
+            token,
+        });
 
         const members = [
             generateMember({ address: '0x123' }),
@@ -83,21 +73,17 @@ describe('<TokenMemberInfo /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('app.plugins.token.tokenMemberInfo.eligibleVoters')).toBeInTheDocument();
-        expect(screen.getByText('app.plugins.token.tokenMemberInfo.tokenHolders')).toBeInTheDocument();
-        expect(screen.getByText('app.plugins.token.tokenMemberInfo.token')).toBeInTheDocument();
-        expect(screen.getByText('app.plugins.token.tokenMemberInfo.tokenLinkDescription')).toBeInTheDocument();
+        expect(screen.getByText(/tokenMemberInfo.eligibleVoters/)).toBeInTheDocument();
+        expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
+        expect(screen.getByText(/tokenMemberInfo.tokenLabel/)).toBeInTheDocument();
+        expect(screen.getByText(/tokenMemberInfo.tokenLinkDescription/)).toBeInTheDocument();
         expect(
-            screen.getByText(
-                'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Bitcoin,tokenSymbol=BTC)',
-            ),
+            screen.getByText(/tokenMemberInfo.tokenNameAndSymbol \(tokenName=Bitcoin,tokenSymbol=BTC\)/),
         ).toBeInTheDocument();
-        expect(screen.getByText('app.plugins.token.tokenMemberInfo.distribution')).toBeInTheDocument();
-        expect(screen.getByText('app.plugins.token.tokenMemberInfo.tokenDistribution (count=5)')).toBeInTheDocument();
-        expect(screen.getByText('app.plugins.token.tokenMemberInfo.supply')).toBeInTheDocument();
-        expect(
-            screen.getByText('app.plugins.token.tokenMemberInfo.tokenSupply (supply=300,symbol=BTC)'),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/tokenMemberInfo.distribution/)).toBeInTheDocument();
+        expect(screen.getByText(/tokenMemberInfo.tokenDistribution \(count=5\)/)).toBeInTheDocument();
+        expect(screen.getByText(/tokenMemberInfo.supply/)).toBeInTheDocument();
+        expect(screen.getByText(/tokenMemberInfo.tokenSupply \(supply=300,symbol=BTC\)/)).toBeInTheDocument();
     });
 
     it('contains a link to the block explorer', () => {
@@ -118,29 +104,25 @@ describe('<TokenMemberInfo /> component', () => {
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
 
+        const token = generateToken({ symbol: 'WETH', name: 'Wrapped ETH', address: '0xWethAddress' });
+        const mockSettings = generateDaoTokenSettings({ token });
+        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
+
         render(createTestComponent());
+
         const linkElement = screen.getByRole('link', {
-            name: 'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Ethereum,tokenSymbol=ETH) app.plugins.token.tokenMemberInfo.tokenLinkDescription',
+            name: 'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Wrapped ETH,tokenSymbol=WETH) app.plugins.token.tokenMemberInfo.tokenLinkDescription',
         });
-        expect(linkElement).toHaveAttribute('href', 'https://etherscan.io/token/0xTestAddress');
+
+        expect(linkElement).toHaveAttribute('href', 'https://etherscan.io/token/0xWethAddress');
     });
 
     it('contains a link to the members page', () => {
-        const baseSettings = generateDaoTokenSettings();
-        const baseTokenSettings = generateToken();
-        const mockSettings = {
-            ...baseSettings,
-            settings: {
-                ...baseSettings.settings,
-                votingMode: 2,
-            },
-            token: {
-                ...baseTokenSettings,
-                symbol: 'BTC',
-                name: 'Bitcoin',
-                totalSupply: 300,
-            },
-        };
+        const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300', address: '0xBtcAddress' });
+        const mockSettings = generateDaoTokenSettings({
+            settings: { ...generateDaoTokenSettings().settings, votingMode: 2 },
+            token,
+        });
 
         const members = [
             generateMember({ address: '0x123' }),
@@ -162,7 +144,7 @@ describe('<TokenMemberInfo /> component', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
         render(createTestComponent());
         const linkElement = screen.getByRole('link', {
-            name: 'app.plugins.token.tokenMemberInfo.tokenDistribution (count=5) 0xTestAddress',
+            name: /tokenMemberInfo.tokenDistribution \(count=5\) 0xBtcAddress/,
         });
         expect(linkElement).toHaveAttribute('href', '/dao/test-id/members');
     });
