@@ -3,7 +3,7 @@ import * as DaoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DaoVersionInfoDefinitionList } from './daoVersionInfoDefinitionList';
+import { DaoVersionInfoDefinitionList } from './daoVersionInfo';
 
 describe('<DaoVersionInfoDefinitionList /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');

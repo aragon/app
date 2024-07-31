@@ -1,18 +1,16 @@
-import type { IGetDaoParams } from '@/shared/api/daoService';
 import * as DaoService from '@/shared/api/daoService';
-
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DaoDefinitionList } from './daoDefinitionList';
+import { DaoSettingsInfo } from './daoSettingsInfo';
 
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
 }));
 
-describe('<DaoDefinitionList /> component', () => {
+describe('<DaoSettingsInfo /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
 
     beforeEach(() => {
@@ -22,14 +20,13 @@ describe('<DaoDefinitionList /> component', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
     });
-    const createTestComponent = (props?: Partial<IGetDaoParams>) => {
-        const completeProps: IGetDaoParams = {
-            urlParams: { id: 'test-id' },
-            ...props,
-        };
+
+    const createTestComponent = (props: { daoId?: string } = {}) => {
+        const { daoId = 'test-id' } = props;
+
         return (
             <OdsModulesProvider>
-                <DaoDefinitionList initialParams={completeProps} />
+                <DaoSettingsInfo daoId={daoId} />
             </OdsModulesProvider>
         );
     };
@@ -47,19 +44,17 @@ describe('<DaoDefinitionList /> component', () => {
 
     it('renders the correct terms', () => {
         render(createTestComponent());
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.name')).toBeInTheDocument();
-        expect(
-            screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.blockchain'),
-        ).toBeInTheDocument();
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.ens')).toBeInTheDocument();
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.summary')).toBeInTheDocument();
+        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.name')).toBeInTheDocument();
+        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.blockchain')).toBeInTheDocument();
+        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.ens')).toBeInTheDocument();
+        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.summary')).toBeInTheDocument();
     });
 
     it('renders the links term if links are present', () => {
         const dao = generateDao({ links: [{ name: 'link', url: 'link' }] });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.links')).toBeInTheDocument();
+        expect(screen.getByText('app.governance.daoSettingsPage.main.daoSettingsInfo.links')).toBeInTheDocument();
     });
 
     it('renders the correct definition values of the dao', () => {

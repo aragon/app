@@ -1,13 +1,13 @@
-import { useDao, type IGetDaoParams } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils, ChainEntityType, DefinitionList, Heading, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
-export interface IDaVersionInfoDefinitionListProps {
+export interface IDaVersionInfoProps {
     /**
-     * Initial parameters to use to fetch the DAO information.
+     * ID of the Dao.
      */
-    initialParams: IGetDaoParams;
+    daoId: string;
 }
 
 export const envLabel: Record<string, string | undefined> = {
@@ -15,10 +15,10 @@ export const envLabel: Record<string, string | undefined> = {
     staging: 'STG',
 };
 
-export const DaoVersionInfoDefinitionList: React.FC<IDaVersionInfoDefinitionListProps> = (props) => {
-    const { initialParams } = props;
+export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
+    const { daoId } = props;
 
-    const { data: dao } = useDao(initialParams);
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { t } = useTranslations();
 
@@ -32,21 +32,24 @@ export const DaoVersionInfoDefinitionList: React.FC<IDaVersionInfoDefinitionList
 
     return (
         <div className="flex w-full flex-col gap-2">
-            <Heading size="h3">Version info</Heading>
+            <Heading size="h3">{t('app.governance.daoSettingsPage.aside.daoVersionInfo.title')}</Heading>
             <DefinitionList.Container>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.app')}>
                     <Link href="/" iconRight={IconType.LINK_EXTERNAL}>
                         {t(`app.application.applicationTags.${versionLabel}`, { version, env })}
                     </Link>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.os')}>
+                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.osLabel')}>
                     {/* TODO: Fetch this operating system value from backend when available (APP-3484) */}
                     <Link
                         description={addressUtils.truncateAddress(dao?.address)}
                         iconRight={IconType.LINK_EXTERNAL}
                         href=""
+                        target="_blank"
                     >
-                        Aragon OSx v0.00
+                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.osValue', {
+                            os: 'Aragon OSx',
+                        })}
                     </Link>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governance')}>

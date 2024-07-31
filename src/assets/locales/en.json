@@ -226,11 +226,12 @@
       "daoSettingsPage": {
         "main": {
           "title": "Settings",
-          "daoDefinitionList": {
+          "daoSettingsInfo": {
+            "title": "DAO",
             "name": "Name",
             "blockchain": "Blockchain",
             "ens": "ENS name",
-            "summary": "summary",
+            "summary": "Summary",
             "links": "Links",
             "readMore": "Read more",
             "readLess": "Read less",
@@ -239,8 +240,10 @@
         },
         "aside": {
           "daoVersionInfo": {
+            "title": "Version info",
             "app": "App",
-            "os": "Operating system",
+            "osLabel": "Operating system",
+            "osValue": "{{os}}",
             "governance": "Governance",
             "governanceLabel": "{{name}} v{{release}}.{{build}}"
           }

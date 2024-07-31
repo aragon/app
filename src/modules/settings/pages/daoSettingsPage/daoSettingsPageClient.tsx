@@ -1,28 +1,29 @@
 'use client';
-import { DaoDefinitionList } from '@/modules/governance/components/daoDefinitionList/daoDefinitionList';
-import { DaoVersionInfoDefinitionList } from '@/modules/governance/components/daoVersionInfoDefinitionList';
-import { type IGetDaoParams } from '@/shared/api/daoService';
+import { DaoSettingsInfo } from '@/modules/governance/components/daoSettingsInfo';
+import { DaoVersionInfo } from '@/modules/governance/components/daoVersionInfo';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface IDaoSettingsPageClientProps {
     /**
-     * Initial parameters to use to fetch the DAO information.
+     * ID of the Dao
      */
-    initialParams: IGetDaoParams;
+    daoId: string;
 }
 
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (props) => {
-    const { initialParams } = props;
+    const { daoId } = props;
     const { t } = useTranslations();
 
     return (
         <>
             <Page.Main title={t('app.governance.daoSettingsPage.main.title')}>
-                <DaoDefinitionList initialParams={initialParams} />
+                <Page.Section title={t('app.governance.daoSettingsPage.main.daoSettingsInfo.title')}>
+                    <DaoSettingsInfo daoId={daoId} />
+                </Page.Section>
             </Page.Main>
             <Page.Aside>
-                <DaoVersionInfoDefinitionList initialParams={initialParams} />
+                <DaoVersionInfo daoId={daoId} />
             </Page.Aside>
         </>
     );
