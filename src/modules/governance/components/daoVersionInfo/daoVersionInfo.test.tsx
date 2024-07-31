@@ -1,9 +1,9 @@
 import type { IDao } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin, generatePlugin } from '@/shared/testUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo } from './daoVersionInfo';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 
 describe('<DaoVersionInfo /> component', () => {
     const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
