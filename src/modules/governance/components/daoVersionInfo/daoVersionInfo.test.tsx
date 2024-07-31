@@ -36,6 +36,8 @@ describe('<DaoVersionInfo /> component', () => {
     });
 
     it('renders the correct values', () => {
+        process.env.version = '1.0.0';
+        process.env.NEXT_PUBLIC_ENV = 'development';
         const dao = generateDao({
             plugins: [
                 {
@@ -50,6 +52,7 @@ describe('<DaoVersionInfo /> component', () => {
 
         render(createTestComponent({ dao: dao }));
 
+        expect(screen.getByText('v1.0.0 (DEV)')).toBeInTheDocument();
         // TODO: Update test when we get value from the backend (APP-3484)
         expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osValue/)).toBeInTheDocument();
         expect(
