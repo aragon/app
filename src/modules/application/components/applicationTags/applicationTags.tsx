@@ -1,5 +1,4 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { envLabel } from '@/shared/constants/envLabel';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
 import { Tag, type ITagProps } from '@aragon/ods';
 import classNames from 'classnames';
