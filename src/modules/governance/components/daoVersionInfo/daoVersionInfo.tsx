@@ -50,7 +50,11 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
                         <Link
                             description={addressUtils.truncateAddress(supportedPlugin.address)}
                             iconRight={IconType.LINK_EXTERNAL}
-                            href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: supportedPlugin.address })}
+                            href={buildEntityUrl({
+                                type: ChainEntityType.ADDRESS,
+                                id: supportedPlugin.address,
+                                chainId,
+                            })}
                         >
                             {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceValue', {
                                 name: supportedPlugin.subdomain,
