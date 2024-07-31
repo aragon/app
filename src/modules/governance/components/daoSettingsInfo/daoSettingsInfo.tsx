@@ -40,7 +40,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.main.daoSettingsInfo.name')}>
                     <div className="flex items-center gap-2">
                         <p>{dao?.name}</p>
-                        {dao?.avatar && <DaoAvatar src={daoAvatar} name={dao?.name} size="md" />}
+                        <DaoAvatar src={daoAvatar} name={dao?.name} size="md" />
                     </div>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.main.daoSettingsInfo.blockchain')}>
