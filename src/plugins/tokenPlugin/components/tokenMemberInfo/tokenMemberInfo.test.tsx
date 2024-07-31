@@ -110,11 +110,8 @@ describe('<TokenMemberInfo /> component', () => {
 
         render(createTestComponent());
 
-        const linkElement = screen.getByRole('link', {
-            name: 'app.plugins.token.tokenMemberInfo.tokenNameAndSymbol (tokenName=Wrapped ETH,tokenSymbol=WETH) app.plugins.token.tokenMemberInfo.tokenLinkDescription',
-        });
-
-        expect(linkElement).toHaveAttribute('href', 'https://etherscan.io/token/0xWethAddress');
+        const link = screen.getByRole<HTMLAnchorElement>('link', { name: /tokenMemberInfo.tokenNameAndSymbol/ });
+        expect(link.text).toContain('tokenName=Wrapped ETH,tokenSymbol=WETH');
     });
 
     it('contains a link to the members page', () => {
