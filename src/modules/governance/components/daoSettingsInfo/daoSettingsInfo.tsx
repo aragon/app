@@ -1,4 +1,4 @@
-import { useDao } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -17,19 +17,16 @@ import {
 
 export interface IDaoSettingsInfoProps {
     /**
-     * ID of the Dao.
+     * Dao Object.
      */
-    daoId: string;
+    dao: IDao;
 }
 
 export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
-    const { daoId } = props;
-
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-
+    const { dao } = props;
     const { t } = useTranslations();
 
-    const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
+    const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
@@ -39,26 +36,26 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
             <DefinitionList.Container>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.main.daoSettingsInfo.name')}>
                     <div className="flex items-center gap-2">
-                        <p>{dao?.name}</p>
-                        <DaoAvatar src={daoAvatar} name={dao?.name} size="md" />
+                        <p>{dao.name}</p>
+                        <DaoAvatar src={daoAvatar} name={dao.name} size="md" />
                     </div>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.main.daoSettingsInfo.blockchain')}>
                     <div className="flex items-center justify-between">
-                        {dao?.network && networkDefinitions[dao.network].name}
+                        {dao.network && networkDefinitions[dao.network].name}
                         <Tag label={t('app.governance.daoSettingsPage.main.daoSettingsInfo.notChangeable')} />
                     </div>
                 </DefinitionList.Item>
-                {dao?.subdomain && (
+                {dao.subdomain && (
                     <DefinitionList.Item term={t('app.governance.daoSettingsPage.main.daoSettingsInfo.ens')}>
                         <div className="flex items-center justify-between">
                             <Link
-                                description={addressUtils.truncateAddress(dao?.address)}
-                                href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao?.address })}
+                                description={addressUtils.truncateAddress(dao.address)}
+                                href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address })}
                                 iconRight={IconType.LINK_EXTERNAL}
                                 target="_blank"
                             >
-                                {dao?.subdomain}
+                                {dao.subdomain}
                             </Link>
                             <Tag label={t('app.governance.daoSettingsPage.main.daoSettingsInfo.notChangeable')} />
                         </div>
@@ -70,12 +67,12 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                         buttonLabelClosed={t('app.governance.daoSettingsPage.main.daoSettingsInfo.readMore')}
                         buttonLabelOpened={t('app.governance.daoSettingsPage.main.daoSettingsInfo.readLess')}
                     >
-                        <p>{dao?.description}</p>
+                        <p>{dao.description}</p>
                     </Collapsible>
                 </DefinitionList.Item>
-                {dao?.links && dao.links.length > 0 && (
+                {dao.links && dao.links.length > 0 && (
                     <DefinitionList.Item term={t('app.governance.daoSettingsPage.main.daoSettingsInfo.links')}>
-                        {dao?.links.map((link, index) => (
+                        {dao.links.map((link, index) => (
                             <li key={index}>
                                 <Link
                                     description={link.url}

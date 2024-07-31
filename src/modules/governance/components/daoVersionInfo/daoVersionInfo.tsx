@@ -1,27 +1,21 @@
-import { useDao } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { envLabel } from '@/shared/constants/envLabel';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
 import { addressUtils, ChainEntityType, DefinitionList, Heading, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
 export interface IDaVersionInfoProps {
     /**
-     * ID of the Dao.
+     * Dao Object.
      */
-    daoId: string;
+    dao: IDao;
 }
 
 export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
-    const { daoId } = props;
-
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-
+    const { dao } = props;
     const { t } = useTranslations();
 
-    const version = process.env.version!;
-
-    const env = envLabel[process.env.NEXT_PUBLIC_ENV!];
-    const versionLabel = env != null ? 'versionEnv' : 'version';
+    const { version, env, versionLabel } = useApplicationVersion();
 
     const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
@@ -38,7 +32,7 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.osLabel')}>
                     {/* TODO: Fetch this operating system value from backend when available (APP-3484) */}
                     <Link
-                        description={addressUtils.truncateAddress(dao?.address)}
+                        description={addressUtils.truncateAddress(dao.address)}
                         iconRight={IconType.LINK_EXTERNAL}
                         href=""
                         target="_blank"
@@ -50,14 +44,14 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceLabel')}>
                     <Link
-                        description={addressUtils.truncateAddress(dao?.plugins[0].address)}
+                        description={addressUtils.truncateAddress(dao.plugins[0].address)}
                         iconRight={IconType.LINK_EXTERNAL}
-                        href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao?.plugins[0].address })}
+                        href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.plugins[0].address })}
                     >
                         {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceValue', {
-                            name: dao?.plugins[0].subdomain,
-                            release: dao?.plugins[0].release,
-                            build: dao?.plugins[0].build,
+                            name: dao.plugins[0].subdomain,
+                            release: dao.plugins[0].release,
+                            build: dao.plugins[0].build,
                         })}
                     </Link>
                 </DefinitionList.Item>

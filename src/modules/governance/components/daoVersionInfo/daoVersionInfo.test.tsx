@@ -1,25 +1,16 @@
-import * as DaoService from '@/shared/api/daoService';
-import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import type { IDao } from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo } from './daoVersionInfo';
 
 describe('<DaoVersionInfo /> component', () => {
-    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
-
-    beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-    });
-
-    afterEach(() => {
-        useDaoSpy.mockReset();
-    });
-    const createTestComponent = (props: { daoId?: string } = {}) => {
-        const { daoId = 'test-id' } = props;
+    const createTestComponent = (props: { dao: IDao } = { dao: generateDao({ plugins: [generateDaoPlugin()] }) }) => {
+        const { dao } = props;
 
         return (
             <OdsModulesProvider>
-                <DaoVersionInfo daoId={daoId} />
+                <DaoVersionInfo dao={dao} />
             </OdsModulesProvider>
         );
     };
@@ -37,9 +28,7 @@ describe('<DaoVersionInfo /> component', () => {
             ],
         });
 
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-
-        render(createTestComponent());
+        render(createTestComponent({ dao: dao }));
 
         expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.app/)).toBeInTheDocument();
         expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osLabel/)).toBeInTheDocument();
@@ -58,9 +47,8 @@ describe('<DaoVersionInfo /> component', () => {
                 },
             ],
         });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
-        render(createTestComponent());
+        render(createTestComponent({ dao: dao }));
 
         // TODO: Update test when we get value from the backend (APP-3484)
         expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osValue/)).toBeInTheDocument();
@@ -83,10 +71,7 @@ describe('<DaoVersionInfo /> component', () => {
                 },
             ],
         });
-
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-
-        render(createTestComponent());
+        render(createTestComponent({ dao: dao }));
 
         const linkElement = screen.getByRole('link', {
             name: /daoSettingsPage.aside.daoVersionInfo.governanceValue \(name=multisig,release=1,build=1\) 0x89…437c/,
