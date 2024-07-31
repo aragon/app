@@ -1,14 +1,16 @@
 import type { IDao } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin, generatePlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo } from './daoVersionInfo';
-
-jest.mock('@/shared/utils/pluginRegistryUtils', () => ({
-    getPlugin: jest.fn(),
-}));
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 
 describe('<DaoVersionInfo /> component', () => {
+    const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
+
+    afterEach(() => {
+        getPluginSpy.mockReset();
+    });
     const createTestComponent = (props: { dao: IDao } = { dao: generateDao({ plugins: [generateDaoPlugin()] }) }) => {
         const { dao } = props;
 
@@ -32,6 +34,8 @@ describe('<DaoVersionInfo /> component', () => {
             ],
         });
 
+        getPluginSpy.mockReturnValue(generatePlugin());
+
         render(createTestComponent({ dao: dao }));
 
         expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.app/)).toBeInTheDocument();
@@ -47,12 +51,14 @@ describe('<DaoVersionInfo /> component', () => {
                 {
                     address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c',
                     release: '1',
-                    build: '1',
+                    build: '3',
                     subdomain: 'multisig',
                     type: '',
                 },
             ],
         });
+
+        getPluginSpy.mockReturnValue(generatePlugin());
 
         render(createTestComponent({ dao: dao }));
 
@@ -61,7 +67,7 @@ describe('<DaoVersionInfo /> component', () => {
         expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osValue/)).toBeInTheDocument();
         expect(
             screen.getByText(
-                /daoSettingsPage.aside.daoVersionInfo.governanceValue \(name=multisig,release=1,build=1\)/,
+                /daoSettingsPage.aside.daoVersionInfo.governanceValue \(name=multisig,release=1,build=3\)/,
             ),
         ).toBeInTheDocument();
     });
@@ -71,17 +77,20 @@ describe('<DaoVersionInfo /> component', () => {
             plugins: [
                 {
                     address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c',
-                    release: '1',
-                    build: '1',
+                    release: '3',
+                    build: '5',
                     subdomain: 'multisig',
                     type: '',
                 },
             ],
         });
+
+        getPluginSpy.mockReturnValue(generatePlugin());
+
         render(createTestComponent({ dao: dao }));
 
         const linkElement = screen.getByRole('link', {
-            name: /daoSettingsPage.aside.daoVersionInfo.governanceValue \(name=multisig,release=1,build=1\) 0x89…437c/,
+            name: /daoSettingsPage.aside.daoVersionInfo.governanceValue \(name=multisig,release=3,build=5\) 0x89…437c/,
         });
 
         expect(linkElement).toHaveAttribute(
