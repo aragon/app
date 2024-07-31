@@ -18,9 +18,7 @@ interface IUseTokenGovernanceSettingsParams {
     settings?: IDaoTokenSettings;
 }
 
-export const useTokenGovernanceSettings = (
-    params: IUseTokenGovernanceSettingsParams,
-): IDaoSettingTermAndDefinition[] => {
+export const useTokenGovernanceSettings = (params: IUseTokenGovernanceSettingsParams): IDaoSettingTermAndDefinition[] => {
     const { daoId, settings } = params;
 
     const { t } = useTranslations();
@@ -63,7 +61,11 @@ export const useTokenGovernanceSettings = (
         minutes: duration.minutes,
     });
 
-    const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPower), decimals);
+    // TODO: to be removed when backend returns numbers without scientific notation (APP-3480)
+    const minProposerVotingPowerFullNumber = Number(minProposerVotingPower ?? '0').toLocaleString('fullwide', {
+        useGrouping: false,
+    });
+    const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPowerFullNumber), decimals);
     const formattedProposerVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
     });
