@@ -44,7 +44,7 @@ export const initialiseTokenPlugin = () => {
             component: TokenProposalVotingBreakdown,
         })
         .registerSlotFunction({
-            slotId: GovernanceSlotId.SETTINGS_GOVERNANCE_INFO,
+            slotId: GovernanceSlotId.GOVERNANCE_SETTINGS_INFO,
             pluginId: plugin.id,
             function: useTokenGovernanceSettings,
         })

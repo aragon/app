@@ -236,6 +236,9 @@
             "readMore": "Read more",
             "readLess": "Read less",
             "notChangeable": "Not changeable"
+          },
+          "governance": {
+            "title": "Governance"
           }
         },
         "aside": {

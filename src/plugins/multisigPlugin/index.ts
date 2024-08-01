@@ -38,7 +38,7 @@ export const initialiseMultisigPlugin = () => {
             component: MultisigProposalVotingBreakdown,
         })
         .registerSlotFunction({
-            slotId: GovernanceSlotId.SETTINGS_GOVERNANCE_INFO,
+            slotId: GovernanceSlotId.GOVERNANCE_SETTINGS_INFO,
             pluginId: plugin.id,
             function: useMultisigGovernanceSettings,
         })
