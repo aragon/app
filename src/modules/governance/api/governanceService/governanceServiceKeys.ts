@@ -3,6 +3,7 @@ import type {
     IGetMemberParams,
     IGetProposalListParams,
     IGetProposalParams,
+    IGetVoteListParams,
 } from './governanceService.api';
 
 export enum GovernanceServiceKey {
@@ -10,6 +11,7 @@ export enum GovernanceServiceKey {
     PROPOSAL = 'PROPOSAL',
     MEMBER_LIST = 'MEMBER_LIST',
     MEMBER = 'MEMBER',
+    VOTE_LIST = 'VOTE_LIST',
 }
 
 export const governanceServiceKeys = {
@@ -17,4 +19,5 @@ export const governanceServiceKeys = {
     proposal: (params: IGetProposalParams) => [GovernanceServiceKey.PROPOSAL, params],
     memberList: (params: IGetMemberListParams) => [GovernanceServiceKey.MEMBER_LIST, params],
     member: (params: IGetMemberParams) => [GovernanceServiceKey.MEMBER, params],
+    voteList: (params: IGetVoteListParams) => [GovernanceServiceKey.VOTE_LIST, params],
 };

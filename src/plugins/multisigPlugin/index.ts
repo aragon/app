@@ -5,6 +5,7 @@ import { MultisigMembersPageDetails } from './components/multisigMembersPageDeta
 import { MultisigProposalList } from './components/multisigProposalList';
 import { MultisigProposalsPageDetails } from './components/multisigProposalsPageDetails';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
+import { MultisigVoteList } from './components/multisigVoteList';
 import { plugin } from './constants/plugin';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
 
@@ -40,5 +41,10 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: plugin.id,
             function: useMultisigGovernanceSettings,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
+            pluginId: plugin.id,
+            component: MultisigVoteList,
         });
 };

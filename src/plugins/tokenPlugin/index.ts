@@ -5,9 +5,10 @@ import { TokenMembersPageDetails } from './components/tokenMembersPageDetails';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalsPageDetails } from './components/tokenProposalsPageDetails';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
+import { TokenVoteList } from './components/tokenVoteList';
 import { plugin } from './constants/plugin';
-import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
+import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
@@ -46,5 +47,10 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: plugin.id,
             function: useTokenGovernanceSettings,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
+            pluginId: plugin.id,
+            component: TokenVoteList,
         });
 };

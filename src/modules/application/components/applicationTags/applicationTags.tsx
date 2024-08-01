@@ -1,3 +1,4 @@
+import { getApplicationVersion } from '@/shared/components/applicationVersion';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Tag, type ITagProps } from '@aragon/ods';
 import classNames from 'classnames';
@@ -29,7 +30,7 @@ export const ApplicationTags: React.FC<IApplicationTagsProps> = (props) => {
     return (
         <div className={classNames('flex flex-row gap-2', className)} {...otherProps}>
             <Tag variant={variant} label={t('app.application.applicationTags.beta')} />
-            <Tag variant={variant} label={t(`app.application.applicationTags.${versionLabel}`, { version, env })} />
+            <Tag variant={variant} label={getApplicationVersion()} />
         </div>
     );
 };

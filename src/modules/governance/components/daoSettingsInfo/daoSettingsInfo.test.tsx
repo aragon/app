@@ -1,35 +1,22 @@
-import type { IGetDaoParams } from '@/shared/api/daoService';
-import * as DaoService from '@/shared/api/daoService';
-
-import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { type IDao, Network } from '@/shared/api/daoService';
+import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DaoDefinitionList } from './daoDefinitionList';
+import { DaoSettingsInfo } from './daoSettingsInfo';
 
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
 }));
 
-describe('<DaoDefinitionList /> component', () => {
-    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
+describe('<DaoSettingsInfo /> component', () => {
+    const createTestComponent = (props: { dao: IDao } = { dao: generateDao() }) => {
+        const { dao } = props;
 
-    beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-    });
-
-    afterEach(() => {
-        useDaoSpy.mockReset();
-    });
-    const createTestComponent = (props?: Partial<IGetDaoParams>) => {
-        const completeProps: IGetDaoParams = {
-            urlParams: { id: 'test-id' },
-            ...props,
-        };
         return (
             <OdsModulesProvider>
-                <DaoDefinitionList initialParams={completeProps} />
+                <DaoSettingsInfo dao={dao} />
             </OdsModulesProvider>
         );
     };
@@ -37,8 +24,7 @@ describe('<DaoDefinitionList /> component', () => {
     it('renders the dao avatar and name', () => {
         const daoAvatarCid = 'ipfs://avatar-cid';
         const dao = generateDao({ avatar: daoAvatarCid, name: 'MyDao' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-        render(createTestComponent());
+        render(createTestComponent({ dao: dao }));
         const daoAvatar = screen.getByTestId('dao-avatar-mock');
         expect(daoAvatar).toBeInTheDocument();
         expect(daoAvatar.dataset.src).toEqual(ipfsUtils.cidToSrc(dao.avatar));
@@ -47,32 +33,35 @@ describe('<DaoDefinitionList /> component', () => {
 
     it('renders the correct terms', () => {
         render(createTestComponent());
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.name')).toBeInTheDocument();
-        expect(
-            screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.blockchain'),
-        ).toBeInTheDocument();
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.ens')).toBeInTheDocument();
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.summary')).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.name/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.blockchain/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.summary/)).toBeInTheDocument();
+    });
+
+    it('renders the ens term and value if present', () => {
+        const dao = generateDao({ subdomain: 'dao.eth' });
+        render(createTestComponent({ dao: dao }));
+
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.ens/)).toBeInTheDocument();
+        expect(screen.getByText('dao.eth')).toBeInTheDocument();
     });
 
     it('renders the links term if links are present', () => {
         const dao = generateDao({ links: [{ name: 'link', url: 'link' }] });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-        render(createTestComponent());
-        expect(screen.getByText('app.governance.daoSettingsPage.main.daoDefinitionList.links')).toBeInTheDocument();
+        render(createTestComponent({ dao: dao }));
+        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.links/)).toBeInTheDocument();
     });
 
     it('renders the correct definition values of the dao', () => {
         const dao = generateDao({
             name: 'Some DAO',
-            network: DaoService.Network.ETHEREUM_MAINNET,
+            network: Network.ETHEREUM_MAINNET,
             address: '0x123',
             subdomain: 'somedao.eth',
             description: 'This is a test DAO.',
             links: [{ name: 'Test Link', url: 'https://testlink.com' }],
         });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
-        render(createTestComponent());
+        render(createTestComponent({ dao: dao }));
 
         expect(screen.getByText('Some DAO')).toBeInTheDocument();
         expect(screen.getByText('Ethereum Mainnet')).toBeInTheDocument();

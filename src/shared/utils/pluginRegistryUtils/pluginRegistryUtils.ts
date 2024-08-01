@@ -118,6 +118,10 @@ export class PluginRegistryUtils {
         return component;
     };
 
+    getPlugin = (pluginId: PluginId): IPlugin | undefined => {
+        return this.pluginRegistry.plugins.find((plugin) => plugin.id === pluginId);
+    };
+
     listContainsRegisteredPlugins = (pluginIds: string[] = []) => {
         const registeredPluginIds = this.pluginRegistry.plugins.map((plugin) => plugin.id);
 

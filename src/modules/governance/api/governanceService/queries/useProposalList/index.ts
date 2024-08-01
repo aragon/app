@@ -1,1 +1,1 @@
-export * from './useProposalList';
+export { proposalListOptions, useProposalList } from './useProposalList';

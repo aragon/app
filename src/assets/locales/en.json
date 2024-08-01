@@ -226,11 +226,12 @@
       "daoSettingsPage": {
         "main": {
           "title": "Settings",
-          "daoDefinitionList": {
+          "daoSettingsInfo": {
+            "title": "DAO",
             "name": "Name",
             "blockchain": "Blockchain",
             "ens": "ENS name",
-            "summary": "summary",
+            "summary": "Summary",
             "links": "Links",
             "readMore": "Read more",
             "readLess": "Read less",
@@ -239,11 +240,23 @@
         },
         "aside": {
           "daoVersionInfo": {
+            "title": "Version info",
             "app": "App",
-            "os": "Operating system",
-            "governance": "Governance",
-            "governanceLabel": "{{name}} v{{release}}.{{build}}"
+            "osLabel": "Operating system",
+            "osValue": "{{os}}",
+            "governanceLabel": "Governance",
+            "governanceValue": "{{name}} v{{release}}.{{build}}"
           }
+        }
+      },
+      "voteList": {
+        "empty": {
+          "title": "No votes found",
+          "description": "No votes have been found."
+        },
+        "error": {
+          "title": "Error loading votes",
+          "description": "There was an error loading the votes, try again later."
         }
       }
     },
@@ -276,6 +289,18 @@
           "tokenBalance": "Token balance",
           "delegations": "Delegations"
         },
+        "tokenMemberInfo": {
+          "eligibleVoters": "Eligible voters",
+          "tokenLabel": "Token",
+          "distribution": "Distribution",
+          "supply": "Supply",
+          "members": "Members",
+          "tokenHolders": "Token holders",
+          "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
+          "tokenDistribution": "{{count}} token holders",
+          "tokenLinkDescription": "View all token holders",
+          "tokenSupply": "{{supply}} {{symbol}}"
+        },
         "tokenGovernanceSettings": {
           "approvalThreshold": "Approval threshold",
           "approval": "> {{approvalThreshold}}",
@@ -289,6 +314,9 @@
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "yes": "Yes",
           "no": "No"
+        },
+        "tokenVoteList": {
+          "entity": "Votes"
         }
       },
       "multisig": {
@@ -309,12 +337,22 @@
           "minimumApprovalMembers": "{{count}} of {{total}} Members",
           "members": "Multisig members"
         },
+        "multisigMembersInfo": {
+          "eligibleVoters": "Eligible voters",
+          "membersLabel": "Members",
+          "multisigMembers": "Multisig members",
+          "linkDescription": "View all members",
+          "membersCount": "See {{count}} addresses"
+        },
         "multisigGovernanceSettings": {
           "minimumApproval": "Minimum approval",
           "proposalCreation": "Proposal creation",
           "members": "Multisig members",
           "anyWallet": "Any wallet",
           "approvals": "{{min}} of {{max}} authorized addresses"
+        },
+        "multisigVoteList": {
+          "entity": "Votes"
         }
       }
     },

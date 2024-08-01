@@ -1,28 +1,26 @@
 'use client';
-import { DaoDefinitionList } from '@/modules/governance/components/daoDefinitionList/daoDefinitionList';
-import { DaoVersionInfoDefinitionList } from '@/modules/governance/components/daoVersionInfoDefinitionList';
+import { DaoSettingsInfo } from '@/modules/governance/components/daoSettingsInfo';
+import { DaoVersionInfo } from '@/modules/governance/components/daoVersionInfo';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { type IGetDaoParams } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import type { IDaoSettingTermAndDefinition } from '../../types';
 import { DefinitionList, Heading } from '@aragon/ods';
+import type { IDaoSettingTermAndDefinition } from '../../types';
 
 export interface IDaoSettingsPageClientProps {
     /**
-     * Initial parameters to use to fetch the DAO information.
+     * ID of the Dao
      */
-    initialParams: IGetDaoParams;
+    daoId: string;
 }
 
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (props) => {
-    const { initialParams } = props;
-
+    const { daoId } = props;
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { t } = useTranslations();
-
-    const daoId = initialParams.urlParams.id;
 
     const pluginIds = useDaoPluginIds(daoId);
     const governanceParams = { daoId: daoId };
@@ -32,26 +30,30 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         pluginIds,
     });
 
+    if (!dao) {
+        return null;
+    }
     return (
         <>
             <Page.Main title={t('app.governance.daoSettingsPage.main.title')}>
-                <Heading size="h3">DAO</Heading>
-                <DaoDefinitionList initialParams={initialParams} />
-                {governanceSettings != null && (
-                    <>
-                        <Heading size="h3">Governance</Heading>
-                        <DefinitionList.Container className="rounded-2xl border border-neutral-100 bg-neutral-0 p-6">
-                            {governanceSettings.map((governanceSetting, index) => (
-                                <DefinitionList.Item key={index} term={governanceSetting.term}>
-                                    <p>{governanceSetting.definition}</p>
-                                </DefinitionList.Item>
-                            ))}
-                        </DefinitionList.Container>
-                    </>
-                )}
+                <Page.Section title={t('app.governance.daoSettingsPage.main.daoSettingsInfo.title')}>
+                    <DaoSettingsInfo dao={dao} />
+                    {governanceSettings != null && (
+                        <>
+                            <Heading size="h3">Governance</Heading>
+                            <DefinitionList.Container className="rounded-2xl border border-neutral-100 bg-neutral-0 p-6">
+                                {governanceSettings.map((governanceSetting, index) => (
+                                    <DefinitionList.Item key={index} term={governanceSetting.term}>
+                                        <p>{governanceSetting.definition}</p>
+                                    </DefinitionList.Item>
+                                ))}
+                            </DefinitionList.Container>
+                        </>
+                    )}
+                </Page.Section>
             </Page.Main>
             <Page.Aside>
-                <DaoVersionInfoDefinitionList initialParams={initialParams} />
+                <DaoVersionInfo dao={dao} />
             </Page.Aside>
         </>
     );
