@@ -5,6 +5,6 @@ export const generateDaoPlugin = (daoPlugin?: Partial<IDaoPlugin>): IDaoPlugin =
     type: 'unknown',
     subdomain: 'unknown',
     release: '0',
-    build: '1',
+    build: '0',
     ...daoPlugin,
 });
