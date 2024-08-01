@@ -1,5 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { MultisigMemberInfo } from './components/multisigMemberInfo';
 import { MultisigMemberList } from './components/multisigMemberList';
 import { MultisigMembersPageDetails } from './components/multisigMembersPageDetails';
 import { MultisigProposalList } from './components/multisigProposalList';
@@ -38,7 +39,7 @@ export const initialiseMultisigPlugin = () => {
             component: MultisigProposalVotingBreakdown,
         })
         .registerSlotFunction({
-            slotId: GovernanceSlotId.GOVERNANCE_SETTINGS_INFO,
+            slotId: GovernanceSlotId.GOVERNANCE_DAO_SETTINGS_INFO,
             pluginId: plugin.id,
             function: useMultisigGovernanceSettings,
         })
@@ -46,5 +47,10 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
             pluginId: plugin.id,
             component: MultisigVoteList,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBERS_INFO,
+            pluginId: plugin.id,
+            component: MultisigMemberInfo,
         });
 };

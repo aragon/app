@@ -18,7 +18,9 @@ interface IUseTokenGovernanceSettingsParams {
     settings?: IDaoTokenSettings;
 }
 
-export const useTokenGovernanceSettings = (params: IUseTokenGovernanceSettingsParams): IDaoSettingTermAndDefinition[] => {
+export const useTokenGovernanceSettings = (
+    params: IUseTokenGovernanceSettingsParams,
+): IDaoSettingTermAndDefinition[] => {
     const { daoId, settings } = params;
 
     const { t } = useTranslations();

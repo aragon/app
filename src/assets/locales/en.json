@@ -239,6 +239,9 @@
           },
           "governance": {
             "title": "Governance"
+          },
+          "members": {
+            "title": "Members"
           }
         },
         "aside": {

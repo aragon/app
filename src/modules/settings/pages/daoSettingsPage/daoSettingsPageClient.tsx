@@ -1,14 +1,12 @@
 'use client';
+import { DaoGovernanceInfo } from '@/modules/governance/components/daoGovernanceInfo';
+import { DaoMembersInfo } from '@/modules/governance/components/daoMembersInfo';
 import { DaoSettingsInfo } from '@/modules/governance/components/daoSettingsInfo';
 import { DaoVersionInfo } from '@/modules/governance/components/daoVersionInfo';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import type { IDaoSettingTermAndDefinition } from '../../types';
-import { DaoGovernanceInfo } from '@/modules/governance/components/daoGovernanceInfo';
+import { Card } from '@aragon/ods';
 
 export interface IDaoSettingsPageClientProps {
     /**
@@ -22,14 +20,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { t } = useTranslations();
 
-    const pluginIds = useDaoPluginIds(daoId);
-    const governanceParams = { daoId: daoId };
-    const governanceSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
-        params: governanceParams,
-        slotId: GovernanceSlotId.GOVERNANCE_SETTINGS_INFO,
-        pluginIds,
-    });
-
     if (!dao) {
         return null;
     }
@@ -41,6 +31,11 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 </Page.Section>
                 <Page.Section title={t('app.governance.daoSettingsPage.main.governance.title')}>
                     <DaoGovernanceInfo daoId={daoId} />
+                </Page.Section>
+                <Page.Section title={t('app.governance.daoSettingsPage.main.members.title')}>
+                    <Card className="p-6">
+                        <DaoMembersInfo daoId={daoId} />
+                    </Card>
                 </Page.Section>
             </Page.Main>
             <Page.Aside>
