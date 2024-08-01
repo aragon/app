@@ -7,7 +7,6 @@ import { DaoGovernanceInfo, type IDaoGovernanceInfoProps } from './daoGovernance
 
 describe('<DaGovernanceInfo /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
-
     const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
 
     afterEach(() => {
