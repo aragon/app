@@ -1,9 +1,9 @@
-import { type IDao, Network } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DaoSettingsInfo } from './daoSettingsInfo';
+import { DaoSettingsInfo, type IDaoSettingsInfoProps } from './daoSettingsInfo';
 
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
@@ -11,12 +11,15 @@ jest.mock('@aragon/ods', () => ({
 }));
 
 describe('<DaoSettingsInfo /> component', () => {
-    const createTestComponent = (props: { dao: IDao } = { dao: generateDao() }) => {
-        const { dao } = props;
+    const createTestComponent = (props?: Partial<IDaoSettingsInfoProps>) => {
+        const completeProps: IDaoSettingsInfoProps = {
+            dao: generateDao(),
+            ...props,
+        };
 
         return (
             <OdsModulesProvider>
-                <DaoSettingsInfo dao={dao} />
+                <DaoSettingsInfo {...completeProps} />
             </OdsModulesProvider>
         );
     };
@@ -33,23 +36,23 @@ describe('<DaoSettingsInfo /> component', () => {
 
     it('renders the correct terms', () => {
         render(createTestComponent());
-        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.name/)).toBeInTheDocument();
-        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.blockchain/)).toBeInTheDocument();
-        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.summary/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsInfo.name/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsInfo.blockchain/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsInfo.summary/)).toBeInTheDocument();
     });
 
     it('renders the ens term and value if present', () => {
         const dao = generateDao({ subdomain: 'dao.eth' });
         render(createTestComponent({ dao: dao }));
 
-        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.ens/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsInfo.ens/)).toBeInTheDocument();
         expect(screen.getByText('dao.eth')).toBeInTheDocument();
     });
 
     it('renders the links term if links are present', () => {
         const dao = generateDao({ links: [{ name: 'link', url: 'link' }] });
         render(createTestComponent({ dao: dao }));
-        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.links/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsInfo.links/)).toBeInTheDocument();
     });
 
     it('renders the correct definition values of the dao', () => {

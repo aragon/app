@@ -1,19 +1,10 @@
+import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import type { ReactNode } from 'react';
 import { DaoSettingsPage, type IDaoSettingsPageProps } from './daoSettingsPage';
 import { DaoSettingsPageClient } from './daoSettingsPageClient';
 
-jest.mock('@tanstack/react-query', () => ({
-    ...jest.requireActual('@tanstack/react-query'),
-    HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
-            {props.children}
-        </div>
-    ),
-}));
-
 jest.mock('./daoSettingsPageClient', () => ({
-    DaoSettingsPageClient: jest.fn(() => <div>DaoSettingsPageClient Mock</div>),
+    DaoSettingsPageClient: jest.fn(() => <div data-testid="page-client-mock" />),
 }));
 
 describe('<DaoSettingsPage /> component', () => {
@@ -24,17 +15,17 @@ describe('<DaoSettingsPage /> component', () => {
         };
         const Component = await DaoSettingsPage(completeProps);
 
-        return Component;
+        return <OdsModulesProvider>{Component}</OdsModulesProvider>;
     };
 
-    it('passes the correct daoId to DaoSettingsPageClient', async () => {
+    it('renders and passes the correct daoId to DaoSettingsPageClient', async () => {
         const params = { id: 'my-dao' };
-
         render(await createTestComponent({ params }));
+
+        expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
         expect(DaoSettingsPageClient).toHaveBeenCalledWith(
             expect.objectContaining({ daoId: params.id }),
             expect.any(Object),
         );
-        expect(screen.getByText('DaoSettingsPageClient Mock')).toBeInTheDocument();
     });
 });

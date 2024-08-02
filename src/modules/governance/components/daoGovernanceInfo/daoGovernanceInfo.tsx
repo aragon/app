@@ -1,8 +1,8 @@
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import { Card, DefinitionList } from '@aragon/ods';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoGovernanceInfoProps {
     /**
@@ -18,7 +18,7 @@ export const DaoGovernanceInfo: React.FC<IDaoGovernanceInfoProps> = (props) => {
     const governanceParams = { daoId: daoId };
     const governanceSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
         params: governanceParams,
-        slotId: GovernanceSlotId.GOVERNANCE_DAO_SETTINGS_INFO,
+        slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginIds,
     });
 

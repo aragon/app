@@ -13,7 +13,7 @@
     "start": "next start",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "next lint",
+    "lint": "next lint --max-warnings=0",
     "lint:fix": "next lint --fix",
     "prettify": "prettier . --check",
     "prettify:fix": "prettier . --write",

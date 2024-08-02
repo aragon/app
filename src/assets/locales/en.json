@@ -2,8 +2,6 @@
   "app": {
     "application": {
       "applicationTags": {
-        "version": "v{{version}}",
-        "versionEnv": "v{{version}} ({{env}})",
         "beta": "Beta"
       },
       "footer": {
@@ -77,6 +75,11 @@
           },
           "links": "Links"
         }
+      }
+    },
+    "explore": {
+      "daoList": {
+        "entity": "DAO"
       }
     },
     "finance": {
@@ -226,34 +229,30 @@
       "daoSettingsPage": {
         "main": {
           "title": "Settings",
-          "daoSettingsInfo": {
-            "title": "DAO",
-            "name": "Name",
-            "blockchain": "Blockchain",
-            "ens": "ENS name",
-            "summary": "Summary",
-            "links": "Links",
-            "readMore": "Read more",
-            "readLess": "Read less",
-            "notChangeable": "Not changeable"
-          },
-          "governance": {
-            "title": "Governance"
-          },
-          "members": {
-            "title": "Members"
-          }
+          "settingsInfoTitle": "DAO",
+          "governanceInfoTitle": "Governance",
+          "membersInfoTitle": "Members"
         },
         "aside": {
-          "daoVersionInfo": {
-            "title": "Version info",
-            "app": "App",
-            "osLabel": "Operating system",
-            "osValue": "{{os}}",
-            "governanceLabel": "Governance",
-            "governanceValue": "{{name}} v{{release}}.{{build}}"
-          }
+          "versionInfoTitle": "Version Info"
         }
+      },
+      "daoSettingsInfo": {
+        "name": "Name",
+        "blockchain": "Blockchain",
+        "ens": "ENS name",
+        "summary": "Summary",
+        "links": "Links",
+        "readMore": "Read more",
+        "readLess": "Read less",
+        "notChangeable": "Not changeable"
+      },
+      "daoVersionInfo": {
+        "app": "App",
+        "osLabel": "Operating system",
+        "osValue": "Aragon OSx",
+        "governanceLabel": "Governance",
+        "governanceValue": "{{name}} v{{release}}.{{build}}"
       },
       "voteList": {
         "empty": {
@@ -368,6 +367,10 @@
           "readMore": "Read more",
           "readLess": "Read less"
         }
+      },
+      "useApplicationVersion": {
+        "version": "v{{version}}",
+        "versionEnv": "v{{version}} ({{env}})"
       }
     }
   }

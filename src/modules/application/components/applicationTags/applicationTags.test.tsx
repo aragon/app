@@ -1,8 +1,14 @@
+import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { render, screen } from '@testing-library/react';
 import { ApplicationTags, type IApplicationTagsProps } from './applicationTags';
 
 describe('<ApplicationTags /> component', () => {
     const originalProcessEnv = process.env;
+    const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
+
+    afterEach(() => {
+        useApplicationVersionSpy.mockReset();
+    });
 
     const createTestComponent = (props?: Partial<IApplicationTagsProps>) => {
         const completeProps: IApplicationTagsProps = { ...props };
@@ -19,24 +25,10 @@ describe('<ApplicationTags /> component', () => {
         expect(screen.getByText(/applicationTags.beta/)).toBeInTheDocument();
     });
 
-    it('renders current version and DEV label on development environment', () => {
-        process.env.version = '1.0.2';
-        process.env.NEXT_PUBLIC_ENV = 'development';
+    it('renders the current application version', () => {
+        const version = '1.0.2 (DEV)';
+        useApplicationVersionSpy.mockReturnValue(version);
         render(createTestComponent());
-        expect(screen.getByText('v1.0.2 (DEV)')).toBeInTheDocument();
-    });
-
-    it('renders current version and STG label on staging environment', () => {
-        process.env.version = '0.0.1';
-        process.env.NEXT_PUBLIC_ENV = 'staging';
-        render(createTestComponent());
-        expect(screen.getByText('v0.0.1 (STG)')).toBeInTheDocument();
-    });
-
-    it('only renders current version of production environment', () => {
-        process.env.version = '1.5.0';
-        process.env.NEXT_PUBLIC_ENV = 'production';
-        render(createTestComponent());
-        expect(screen.getByText('v1.5.0')).toBeInTheDocument();
+        expect(screen.getByText(version)).toBeInTheDocument();
     });
 });

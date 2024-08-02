@@ -4,11 +4,11 @@ import type { IGetDaoListParams } from './daoExplorerService.api';
 
 class DaoExplorerService extends AragonBackendService {
     private urls = {
-        daoList: '/daos',
+        daos: '/daos',
     };
 
     getDaoList = async ({ queryParams }: IGetDaoListParams): Promise<IPaginatedResponse<IDao>> => {
-        const result = await this.request<IPaginatedResponse<IDao>>(this.urls.daoList, { queryParams });
+        const result = await this.request<IPaginatedResponse<IDao>>(this.urls.daos, { queryParams });
 
         return result;
     };

@@ -1,7 +1,7 @@
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import * as DaoService from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import { render, screen } from '@testing-library/react';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoMembersInfo, type IDaoMembersInfoProps } from './daoMembersInfo';
 
 jest.mock('@/shared/components/pluginComponent', () => ({
@@ -29,13 +29,13 @@ describe('<DaoMemberInfo /> component', () => {
         return <DaoMembersInfo daoId={daoId} />;
     };
 
-    it('renders the plugin-specific proposal breakdown component', () => {
+    it('renders the plugin-specific dao members info component', () => {
         const pluginIds = ['multisig'];
         useDaoPluginIdsSpy.mockReturnValue(pluginIds);
         render(createTestComponent());
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent).toBeInTheDocument();
-        expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_DAO_MEMBERS_INFO);
+        expect(pluginComponent.dataset.slotid).toEqual(SettingsSlotId.SETTINGS_GOVERNANCE_DAO_MEMBERS_INFO);
         expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
     });
 });

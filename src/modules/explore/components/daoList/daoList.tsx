@@ -1,9 +1,11 @@
 'use client';
 
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { DaoDataListItemStructure, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
+import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
 import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService';
 
 export interface IDaoListProps {
@@ -16,21 +18,26 @@ export interface IDaoListProps {
 export const DaoList: React.FC<IDaoListProps> = (props) => {
     const { initialParams } = props;
 
-    const { data: daoListData, isLoading, fetchNextPage } = useDaoList(initialParams);
+    const { t } = useTranslations();
+    const { data: daoListData, fetchNextPage, status, fetchStatus, isFetchingNextPage } = useDaoList(initialParams);
 
     const daoList = daoListData?.pages.flatMap((page) => page.data);
+    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+
+    const pageSize = initialParams.queryParams.pageSize ?? daoListData?.pages[0].metadata.pageSize;
+    const itemsCount = daoListData?.pages[0].metadata.totalRecords;
 
     return (
         <DataListRoot
-            entityLabel="DAO"
+            entityLabel={t('app.explore.daoList.entity')}
             onLoadMore={fetchNextPage}
-            state={isLoading ? 'fetchingNextPage' : 'idle'}
-            pageSize={daoListData?.pages[0].metadata.pageSize}
-            itemsCount={daoListData?.pages[0].metadata.totalRecords}
+            state={state}
+            pageSize={pageSize}
+            itemsCount={itemsCount}
         >
-            <DataListContainer className="grid grid-cols-1 lg:grid-cols-2">
+            <DataListContainer className="grid grid-cols-1 lg:grid-cols-2" SkeletonElement={DaoDataListItem.Skeleton}>
                 {daoList?.map((dao) => (
-                    <DaoDataListItemStructure
+                    <DaoDataListItem.Structure
                         key={dao.id}
                         href={`/dao/${dao.id}/dashboard`}
                         ens={daoUtils.getDaoEns(dao)}

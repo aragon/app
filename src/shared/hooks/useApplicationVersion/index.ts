@@ -1,0 +1,1 @@
+export { useApplicationVersion } from './useApplicationVersion';

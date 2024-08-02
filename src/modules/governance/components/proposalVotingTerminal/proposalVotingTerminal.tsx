@@ -1,9 +1,13 @@
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { VoteList } from '../voteList';
 
 export interface IProposalVotingTerminalProps {
     /**
@@ -16,11 +20,27 @@ export interface IProposalVotingTerminalProps {
     daoId: string;
 }
 
+const votesPerPage = 6;
+
 export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
     const { proposal, daoId } = props;
 
     const { t } = useTranslations();
     const pluginIds = useDaoPluginIds(daoId);
+
+    const voteListParams = { queryParams: { proposalId: proposal.id, pageSize: votesPerPage } };
+
+    // TODO: remove custom settings object and plugin-specific logic when settings interface is cleaned up (APP-3483)
+    const settingsObject = {
+        settings: proposal.settings,
+        token: (proposal as unknown as Record<string, unknown>).token,
+    };
+
+    const proposalSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
+        params: { daoId, settings: settingsObject },
+        slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
+        pluginIds,
+    });
 
     return (
         <ProposalVoting.Container
@@ -37,8 +57,10 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                     pluginIds={pluginIds}
                     proposalId={proposal.id}
                 />
-                <ProposalVoting.Votes />
-                <ProposalVoting.Details />
+                <ProposalVoting.Votes>
+                    <VoteList initialParams={voteListParams} daoId={daoId} />
+                </ProposalVoting.Votes>
+                <ProposalVoting.Details settings={proposalSettings} />
             </ProposalVoting.Stage>
         </ProposalVoting.Container>
     );

@@ -14,6 +14,7 @@ describe('<MultisigVoteList /> component', () => {
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
         const completeProps: IMultisigVoteListProps = {
             initialParams: { queryParams: {} },
+            daoId: 'test-id',
             ...props,
         };
 
@@ -48,8 +49,8 @@ describe('<MultisigVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toMatch(votes[0].transactionHash);
-        expect(links[1].getAttribute('href')).toMatch(votes[1].transactionHash);
+        expect(links[0].getAttribute('href')).toMatch(votes[0].memberAddress);
+        expect(links[1].getAttribute('href')).toMatch(votes[1].memberAddress);
 
         expect(screen.getByText(addressUtils.truncateAddress(votes[0].memberAddress))).toBeInTheDocument();
         expect(screen.getByText(addressUtils.truncateAddress(votes[1].memberAddress))).toBeInTheDocument();
