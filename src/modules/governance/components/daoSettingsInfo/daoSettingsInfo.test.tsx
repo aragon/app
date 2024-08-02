@@ -1,9 +1,9 @@
-import { type IDao, Network } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DaoSettingsInfo } from './daoSettingsInfo';
+import { DaoSettingsInfo, type IDaoSettingsInfoProps } from './daoSettingsInfo';
 
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
@@ -11,12 +11,15 @@ jest.mock('@aragon/ods', () => ({
 }));
 
 describe('<DaoSettingsInfo /> component', () => {
-    const createTestComponent = (props: { dao: IDao } = { dao: generateDao() }) => {
-        const { dao } = props;
+    const createTestComponent = (props?: Partial<IDaoSettingsInfoProps>) => {
+        const completeProps: IDaoSettingsInfoProps = {
+            dao: generateDao(),
+            ...props,
+        };
 
         return (
             <OdsModulesProvider>
-                <DaoSettingsInfo dao={dao} />
+                <DaoSettingsInfo {...completeProps} />
             </OdsModulesProvider>
         );
     };

@@ -1,1 +1,1 @@
-export { DaoVersionInfo, type IDaVersionInfoProps } from './daoVersionInfo';
+export { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';

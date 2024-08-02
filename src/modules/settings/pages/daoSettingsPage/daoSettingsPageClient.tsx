@@ -27,7 +27,9 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 </Page.Section>
             </Page.Main>
             <Page.Aside>
-                <DaoVersionInfo dao={dao} />
+                <Page.Section title={t('app.governance.daoSettingsPage.aside.daoVersionInfo.title')}>
+                    <DaoVersionInfo dao={dao} />
+                </Page.Section>
             </Page.Aside>
         </>
     );

@@ -1,19 +1,18 @@
 import type { IDao } from '@/shared/api/daoService';
 import { ApplicationVersion } from '@/shared/components/applicationVersion';
-import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { addressUtils, ChainEntityType, DefinitionList, Heading, IconType, Link, useBlockExplorer } from '@aragon/ods';
+import { addressUtils, ChainEntityType, DefinitionList, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
-export interface IDaVersionInfoProps {
+export interface IDaoVersionInfoProps {
     /**
      * Dao Object.
      */
     dao: IDao;
 }
 
-export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
+export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const { dao } = props;
     const { t } = useTranslations();
 
@@ -23,46 +22,42 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
     const supportedPlugin = dao.plugins.find((plugin) => pluginRegistryUtils.getPlugin(plugin.subdomain) != null);
 
     return (
-        <Page.Section title={t('app.governance.daoSettingsPage.aside.daoVersionInfo.title')}>
-            <DefinitionList.Container>
-                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.app')}>
-                    <Link href="/" iconRight={IconType.LINK_EXTERNAL}>
-                        <ApplicationVersion />
-                    </Link>
-                </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.osLabel')}>
-                    {/* TODO: Fetch this operating system value from backend when available (APP-3484) */}
+        <DefinitionList.Container>
+            <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.app')}>
+                <Link href="/" iconRight={IconType.LINK_EXTERNAL}>
+                    <ApplicationVersion />
+                </Link>
+            </DefinitionList.Item>
+            <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.osLabel')}>
+                {/* TODO: Fetch this operating system value from backend when available (APP-3484) */}
+                <Link
+                    description={addressUtils.truncateAddress(dao.address)}
+                    iconRight={IconType.LINK_EXTERNAL}
+                    href=""
+                    target="_blank"
+                >
+                    {t('app.governance.daoSettingsPage.aside.daoVersionInfo.osValue')}
+                </Link>
+            </DefinitionList.Item>
+            {supportedPlugin && (
+                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceLabel')}>
                     <Link
-                        description={addressUtils.truncateAddress(dao.address)}
+                        description={addressUtils.truncateAddress(supportedPlugin.address)}
                         iconRight={IconType.LINK_EXTERNAL}
-                        href=""
-                        target="_blank"
+                        href={buildEntityUrl({
+                            type: ChainEntityType.ADDRESS,
+                            id: supportedPlugin.address,
+                            chainId,
+                        })}
                     >
-                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.osValue')}
+                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceValue', {
+                            name: supportedPlugin.subdomain,
+                            release: supportedPlugin.release,
+                            build: supportedPlugin.build,
+                        })}
                     </Link>
                 </DefinitionList.Item>
-                {supportedPlugin && (
-                    <DefinitionList.Item
-                        term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceLabel')}
-                    >
-                        <Link
-                            description={addressUtils.truncateAddress(supportedPlugin.address)}
-                            iconRight={IconType.LINK_EXTERNAL}
-                            href={buildEntityUrl({
-                                type: ChainEntityType.ADDRESS,
-                                id: supportedPlugin.address,
-                                chainId,
-                            })}
-                        >
-                            {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceValue', {
-                                name: supportedPlugin.subdomain,
-                                release: supportedPlugin.release,
-                                build: supportedPlugin.build,
-                            })}
-                        </Link>
-                    </DefinitionList.Item>
-                )}
-            </DefinitionList.Container>
-        </Page.Section>
+            )}
+        </DefinitionList.Container>
     );
 };

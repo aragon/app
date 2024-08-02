@@ -42,6 +42,6 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.title/)).toBeInTheDocument();
         expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.title/)).toBeInTheDocument();
         expect(screen.getByText('My Dao Name')).toBeInTheDocument();
-        expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osValue \(os=Aragon OSx\)/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osValue/)).toBeInTheDocument();
     });
 });

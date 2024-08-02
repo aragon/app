@@ -1,9 +1,8 @@
-import type { IDao } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin, generatePlugin } from '@/shared/testUtils';
+import { generateDao, generatePlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DaoVersionInfo } from './daoVersionInfo';
+import { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';
 
 describe('<DaoVersionInfo /> component', () => {
     const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
@@ -11,12 +10,15 @@ describe('<DaoVersionInfo /> component', () => {
     afterEach(() => {
         getPluginSpy.mockReset();
     });
-    const createTestComponent = (props: { dao: IDao } = { dao: generateDao({ plugins: [generateDaoPlugin()] }) }) => {
-        const { dao } = props;
+    const createTestComponent = (props?: Partial<IDaoVersionInfoProps>) => {
+        const completeProps: IDaoVersionInfoProps = {
+            dao: generateDao(),
+            ...props,
+        };
 
         return (
             <OdsModulesProvider>
-                <DaoVersionInfo dao={dao} />
+                <DaoVersionInfo {...completeProps} />
             </OdsModulesProvider>
         );
     };
