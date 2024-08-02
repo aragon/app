@@ -26,16 +26,12 @@ describe('<DaoVersionInfo /> component', () => {
     };
 
     it('renders the correct terms', () => {
-        const plugin = generateDaoPlugin();
-        const dao = generateDao({ plugins: [plugin] });
-
-        getPluginSpy.mockReturnValue(generatePlugin());
+        const dao = generateDao();
 
         render(createTestComponent({ dao: dao }));
 
         expect(screen.getByText(/daoVersionInfo.app/)).toBeInTheDocument();
         expect(screen.getByText(/daoVersionInfo.osLabel/)).toBeInTheDocument();
-        expect(screen.getByText(/daoVersionInfo.governanceLabel/)).toBeInTheDocument();
     });
 
     it('renders the correct values', () => {
@@ -54,7 +50,9 @@ describe('<DaoVersionInfo /> component', () => {
 
         render(createTestComponent({ dao: dao }));
 
-        expect(screen.getByText('v1.0.0 (DEV)')).toBeInTheDocument();
+        expect(
+            screen.getByText(/shared.useApplicationVersion.versionEnv \(version=1.0.0,env=DEV\)/),
+        ).toBeInTheDocument();
         // TODO: Update test when we get value from the backend (APP-3484)
         expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
         expect(

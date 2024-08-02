@@ -2,8 +2,6 @@
   "app": {
     "application": {
       "applicationTags": {
-        "version": "v{{version}}",
-        "versionEnv": "v{{version}} ({{env}})",
         "beta": "Beta"
       },
       "footer": {
@@ -360,6 +358,10 @@
           "readMore": "Read more",
           "readLess": "Read less"
         }
+      },
+      "useApplicationVersion": {
+        "version": "v{{version}}",
+        "versionEnv": "v{{version}} ({{env}})"
       }
     }
   }

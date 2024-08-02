@@ -1,7 +1,7 @@
 import type { IDao } from '@/shared/api/daoService';
-import { ApplicationVersion } from '@/shared/components/applicationVersion';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, ChainEntityType, DefinitionList, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
@@ -21,11 +21,17 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
 
     const supportedPlugin = dao.plugins.find((plugin) => pluginRegistryUtils.getPlugin(plugin.subdomain) != null);
 
+    const { version, env } = useApplicationVersion();
+
+    const versionLabel = env
+        ? t('shared.useApplicationVersion.versionEnv', { version, env })
+        : t('shared.useApplicationVersion.version', { version });
+
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.governance.daoVersionInfo.app')}>
                 <Link href="/" iconRight={IconType.LINK_EXTERNAL}>
-                    <ApplicationVersion />
+                    {versionLabel}
                 </Link>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.governance.daoVersionInfo.osLabel')}>

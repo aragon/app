@@ -23,20 +23,24 @@ describe('<ApplicationTags /> component', () => {
         process.env.version = '1.0.2';
         process.env.NEXT_PUBLIC_ENV = 'development';
         render(createTestComponent());
-        expect(screen.getByText('v1.0.2 (DEV)')).toBeInTheDocument();
+        expect(
+            screen.getByText(/shared.useApplicationVersion.versionEnv \(version=1.0.2,env=DEV\)/),
+        ).toBeInTheDocument();
     });
 
     it('renders current version and STG label on staging environment', () => {
         process.env.version = '0.0.1';
         process.env.NEXT_PUBLIC_ENV = 'staging';
         render(createTestComponent());
-        expect(screen.getByText('v0.0.1 (STG)')).toBeInTheDocument();
+        expect(
+            screen.getByText(/shared.useApplicationVersion.versionEnv \(version=0.0.1,env=STG\)/),
+        ).toBeInTheDocument();
     });
 
     it('only renders current version of production environment', () => {
         process.env.version = '1.5.0';
         process.env.NEXT_PUBLIC_ENV = 'production';
         render(createTestComponent());
-        expect(screen.getByText('v1.5.0')).toBeInTheDocument();
+        expect(screen.getByText(/shared.useApplicationVersion.version \(version=1.5.0\)/)).toBeInTheDocument();
     });
 });
