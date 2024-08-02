@@ -28,7 +28,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
 
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
-    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
+    const chainId = networkDefinitions[dao.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     return (
@@ -42,7 +42,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.main.daoSettingsInfo.blockchain')}>
                     <div className="flex items-center justify-between">
-                        {dao.network && networkDefinitions[dao.network].name}
+                        {networkDefinitions[dao.network].name}
                         <Tag label={t('app.governance.daoSettingsPage.main.daoSettingsInfo.notChangeable')} />
                     </div>
                 </DefinitionList.Item>

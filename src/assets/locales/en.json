@@ -243,7 +243,7 @@
             "title": "Version info",
             "app": "App",
             "osLabel": "Operating system",
-            "osValue": "{{os}}",
+            "osValue": "Aragon OSx",
             "governanceLabel": "Governance",
             "governanceValue": "{{name}} v{{release}}.{{build}}"
           }

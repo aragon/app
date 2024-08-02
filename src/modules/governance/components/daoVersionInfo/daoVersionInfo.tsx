@@ -1,5 +1,6 @@
 import type { IDao } from '@/shared/api/daoService';
 import { ApplicationVersion } from '@/shared/components/applicationVersion';
+import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -22,8 +23,7 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
     const supportedPlugin = dao.plugins.find((plugin) => pluginRegistryUtils.getPlugin(plugin.subdomain) != null);
 
     return (
-        <div className="flex w-full flex-col gap-2">
-            <Heading size="h3">{t('app.governance.daoSettingsPage.aside.daoVersionInfo.title')}</Heading>
+        <Page.Section title={t('app.governance.daoSettingsPage.aside.daoVersionInfo.title')}>
             <DefinitionList.Container>
                 <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.app')}>
                     <Link href="/" iconRight={IconType.LINK_EXTERNAL}>
@@ -38,9 +38,7 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
                         href=""
                         target="_blank"
                     >
-                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.osValue', {
-                            os: 'Aragon OSx',
-                        })}
+                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.osValue')}
                     </Link>
                 </DefinitionList.Item>
                 {supportedPlugin && (
@@ -65,6 +63,6 @@ export const DaoVersionInfo: React.FC<IDaVersionInfoProps> = (props) => {
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
-        </div>
+        </Page.Section>
     );
 };
