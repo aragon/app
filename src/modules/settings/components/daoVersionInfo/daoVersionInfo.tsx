@@ -2,6 +2,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, ChainEntityType, DefinitionList, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
@@ -17,9 +18,10 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const { t } = useTranslations();
 
     const chainId = networkDefinitions[dao.network].chainId;
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { buildEntityUrl } = useBlockExplorer();
 
     const supportedPlugin = dao.plugins.find((plugin) => pluginRegistryUtils.getPlugin(plugin.subdomain) != null);
+    const pluginLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: supportedPlugin?.address, chainId });
 
     const version = useApplicationVersion();
 
@@ -46,14 +48,11 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                     <Link
                         description={addressUtils.truncateAddress(supportedPlugin.address)}
                         iconRight={IconType.LINK_EXTERNAL}
-                        href={buildEntityUrl({
-                            type: ChainEntityType.ADDRESS,
-                            id: supportedPlugin.address,
-                            chainId,
-                        })}
+                        href={pluginLink}
+                        target="_blank"
                     >
                         {t('app.governance.daoVersionInfo.governanceValue', {
-                            name: supportedPlugin.subdomain,
+                            name: daoUtils.formatPluginName(supportedPlugin.subdomain),
                             release: supportedPlugin.release,
                             build: supportedPlugin.build,
                         })}

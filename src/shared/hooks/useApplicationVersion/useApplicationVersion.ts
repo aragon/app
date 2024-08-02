@@ -10,6 +10,7 @@ export const useApplicationVersion = (): string => {
 
     const version = process.env.version!;
     const env = envLabel[process.env.NEXT_PUBLIC_ENV!];
+
     const versionLabel = env
         ? t('app.shared.useApplicationVersion.versionEnv', { version, env })
         : t('app.shared.useApplicationVersion.version', { version });

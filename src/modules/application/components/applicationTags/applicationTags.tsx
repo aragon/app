@@ -16,7 +16,6 @@ export const ApplicationTags: React.FC<IApplicationTagsProps> = (props) => {
     const { variant = 'primary', className, ...otherProps } = props;
 
     const { t } = useTranslations();
-
     const version = useApplicationVersion();
 
     return (

@@ -36,13 +36,13 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
             <DefinitionList.Container>
                 <DefinitionList.Item term={t('app.governance.daoSettingsInfo.name')}>
                     <div className="flex items-center gap-2">
-                        <p>{dao.name}</p>
+                        <p className="text-neutral-500">{dao.name}</p>
                         <DaoAvatar src={daoAvatar} name={dao.name} size="md" />
                     </div>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.governance.daoSettingsInfo.blockchain')}>
                     <div className="flex items-center justify-between">
-                        {networkDefinitions[dao.network].name}
+                        <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                         <Tag label={t('app.governance.daoSettingsInfo.notChangeable')} />
                     </div>
                 </DefinitionList.Item>
@@ -64,17 +64,19 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                 <DefinitionList.Item term={t('app.governance.daoSettingsInfo.summary')}>
                     <Collapsible
                         collapsedSize="sm"
+                        customCollapsedHeight={50}
                         buttonLabelClosed={t('app.governance.daoSettingsInfo.readMore')}
                         buttonLabelOpened={t('app.governance.daoSettingsInfo.readLess')}
                     >
-                        <p>{dao.description}</p>
+                        <p className="text-neutral-500">{dao.description}</p>
                     </Collapsible>
                 </DefinitionList.Item>
                 {dao.links && dao.links.length > 0 && (
                     <DefinitionList.Item term={t('app.governance.daoSettingsInfo.links')}>
-                        {dao.links.map((link, index) => (
-                            <li key={index}>
+                        <div className="flex flex-col gap-3">
+                            {dao.links.map((link) => (
                                 <Link
+                                    key={link.url}
                                     description={link.url}
                                     iconRight={IconType.LINK_EXTERNAL}
                                     href={link.url}
@@ -82,8 +84,8 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                                 >
                                     {link.name}
                                 </Link>
-                            </li>
-                        ))}
+                            ))}
+                        </div>
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>

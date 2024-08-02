@@ -1,9 +1,10 @@
 'use client';
-import { DaoSettingsInfo } from '@/modules/governance/components/daoSettingsInfo';
-import { DaoVersionInfo } from '@/modules/governance/components/daoVersionInfo';
+
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
+import { DaoVersionInfo } from '../../components/daoVersionInfo';
 
 export interface IDaoSettingsPageClientProps {
     /**
@@ -14,11 +15,16 @@ export interface IDaoSettingsPageClientProps {
 
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (props) => {
     const { daoId } = props;
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
     const { t } = useTranslations();
+
+    const daoParams = { urlParams: { id: daoId } };
+    const { data: dao } = useDao(daoParams);
+
     if (!dao) {
         return null;
     }
+
     return (
         <>
             <Page.Main title={t('app.governance.daoSettingsPage.main.title')}>
