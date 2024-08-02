@@ -1,4 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenMembersPageDetails } from './components/tokenMembersPageDetails';
@@ -7,11 +8,15 @@ import { TokenProposalsPageDetails } from './components/tokenProposalsPageDetail
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
 import { TokenVoteList } from './components/tokenVoteList';
 import { plugin } from './constants/plugin';
+import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
+        // Plugin definitions
         .registerPlugin(plugin)
+
+        // Governance module slots
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
             pluginId: plugin.id,
@@ -46,5 +51,12 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
             pluginId: plugin.id,
             component: TokenVoteList,
+        })
+
+        // Settings module slots
+        .registerSlotFunction({
+            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
+            pluginId: plugin.id,
+            function: useTokenGovernanceSettings,
         });
 };
