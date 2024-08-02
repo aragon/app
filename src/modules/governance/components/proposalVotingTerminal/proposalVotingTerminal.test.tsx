@@ -1,5 +1,6 @@
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
 import { type IProposalVotingTerminalProps, ProposalVotingTerminal } from './proposalVotingTerminal';
@@ -8,6 +9,10 @@ jest.mock('@/shared/components/pluginComponent', () => ({
     PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
         <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginids={props.pluginIds} />
     ),
+}));
+
+jest.mock('../voteList', () => ({
+    VoteList: () => <div data-testid="vote-list-mock" />,
 }));
 
 describe('<ProposalVotingTerminal /> component', () => {
@@ -44,5 +49,11 @@ describe('<ProposalVotingTerminal /> component', () => {
         expect(pluginComponent).toBeInTheDocument();
         expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN);
         expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
+    });
+
+    it('renders the list of votes', async () => {
+        render(createTestComponent());
+        await userEvent.click(screen.getByRole('tab', { name: 'Votes' }));
+        expect(screen.getByTestId('vote-list-mock')).toBeInTheDocument();
     });
 });

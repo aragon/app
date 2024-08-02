@@ -25,6 +25,7 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
             slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
             pluginIds={pluginIds}
             initialParams={initialParams}
+            daoId={daoId}
         />
     );
 };

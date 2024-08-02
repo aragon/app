@@ -1,19 +1,17 @@
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
-    ChainEntityType,
     DataListContainer,
     DataListPagination,
     DataListRoot,
     type IVoteDataListItemStructureProps,
-    useBlockExplorer,
     VoteDataListItem,
 } from '@aragon/ods';
+import { formatUnits } from 'viem';
 import { type ITokenVote, VoteOption } from '../../types';
 
-export interface ITokenVoteListProps extends Pick<IVoteListProps, 'initialParams'> {}
+export interface ITokenVoteListProps extends IVoteListProps {}
 
 // TODO: use VoteIndicator type when exported from ODS
 const voteOptionToIndicator: Record<VoteOption, IVoteDataListItemStructureProps['voteIndicator']> = {
@@ -23,10 +21,9 @@ const voteOptionToIndicator: Record<VoteOption, IVoteDataListItemStructureProps[
 };
 
 export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
-    const { initialParams } = props;
+    const { initialParams, daoId } = props;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, voteList } =
         useVoteListData<ITokenVote>(initialParams);
@@ -47,15 +44,10 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                 {voteList?.map((vote) => (
                     <VoteDataListItem.Structure
                         key={vote.transactionHash}
-                        href={buildEntityUrl({
-                            type: ChainEntityType.TRANSACTION,
-                            id: vote.transactionHash,
-                            chainId: networkDefinitions[vote.network].chainId,
-                        })}
-                        target="_blank"
+                        href={`/dao/${daoId}/members/${vote.memberAddress}`}
                         voteIndicator={voteOptionToIndicator[vote.voteOption]}
                         voter={{ address: vote.memberAddress }}
-                        votingPower={vote.votingPower}
+                        votingPower={formatUnits(BigInt(vote.votingPower), vote.token.decimals)}
                         tokenSymbol={vote.token.symbol}
                     />
                 ))}
