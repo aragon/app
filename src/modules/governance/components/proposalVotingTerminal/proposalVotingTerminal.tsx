@@ -17,13 +17,15 @@ export interface IProposalVotingTerminalProps {
     daoId: string;
 }
 
+const votesPerPage = 6;
+
 export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
     const { proposal, daoId } = props;
 
     const { t } = useTranslations();
     const pluginIds = useDaoPluginIds(daoId);
 
-    const voteListParams = { queryParams: { proposalId: proposal.id } };
+    const voteListParams = { queryParams: { proposalId: proposal.id, pageSize: votesPerPage } };
 
     return (
         <ProposalVoting.Container
