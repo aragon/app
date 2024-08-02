@@ -33,9 +33,9 @@ describe('<DaoVersionInfo /> component', () => {
 
         render(createTestComponent({ dao: dao }));
 
-        expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.app/)).toBeInTheDocument();
-        expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osLabel/)).toBeInTheDocument();
-        expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.governanceLabel/)).toBeInTheDocument();
+        expect(screen.getByText(/daoVersionInfo.app/)).toBeInTheDocument();
+        expect(screen.getByText(/daoVersionInfo.osLabel/)).toBeInTheDocument();
+        expect(screen.getByText(/daoVersionInfo.governanceLabel/)).toBeInTheDocument();
     });
 
     it('renders the correct values', () => {
@@ -56,11 +56,9 @@ describe('<DaoVersionInfo /> component', () => {
 
         expect(screen.getByText('v1.0.0 (DEV)')).toBeInTheDocument();
         // TODO: Update test when we get value from the backend (APP-3484)
-        expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osValue/)).toBeInTheDocument();
+        expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
         expect(
-            screen.getByText(
-                /daoSettingsPage.aside.daoVersionInfo.governanceValue \(name=multisig,release=1,build=3\)/,
-            ),
+            screen.getByText(/daoVersionInfo.governanceValue \(name=multisig,release=1,build=3\)/),
         ).toBeInTheDocument();
     });
 
@@ -82,7 +80,7 @@ describe('<DaoVersionInfo /> component', () => {
         render(createTestComponent({ dao: dao }));
 
         const linkElement = screen.getByRole('link', {
-            name: /daoSettingsPage.aside.daoVersionInfo.governanceValue \(name=multisig,release=3,build=5\) 0x89…437c/,
+            name: /daoVersionInfo.governanceValue \(name=multisig,release=3,build=5\) 0x89…437c/,
         });
 
         expect(linkElement).toHaveAttribute(

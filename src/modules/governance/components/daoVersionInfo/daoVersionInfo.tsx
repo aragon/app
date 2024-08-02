@@ -23,12 +23,12 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.app')}>
+            <DefinitionList.Item term={t('app.governance.daoVersionInfo.app')}>
                 <Link href="/" iconRight={IconType.LINK_EXTERNAL}>
                     <ApplicationVersion />
                 </Link>
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.osLabel')}>
+            <DefinitionList.Item term={t('app.governance.daoVersionInfo.osLabel')}>
                 {/* TODO: Fetch this operating system value from backend when available (APP-3484) */}
                 <Link
                     description={addressUtils.truncateAddress(dao.address)}
@@ -36,11 +36,11 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                     href=""
                     target="_blank"
                 >
-                    {t('app.governance.daoSettingsPage.aside.daoVersionInfo.osValue')}
+                    {t('app.governance.daoVersionInfo.osValue')}
                 </Link>
             </DefinitionList.Item>
             {supportedPlugin && (
-                <DefinitionList.Item term={t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceLabel')}>
+                <DefinitionList.Item term={t('app.governance.daoVersionInfo.governanceLabel')}>
                     <Link
                         description={addressUtils.truncateAddress(supportedPlugin.address)}
                         iconRight={IconType.LINK_EXTERNAL}
@@ -50,7 +50,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                             chainId,
                         })}
                     >
-                        {t('app.governance.daoSettingsPage.aside.daoVersionInfo.governanceValue', {
+                        {t('app.governance.daoVersionInfo.governanceValue', {
                             name: supportedPlugin.subdomain,
                             release: supportedPlugin.release,
                             build: supportedPlugin.build,

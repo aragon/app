@@ -12,20 +12,10 @@ export interface IApplicationTagsProps extends ComponentProps<'div'> {
     variant?: ITagProps['variant'];
 }
 
-const envLabel: Record<string, string | undefined> = {
-    development: 'DEV',
-    staging: 'STG',
-};
-
 export const ApplicationTags: React.FC<IApplicationTagsProps> = (props) => {
     const { variant = 'primary', className, ...otherProps } = props;
 
     const { t } = useTranslations();
-
-    const version = process.env.version!;
-
-    const env = envLabel[process.env.NEXT_PUBLIC_ENV!];
-    const versionLabel = env != null ? 'versionEnv' : 'version';
 
     return (
         <div className={classNames('flex flex-row gap-2', className)} {...otherProps}>

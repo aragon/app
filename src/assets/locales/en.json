@@ -225,29 +225,27 @@
       },
       "daoSettingsPage": {
         "main": {
-          "title": "Settings",
-          "daoSettingsInfo": {
-            "title": "DAO",
-            "name": "Name",
-            "blockchain": "Blockchain",
-            "ens": "ENS name",
-            "summary": "Summary",
-            "links": "Links",
-            "readMore": "Read more",
-            "readLess": "Read less",
-            "notChangeable": "Not changeable"
-          }
-        },
-        "aside": {
-          "daoVersionInfo": {
-            "title": "Version info",
-            "app": "App",
-            "osLabel": "Operating system",
-            "osValue": "Aragon OSx",
-            "governanceLabel": "Governance",
-            "governanceValue": "{{name}} v{{release}}.{{build}}"
-          }
+          "title": "Settings"
         }
+      },
+      "daoSettingsInfo": {
+        "title": "DAO",
+        "name": "Name",
+        "blockchain": "Blockchain",
+        "ens": "ENS name",
+        "summary": "Summary",
+        "links": "Links",
+        "readMore": "Read more",
+        "readLess": "Read less",
+        "notChangeable": "Not changeable"
+      },
+      "daoVersionInfo": {
+        "title": "Version info",
+        "app": "App",
+        "osLabel": "Operating system",
+        "osValue": "Aragon OSx",
+        "governanceLabel": "Governance",
+        "governanceValue": "{{name}} v{{release}}.{{build}}"
       },
       "voteList": {
         "empty": {

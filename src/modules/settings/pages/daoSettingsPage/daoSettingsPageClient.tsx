@@ -22,12 +22,12 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     return (
         <>
             <Page.Main title={t('app.governance.daoSettingsPage.main.title')}>
-                <Page.Section title={t('app.governance.daoSettingsPage.main.daoSettingsInfo.title')}>
+                <Page.Section title={t('app.governance.daoSettingsInfo.title')}>
                     <DaoSettingsInfo dao={dao} />
                 </Page.Section>
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.governance.daoSettingsPage.aside.daoVersionInfo.title')}>
+                <Page.Section title={t('app.governance.daoVersionInfo.title')}>
                     <DaoVersionInfo dao={dao} />
                 </Page.Section>
             </Page.Aside>

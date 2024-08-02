@@ -39,9 +39,9 @@ describe('<DaoSettingsPageClient /> component', () => {
         const dao = generateDao({ id: 'my-dao', name: 'My Dao Name' });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
-        expect(screen.getByText(/daoSettingsPage.main.daoSettingsInfo.title/)).toBeInTheDocument();
-        expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.title/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsInfo.title/)).toBeInTheDocument();
+        expect(screen.getByText(/daoVersionInfo.title/)).toBeInTheDocument();
         expect(screen.getByText('My Dao Name')).toBeInTheDocument();
-        expect(screen.getByText(/daoSettingsPage.aside.daoVersionInfo.osValue/)).toBeInTheDocument();
+        expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
     });
 });
