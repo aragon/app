@@ -32,6 +32,10 @@ export interface IProposal {
      */
     description: string | null;
     /**
+     * Timestamp of the start date of the proposal.
+     */
+    startDate: number;
+    /**
      * Timestamp of the end date of the proposal.
      */
     endDate: number;

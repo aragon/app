@@ -1,10 +1,11 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { IMember, IProposal } from './domain';
+import type { IMember, IProposal, IVote } from './domain';
 import type {
     IGetMemberListParams,
     IGetMemberParams,
     IGetProposalListParams,
     IGetProposalParams,
+    IGetVoteListParams,
 } from './governanceService.api';
 
 class GovernanceService extends AragonBackendService {
@@ -13,6 +14,7 @@ class GovernanceService extends AragonBackendService {
         member: '/members/active/:address',
         proposals: '/proposals',
         proposal: '/proposals/:id',
+        votes: '/votes',
     };
 
     getMemberList = async <TMember extends IMember = IMember>(
@@ -40,7 +42,16 @@ class GovernanceService extends AragonBackendService {
     getProposal = async <TProposal extends IProposal = IProposal>(params: IGetProposalParams): Promise<TProposal> => {
         const result = await this.request<TProposal>(this.urls.proposal, params);
 
-        console.log('result', result.actions)
+        // useful for debugging until final backend implementation
+        // console.log('result', result.actions);
+
+        return result;
+    };
+
+    getVoteList = async <TVote extends IVote = IVote>(
+        params: IGetVoteListParams,
+    ): Promise<IPaginatedResponse<TVote>> => {
+        const result = await this.request<IPaginatedResponse<TVote>>(this.urls.votes, params);
 
         return result;
     };

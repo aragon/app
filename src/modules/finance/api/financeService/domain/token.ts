@@ -37,4 +37,8 @@ export interface IToken {
      * Current price in USD.
      */
     priceUsd: string;
+    /**
+     * Total supply of the token.
+     */
+    totalSupply: string;
 }

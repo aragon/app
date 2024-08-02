@@ -1,6 +1,5 @@
 import { useDao, useDaoSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { percentageDecimals } from '@/shared/constants/decimals';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -16,6 +15,7 @@ import {
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import { DaoTokenVotingMode, type IDaoTokenSettings } from '../../types';
+import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 
 export interface ITokenProposalsPageDetailsProps {
     /**
@@ -28,6 +28,7 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
     const { daoId } = props;
 
     const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer();
 
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
@@ -35,21 +36,18 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
     const daoSettingsParams = { daoId };
     const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
 
-    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
-
     if (dao == null || settings == null) {
         return null;
     }
 
     const { supportThreshold, minParticipation, minProposerVotingPower } = settings.settings;
-    const supportThresholdPercentage = formatUnits(BigInt(supportThreshold), percentageDecimals);
+    const supportThresholdPercentage = tokenSettingsUtils.parsePercentageSetting(supportThreshold) / 100;
     const formattedSupportThresholdPercentage = formatterUtils.formatNumber(supportThresholdPercentage, {
         isPercentage: true,
         format: NumberFormat.PERCENTAGE_SHORT,
     });
 
-    const minParticipationPercentage = formatUnits(BigInt(minParticipation), percentageDecimals);
+    const minParticipationPercentage = tokenSettingsUtils.parsePercentageSetting(minParticipation) / 100;
     const formattedMinParticipationPercentage = formatterUtils.formatNumber(minParticipationPercentage, {
         isPercentage: true,
         format: NumberFormat.PERCENTAGE_SHORT,
@@ -59,14 +57,13 @@ export const TokenProposalsPageDetails: React.FC<ITokenProposalsPageDetailsProps
     const minProposerAmount = formatUnits(BigInt(Number(minProposerVotingPower)), token.decimals);
     const formattedMinBalance = `${formatterUtils.formatNumber(minProposerAmount)} $${token.symbol}`;
 
+    const { chainId } = networkDefinitions[dao.network];
+    const pluginLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: settings.pluginAddress, chainId });
+
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.plugins.token.tokenProposalsPageDetails.contract')}>
-                <Link
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: settings.pluginAddress })}
-                    target="_blank"
-                >
+                <Link iconRight={IconType.LINK_EXTERNAL} href={pluginLink} target="_blank">
                     {daoUtils.formatPluginName(settings.pluginSubdomain)}
                 </Link>
                 <p className="text-neutral-500">{addressUtils.truncateAddress(settings.pluginAddress)}</p>

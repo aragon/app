@@ -207,7 +207,8 @@
           "actions": {
             "header": "Actions",
             "description": "The following actions will execute if all voting stages are approved."
-          }
+          },
+          "governance": "Governance"
         },
         "aside": {
           "details": {
@@ -220,6 +221,20 @@
           "links": {
             "title": "Links"
           }
+        }
+      },
+      "proposalVotingTerminal": {
+        "title": "Voting",
+        "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute."
+      },
+      "voteList": {
+        "empty": {
+          "title": "No votes found",
+          "description": "No votes have been found."
+        },
+        "error": {
+          "title": "Error loading votes",
+          "description": "There was an error loading the votes, try again later."
         }
       }
     },
@@ -251,6 +266,35 @@
           "votingPower": "Voting power",
           "tokenBalance": "Token balance",
           "delegations": "Delegations"
+        },
+        "tokenMemberInfo": {
+          "eligibleVoters": "Eligible voters",
+          "tokenLabel": "Token",
+          "distribution": "Distribution",
+          "supply": "Supply",
+          "members": "Members",
+          "tokenHolders": "Token holders",
+          "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
+          "tokenDistribution": "{{count}} token holders",
+          "tokenLinkDescription": "View all token holders",
+          "tokenSupply": "{{supply}} {{symbol}}"
+        },
+        "tokenGovernanceSettings": {
+          "approvalThreshold": "Approval threshold",
+          "approval": "> {{approvalThreshold}}",
+          "minimumParticipation": "Minimum participation",
+          "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
+          "minimumDuration": "Minimum duration",
+          "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "earlyExecution": "Early execution",
+          "voteChange": "Vote change",
+          "proposalThreshold": "Proposal threshold",
+          "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
+          "yes": "Yes",
+          "no": "No"
+        },
+        "tokenVoteList": {
+          "entity": "Votes"
         }
       },
       "multisig": {
@@ -270,6 +314,23 @@
           "proposalCreation": "Proposal creation",
           "minimumApprovalMembers": "{{count}} of {{total}} Members",
           "members": "Multisig members"
+        },
+        "multisigMembersInfo": {
+          "eligibleVoters": "Eligible voters",
+          "membersLabel": "Members",
+          "multisigMembers": "Multisig members",
+          "linkDescription": "View all members",
+          "membersCount": "See {{count}} addresses"
+        },
+        "multisigGovernanceSettings": {
+          "minimumApproval": "Minimum approval",
+          "proposalCreation": "Proposal creation",
+          "members": "Multisig members",
+          "anyWallet": "Any wallet",
+          "approvals": "{{min}} of {{max}} authorized addresses"
+        },
+        "multisigVoteList": {
+          "entity": "Votes"
         }
       }
     },

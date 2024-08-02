@@ -22,6 +22,7 @@ import {
     useBlockExplorer,
 } from '@aragon/ods';
 import { useProposal } from '../../api/governanceService';
+import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -38,20 +39,19 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { daoId, proposalId } = props;
 
     const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer();
     const pageUrl = useCurrentUrl();
 
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
 
-    const chainId = proposal ? networkDefinitions[proposal.network].chainId : undefined;
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
-
     const plugins = useDaoPluginIds(daoId);
 
     if (proposal == null) {
         return null;
     }
+    
     const { blockTimestamp, creatorAddress, transactionHash, summary, title, description, actions, resources } =
         proposal;
 
@@ -63,8 +63,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const creatorName = addressUtils.truncateAddress(creatorAddress);
 
-    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress });
-    const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
+    const { chainId } = networkDefinitions[proposal.network];
+    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
+    const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
     const pageBreadcrumbs = [
         {
@@ -105,6 +106,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                     >
                         <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
+                        </Page.Section>
+                    <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
+                        <ProposalVotingTerminal proposal={proposal} daoId={daoId} />
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>

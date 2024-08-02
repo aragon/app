@@ -1,4 +1,4 @@
-import { generateMember, generateProposal } from '../../testUtils';
+import { generateMember, generateProposal, generateVote } from '../../testUtils';
 import { governanceService } from './governanceService';
 
 describe('governance service', () => {
@@ -50,5 +50,16 @@ describe('governance service', () => {
 
         expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposal, params);
         expect(result).toEqual(proposal);
+    });
+
+    it('getVoteList fetches the votes of a specific proposal', async () => {
+        const votes = [generateVote({ transactionHash: '0' }), generateVote({ transactionHash: '1' })];
+        const params = { queryParams: { proposalId: 'proposal-id' } };
+
+        requestSpy.mockResolvedValue(votes);
+        const result = await governanceService.getVoteList(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].votes, params);
+        expect(result).toEqual(votes);
     });
 });

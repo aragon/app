@@ -11,5 +11,6 @@ export const generateToken = (token?: Partial<IToken>): IToken => ({
     decimals: 0,
     priceChangeOnDayUsd: '0.00',
     priceUsd: '0.00',
+    totalSupply: '0',
     ...token,
 });

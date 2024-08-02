@@ -1,3 +1,7 @@
+import {
+    DaoProposalDetailsPageClient,
+    type IDaoProposalDetailsPageClientProps,
+} from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
 import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
 import { Network } from '@/shared/api/daoService';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
@@ -6,7 +10,10 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
-import { DaoProposalDetailsPageClient, type IDaoProposalDetailsPageClientProps } from './daoProposalDetailsPageClient';
+
+jest.mock('../../components/proposalVotingTerminal', () => ({
+    ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
+}));
 
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
@@ -141,7 +148,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         render(createTestComponent());
         expect(screen.queryByText(/daoProposalDetailsPage.aside.links.title/)).not.toBeInTheDocument();
     });
-    
+
     it('renders the proposal actions when defined', () => {
         const actions = [
             generateProposalActionChangeMembers({
@@ -159,5 +166,11 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         actions.forEach((action) => {
             expect(screen.getByText(action.inputData!.function)).toBeInTheDocument();
         });
+    });
+
+    it('renders the proposal voting terminal', () => {
+        render(createTestComponent());
+        expect(screen.getByText(/daoProposalDetailsPage.main.governance/)).toBeInTheDocument();
+        expect(screen.getByTestId('voting-terminal-mock')).toBeInTheDocument();
     });
 });

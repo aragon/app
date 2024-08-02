@@ -1,4 +1,10 @@
-import { type IProposalActionChangeSettings, proposalActionsUtils as ODSProposalActionUtils, type IProposalAction, type IProposalActionWithdrawToken, ProposalActionType } from '@aragon/ods';
+import {
+    type IProposalAction,
+    type IProposalActionChangeSettings,
+    type IProposalActionWithdrawToken,
+    proposalActionsUtils as ODSProposalActionUtils,
+    ProposalActionType,
+} from '@aragon/ods';
 import { formatUnits } from 'viem';
 
 enum ProposalActionTypeBackend {
@@ -23,23 +29,22 @@ class ProposalActionUtils {
     };
 
     normalizeActions = (plugins: string[], fetchedActions: IProposalAction[]): IProposalAction[] => {
-        return fetchedActions
-            .map((action) => {
-                const mappedType = this.actionTypeMapping[action.type as ProposalActionTypeBackend];
-                const normalizedAction = { ...action, type: mappedType }
+        return fetchedActions.map((action) => {
+            const mappedType = this.actionTypeMapping[action.type as ProposalActionTypeBackend];
+            const normalizedAction = { ...action, type: mappedType };
 
-                if (ODSProposalActionUtils.isWithdrawTokenAction(normalizedAction)) {
-                    return this.normalizeTransferAction(normalizedAction);
-                }
-                if(ODSProposalActionUtils.isChangeSettingsAction(normalizedAction)) {
-                    return this.normalizeChangeSettingsAction(plugins, normalizedAction);
-                }
-                return {
-                    ...normalizedAction,
-                    type: mappedType,
-                };
-            })
-    }
+            if (ODSProposalActionUtils.isWithdrawTokenAction(normalizedAction)) {
+                return this.normalizeTransferAction(normalizedAction);
+            }
+            if (ODSProposalActionUtils.isChangeSettingsAction(normalizedAction)) {
+                return this.normalizeChangeSettingsAction(plugins, normalizedAction);
+            }
+            return {
+                ...normalizedAction,
+                type: mappedType,
+            };
+        });
+    };
     normalizeTransferAction = (action: IProposalActionWithdrawToken): IProposalActionWithdrawToken => {
         const { amount, token, ...otherValues } = action;
 
@@ -48,26 +53,29 @@ class ProposalActionUtils {
             amount: formatUnits(BigInt(amount), token.decimals),
             ...otherValues,
         };
-    }
-    normalizeChangeSettingsAction = (plugins: string[], action: IProposalActionChangeSettings): IProposalActionChangeSettings => {
-        const {proposedSettings, existingSettings, ...otherValues } = action;
-    
-        if(plugins.includes('multisig')) {
+    };
+    normalizeChangeSettingsAction = (
+        plugins: string[],
+        action: IProposalActionChangeSettings,
+    ): IProposalActionChangeSettings => {
+        const { proposedSettings, existingSettings, ...otherValues } = action;
+
+        if (plugins.includes('multisig')) {
             return {
                 proposedSettings: proposedSettings.map(({ term, definition }) => ({ term, definition })),
                 existingSettings: existingSettings.map(({ term, definition }) => ({ term, definition })),
                 ...otherValues,
-            }
-        }  
+            };
+        }
         if (plugins.includes('token-voting')) {
             return {
                 proposedSettings: proposedSettings.map(({ term, definition }) => ({ term, definition })),
                 existingSettings: existingSettings.map(({ term, definition }) => ({ term, definition })),
                 ...otherValues,
             };
-        } 
+        }
         return action;
-    }
+    };
 }
 
 const proposalActionUtils = new ProposalActionUtils();

@@ -29,11 +29,9 @@ export interface IAssetListProps extends ComponentProps<'div'> {
 
 export const AssetList: React.FC<IAssetListProps> = (props) => {
     const { initialParams, hidePagination, children, ...otherProps } = props;
-    const { t } = useTranslations();
 
-    const { network } = initialParams.queryParams;
-    const chainId = network ? networkDefinitions[network].chainId : undefined;
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
@@ -62,7 +60,11 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                         logoSrc={token.logo}
                         priceChange={Number(token.priceChangeOnDayUsd)}
                         target="_blank"
-                        href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address })}
+                        href={buildEntityUrl({
+                            type: ChainEntityType.TOKEN,
+                            id: token.address,
+                            chainId: networkDefinitions[token.network].chainId,
+                        })}
                     />
                 ))}
             </DataListContainer>
