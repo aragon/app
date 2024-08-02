@@ -11,6 +11,7 @@ export interface IDaoSettingsPageProps {
 
 export const DaoSettingsPage: React.FC<IDaoSettingsPageProps> = async (props) => {
     const { params } = props;
+
     return (
         <Page.Container>
             <Page.Content>

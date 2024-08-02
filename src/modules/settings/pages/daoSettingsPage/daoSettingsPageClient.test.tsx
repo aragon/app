@@ -1,12 +1,8 @@
 import * as DaoService from '@/shared/api/daoService';
-import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DaoSettingsPageClient } from './daoSettingsPageClient';
-
-jest.mock('@/shared/utils/pluginRegistryUtils', () => ({
-    getPlugin: jest.fn(),
-}));
+import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
 
 describe('<DaoSettingsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
@@ -19,11 +15,15 @@ describe('<DaoSettingsPageClient /> component', () => {
         useDaoSpy.mockReset();
     });
 
-    const createTestComponent = (props: { daoId: string } = { daoId: 'test-dao' }) => {
-        const { daoId } = props;
+    const createTestComponent = (props?: Partial<IDaoSettingsPageClientProps>) => {
+        const completeProps: IDaoSettingsPageClientProps = {
+            daoId: 'test',
+            ...props,
+        };
+
         return (
             <OdsModulesProvider>
-                <DaoSettingsPageClient daoId={daoId} />
+                <DaoSettingsPageClient {...completeProps} />
             </OdsModulesProvider>
         );
     };
@@ -43,5 +43,11 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByText(/daoSettingsPage.aside.versionInfoTitle/)).toBeInTheDocument();
         expect(screen.getByText('My Dao Name')).toBeInTheDocument();
         expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
+    });
+
+    it('returns null when DAO cannot be fetched', () => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        render(createTestComponent());
+        expect(screen.queryByText(/daoSettingsPage.main.title/)).not.toBeInTheDocument();
     });
 });

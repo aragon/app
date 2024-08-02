@@ -77,6 +77,11 @@
         }
       }
     },
+    "explore": {
+      "daoList": {
+        "entity": "DAO"
+      }
+    },
     "finance": {
       "assetList": {
         "entity": "Assets",
