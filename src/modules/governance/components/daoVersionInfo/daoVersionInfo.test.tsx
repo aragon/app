@@ -1,14 +1,16 @@
-import { generateDao, generatePlugin } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin, generatePlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';
 
 describe('<DaoVersionInfo /> component', () => {
+    const originalProcessEnv = process.env;
     const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
 
     afterEach(() => {
         getPluginSpy.mockReset();
+        process.env = originalProcessEnv;
     });
     const createTestComponent = (props?: Partial<IDaoVersionInfoProps>) => {
         const completeProps: IDaoVersionInfoProps = {
@@ -24,17 +26,8 @@ describe('<DaoVersionInfo /> component', () => {
     };
 
     it('renders the correct terms', () => {
-        const dao = generateDao({
-            plugins: [
-                {
-                    address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c',
-                    release: '1',
-                    build: '1',
-                    subdomain: 'multisig',
-                    type: '',
-                },
-            ],
-        });
+        const plugin = generateDaoPlugin();
+        const dao = generateDao({ plugins: [plugin] });
 
         getPluginSpy.mockReturnValue(generatePlugin());
 
@@ -48,17 +41,14 @@ describe('<DaoVersionInfo /> component', () => {
     it('renders the correct values', () => {
         process.env.version = '1.0.0';
         process.env.NEXT_PUBLIC_ENV = 'development';
-        const dao = generateDao({
-            plugins: [
-                {
-                    address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c',
-                    release: '1',
-                    build: '3',
-                    subdomain: 'multisig',
-                    type: '',
-                },
-            ],
+        const plugin = generateDaoPlugin({
+            address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c',
+            release: '1',
+            build: '3',
+            subdomain: 'multisig',
+            type: '',
         });
+        const dao = generateDao({ plugins: [plugin] });
 
         getPluginSpy.mockReturnValue(generatePlugin());
 
