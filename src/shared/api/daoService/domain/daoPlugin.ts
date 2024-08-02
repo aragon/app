@@ -11,4 +11,12 @@ export interface IDaoPlugin {
      * Subdomain of the plugin.
      */
     subdomain: string;
+    /**
+     * Release number of the plugin.
+     */
+    release: string;
+    /**
+     * Build number of the plugin.
+     */
+    build: string;
 }

@@ -2,8 +2,6 @@
   "app": {
     "application": {
       "applicationTags": {
-        "version": "v{{version}}",
-        "versionEnv": "v{{version}} ({{env}})",
         "beta": "Beta"
       },
       "footer": {
@@ -223,6 +221,32 @@
         "title": "Voting",
         "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute."
       },
+      "daoSettingsPage": {
+        "main": {
+          "title": "Settings",
+          "settingsInfoTitle": "DAO"
+        },
+        "aside": {
+          "versionInfoTitle": "Version Info"
+        }
+      },
+      "daoSettingsInfo": {
+        "name": "Name",
+        "blockchain": "Blockchain",
+        "ens": "ENS name",
+        "summary": "Summary",
+        "links": "Links",
+        "readMore": "Read more",
+        "readLess": "Read less",
+        "notChangeable": "Not changeable"
+      },
+      "daoVersionInfo": {
+        "app": "App",
+        "osLabel": "Operating system",
+        "osValue": "Aragon OSx",
+        "governanceLabel": "Governance",
+        "governanceValue": "{{name}} v{{release}}.{{build}}"
+      },
       "voteList": {
         "empty": {
           "title": "No votes found",
@@ -336,6 +360,10 @@
           "readMore": "Read more",
           "readLess": "Read less"
         }
+      },
+      "useApplicationVersion": {
+        "version": "v{{version}}",
+        "versionEnv": "v{{version}} ({{env}})"
       }
     }
   }
