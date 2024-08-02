@@ -223,11 +223,14 @@
       },
       "daoSettingsPage": {
         "main": {
-          "title": "Settings"
+          "title": "Settings",
+          "settingsInfoTitle": "DAO"
+        },
+        "aside": {
+          "versionInfoTitle": "Version Info"
         }
       },
       "daoSettingsInfo": {
-        "title": "DAO",
         "name": "Name",
         "blockchain": "Blockchain",
         "ens": "ENS name",
@@ -238,7 +241,6 @@
         "notChangeable": "Not changeable"
       },
       "daoVersionInfo": {
-        "title": "Version info",
         "app": "App",
         "osLabel": "Operating system",
         "osValue": "Aragon OSx",

@@ -16,22 +16,18 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const { dao } = props;
     const { t } = useTranslations();
 
-    const chainId = dao ? networkDefinitions[dao.network].chainId : undefined;
+    const chainId = networkDefinitions[dao.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const supportedPlugin = dao.plugins.find((plugin) => pluginRegistryUtils.getPlugin(plugin.subdomain) != null);
 
-    const { version, env } = useApplicationVersion();
-
-    const versionLabel = env
-        ? t('shared.useApplicationVersion.versionEnv', { version, env })
-        : t('shared.useApplicationVersion.version', { version });
+    const version = useApplicationVersion();
 
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.governance.daoVersionInfo.app')}>
                 <Link href="/" iconRight={IconType.LINK_EXTERNAL}>
-                    {versionLabel}
+                    {version}
                 </Link>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.governance.daoVersionInfo.osLabel')}>

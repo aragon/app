@@ -17,16 +17,12 @@ export const ApplicationTags: React.FC<IApplicationTagsProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const { version, env } = useApplicationVersion();
-
-    const versionLabel = env
-        ? t('shared.useApplicationVersion.versionEnv', { version, env })
-        : t('shared.useApplicationVersion.version', { version });
+    const version = useApplicationVersion();
 
     return (
         <div className={classNames('flex flex-row gap-2', className)} {...otherProps}>
             <Tag variant={variant} label={t('app.application.applicationTags.beta')} />
-            <Tag variant={variant} label={versionLabel} />
+            <Tag variant={variant} label={version} />
         </div>
     );
 };
