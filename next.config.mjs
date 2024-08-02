@@ -42,6 +42,11 @@ const nextConfig = {
                 hostname: 'clonex-assets.rtfkt.com',
                 port: '',
             },
+            {
+                protocol: 'https',
+                hostname: 'www.datocms-assets.com',
+                port: '',
+            },
         ],
     },
     experimental: {

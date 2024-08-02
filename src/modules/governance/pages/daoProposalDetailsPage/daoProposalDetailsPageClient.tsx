@@ -5,6 +5,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
+import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import {
     addressUtils,
     Button,
@@ -46,14 +47,15 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const chainId = proposal ? networkDefinitions[proposal.network].chainId : undefined;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
+    const plugins = useDaoPluginIds(daoId);
+
     if (proposal == null) {
         return null;
     }
-
     const { blockTimestamp, creatorAddress, transactionHash, summary, title, description, actions, resources } =
         proposal;
 
-    const normalizedProposalActions = proposalActionUtils.normalizeActions(actions);
+    const normalizedProposalActions = proposalActionUtils.normalizeActions(plugins, actions);
 
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
@@ -102,7 +104,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                     >
-                        <ProposalActions actions={normalizedProposalActions} />
+                        <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>

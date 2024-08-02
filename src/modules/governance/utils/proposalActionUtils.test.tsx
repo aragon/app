@@ -9,8 +9,9 @@ describe('ProposalActionUtils', () => {
             generateProposalActionChangeMembers({ type: 'MultisigAddMembers' as IProposalActionChangeMembers['type'] }),
             generateProposalActionChangeSettings({ type: 'UpdateMultiSigSettings' }),
         ];
+        const daoPlugins = ['multisig'];
 
-        const transformedActions = proposalActionUtils.normalizeActions(fetchedActions);
+        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
 
         expect(transformedActions).toHaveLength(2);
         expect(transformedActions[0].type).toEqual(ProposalActionType.ADD_MEMBERS);
@@ -22,8 +23,9 @@ describe('ProposalActionUtils', () => {
             generateProposalActionChangeMembers({ type: 'UnknownActionType' as IProposalActionChangeMembers['type'] }),
             generateProposalActionChangeSettings({ type: 'UnknownActionType' }),
         ];
+        const daoPlugins = ['multisig'];
 
-        const transformedActions = proposalActionUtils.normalizeActions(fetchedActions);
+        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
 
         expect(transformedActions).toHaveLength(0);
     });
