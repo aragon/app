@@ -1,0 +1,5 @@
+describe('AragonBackendServiceError class', () => {
+    it('', () => {
+        //
+    });
+});
