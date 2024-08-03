@@ -1,3 +1,7 @@
+import { transformMultisigGovernanceSettings } from '@/modules/governance/utils/transformMultisigGovernanceSettings';
+import { transformTokenGovernanceSettings } from '@/modules/governance/utils/transformTokenGovernanceSettings';
+import { IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
+import { IDao } from '@/shared/api/daoService';
 import {
     type IProposalAction,
     type IProposalActionChangeSettings,
@@ -45,6 +49,7 @@ class ProposalActionUtils {
             };
         });
     };
+
     normalizeTransferAction = (action: IProposalActionWithdrawToken): IProposalActionWithdrawToken => {
         const { amount, token, ...otherValues } = action;
 
@@ -54,24 +59,25 @@ class ProposalActionUtils {
             ...otherValues,
         };
     };
+
     normalizeChangeSettingsAction = (
         plugins: string[],
-        action: IProposalActionChangeSettings,
+        action: IProposalActionChangeSettings
     ): IProposalActionChangeSettings => {
         const { proposedSettings, existingSettings, ...otherValues } = action;
 
         if (plugins.includes('multisig')) {
             return {
-                proposedSettings: proposedSettings.map(({ term, definition }) => ({ term, definition })),
-                existingSettings: existingSettings.map(({ term, definition }) => ({ term, definition })),
                 ...otherValues,
+                proposedSettings: transformMultisigGovernanceSettings(proposedSettings),
+                existingSettings: transformMultisigGovernanceSettings(existingSettings),
             };
         }
         if (plugins.includes('token-voting')) {
             return {
-                proposedSettings: proposedSettings.map(({ term, definition }) => ({ term, definition })),
-                existingSettings: existingSettings.map(({ term, definition }) => ({ term, definition })),
                 ...otherValues,
+                proposedSettings: transformTokenGovernanceSettings(proposedSettings),
+                existingSettings: transformTokenGovernanceSettings(existingSettings),
             };
         }
         return action;
