@@ -5,7 +5,6 @@ import { DaoMembersInfo } from '@/modules/governance/components/daoMembersInfo';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Card } from '@aragon/ods';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
 
