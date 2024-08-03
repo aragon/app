@@ -47,8 +47,6 @@ describe('<DaoSettingsPageClient /> component', () => {
     };
 
     it('renders the page title', () => {
-        const dao = generateDao({ id: 'my-dao', name: 'My Dao' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
         expect(screen.getByText(/daoSettingsPage.main.title/)).toBeInTheDocument();
     });

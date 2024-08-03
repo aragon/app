@@ -1,5 +1,4 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import * as DaoService from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import { render, screen } from '@testing-library/react';
 import { DaoMembersInfo, type IDaoMembersInfoProps } from './daoMembersInfo';
@@ -11,7 +10,6 @@ jest.mock('@/shared/components/pluginComponent', () => ({
 }));
 
 describe('<DaoMemberInfo /> component', () => {
-    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
 
     beforeEach(() => {
@@ -19,14 +17,16 @@ describe('<DaoMemberInfo /> component', () => {
     });
 
     afterEach(() => {
-        useDaoSpy.mockReset();
         useDaoPluginIdsSpy.mockReset();
     });
 
-    const createTestComponent = (props: IDaoMembersInfoProps = { daoId: 'test-id' }) => {
-        const { daoId } = props;
+    const createTestComponent = (props?: Partial<IDaoMembersInfoProps>) => {
+        const completeProps = {
+            daoId: 'test-id',
+            ...props,
+        };
 
-        return <DaoMembersInfo daoId={daoId} />;
+        return <DaoMembersInfo {...completeProps} />;
     };
 
     it('renders the plugin-specific dao members info component', () => {

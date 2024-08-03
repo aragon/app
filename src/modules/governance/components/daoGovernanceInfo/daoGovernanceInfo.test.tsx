@@ -22,7 +22,7 @@ describe('<DaGovernanceInfo /> component', () => {
             </OdsModulesProvider>
         );
     };
-    it('renders the dao governance info component', () => {
+    it('renders the <DaoGovernanceInfo /> component', () => {
         const dao = generateDao({ id: 'some-id', name: 'Some Dao' });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         useSlotFunctionSpy.mockReturnValue([

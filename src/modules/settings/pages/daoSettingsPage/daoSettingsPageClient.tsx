@@ -38,9 +38,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                     <DaoGovernanceInfo daoId={daoId} />
                 </Page.Section>
                 <Page.Section title={t('app.governance.daoSettingsPage.main.membersInfoTitle')}>
-                    <Card className="p-6">
-                        <DaoMembersInfo daoId={daoId} />
-                    </Card>
+                    <DaoMembersInfo daoId={daoId} />
                 </Page.Section>
             </Page.Main>
             <Page.Aside>

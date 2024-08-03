@@ -31,7 +31,7 @@ export const DaoGovernanceInfo: React.FC<IDaoGovernanceInfoProps> = (props) => {
             <DefinitionList.Container>
                 {governanceSettings.map((governanceSetting, index) => (
                     <DefinitionList.Item key={index} term={governanceSetting.term}>
-                        <p>{governanceSetting.definition}</p>
+                        <p className="text-neutral-500">{governanceSetting.definition}</p>
                     </DefinitionList.Item>
                 ))}
             </DefinitionList.Container>
