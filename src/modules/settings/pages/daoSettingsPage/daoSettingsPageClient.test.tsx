@@ -4,6 +4,13 @@ import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
 
+jest.mock('@/modules/governance/components/daoGovernanceInfo', () => ({
+    DaoGovernanceInfo: () => <div data-testid="governance-info-mock" />,
+}));
+jest.mock('@/modules/governance/components/daoMembersInfo', () => ({
+    DaoMembersInfo: () => <div data-testid="members-info-mock" />,
+}));
+
 describe('<DaoSettingsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
 
@@ -29,8 +36,6 @@ describe('<DaoSettingsPageClient /> component', () => {
     };
 
     it('renders the page title', () => {
-        const dao = generateDao({ id: 'my-dao', name: 'My Dao' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
         expect(screen.getByText(/daoSettingsPage.main.title/)).toBeInTheDocument();
     });
@@ -43,6 +48,18 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByText(/daoSettingsPage.aside.versionInfoTitle/)).toBeInTheDocument();
         expect(screen.getByText('My Dao Name')).toBeInTheDocument();
         expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
+    });
+
+    it('renders the dao governance info component', () => {
+        render(createTestComponent());
+        expect(screen.getByText(/daoSettingsPage.main.governanceInfoTitle/)).toBeInTheDocument();
+        expect(screen.getByTestId('governance-info-mock')).toBeInTheDocument();
+    });
+
+    it('renders the dao members info component', () => {
+        render(createTestComponent());
+        expect(screen.getByText(/daoSettingsPage.main.membersInfoTitle/)).toBeInTheDocument();
+        expect(screen.getByTestId('members-info-mock')).toBeInTheDocument();
     });
 
     it('returns null when DAO cannot be fetched', () => {

@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenMembersPageDetails } from './components/tokenMembersPageDetails';
 import { TokenProposalList } from './components/tokenProposalList';
@@ -58,5 +59,10 @@ export const initialiseTokenPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
             pluginId: plugin.id,
             function: useTokenGovernanceSettings,
+        })
+        .registerSlotComponent({
+            slotId: SettingsSlotId.SETTINGS_MEMBERS_INFO,
+            pluginId: plugin.id,
+            component: TokenMemberInfo,
         });
 };

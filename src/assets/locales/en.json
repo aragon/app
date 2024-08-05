@@ -229,7 +229,9 @@
       "daoSettingsPage": {
         "main": {
           "title": "Settings",
-          "settingsInfoTitle": "DAO"
+          "settingsInfoTitle": "DAO",
+          "governanceInfoTitle": "Governance",
+          "membersInfoTitle": "Members"
         },
         "aside": {
           "versionInfoTitle": "Version Info"
