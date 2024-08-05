@@ -1,5 +1,5 @@
+import { ErrorFeedback } from '@/shared/components/errorFeedback';
 import { Component, type ReactNode } from 'react';
-import { ErrorBoundaryFeedback } from './errorBoundaryFeedback';
 
 export interface IErrorBoundaryClassState {
     /**
@@ -47,7 +47,7 @@ export class ErrorBoundaryClass extends Component<IErrorBoundaryClassProps, IErr
 
     render() {
         if (this.state.hasError) {
-            return <ErrorBoundaryFeedback />;
+            return <ErrorFeedback />;
         }
 
         return this.props.children;

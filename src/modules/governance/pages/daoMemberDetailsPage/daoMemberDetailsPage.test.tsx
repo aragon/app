@@ -18,14 +18,14 @@ jest.mock('./daoMemberDetailsPageClient', () => ({
 }));
 
 describe('<DaoMemberDetailsPage /> component', () => {
-    const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
+    const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
 
     beforeEach(() => {
-        prefetchQuerySpy.mockImplementation(jest.fn());
+        fetchQuerySpy.mockImplementation(jest.fn());
     });
 
     afterEach(() => {
-        prefetchQuerySpy.mockReset();
+        fetchQuerySpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<IDaoMemberDetailsPageProps>) => {
@@ -45,11 +45,20 @@ describe('<DaoMemberDetailsPage /> component', () => {
             queryParams: { daoId: params.id },
         };
         render(await createTestComponent({ params }));
-        expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(memberOptions(memberParams).queryKey);
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(memberOptions(memberParams).queryKey);
     });
 
     it('renders the page client component', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
+    });
+
+    it('renders error with a link to proposal list page on fetch proposal error', async () => {
+        const daoId = 'test-dao-id';
+        fetchQuerySpy.mockRejectedValue('error');
+        render(await createTestComponent({ params: { id: daoId, address: '' } }));
+        const errorLink = screen.getByRole('link', { name: /daoMemberDetailsPage.notFound.action/ });
+        expect(errorLink).toBeInTheDocument();
+        expect(errorLink.getAttribute('href')).toEqual(`/dao/${daoId}/members`);
     });
 });

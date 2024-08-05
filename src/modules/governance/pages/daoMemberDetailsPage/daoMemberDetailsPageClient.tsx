@@ -59,7 +59,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     // TODO: Display real last activity date (APP-3405)
     const stats = [
         ...(pluginStats ?? []),
-        { label: t('app.governance.daoMemberPage.header.stat.latestActivity'), value: 3, suffix: 'days ago' },
+        { label: t('app.governance.daoMemberDetailsPage.header.stat.latestActivity'), value: 3, suffix: 'days ago' },
     ];
 
     if (member == null || dao == null) {
@@ -75,7 +75,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const blockExplorer = getBlockExplorer(chainId);
 
     const pageBreadcrumbs = [
-        { href: `/dao/${daoId}/members`, label: t('app.governance.daoMemberPage.header.breadcrumb.members') },
+        { href: `/dao/${daoId}/members`, label: t('app.governance.daoMemberDetailsPage.header.breadcrumb.members') },
         { label: memberName },
     ];
 
@@ -116,9 +116,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             <Page.Content>
                 <Page.Main />
                 <Page.Aside>
-                    <Page.Section title={t('app.governance.daoMemberPage.aside.details.title')} inset={false}>
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
-                            <DefinitionList.Item term={t('app.governance.daoMemberPage.aside.details.address')}>
+                            <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.address')}>
                                 {addressUrl && (
                                     <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
                                         {truncatedAddress}
@@ -126,13 +126,15 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                                 )}
                             </DefinitionList.Item>
                             {ens && addressUrl && (
-                                <DefinitionList.Item term={t('app.governance.daoMemberPage.aside.details.ens')}>
+                                <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.ens')}>
                                     <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
                                         {ens}
                                     </Link>
                                 </DefinitionList.Item>
                             )}
-                            <DefinitionList.Item term={t('app.governance.daoMemberPage.aside.details.firstActivity')}>
+                            <DefinitionList.Item
+                                term={t('app.governance.daoMemberDetailsPage.aside.details.firstActivity')}
+                            >
                                 {/* TODO: Display real first activity date (APP-3405) */}
                                 <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
                                     October 23, 2024
