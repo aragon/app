@@ -6,7 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 
 export interface IDaoMembersPageClientProps {
     /**
@@ -28,7 +28,11 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
             </Page.Main>
             <Page.Aside>
                 <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')} inset={false}>
-                    <PluginComponent slotId={GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS} pluginIds={pluginIds} />
+                    <PluginComponent
+                        slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO}
+                        pluginIds={pluginIds}
+                        daoId={initialParams.queryParams.daoId}
+                    />
                 </Page.Section>
             </Page.Aside>
         </>
