@@ -1,7 +1,7 @@
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import { render, screen } from '@testing-library/react';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoMembersPageClient, type IDaoMembersPageClientProps } from './daoMembersPageClient';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 
 jest.mock('@/shared/components/pluginComponent', () => ({
     PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
@@ -39,7 +39,7 @@ describe('<DaoMembersPageClient /> component', () => {
         expect(screen.getByTestId('member-list-mock')).toBeInTheDocument();
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent).toBeInTheDocument();
-        expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS);
+        expect(pluginComponent.dataset.slotid).toEqual(SettingsSlotId.SETTINGS_MEMBERS_INFO);
         expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
     });
 });

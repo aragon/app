@@ -1,7 +1,8 @@
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
+import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
 import { render, screen } from '@testing-library/react';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 
 jest.mock('@/shared/components/pluginComponent', () => ({
     PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
@@ -15,6 +16,7 @@ jest.mock('../../components/daoProposalList', () => ({
 
 describe('<DaoProposalsPageClient /> component', () => {
     const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
+    const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
 
     afterEach(() => {
         useDaoPluginIdsSpy.mockReset();
@@ -33,13 +35,13 @@ describe('<DaoProposalsPageClient /> component', () => {
         const pluginIds = ['id-1', 'id-2'];
         useDaoPluginIdsSpy.mockReturnValue(pluginIds);
         render(createTestComponent());
-
+        expect(useSlotFunctionSpy).toHaveBeenCalledWith({
+            params: { daoId: 'test-id' },
+            pluginIds,
+            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
+        });
         expect(screen.getByText(/daoProposalsPage.main.title/)).toBeInTheDocument();
         expect(screen.getByText(/daoProposalsPage.aside.details.title/)).toBeInTheDocument();
         expect(screen.getByTestId('proposal-list-mock')).toBeInTheDocument();
-        const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent).toBeInTheDocument();
-        expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_PROPOSALS_PAGE_DETAILS);
-        expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
     });
 });

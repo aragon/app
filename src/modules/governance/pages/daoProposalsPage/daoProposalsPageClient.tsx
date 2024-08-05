@@ -35,17 +35,16 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                     <DaoProposalList initialParams={initialParams} />
                 </Page.Main>
                 <Page.Aside>
-                    {governanceSettings && (
-                        <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={false}>
-                            <DefinitionList.Container>
-                                {governanceSettings.map((governanceSetting, index) => (
+                    <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={false}>
+                        <DefinitionList.Container>
+                            {governanceSettings &&
+                                governanceSettings.map((governanceSetting, index) => (
                                     <DefinitionList.Item key={index} term={governanceSetting.term}>
                                         <p className="text-neutral-500">{governanceSetting.definition}</p>
                                     </DefinitionList.Item>
                                 ))}
-                            </DefinitionList.Container>
-                        </Page.Section>
-                    )}
+                        </DefinitionList.Container>
+                    </Page.Section>
                 </Page.Aside>
             </>
         );
