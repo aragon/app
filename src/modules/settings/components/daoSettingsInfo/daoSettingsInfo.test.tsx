@@ -42,11 +42,11 @@ describe('<DaoSettingsInfo /> component', () => {
     });
 
     it('renders the ens term and value if present', () => {
-        const dao = generateDao({ subdomain: 'dao.eth' });
+        const dao = generateDao({ subdomain: 'mydaoname' });
         render(createTestComponent({ dao: dao }));
 
         expect(screen.getByText(/daoSettingsInfo.ens/)).toBeInTheDocument();
-        expect(screen.getByText('dao.eth')).toBeInTheDocument();
+        expect(screen.getByText('mydaoname.dao.eth')).toBeInTheDocument();
     });
 
     it('renders the links term if links are present', () => {
@@ -60,7 +60,7 @@ describe('<DaoSettingsInfo /> component', () => {
             name: 'Some DAO',
             network: Network.ETHEREUM_MAINNET,
             address: '0x123',
-            subdomain: 'somedao.eth',
+            subdomain: 'somedao',
             description: 'This is a test DAO.',
             links: [{ name: 'Test Link', url: 'https://testlink.com' }],
         });
@@ -68,7 +68,7 @@ describe('<DaoSettingsInfo /> component', () => {
 
         expect(screen.getByText('Some DAO')).toBeInTheDocument();
         expect(screen.getByText('Ethereum Mainnet')).toBeInTheDocument();
-        expect(screen.getByText('somedao.eth')).toBeInTheDocument();
+        expect(screen.getByText('somedao.dao.eth')).toBeInTheDocument();
         expect(screen.getByText('This is a test DAO.')).toBeInTheDocument();
         expect(screen.getByText('Test Link')).toBeInTheDocument();
         expect(screen.getByText('https://testlink.com')).toBeInTheDocument();

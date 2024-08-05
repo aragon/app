@@ -28,7 +28,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.governance.daoVersionInfo.app')}>
-                <Link href="/" iconRight={IconType.LINK_EXTERNAL}>
+                <Link href="/" iconRight={IconType.LINK_EXTERNAL} target="_blank">
                     {version}
                 </Link>
             </DefinitionList.Item>

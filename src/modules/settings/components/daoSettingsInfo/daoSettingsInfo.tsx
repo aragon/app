@@ -1,6 +1,7 @@
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     addressUtils,
@@ -55,7 +56,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                                 iconRight={IconType.LINK_EXTERNAL}
                                 target="_blank"
                             >
-                                {dao.subdomain}
+                                {daoUtils.getDaoEns(dao)}
                             </Link>
                             <Tag label={t('app.governance.daoSettingsInfo.notChangeable')} />
                         </div>
@@ -64,7 +65,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                 <DefinitionList.Item term={t('app.governance.daoSettingsInfo.summary')}>
                     <Collapsible
                         collapsedSize="sm"
-                        customCollapsedHeight={50}
+                        customCollapsedHeight={60}
                         buttonLabelClosed={t('app.governance.daoSettingsInfo.readMore')}
                         buttonLabelOpened={t('app.governance.daoSettingsInfo.readLess')}
                     >
