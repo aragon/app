@@ -51,7 +51,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     if (proposal == null) {
         return null;
     }
-    
+
     const { blockTimestamp, creatorAddress, transactionHash, summary, title, description, actions, resources } =
         proposal;
 
@@ -106,7 +106,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                     >
                         <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
-                        </Page.Section>
+                    </Page.Section>
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
                         <ProposalVotingTerminal proposal={proposal} daoId={daoId} />
                     </Page.Section>

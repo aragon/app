@@ -1,6 +1,6 @@
-import { type IDaoSettingTermAndDefinition } from "@/modules/settings/types";
-import { DaoTokenVotingMode } from "@/plugins/tokenPlugin/types";
-import { type IProposalActionChangeSettingsSetting } from "@aragon/ods";
+import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
+import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
+import { type IProposalActionChangeSettingsSetting } from '@aragon/ods';
 
 const tokenGovernanceTermsMapping: { [key: string]: string } = {
     supportThreshold: 'Approval Threshold',
@@ -17,7 +17,7 @@ const votingModeMapping: { [key: number]: string } = {
 };
 
 export const transformTokenGovernanceSettings = (
-    settings: IProposalActionChangeSettingsSetting[]
+    settings: IProposalActionChangeSettingsSetting[],
 ): IDaoSettingTermAndDefinition[] => {
     return settings.map(({ term, definition }) => {
         const mappedTerm = tokenGovernanceTermsMapping[term] || term;

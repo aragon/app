@@ -1,5 +1,5 @@
-import { type IDaoSettingTermAndDefinition } from "@/modules/settings/types";
-import { type IProposalActionChangeSettingsSetting } from "@aragon/ods";
+import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
+import { type IProposalActionChangeSettingsSetting } from '@aragon/ods';
 
 const multisigGovernanceTermsMapping: { [key: string]: string } = {
     onlyListed: 'Proposal Creation',
@@ -7,7 +7,7 @@ const multisigGovernanceTermsMapping: { [key: string]: string } = {
 };
 
 export const transformMultisigGovernanceSettings = (
-    settings: IProposalActionChangeSettingsSetting[]
+    settings: IProposalActionChangeSettingsSetting[],
 ): IDaoSettingTermAndDefinition[] => {
     return settings.map(({ term, definition }) => {
         const mappedTerm = multisigGovernanceTermsMapping[term] || term;

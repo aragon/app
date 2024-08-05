@@ -1,7 +1,5 @@
 import { transformMultisigGovernanceSettings } from '@/modules/governance/utils/transformMultisigGovernanceSettings';
 import { transformTokenGovernanceSettings } from '@/modules/governance/utils/transformTokenGovernanceSettings';
-import { IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
-import { IDao } from '@/shared/api/daoService';
 import {
     type IProposalAction,
     type IProposalActionChangeSettings,
@@ -62,7 +60,7 @@ class ProposalActionUtils {
 
     normalizeChangeSettingsAction = (
         plugins: string[],
-        action: IProposalActionChangeSettings
+        action: IProposalActionChangeSettings,
     ): IProposalActionChangeSettings => {
         const { proposedSettings, existingSettings, ...otherValues } = action;
 
