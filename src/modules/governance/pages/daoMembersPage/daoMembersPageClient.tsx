@@ -1,12 +1,12 @@
 'use client';
 
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { Page } from '@/shared/components/page';
 import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
-import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 
 export interface IDaoMembersPageClientProps {
     /**

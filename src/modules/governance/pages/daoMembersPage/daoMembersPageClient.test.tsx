@@ -1,7 +1,7 @@
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import { render, screen } from '@testing-library/react';
 import { DaoMembersPageClient, type IDaoMembersPageClientProps } from './daoMembersPageClient';
-import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 
 jest.mock('@/shared/components/pluginComponent', () => ({
     PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
