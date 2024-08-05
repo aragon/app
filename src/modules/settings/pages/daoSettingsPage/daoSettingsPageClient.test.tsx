@@ -1,36 +1,25 @@
 import * as DaoService from '@/shared/api/daoService';
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
-import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { SettingsSlotId } from '../../constants/moduleSlots';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
 
-jest.mock('@/shared/components/pluginComponent', () => ({
-    PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
-        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginids={props.pluginIds} />
-    ),
+jest.mock('@/modules/governance/components/daoGovernanceInfo', () => ({
+    DaoGovernanceInfo: () => <div data-testid="governance-info-mock" />,
 }));
-
-jest.mock('@/shared/utils/pluginRegistryUtils', () => ({
-    getPlugin: jest.fn(),
+jest.mock('@/modules/governance/components/daoMembersInfo', () => ({
+    DaoMembersInfo: () => <div data-testid="members-info-mock" />,
 }));
 
 describe('<DaoSettingsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
-    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
-    const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useDaoPluginIdsSpy.mockReturnValue([]);
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
-        useDaoPluginIdsSpy.mockReset();
-        useSlotFunctionSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoSettingsPageClientProps>) => {
@@ -62,27 +51,15 @@ describe('<DaoSettingsPageClient /> component', () => {
     });
 
     it('renders the dao governance info component', () => {
-        useSlotFunctionSpy.mockReturnValue([
-            { term: 'Governance Term 1', definition: 'Definition 1' },
-            { term: 'Governance Term 2', definition: 'Definition 2' },
-        ]);
         render(createTestComponent());
-        expect(screen.getByText('Governance Term 1')).toBeInTheDocument();
-        expect(screen.getByText('Definition 1')).toBeInTheDocument();
-        expect(screen.getByText('Governance Term 2')).toBeInTheDocument();
-        expect(screen.getByText('Definition 2')).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsPage.main.governanceInfoTitle/)).toBeInTheDocument();
+        expect(screen.getByTestId('governance-info-mock')).toBeInTheDocument();
     });
 
     it('renders the dao members info component', () => {
-        const pluginIds = ['multisig'];
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
-        const dao = generateDao({ id: 'my-dao', name: 'My Dao Name' });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
-        const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent).toBeInTheDocument();
-        expect(pluginComponent.dataset.slotid).toEqual(SettingsSlotId.SETTINGS_MEMBERS_INFO);
-        expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
+        expect(screen.getByText(/daoSettingsPage.main.membersInfoTitle/)).toBeInTheDocument();
+        expect(screen.getByTestId('members-info-mock')).toBeInTheDocument();
     });
 
     it('returns null when DAO cannot be fetched', () => {
