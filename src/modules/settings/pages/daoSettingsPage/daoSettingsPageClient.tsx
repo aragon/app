@@ -5,6 +5,7 @@ import { DaoMembersInfo } from '@/modules/governance/components/daoMembersInfo';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { Card } from '@aragon/ods';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
 
@@ -34,7 +35,9 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                     <DaoSettingsInfo dao={dao} />
                 </Page.Section>
                 <Page.Section title={t('app.governance.daoSettingsPage.main.governanceInfoTitle')}>
-                    <DaoGovernanceInfo daoId={daoId} />
+                    <Card className="p-6">
+                        <DaoGovernanceInfo daoId={daoId} />
+                    </Card>
                 </Page.Section>
                 <Page.Section title={t('app.governance.daoSettingsPage.main.membersInfoTitle')}>
                     <DaoMembersInfo daoId={daoId} />

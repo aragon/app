@@ -1,13 +1,9 @@
 'use client';
 
-import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { DefinitionList } from '@aragon/ods';
 import type { IGetProposalListParams } from '../../api/governanceService';
+import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
 import { DaoProposalList } from '../../components/daoProposalList';
 
 export interface IDaoProposalsPageClientProps {
@@ -21,13 +17,6 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const { initialParams } = props;
 
     const { t } = useTranslations();
-    const pluginIds = useDaoPluginIds(initialParams.queryParams.daoId);
-    const governanceParams = { daoId: initialParams.queryParams.daoId };
-    const governanceSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
-        params: governanceParams,
-        slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginIds,
-    });
 
     return (
         <>
@@ -36,14 +25,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
             </Page.Main>
             <Page.Aside>
                 <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={false}>
-                    <DefinitionList.Container>
-                        {governanceSettings &&
-                            governanceSettings.map((governanceSetting, index) => (
-                                <DefinitionList.Item key={index} term={governanceSetting.term}>
-                                    <p className="text-neutral-500">{governanceSetting.definition}</p>
-                                </DefinitionList.Item>
-                            ))}
-                    </DefinitionList.Container>
+                    <DaoGovernanceInfo daoId={initialParams.queryParams.daoId} />
                 </Page.Section>
             </Page.Aside>
         </>
