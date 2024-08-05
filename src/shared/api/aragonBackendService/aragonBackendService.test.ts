@@ -1,5 +1,6 @@
 import { generatePaginatedResponse, generatePaginatedResponseMetadata, generateResponse } from '@/shared/testUtils';
 import { AragonBackendService } from './aragonBackendService';
+import { AragonBackendServiceError } from './aragonBackendServiceError';
 
 class ServiceTest extends AragonBackendService {}
 
@@ -32,10 +33,13 @@ describe('AragonBackend service', () => {
             expect(fetchSpy).toHaveBeenCalledWith(expect.anything(), { cache: 'no-store' });
         });
 
-        it('throws the statusText as error on request error', async () => {
-            const response = generateResponse({ ok: false, statusText: 'something wrong happened' });
+        it('throws AragonBackendService error on request error', async () => {
+            const error = { code: 'notFound', description: 'error-description' };
+            const status = 404;
+            const response = generateResponse({ ok: false, status, json: () => Promise.resolve(error) });
+            const expectedError = new AragonBackendServiceError(error.code, error.description, status);
             fetchSpy.mockResolvedValue(response);
-            await expect(serviceTest.request('/test')).rejects.toEqual(new Error(response.statusText));
+            await expect(serviceTest.request('/test')).rejects.toEqual(expectedError);
         });
 
         it('returns the parsed json response', async () => {

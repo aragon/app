@@ -19,7 +19,18 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
 
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
-    await queryClient.prefetchQuery(proposalOptions(proposalParams));
+
+    try {
+        await queryClient.fetchQuery(proposalOptions(proposalParams));
+    } catch (error: unknown) {
+        return (
+            <Page.Error
+                error={JSON.parse(JSON.stringify(error))}
+                actionLink={`/dao/${id}/proposals`}
+                notFoundNamespace="app.governance.daoProposalDetailsPage"
+            />
+        );
+    }
 
     return (
         <Page.Container queryClient={queryClient}>

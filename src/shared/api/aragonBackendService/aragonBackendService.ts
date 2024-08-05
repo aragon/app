@@ -1,3 +1,4 @@
+import { AragonBackendServiceError } from './aragonBackendServiceError';
 import type { IPaginatedResponse, IRequestQueryParams, IRequestUrlQueryParams } from './domain';
 
 type IRequestParams<TUrlParams, TQueryParams> = Partial<IRequestUrlQueryParams<TUrlParams, TQueryParams>>;
@@ -10,13 +11,13 @@ export class AragonBackendService {
         params: IRequestParams<TUrlParams, TQueryParams> = {},
     ): Promise<TData> => {
         const completeUrl = this.buildUrl(url, params);
-        const result = await fetch(completeUrl, { cache: 'no-store' });
+        const response = await fetch(completeUrl, { cache: 'no-store' });
 
-        if (!result.ok) {
-            throw new Error(result.statusText);
+        if (!response.ok) {
+            throw await AragonBackendServiceError.fromResponse(response);
         }
 
-        return result.json();
+        return response.json() as TData;
     };
 
     getNextPageParams = <TParams extends IRequestQueryParams<object>, TData = unknown>(

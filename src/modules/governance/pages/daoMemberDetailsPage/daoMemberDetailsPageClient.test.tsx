@@ -107,25 +107,25 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         render(createTestComponent({ address }));
 
-        expect(screen.getByText(/daoMemberPage.aside.details.title/)).toBeInTheDocument();
+        expect(screen.getByText(/daoMemberDetailsPage.aside.details.title/)).toBeInTheDocument();
 
-        expect(screen.getByText(/daoMemberPage.aside.details.address/)).toBeInTheDocument();
+        expect(screen.getByText(/daoMemberDetailsPage.aside.details.address/)).toBeInTheDocument();
         const memberAddressLink = screen.getByRole('link', { name: addressUtils.truncateAddress(member.address) });
 
         expect(memberAddressLink).toBeInTheDocument();
         expect(memberAddressLink).toHaveAttribute('href', expect.stringMatching(member.address));
 
-        expect(screen.getByText(/daoMemberPage.aside.details.ens/)).toBeInTheDocument();
+        expect(screen.getByText(/daoMemberDetailsPage.aside.details.ens/)).toBeInTheDocument();
         const memberEnsLink = screen.getByRole('link', { name: ens });
         expect(memberEnsLink).toBeInTheDocument();
         expect(memberEnsLink).toHaveAttribute('href', expect.stringMatching(member.address));
 
-        expect(screen.getByText(/daoMemberPage.aside.details.firstActivity/)).toBeInTheDocument();
+        expect(screen.getByText(/daoMemberDetailsPage.aside.details.firstActivity/)).toBeInTheDocument();
     });
 
     it('renders the formatted member stats', () => {
         render(createTestComponent());
 
-        expect(screen.getByText(/daoMemberPage.header.stat.latestActivity/)).toBeInTheDocument();
+        expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivity/)).toBeInTheDocument();
     });
 });

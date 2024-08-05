@@ -19,16 +19,16 @@ jest.mock('../../navigations/navigationDao', () => ({
 }));
 
 describe('<LayoutDao /> component', () => {
-    const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
+    const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const consoleErrorSpy = jest.spyOn(console, 'error');
 
     beforeEach(() => {
         consoleErrorSpy.mockImplementation(jest.fn());
-        prefetchQuerySpy.mockImplementation(jest.fn());
+        fetchQuerySpy.mockImplementation(jest.fn());
     });
 
     afterEach(() => {
-        prefetchQuerySpy.mockReset();
+        fetchQuerySpy.mockReset();
         consoleErrorSpy.mockReset();
     });
 
@@ -53,8 +53,8 @@ describe('<LayoutDao /> component', () => {
         const params = { id: 'my-dao' };
         const daoSettingsParams = { daoId: params.id };
         render(await createTestComponent({ params }));
-        expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
-        expect(prefetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
+        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
             daoSettingsOptions({ urlParams: daoSettingsParams }).queryKey,
         );
     });
@@ -72,6 +72,24 @@ describe('<LayoutDao /> component', () => {
 
         render(await createTestComponent({ children: <Children /> }));
         expect(screen.getByTestId('navigation-dao-mock')).toBeInTheDocument();
-        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+    });
+
+    it('renders error with a link to explore page on fetch DAO error', async () => {
+        const daoId = 'dao-id';
+        fetchQuerySpy.mockRejectedValue('error');
+        render(await createTestComponent({ params: { id: daoId } }));
+        const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
+        expect(errorLink).toBeInTheDocument();
+        expect(errorLink.getAttribute('href')).toEqual(`/`);
+    });
+
+    it('renders error with a link to explore page on fetch DAO settings error', async () => {
+        const daoId = 'dao-id';
+        fetchQuerySpy.mockResolvedValueOnce('ok').mockRejectedValueOnce('error');
+        render(await createTestComponent({ params: { id: daoId } }));
+        const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
+        expect(errorLink).toBeInTheDocument();
+        expect(errorLink.getAttribute('href')).toEqual(`/`);
     });
 });
