@@ -23,7 +23,7 @@ describe('<ErrorBoundary /> component', () => {
         };
 
         render(createTestComponent({ children: <Children /> }));
-        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
     });
 
     it('resets the error state on pathname change', () => {
@@ -34,7 +34,7 @@ describe('<ErrorBoundary /> component', () => {
         };
 
         const { rerender } = render(createTestComponent({ pathname: initialPathname, children: <ChildrenError /> }));
-        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
 
         const newPathname = '/create';
         const children = 'new-children';

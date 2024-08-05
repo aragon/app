@@ -1,4 +1,5 @@
 import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
+import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
@@ -22,11 +23,21 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
 
     const queryClient = new QueryClient();
 
-    const daoUrlParams = { id };
-    await queryClient.prefetchQuery(daoOptions({ urlParams: daoUrlParams }));
+    try {
+        const daoUrlParams = { id };
+        await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
 
-    const daoSettingsUrlParams = { daoId: id };
-    await queryClient.prefetchQuery(daoSettingsOptions({ urlParams: daoSettingsUrlParams }));
+        const daoSettingsUrlParams = { daoId: id };
+        await queryClient.fetchQuery(daoSettingsOptions({ urlParams: daoSettingsUrlParams }));
+    } catch (error: unknown) {
+        return (
+            <Page.Error
+                error={JSON.parse(JSON.stringify(error))}
+                actionLink="/"
+                notFoundNamespace="app.application.layoutDao"
+            />
+        );
+    }
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

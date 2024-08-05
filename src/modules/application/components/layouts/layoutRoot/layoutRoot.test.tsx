@@ -49,6 +49,6 @@ describe('<LayoutRoot /> component', () => {
 
         render(await createTestComponent({ children: <Children /> }));
         expect(screen.getByText(/footer.link.explore/)).toBeInTheDocument();
-        expect(screen.getByText(/errorBoundaryFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
     });
 });
