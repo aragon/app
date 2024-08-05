@@ -1,5 +1,6 @@
 import { ProposalDataListItem } from '@aragon/ods';
 import { type IMultisigProposal } from '../../types';
+import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 
 export interface IMultisigProposalListItemProps {
     /**
@@ -23,8 +24,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             summary={proposal.summary}
             date={proposal.endDate * 1000}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
-            // TODO: provide the correct status (APP-3393)
-            status="draft"
+            status={multisigProposalUtils.getProposalStatus(proposal)}
             type="approvalThreshold"
             // TODO: provide the corrct voted status (APP-3394)
             voted={true}
@@ -32,10 +32,9 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
                 address: proposal.creatorAddress,
                 link: `members/${proposal.creatorAddress}`,
             }}
-            // TODO: add winning option (APP-3373)
             result={{
-                approvalAmount: 10,
-                approvalThreshold: 20,
+                approvalAmount: proposal.metrics.totalVotes,
+                approvalThreshold: proposal.settings.minApprovals,
             }}
         />
     );

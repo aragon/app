@@ -1,18 +1,7 @@
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import type { IDaoTokenSettings } from './daoTokenSettings';
-import type { VoteOption } from './enum/voteOption';
-
-export interface ITokenProposalOptionVotes {
-    /**
-     * Vote option.
-     */
-    type: VoteOption;
-    /**
-     * Total voting power of members that voted this vote option.
-     */
-    totalVotingPower: string;
-}
+import type { ITokenProposalOptionVotes } from './tokenProposalOptionVotes';
 
 export interface ITokenProposal extends IProposal {
     /**

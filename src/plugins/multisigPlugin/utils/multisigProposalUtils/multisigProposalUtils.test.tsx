@@ -1,0 +1,5 @@
+describe('multisigProposal utils', () => {
+    it('', () => {
+        //
+    });
+});

@@ -1,4 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
+import { IProposalAction } from '@aragon/ods';
+import type { IProposalExecution } from './proposalExecution';
 import type { IProposalResource } from './proposalResource';
 
 // TODO: TSettings generic type should extends IDaoSettings interface after sync with backend (APP-3483)
@@ -59,4 +61,12 @@ export interface IProposal<TSettings = unknown> {
      * DAO settings when the proposal was created.
      */
     settings: TSettings;
+    /**
+     * Execution information of the proposal.
+     */
+    executed: IProposalExecution;
+    /**
+     * Actions to be executed on this proposal.
+     */
+    actions: IProposalAction[];
 }

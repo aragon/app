@@ -8,6 +8,7 @@ import { MultisigProposalVotingBreakdown } from './components/multisigProposalVo
 import { MultisigVoteList } from './components/multisigVoteList';
 import { plugin } from './constants/plugin';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
+import { multisigProposalUtils } from './utils/multisigProposalUtils';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -34,6 +35,11 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
             pluginId: plugin.id,
             component: MultisigVoteList,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+            pluginId: plugin.id,
+            function: multisigProposalUtils.getProposalStatus,
         })
 
         // Settings module slots

@@ -9,6 +9,7 @@ import { TokenVoteList } from './components/tokenVoteList';
 import { plugin } from './constants/plugin';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
+import { tokenProposalUtils } from './utils/tokenProposalUtils';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
@@ -40,6 +41,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
             pluginId: plugin.id,
             component: TokenVoteList,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+            pluginId: plugin.id,
+            function: tokenProposalUtils.getProposalStatus,
         })
 
         // Settings module slots

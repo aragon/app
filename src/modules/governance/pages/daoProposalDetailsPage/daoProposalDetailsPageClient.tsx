@@ -4,6 +4,8 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
+import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import {
     addressUtils,
     Button,
@@ -20,6 +22,7 @@ import {
 } from '@aragon/ods';
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -37,11 +40,18 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
+    const pluginIds = useDaoPluginIds(daoId);
     const pageUrl = useCurrentUrl();
 
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
+
+    const proposalStatus = useSlotFunction<string>({
+        params: proposal,
+        slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+        pluginIds,
+    });
 
     if (proposal == null) {
         return null;
@@ -59,17 +69,23 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
+    const breadcrumbsTag = proposalStatus ? { label: proposalStatus } : undefined;
     const pageBreadcrumbs = [
         {
             href: `/dao/${daoId}/proposals`,
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
-        { label: proposal.proposalId },
+        { label: proposal.proposalId, tag: { label: proposalStatus } },
     ];
 
     return (
         <>
-            <Page.Header breadcrumbs={pageBreadcrumbs} title={title} description={summary}>
+            <Page.Header
+                breadcrumbs={pageBreadcrumbs}
+                breadcrumbsTag={breadcrumbsTag}
+                title={title}
+                description={summary}
+            >
                 <div className="flex flex-row gap-4">
                     <Button
                         variant="tertiary"
