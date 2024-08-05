@@ -17,11 +17,7 @@ export const DaoMembersInfo: React.FC<IDaoMembersInfoProps> = (props) => {
 
     return (
         <Card className="p-6">
-            <PluginComponent
-                slotId={SettingsSlotId.SETTINGS_GOVERNANCE_DAO_MEMBERS_INFO}
-                pluginIds={pluginIds}
-                daoId={daoId}
-            />
+            <PluginComponent slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO} pluginIds={pluginIds} daoId={daoId} />
         </Card>
     );
 };

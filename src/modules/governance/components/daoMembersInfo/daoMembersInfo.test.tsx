@@ -35,7 +35,7 @@ describe('<DaoMemberInfo /> component', () => {
         render(createTestComponent());
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent).toBeInTheDocument();
-        expect(pluginComponent.dataset.slotid).toEqual(SettingsSlotId.SETTINGS_GOVERNANCE_DAO_MEMBERS_INFO);
+        expect(pluginComponent.dataset.slotid).toEqual(SettingsSlotId.SETTINGS_MEMBERS_INFO);
         expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
     });
 });

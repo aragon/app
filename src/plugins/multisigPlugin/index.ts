@@ -55,7 +55,7 @@ export const initialiseMultisigPlugin = () => {
             function: useMultisigGovernanceSettings,
         })
         .registerSlotComponent({
-            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_DAO_MEMBERS_INFO,
+            slotId: SettingsSlotId.SETTINGS_MEMBERS_INFO,
             pluginId: plugin.id,
             component: MultisigMemberInfo,
         });
