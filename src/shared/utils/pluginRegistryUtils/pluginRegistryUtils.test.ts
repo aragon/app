@@ -21,6 +21,18 @@ describe('pluginRegistry utils', () => {
         });
     });
 
+    describe('getPlugin', () => {
+        it('returns the plugin when it is registered', () => {
+            const plugin = generatePlugin({ id: 'plugin-1' });
+            pluginRegistryUtils.registerPlugin(plugin);
+            expect(pluginRegistryUtils.getPlugin('plugin-1')).toEqual(plugin);
+        });
+
+        it('returns undefined when the plugin is not registered', () => {
+            expect(pluginRegistryUtils.getPlugin('no-plugin')).toBeUndefined();
+        });
+    });
+
     describe('registerSlotComponent', () => {
         it('registers the specified slot component', () => {
             const params = { slotId: 'slot-id', pluginId: 'plugin-id', component: () => null };

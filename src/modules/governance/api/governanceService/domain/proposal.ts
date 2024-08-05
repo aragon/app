@@ -2,7 +2,8 @@ import type { Network } from '@/shared/api/daoService';
 import type { IProposalAction } from '@aragon/ods';
 import type { IProposalResource } from './proposalResource';
 
-export interface IProposal {
+// TODO: TSettings generic type should extends IDaoSettings interface after sync with backend (APP-3483)
+export interface IProposal<TSettings = unknown> {
     /**
      * Id of the proposal in DaoAddress-PluginAddress-ProposalId format.
      */
@@ -59,4 +60,8 @@ export interface IProposal {
      * Array of resources of the proposal.
      */
     resources: IProposalResource[];
+    /**
+     * DAO settings when the proposal was created.
+     */
+    settings: TSettings;
 }

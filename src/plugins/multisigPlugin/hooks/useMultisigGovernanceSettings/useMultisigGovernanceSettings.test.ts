@@ -4,6 +4,7 @@ import * as daoService from '@/shared/api/daoService';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
+    generateReactQueryInfiniteResultError,
     generateReactQueryInfiniteResultSuccess,
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
@@ -34,6 +35,14 @@ describe('useMultisigGovernanceSettings', () => {
 
     it('returns empty array when daoSettings is null', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
+            wrapper: ReactQueryWrapper,
+        });
+        expect(result.current).toEqual([]);
+    });
+
+    it('returns empty array when dao members is null', () => {
+        useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error() }));
         const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
             wrapper: ReactQueryWrapper,
         });
