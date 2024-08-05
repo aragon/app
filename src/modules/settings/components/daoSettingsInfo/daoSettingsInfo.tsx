@@ -31,6 +31,8 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
     const chainId = networkDefinitions[dao.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
+    const subdomainLabel = dao.subdomain?.includes('dao.eth') ? dao.subdomain : `${dao.subdomain}.dao.eth`;
+
     return (
         <Card className="p-6">
             <DefinitionList.Container>
@@ -55,7 +57,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                                 iconRight={IconType.LINK_EXTERNAL}
                                 target="_blank"
                             >
-                                {dao.subdomain}
+                                {subdomainLabel}
                             </Link>
                             <Tag label={t('app.governance.daoSettingsInfo.notChangeable')} />
                         </div>
