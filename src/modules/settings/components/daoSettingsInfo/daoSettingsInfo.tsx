@@ -1,6 +1,7 @@
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     addressUtils,
@@ -31,8 +32,6 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
     const chainId = networkDefinitions[dao.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
-    const subdomainLabel = dao.subdomain?.includes('dao.eth') ? dao.subdomain : `${dao.subdomain}.dao.eth`;
-
     return (
         <Card className="p-6">
             <DefinitionList.Container>
@@ -57,7 +56,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                                 iconRight={IconType.LINK_EXTERNAL}
                                 target="_blank"
                             >
-                                {subdomainLabel}
+                                {daoUtils.getDaoEns(dao)}
                             </Link>
                             <Tag label={t('app.governance.daoSettingsInfo.notChangeable')} />
                         </div>
