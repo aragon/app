@@ -90,7 +90,7 @@ class ProposalActionUtils {
 
         return {
             ...otherValues,
-            currentMembers: Array.isArray(currentMembers) ? currentMembers.length : Array(currentMembers).length,
+            currentMembers: Array.isArray(currentMembers) ? currentMembers.length : currentMembers,
         };
     };
 }

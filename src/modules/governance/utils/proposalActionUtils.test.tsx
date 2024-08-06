@@ -1,6 +1,12 @@
 import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
 import { generateProposalActionChangeSettings } from '@/modules/governance/testUtils/generators/proposalActionChangeSettings';
-import { ProposalActionType, type IProposalAction, type IProposalActionChangeMembers } from '@aragon/ods';
+import { generateProposalActionWithdrawToken } from '@/modules/governance/testUtils/generators/proposalActionWithdrawToken';
+import {
+    proposalActionsUtils as ODSProposalActionUtils,
+    ProposalActionType,
+    type IProposalAction,
+    type IProposalActionChangeMembers,
+} from '@aragon/ods';
 import proposalActionUtils from './proposalActionUtils';
 
 describe('ProposalActionUtils', () => {
@@ -18,15 +24,141 @@ describe('ProposalActionUtils', () => {
         expect(transformedActions[1].type).toEqual(ProposalActionType.CHANGE_SETTINGS_MULTISIG);
     });
 
-    it('should return null for unknown action types and filter them out', () => {
+    it('should normalize transfer actions correctly', () => {
         const fetchedActions: IProposalAction[] = [
-            generateProposalActionChangeMembers({ type: 'UnknownActionType' as IProposalActionChangeMembers['type'] }),
-            generateProposalActionChangeSettings({ type: 'UnknownActionType' }),
+            generateProposalActionWithdrawToken({
+                amount: '1000000000000000000',
+                token: {
+                    name: 'Token Name',
+                    symbol: 'TKN',
+                    decimals: 18,
+                    logo: 'token-logo.png',
+                    priceUsd: '1.00',
+                    address: '0x1234567890',
+                },
+            }),
+        ];
+
+        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions);
+
+        expect(transformedActions).toHaveLength(1);
+        const action = transformedActions[0];
+
+        if (ODSProposalActionUtils.isWithdrawTokenAction(action)) {
+            expect(action.type).toEqual(ProposalActionType.WITHDRAW_TOKEN);
+            expect(action.amount).toEqual('1'); // Assuming formatUnits correctly converts the amount
+        }
+    });
+
+    it('should normalize change settings actions correctly for multisig', () => {
+        const fetchedActions: IProposalAction[] = [
+            generateProposalActionChangeSettings({
+                type: 'UpdateMultiSigSettings',
+                proposedSettings: [{ term: 'someSetting', definition: 'new' }],
+                existingSettings: [{ term: 'someSetting', definition: 'old' }],
+            }),
         ];
         const daoPlugins = ['multisig'];
 
         const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
 
-        expect(transformedActions).toHaveLength(0);
+        expect(transformedActions).toHaveLength(1);
+        const action = transformedActions[0];
+
+        if (ODSProposalActionUtils.isChangeSettingsAction(action)) {
+            expect(action.type).toEqual(ProposalActionType.CHANGE_SETTINGS_MULTISIG);
+            expect(action.proposedSettings).toEqual([{ term: 'someSetting', definition: 'new' }]);
+        }
+    });
+
+    it('should normalize change members actions correctly', () => {
+        const fetchedActions = [
+            generateProposalActionChangeMembers({
+                type: 'MultisigAddMembers' as IProposalActionChangeMembers['type'],
+                currentMembers: 4,
+                members: [{ address: '0x3' }, { address: '0x4' }],
+            }),
+        ];
+
+        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions);
+
+        expect(transformedActions).toHaveLength(1);
+        const action = transformedActions[0];
+
+        if (ODSProposalActionUtils.isChangeMembersAction(action)) {
+            expect(action.type).toEqual(ProposalActionType.ADD_MEMBERS);
+            expect(action.currentMembers).toEqual(4);
+            expect(action.members).toHaveLength(2);
+        }
+    });
+
+    it('should normalize change settings actions correctly for token-voting', () => {
+        const fetchedActions: IProposalAction[] = [
+            generateProposalActionChangeSettings({
+                type: 'UpdateVoteSettings',
+                proposedSettings: [{ term: 'votingPeriod', definition: '5 days' }],
+                existingSettings: [{ term: 'votingPeriod', definition: '3 days' }],
+            }),
+        ];
+        const daoPlugins = ['token-voting'];
+
+        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
+
+        expect(transformedActions).toHaveLength(1);
+        const action = transformedActions[0];
+
+        if (ODSProposalActionUtils.isChangeSettingsAction(action)) {
+            expect(action.type).toEqual(ProposalActionType.CHANGE_SETTINGS_TOKENVOTE);
+            expect(action.proposedSettings).toEqual([{ term: 'votingPeriod', definition: '5 days' }]);
+        }
+    });
+
+    it('should return a normal action when no specific case is met', () => {
+        const fetchedActions: IProposalAction[] = [
+            {
+                type: 'UnknownType' as any, // Simulate an unknown type
+                from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+                to: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
+                data: '',
+                value: '1000000',
+                inputData: {
+                    function: 'settings',
+                    contract: 'GovernanceERC20',
+                    parameters: [
+                        { type: 'address', value: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE' },
+                        { type: 'uint256', value: '1000000000000000000' },
+                    ],
+                },
+            } as IProposalAction,
+        ];
+
+        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions);
+
+        expect(transformedActions).toHaveLength(1);
+        const action = transformedActions[0];
+
+        expect(action.type).toEqual(undefined);
+        expect(action.inputData?.function).toEqual('settings');
+    });
+
+    it('should return a normal action when plugins do not match multisig or token-voting', () => {
+        const fetchedActions: IProposalAction[] = [
+            generateProposalActionChangeSettings({
+                type: 'UpdateVoteSettings',
+                proposedSettings: [{ term: 'votingPeriod', definition: '5 days' }],
+                existingSettings: [{ term: 'votingPeriod', definition: '3 days' }],
+            }),
+        ];
+        const daoPlugins = ['unknown-plugin'];
+
+        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
+
+        expect(transformedActions).toHaveLength(1);
+        const action = transformedActions[0];
+
+        if (ODSProposalActionUtils.isChangeSettingsAction(action)) {
+            expect(action.type).toEqual(ProposalActionType.CHANGE_SETTINGS_TOKENVOTE);
+            expect(action.proposedSettings).toEqual([{ term: 'votingPeriod', definition: '5 days' }]);
+        }
     });
 });
