@@ -3,17 +3,17 @@ import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { type IProposalActionChangeSettingsSetting } from '@aragon/ods';
 
 const tokenGovernanceTermsMapping: { [key: string]: string } = {
-    supportThreshold: 'Approval Threshold',
-    minParticipation: 'Minimum Participation',
-    minDuration: 'Minimum Duration',
-    minProposerVotingPower: 'Proposal Threshold',
-    votingMode: 'Voting Mode',
+    supportThreshold: 'Approval threshold',
+    minParticipation: 'Minimum participation',
+    minDuration: 'Minimum duration',
+    minProposerVotingPower: 'Proposal threshold',
+    votingMode: 'Voting mode',
 };
 
 const votingModeMapping: { [key: number]: string } = {
     [DaoTokenVotingMode.STANDARD]: 'Standard',
-    [DaoTokenVotingMode.EARLY_EXECUTION]: 'Early Execution',
-    [DaoTokenVotingMode.VOTE_REPLACEMENT]: 'Vote Replacement',
+    [DaoTokenVotingMode.EARLY_EXECUTION]: 'Early execution',
+    [DaoTokenVotingMode.VOTE_REPLACEMENT]: 'Vote replacement',
 };
 
 export const transformTokenGovernanceSettings = (

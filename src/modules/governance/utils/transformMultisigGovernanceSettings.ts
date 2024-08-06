@@ -2,8 +2,8 @@ import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { type IProposalActionChangeSettingsSetting } from '@aragon/ods';
 
 const multisigGovernanceTermsMapping: { [key: string]: string } = {
-    onlyListed: 'Proposal Creation',
-    required: 'Minimum approvals',
+    onlyListed: 'Proposal creation',
+    minApprovals: 'Minimum approvals',
 };
 
 export const transformMultisigGovernanceSettings = (

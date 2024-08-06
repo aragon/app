@@ -3,8 +3,9 @@ import {
     type IDaoProposalDetailsPageClientProps,
 } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
 import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
+import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
-import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { clipboardUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -17,20 +18,23 @@ jest.mock('../../components/proposalVotingTerminal', () => ({
 
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
+    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
 
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         useProposalSpy.mockReset();
+        useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {
         const completeProps: IDaoProposalDetailsPageClientProps = {
-            daoId: 'dao-id',
+            daoId: 'daefawo-id',
             proposalId: 'proposal-id',
             ...props,
         };

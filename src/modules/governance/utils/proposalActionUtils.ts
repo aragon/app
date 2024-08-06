@@ -2,6 +2,7 @@ import { transformMultisigGovernanceSettings } from '@/modules/governance/utils/
 import { transformTokenGovernanceSettings } from '@/modules/governance/utils/transformTokenGovernanceSettings';
 import {
     type IProposalAction,
+    type IProposalActionChangeMembers,
     type IProposalActionChangeSettings,
     type IProposalActionWithdrawToken,
     proposalActionsUtils as ODSProposalActionUtils,
@@ -41,6 +42,9 @@ class ProposalActionUtils {
             if (ODSProposalActionUtils.isChangeSettingsAction(normalizedAction)) {
                 return this.normalizeChangeSettingsAction(plugins, normalizedAction);
             }
+            if (ODSProposalActionUtils.isChangeMembersAction(normalizedAction)) {
+                return this.normalizeChangeMembersAction(normalizedAction);
+            }
             return {
                 ...normalizedAction,
                 type: mappedType,
@@ -79,6 +83,15 @@ class ProposalActionUtils {
             };
         }
         return action;
+    };
+
+    normalizeChangeMembersAction = (action: IProposalActionChangeMembers): IProposalActionChangeMembers => {
+        const { currentMembers, ...otherValues } = action;
+
+        return {
+            ...otherValues,
+            currentMembers: Array.isArray(currentMembers) ? currentMembers.length : Array(currentMembers).length,
+        };
     };
 }
 
