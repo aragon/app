@@ -18,6 +18,8 @@ import {
     formatterUtils,
     IconType,
     Link,
+    type ProposalStatus,
+    type TagVariant,
     useBlockExplorer,
 } from '@aragon/ods';
 import { useProposal } from '../../api/governanceService';
@@ -35,6 +37,21 @@ export interface IDaoProposalDetailsPageClientProps {
     proposalId: string;
 }
 
+const statusToTagVariant: Record<ProposalStatus, TagVariant> = {
+    accepted: 'success',
+    active: 'info',
+    challenged: 'warning',
+    draft: 'neutral',
+    executed: 'success',
+    expired: 'critical',
+    failed: 'critical',
+    partiallyExecuted: 'warning',
+    pending: 'neutral',
+    queued: 'success',
+    rejected: 'critical',
+    vetoed: 'warning',
+};
+
 export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClientProps> = (props) => {
     const { daoId, proposalId } = props;
 
@@ -47,7 +64,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
 
-    const proposalStatus = useSlotFunction<string>({
+    const proposalStatus = useSlotFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginIds,
@@ -69,13 +86,15 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
-    const breadcrumbsTag = proposalStatus ? { label: proposalStatus } : undefined;
+    const breadcrumbsTag = proposalStatus
+        ? { label: proposalStatus, variant: statusToTagVariant[proposalStatus] }
+        : undefined;
     const pageBreadcrumbs = [
         {
             href: `/dao/${daoId}/proposals`,
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
-        { label: proposal.proposalId, tag: { label: proposalStatus } },
+        { label: proposal.proposalId },
     ];
 
     return (
@@ -110,7 +129,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         </Page.Section>
                     )}
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
-                        <ProposalVotingTerminal proposal={proposal} daoId={daoId} />
+                        <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>
