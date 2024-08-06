@@ -3,7 +3,6 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
-import { TokenMembersPageDetails } from './components/tokenMembersPageDetails';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalsPageDetails } from './components/tokenProposalsPageDetails';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
@@ -22,11 +21,6 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
             pluginId: plugin.id,
             component: TokenMemberList,
-        })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
-            pluginId: plugin.id,
-            component: TokenMembersPageDetails,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,

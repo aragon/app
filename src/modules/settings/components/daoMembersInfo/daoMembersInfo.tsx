@@ -1,7 +1,6 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { Card } from '@aragon/ods';
 
 export interface IDaoMembersInfoProps {
     /**
@@ -15,9 +14,5 @@ export const DaoMembersInfo: React.FC<IDaoMembersInfoProps> = (props) => {
 
     const pluginIds = useDaoPluginIds(daoId);
 
-    return (
-        <Card className="p-6">
-            <PluginComponent slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO} pluginIds={pluginIds} daoId={daoId} />
-        </Card>
-    );
+    return <PluginComponent slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO} pluginIds={pluginIds} daoId={daoId} />;
 };

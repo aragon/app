@@ -3,7 +3,6 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigMemberInfo } from './components/multisigMemberInfo';
 import { MultisigMemberList } from './components/multisigMemberList';
-import { MultisigMembersPageDetails } from './components/multisigMembersPageDetails';
 import { MultisigProposalList } from './components/multisigProposalList';
 import { MultisigProposalsPageDetails } from './components/multisigProposalsPageDetails';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
@@ -21,11 +20,6 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
             pluginId: plugin.id,
             component: MultisigMemberList,
-        })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
-            pluginId: plugin.id,
-            component: MultisigMembersPageDetails,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,

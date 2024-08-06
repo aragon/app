@@ -2,8 +2,8 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { DaoGovernanceInfo } from '../../../settings/components/daoGovernanceInfo';
 import type { IGetProposalListParams } from '../../api/governanceService';
-import { DaoGovernanceInfo } from '../../components/daoGovernanceInfo';
 import { DaoProposalList } from '../../components/daoProposalList';
 
 export interface IDaoProposalsPageClientProps {

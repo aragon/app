@@ -1,10 +1,8 @@
 'use client';
 
-import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { Page } from '@/shared/components/page';
-import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { DaoMembersInfo } from '../../../settings/components/daoMembersInfo';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
 
@@ -19,7 +17,6 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
     const { initialParams } = props;
 
     const { t } = useTranslations();
-    const pluginIds = useDaoPluginIds(initialParams.queryParams.daoId);
 
     return (
         <>
@@ -28,11 +25,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
             </Page.Main>
             <Page.Aside>
                 <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')} inset={false}>
-                    <PluginComponent
-                        slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO}
-                        pluginIds={pluginIds}
-                        daoId={initialParams.queryParams.daoId}
-                    />
+                    <DaoMembersInfo daoId={initialParams.queryParams.daoId} />
                 </Page.Section>
             </Page.Aside>
         </>
