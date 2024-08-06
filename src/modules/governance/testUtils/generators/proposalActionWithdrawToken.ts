@@ -1,4 +1,4 @@
-import { type IProposalActionWithdrawToken, ProposalActionType } from "@aragon/ods";
+import { type IProposalActionWithdrawToken } from '@aragon/ods';
 
 export const generateToken = (
     token?: Partial<IProposalActionWithdrawToken['token']>,
@@ -31,7 +31,7 @@ export const generateProposalActionWithdrawToken = (
                 type: 'string',
                 value: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
             },
-            { 
+            {
                 type: 'string',
                 value: '1000000000000000000',
             },
