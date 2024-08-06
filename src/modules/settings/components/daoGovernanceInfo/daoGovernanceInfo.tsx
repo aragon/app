@@ -2,7 +2,7 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { Card, DefinitionList } from '@aragon/ods';
+import { DefinitionList } from '@aragon/ods';
 
 export interface IDaoGovernanceInfoProps {
     /**
@@ -27,14 +27,12 @@ export const DaoGovernanceInfo: React.FC<IDaoGovernanceInfoProps> = (props) => {
     }
 
     return (
-        <Card className="p-6">
-            <DefinitionList.Container>
-                {governanceSettings.map((governanceSetting, index) => (
-                    <DefinitionList.Item key={index} term={governanceSetting.term}>
-                        <p className="text-neutral-500">{governanceSetting.definition}</p>
-                    </DefinitionList.Item>
-                ))}
-            </DefinitionList.Container>
-        </Card>
+        <DefinitionList.Container>
+            {governanceSettings.map((governanceSetting, index) => (
+                <DefinitionList.Item key={index} term={governanceSetting.term}>
+                    <p className="text-neutral-500">{governanceSetting.definition}</p>
+                </DefinitionList.Item>
+            ))}
+        </DefinitionList.Container>
     );
 };

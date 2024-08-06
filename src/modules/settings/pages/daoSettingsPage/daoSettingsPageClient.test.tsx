@@ -4,10 +4,10 @@ import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
 
-jest.mock('@/modules/governance/components/daoGovernanceInfo', () => ({
+jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
     DaoGovernanceInfo: () => <div data-testid="governance-info-mock" />,
 }));
-jest.mock('@/modules/governance/components/daoMembersInfo', () => ({
+jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
     DaoMembersInfo: () => <div data-testid="members-info-mock" />,
 }));
 
