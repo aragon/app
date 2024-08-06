@@ -22,7 +22,7 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.eligibleVoters')}>
-                <p>{t('app.plugins.multisig.multisigMembersInfo.multisigMembers')}</p>
+                <p className="text-neutral-500">{t('app.plugins.multisig.multisigMembersInfo.multisigMembers')}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}>
                 <Link
