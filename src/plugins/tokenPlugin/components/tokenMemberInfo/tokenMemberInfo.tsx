@@ -48,7 +48,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.eligibleVoters')}>
-                <p>{t('app.plugins.token.tokenMemberInfo.tokenHolders')}</p>
+                <p className="text-neutral-500">{t('app.plugins.token.tokenMemberInfo.tokenHolders')}</p>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.tokenLabel')}>
                 <Link
@@ -73,7 +73,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
                 </Link>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.supply')}>
-                <p>
+                <p className="text-neutral-500">
                     {t('app.plugins.token.tokenMemberInfo.tokenSupply', {
                         supply: formattedTotalSupply,
                         symbol: daoSettings.token.symbol,
