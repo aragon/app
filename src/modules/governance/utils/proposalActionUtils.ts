@@ -1,15 +1,15 @@
+import { ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum/proposalActionType';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils/pluginRegistryUtils';
 import {
     type IProposalAction,
     type IProposalActionChangeMembers,
     type IProposalActionChangeSettings,
     type IProposalActionWithdrawToken,
-    ProposalActionType as ProposalActionTypeODS,
     proposalActionsUtils as ODSProposalActionUtils,
+    ProposalActionType as ProposalActionTypeODS,
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum/proposalActionType';
-import { pluginRegistryUtils} from '@/shared/utils/pluginRegistryUtils/pluginRegistryUtils';
-import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 
 class ProposalActionUtils {
     actionTypeMapping: { [key in ProposalActionType]: ProposalActionTypeODS } = {
@@ -59,17 +59,20 @@ class ProposalActionUtils {
     ): IProposalActionChangeSettings => {
         const { proposedSettings, existingSettings, ...otherValues } = action;
 
-        const parsingFunction = pluginRegistryUtils.getSlotFunction({ pluginId: plugins[0], slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK });
+        const parsingFunction = pluginRegistryUtils.getSlotFunction({
+            pluginId: plugins[0],
+            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
+        });
 
         const parsedProposedSettings = parsingFunction && parsingFunction({ settings: proposedSettings });
         const parsedExistingSettings = parsingFunction && parsingFunction({ settings: existingSettings });
-    
+
         if (parsedProposedSettings && parsedExistingSettings) {
             return {
                 ...otherValues,
                 proposedSettings: parsedProposedSettings,
                 existingSettings: parsedExistingSettings,
-            }
+            };
         }
 
         return action;

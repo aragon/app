@@ -10,7 +10,6 @@ import { MultisigProposalVotingBreakdown } from './components/multisigProposalVo
 import { MultisigVoteList } from './components/multisigVoteList';
 import { plugin } from './constants/plugin';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
-import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -59,6 +58,5 @@ export const initialiseMultisigPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_MEMBERS_INFO,
             pluginId: plugin.id,
             component: MultisigMemberInfo,
-        })
-
+        });
 };

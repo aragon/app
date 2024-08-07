@@ -81,7 +81,7 @@ class TokenSettingsUtils {
             const formattedProposerVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, {
                 format: NumberFormat.TOKEN_AMOUNT_LONG,
             });
-            
+
             return [
                 {
                     term: t('app.plugins.token.tokenGovernanceSettings.approvalThreshold'),
