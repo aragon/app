@@ -37,6 +37,7 @@ export interface IDaoProposalDetailsPageClientProps {
     proposalId: string;
 }
 
+// TODO: to be removed when https://github.com/aragon/ods/pull/267 is merged on ODS
 const statusToTagVariant: Record<ProposalStatus, TagVariant> = {
     accepted: 'success',
     active: 'info',
@@ -68,7 +69,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginIds,
-    });
+    })!;
 
     if (proposal == null) {
         return null;
@@ -86,9 +87,8 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
-    const breadcrumbsTag = proposalStatus
-        ? { label: proposalStatus, variant: statusToTagVariant[proposalStatus] }
-        : undefined;
+    // TODO: use useOdsModulesContext() and copy.proposalDataListItemStatus.status[proposalStatus]
+    const breadcrumbsTag = { label: proposalStatus, variant: statusToTagVariant[proposalStatus] };
     const pageBreadcrumbs = [
         {
             href: `/dao/${daoId}/proposals`,

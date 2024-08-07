@@ -6,10 +6,10 @@ class MultisigProposalUtils {
     getProposalStatus = (proposal: IMultisigProposal): ProposalStatus => {
         const now = DateTime.utc();
 
-        const startDate = DateTime.fromMillis(proposal.startDate * 1000);
-        const endDate = DateTime.fromMillis(proposal.endDate * 1000);
+        const startDate = DateTime.fromMillis(proposal.startDate * 1000).toUTC();
+        const endDate = DateTime.fromMillis(proposal.endDate * 1000).toUTC();
 
-        const approvalReached = proposal.metrics.totalVotes >= proposal.settings.minApprovals;
+        const approvalReached = this.isApprovalReached(proposal);
         const isSignalingProposal = proposal.actions.length === 0;
 
         if (proposal.executed.status === true) {
@@ -24,11 +24,18 @@ class MultisigProposalUtils {
             return 'active';
         }
 
-        if (approvalReached && isSignalingProposal) {
-            return 'accepted';
+        if (approvalReached) {
+            return isSignalingProposal ? 'accepted' : 'expired';
         }
 
-        return approvalReached ? 'expired' : 'rejected';
+        return 'rejected';
+    };
+
+    isApprovalReached = (proposal: IMultisigProposal): boolean => {
+        const { metrics, settings } = proposal;
+        const approvalReached = metrics.totalVotes >= settings.minApprovals;
+
+        return approvalReached;
     };
 }
 

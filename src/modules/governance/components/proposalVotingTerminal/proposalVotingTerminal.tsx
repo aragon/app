@@ -26,16 +26,18 @@ export interface IProposalVotingTerminalProps {
 
 const votesPerPage = 6;
 
+// TODO: to be removed when https://github.com/aragon/ods/pull/267 is merged on ODS
 const statusToStageStatus: Record<ProposalStatus, ProposalVotingStatus> = {
     accepted: ProposalVotingStatus.ACCEPTED,
     active: ProposalVotingStatus.ACTIVE,
     challenged: ProposalVotingStatus.ACTIVE,
     draft: ProposalVotingStatus.PENDING,
     executed: ProposalVotingStatus.ACCEPTED,
-    expired: ProposalVotingStatus.REJECTED,
-    failed: ProposalVotingStatus.REJECTED,
+    expired: ProposalVotingStatus.ACCEPTED,
+    failed: ProposalVotingStatus.ACCEPTED,
     partiallyExecuted: ProposalVotingStatus.ACCEPTED,
     pending: ProposalVotingStatus.PENDING,
+    // executable: ProposalVotingStatus.ACCEPTED, use executable when updating ODS library
     queued: ProposalVotingStatus.ACCEPTED,
     rejected: ProposalVotingStatus.REJECTED,
     vetoed: ProposalVotingStatus.ACTIVE,

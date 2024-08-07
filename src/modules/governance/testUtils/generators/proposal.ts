@@ -16,5 +16,7 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     resources: [],
     network: Network.ARBITRUM_MAINNET,
     settings: {},
+    executed: { status: false },
+    actions: [],
     ...proposal,
 });

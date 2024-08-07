@@ -14,7 +14,7 @@ class TokenProposalUtils {
         const isSignalingProposal = proposal.actions.length === 0;
 
         const isEarlyExecution = proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION;
-        const isExecutable = approvalReached && (now >= endDate || isEarlyExecution);
+        const isExecutable = approvalReached && (now >= endDate || isEarlyExecution) && !isSignalingProposal;
 
         if (proposal.executed.status === true) {
             return 'executed';
@@ -24,42 +24,59 @@ class TokenProposalUtils {
             return 'pending';
         }
 
-        if (isExecutable && !isSignalingProposal) {
-            return 'queued';
+        if (isExecutable) {
+            // TODO: remove cast when https://github.com/aragon/ods/pull/267 is merged on ODS
+            return 'executable' as ProposalStatus;
         }
 
         if (now < endDate) {
             return 'active';
         }
 
-        if (approvalReached && isSignalingProposal) {
-            return 'accepted';
-        }
-
-        return 'rejected';
+        return approvalReached && isSignalingProposal ? 'accepted' : 'rejected';
     };
 
-    isApprovalReached = (proposal: ITokenProposal): boolean => {
-        const { minParticipation, supportThreshold } = proposal.settings;
+    private isApprovalReached = (proposal: ITokenProposal): boolean => {
+        const isMinParticipationReached = this.isMinParticipationReached(proposal);
+        const isSupportReached = this.isSupportReached(proposal);
+
+        return isMinParticipationReached && isSupportReached;
+    };
+
+    private isMinParticipationReached = (proposal: ITokenProposal): boolean => {
+        const { minParticipation } = proposal.settings;
         const { totalSupply } = proposal.token;
 
-        const totalVotes = proposal.metrics.votesByOption.reduce(
+        const totalVotes = this.getTotalVotes(proposal);
+        const totalVotesPercentage = (totalVotes * BigInt(100)) / BigInt(totalSupply);
+
+        return totalVotesPercentage >= tokenSettingsUtils.parsePercentageSetting(minParticipation);
+    };
+
+    private isSupportReached = (proposal: ITokenProposal): boolean => {
+        const { supportThreshold } = proposal.settings;
+        const { votesByOption } = proposal.metrics;
+
+        const totalVotes = this.getTotalVotes(proposal);
+
+        const yesVotes = votesByOption.find((optionVotes) => optionVotes.type === VoteOption.YES);
+        const parsedYesVotes = BigInt(tokenSettingsUtils.fromScientificNotation(yesVotes?.totalVotingPower));
+
+        const yesVotesPercentage = totalVotes ? (parsedYesVotes * BigInt(100)) / totalVotes : 0;
+
+        return yesVotesPercentage >= tokenSettingsUtils.parsePercentageSetting(supportThreshold);
+    };
+
+    private getTotalVotes = (proposal: ITokenProposal): bigint => {
+        const { votesByOption } = proposal.metrics;
+
+        const totalVotes = votesByOption.reduce(
             (accumulator, current) =>
                 accumulator + BigInt(tokenSettingsUtils.fromScientificNotation(current.totalVotingPower)),
             BigInt(0),
         );
-        const totalVotesPercentage = (totalVotes * BigInt(100)) / BigInt(totalSupply);
-        const isMinParticipationReached =
-            totalVotesPercentage > tokenSettingsUtils.parsePercentageSetting(minParticipation);
 
-        const yesVotes = proposal.metrics.votesByOption.find((optionVotes) => optionVotes.type === VoteOption.YES);
-        const yesVotesPercentage = totalVotes
-            ? (BigInt(tokenSettingsUtils.fromScientificNotation(yesVotes?.totalVotingPower)) * BigInt(100)) / totalVotes
-            : 0;
-        const isSupportThresholdReached =
-            yesVotesPercentage > tokenSettingsUtils.parsePercentageSetting(supportThreshold);
-
-        return isMinParticipationReached && isSupportThresholdReached;
+        return totalVotes;
     };
 }
 
