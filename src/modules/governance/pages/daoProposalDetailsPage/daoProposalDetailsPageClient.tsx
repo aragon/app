@@ -19,6 +19,7 @@ import {
     IconType,
     Link,
     type ProposalStatus,
+    Tag,
     type TagVariant,
     useBlockExplorer,
 } from '@aragon/ods';
@@ -87,8 +88,8 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
-    // TODO: use useOdsModulesContext() and copy.proposalDataListItemStatus.status[proposalStatus]
-    const breadcrumbsTag = { label: proposalStatus, variant: statusToTagVariant[proposalStatus] };
+    // TODO: use useOdsModulesContext() and copy.proposalDataListItemStatus.status[proposalStatus]us;
+    const statusTag = { label: proposalStatus, variant: statusToTagVariant[proposalStatus] };
     const pageBreadcrumbs = [
         {
             href: `/dao/${daoId}/proposals`,
@@ -99,12 +100,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     return (
         <>
-            <Page.Header
-                breadcrumbs={pageBreadcrumbs}
-                breadcrumbsTag={breadcrumbsTag}
-                title={title}
-                description={summary}
-            >
+            <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary}>
                 <div className="flex flex-row gap-4">
                     <Button
                         variant="tertiary"
@@ -156,6 +152,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 <Link href={creatorLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                                     {creatorName}
                                 </Link>
+                            </DefinitionList.Item>
+                            <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.status')}>
+                                <Tag label={statusTag.label} variant={statusTag.variant} className="w-fit" />
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.Section>

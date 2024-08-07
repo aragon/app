@@ -1,9 +1,12 @@
 import { Network } from '@/shared/api/daoService';
+import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
+import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { clipboardUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
 import { DaoProposalDetailsPageClient, type IDaoProposalDetailsPageClientProps } from './daoProposalDetailsPageClient';
 
@@ -14,14 +17,19 @@ jest.mock('../../components/proposalVotingTerminal', () => ({
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
+    const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
+    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
 
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
+        useDaoPluginIdsSpy.mockReturnValue([]);
     });
 
     afterEach(() => {
         useProposalSpy.mockReset();
         clipboardCopySpy.mockReset();
+        useSlotFunctionSpy.mockReset();
+        useDaoPluginIdsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {
@@ -70,6 +78,24 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         expect(proposalsLink).toBeInTheDocument();
         expect(proposalsLink.getAttribute('href')).toEqual(`/dao/${daoId}/proposals`);
         expect(within(breadcrumbsContainer).getByText(proposal.proposalId)).toBeInTheDocument();
+    });
+
+    it('uses the plugin-specific function to process and render the proposal status', () => {
+        const pluginIds = ['test-1', 'test-2'];
+        const status = 'rejected';
+        const proposal = generateProposal();
+        useSlotFunctionSpy.mockReturnValue(status);
+        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
+        useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+        render(createTestComponent());
+
+        expect(useSlotFunctionSpy).toHaveBeenCalledWith({
+            params: proposal,
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+            pluginIds,
+        });
+        expect(screen.getAllByText(status)).toHaveLength(2);
+        expect(screen.getByText(/daoProposalDetailsPage.aside.details.status/)).toBeInTheDocument();
     });
 
     it('returns empty container on proposal fetch error', () => {
