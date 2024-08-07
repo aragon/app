@@ -1,6 +1,5 @@
 'use client';
 
-import { knownActionNames } from '@/modules/governance/utils/knownActionNames';
 import proposalActionUtils from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -106,11 +105,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                     >
-                        <ProposalActions
-                            actions={normalizedProposalActions}
-                            actionNames={knownActionNames}
-                            chainId={chainId}
-                        />
+                        <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
                     </Page.Section>
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
                         <ProposalVotingTerminal proposal={proposal} daoId={daoId} />
