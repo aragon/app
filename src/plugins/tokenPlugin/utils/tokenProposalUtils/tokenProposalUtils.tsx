@@ -48,8 +48,13 @@ class TokenProposalUtils {
         const { totalSupply } = proposal.token;
 
         const parsedTotalSupply = BigInt(totalSupply);
+
+        if (parsedTotalSupply === BigInt(0)) {
+            return false;
+        }
+
         const totalVotes = this.getTotalVotes(proposal);
-        const totalVotesPercentage = parsedTotalSupply > 0 ? (totalVotes * BigInt(100)) / parsedTotalSupply : 0;
+        const totalVotesPercentage = (totalVotes * BigInt(100)) / parsedTotalSupply;
 
         return totalVotesPercentage >= tokenSettingsUtils.parsePercentageSetting(minParticipation);
     };
@@ -60,10 +65,13 @@ class TokenProposalUtils {
 
         const totalVotes = this.getTotalVotes(proposal);
 
+        if (totalVotes === BigInt(0)) {
+            return false;
+        }
+
         const yesVotes = votesByOption.find((optionVotes) => optionVotes.type === VoteOption.YES);
         const parsedYesVotes = BigInt(tokenSettingsUtils.fromScientificNotation(yesVotes?.totalVotingPower));
-
-        const yesVotesPercentage = totalVotes ? (parsedYesVotes * BigInt(100)) / totalVotes : 0;
+        const yesVotesPercentage = (parsedYesVotes * BigInt(100)) / totalVotes;
 
         return yesVotesPercentage >= tokenSettingsUtils.parsePercentageSetting(supportThreshold);
     };

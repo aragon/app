@@ -34,6 +34,7 @@ describe('<ProposalVotingTerminal /> component', () => {
         const completeProps: IProposalVotingTerminalProps = {
             proposal: generateProposal(),
             daoId: 'test-id',
+            status: 'active',
             ...props,
         };
 
