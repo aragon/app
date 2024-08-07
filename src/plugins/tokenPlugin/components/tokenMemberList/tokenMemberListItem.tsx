@@ -22,7 +22,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
 
     const tokenDecimals = settings?.token.decimals ?? 0;
     const parsedVotingPower = formatUnits(BigInt(member.votingPower), tokenDecimals);
-    console.debug(member);
+
     return (
         <MemberDataListItem.Structure
             key={member.address}
