@@ -64,7 +64,7 @@ class ProposalActionUtils {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         });
 
-        const parsedProposedSettings = parsingFunction && parsingFunction({ settings: proposedSettings });
+        const parsedProposedSettings = parsingFunction && parsingFunction!({ settings: proposedSettings });
         const parsedExistingSettings = parsingFunction && parsingFunction({ settings: existingSettings });
 
         if (parsedProposedSettings && parsedExistingSettings) {
