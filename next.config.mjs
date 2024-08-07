@@ -21,11 +21,6 @@ const nextConfig = {
                 hostname: '**',
                 port: '',
             },
-            {
-                protocol: 'https',
-                hostname: 'www.datocms-assets.com',
-                port: '',
-            },
         ],
     },
     experimental: {
