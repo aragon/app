@@ -36,24 +36,25 @@ class TokenProposalUtils {
         return approvalReached && isSignalingProposal ? 'accepted' : 'rejected';
     };
 
-    private isApprovalReached = (proposal: ITokenProposal): boolean => {
+    isApprovalReached = (proposal: ITokenProposal): boolean => {
         const isMinParticipationReached = this.isMinParticipationReached(proposal);
         const isSupportReached = this.isSupportReached(proposal);
 
         return isMinParticipationReached && isSupportReached;
     };
 
-    private isMinParticipationReached = (proposal: ITokenProposal): boolean => {
+    isMinParticipationReached = (proposal: ITokenProposal): boolean => {
         const { minParticipation } = proposal.settings;
         const { totalSupply } = proposal.token;
 
+        const parsedTotalSupply = BigInt(totalSupply);
         const totalVotes = this.getTotalVotes(proposal);
-        const totalVotesPercentage = (totalVotes * BigInt(100)) / BigInt(totalSupply);
+        const totalVotesPercentage = parsedTotalSupply > 0 ? (totalVotes * BigInt(100)) / parsedTotalSupply : 0;
 
         return totalVotesPercentage >= tokenSettingsUtils.parsePercentageSetting(minParticipation);
     };
 
-    private isSupportReached = (proposal: ITokenProposal): boolean => {
+    isSupportReached = (proposal: ITokenProposal): boolean => {
         const { supportThreshold } = proposal.settings;
         const { votesByOption } = proposal.metrics;
 
@@ -67,7 +68,7 @@ class TokenProposalUtils {
         return yesVotesPercentage >= tokenSettingsUtils.parsePercentageSetting(supportThreshold);
     };
 
-    private getTotalVotes = (proposal: ITokenProposal): bigint => {
+    getTotalVotes = (proposal: ITokenProposal): bigint => {
         const { votesByOption } = proposal.metrics;
 
         const totalVotes = votesByOption.reduce(
