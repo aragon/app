@@ -2,7 +2,7 @@ import { generateToken } from '@/modules/finance/testUtils';
 import { type IProposalAction } from '@aragon/ods';
 import { DateTime, Settings } from 'luxon';
 import { generateTokenProposal } from '../../testUtils';
-import { DaoTokenVotingMode, ITokenProposalOptionVotes, VoteOption, type IDaoTokenSettings } from '../../types';
+import { DaoTokenVotingMode, VoteOption, type IDaoTokenSettings, type ITokenProposalOptionVotes } from '../../types';
 import { tokenProposalUtils } from './tokenProposalUtils';
 
 describe('tokenProposal utils', () => {
