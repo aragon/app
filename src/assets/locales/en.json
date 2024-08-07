@@ -315,6 +315,11 @@
         },
         "tokenVoteList": {
           "entity": "Votes"
+        },
+        "tokenProposalListItem": {
+          "abstain": "Abstain",
+          "yes": "Yes",
+          "no": "No"
         }
       },
       "multisig": {

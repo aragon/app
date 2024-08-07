@@ -4,6 +4,8 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
+import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import {
     addressUtils,
     Button,
@@ -16,10 +18,15 @@ import {
     formatterUtils,
     IconType,
     Link,
+    type ProposalStatus,
+    proposalStatusToTagVariant,
+    Tag,
     useBlockExplorer,
+    useOdsModulesContext,
 } from '@aragon/ods';
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -37,11 +44,19 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
+    const { copy } = useOdsModulesContext();
+    const pluginIds = useDaoPluginIds(daoId);
     const pageUrl = useCurrentUrl();
 
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
+
+    const proposalStatus = useSlotFunction<ProposalStatus>({
+        params: proposal,
+        slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+        pluginIds,
+    })!;
 
     if (proposal == null) {
         return null;
@@ -59,6 +74,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
+    const statusTag = {
+        label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],
+        variant: proposalStatusToTagVariant[proposalStatus],
+    };
     const pageBreadcrumbs = [
         {
             href: `/dao/${daoId}/proposals`,
@@ -69,7 +88,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     return (
         <>
-            <Page.Header breadcrumbs={pageBreadcrumbs} title={title} description={summary}>
+            <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary}>
                 <div className="flex flex-row gap-4">
                     <Button
                         variant="tertiary"
@@ -94,7 +113,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         </Page.Section>
                     )}
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
-                        <ProposalVotingTerminal proposal={proposal} daoId={daoId} />
+                        <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>
@@ -121,6 +140,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 <Link href={creatorLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                                     {creatorName}
                                 </Link>
+                            </DefinitionList.Item>
+                            <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.status')}>
+                                <Tag label={statusTag.label} variant={statusTag.variant} className="w-fit" />
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.Section>

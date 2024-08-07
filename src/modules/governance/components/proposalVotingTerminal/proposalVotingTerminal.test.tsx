@@ -1,6 +1,7 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
+import { ProposalStatus } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -34,6 +35,7 @@ describe('<ProposalVotingTerminal /> component', () => {
         const completeProps: IProposalVotingTerminalProps = {
             proposal: generateProposal(),
             daoId: 'test-id',
+            status: ProposalStatus.PENDING,
             ...props,
         };
 
