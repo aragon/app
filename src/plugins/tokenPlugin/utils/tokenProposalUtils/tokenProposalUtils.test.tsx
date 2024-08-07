@@ -1,5 +1,5 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import { type IProposalAction } from '@aragon/ods';
+import { ProposalStatus, type IProposalAction } from '@aragon/ods';
 import { DateTime, Settings } from 'luxon';
 import { generateTokenProposal } from '../../testUtils';
 import { DaoTokenVotingMode, VoteOption, type IDaoTokenSettings, type ITokenProposalOptionVotes } from '../../types';
@@ -29,7 +29,7 @@ describe('tokenProposal utils', () => {
 
         it('returns executed status when proposal has been executed', () => {
             const proposal = generateTokenProposal({ executed: { status: true } });
-            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual('executed');
+            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTED);
         });
 
         it('returns pending status when proposal has not started yet', () => {
@@ -37,7 +37,7 @@ describe('tokenProposal utils', () => {
             const startDate = DateTime.fromISO('2022-02-10T08:00:00.000Z').toMillis() / 1000;
             const proposal = generateTokenProposal({ startDate });
             setNow(now);
-            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual('pending');
+            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.PENDING);
         });
 
         it('returns executable status when approval is reached, proposal is started, can be executed early and has actions', () => {
@@ -50,7 +50,7 @@ describe('tokenProposal utils', () => {
             const proposal = generateTokenProposal({ startDate, settings, actions });
             setNow(now);
             isApprovalReachedSpy.mockReturnValue(true);
-            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual('executable');
+            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
         });
 
         it('returns executable status when approval is reached, proposal is ended and has actions', () => {
@@ -63,7 +63,7 @@ describe('tokenProposal utils', () => {
             const proposal = generateTokenProposal({ startDate, endDate, actions });
             setNow(now);
             isApprovalReachedSpy.mockReturnValue(true);
-            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual('executable');
+            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
         });
 
         it('returns active status when proposal has not ended yet', () => {
@@ -72,7 +72,7 @@ describe('tokenProposal utils', () => {
             const endDate = DateTime.fromISO('2022-02-12T08:00:00.000Z').toMillis() / 1000;
             const proposal = generateTokenProposal({ startDate, endDate });
             setNow(now);
-            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual('active');
+            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACTIVE);
         });
 
         it('returns accepted status when proposal is ended, the approval has been reached and proposal is signaling', () => {
@@ -83,7 +83,7 @@ describe('tokenProposal utils', () => {
             const proposal = generateTokenProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
             setNow(now);
-            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual('accepted');
+            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACCEPTED);
         });
 
         it('returns rejected status when proposal is ended and the approval has not been reached', () => {
@@ -93,7 +93,7 @@ describe('tokenProposal utils', () => {
             const proposal = generateTokenProposal({ startDate, endDate });
             isApprovalReachedSpy.mockReturnValue(false);
             setNow(now);
-            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual('rejected');
+            expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.REJECTED);
         });
     });
 

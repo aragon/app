@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/ods": "npm:^1.0.41"
+    "@aragon/ods": "npm:^1.0.42"
     "@next/bundle-analyzer": "npm:^14.2.5"
     "@tailwindcss/typography": "npm:^0.5.13"
     "@tanstack/react-query": "npm:^5.51.21"
@@ -97,9 +97,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/ods@npm:^1.0.41":
-  version: 1.0.41
-  resolution: "@aragon/ods@npm:1.0.41"
+"@aragon/ods@npm:^1.0.42":
+  version: 1.0.42
+  resolution: "@aragon/ods@npm:1.0.42"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -107,6 +107,7 @@ __metadata:
     "@radix-ui/react-checkbox": "npm:^1.1.0"
     "@radix-ui/react-dialog": "npm:^1.1.0"
     "@radix-ui/react-dropdown-menu": "npm:^2.1.0"
+    "@radix-ui/react-focus-scope": "npm:^1.1.0"
     "@radix-ui/react-progress": "npm:^1.1.0"
     "@radix-ui/react-radio-group": "npm:^1.2.0"
     "@radix-ui/react-switch": "npm:^1.1.0"
@@ -124,9 +125,9 @@ __metadata:
     blockies-ts: "npm:^1.0.0"
     classnames: "npm:^2.0.0"
     framer-motion: "npm:^11.3.0"
-    luxon: "npm:^3.4.4"
+    luxon: "npm:^3.5.0"
     react-dropzone: "npm:^14.2.0"
-    react-imask: "npm:^7.6.0"
+    react-imask: "npm:7.5.0"
     sanitize-html: "npm:^2.13.0"
     tiptap-markdown: "npm:^0.8.10"
   peerDependencies:
@@ -137,7 +138,7 @@ __metadata:
     tailwindcss: ^3.4.0
     viem: ^2.18.0
     wagmi: ^2.12.0
-  checksum: 10c0/720d97e49223aac8fd586ecc67ac87a1024d7d96c696a402a67db390cb01f5b0a875f0505a6fafc9e35e2772de2783493de1eadeea2250e81beda176a3ea96d8
+  checksum: 10c0/d33b2a569c9b1f3228f29792ebd9c74fdf83273ca3a5ca97d6401c0cdc5f81da98ce2c1ac1c589a41b826750f5c8ad87df4f68e8852d0650ffe5826d7e0a17eb
   languageName: node
   linkType: hard
 
@@ -2086,7 +2087,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-focus-scope@npm:1.1.0":
+"@radix-ui/react-focus-scope@npm:1.1.0, @radix-ui/react-focus-scope@npm:^1.1.0":
   version: 1.1.0
   resolution: "@radix-ui/react-focus-scope@npm:1.1.0"
   dependencies:
@@ -8590,12 +8591,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imask@npm:^7.6.0":
-  version: 7.6.0
-  resolution: "imask@npm:7.6.0"
+"imask@npm:^7.5.0":
+  version: 7.6.1
+  resolution: "imask@npm:7.6.1"
   dependencies:
     "@babel/runtime-corejs3": "npm:^7.24.4"
-  checksum: 10c0/c754210124efbb5dcaa37e9e21497dc9f166e7fb5759853840e49c4cde1bac61bc12f23ca5c6150a2fa57246d762d3849ad3203f5c803fc22d928e8b546b95d1
+  checksum: 10c0/cda75bb5036bf65b1028a39ee5fe7bb1a654838213e8f85288c5899a9e5eb84ce7d2b37ae2d9d600f553b7b0e9fd2f4ba2cbdb03a2c46cf0fa60075bc0c21f0c
   languageName: node
   linkType: hard
 
@@ -12269,15 +12270,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-imask@npm:^7.6.0":
-  version: 7.6.0
-  resolution: "react-imask@npm:7.6.0"
+"react-imask@npm:7.5.0":
+  version: 7.5.0
+  resolution: "react-imask@npm:7.5.0"
   dependencies:
-    imask: "npm:^7.6.0"
+    imask: "npm:^7.5.0"
     prop-types: "npm:^15.8.1"
   peerDependencies:
     react: ">=0.14.0"
-  checksum: 10c0/f5e7d9a865943ebf05d1c28819d8489a9f36cdeb2a005de340121636dbcb5e3b265017f2b64d7c40268bb5b16b9cf969721f371f18528bfe68a3b86cd8be2373
+  checksum: 10c0/755969ce03067608bc543731397b71586d2820094f94cf73e4bcce6c19214ccca7574f160456eee66537f1f64349a542c041df0ecd4b1afeb300f5a270fc31e2
   languageName: node
   linkType: hard
 

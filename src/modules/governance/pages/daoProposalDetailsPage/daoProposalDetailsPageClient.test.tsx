@@ -2,7 +2,7 @@ import { Network } from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { clipboardUtils, OdsModulesProvider } from '@aragon/ods';
+import { clipboardUtils, OdsModulesProvider, ProposalStatus } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
@@ -82,7 +82,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     it('uses the plugin-specific function to process and render the proposal status', () => {
         const pluginIds = ['test-1', 'test-2'];
-        const status = 'rejected';
+        const status = ProposalStatus.REJECTED;
         const proposal = generateProposal();
         useSlotFunctionSpy.mockReturnValue(status);
         useDaoPluginIdsSpy.mockReturnValue(pluginIds);
@@ -94,7 +94,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
             pluginIds,
         });
-        expect(screen.getAllByText(status)).toHaveLength(2);
+        expect(screen.getAllByText('Rejected')).toHaveLength(2);
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.status/)).toBeInTheDocument();
     });
 

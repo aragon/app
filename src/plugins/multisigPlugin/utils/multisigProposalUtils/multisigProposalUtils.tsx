@@ -1,4 +1,4 @@
-import { type ProposalStatus } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { type IMultisigProposal } from '../../types';
 
@@ -13,22 +13,22 @@ class MultisigProposalUtils {
         const isSignalingProposal = proposal.actions.length === 0;
 
         if (proposal.executed.status === true) {
-            return 'executed';
+            return ProposalStatus.EXECUTED;
         }
 
         if (startDate >= now) {
-            return 'pending';
+            return ProposalStatus.PENDING;
         }
 
         if (now <= endDate) {
-            return 'active';
+            return ProposalStatus.ACTIVE;
         }
 
         if (approvalReached) {
-            return isSignalingProposal ? 'accepted' : 'expired';
+            return isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.EXPIRED;
         }
 
-        return 'rejected';
+        return ProposalStatus.REJECTED;
     };
 
     isApprovalReached = (proposal: IMultisigProposal): boolean => {

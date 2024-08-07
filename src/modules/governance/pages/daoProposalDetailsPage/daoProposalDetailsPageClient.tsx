@@ -19,9 +19,10 @@ import {
     IconType,
     Link,
     type ProposalStatus,
+    proposalStatusToTagVariant,
     Tag,
-    type TagVariant,
     useBlockExplorer,
+    useOdsModulesContext,
 } from '@aragon/ods';
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
@@ -38,27 +39,12 @@ export interface IDaoProposalDetailsPageClientProps {
     proposalId: string;
 }
 
-// TODO: to be removed when https://github.com/aragon/ods/pull/267 is merged on ODS
-const statusToTagVariant: Record<ProposalStatus, TagVariant> = {
-    accepted: 'success',
-    active: 'info',
-    challenged: 'warning',
-    draft: 'neutral',
-    executed: 'success',
-    expired: 'critical',
-    failed: 'critical',
-    partiallyExecuted: 'warning',
-    pending: 'neutral',
-    queued: 'success',
-    rejected: 'critical',
-    vetoed: 'warning',
-};
-
 export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClientProps> = (props) => {
     const { daoId, proposalId } = props;
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
+    const { copy } = useOdsModulesContext();
     const pluginIds = useDaoPluginIds(daoId);
     const pageUrl = useCurrentUrl();
 
@@ -88,8 +74,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
-    // TODO: use useOdsModulesContext() and copy.proposalDataListItemStatus.status[proposalStatus]us;
-    const statusTag = { label: proposalStatus, variant: statusToTagVariant[proposalStatus] };
+    const statusTag = {
+        label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],
+        variant: proposalStatusToTagVariant[proposalStatus],
+    };
     const pageBreadcrumbs = [
         {
             href: `/dao/${daoId}/proposals`,

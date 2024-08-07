@@ -1,4 +1,4 @@
-import { type ProposalStatus } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
@@ -17,23 +17,22 @@ class TokenProposalUtils {
         const isExecutable = approvalReached && (now >= endDate || isEarlyExecution) && !isSignalingProposal;
 
         if (proposal.executed.status === true) {
-            return 'executed';
+            return ProposalStatus.EXECUTED;
         }
 
         if (startDate >= now) {
-            return 'pending';
+            return ProposalStatus.PENDING;
         }
 
         if (isExecutable) {
-            // TODO: remove cast when https://github.com/aragon/ods/pull/267 is merged on ODS
-            return 'executable' as ProposalStatus;
+            return ProposalStatus.EXECUTABLE;
         }
 
         if (now < endDate) {
-            return 'active';
+            return ProposalStatus.ACTIVE;
         }
 
-        return approvalReached && isSignalingProposal ? 'accepted' : 'rejected';
+        return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED;
     };
 
     isApprovalReached = (proposal: ITokenProposal): boolean => {

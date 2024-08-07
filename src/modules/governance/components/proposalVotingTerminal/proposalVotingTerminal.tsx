@@ -4,7 +4,7 @@ import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { type ProposalStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
+import { type ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList } from '../voteList';
@@ -25,23 +25,6 @@ export interface IProposalVotingTerminalProps {
 }
 
 const votesPerPage = 6;
-
-// TODO: to be removed when https://github.com/aragon/ods/pull/267 is merged on ODS
-const statusToStageStatus: Record<ProposalStatus, ProposalVotingStatus> = {
-    accepted: ProposalVotingStatus.ACCEPTED,
-    active: ProposalVotingStatus.ACTIVE,
-    challenged: ProposalVotingStatus.ACTIVE,
-    draft: ProposalVotingStatus.PENDING,
-    executed: ProposalVotingStatus.ACCEPTED,
-    expired: ProposalVotingStatus.ACCEPTED,
-    failed: ProposalVotingStatus.ACCEPTED,
-    partiallyExecuted: ProposalVotingStatus.ACCEPTED,
-    pending: ProposalVotingStatus.PENDING,
-    // executable: ProposalVotingStatus.ACCEPTED, use executable when updating ODS library
-    queued: ProposalVotingStatus.ACCEPTED,
-    rejected: ProposalVotingStatus.REJECTED,
-    vetoed: ProposalVotingStatus.ACTIVE,
-};
 
 export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
     const { proposal, status, daoId } = props;
@@ -69,7 +52,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
             description={t('app.governance.proposalVotingTerminal.description')}
         >
             <ProposalVoting.Stage
-                status={statusToStageStatus[status]}
+                status={proposalStatusToVotingStatus[status]}
                 startDate={proposal.startDate * 1000}
                 endDate={proposal.endDate * 1000}
             >
