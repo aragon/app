@@ -12,7 +12,7 @@ interface IUseTokenGovernanceSettingsParams {
     /**
      * Settings of the token based Dao.
      */
-    settings?: IDaoTokenSettings | IDaoSettingTermAndDefinition[];
+    settings?: IDaoTokenSettings;
 }
 
 export const useTokenGovernanceSettings = (
@@ -34,5 +34,5 @@ export const useTokenGovernanceSettings = (
         return [];
     }
 
-    return tokenSettingsUtils.parseSettings({ settings: processedSettings, t });
+    return tokenSettingsUtils.parseSettings({ fetchedSettings: processedSettings, t });
 };

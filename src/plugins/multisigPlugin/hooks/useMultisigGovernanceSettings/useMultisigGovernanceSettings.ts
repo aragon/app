@@ -13,7 +13,7 @@ interface IUseMultisigGovernanceSettingsParams {
     /**
      * Settings of the multisig based Dao.
      */
-    settings?: IDaoMultisigSettings | IDaoSettingTermAndDefinition[];
+    settings?: IDaoMultisigSettings;
 }
 
 export const useMultisigGovernanceSettings = (
@@ -22,18 +22,19 @@ export const useMultisigGovernanceSettings = (
     const { daoId, settings } = params;
 
     const { t } = useTranslations();
-
+    
     const daoSettingsParams = { daoId };
     const { data: memberList } = useMemberList({ queryParams: daoSettingsParams });
     const { data: currentSettings } = useDaoSettings<IDaoMultisigSettings>(
         { urlParams: daoSettingsParams },
         { enabled: settings == null },
     );
+
     const processedSettings = settings ?? currentSettings;
 
     if (processedSettings == null || memberList == null) {
         return [];
     }
 
-    return multisigSettingsUtils.parseSettings({ settings: processedSettings, memberList, t });
+    return multisigSettingsUtils.parseSettings({ fetchedSettings: processedSettings, memberList, t });
 };
