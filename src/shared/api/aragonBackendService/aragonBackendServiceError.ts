@@ -22,7 +22,7 @@ export class AragonBackendServiceError extends Error {
         try {
             const error = (await response.json()) as IErrorResponse;
             return new AragonBackendServiceError(error.code, error.description, response.status);
-        } catch (error: unknown) {
+        } catch {
             return new AragonBackendServiceError(this.parseErrorCode, this.parseErrorDescription, response.status);
         }
     };
