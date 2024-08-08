@@ -12,12 +12,18 @@ class MultisigProposalUtils {
         const approvalReached = this.isApprovalReached(proposal);
         const isSignalingProposal = proposal.actions.length === 0;
 
+        const isExecutable = approvalReached && now <= endDate && !isSignalingProposal;
+
         if (proposal.executed.status === true) {
             return ProposalStatus.EXECUTED;
         }
 
         if (startDate >= now) {
             return ProposalStatus.PENDING;
+        }
+
+        if (isExecutable) {
+            return ProposalStatus.EXECUTABLE;
         }
 
         if (now <= endDate) {
