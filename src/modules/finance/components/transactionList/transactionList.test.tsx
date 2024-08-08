@@ -49,4 +49,26 @@ describe('<TransactionList /> component', () => {
             expect(screen.getByText(`${transaction.value} ${transaction.token.symbol}`)).toBeInTheDocument();
         });
     });
+
+    it('renders the correct token amount in usd', () => {
+        const transaction = generateTransaction({
+            token: generateToken({ symbol: 'ETH' }),
+            value: '1',
+            amountUsd: '123.00',
+        });
+
+        useTransactionListDataSpy.mockReturnValue({
+            onLoadMore: jest.fn(),
+            transactionList: [transaction],
+            state: 'idle' as const,
+            pageSize: 10,
+            itemsCount: 1,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent());
+
+        expect(screen.getByText('$123.00')).toBeInTheDocument();
+    });
 });

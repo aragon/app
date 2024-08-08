@@ -57,8 +57,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                         status={TransactionStatus.SUCCESS}
                         tokenSymbol={transaction.token.symbol}
                         tokenAmount={transaction.value}
-                        // TODO: needs to updated when backend pricing is available [APP-3331]
-                        tokenPrice={0}
+                        tokenPrice={transaction.amountUsd}
                     />
                 ))}
             </DataListContainer>
