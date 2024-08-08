@@ -14,7 +14,7 @@ export interface IMultisigSettingsParseParams {
 class MultisigSettingsUtils {
     parseSettings = (params: IMultisigSettingsParseParams): IDaoSettingTermAndDefinition[] => {
         const { fetchedSettings, memberList, t } = params;
-        
+
         return [
             {
                 term: t('app.plugins.multisig.multisigGovernanceSettings.minimumApproval'),
@@ -30,7 +30,7 @@ class MultisigSettingsUtils {
                     : t('app.plugins.multisig.multisigGovernanceSettings.anyWallet'),
             },
         ];
-    }
+    };
 }
 
 export const multisigSettingsUtils = new MultisigSettingsUtils();

@@ -22,7 +22,7 @@ export const useMultisigGovernanceSettings = (
     const { daoId, settings } = params;
 
     const { t } = useTranslations();
-    
+
     const daoSettingsParams = { daoId };
     const { data: memberList } = useMemberList({ queryParams: daoSettingsParams });
     const { data: currentSettings } = useDaoSettings<IDaoMultisigSettings>(

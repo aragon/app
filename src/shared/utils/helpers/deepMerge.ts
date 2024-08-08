@@ -1,14 +1,16 @@
+// disable eslint for this file as it's temporary helper and will be removed once settings interface is updated
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+    [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
 
 export const deepMerge = <T extends object>(target: T, source: DeepPartial<T>): T => {
-  for (const key of Object.keys(source) as Array<keyof T>) {
-      if (source[key] instanceof Object && key in target) {
-          (target as any)[key] = deepMerge((target as any)[key], (source as any)[key]);
-      } else {
-          (target as any)[key] = source[key] as any;
-      }
-  }
-  return target;
+    for (const key of Object.keys(source) as Array<keyof T>) {
+        if (source[key] instanceof Object && key in target) {
+            (target as any)[key] = deepMerge((target as any)[key], (source as any)[key]);
+        } else {
+            (target as any)[key] = source[key] as any;
+        }
+    }
+    return target;
 };

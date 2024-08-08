@@ -1,3 +1,4 @@
+import { generateProposal } from '@/modules/governance/testUtils';
 import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
 import { generateProposalActionChangeSettings } from '@/modules/governance/testUtils/generators/proposalActionChangeSettings';
 import { generateProposalActionWithdrawToken } from '@/modules/governance/testUtils/generators/proposalActionWithdrawToken';
@@ -17,7 +18,10 @@ describe('ProposalActionUtils', () => {
         ];
         const daoPlugins = ['multisig'];
 
-        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
+        const daoId = '0x123';
+        const proposal = generateProposal();
+
+        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions, proposal, daoId);
 
         expect(transformedActions).toHaveLength(2);
         expect(transformedActions[0].type).toEqual(ProposalActionType.ADD_MEMBERS);
@@ -39,14 +43,17 @@ describe('ProposalActionUtils', () => {
             }),
         ];
 
-        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions);
+        const daoId = '0x123';
+        const proposal = generateProposal();
+
+        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions, proposal, daoId);
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
 
         if (ODSProposalActionUtils.isWithdrawTokenAction(action)) {
             expect(action.type).toEqual(ProposalActionType.WITHDRAW_TOKEN);
-            expect(action.amount).toEqual('1'); // Assuming formatUnits correctly converts the amount
+            expect(action.amount).toEqual('1');
         }
     });
 
@@ -60,7 +67,10 @@ describe('ProposalActionUtils', () => {
         ];
         const daoPlugins = ['multisig'];
 
-        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
+        const daoId = '0x123';
+        const proposal = generateProposal();
+
+        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions, proposal, daoId);
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -80,7 +90,10 @@ describe('ProposalActionUtils', () => {
             }),
         ];
 
-        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions);
+        const daoId = '0x123';
+        const proposal = generateProposal();
+
+        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions, proposal, daoId);
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -102,7 +115,10 @@ describe('ProposalActionUtils', () => {
         ];
         const daoPlugins = ['token-voting'];
 
-        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
+        const daoId = '0x123';
+        const proposal = generateProposal();
+
+        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions, proposal, daoId);
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -132,7 +148,10 @@ describe('ProposalActionUtils', () => {
             } as IProposalAction,
         ];
 
-        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions);
+        const daoId = '0x123';
+        const proposal = generateProposal();
+
+        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions, proposal, daoId);
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -151,7 +170,10 @@ describe('ProposalActionUtils', () => {
         ];
         const daoPlugins = ['unknown-plugin'];
 
-        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions);
+        const daoId = '0x123';
+        const proposal = generateProposal();
+
+        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions, proposal, daoId);
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
