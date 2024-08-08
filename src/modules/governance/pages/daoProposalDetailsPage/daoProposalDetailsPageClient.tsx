@@ -121,12 +121,15 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
                         <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
                     </Page.Section>
-                    <Page.Section
-                        title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
-                        description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
-                    >
-                        <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
-                    </Page.Section>
+                    {/** TODO should be removed with empty state addition to Proposal Actions (APP-3516) **/}
+                    {normalizedProposalActions.length > 0 && (
+                        <Page.Section
+                            title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
+                            description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
+                        >
+                            <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
+                        </Page.Section>
+                    )}
                 </Page.Main>
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
