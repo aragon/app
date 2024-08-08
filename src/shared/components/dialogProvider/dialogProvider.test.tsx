@@ -1,0 +1,5 @@
+describe('<DialogProvider /> component', () => {
+    it('', () => {
+        //
+    });
+});

@@ -1,11 +1,14 @@
 'use client';
 
+import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider/dialogProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { Button, DaoAvatar, IconType, addressUtils, clipboardUtils } from '@aragon/ods';
+import { Button, DaoAvatar, IconType, Wallet, addressUtils, clipboardUtils } from '@aragon/ods';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { useAccount, useDisconnect } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
@@ -19,6 +22,10 @@ export interface INavigationDaoProps extends INavigationContainerProps {
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const { id, containerClasses, ...otherProps } = props;
 
+    const { address, isConnected } = useAccount();
+    const { disconnect } = useDisconnect();
+    const { open, active } = useDialogContext();
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const urlParams = { id };
@@ -26,9 +33,19 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const handleCopyClick = () => clipboardUtils.copy(dao!.address);
 
+    const handleWalletClick = () => {
+        if (isConnected) {
+            disconnect();
+        } else {
+            open(ApplicationDialog.CONNECT_WALLET);
+        }
+    };
+
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
     const links = navigationDaoLinks(dao);
     const dialogSubtitle = daoUtils.getDaoEns(dao) ?? addressUtils.truncateAddress(dao?.address);
+
+    const walletUser = address != null ? { address } : undefined;
 
     return (
         <Navigation.Container
@@ -42,6 +59,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                         {dao?.name}
                     </p>
                 </button>
+                <Wallet onClick={handleWalletClick} user={walletUser} />
                 <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
             </div>
             <Navigation.Links className="hidden md:flex xl:pl-14" links={links} variant="columns" />

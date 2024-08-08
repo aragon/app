@@ -1,0 +1,5 @@
+describe('<DialogRoot /> component', () => {
+    it('', () => {
+        //
+    });
+});

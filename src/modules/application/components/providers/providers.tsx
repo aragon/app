@@ -1,20 +1,27 @@
 'use client';
 
+import { DialogProvider } from '@/shared/components/dialogProvider';
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import type { ReactNode } from 'react';
+import { State } from 'wagmi';
 import { initialisePlugins } from '../../../../plugins';
 import { wagmiConfig } from '../../constants/wagmi';
 import { queryClientUtils } from '../../utils/queryClientUtils';
+import { providersDialogs } from './providersDialogs';
 
 export interface IProvidersProps {
     /**
      * Translations of the application.
      */
     translations: Translations;
+    /**
+     * Initial state of Wagmi provider.
+     */
+    wagmiInitialState?: State;
     /**
      * Children of the component.
      */
@@ -23,11 +30,8 @@ export interface IProvidersProps {
 
 const coreProviderValues = { Link: Link, Img: Image };
 
-/**
- * Provides global providers for the whole application.
- */
 export const Providers: React.FC<IProvidersProps> = (props) => {
-    const { translations, children } = props;
+    const { translations, wagmiInitialState, children } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
     initialisePlugins();
@@ -36,10 +40,12 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
         <TranslationsProvider translations={translations}>
             <OdsModulesProvider
                 wagmiConfig={wagmiConfig}
+                // @ts-expect-error Soon supported by ODS library
+                wagmiInitialState={wagmiInitialState}
                 queryClient={queryClient}
                 coreProviderValues={coreProviderValues}
             >
-                {children}
+                <DialogProvider dialogs={providersDialogs}>{children}</DialogProvider>
             </OdsModulesProvider>
         </TranslationsProvider>
     );
