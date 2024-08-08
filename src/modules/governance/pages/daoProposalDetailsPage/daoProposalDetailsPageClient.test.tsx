@@ -41,7 +41,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {
         const completeProps: IDaoProposalDetailsPageClientProps = {
-            daoId: 'daefawo-id',
+            daoId: 'dao-id',
             proposalId: 'proposal-id',
             ...props,
         };

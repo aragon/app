@@ -14,7 +14,7 @@ import {
     proposalActionsUtils as ODSProposalActionUtils,
     ProposalActionType as ProposalActionTypeODS,
 } from '@aragon/ods';
-import { formatUnits } from 'viem';
+import { formatUnits, hexToBigInt } from 'viem';
 
 class ProposalActionUtils {
     actionTypeMapping: { [key in ProposalActionType]: ProposalActionTypeODS } = {
@@ -36,6 +36,9 @@ class ProposalActionUtils {
         return fetchedActions.map((action) => {
             const mappedType = this.actionTypeMapping[action.type as ProposalActionType];
             const normalizedAction = { ...action, type: mappedType };
+            console.log('fetchedAction', action);   
+            console.log('normalizedAction', normalizedAction);
+            console.log('proposal', proposal);
 
             if (ODSProposalActionUtils.isWithdrawTokenAction(normalizedAction)) {
                 return this.normalizeTransferAction(normalizedAction);
@@ -68,6 +71,15 @@ class ProposalActionUtils {
 
     normalizeTransferAction = (action: IProposalActionWithdrawToken): IProposalActionWithdrawToken => {
         const { amount, token, ...otherValues } = action;
+        // Convert hex string to BigInt
+        const bigIntValue = BigInt(amount);
+        console.log('BigInt value:', bigIntValue.toString());
+
+        // For further precision formatting, you can divide or manipulate the BigInt
+        const decimals = 18;
+        const factor = BigInt(6 ** 16);
+        const formattedValue = bigIntValue / factor;
+        console.log('Formatted BigInt value:', formattedValue.toString());
 
         return {
             token,
