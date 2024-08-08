@@ -3,14 +3,13 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
-import { TokenMembersPageDetails } from './components/tokenMembersPageDetails';
 import { TokenProposalList } from './components/tokenProposalList';
-import { TokenProposalsPageDetails } from './components/tokenProposalsPageDetails';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
 import { TokenVoteList } from './components/tokenVoteList';
 import { plugin } from './constants/plugin';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
+import { tokenProposalUtils } from './utils/tokenProposalUtils';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
@@ -23,11 +22,6 @@ export const initialiseTokenPlugin = () => {
             pluginId: plugin.id,
             component: TokenMemberList,
         })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
-            pluginId: plugin.id,
-            component: TokenMembersPageDetails,
-        })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
             pluginId: plugin.id,
@@ -39,11 +33,6 @@ export const initialiseTokenPlugin = () => {
             component: TokenProposalList,
         })
         .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_PROPOSALS_PAGE_DETAILS,
-            pluginId: plugin.id,
-            component: TokenProposalsPageDetails,
-        })
-        .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,
             pluginId: plugin.id,
             component: TokenProposalVotingBreakdown,
@@ -52,6 +41,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
             pluginId: plugin.id,
             component: TokenVoteList,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+            pluginId: plugin.id,
+            function: tokenProposalUtils.getProposalStatus,
         })
 
         // Settings module slots

@@ -3,13 +3,12 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigMemberInfo } from './components/multisigMemberInfo';
 import { MultisigMemberList } from './components/multisigMemberList';
-import { MultisigMembersPageDetails } from './components/multisigMembersPageDetails';
 import { MultisigProposalList } from './components/multisigProposalList';
-import { MultisigProposalsPageDetails } from './components/multisigProposalsPageDetails';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
 import { MultisigVoteList } from './components/multisigVoteList';
 import { plugin } from './constants/plugin';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
+import { multisigProposalUtils } from './utils/multisigProposalUtils';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -23,19 +22,9 @@ export const initialiseMultisigPlugin = () => {
             component: MultisigMemberList,
         })
         .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBERS_PAGE_DETAILS,
-            pluginId: plugin.id,
-            component: MultisigMembersPageDetails,
-        })
-        .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
             pluginId: plugin.id,
             component: MultisigProposalList,
-        })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_PROPOSALS_PAGE_DETAILS,
-            pluginId: plugin.id,
-            component: MultisigProposalsPageDetails,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,
@@ -46,6 +35,11 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
             pluginId: plugin.id,
             component: MultisigVoteList,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+            pluginId: plugin.id,
+            function: multisigProposalUtils.getProposalStatus,
         })
 
         // Settings module slots

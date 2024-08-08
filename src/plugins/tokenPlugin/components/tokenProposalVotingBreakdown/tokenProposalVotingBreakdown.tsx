@@ -15,9 +15,10 @@ export interface ITokenProposalVotingBreakdownProps {
 const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
     const votes = proposal.metrics.votesByOption.find((vote) => vote.type === option);
 
-    // TODO: to be removed when backend returns numbers without scientific notation (APP-3480)
-    const fullNumber = Number(votes?.totalVotingPower ?? '0').toLocaleString('fullwide', { useGrouping: false });
-    const parsedVotingPower = formatUnits(BigInt(fullNumber), proposal.token.decimals);
+    const parsedVotingPower = formatUnits(
+        BigInt(tokenSettingsUtils.fromScientificNotation(votes?.totalVotingPower)),
+        proposal.token.decimals,
+    );
 
     return parsedVotingPower;
 };

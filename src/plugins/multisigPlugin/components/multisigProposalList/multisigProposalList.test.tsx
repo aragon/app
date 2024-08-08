@@ -1,7 +1,7 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
-import { generateProposal } from '@/modules/governance/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
+import { generateMultisigProposal } from '../../testUtils';
 import { MultisigProposalList, type IMultisigProposalListProps } from './multisigProposalList';
 
 describe('<MultisigProposalList /> component', () => {
@@ -38,8 +38,8 @@ describe('<MultisigProposalList /> component', () => {
 
     it('fetches and renders the multisig proposal list', () => {
         const proposals = [
-            generateProposal({ title: 'First', id: '1' }),
-            generateProposal({ title: 'Second', id: '2' }),
+            generateMultisigProposal({ title: 'First', id: '1' }),
+            generateMultisigProposal({ title: 'Second', id: '2' }),
         ];
         useProposalListDataSpy.mockReturnValue({
             proposalList: proposals,
@@ -59,7 +59,7 @@ describe('<MultisigProposalList /> component', () => {
     it('does not render the data-list pagination when hidePagination is set to true', () => {
         const hidePagination = true;
         useProposalListDataSpy.mockReturnValue({
-            proposalList: [generateProposal()],
+            proposalList: [generateMultisigProposal()],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,

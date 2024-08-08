@@ -94,6 +94,12 @@ class TokenSettingsUtils {
             },
         ];
     };
+    /**
+     * The function formats a number from scientific notation to full-number.
+     * TODO: to be removed when backend returns numbers without scientific notation (APP-3480)
+     */
+    fromScientificNotation = (value?: string) =>
+        Number(value ?? '0').toLocaleString('fullwide', { useGrouping: false });
 }
 
 export const tokenSettingsUtils = new TokenSettingsUtils();

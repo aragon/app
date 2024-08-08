@@ -39,6 +39,18 @@ describe('<TokenMemberListItem /> component', () => {
         expect(screen.getByText(member.ens!)).toBeInTheDocument();
     });
 
+    it('renders the token member with correct delegation count', () => {
+        const member = generateTokenMember({
+            ens: 'tttt.eth',
+            address: '0x123',
+            metrics: { delegateReceivedCount: 5 },
+        });
+        render(createTestComponent({ member }));
+        expect(screen.getByText(member.ens!)).toBeInTheDocument();
+        expect(screen.getByText('5')).toBeInTheDocument();
+        expect(screen.getByText('Delegations')).toBeInTheDocument();
+    });
+
     it('fetches the DAO settings to parse the member voting power using the decimals of the governance token', () => {
         const daoId = 'test-dao-id';
         const token = generateToken({ decimals: 6 });
