@@ -1,13 +1,14 @@
-import { authConnector, createWeb3Modal } from '@web3modal/wagmi';
-import { Chain, createClient } from 'viem';
+import { authConnector } from '@web3modal/wagmi';
+import { createWeb3Modal } from '@web3modal/wagmi/react';
+import { type Chain, createClient } from 'viem';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
 import { arbitrum, base, mainnet, polygon, sepolia, zkSync, zkSyncSepoliaTestnet } from 'wagmi/chains';
 import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors';
 
 // Metadata used during wallet connection process.
-const AppMetadata = {
+const appMetadata = {
     name: 'Aragon App',
-    description: 'Aragon App - Next',
+    description: 'Aragon App',
     url: 'https://dev-app-next.vercel.app/',
     icons: ['https://dev-app-next.vercel.app/icon.svg'],
 };
@@ -24,13 +25,24 @@ export const wagmiConfig = createConfig({
     client: ({ chain }) => createClient({ chain, transport: http() }),
     ssr: true,
     connectors: [
-        walletConnect({ projectId, metadata: AppMetadata, showQrModal: false }),
+        walletConnect({ projectId, metadata: appMetadata, showQrModal: false }),
         injected({ shimDisconnect: false }),
-        coinbaseWallet({ appName: AppMetadata.name, appLogoUrl: AppMetadata.icons[0] }),
+        coinbaseWallet({ appName: appMetadata.name, appLogoUrl: appMetadata.icons[0] }),
         authConnector({ chains, options: { projectId }, email: true, showWallets: true, walletFeatures: true }),
     ],
     storage: createStorage({ storage: cookieStorage }),
 });
 
-// Initialize web3-modal
-createWeb3Modal({ metadata: AppMetadata, wagmiConfig: wagmiConfig, projectId });
+// Initialize web3-modal for wallet connection.
+createWeb3Modal({
+    metadata: appMetadata,
+    wagmiConfig,
+    projectId,
+    themeMode: 'light',
+    themeVariables: {
+        '--w3m-font-family': 'var(--ods-font-family)',
+        '--w3m-accent': 'var(--ods-color-primary-400)',
+        '--w3m-color-mix': 'var(--ods-color-neutral-100)',
+        '--w3m-border-radius-master': '1.3px',
+    },
+});

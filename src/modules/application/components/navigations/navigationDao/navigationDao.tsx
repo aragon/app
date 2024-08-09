@@ -8,6 +8,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { Button, DaoAvatar, IconType, Wallet, addressUtils, clipboardUtils } from '@aragon/ods';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { mainnet } from 'viem/chains';
 import { useAccount, useDisconnect } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 import { navigationDaoLinks } from './navigationDaoLinks';
@@ -24,7 +25,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const { address, isConnected } = useAccount();
     const { disconnect } = useDisconnect();
-    const { open, active } = useDialogContext();
+    const { open } = useDialogContext();
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -59,8 +60,10 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                         {dao?.name}
                     </p>
                 </button>
-                <Wallet onClick={handleWalletClick} user={walletUser} />
-                <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
+                <div className="flex flex-row gap-2">
+                    <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
+                    <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
+                </div>
             </div>
             <Navigation.Links className="hidden md:flex xl:pl-14" links={links} variant="columns" />
             <Navigation.Dialog links={links} open={isDialogOpen} onOpenChange={setIsDialogOpen}>

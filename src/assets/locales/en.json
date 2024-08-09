@@ -41,6 +41,20 @@
         "title": "Page not found",
         "description": "We couldn't find the page that you're looking for.",
         "action": "Go to dashboard"
+      },
+      "connectWalletDialog": {
+        "app": "Aragon App",
+        "connect": "wants to connect to your wallet",
+        "auditLink": "https://aragon.org",
+        "feature": {
+          "permissions": "View only permissions",
+          "stats": "Trusted by +7,500 DAOs and +$27B",
+          "smartContracts": "Audited Smart Contracts"
+        },
+        "action": {
+          "connect": "Connect",
+          "cancel": "Cancel"
+        }
       }
     },
     "dashboard": {
