@@ -1,9 +1,9 @@
 export enum ProposalActionType {
-    Transfer = 'Transfer',
-    Mint = 'Mint',
-    MultisigAddMembers = 'MultisigAddMembers',
-    MultisigRemoveMembers = 'MultisigRemoveMembers',
-    MetadataUpdate = 'MetadataUpdate',
-    UpdateMultiSigSettings = 'UpdateMultiSigSettings',
-    UpdateVoteSettings = 'UpdateVoteSettings',
+    TRANSFER = 'Transfer',
+    MINT = 'Mint',
+    MULTISIG_ADD_MEMBERS = 'MultisigAddMembers',
+    MULTISIG_REMOVE_MEMBERS = 'MultisigRemoveMembers',
+    METADATA_UPDATE = 'MetadataUpdate',
+    UPDATE_MULTISIG_SETTINGS = 'UpdateMultiSigSettings',
+    UPDATE_VOTE_SETTINGS = 'UpdateVoteSettings',
 }

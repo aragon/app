@@ -1,13 +1,19 @@
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { DaoTokenVotingMode, type IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
-import { type ITFuncOptions } from '@/shared/utils/translationsUtils';
+import { type TranslationFunction } from '@/shared/components/translationsProvider/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { Duration } from 'luxon';
 import { formatUnits } from 'viem';
 
 export interface IParseTokenSettingsParams {
-    fetchedSettings: IDaoTokenSettings;
-    t: (translation: string, options?: ITFuncOptions) => string;
+    /**
+     * Settings passed into the function either from the DAO or the proposal.
+     */
+    settings: IDaoTokenSettings;
+    /**
+     * The translation function for internationalization.
+     */
+    t: TranslationFunction;
 }
 class TokenSettingsUtils {
     /**
@@ -17,10 +23,11 @@ class TokenSettingsUtils {
      */
     parsePercentageSetting = (percentage: number) => percentage / 10 ** 4;
 
-    parseSettings = ({ fetchedSettings, t }: IParseTokenSettingsParams): IDaoSettingTermAndDefinition[] => {
-        const { settings, token } = fetchedSettings;
+    parseSettings = (params: IParseTokenSettingsParams): IDaoSettingTermAndDefinition[] => {
+        const { settings, t } = params;
+        const { settings: tokenSettings, token } = settings;
 
-        const { supportThreshold, minParticipation, minDuration, minProposerVotingPower, votingMode } = settings;
+        const { supportThreshold, minParticipation, minDuration, minProposerVotingPower, votingMode } = tokenSettings;
 
         const { symbol: tokenSymbol, totalSupply, decimals } = token;
 
@@ -94,6 +101,7 @@ class TokenSettingsUtils {
             },
         ];
     };
+
     /**
      * The function formats a number from scientific notation to full-number.
      * TODO: to be removed when backend returns numbers without scientific notation (APP-3480)

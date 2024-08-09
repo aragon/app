@@ -1,52 +1,70 @@
 import { type IProposal } from '@/modules/governance/api/governanceService';
-import { ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum/proposalActionType';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { type IDaoLink } from '@/shared/api/daoService';
-import { deepMerge } from '@/shared/utils/helpers/deepMerge';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils/pluginRegistryUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     type IProposalAction,
     type IProposalActionChangeMembers,
     type IProposalActionChangeSettings,
+    type IProposalActionTokenMint,
     type IProposalActionUpdateMetadata,
     type IProposalActionUpdateMetadataDaoMetadataLink,
     type IProposalActionWithdrawToken,
-    proposalActionsUtils as ODSProposalActionUtils,
-    ProposalActionType as ProposalActionTypeODS,
+    proposalActionsUtils as OdsProposalActionUtils,
+    ProposalActionType as OdsProposalActionType,
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
 
+interface INormalizeActionsParams {
+    /**
+     * List of plugins for the DAO.
+     */
+    plugins: string[];
+    /**
+     * List of fetched actions in the proposal.
+     */
+    actions: IProposalAction[];
+    /**
+     * The proposal object with full data.
+     */
+    proposal: IProposal;
+    /**
+     * The DAO ID.
+     */
+    daoId: string;
+}
+
 class ProposalActionUtils {
-    actionTypeMapping: { [key in ProposalActionType]: ProposalActionTypeODS } = {
-        [ProposalActionType.Transfer]: ProposalActionTypeODS.WITHDRAW_TOKEN,
-        [ProposalActionType.Mint]: ProposalActionTypeODS.TOKEN_MINT,
-        [ProposalActionType.MultisigAddMembers]: ProposalActionTypeODS.ADD_MEMBERS,
-        [ProposalActionType.MultisigRemoveMembers]: ProposalActionTypeODS.REMOVE_MEMBERS,
-        [ProposalActionType.MetadataUpdate]: ProposalActionTypeODS.UPDATE_METADATA,
-        [ProposalActionType.UpdateMultiSigSettings]: ProposalActionTypeODS.CHANGE_SETTINGS_MULTISIG,
-        [ProposalActionType.UpdateVoteSettings]: ProposalActionTypeODS.CHANGE_SETTINGS_TOKENVOTE,
+    actionTypeMapping: Record<ProposalActionType, OdsProposalActionType> = {
+        [ProposalActionType.TRANSFER]: OdsProposalActionType.WITHDRAW_TOKEN,
+        [ProposalActionType.MINT]: OdsProposalActionType.TOKEN_MINT,
+        [ProposalActionType.MULTISIG_ADD_MEMBERS]: OdsProposalActionType.ADD_MEMBERS,
+        [ProposalActionType.MULTISIG_REMOVE_MEMBERS]: OdsProposalActionType.REMOVE_MEMBERS,
+        [ProposalActionType.METADATA_UPDATE]: OdsProposalActionType.UPDATE_METADATA,
+        [ProposalActionType.UPDATE_MULTISIG_SETTINGS]: OdsProposalActionType.CHANGE_SETTINGS_MULTISIG,
+        [ProposalActionType.UPDATE_VOTE_SETTINGS]: OdsProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
     };
 
     normalizeActions = (
-        plugins: string[],
-        fetchedActions: IProposalAction[],
-        proposal: IProposal,
-        daoId: string,
+       params: INormalizeActionsParams,
     ): IProposalAction[] => {
-        return fetchedActions.map((action) => {
+        const { plugins, actions, proposal, daoId } = params;
+
+        return actions.map((action) => {
             const mappedType = this.actionTypeMapping[action.type as ProposalActionType];
             const normalizedAction = { ...action, type: mappedType };
 
-            if (ODSProposalActionUtils.isWithdrawTokenAction(normalizedAction)) {
+            if (OdsProposalActionUtils.isWithdrawTokenAction(normalizedAction)) {
                 return this.normalizeTransferAction(normalizedAction);
             }
-            if (ODSProposalActionUtils.isChangeSettingsAction(normalizedAction)) {
+            if (OdsProposalActionUtils.isChangeSettingsAction(normalizedAction)) {
                 return this.normalizeChangeSettingsAction(normalizedAction, plugins, proposal, daoId);
             }
-            if (ODSProposalActionUtils.isChangeMembersAction(normalizedAction)) {
+            if (OdsProposalActionUtils.isChangeMembersAction(normalizedAction)) {
                 return this.normalizeChangeMembersAction(normalizedAction);
             }
-            if (ODSProposalActionUtils.isUpdateMetadataAction(normalizedAction)) {
+            if (OdsProposalActionUtils.isUpdateMetadataAction(normalizedAction)) {
                 /**
                  * TODO remove type assertion (and mapping below) when ODS Interface for IProposalActionUpdateMetadataDaoMetadataLink is updated (APP-3505)
                  * Check whether normalizer for UpdateMetadataAction is needed
@@ -90,20 +108,21 @@ class ProposalActionUtils {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         });
 
+        const completeProposedSettings = {...existingSettings as IProposalActionChangeSettings[], ...proposedSettings};
+        
         // TODO: remove settings objects and deepMerge helper when settings interface is cleaned up (APP-3483)
         const settingsObjectExisting = {
             settings: existingSettings,
             token: (proposal as unknown as Record<string, unknown>).token,
         };
         const settingsObjectProposed = {
-            settings: proposedSettings,
+            settings: completeProposedSettings,
             token: (proposal as unknown as Record<string, unknown>).token,
         };
-        const completedSettingsObjectProposed = deepMerge(settingsObjectExisting, settingsObjectProposed);
 
         const parsedExistingSettings = parsingFunction && parsingFunction({ settings: settingsObjectExisting, daoId });
         const parsedProposedSettings =
-            parsingFunction && parsingFunction({ settings: completedSettingsObjectProposed, daoId });
+            parsingFunction && parsingFunction({ settings: settingsObjectProposed, daoId });
 
         if (parsedProposedSettings && parsedExistingSettings) {
             return {
@@ -151,6 +170,16 @@ class ProposalActionUtils {
             },
         };
     };
+
+    normalizeTokenMintAction = (action: IProposalActionTokenMint): IProposalActionTokenMint => {  
+        const { receivers, ...otherValues } = action;
+    
+        return {
+            ...otherValues,
+            receivers: [...receivers]
+        };
+    }
+
 }
 
 const proposalActionUtils = new ProposalActionUtils();

@@ -34,5 +34,5 @@ export const useTokenGovernanceSettings = (
         return [];
     }
 
-    return tokenSettingsUtils.parseSettings({ fetchedSettings: processedSettings, t });
+    return tokenSettingsUtils.parseSettings({ settings: processedSettings, t });
 };

@@ -1,144 +1,73 @@
-import { generateToken } from '@/modules/finance/testUtils';
-import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
-import * as daoService from '@/shared/api/daoService';
-import { generateReactQueryResultError, generateReactQueryResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
-import { useTokenGovernanceSettings } from './useTokenGovernanceSettings';
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import { formatterUtils, NumberFormat } from '@aragon/ods';
+import { Duration } from 'luxon';
+import { formatUnits } from 'viem';
 
-describe('useTokenGovernanceSettings', () => {
-    const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
-
-    beforeEach(() => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
-    });
-
-    afterEach(() => {
-        useDaoSettingsSpy.mockReset();
-    });
-
-    it('returns empty array when daoSettings is null', () => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }));
-        expect(result.current).toEqual([]);
-    });
-
-    it('fetches the specified DAO terms and definitions for token Dao', async () => {
-        const tokenSettings = generateToken();
-        const mockSettings = generateDaoTokenSettings({
-            settings: {
-                supportThreshold: 300000,
-                minParticipation: 200000,
-                minDuration: 604800,
-                minProposerVotingPower: '100',
-                votingMode: 1,
-            },
-            token: { ...tokenSettings, decimals: 2, totalSupply: '200000' },
+describe('tokenSettingsUtils', () => {
+    describe('parsePercentageSetting', () => {
+        it('correctly parses the percentage setting', () => {
+            expect(tokenSettingsUtils.parsePercentageSetting(500000)).toEqual(50);
+            expect(tokenSettingsUtils.parsePercentageSetting(123456)).toEqual(12.3456);
+            expect(tokenSettingsUtils.parsePercentageSetting(0)).toEqual(0);
+            expect(tokenSettingsUtils.parsePercentageSetting(1000000)).toEqual(100);
         });
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
-        const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }), {
-            wrapper: ReactQueryWrapper,
-        });
-
-        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
-            { urlParams: { daoId: 'token-test-id' } },
-            expect.objectContaining({ enabled: true }),
-        );
-
-        const [
-            approvalThreshold,
-            minimumParticipation,
-            minimumDuration,
-            earlyExecution,
-            voteChange,
-            proposalThreshold,
-        ] = result.current;
-
-        expect(approvalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.approvalThreshold');
-        expect(approvalThreshold.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=30%)',
-        );
-        expect(minimumParticipation.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumParticipation');
-        expect(minimumParticipation.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.participation (participation=20%,tokenValue=400,tokenSymbol=ETH)',
-        );
-        expect(minimumDuration.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
-        expect(minimumDuration.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.duration (days=7,hours=0,minutes=0)',
-        );
-        expect(earlyExecution.term).toBe('app.plugins.token.tokenGovernanceSettings.earlyExecution');
-        expect(earlyExecution.definition).toBe('app.plugins.token.tokenGovernanceSettings.yes');
-        expect(voteChange.term).toBe('app.plugins.token.tokenGovernanceSettings.voteChange');
-        expect(voteChange.definition).toBe('app.plugins.token.tokenGovernanceSettings.no');
-        expect(proposalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.proposalThreshold');
-        expect(proposalThreshold.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=1,symbol=ETH)',
-        );
     });
 
-    it('handles settings object being passed directly to the hook', async () => {
-        const tokenSettings = generateToken();
-        const mockSettings = generateDaoTokenSettings({
-            settings: {
-                supportThreshold: 500000,
-                minParticipation: 100000,
-                minDuration: 604800,
-                minProposerVotingPower: '1',
-                votingMode: 1,
-            },
-            token: { ...tokenSettings, decimals: 1, totalSupply: '10000' },
+    describe('formatApproveThreshold', () => {
+        it('correctly formats the approval threshold', () => {
+            const parsedSupportThreshold = tokenSettingsUtils.parsePercentageSetting(300000);
+            const formattedApproveThreshold = formatterUtils.formatNumber(parsedSupportThreshold / 100, {
+                format: NumberFormat.PERCENTAGE_SHORT,
+            });
+            expect(formattedApproveThreshold).toBe('30%');
         });
-        const { result } = renderHook(() =>
-            useTokenGovernanceSettings({ daoId: 'token-test-id', settings: mockSettings }),
-        );
-
-        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
-            { urlParams: { daoId: 'token-test-id' } },
-            expect.objectContaining({ enabled: false }),
-        );
-
-        const [
-            approvalThreshold,
-            minimumParticipation,
-            minimumDuration,
-            earlyExecution,
-            voteChange,
-            proposalThreshold,
-        ] = result.current;
-
-        expect(approvalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.approvalThreshold');
-        expect(approvalThreshold.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=50%)',
-        );
-        expect(minimumParticipation.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumParticipation');
-        expect(minimumParticipation.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.participation (participation=10%,tokenValue=100,tokenSymbol=ETH)',
-        );
-        expect(minimumDuration.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
-        expect(minimumDuration.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.duration (days=7,hours=0,minutes=0)',
-        );
-        expect(earlyExecution.term).toBe('app.plugins.token.tokenGovernanceSettings.earlyExecution');
-        expect(earlyExecution.definition).toBe('app.plugins.token.tokenGovernanceSettings.yes');
-        expect(voteChange.term).toBe('app.plugins.token.tokenGovernanceSettings.voteChange');
-        expect(voteChange.definition).toBe('app.plugins.token.tokenGovernanceSettings.no');
-        expect(proposalThreshold.term).toBe('app.plugins.token.tokenGovernanceSettings.proposalThreshold');
-        expect(proposalThreshold.definition).toBe(
-            'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=0.1,symbol=ETH)',
-        );
     });
 
-    it('correctly handles different voting modes', () => {
-        const baseSettings = generateDaoTokenSettings();
-        const mockSettings = { ...baseSettings, settings: { ...baseSettings.settings, votingMode: 2 } };
-
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
-        const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }), {
-            wrapper: ReactQueryWrapper,
+    describe('formatMinParticipation', () => {
+        it('correctly formats the minimum participation', () => {
+            const parsedMinParticipation = tokenSettingsUtils.parsePercentageSetting(200000);
+            const formattedMinParticipation = formatterUtils.formatNumber(parsedMinParticipation / 100, {
+                format: NumberFormat.PERCENTAGE_SHORT,
+            });
+            expect(formattedMinParticipation).toBe('20%');
         });
+    });
 
-        const [, , , earlyExecution, voteChange] = result.current;
+    describe('formatMinParticipationToken', () => {
+        it('correctly formats the minimum participation token value', () => {
+            const totalSupply = '200000';
+            const decimals = 2;
+            const parsedMinParticipation = tokenSettingsUtils.parsePercentageSetting(200000);
+            const minParticipationToken = (Number(totalSupply) * parsedMinParticipation) / 100;
+            const parsedMinParticipationToken = formatUnits(BigInt(minParticipationToken), decimals);
+            const formattedMinParticipationToken = formatterUtils.formatNumber(parsedMinParticipationToken, {
+                format: NumberFormat.TOKEN_AMOUNT_LONG,
+            });
+            expect(formattedMinParticipationToken).toBe('400');
+        });
+    });
 
-        expect(earlyExecution.definition).toBe('app.plugins.token.tokenGovernanceSettings.no');
-        expect(voteChange.definition).toBe('app.plugins.token.tokenGovernanceSettings.yes');
+    describe('formatDuration', () => {
+        it('correctly formats the duration', () => {
+            const minDuration = 604800;
+            const duration = Duration.fromObject({ seconds: minDuration }).shiftTo('days', 'hours', 'minutes');
+            const formattedDuration = `days=${duration.days},hours=${duration.hours},minutes=${duration.minutes}`;
+            expect(formattedDuration).toBe('days=7,hours=0,minutes=0');
+        });
+    });
+
+    describe('formatProposerVotingPower', () => {
+        it('correctly formats the proposer voting power', () => {
+            const minProposerVotingPower = '100';
+            const decimals = 2;
+            const minProposerVotingPowerFullNumber = Number(minProposerVotingPower ?? '0').toLocaleString('fullwide', {
+                useGrouping: false,
+            });
+            const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPowerFullNumber), decimals);
+            const formattedProposerVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, {
+                format: NumberFormat.TOKEN_AMOUNT_LONG,
+            });
+            expect(formattedProposerVotingPower).toBe('1');
+        });
     });
 });

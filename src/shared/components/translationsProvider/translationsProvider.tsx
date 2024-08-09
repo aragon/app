@@ -10,6 +10,8 @@ export interface ITranslationContext {
     t: (translation: string, options?: ITFuncOptions) => string;
 }
 
+export type TranslationFunction = (translation: string, options?: ITFuncOptions) => string;
+
 const translationsContext = createContext<ITranslationContext | null>(null);
 
 export interface ITranslationsProviderProps {

@@ -1,0 +1,1 @@
+export { ProposalActionType} from './proposalActionType'

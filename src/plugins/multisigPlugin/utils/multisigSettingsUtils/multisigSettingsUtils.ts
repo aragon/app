@@ -1,31 +1,37 @@
-import { type IMember } from '@/modules/governance/api/governanceService';
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { type IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
-import { type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import { type ITFuncOptions } from '@/shared/utils/translationsUtils';
-import { type InfiniteData } from '@tanstack/react-query';
+import { type TranslationFunction } from '@/shared/components/translationsProvider/translationsProvider';
 
 export interface IMultisigSettingsParseParams {
-    fetchedSettings: IDaoMultisigSettings;
-    memberList: InfiniteData<IPaginatedResponse<IMember>, unknown>;
-    t: (translation: string, options?: ITFuncOptions) => string;
+    /**
+     * Settings passed into the function either from the DAO or the proposal.
+     */
+    settings: IDaoMultisigSettings;
+    /**
+     * List of members in the DAO.
+     */
+    membersCount: number;
+    /**
+     * The translation function for internationalization.
+     */
+    t: TranslationFunction;
 }
 
 class MultisigSettingsUtils {
     parseSettings = (params: IMultisigSettingsParseParams): IDaoSettingTermAndDefinition[] => {
-        const { fetchedSettings, memberList, t } = params;
+        const { settings, membersCount, t } = params;
 
         return [
             {
                 term: t('app.plugins.multisig.multisigGovernanceSettings.minimumApproval'),
                 definition: t('app.plugins.multisig.multisigGovernanceSettings.approvals', {
-                    min: fetchedSettings.settings.minApprovals,
-                    max: memberList.pages[0].metadata.totalRecords,
+                    min: settings.settings.minApprovals,
+                    max: membersCount,
                 }),
             },
             {
                 term: t('app.plugins.multisig.multisigGovernanceSettings.proposalCreation'),
-                definition: fetchedSettings.settings.onlyListed
+                definition: settings.settings.onlyListed
                     ? t('app.plugins.multisig.multisigGovernanceSettings.members')
                     : t('app.plugins.multisig.multisigGovernanceSettings.anyWallet'),
             },

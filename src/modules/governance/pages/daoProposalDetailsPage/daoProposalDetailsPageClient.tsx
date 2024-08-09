@@ -68,7 +68,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { blockTimestamp, creatorAddress, transactionHash, summary, title, description, actions, resources } =
         proposal;
 
-    const normalizedProposalActions = proposalActionUtils.normalizeActions(plugins, actions, proposal, daoId);
+    const normalizedProposalActions = proposalActionUtils.normalizeActions({plugins, actions, proposal, daoId});
 
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
