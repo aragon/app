@@ -1,6 +1,7 @@
 'use client';
 
 import { DialogProvider } from '@/shared/components/dialogProvider';
+import { DialogRoot } from '@/shared/components/dialogRoot';
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
@@ -45,7 +46,10 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                 queryClient={queryClient}
                 coreProviderValues={coreProviderValues}
             >
-                <DialogProvider dialogs={providersDialogs}>{children}</DialogProvider>
+                <DialogProvider>
+                    {children}
+                    <DialogRoot dialogs={providersDialogs} />
+                </DialogProvider>
             </OdsModulesProvider>
         </TranslationsProvider>
     );

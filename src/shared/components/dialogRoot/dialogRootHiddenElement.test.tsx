@@ -1,0 +1,5 @@
+describe('<DialogRootHiddenElement /> component', () => {
+    it('', () => {
+        //
+    });
+});

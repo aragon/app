@@ -1,5 +1,4 @@
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
-import { DialogRoot } from '@/shared/components/dialogRoot';
 import { translations } from '@/shared/constants/translations';
 import '@aragon/ods/index.css';
 import { headers } from 'next/headers';
@@ -30,7 +29,6 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
                     </ErrorBoundary>
-                    <DialogRoot />
                     <Footer />
                 </Providers>
             </body>

@@ -1,6 +1,6 @@
-import { ModuleDialogs } from '@/shared/components/dialogProvider';
+import type { DialogComponent } from '@/shared/components/dialogProvider';
 import { applicationDialogs } from '../../constants/moduleDialogs';
 
-export const providersDialogs: ModuleDialogs = {
+export const providersDialogs: Record<string, DialogComponent> = {
     ...applicationDialogs,
 };

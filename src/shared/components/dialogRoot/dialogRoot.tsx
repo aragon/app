@@ -1,19 +1,32 @@
 'use client';
 
 import { Dialog, type IDialogRootProps as IOdsDialogRootProps } from '@aragon/ods';
-import { useDialogContext } from '../dialogProvider';
+import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
+import { DialogRootHiddenElement } from './dialogRootHiddenElement';
 
-export interface IDialogRootProps extends IOdsDialogRootProps {}
+export interface IDialogRootProps extends IOdsDialogRootProps {
+    /**
+     * Dialogs of the application.
+     */
+    dialogs: Record<string, IDialogComponentDefinitions>;
+}
 
 export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
-    const { active, dialogs, close } = useDialogContext();
+    const { dialogs } = props;
+    const { location, close } = useDialogContext();
 
-    const isOpen = active != null;
-    const ActiveDialogComponent = active != null ? dialogs[active.id] : undefined;
+    const isOpen = location != null;
+    const activeDialog = location != null ? dialogs[location.id] : undefined;
 
     return (
         <Dialog.Root {...props} open={isOpen} onOpenChange={close}>
-            {ActiveDialogComponent && <ActiveDialogComponent definition={active!} />}
+            {activeDialog && (
+                <>
+                    <DialogRootHiddenElement label={activeDialog.title} type="title" />
+                    <DialogRootHiddenElement label={activeDialog.description} type="description" />
+                    <activeDialog.Component location={location!} />
+                </>
+            )}
         </Dialog.Root>
     );
 };

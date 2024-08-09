@@ -1,9 +1,8 @@
-import { authConnector } from '@web3modal/wagmi';
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { type Chain, createClient } from 'viem';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
 import { arbitrum, base, mainnet, polygon, sepolia, zkSync, zkSyncSepoliaTestnet } from 'wagmi/chains';
-import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors';
+import { coinbaseWallet, walletConnect } from 'wagmi/connectors';
 
 // Metadata used during wallet connection process.
 const appMetadata = {
@@ -26,9 +25,7 @@ export const wagmiConfig = createConfig({
     ssr: true,
     connectors: [
         walletConnect({ projectId, metadata: appMetadata, showQrModal: false }),
-        injected({ shimDisconnect: false }),
         coinbaseWallet({ appName: appMetadata.name, appLogoUrl: appMetadata.icons[0] }),
-        authConnector({ chains, options: { projectId }, email: true, showWallets: true, walletFeatures: true }),
     ],
     storage: createStorage({ storage: cookieStorage }),
 });
@@ -39,6 +36,11 @@ createWeb3Modal({
     wagmiConfig,
     projectId,
     themeMode: 'light',
+    featuredWalletIds: [
+        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
+        '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
+        '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1', // Rabby
+    ],
     themeVariables: {
         '--w3m-font-family': 'var(--ods-font-family)',
         '--w3m-accent': 'var(--ods-color-primary-400)',

@@ -1,7 +1,9 @@
-export {
-    DialogProvider,
-    useDialogContext,
-    type IDialogComponentProps,
-    type IDialogProviderProps,
-    type ModuleDialogs,
-} from './dialogProvider';
+export { DialogProvider, useDialogContext } from './dialogProvider';
+export type {
+    DialogComponentProps,
+    IDialogComponentDefinitions,
+    IDialogComponentProps,
+    IDialogContext,
+    IDialogLocation,
+    IOpenDialogOptions,
+} from './dialogProvider.api';
