@@ -1,20 +1,16 @@
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
 import { generateProposalActionChangeSettings } from '@/modules/governance/testUtils/generators/proposalActionChangeSettings';
 import { generateProposalActionWithdrawToken } from '@/modules/governance/testUtils/generators/proposalActionWithdrawToken';
-import {
-    proposalActionsUtils as ODSProposalActionUtils,
-    ProposalActionType,
-    type IProposalAction,
-    type IProposalActionChangeMembers,
-} from '@aragon/ods';
+import { type IProposalAction } from '@aragon/ods';
 import proposalActionUtils from './proposalActionUtils';
 
 describe('ProposalActionUtils', () => {
     it('should map known action types correctly', () => {
         const actions: IProposalAction[] = [
-            generateProposalActionChangeMembers({ type: 'MultisigAddMembers' as IProposalActionChangeMembers['type'] }),
-            generateProposalActionChangeSettings({ type: 'UpdateMultiSigSettings' }),
+            generateProposalActionChangeMembers({ type: ProposalActionType.MULTISIG_ADD_MEMBERS }),
+            generateProposalActionChangeSettings({ type: ProposalActionType.UPDATE_MULTISIG_SETTINGS }),
         ];
         const plugins = ['multisig'];
 
@@ -24,8 +20,8 @@ describe('ProposalActionUtils', () => {
         const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
         expect(transformedActions).toHaveLength(2);
-        expect(transformedActions[0].type).toEqual(ProposalActionType.ADD_MEMBERS);
-        expect(transformedActions[1].type).toEqual(ProposalActionType.CHANGE_SETTINGS_MULTISIG);
+        expect(transformedActions[0].type).toEqual('ADD_MEMBERS');
+        expect(transformedActions[1].type).toEqual('CHANGE_SETTINGS_MULTISIG');
     });
 
     it('should normalize transfer actions correctly', () => {
@@ -51,8 +47,8 @@ describe('ProposalActionUtils', () => {
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
 
-        if (ODSProposalActionUtils.isWithdrawTokenAction(action)) {
-            expect(action.type).toEqual(ProposalActionType.WITHDRAW_TOKEN);
+        if (proposalActionUtils.isWithdrawTokenAction(action)) {
+            expect(action.type).toEqual('WITHDRAW_TOKEN');
             expect(action.amount).toEqual('1');
         }
     });
@@ -60,7 +56,7 @@ describe('ProposalActionUtils', () => {
     it('should normalize change settings actions correctly for multisig', () => {
         const actions: IProposalAction[] = [
             generateProposalActionChangeSettings({
-                type: 'UpdateMultiSigSettings',
+                type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
                 proposedSettings: [{ term: 'someSetting', definition: 'new' }],
                 existingSettings: [{ term: 'someSetting', definition: 'old' }],
             }),
@@ -75,8 +71,8 @@ describe('ProposalActionUtils', () => {
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
 
-        if (ODSProposalActionUtils.isChangeSettingsAction(action)) {
-            expect(action.type).toEqual(ProposalActionType.CHANGE_SETTINGS_MULTISIG);
+        if (proposalActionUtils.isChangeSettingsAction(action)) {
+            expect(action.type).toEqual('CHANGE_SETTINGS_MULTISIG');
             expect(action.proposedSettings).toEqual([{ term: 'someSetting', definition: 'new' }]);
         }
     });
@@ -84,8 +80,8 @@ describe('ProposalActionUtils', () => {
     it('should normalize change members actions correctly', () => {
         const actions = [
             generateProposalActionChangeMembers({
-                type: 'MultisigAddMembers' as IProposalActionChangeMembers['type'],
-                currentMembers: 4,
+                type: ProposalActionType.MULTISIG_ADD_MEMBERS,
+                currentMembers: [{ address: '0x1' }, { address: '0x2' }, { address: '0x3' }, { address: '0x4' }],
                 members: [{ address: '0x3' }, { address: '0x4' }],
             }),
         ];
@@ -99,8 +95,8 @@ describe('ProposalActionUtils', () => {
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
 
-        if (ODSProposalActionUtils.isChangeMembersAction(action)) {
-            expect(action.type).toEqual(ProposalActionType.ADD_MEMBERS);
+        if (proposalActionUtils.isChangeMembersAction(action)) {
+            expect(action.type).toEqual('ADD_MEMBERS');
             expect(action.currentMembers).toEqual(4);
             expect(action.members).toHaveLength(2);
         }
@@ -109,7 +105,7 @@ describe('ProposalActionUtils', () => {
     it('should normalize change settings actions correctly for token-voting', () => {
         const actions: IProposalAction[] = [
             generateProposalActionChangeSettings({
-                type: 'UpdateVoteSettings',
+                type: ProposalActionType.UPDATE_VOTE_SETTINGS,
                 proposedSettings: [{ term: 'votingPeriod', definition: '5 days' }],
                 existingSettings: [{ term: 'votingPeriod', definition: '3 days' }],
             }),
@@ -124,8 +120,8 @@ describe('ProposalActionUtils', () => {
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
 
-        if (ODSProposalActionUtils.isChangeSettingsAction(action)) {
-            expect(action.type).toEqual(ProposalActionType.CHANGE_SETTINGS_TOKENVOTE);
+        if (proposalActionUtils.isChangeSettingsAction(action)) {
+            expect(action.type).toEqual('CHANGE_SETTINGS_TOKENVOTE');
             expect(action.proposedSettings).toEqual([{ term: 'votingPeriod', definition: '5 days' }]);
         }
     });
@@ -133,7 +129,7 @@ describe('ProposalActionUtils', () => {
     it('should return a normal action when no specific case is met', () => {
         const actions: IProposalAction[] = [
             {
-                type: 'UnknownType',
+                type: 'UnknownType' as ProposalActionType,
                 from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
                 to: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
                 data: '',
@@ -157,14 +153,15 @@ describe('ProposalActionUtils', () => {
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
 
-        expect(action.type).toEqual(undefined);
+        // Check that the normal action is returned as-is
+        expect(action.type).toEqual('UnknownType');
         expect(action.inputData?.function).toEqual('settings');
     });
 
     it('should return a normal action when plugins do not match multisig or token-voting', () => {
         const actions: IProposalAction[] = [
             generateProposalActionChangeSettings({
-                type: 'UpdateVoteSettings',
+                type: ProposalActionType.UPDATE_VOTE_SETTINGS,
                 proposedSettings: [{ term: 'votingPeriod', definition: '5 days' }],
                 existingSettings: [{ term: 'votingPeriod', definition: '3 days' }],
             }),
@@ -179,8 +176,8 @@ describe('ProposalActionUtils', () => {
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
 
-        if (ODSProposalActionUtils.isChangeSettingsAction(action)) {
-            expect(action.type).toEqual(ProposalActionType.CHANGE_SETTINGS_TOKENVOTE);
+        if (proposalActionUtils.isChangeSettingsAction(action)) {
+            expect(action.type).toEqual('CHANGE_SETTINGS_TOKENVOTE');
             expect(action.proposedSettings).toEqual([{ term: 'votingPeriod', definition: '5 days' }]);
         }
     });

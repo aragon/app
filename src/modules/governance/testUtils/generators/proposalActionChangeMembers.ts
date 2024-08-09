@@ -1,10 +1,10 @@
-import { type IProposalActionChangeMembers } from '@aragon/ods';
+import { IProposalActionChangeMembers } from '@/modules/governance/api/governanceService';
 
 export const generateProposalActionChangeMembers = (
     action?: Partial<IProposalActionChangeMembers>,
 ): IProposalActionChangeMembers => ({
     members: [{ address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' }],
-    currentMembers: 5,
+    currentMembers: [{ address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' }],
     type: 'MultisigAddMembers' as IProposalActionChangeMembers['type'],
     from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
     to: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',

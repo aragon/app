@@ -161,6 +161,7 @@ class ProposalActionUtils {
                 href: link.url,
             }));
         };
+
         return {
             ...otherValues,
             type: this.actionTypeMapping[type],

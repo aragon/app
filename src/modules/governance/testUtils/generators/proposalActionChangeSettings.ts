@@ -1,4 +1,5 @@
-import { type IProposalActionChangeSettings } from '@aragon/ods';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { IProposalActionChangeSettings } from '@/modules/governance/api/governanceService/domain/proposalActionChangeSettings';
 
 export const generateProposalActionChangeSettings = (
     action?: Partial<IProposalActionChangeSettings>,
@@ -19,7 +20,7 @@ export const generateProposalActionChangeSettings = (
         { term: 'Early Execution', definition: 'Yes' },
         { term: 'Vote Changes', definition: 'No' },
     ],
-    type: 'UpdateMultiSigSettings',
+    type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
     from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
     to: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
     data: '',
