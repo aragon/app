@@ -1,4 +1,4 @@
-import { IProposalActionChangeMembers } from '@/modules/governance/api/governanceService';
+import { type IProposalActionChangeMembers } from '@/modules/governance/api/governanceService';
 
 export const generateProposalActionChangeMembers = (
     action?: Partial<IProposalActionChangeMembers>,

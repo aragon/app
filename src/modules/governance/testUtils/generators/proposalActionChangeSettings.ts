@@ -1,5 +1,5 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { IProposalActionChangeSettings } from '@/modules/governance/api/governanceService/domain/proposalActionChangeSettings';
+import { type IProposalActionChangeSettings } from '@/modules/governance/api/governanceService/domain/proposalActionChangeSettings';
 
 export const generateProposalActionChangeSettings = (
     action?: Partial<IProposalActionChangeSettings>,
