@@ -1,1 +1,1 @@
-export { ProposalActionType} from './proposalActionType'
+export { ProposalActionType } from './proposalActionType';

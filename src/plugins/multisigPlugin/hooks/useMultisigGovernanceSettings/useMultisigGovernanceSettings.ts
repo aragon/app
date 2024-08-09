@@ -36,5 +36,9 @@ export const useMultisigGovernanceSettings = (
         return [];
     }
 
-    return multisigSettingsUtils.parseSettings({ settings: processedSettings, membersCount: memberList.pages[0].metadata.totalRecords, t });
+    return multisigSettingsUtils.parseSettings({
+        settings: processedSettings,
+        membersCount: memberList.pages[0].metadata.totalRecords,
+        t,
+    });
 };

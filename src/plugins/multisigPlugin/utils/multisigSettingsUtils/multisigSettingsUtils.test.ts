@@ -1,7 +1,7 @@
-import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
-import { type IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
-import { type TranslationFunction } from '@/shared/components/translationsProvider/translationsProvider';
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
+import { type IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
+import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
+import { type TranslationFunction } from '@/shared/components/translationsProvider/translationsProvider';
 
 describe('multisigSettingsUtils', () => {
     const mockTranslations: TranslationFunction = (key: string, options?: Record<string, unknown>) => {
@@ -22,13 +22,13 @@ describe('multisigSettingsUtils', () => {
     };
 
     const generateMockSettings = (minApprovals: number, onlyListed: boolean): IDaoMultisigSettings => ({
-      settings: {
-        minApprovals,
-        onlyListed,
-      },
-      id: '',
-      pluginAddress: '',
-      pluginSubdomain: ''
+        settings: {
+            minApprovals,
+            onlyListed,
+        },
+        id: '',
+        pluginAddress: '',
+        pluginSubdomain: '',
     });
 
     it('parses settings correctly for minimum approvals and proposal creation when any wallet can create proposals', () => {

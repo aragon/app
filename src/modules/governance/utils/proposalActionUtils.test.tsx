@@ -12,16 +12,16 @@ import proposalActionUtils from './proposalActionUtils';
 
 describe('ProposalActionUtils', () => {
     it('should map known action types correctly', () => {
-        const fetchedActions: IProposalAction[] = [
+        const actions: IProposalAction[] = [
             generateProposalActionChangeMembers({ type: 'MultisigAddMembers' as IProposalActionChangeMembers['type'] }),
             generateProposalActionChangeSettings({ type: 'UpdateMultiSigSettings' }),
         ];
-        const daoPlugins = ['multisig'];
+        const plugins = ['multisig'];
 
         const daoId = '0x123';
         const proposal = generateProposal();
 
-        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions, proposal, daoId);
+        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
         expect(transformedActions).toHaveLength(2);
         expect(transformedActions[0].type).toEqual(ProposalActionType.ADD_MEMBERS);
@@ -29,7 +29,7 @@ describe('ProposalActionUtils', () => {
     });
 
     it('should normalize transfer actions correctly', () => {
-        const fetchedActions: IProposalAction[] = [
+        const actions: IProposalAction[] = [
             generateProposalActionWithdrawToken({
                 amount: '1000000000000000000',
                 token: {
@@ -42,11 +42,11 @@ describe('ProposalActionUtils', () => {
                 },
             }),
         ];
-
+        const plugins = [''];
         const daoId = '0x123';
         const proposal = generateProposal();
 
-        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions, proposal, daoId);
+        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -58,19 +58,19 @@ describe('ProposalActionUtils', () => {
     });
 
     it('should normalize change settings actions correctly for multisig', () => {
-        const fetchedActions: IProposalAction[] = [
+        const actions: IProposalAction[] = [
             generateProposalActionChangeSettings({
                 type: 'UpdateMultiSigSettings',
                 proposedSettings: [{ term: 'someSetting', definition: 'new' }],
                 existingSettings: [{ term: 'someSetting', definition: 'old' }],
             }),
         ];
-        const daoPlugins = ['multisig'];
+        const plugins = ['multisig'];
 
         const daoId = '0x123';
         const proposal = generateProposal();
 
-        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions, proposal, daoId);
+        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -82,7 +82,7 @@ describe('ProposalActionUtils', () => {
     });
 
     it('should normalize change members actions correctly', () => {
-        const fetchedActions = [
+        const actions = [
             generateProposalActionChangeMembers({
                 type: 'MultisigAddMembers' as IProposalActionChangeMembers['type'],
                 currentMembers: 4,
@@ -90,10 +90,11 @@ describe('ProposalActionUtils', () => {
             }),
         ];
 
+        const plugins = [''];
         const daoId = '0x123';
         const proposal = generateProposal();
 
-        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions, proposal, daoId);
+        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -106,19 +107,19 @@ describe('ProposalActionUtils', () => {
     });
 
     it('should normalize change settings actions correctly for token-voting', () => {
-        const fetchedActions: IProposalAction[] = [
+        const actions: IProposalAction[] = [
             generateProposalActionChangeSettings({
                 type: 'UpdateVoteSettings',
                 proposedSettings: [{ term: 'votingPeriod', definition: '5 days' }],
                 existingSettings: [{ term: 'votingPeriod', definition: '3 days' }],
             }),
         ];
-        const daoPlugins = ['token-voting'];
+        const plugins = ['token-voting'];
 
         const daoId = '0x123';
         const proposal = generateProposal();
 
-        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions, proposal, daoId);
+        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -130,7 +131,7 @@ describe('ProposalActionUtils', () => {
     });
 
     it('should return a normal action when no specific case is met', () => {
-        const fetchedActions: IProposalAction[] = [
+        const actions: IProposalAction[] = [
             {
                 type: 'UnknownType',
                 from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
@@ -147,11 +148,11 @@ describe('ProposalActionUtils', () => {
                 },
             } as IProposalAction,
         ];
-
+        const plugins = [''];
         const daoId = '0x123';
         const proposal = generateProposal();
 
-        const transformedActions = proposalActionUtils.normalizeActions([], fetchedActions, proposal, daoId);
+        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
@@ -161,19 +162,19 @@ describe('ProposalActionUtils', () => {
     });
 
     it('should return a normal action when plugins do not match multisig or token-voting', () => {
-        const fetchedActions: IProposalAction[] = [
+        const actions: IProposalAction[] = [
             generateProposalActionChangeSettings({
                 type: 'UpdateVoteSettings',
                 proposedSettings: [{ term: 'votingPeriod', definition: '5 days' }],
                 existingSettings: [{ term: 'votingPeriod', definition: '3 days' }],
             }),
         ];
-        const daoPlugins = ['unknown-plugin'];
+        const plugins = ['unknown-plugin'];
 
         const daoId = '0x123';
         const proposal = generateProposal();
 
-        const transformedActions = proposalActionUtils.normalizeActions(daoPlugins, fetchedActions, proposal, daoId);
+        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
         expect(transformedActions).toHaveLength(1);
         const action = transformedActions[0];
