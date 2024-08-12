@@ -1,6 +1,7 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IMember, IProposal, IVote } from './domain';
 import type {
+    IGetDelegatesListParams,
     IGetMemberListParams,
     IGetMemberParams,
     IGetProposalListParams,
@@ -10,12 +11,21 @@ import type {
 
 class GovernanceService extends AragonBackendService {
     private urls = {
+        delegates: '/delegates',
         members: '/members/active',
         member: '/members/active/:address',
         proposals: '/proposals',
         proposal: '/proposals/:id',
         votes: '/votes',
     };
+
+    getDelegatesList = async <TDelegate extends IMember = IMember>(
+        params: IGetMemberListParams,
+    ): Promise<IPaginatedResponse<TDelegate>> => {
+        const result = await this.request<IPaginatedResponse<TDelegate>>(this.urls.delegates, params);
+
+        return result;
+    }
 
     getMemberList = async <TMember extends IMember = IMember>(
         params: IGetMemberListParams,

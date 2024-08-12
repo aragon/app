@@ -196,6 +196,15 @@
             "ens": "ENS",
             "firstActivity": "First activity"
           }
+        },
+        "main": {
+          "delegates": {
+            "delegationCount": "{{count}} Delegations received",
+            "entity": "Delegations"
+          },
+          "proposals": "Proposals",
+          "votes": "Votes",
+          "transactions": "Transactions"
         }
       },
       "daoProposalDetailsPage": {

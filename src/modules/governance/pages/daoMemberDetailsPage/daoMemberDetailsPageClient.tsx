@@ -12,6 +12,7 @@ import {
     addressUtils,
     ChainEntityType,
     clipboardUtils,
+    DataListRoot,
     DefinitionList,
     Dropdown,
     IconType,
@@ -44,6 +45,8 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const memberQueryParams = { daoId };
     const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
     const { data: member } = useMember(memberParams);
+
+    console.log('member', member);
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -114,7 +117,27 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                 </div>
             </Page.Header>
             <Page.Content>
-                <Page.Main />
+                <Page.Main>
+                    <Page.Section
+                        title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
+                            count: member.metrics?.delegateReceivedCount,
+                        })}
+                    >
+                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.delegates.entity')}>
+                            {/* {member.metrics.delegateReceivedCount > 0 && (
+                                <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
+                                    {delegators?.map((delegator) => {
+                                        <MemberDataListItem.Structure
+                                            address={address}
+                                            ensName={delegator.ens}
+                                            avatarSrc={delegator.avatar}
+                                        />;
+                                    })}
+                                </DataListContainer>
+                            )} */}
+                        </DataListRoot>
+                    </Page.Section>
+                </Page.Main>
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>

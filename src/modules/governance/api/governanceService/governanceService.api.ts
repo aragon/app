@@ -56,3 +56,12 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
 }
 
 export interface IGetVoteListParams extends IRequestQueryParams<IGetVoteListQueryParams> {}
+
+export interface IGetDelegatesListQueryParams extends IPaginatedRequest {
+    /**
+     * ID of the DAO to fetch the delegates from.
+     */
+    daoId: string;
+}
+
+export interface IGetDelegatesListParams extends IRequestQueryParams<IGetDelegatesListQueryParams> {}
