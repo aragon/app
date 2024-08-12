@@ -1,6 +1,6 @@
 'use client';
 
-import proposalActionUtils from '@/modules/governance/utils/proposalActionUtils';
+import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';

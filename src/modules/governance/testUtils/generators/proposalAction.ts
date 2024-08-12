@@ -1,4 +1,4 @@
-import { IProposalAction } from '@aragon/ods';
+import { type IProposalAction } from '@aragon/ods';
 
 export const generateProposalAction = (action?: Partial<IProposalAction>): IProposalAction => ({
     type: '',

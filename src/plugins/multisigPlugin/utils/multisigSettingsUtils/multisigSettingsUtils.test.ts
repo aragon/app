@@ -17,13 +17,16 @@ describe('multisigSettings utils', () => {
 
         const [minimumApproval, proposalCreation] = result;
 
-        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-        expect(minimumApproval.definition).toBe(
-            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=2,max=5)',
-        );
+        const expectedMinApprovalTerm = 'app.plugins.multisig.multisigGovernanceSettings.minimumApproval';
+        const expectedMinApprovalDefinition = `app.plugins.multisig.multisigGovernanceSettings.approvals (min=${settings.settings.minApprovals},max=${membersCount})`;
+        const expectedProposalCreationTerm = 'app.plugins.multisig.multisigGovernanceSettings.proposalCreation';
+        const expectedProposalCreationDefinition = 'app.plugins.multisig.multisigGovernanceSettings.anyWallet';
 
-        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
-        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
+        expect(minimumApproval.term).toBe(expectedMinApprovalTerm);
+        expect(minimumApproval.definition).toBe(expectedMinApprovalDefinition);
+
+        expect(proposalCreation.term).toBe(expectedProposalCreationTerm);
+        expect(proposalCreation.definition).toBe(expectedProposalCreationDefinition);
     });
 
     it('parses settings correctly for minimum approvals and proposal creation when only members can create proposals', () => {
@@ -40,13 +43,16 @@ describe('multisigSettings utils', () => {
 
         const [minimumApproval, proposalCreation] = result;
 
-        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-        expect(minimumApproval.definition).toBe(
-            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=3,max=10)',
-        );
+        const expectedMinApprovalTerm = 'app.plugins.multisig.multisigGovernanceSettings.minimumApproval';
+        const expectedMinApprovalDefinition = `app.plugins.multisig.multisigGovernanceSettings.approvals (min=${settings.settings.minApprovals},max=${membersCount})`;
+        const expectedProposalCreationTerm = 'app.plugins.multisig.multisigGovernanceSettings.proposalCreation';
+        const expectedProposalCreationDefinition = 'app.plugins.multisig.multisigGovernanceSettings.members';
 
-        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
-        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.members');
+        expect(minimumApproval.term).toBe(expectedMinApprovalTerm);
+        expect(minimumApproval.definition).toBe(expectedMinApprovalDefinition);
+
+        expect(proposalCreation.term).toBe(expectedProposalCreationTerm);
+        expect(proposalCreation.definition).toBe(expectedProposalCreationDefinition);
     });
 
     it('handles cases with zero members and minimum approvals', () => {
@@ -63,13 +69,16 @@ describe('multisigSettings utils', () => {
 
         const [minimumApproval, proposalCreation] = result;
 
-        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-        expect(minimumApproval.definition).toBe(
-            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=0,max=0)',
-        );
+        const expectedMinApprovalTerm = 'app.plugins.multisig.multisigGovernanceSettings.minimumApproval';
+        const expectedMinApprovalDefinition = `app.plugins.multisig.multisigGovernanceSettings.approvals (min=${settings.settings.minApprovals},max=${membersCount})`;
+        const expectedProposalCreationTerm = 'app.plugins.multisig.multisigGovernanceSettings.proposalCreation';
+        const expectedProposalCreationDefinition = 'app.plugins.multisig.multisigGovernanceSettings.anyWallet';
 
-        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
-        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
+        expect(minimumApproval.term).toBe(expectedMinApprovalTerm);
+        expect(minimumApproval.definition).toBe(expectedMinApprovalDefinition);
+
+        expect(proposalCreation.term).toBe(expectedProposalCreationTerm);
+        expect(proposalCreation.definition).toBe(expectedProposalCreationDefinition);
     });
 
     it('handles cases where only members can create proposals but there are no members', () => {
@@ -86,12 +95,15 @@ describe('multisigSettings utils', () => {
 
         const [minimumApproval, proposalCreation] = result;
 
-        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-        expect(minimumApproval.definition).toBe(
-            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=1,max=0)',
-        );
+        const expectedMinApprovalTerm = 'app.plugins.multisig.multisigGovernanceSettings.minimumApproval';
+        const expectedMinApprovalDefinition = `app.plugins.multisig.multisigGovernanceSettings.approvals (min=${settings.settings.minApprovals},max=${membersCount})`;
+        const expectedProposalCreationTerm = 'app.plugins.multisig.multisigGovernanceSettings.proposalCreation';
+        const expectedProposalCreationDefinition = 'app.plugins.multisig.multisigGovernanceSettings.members';
 
-        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
-        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.members');
+        expect(minimumApproval.term).toBe(expectedMinApprovalTerm);
+        expect(minimumApproval.definition).toBe(expectedMinApprovalDefinition);
+
+        expect(proposalCreation.term).toBe(expectedProposalCreationTerm);
+        expect(proposalCreation.definition).toBe(expectedProposalCreationDefinition);
     });
 });

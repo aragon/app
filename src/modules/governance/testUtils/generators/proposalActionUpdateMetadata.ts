@@ -1,4 +1,4 @@
-import { IProposalActionUpdateMetadata, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { type IProposalActionUpdateMetadata, ProposalActionType } from '@/modules/governance/api/governanceService';
 
 export const generateProposalActionUpdateMetadata = (
     action?: Partial<IProposalActionUpdateMetadata>,

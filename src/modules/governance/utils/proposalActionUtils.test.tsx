@@ -11,7 +11,7 @@ import {
 } from '@/modules/governance/testUtils';
 import { generateProposalActionTokenMint } from '@/modules/governance/testUtils/generators/proposalActionTokenMint';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { IProposalAction } from '@aragon/ods';
+import { type IProposalAction } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import { proposalActionUtils } from './proposalActionUtils';
 

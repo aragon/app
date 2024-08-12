@@ -1,4 +1,4 @@
-import { IProposalActionTokenMint, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { type IProposalActionTokenMint, ProposalActionType } from '@/modules/governance/api/governanceService';
 
 export const generateProposalActionTokenMint = (
     action?: Partial<IProposalActionTokenMint>,
