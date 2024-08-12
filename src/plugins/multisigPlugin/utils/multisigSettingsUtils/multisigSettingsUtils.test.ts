@@ -1,116 +1,97 @@
-import { type IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
+import { generateDaoMultisigSettings } from '@/plugins/multisigPlugin/testUtils';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
-import { type TranslationFunction } from '@/shared/components/translationsProvider/translationsProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
-describe('multisigSettingsUtils', () => {
-    const mockTranslations: TranslationFunction = (key: string, options?: Record<string, unknown>) => {
-        switch (key) {
-            case 'app.plugins.multisig.multisigGovernanceSettings.minimumApproval':
-                return 'Minimum Approval';
-            case 'app.plugins.multisig.multisigGovernanceSettings.approvals':
-                return `Approvals (min=${options?.min}, max=${options?.max})`;
-            case 'app.plugins.multisig.multisigGovernanceSettings.proposalCreation':
-                return 'Proposal Creation';
-            case 'app.plugins.multisig.multisigGovernanceSettings.members':
-                return 'Only members can create proposals';
-            case 'app.plugins.multisig.multisigGovernanceSettings.anyWallet':
-                return 'Any wallet can create proposals';
-            default:
-                return key;
-        }
-    };
-
-    const generateMockSettings = (minApprovals: number, onlyListed: boolean): IDaoMultisigSettings => ({
-        settings: {
-            minApprovals,
-            onlyListed,
-        },
-        id: '',
-        pluginAddress: '',
-        pluginSubdomain: '',
-    });
-
+describe('multisigSettings utils', () => {
     it('parses settings correctly for minimum approvals and proposal creation when any wallet can create proposals', () => {
-        const settings = generateMockSettings(2, false);
+        const settings = generateDaoMultisigSettings({ settings: { minApprovals: 2, onlyListed: false } });
         const membersCount = 5;
 
         const result = multisigSettingsUtils.parseSettings({
             settings,
             membersCount,
-            t: mockTranslations,
+            t: useTranslations().t,
         });
 
         expect(result).toHaveLength(2);
 
         const [minimumApproval, proposalCreation] = result;
 
-        expect(minimumApproval.term).toBe('Minimum Approval');
-        expect(minimumApproval.definition).toBe('Approvals (min=2, max=5)');
+        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
+        expect(minimumApproval.definition).toBe(
+            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=2,max=5)',
+        );
 
-        expect(proposalCreation.term).toBe('Proposal Creation');
-        expect(proposalCreation.definition).toBe('Any wallet can create proposals');
+        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
+        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
     });
 
     it('parses settings correctly for minimum approvals and proposal creation when only members can create proposals', () => {
-        const settings = generateMockSettings(3, true);
+        const settings = generateDaoMultisigSettings({ settings: { minApprovals: 3, onlyListed: true } });
         const membersCount = 10;
 
         const result = multisigSettingsUtils.parseSettings({
             settings,
             membersCount,
-            t: mockTranslations,
+            t: useTranslations().t,
         });
 
         expect(result).toHaveLength(2);
 
         const [minimumApproval, proposalCreation] = result;
 
-        expect(minimumApproval.term).toBe('Minimum Approval');
-        expect(minimumApproval.definition).toBe('Approvals (min=3, max=10)');
+        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
+        expect(minimumApproval.definition).toBe(
+            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=3,max=10)',
+        );
 
-        expect(proposalCreation.term).toBe('Proposal Creation');
-        expect(proposalCreation.definition).toBe('Only members can create proposals');
+        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
+        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.members');
     });
 
     it('handles cases with zero members and minimum approvals', () => {
-        const settings = generateMockSettings(0, false);
+        const settings = generateDaoMultisigSettings({ settings: { minApprovals: 0, onlyListed: false } });
         const membersCount = 0;
 
         const result = multisigSettingsUtils.parseSettings({
             settings,
             membersCount,
-            t: mockTranslations,
+            t: useTranslations().t,
         });
 
         expect(result).toHaveLength(2);
 
         const [minimumApproval, proposalCreation] = result;
 
-        expect(minimumApproval.term).toBe('Minimum Approval');
-        expect(minimumApproval.definition).toBe('Approvals (min=0, max=0)');
+        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
+        expect(minimumApproval.definition).toBe(
+            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=0,max=0)',
+        );
 
-        expect(proposalCreation.term).toBe('Proposal Creation');
-        expect(proposalCreation.definition).toBe('Any wallet can create proposals');
+        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
+        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
     });
 
     it('handles cases where only members can create proposals but there are no members', () => {
-        const settings = generateMockSettings(1, true);
+        const settings = generateDaoMultisigSettings({ settings: { minApprovals: 1, onlyListed: true } });
         const membersCount = 0;
 
         const result = multisigSettingsUtils.parseSettings({
             settings,
             membersCount,
-            t: mockTranslations,
+            t: useTranslations().t,
         });
 
         expect(result).toHaveLength(2);
 
         const [minimumApproval, proposalCreation] = result;
 
-        expect(minimumApproval.term).toBe('Minimum Approval');
-        expect(minimumApproval.definition).toBe('Approvals (min=1, max=0)');
+        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
+        expect(minimumApproval.definition).toBe(
+            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=1,max=0)',
+        );
 
-        expect(proposalCreation.term).toBe('Proposal Creation');
-        expect(proposalCreation.definition).toBe('Only members can create proposals');
+        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
+        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.members');
     });
 });

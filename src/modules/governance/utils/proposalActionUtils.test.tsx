@@ -19,7 +19,7 @@ jest.mock('viem', () => ({
     formatUnits: jest.fn(),
 }));
 
-describe('proposal ActionUtils', () => {
+describe('proposalAction utils', () => {
     const daoId = 'test-dao-id';
     const plugins = ['plugin1', 'plugin2'];
     const proposal = {
