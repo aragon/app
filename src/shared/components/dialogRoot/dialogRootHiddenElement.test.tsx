@@ -17,21 +17,21 @@ describe('<DialogRootHiddenElement /> component', () => {
     };
 
     it('renders empty container when label is not defined', () => {
-        const { container } = render(createTestComponent({ label: undefined }));
+        const { container } = render(createTestComponent({ labelKey: undefined }));
         expect(container).toBeEmptyDOMElement();
     });
 
     it('renders the specified title', () => {
-        const label = 'test-title';
+        const labelKey = 'test-title';
         const type = 'title';
-        render(createTestComponent({ label, type }));
-        expect(screen.getByText(label)).toBeInTheDocument();
+        render(createTestComponent({ labelKey, type }));
+        expect(screen.getByText(labelKey)).toBeInTheDocument();
     });
 
     it('renders the specified description', () => {
-        const label = 'test-description';
+        const labelKey = 'test-description';
         const type = 'description';
-        render(createTestComponent({ label, type }));
-        expect(screen.getByText(label)).toBeInTheDocument();
+        render(createTestComponent({ labelKey, type }));
+        expect(screen.getByText(labelKey)).toBeInTheDocument();
     });
 });

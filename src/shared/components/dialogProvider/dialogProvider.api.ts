@@ -49,12 +49,13 @@ export interface IDialogComponentDefinitions {
      */
     Component: ComponentType<IDialogComponentProps>;
     /**
-     * Optional hidden title for screen readers, usually used for Dialogs without a Dialog.Header component.
+     * Optional hidden title (as translation key) for screen readers, usually used for Dialogs without a Dialog.Header
+     * component.
      */
     title?: string;
     /**
-     * Optional hidden description for screen readers, usually used for Dialogs without a description on the relative
-     * Dialog.Header component.
+     * Optional hidden description (as translation key) for screen readers, usually used for Dialogs without a
+     * description on the relative Dialog.Header component.
      */
     description?: string;
 }

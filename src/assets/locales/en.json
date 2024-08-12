@@ -54,6 +54,10 @@
         "action": {
           "connect": "Connect",
           "cancel": "Cancel"
+        },
+        "screenReader": {
+          "title": "Connect wallet",
+          "description": "Connect your wallet to Aragon App"
         }
       }
     },

@@ -22,8 +22,8 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
         <Dialog.Root {...props} open={isOpen} onOpenChange={close}>
             {activeDialog && (
                 <>
-                    <DialogRootHiddenElement label={activeDialog.title} type="title" />
-                    <DialogRootHiddenElement label={activeDialog.description} type="description" />
+                    <DialogRootHiddenElement labelKey={activeDialog.title} type="title" />
+                    <DialogRootHiddenElement labelKey={activeDialog.description} type="description" />
                     <activeDialog.Component location={location!} />
                 </>
             )}

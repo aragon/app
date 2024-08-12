@@ -8,7 +8,7 @@ export enum ApplicationDialog {
 export const applicationDialogs: Record<ApplicationDialog, IDialogComponentDefinitions> = {
     [ApplicationDialog.CONNECT_WALLET]: {
         Component: ConnectWalletDialog,
-        title: 'Connect wallet',
-        description: 'Connect your wallet to Aragon App',
+        title: 'app.application.connectWalletDialog.screenReader.title',
+        description: 'app.application.connectWalletDialog.screenReader.description',
     },
 };

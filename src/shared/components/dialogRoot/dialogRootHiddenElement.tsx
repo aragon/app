@@ -1,11 +1,12 @@
 import { Description, Title } from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { useTranslations } from '../translationsProvider';
 
 export interface IDialogRootHiddenElementProps {
     /**
-     * Label only rendered for screen readers.
+     * Key of the label only rendered for screen readers.
      */
-    label?: string;
+    labelKey?: string;
     /**
      * Type of element to be displayed.
      */
@@ -13,9 +14,10 @@ export interface IDialogRootHiddenElementProps {
 }
 
 export const DialogRootHiddenElement: React.FC<IDialogRootHiddenElementProps> = (props) => {
-    const { label, type } = props;
+    const { labelKey, type } = props;
+    const { t } = useTranslations();
 
-    if (!label) {
+    if (!labelKey) {
         return null;
     }
 
@@ -23,7 +25,7 @@ export const DialogRootHiddenElement: React.FC<IDialogRootHiddenElementProps> = 
 
     return (
         <VisuallyHidden asChild={true}>
-            <LabelComponent>{label}</LabelComponent>
+            <LabelComponent>{t(labelKey)}</LabelComponent>
         </VisuallyHidden>
     );
 };
