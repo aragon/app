@@ -164,17 +164,13 @@ class ProposalActionUtils {
     };
 
     normalizeTokenMintAction = (action: IProposalActionTokenMint): OdsIProposalActionTokenMint => {
-        const { receivers, type, token, ...otherValues } = action;
+        const { receivers, token, ...otherValues } = action;
 
         return {
             ...otherValues,
-            type: this.actionTypeMapping[type],
+            type: this.actionTypeMapping[action.type],
+            receivers: Array(receivers),
             tokenSymbol: token.symbol,
-            receivers: Array({
-                address: receivers.address,
-                currentBalance: Number(formatUnits(BigInt(receivers.currentBalance), token.decimals)),
-                newBalance: Number(formatUnits(BigInt(receivers.newBalance), token.decimals)),
-            }),
         };
     };
 

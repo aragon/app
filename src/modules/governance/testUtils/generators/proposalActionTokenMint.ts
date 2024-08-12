@@ -5,9 +5,9 @@ export const generateProposalActionTokenMint = (
 ): IProposalActionTokenMint => ({
     type: ProposalActionType.MINT,
     receivers: {
-        address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+        address: '0x1',
         currentBalance: 1,
-        newBalance: 2,
+        newBalance: 1,
     },
     token: {
         address: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
@@ -20,7 +20,7 @@ export const generateProposalActionTokenMint = (
     value: '1000000',
     tokenSupply: 0,
     holdersCount: 0,
-    tokenSymbol: '',
+    tokenSymbol: 'ETH',
     inputData: {
         function: 'settings',
         contract: 'GovernanceERC20',

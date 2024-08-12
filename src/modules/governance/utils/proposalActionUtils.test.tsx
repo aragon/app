@@ -30,7 +30,7 @@ describe('proposalAction utils', () => {
         jest.clearAllMocks();
     });
 
-    it('should normalize a transfer action', () => {
+    it('normalizes a transfer action', () => {
         const action: IProposalActionWithdrawToken = {
             type: ProposalActionType.TRANSFER,
             amount: '1000000000000000000',
@@ -63,7 +63,7 @@ describe('proposalAction utils', () => {
         expect(formatUnits).toHaveBeenCalledWith(BigInt(action.amount), action.token.decimals);
     });
 
-    it('should normalize a change settings action', () => {
+    it('normalizes a change settings action', () => {
         const action: IProposalActionChangeSettings = {
             type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
             proposedSettings: {
@@ -95,7 +95,7 @@ describe('proposalAction utils', () => {
         });
     });
 
-    it('should normalize a change members action', () => {
+    it('normalizes a change members action', () => {
         const action: IProposalActionChangeMembers = generateProposalActionChangeMembers();
         const result = proposalActionUtils.normalizeChangeMembersAction(action);
 
@@ -106,7 +106,7 @@ describe('proposalAction utils', () => {
         });
     });
 
-    it('should normalize an update metadata action', () => {
+    it('normalizes an update metadata action', () => {
         const action = generateProposalActionUpdateMetadata({
             proposedMetadata: {
                 logo: '',
@@ -142,21 +142,30 @@ describe('proposalAction utils', () => {
         });
     });
 
-    it('should normalize a token mint action', () => {
+    it('normalizes a token mint action', () => {
         const action = generateProposalActionTokenMint({
             receivers: { address: '0x1', currentBalance: 1000000, newBalance: 20000000 },
         });
 
         const result = proposalActionUtils.normalizeTokenMintAction(action);
 
+        const { token, ...otherValues } = action;
+
         expect(result).toEqual({
-            ...action,
+            ...otherValues,
             type: 'TOKEN_MINT',
-            receivers: [{ address: '0x1', currentBalance: 1000000, newBalance: 20000000 }],
+            receivers: [
+                {
+                    address: action.receivers.address,
+                    currentBalance: action.receivers.currentBalance,
+                    newBalance: action.receivers.newBalance,
+                },
+            ],
+            tokenSymbol: token.symbol,
         });
     });
 
-    it('should return unmodified action if type does not match any known action', () => {
+    it('returns unmodified action if type does not match any known action', () => {
         const action: IProposalAction = {
             type: 'UNKNOWN_TYPE',
         } as IProposalAction;
