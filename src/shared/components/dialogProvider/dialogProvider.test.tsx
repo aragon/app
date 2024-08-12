@@ -1,6 +1,6 @@
 import { testLogger } from '@/test/utils';
 import { act, render, renderHook, screen } from '@testing-library/react';
-import { DialogProvider, IDialogProviderProps, useDialogContext } from './dialogProvider';
+import { DialogProvider, type IDialogProviderProps, useDialogContext } from './dialogProvider';
 
 describe('<DialogProvider /> component', () => {
     const createTestComponent = (props?: Partial<IDialogProviderProps>) => {
