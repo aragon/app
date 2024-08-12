@@ -43,4 +43,8 @@ export interface ITransaction {
      * The id of the transaction.
      */
     id: string;
+    /**
+     * The amount of the transaction in USD.
+     */
+    amountUsd: string;
 }
