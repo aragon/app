@@ -1,4 +1,4 @@
-import { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
 
 export enum ApplicationDialog {
