@@ -2,11 +2,11 @@ import {
     ProposalActionType,
     type IProposal,
     type IProposalActionChangeMembers,
+    type IProposalActionChangeSettings,
+    type IProposalActionTokenMint,
+    type IProposalActionUpdateMetadata,
+    type IProposalActionWithdrawToken,
 } from '@/modules/governance/api/governanceService';
-import { type IProposalActionChangeSettings } from '@/modules/governance/api/governanceService/domain/proposalActionChangeSettings';
-import { type IProposalActionTokenMint } from '@/modules/governance/api/governanceService/domain/proposalActionTokenMint';
-import { type IProposalActionUpdateMetadata } from '@/modules/governance/api/governanceService/domain/proposalActionUpdateMetadata';
-import { type IProposalActionWithdrawToken } from '@/modules/governance/api/governanceService/domain/proposalActionWithdrawToken';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { type IDaoLink } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -41,12 +41,8 @@ interface INormalizeActionsParams {
     daoId: string;
 }
 
-function createActionTypeMapping<T extends Record<ProposalActionType, OdsProposalActionType>>(mapping: T): T {
-    return mapping;
-}
-
 class ProposalActionUtils {
-    actionTypeMapping = createActionTypeMapping({
+    actionTypeMapping = {
         [ProposalActionType.TRANSFER]: OdsProposalActionType.WITHDRAW_TOKEN,
         [ProposalActionType.MINT]: OdsProposalActionType.TOKEN_MINT,
         [ProposalActionType.MULTISIG_ADD_MEMBERS]: OdsProposalActionType.ADD_MEMBERS,
@@ -54,13 +50,8 @@ class ProposalActionUtils {
         [ProposalActionType.METADATA_UPDATE]: OdsProposalActionType.UPDATE_METADATA,
         [ProposalActionType.UPDATE_MULTISIG_SETTINGS]: OdsProposalActionType.CHANGE_SETTINGS_MULTISIG,
         [ProposalActionType.UPDATE_VOTE_SETTINGS]: OdsProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
-    });
+    } as const;
 
-    /**
-    =========================
-    NORMALIZE ACTIONS REDUCER
-    =========================
-     */
     normalizeActions = (params: INormalizeActionsParams): OdsIProposalAction[] => {
         const { plugins, actions, proposal, daoId } = params;
 
@@ -85,11 +76,6 @@ class ProposalActionUtils {
         });
     };
 
-    /**
-    =====================================
-    FRONTEND NORMALIZE INDIVIDUAL ACTIONS
-    =====================================
-     */
     normalizeTransferAction = (action: IProposalActionWithdrawToken): OdsIProposalActionWithdrawToken => {
         const { amount, token, ...otherValues } = action;
 
@@ -109,15 +95,16 @@ class ProposalActionUtils {
     ): OdsIProposalActionChangeSettings => {
         const { type, proposedSettings, ...otherValues } = action;
         const { settings: existingSettings } = proposal;
+        const supportedPlugin = plugins.find((plugin) => pluginRegistryUtils.getPlugin(plugin) != null);
 
         const parsingFunction = pluginRegistryUtils.getSlotFunction({
-            pluginId: plugins[0],
+            pluginId: supportedPlugin!,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        });
+        })!;
 
-        // TODO: must cast with IProposal<unknown> for the moment
+        // TODO: must cast to object (APP-3483)
         const completeProposedSettings = {
-            ...(existingSettings as OdsIProposalActionChangeSettings[]),
+            ...(existingSettings as object),
             ...proposedSettings,
         };
 
@@ -182,15 +169,10 @@ class ProposalActionUtils {
         return {
             ...otherValues,
             type: this.actionTypeMapping[type],
-            receivers: [...receivers],
+            receivers: Array(receivers),
         };
     };
 
-    /**
-    ===================
-    BACKEND TYPE GUARDS
-    ===================
-     */
     isWithdrawTokenAction = (action: Partial<OdsIProposalAction>): action is IProposalActionWithdrawToken => {
         return action.type === ProposalActionType.TRANSFER;
     };
@@ -218,6 +200,4 @@ class ProposalActionUtils {
     };
 }
 
-const proposalActionUtils = new ProposalActionUtils();
-
-export default proposalActionUtils;
+export const proposalActionUtils = new ProposalActionUtils();

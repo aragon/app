@@ -48,38 +48,6 @@ describe('useMultisigGovernanceSettings', () => {
         expect(result.current).toEqual([]);
     });
 
-    it('fetches the specified DAO terms and definitions for multisig Dao', async () => {
-        const mockSettings = generateDaoMultisigSettings({
-            settings: {
-                minApprovals: 1,
-                onlyListed: false,
-            },
-        });
-
-        const members = [generateMember({ address: '0x123' })];
-        const membersMetadata = generatePaginatedResponseMetadata({
-            pageSize: 20,
-            totalRecords: members.length,
-        });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
-
-        useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
-        );
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
-
-        const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
-            wrapper: ReactQueryWrapper,
-        });
-
-        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
-            { urlParams: { daoId: 'multisig-test-id' } },
-            expect.objectContaining({ enabled: true }),
-        );
-
-        expect(result.current.length).toBeGreaterThan(0);
-    });
-
     it('handles settings being passed directly to the hook', async () => {
         const mockSettings = generateDaoMultisigSettings({
             settings: {

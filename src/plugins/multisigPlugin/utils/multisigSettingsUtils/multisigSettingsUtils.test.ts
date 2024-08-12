@@ -1,4 +1,3 @@
-import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { type IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
 import { type TranslationFunction } from '@/shared/components/translationsProvider/translationsProvider';
@@ -35,7 +34,7 @@ describe('multisigSettingsUtils', () => {
         const settings = generateMockSettings(2, false);
         const membersCount = 5;
 
-        const result: IDaoSettingTermAndDefinition[] = multisigSettingsUtils.parseSettings({
+        const result = multisigSettingsUtils.parseSettings({
             settings,
             membersCount,
             t: mockTranslations,
@@ -56,7 +55,7 @@ describe('multisigSettingsUtils', () => {
         const settings = generateMockSettings(3, true);
         const membersCount = 10;
 
-        const result: IDaoSettingTermAndDefinition[] = multisigSettingsUtils.parseSettings({
+        const result = multisigSettingsUtils.parseSettings({
             settings,
             membersCount,
             t: mockTranslations,
@@ -77,7 +76,7 @@ describe('multisigSettingsUtils', () => {
         const settings = generateMockSettings(0, false);
         const membersCount = 0;
 
-        const result: IDaoSettingTermAndDefinition[] = multisigSettingsUtils.parseSettings({
+        const result = multisigSettingsUtils.parseSettings({
             settings,
             membersCount,
             t: mockTranslations,
@@ -98,7 +97,7 @@ describe('multisigSettingsUtils', () => {
         const settings = generateMockSettings(1, true);
         const membersCount = 0;
 
-        const result: IDaoSettingTermAndDefinition[] = multisigSettingsUtils.parseSettings({
+        const result = multisigSettingsUtils.parseSettings({
             settings,
             membersCount,
             t: mockTranslations,

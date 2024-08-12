@@ -15,6 +15,7 @@ export interface IParseTokenSettingsParams {
      */
     t: TranslationFunction;
 }
+
 class TokenSettingsUtils {
     /**
      * Percentage values for token-based DAO settings are stored values between 0 and 10**6 (defined as RATIO_BASE). The

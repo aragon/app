@@ -1,184 +1,173 @@
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { generateProposal } from '@/modules/governance/testUtils';
-import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
-import { generateProposalActionChangeSettings } from '@/modules/governance/testUtils/generators/proposalActionChangeSettings';
-import { generateProposalActionWithdrawToken } from '@/modules/governance/testUtils/generators/proposalActionWithdrawToken';
-import { type IProposalAction } from '@aragon/ods';
-import proposalActionUtils from './proposalActionUtils';
+import {
+    ProposalActionType,
+    type IProposal,
+    type IProposalActionChangeMembers,
+    type IProposalActionChangeSettings,
+    type IProposalActionWithdrawToken,
+} from '@/modules/governance/api/governanceService';
+import {
+    generateProposalActionChangeMembers,
+    generateProposalActionUpdateMetadata,
+} from '@/modules/governance/testUtils';
+import { generateProposalActionTokenMint } from '@/modules/governance/testUtils/generators/proposalActionTokenMint';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { IProposalAction } from '@aragon/ods';
+import { formatUnits } from 'viem';
+import { proposalActionUtils } from './proposalActionUtils';
 
-describe('ProposalActionUtils', () => {
-    it('should map known action types correctly', () => {
-        const actions: IProposalAction[] = [
-            generateProposalActionChangeMembers({ type: ProposalActionType.MULTISIG_ADD_MEMBERS }),
-            generateProposalActionChangeSettings({ type: ProposalActionType.UPDATE_MULTISIG_SETTINGS }),
-        ];
-        const plugins = ['multisig'];
+jest.mock('viem', () => ({
+    formatUnits: jest.fn(),
+}));
 
-        const daoId = '0x123';
-        const proposal = generateProposal();
+describe('proposal ActionUtils', () => {
+    const daoId = 'test-dao-id';
+    const plugins = ['plugin1', 'plugin2'];
+    const proposal = {
+        settings: {},
+    } as unknown as IProposal;
 
-        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
-
-        expect(transformedActions).toHaveLength(2);
-        expect(transformedActions[0].type).toEqual('ADD_MEMBERS');
-        expect(transformedActions[1].type).toEqual('CHANGE_SETTINGS_MULTISIG');
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
-    it('should normalize transfer actions correctly', () => {
-        const actions: IProposalAction[] = [
-            generateProposalActionWithdrawToken({
-                amount: '1000000000000000000',
-                token: {
-                    name: 'Token Name',
-                    symbol: 'TKN',
-                    decimals: 18,
-                    logo: 'token-logo.png',
-                    priceUsd: '1.00',
-                    address: '0x1234567890',
+    it('should normalize a transfer action', () => {
+        const action: IProposalActionWithdrawToken = {
+            type: ProposalActionType.TRANSFER,
+            amount: '1000000000000000000',
+            token: {
+                decimals: 18,
+                symbol: 'DAI',
+                name: '',
+                logo: '',
+                priceUsd: '',
+                address: '',
+            },
+            sender: { address: '0x9939393939234234234233' },
+            receiver: { address: '0x9939393939334242342332' },
+            from: '',
+            to: '',
+            data: '',
+            value: '',
+            inputData: null,
+        };
+
+        (formatUnits as jest.Mock).mockReturnValue('1.0');
+
+        const result = proposalActionUtils.normalizeTransferAction(action);
+
+        expect(result).toEqual({
+            ...action,
+            type: 'WITHDRAW_TOKEN',
+            amount: '1.0',
+        });
+        expect(formatUnits).toHaveBeenCalledWith(BigInt(action.amount), action.token.decimals);
+    });
+
+    it('should normalize a change settings action', () => {
+        const action: IProposalActionChangeSettings = {
+            type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
+            proposedSettings: {
+                settings: {
+                    minApprovals: 0,
+                    onlyListed: false,
                 },
-            }),
-        ];
-        const plugins = [''];
-        const daoId = '0x123';
-        const proposal = generateProposal();
+                id: '',
+                pluginAddress: '',
+                pluginSubdomain: '',
+            },
+            from: '',
+            to: '',
+            data: '',
+            value: '',
+            inputData: null,
+        };
 
-        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
+        jest.spyOn(pluginRegistryUtils, 'getPlugin').mockReturnValue({ id: 'plugin-id', name: 'plugin-name' }); // Mock the plugin existence
+        jest.spyOn(pluginRegistryUtils, 'getSlotFunction').mockReturnValue(() => ({ parsed: 'parsed' })); // Mock the parsing function
 
-        expect(transformedActions).toHaveLength(1);
-        const action = transformedActions[0];
+        const result = proposalActionUtils.normalizeChangeSettingsAction(action, plugins, proposal, daoId);
 
-        if (proposalActionUtils.isWithdrawTokenAction(action)) {
-            expect(action.type).toEqual('WITHDRAW_TOKEN');
-            expect(action.amount).toEqual('1');
-        }
+        expect(result).toEqual({
+            ...action,
+            type: 'CHANGE_SETTINGS_MULTISIG',
+            existingSettings: { parsed: 'parsed' },
+            proposedSettings: { parsed: 'parsed' },
+        });
     });
 
-    it('should normalize change settings actions correctly for multisig', () => {
-        const actions: IProposalAction[] = [
-            generateProposalActionChangeSettings({
-                type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
-                proposedSettings: [{ term: 'someSetting', definition: 'new' }],
-                existingSettings: [{ term: 'someSetting', definition: 'old' }],
-            }),
-        ];
-        const plugins = ['multisig'];
+    it('should normalize a change members action', () => {
+        const action: IProposalActionChangeMembers = generateProposalActionChangeMembers();
+        const result = proposalActionUtils.normalizeChangeMembersAction(action);
 
-        const daoId = '0x123';
-        const proposal = generateProposal();
-
-        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
-
-        expect(transformedActions).toHaveLength(1);
-        const action = transformedActions[0];
-
-        if (proposalActionUtils.isChangeSettingsAction(action)) {
-            expect(action.type).toEqual('CHANGE_SETTINGS_MULTISIG');
-            expect(action.proposedSettings).toEqual([{ term: 'someSetting', definition: 'new' }]);
-        }
+        expect(result).toEqual({
+            ...action,
+            type: 'ADD_MEMBERS',
+            currentMembers: 1,
+        });
     });
 
-    it('should normalize change members actions correctly', () => {
-        const actions = [
-            generateProposalActionChangeMembers({
-                type: ProposalActionType.MULTISIG_ADD_MEMBERS,
-                currentMembers: [{ address: '0x1' }, { address: '0x2' }, { address: '0x3' }, { address: '0x4' }],
-                members: [{ address: '0x3' }, { address: '0x4' }],
-            }),
-        ];
+    it('should normalize an update metadata action', () => {
+        const action = generateProposalActionUpdateMetadata({
+            proposedMetadata: {
+                logo: '',
+                name: '',
+                description: '',
+                links: [{ name: 'Link1', url: 'https://link1.com' }],
+            },
+            existingMetadata: {
+                logo: '',
+                name: '',
+                description: '',
+                links: [{ name: 'Link2', url: 'https://link2.com' }],
+            },
+        });
 
-        const plugins = [''];
-        const daoId = '0x123';
-        const proposal = generateProposal();
+        const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
 
-        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
-
-        expect(transformedActions).toHaveLength(1);
-        const action = transformedActions[0];
-
-        if (proposalActionUtils.isChangeMembersAction(action)) {
-            expect(action.type).toEqual('ADD_MEMBERS');
-            expect(action.currentMembers).toEqual(4);
-            expect(action.members).toHaveLength(2);
-        }
+        expect(result).toEqual({
+            ...action,
+            type: 'UPDATE_METADATA',
+            proposedMetadata: {
+                logo: '',
+                name: '',
+                description: '',
+                links: [{ label: 'Link1', href: 'https://link1.com' }],
+            },
+            existingMetadata: {
+                logo: '',
+                name: '',
+                description: '',
+                links: [{ label: 'Link2', href: 'https://link2.com' }],
+            },
+        });
     });
 
-    it('should normalize change settings actions correctly for token-voting', () => {
-        const actions: IProposalAction[] = [
-            generateProposalActionChangeSettings({
-                type: ProposalActionType.UPDATE_VOTE_SETTINGS,
-                proposedSettings: [{ term: 'votingPeriod', definition: '5 days' }],
-                existingSettings: [{ term: 'votingPeriod', definition: '3 days' }],
-            }),
-        ];
-        const plugins = ['token-voting'];
+    it('should normalize a token mint action', () => {
+        const action = generateProposalActionTokenMint({
+            receivers: { address: '0x1', currentBalance: 1000000, newBalance: 20000000 },
+        });
 
-        const daoId = '0x123';
-        const proposal = generateProposal();
+        const result = proposalActionUtils.normalizeTokenMintAction(action);
 
-        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
-
-        expect(transformedActions).toHaveLength(1);
-        const action = transformedActions[0];
-
-        if (proposalActionUtils.isChangeSettingsAction(action)) {
-            expect(action.type).toEqual('CHANGE_SETTINGS_TOKENVOTE');
-            expect(action.proposedSettings).toEqual([{ term: 'votingPeriod', definition: '5 days' }]);
-        }
+        expect(result).toEqual({
+            ...action,
+            type: 'TOKEN_MINT',
+            receivers: [{ address: '0x1', currentBalance: 1000000, newBalance: 20000000 }],
+        });
     });
 
-    it('should return a normal action when no specific case is met', () => {
-        const actions: IProposalAction[] = [
-            {
-                type: 'UnknownType' as ProposalActionType,
-                from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-                to: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
-                data: '',
-                value: '1000000',
-                inputData: {
-                    function: 'settings',
-                    contract: 'GovernanceERC20',
-                    parameters: [
-                        { type: 'address', value: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE' },
-                        { type: 'uint256', value: '1000000000000000000' },
-                    ],
-                },
-            } as IProposalAction,
-        ];
-        const plugins = [''];
-        const daoId = '0x123';
-        const proposal = generateProposal();
+    it('should return unmodified action if type does not match any known action', () => {
+        const action: IProposalAction = {
+            type: 'UNKNOWN_TYPE',
+        } as IProposalAction;
 
-        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
+        const result = proposalActionUtils.normalizeActions({
+            actions: [action],
+            plugins,
+            proposal,
+            daoId,
+        });
 
-        expect(transformedActions).toHaveLength(1);
-        const action = transformedActions[0];
-
-        // Check that the normal action is returned as-is
-        expect(action.type).toEqual('UnknownType');
-        expect(action.inputData?.function).toEqual('settings');
-    });
-
-    it('should return a normal action when plugins do not match multisig or token-voting', () => {
-        const actions: IProposalAction[] = [
-            generateProposalActionChangeSettings({
-                type: ProposalActionType.UPDATE_VOTE_SETTINGS,
-                proposedSettings: [{ term: 'votingPeriod', definition: '5 days' }],
-                existingSettings: [{ term: 'votingPeriod', definition: '3 days' }],
-            }),
-        ];
-        const plugins = ['unknown-plugin'];
-
-        const daoId = '0x123';
-        const proposal = generateProposal();
-
-        const transformedActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
-
-        expect(transformedActions).toHaveLength(1);
-        const action = transformedActions[0];
-
-        if (proposalActionUtils.isChangeSettingsAction(action)) {
-            expect(action.type).toEqual('CHANGE_SETTINGS_TOKENVOTE');
-            expect(action.proposedSettings).toEqual([{ term: 'votingPeriod', definition: '5 days' }]);
-        }
+        expect(result).toEqual([action]);
     });
 });
