@@ -5,16 +5,26 @@ import { type IProposalActionChangeSettings as OdsIProposalActionChangeSettings 
 
 export interface IProposalActionChangeSettings
     extends Omit<OdsIProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
+    /**
+     * The type of the proposal action.
+     */
     type: ProposalActionType.UPDATE_MULTISIG_SETTINGS;
+    /**
+     * The proposed settings to be updated.
+     */
     proposedSettings: IDaoMultisigSettings;
-    existingSettings?: IDaoMultisigSettings;
 }
 
 export interface IProposalActionChangeTokenSettings
     extends Omit<OdsIProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
+    /**
+     * The type of the proposal action.
+     */
     type: ProposalActionType.UPDATE_VOTE_SETTINGS;
+    /**
+     * The proposed settings to be updated.
+     */
     proposedSettings: IDaoTokenSettings;
-    existingSettings?: IDaoTokenSettings;
 }
 
 export type ExtendedProposalActionChangeSettings = IProposalActionChangeSettings | IProposalActionChangeTokenSettings;
