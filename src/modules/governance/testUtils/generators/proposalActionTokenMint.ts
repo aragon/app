@@ -1,13 +1,18 @@
 import { type IProposalActionTokenMint, ProposalActionType } from '@/modules/governance/api/governanceService';
 
 export const generateProposalActionTokenMint = (
-    action?: Partial<IProposalActionTokenMint>,
+    action: Partial<IProposalActionTokenMint>,
 ): IProposalActionTokenMint => ({
     type: ProposalActionType.MINT,
     receivers: {
         address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
         currentBalance: 1,
         newBalance: 2,
+    },
+    token: {
+        address: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
+        symbol: 'ETH',
+        decimals: 18,
     },
     from: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
     to: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
