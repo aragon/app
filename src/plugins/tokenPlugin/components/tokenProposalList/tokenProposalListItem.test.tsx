@@ -32,4 +32,68 @@ describe('<TokenProposalListItem /> component', () => {
         render(createTestComponent({ proposal }));
         expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/${proposal.id}`);
     });
+
+    it('displays 100% for a single yes vote', () => {
+        const currentDate = new Date();
+        const futureDate = new Date(currentDate.getTime() + 30 * 24 * 60 * 60 * 1000); // Some future date
+        const futureTimestamp = Math.floor(futureDate.getTime() / 1000);
+
+        const proposal = generateTokenProposal({
+            metrics: {
+                votesByOption: [
+                    {
+                        type: 2,
+                        totalVotingPower: '5.000000001e+19',
+                    },
+                ],
+            },
+            endDate: futureTimestamp,
+        });
+
+        render(createTestComponent({ proposal }));
+        expect(screen.getByText('100%')).toBeInTheDocument();
+    });
+
+    it('calculates correct percentage for multiple options', () => {
+        const currentDate = new Date();
+        const futureDate = new Date(currentDate.getTime() + 30 * 24 * 60 * 60 * 1000); // Some future date
+        const futureTimestamp = Math.floor(futureDate.getTime() / 1000);
+        const proposal = generateTokenProposal({
+            metrics: {
+                votesByOption: [
+                    {
+                        type: 2,
+                        totalVotingPower: '5.000000001e+19',
+                    },
+                    {
+                        type: 3,
+                        totalVotingPower: '2.500000001e+19',
+                    },
+                ],
+            },
+            endDate: futureTimestamp,
+        });
+
+        render(createTestComponent({ proposal }));
+        // Maybe we should format this, but I expected this to happen on ODS?
+        expect(screen.getByText('66.67%')).toBeInTheDocument();
+    });
+
+    it('handles zero votes correctly', () => {
+        // Perhaps this is not correct as no votes would mean no winning option?
+        const currentDate = new Date();
+        const futureDate = new Date(currentDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const futureTimestamp = Math.floor(futureDate.getTime() / 1000);
+        const proposal = generateTokenProposal({
+            metrics: {
+                votesByOption: [],
+            },
+            endDate: futureTimestamp,
+        });
+
+        render(createTestComponent({ proposal }));
+        expect(screen.getByText('0%')).toBeInTheDocument();
+    });
+
+
 });

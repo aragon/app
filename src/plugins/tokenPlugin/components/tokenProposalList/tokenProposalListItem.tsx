@@ -39,12 +39,37 @@ const getWinningOption = (proposal: ITokenProposal) => {
     );
 };
 
+/**
+ * Calculates the percentage of votes for a given option based on its voting power.
+ * The calculation is: (option voting power / total voting power of Yes and No) * 100.
+ */
+const getVotePercentage = (value: number, totalYesNo: number): number => {
+    // Handle edge cases where no votes have been cast.
+    if (totalYesNo === 0) {
+        return value > 0 ? 100 : 0; // Return 100% if there is any voting power, otherwise 0%.
+    }
+
+    return Number(((value * 100) / totalYesNo).toFixed(2));
+};
+
 export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
     const { t } = useTranslations();
 
     const winningOption = getWinningOption(proposal);
+
+    // Calculate the total voting power for Yes and No options (excluding Abstain).
+    const totalYesNo = proposal.metrics.votesByOption
+        .filter((option) => option.type === VoteOption.YES || option.type === VoteOption.NO)
+        .reduce((acc, option) => {
+            return acc + Number(tokenSettingsUtils.fromScientificNotation(option.totalVotingPower));
+        }, 0);
+
+    const winningVotePower = Number(tokenSettingsUtils.fromScientificNotation(winningOption.totalVotingPower));
+
+    // Calculate the percentage of the total voting power that the winning option holds.
+    const votePercentage = getVotePercentage(winningVotePower, totalYesNo);
 
     const parsedWinningOption = formatUnits(
         BigInt(tokenSettingsUtils.fromScientificNotation(winningOption?.totalVotingPower)),
@@ -74,7 +99,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             result={{
                 option: t(voteOptionToLabel[winningOption.type]),
                 voteAmount: `${formattedWinningOption} ${proposal.token.symbol}`,
-                votePercentage: 15,
+                votePercentage,
             }}
         />
     );
