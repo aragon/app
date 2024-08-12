@@ -3,6 +3,11 @@ import { type IProposalActionTokenMint as OdsIProposalActionTokenMint } from '@a
 
 export interface IProposalActionTokenMint extends Omit<OdsIProposalActionTokenMint, 'type' | 'receivers'> {
     type: ProposalActionType.MINT;
+    token: {
+        address: string;
+        symbol: string;
+        decimals: number;
+    };
     receivers: {
         address: string;
         currentBalance: number;
