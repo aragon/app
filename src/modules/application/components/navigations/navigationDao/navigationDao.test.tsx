@@ -1,17 +1,23 @@
+import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import * as DaoService from '@/shared/api/daoService';
+import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { IconType, addressUtils, clipboardUtils } from '@aragon/ods';
+import { IconType, OdsModulesProvider, addressUtils, clipboardUtils, type ICompositeAddress } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
+import * as wagmi from 'wagmi';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
+    Wallet: (props: { user: ICompositeAddress; onClick: () => void }) => (
+        <button onClick={props.onClick}>{props?.user ? props.user.address : 'connect-mock'}</button>
+    ),
 }));
 
 jest.mock('../navigation/navigationTrigger', () => ({
@@ -26,16 +32,25 @@ describe('<NavigationDao /> component', () => {
     const copySpy = jest.spyOn(clipboardUtils, 'copy');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
+    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useDisconnectSpy = jest.spyOn(wagmi, 'useDisconnect');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         usePathnameSpy.mockReturnValue('');
+        useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
+        useDisconnectSpy.mockReturnValue({} as wagmi.UseDisconnectReturnType);
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
         hasSupportedPluginsSpy.mockReset();
+        useDialogContextSpy.mockReset();
+        useAccountSpy.mockReset();
+        useDisconnectSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
@@ -44,7 +59,11 @@ describe('<NavigationDao /> component', () => {
             ...props,
         };
 
-        return <NavigationDao {...completeProps} />;
+        return (
+            <OdsModulesProvider>
+                <NavigationDao {...completeProps} />
+            </OdsModulesProvider>
+        );
     };
 
     it('renders the dao avatar and name', () => {
@@ -138,5 +157,28 @@ describe('<NavigationDao /> component', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
         render(createTestComponent());
         expect(screen.getByTestId('dao-avatar-mock')).toBeInTheDocument();
+    });
+
+    it('renders a connect button opening the connect-wallet dialog', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
+        render(createTestComponent());
+        const button = screen.getByRole('button', { name: 'connect-mock' });
+        expect(button).toBeInTheDocument();
+        await userEvent.click(button);
+        expect(open).toHaveBeenCalledWith(ApplicationDialog.CONNECT_WALLET);
+    });
+
+    it('renders the user avatar on a button to disconnect the user', async () => {
+        const address = '0x097d5e2325C2a98d3Adb0FE771ef66584698c59e';
+        const disconnect = jest.fn();
+        useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
+        useDisconnectSpy.mockReturnValue({ disconnect } as unknown as wagmi.UseDisconnectReturnType);
+
+        render(createTestComponent());
+        const button = screen.getByText(address);
+        expect(button).toBeInTheDocument();
+        await userEvent.click(button);
+        expect(disconnect).toHaveBeenCalled();
     });
 });

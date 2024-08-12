@@ -2,7 +2,7 @@
 
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDao } from '@/shared/api/daoService';
-import { useDialogContext } from '@/shared/components/dialogProvider/dialogProvider';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { Button, DaoAvatar, IconType, Wallet, addressUtils, clipboardUtils } from '@aragon/ods';
