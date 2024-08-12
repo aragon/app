@@ -4,16 +4,15 @@ import { formatUnits } from 'viem';
 import { tokenSettingsUtils } from './tokenSettingsUtils';
 
 describe('tokenSettingsUtils', () => {
-    describe('parsePercentageSetting', () => {
+
+    describe('parseSettings', () => {
         it('correctly parses the percentage setting', () => {
             expect(tokenSettingsUtils.parsePercentageSetting(500000)).toEqual(50);
             expect(tokenSettingsUtils.parsePercentageSetting(123456)).toEqual(12.3456);
             expect(tokenSettingsUtils.parsePercentageSetting(0)).toEqual(0);
             expect(tokenSettingsUtils.parsePercentageSetting(1000000)).toEqual(100);
         });
-    });
 
-    describe('formatApproveThreshold', () => {
         it('correctly formats the approval threshold', () => {
             const parsedSupportThreshold = tokenSettingsUtils.parsePercentageSetting(300000);
             const formattedApproveThreshold = formatterUtils.formatNumber(parsedSupportThreshold / 100, {
@@ -21,9 +20,7 @@ describe('tokenSettingsUtils', () => {
             });
             expect(formattedApproveThreshold).toBe('30%');
         });
-    });
 
-    describe('formatMinParticipation', () => {
         it('correctly formats the minimum participation', () => {
             const parsedMinParticipation = tokenSettingsUtils.parsePercentageSetting(200000);
             const formattedMinParticipation = formatterUtils.formatNumber(parsedMinParticipation / 100, {
@@ -31,9 +28,7 @@ describe('tokenSettingsUtils', () => {
             });
             expect(formattedMinParticipation).toBe('20%');
         });
-    });
 
-    describe('formatMinParticipationToken', () => {
         it('correctly formats the minimum participation token value', () => {
             const totalSupply = '200000';
             const decimals = 2;
@@ -45,18 +40,14 @@ describe('tokenSettingsUtils', () => {
             });
             expect(formattedMinParticipationToken).toBe('400');
         });
-    });
 
-    describe('formatDuration', () => {
         it('correctly formats the duration', () => {
             const minDuration = 604800;
             const duration = Duration.fromObject({ seconds: minDuration }).shiftTo('days', 'hours', 'minutes');
             const formattedDuration = `days=${duration.days},hours=${duration.hours},minutes=${duration.minutes}`;
             expect(formattedDuration).toBe('days=7,hours=0,minutes=0');
         });
-    });
 
-    describe('formatProposerVotingPower', () => {
         it('correctly formats the proposer voting power', () => {
             const minProposerVotingPower = '100';
             const decimals = 2;
