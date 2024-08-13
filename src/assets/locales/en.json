@@ -198,6 +198,9 @@
           }
         },
         "main": {
+          "delegationStatement": {
+            "title": "Delegation statement"
+          },
           "delegates": {
             "delegationCount": "{{count}} Delegations received",
             "entity": "Delegations"

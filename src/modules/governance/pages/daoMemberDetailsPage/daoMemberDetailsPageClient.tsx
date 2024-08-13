@@ -1,5 +1,6 @@
 'use client';
 
+import { delegationStatementMock } from '@/modules/governance/testUtils/mocks/delegationStatementMock';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
@@ -10,10 +11,13 @@ import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import {
     addressUtils,
+    Card,
     ChainEntityType,
     clipboardUtils,
+    Collapsible,
     DataListRoot,
     DefinitionList,
+    DocumentParser,
     Dropdown,
     IconType,
     Link,
@@ -45,8 +49,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const memberQueryParams = { daoId };
     const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
     const { data: member } = useMember(memberParams);
-
-    console.log('member', member);
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -118,6 +120,70 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             </Page.Header>
             <Page.Content>
                 <Page.Main>
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.delegationStatement.title')}>
+                        <Card className="p-6">
+                            <Collapsible showOverlay={true} buttonLabelClosed="Read more" buttonLabelOpened="Read less">
+                                <DocumentParser document={delegationStatementMock} />
+                            </Collapsible>
+                        </Card>
+                    </Page.Section>
+                    <Page.Section
+                        title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
+                            count: member.metrics?.delegateReceivedCount,
+                        })}
+                    >
+                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.delegates.entity')}>
+                            {/* {member.metrics.delegateReceivedCount > 0 && (
+                                <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
+                                    {delegators?.map((delegator) => {
+                                        <MemberDataListItem.Structure
+                                            address={address}
+                                            ensName={delegator.ens}
+                                            avatarSrc={delegator.avatar}
+                                        />;
+                                    })}
+                                </DataListContainer>
+                            )} */}
+                        </DataListRoot>
+                    </Page.Section>
+                    <Page.Section
+                        title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
+                            count: member.metrics?.delegateReceivedCount,
+                        })}
+                    >
+                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.delegates.entity')}>
+                            {/* {member.metrics.delegateReceivedCount > 0 && (
+                                <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
+                                    {delegators?.map((delegator) => {
+                                        <MemberDataListItem.Structure
+                                            address={address}
+                                            ensName={delegator.ens}
+                                            avatarSrc={delegator.avatar}
+                                        />;
+                                    })}
+                                </DataListContainer>
+                            )} */}
+                        </DataListRoot>
+                    </Page.Section>
+                    <Page.Section
+                        title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
+                            count: member.metrics?.delegateReceivedCount,
+                        })}
+                    >
+                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.delegates.entity')}>
+                            {/* {member.metrics.delegateReceivedCount > 0 && (
+                                <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
+                                    {delegators?.map((delegator) => {
+                                        <MemberDataListItem.Structure
+                                            address={address}
+                                            ensName={delegator.ens}
+                                            avatarSrc={delegator.avatar}
+                                        />;
+                                    })}
+                                </DataListContainer>
+                            )} */}
+                        </DataListRoot>
+                    </Page.Section>
                     <Page.Section
                         title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
                             count: member.metrics?.delegateReceivedCount,
