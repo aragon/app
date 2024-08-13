@@ -41,7 +41,6 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
         <TranslationsProvider translations={translations}>
             <OdsModulesProvider
                 wagmiConfig={wagmiConfig}
-                // @ts-expect-error TODO: Soon supported by ODS library
                 wagmiInitialState={wagmiInitialState}
                 queryClient={queryClient}
                 coreProviderValues={coreProviderValues}
