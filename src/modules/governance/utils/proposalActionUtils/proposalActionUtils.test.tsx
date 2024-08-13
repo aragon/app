@@ -144,7 +144,7 @@ describe('proposalAction utils', () => {
 
     it('normalizes a token mint action', () => {
         const action = generateProposalActionTokenMint({
-            receivers: { address: '0x1', currentBalance: 1000000, newBalance: 20000000 },
+            receiver: { address: '0x1', currentBalance: '1000000', newBalance: '20000000' },
         });
 
         const result = proposalActionUtils.normalizeTokenMintAction(action);
@@ -154,13 +154,11 @@ describe('proposalAction utils', () => {
         expect(result).toEqual({
             ...otherValues,
             type: 'TOKEN_MINT',
-            receivers: [
-                {
-                    address: action.receivers.address,
-                    currentBalance: action.receivers.currentBalance,
-                    newBalance: action.receivers.newBalance,
-                },
-            ],
+            receiver: {
+                address: action.receiver.address,
+                currentBalance: action.receiver.currentBalance,
+                newBalance: action.receiver.newBalance,
+            },
             tokenSymbol: token.symbol,
         });
     });

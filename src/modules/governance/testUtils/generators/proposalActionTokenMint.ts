@@ -4,10 +4,10 @@ export const generateProposalActionTokenMint = (
     action: Partial<IProposalActionTokenMint>,
 ): IProposalActionTokenMint => ({
     type: ProposalActionType.MINT,
-    receivers: {
+    receiver: {
         address: '0x1',
-        currentBalance: 1,
-        newBalance: 1,
+        currentBalance: '1',
+        newBalance: '1',
     },
     token: {
         address: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
@@ -18,8 +18,6 @@ export const generateProposalActionTokenMint = (
     to: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
     data: '',
     value: '1000000',
-    tokenSupply: 0,
-    holdersCount: 0,
     tokenSymbol: 'ETH',
     inputData: {
         function: 'settings',
