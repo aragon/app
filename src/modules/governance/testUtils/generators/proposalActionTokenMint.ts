@@ -1,10 +1,10 @@
 import { type IProposalActionTokenMint, ProposalActionType } from '@/modules/governance/api/governanceService';
 
 export const generateProposalActionTokenMint = (
-    action: Partial<IProposalActionTokenMint>,
+    action?: Partial<IProposalActionTokenMint>,
 ): IProposalActionTokenMint => ({
     type: ProposalActionType.MINT,
-    receiver: {
+    receivers: {
         address: '0x1',
         currentBalance: '1',
         newBalance: '1',

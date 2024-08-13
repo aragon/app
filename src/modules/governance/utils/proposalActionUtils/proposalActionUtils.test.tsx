@@ -1,54 +1,35 @@
 import {
-    ProposalActionType,
-    type IProposal,
-    type IProposalActionChangeMembers,
-    type IProposalActionChangeSettings,
-    type IProposalActionWithdrawToken,
-} from '@/modules/governance/api/governanceService';
-import {
+    generateProposal,
     generateProposalActionChangeMembers,
     generateProposalActionTokenMint,
     generateProposalActionUpdateMetadata,
+    generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { type IProposalAction } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { proposalActionUtils } from '.';
+import { proposalActionUtils } from './proposalActionUtils';
 
 jest.mock('viem', () => ({
     formatUnits: jest.fn(),
 }));
 
-describe('proposalAction utils', () => {
-    const daoId = 'test-dao-id';
-    const plugins = ['plugin1', 'plugin2'];
-    const proposal = {
-        settings: {},
-    } as unknown as IProposal;
-
+describe('proposalActionUtils', () => {
     afterEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('normalizes a transfer action', () => {
-        const action: IProposalActionWithdrawToken = {
-            type: ProposalActionType.TRANSFER,
+        const baseAction = generateProposalActionWithdrawToken();
+
+        const action = {
+            ...baseAction,
             amount: '1000000000000000000',
             token: {
+                ...baseAction.token,
                 decimals: 18,
                 symbol: 'DAI',
-                name: '',
-                logo: '',
-                priceUsd: '',
-                address: '',
             },
             sender: { address: '0x9939393939234234234233' },
             receiver: { address: '0x9939393939334242342332' },
-            from: '',
-            to: '',
-            data: '',
-            value: '',
-            inputData: null,
         };
 
         (formatUnits as jest.Mock).mockReturnValue('1.0');
@@ -63,40 +44,42 @@ describe('proposalAction utils', () => {
         expect(formatUnits).toHaveBeenCalledWith(BigInt(action.amount), action.token.decimals);
     });
 
-    it('normalizes a change settings action', () => {
-        const action: IProposalActionChangeSettings = {
-            type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
-            proposedSettings: {
-                settings: {
-                    minApprovals: 0,
-                    onlyListed: false,
-                },
-                id: '',
-                pluginAddress: '',
-                pluginSubdomain: '',
-            },
-            from: '',
-            to: '',
-            data: '',
-            value: '',
-            inputData: null,
+    it('normalizes a token mint action', () => {
+        const baseAction = generateProposalActionTokenMint();
+
+        const action = {
+            ...baseAction,
+            receivers: { ...baseAction.receivers, currentBalance: '1000000', newBalance: '20000000' },
         };
 
-        jest.spyOn(pluginRegistryUtils, 'getPlugin').mockReturnValue({ id: 'plugin-id', name: 'plugin-name' }); // Mock the plugin existence
-        jest.spyOn(pluginRegistryUtils, 'getSlotFunction').mockReturnValue(() => ({ parsed: 'parsed' })); // Mock the parsing function
+        (formatUnits as jest.Mock).mockReturnValueOnce('1.0').mockReturnValueOnce('2.0');
 
-        const result = proposalActionUtils.normalizeChangeSettingsAction(action, plugins, proposal, daoId);
+        const result = proposalActionUtils.normalizeTokenMintAction(action);
+
+        const { receivers, token, ...otherValues } = action;
 
         expect(result).toEqual({
-            ...action,
-            type: 'CHANGE_SETTINGS_MULTISIG',
-            existingSettings: { parsed: 'parsed' },
-            proposedSettings: { parsed: 'parsed' },
+            ...otherValues,
+            type: 'TOKEN_MINT',
+            receiver: {
+                address: receivers.address,
+                currentBalance: '1.0',
+                newBalance: '2.0',
+            },
+            tokenSymbol: token.symbol,
         });
+
+        expect(formatUnits).toHaveBeenNthCalledWith(1, BigInt(action.receivers.currentBalance), action.token.decimals);
+        expect(formatUnits).toHaveBeenNthCalledWith(2, BigInt(action.receivers.newBalance), action.token.decimals);
     });
 
     it('normalizes a change members action', () => {
-        const action: IProposalActionChangeMembers = generateProposalActionChangeMembers();
+        const baseAction = generateProposalActionChangeMembers();
+        const action = {
+            ...baseAction,
+            currentMembers: [{ address: '0xMemberAddress' }],
+        };
+
         const result = proposalActionUtils.normalizeChangeMembersAction(action);
 
         expect(result).toEqual({
@@ -107,20 +90,19 @@ describe('proposalAction utils', () => {
     });
 
     it('normalizes an update metadata action', () => {
-        const action = generateProposalActionUpdateMetadata({
+        const baseAction = generateProposalActionUpdateMetadata();
+
+        const action = {
+            ...baseAction,
             proposedMetadata: {
-                logo: '',
-                name: '',
-                description: '',
+                ...baseAction.proposedMetadata,
                 links: [{ name: 'Link1', url: 'https://link1.com' }],
             },
             existingMetadata: {
-                logo: '',
-                name: '',
-                description: '',
+                ...baseAction.existingMetadata,
                 links: [{ name: 'Link2', url: 'https://link2.com' }],
             },
-        });
+        };
 
         const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
 
@@ -128,51 +110,29 @@ describe('proposalAction utils', () => {
             ...action,
             type: 'UPDATE_METADATA',
             proposedMetadata: {
-                logo: '',
-                name: '',
-                description: '',
+                ...action.proposedMetadata,
                 links: [{ label: 'Link1', href: 'https://link1.com' }],
             },
             existingMetadata: {
-                logo: '',
-                name: '',
-                description: '',
+                ...action.existingMetadata,
                 links: [{ label: 'Link2', href: 'https://link2.com' }],
             },
         });
     });
 
-    it('normalizes a token mint action', () => {
-        const action = generateProposalActionTokenMint({
-            receiver: { address: '0x1', currentBalance: '1000000', newBalance: '20000000' },
-        });
-
-        const result = proposalActionUtils.normalizeTokenMintAction(action);
-
-        const { token, ...otherValues } = action;
-
-        expect(result).toEqual({
-            ...otherValues,
-            type: 'TOKEN_MINT',
-            receiver: {
-                address: action.receiver.address,
-                currentBalance: action.receiver.currentBalance,
-                newBalance: action.receiver.newBalance,
-            },
-            tokenSymbol: token.symbol,
-        });
-    });
-
     it('returns unmodified action if type does not match any known action', () => {
-        const action: IProposalAction = {
+        const baseAction = generateProposalActionWithdrawToken();
+
+        const action = {
+            ...baseAction,
             type: 'UNKNOWN_TYPE',
-        } as IProposalAction;
+        };
 
         const result = proposalActionUtils.normalizeActions({
             actions: [action],
-            plugins,
-            proposal,
-            daoId,
+            plugins: [],
+            proposal: generateProposal(),
+            daoId: 'daoId',
         });
 
         expect(result).toEqual([action]);
