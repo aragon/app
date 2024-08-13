@@ -1,4 +1,5 @@
 import {
+    INormalizeActionsParams,
     ProposalActionType,
     type IProposal,
     type IProposalActionChangeMembers,
@@ -21,25 +22,6 @@ import {
     type IProposalActionWithdrawToken as OdsIProposalActionWithdrawToken,
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
-
-interface INormalizeActionsParams {
-    /**
-     * List of plugins for the DAO.
-     */
-    plugins: string[];
-    /**
-     * List of fetched actions in the proposal.
-     */
-    actions: OdsIProposalAction[];
-    /**
-     * The proposal object with full data.
-     */
-    proposal: IProposal;
-    /**
-     * The DAO ID.
-     */
-    daoId: string;
-}
 
 class ProposalActionUtils {
     actionTypeMapping = {

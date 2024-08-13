@@ -1,6 +1,6 @@
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { DaoTokenVotingMode, type IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
-import { type TranslationFunction } from '@/shared/components/translationsProvider/translationsProvider';
+import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { Duration } from 'luxon';
 import { formatUnits } from 'viem';

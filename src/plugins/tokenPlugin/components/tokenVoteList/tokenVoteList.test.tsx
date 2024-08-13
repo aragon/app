@@ -2,7 +2,7 @@ import { generateToken } from '@/modules/finance/testUtils';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { addressUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateTokenVote } from '../../testUtils/generators/tokenVote';
+import { generateTokenVote } from '../../testUtils';
 import { VoteOption } from '../../types';
 import { type ITokenVoteListProps, TokenVoteList } from './tokenVoteList';
 

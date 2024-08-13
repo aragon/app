@@ -2,7 +2,7 @@ import {
     DaoProposalDetailsPageClient,
     type IDaoProposalDetailsPageClientProps,
 } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
-import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils/generators/proposalActionChangeMembers';
+import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';

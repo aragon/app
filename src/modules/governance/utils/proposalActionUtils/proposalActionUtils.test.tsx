@@ -7,13 +7,13 @@ import {
 } from '@/modules/governance/api/governanceService';
 import {
     generateProposalActionChangeMembers,
+    generateProposalActionTokenMint,
     generateProposalActionUpdateMetadata,
 } from '@/modules/governance/testUtils';
-import { generateProposalActionTokenMint } from '@/modules/governance/testUtils/generators/proposalActionTokenMint';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type IProposalAction } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { proposalActionUtils } from './proposalActionUtils';
+import { proposalActionUtils } from '.';
 
 jest.mock('viem', () => ({
     formatUnits: jest.fn(),

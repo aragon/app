@@ -1,6 +1,6 @@
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { type IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
-import { type TranslationFunction } from '@/shared/components/translationsProvider/translationsProvider';
+import { type TranslationFunction } from '@/shared/components/translationsProvider';
 
 export interface IMultisigSettingsParseParams {
     /**
