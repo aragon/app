@@ -3,7 +3,7 @@ import { Duration } from 'luxon';
 import { formatUnits } from 'viem';
 import { tokenSettingsUtils } from './tokenSettingsUtils';
 
-describe('tokenSettingsUtils', () => {
+describe('tokenSettings utils', () => {
     describe('parseSettings', () => {
         it('correctly parses the percentage setting', () => {
             expect(tokenSettingsUtils.parsePercentageSetting(500000)).toEqual(50);
