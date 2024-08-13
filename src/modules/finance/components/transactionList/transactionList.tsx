@@ -47,20 +47,24 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                 errorState={errorState}
                 SkeletonElement={TransactionDataListItem.Skeleton}
             >
-                {transactionList?.map((transaction) => (
-                    <TransactionDataListItem.Structure
-                        chainId={networkDefinitions[transaction.network].chainId}
-                        hash={transaction.transactionHash}
-                        key={transaction.transactionHash}
-                        date={transaction.blockTimestamp * 1000}
-                        type={transactionTypeToDataListType[transaction.type]}
-                        status={TransactionStatus.SUCCESS}
-                        tokenSymbol={transaction.token.symbol}
-                        tokenAmount={transaction.value}
-                        // TODO: needs to updated when backend pricing is available [APP-3331]
-                        tokenPrice={0}
-                    />
-                ))}
+                {transactionList?.map((transaction) => {
+                    /* TODO: We need correct token price at time of transaction to avoid below calculation (APP-3526) */
+                    const tokenPriceRaw = Number(transaction.amountUsd) / Number(transaction.value);
+                    const tokenPrice = isNaN(tokenPriceRaw) ? 0 : tokenPriceRaw;
+                    return (
+                        <TransactionDataListItem.Structure
+                            chainId={networkDefinitions[transaction.network].chainId}
+                            hash={transaction.transactionHash}
+                            key={transaction.transactionHash}
+                            date={transaction.blockTimestamp * 1000}
+                            type={transactionTypeToDataListType[transaction.type]}
+                            status={TransactionStatus.SUCCESS}
+                            tokenSymbol={transaction.token.symbol}
+                            tokenAmount={transaction.value}
+                            tokenPrice={tokenPrice}
+                        />
+                    );
+                })}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>

@@ -14,5 +14,6 @@ export const generateTransaction = (transaction?: Partial<ITransaction>): ITrans
     type: TransactionType.DEPOSIT,
     transactionHash: '0x0000000000000000000000000000000000000000',
     id: '0',
+    amountUsd: '0',
     ...transaction,
 });
