@@ -1,5 +1,6 @@
+import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
+import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
-import { Duration } from 'luxon';
 import { formatUnits } from 'viem';
 import { tokenSettingsUtils } from './tokenSettingsUtils';
 
@@ -40,11 +41,33 @@ describe('tokenSettings utils', () => {
             expect(formattedMinParticipationToken).toBe('400');
         });
 
-        it('correctly formats the duration', () => {
-            const minDuration = 604800;
-            const duration = Duration.fromObject({ seconds: minDuration }).shiftTo('days', 'hours', 'minutes');
-            const formattedDuration = `days=${duration.days},hours=${duration.hours},minutes=${duration.minutes}`;
-            expect(formattedDuration).toBe('days=7,hours=0,minutes=0');
+        it('correctly formats the duration from settings', () => {
+            const settings = generateDaoTokenSettings({
+                settings: {
+                    minDuration: 604800,
+                    supportThreshold: 0,
+                    minParticipation: 0,
+                    minProposerVotingPower: '0',
+                    votingMode: DaoTokenVotingMode.EARLY_EXECUTION,
+                },
+            });
+
+            const t = (key: string, options?: { days?: number; hours?: number; minutes?: number }) => {
+                if (key === 'app.plugins.token.tokenGovernanceSettings.duration') {
+                    return `days=${options?.days ?? 0},hours=${options?.hours ?? 0},minutes=${options?.minutes ?? 0}`;
+                }
+                return key;
+            };
+
+            const result = tokenSettingsUtils.parseSettings({ settings, t });
+
+            expect(result).toHaveLength(6);
+
+            const durationTerm = result.find(
+                (term) => term.term === 'app.plugins.token.tokenGovernanceSettings.minimumDuration',
+            );
+
+            expect(durationTerm?.definition).toBe('days=7,hours=0,minutes=0');
         });
 
         it('correctly formats the proposer voting power', () => {
