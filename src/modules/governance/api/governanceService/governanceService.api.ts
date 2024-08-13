@@ -1,11 +1,11 @@
-import { IProposal } from '@/modules/governance/api/governanceService';
+import type { IProposal } from '@/modules/governance/api/governanceService/domain';
 import type {
     IPaginatedRequest,
     IRequestQueryParams,
     IRequestUrlParams,
     IRequestUrlQueryParams,
 } from '@/shared/api/aragonBackendService';
-import { IProposalAction } from '@aragon/ods';
+import type { IProposalAction } from '@aragon/ods';
 
 export interface IGetProposalListQueryParams extends IPaginatedRequest {
     /**

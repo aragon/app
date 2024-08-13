@@ -1,6 +1,6 @@
 import {
-    INormalizeActionsParams,
     ProposalActionType,
+    type INormalizeActionsParams,
     type IProposal,
     type IProposalActionChangeMembers,
     type IProposalActionChangeSettings,

@@ -2,7 +2,7 @@ import {
     DaoProposalDetailsPageClient,
     type IDaoProposalDetailsPageClientProps,
 } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
-import { generateProposalActionChangeMembers } from '@/modules/governance/testUtils';
+import { generateProposal, generateProposalActionChangeMembers } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
@@ -13,7 +13,6 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { generateProposal } from '../../testUtils';
 
 jest.mock('../../components/proposalVotingTerminal', () => ({
     ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
