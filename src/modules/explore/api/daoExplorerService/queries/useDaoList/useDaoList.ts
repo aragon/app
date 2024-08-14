@@ -13,7 +13,7 @@ export const daoListOptions = (
     queryKey: daoExplorerServiceKeys.daoList(params),
     initialPageParam: params,
     queryFn: ({ pageParam }) => daoExplorerService.getDaoList(pageParam),
-    getNextPageParam: daoExplorerService.getNextPageParams,
+    getNextPageParam: daoExplorerService.getNextPageParamsQuery,
     ...options,
 });
 

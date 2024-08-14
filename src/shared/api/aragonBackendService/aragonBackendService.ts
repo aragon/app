@@ -1,5 +1,5 @@
 import { AragonBackendServiceError } from './aragonBackendServiceError';
-import type { IPaginatedResponse, IRequestQueryParams, IRequestUrlQueryParams } from './domain';
+import type { IPaginatedResponse, IRequestQueryParams, IRequestUrlParams, IRequestUrlQueryParams } from './domain';
 
 type IRequestParams<TUrlParams, TQueryParams> = Partial<IRequestUrlQueryParams<TUrlParams, TQueryParams>>;
 
@@ -20,7 +20,7 @@ export class AragonBackendService {
         return response.json() as TData;
     };
 
-    getNextPageParams = <TParams extends IRequestQueryParams<object>, TData = unknown>(
+    getNextPageParamsQuery = <TParams extends IRequestQueryParams<object>, TData = unknown>(
         lastPage: IPaginatedResponse<TData>,
         _allPages: Array<IPaginatedResponse<TData>>,
         previousParams: TParams,
@@ -35,6 +35,26 @@ export class AragonBackendService {
             ...previousParams,
             queryParams: {
                 ...previousParams.queryParams,
+                page: page + 1,
+            },
+        };
+    };
+
+    getNextPageParamsUrl = <TParams extends IRequestUrlParams<object>, TData = unknown>(
+        lastPage: IPaginatedResponse<TData>,
+        _allPages: Array<IPaginatedResponse<TData>>,
+        previousParams: TParams,
+    ): TParams | undefined => {
+        const { page, totalPages } = lastPage.metadata;
+
+        if (page >= totalPages) {
+            return undefined;
+        }
+
+        return {
+            ...previousParams,
+            queryParams: {
+                ...previousParams.urlParams,
                 page: page + 1,
             },
         };

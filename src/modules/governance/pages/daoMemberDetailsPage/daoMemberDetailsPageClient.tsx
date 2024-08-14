@@ -1,7 +1,8 @@
 'use client';
 
-import { delegationStatementMock } from '@/modules/governance/testUtils/mocks/delegationStatementMock';
 import { useDao } from '@/shared/api/daoService';
+
+import { useDaoListByMemberAddress } from '@/shared/api/daoService/queries/useDaoListByMemberAddress';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -9,21 +10,22 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     addressUtils,
-    Card,
     ChainEntityType,
     clipboardUtils,
-    Collapsible,
+    DaoDataListItem,
     DataListRoot,
     DefinitionList,
-    DocumentParser,
     Dropdown,
     IconType,
     Link,
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/ods';
+import { useMemo } from 'react';
 import { useMember } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
@@ -48,7 +50,16 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
     const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
+    const daoByMembersUrlParams = { address };
+    const daoByMemberParams = { urlParams: daoByMembersUrlParams };
+
     const { data: member } = useMember(memberParams);
+    const { data: membersDaos } = useDaoListByMemberAddress(daoByMemberParams);
+
+    const daoListByMember = membersDaos?.pages.flatMap((page) => page.data);
+    const otherDaosOfMember = useMemo(() => {
+        return daoListByMember?.filter((memberDao) => memberDao.id !== daoId);
+    }, [daoListByMember, daoId]);
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -120,15 +131,8 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             </Page.Header>
             <Page.Content>
                 <Page.Main>
-                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.delegationStatement.title')}>
-                        <Card className="p-6">
-                            <Collapsible showOverlay={true} buttonLabelClosed="Read more" buttonLabelOpened="Read less">
-                                <DocumentParser document={delegationStatementMock} />
-                            </Collapsible>
-                        </Card>
-                    </Page.Section>
                     <Page.Section
-                        title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
+                        title={t('app.governance.daoMemberDetailsPage.main.delegates.title', {
                             count: member.metrics?.delegateReceivedCount,
                         })}
                     >
@@ -146,13 +150,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             )} */}
                         </DataListRoot>
                     </Page.Section>
-                    <Page.Section
-                        title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
-                            count: member.metrics?.delegateReceivedCount,
-                        })}
-                    >
-                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.delegates.entity')}>
-                            {/* {member.metrics.delegateReceivedCount > 0 && (
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
+                        {/* <DataListRoot entityLabel="MOCK">
+                            {member.metrics.delegateReceivedCount > 0 && (
                                 <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
                                     {delegators?.map((delegator) => {
                                         <MemberDataListItem.Structure
@@ -162,16 +162,12 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                                         />;
                                     })}
                                 </DataListContainer>
-                            )} */}
-                        </DataListRoot>
+                            )}
+                        </DataListRoot> */}
                     </Page.Section>
-                    <Page.Section
-                        title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
-                            count: member.metrics?.delegateReceivedCount,
-                        })}
-                    >
-                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.delegates.entity')}>
-                            {/* {member.metrics.delegateReceivedCount > 0 && (
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.proposalsCreation.title')}>
+                        {/* <DataListRoot entityLabel="MOCK ENTITY">
+                            {member.metrics.delegateReceivedCount > 0 && (
                                 <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
                                     {delegators?.map((delegator) => {
                                         <MemberDataListItem.Structure
@@ -181,28 +177,28 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                                         />;
                                     })}
                                 </DataListContainer>
-                            )} */}
-                        </DataListRoot>
+                            )}
+                        </DataListRoot> */}
                     </Page.Section>
-                    <Page.Section
-                        title={t('app.governance.daoMemberDetailsPage.main.delegates.delegationCount', {
-                            count: member.metrics?.delegateReceivedCount,
-                        })}
-                    >
-                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.otherDaos.title')}>
-                            {/* {member.metrics.delegateReceivedCount > 0 && (
-                                <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
-                                    {delegators?.map((delegator) => {
-                                        <MemberDataListItem.Structure
-                                            address={address}
-                                            ensName={delegator.ens}
-                                            avatarSrc={delegator.avatar}
-                                        />;
-                                    })}
-                                </DataListContainer>
-                            )} */}
-                        </DataListRoot>
-                    </Page.Section>
+                    {otherDaosOfMember && (
+                        <Page.Section title={t('app.governance.daoMemberDetailsPage.main.otherDaos.title')}>
+                            <DataListRoot entityLabel="Daos">
+                                {otherDaosOfMember.map((dao) => (
+                                    <DaoDataListItem.Structure
+                                        key={dao.id}
+                                        href={`/dao/${dao.id}/dashboard`}
+                                        ens={daoUtils.getDaoEns(dao)}
+                                        address={dao.address}
+                                        name={dao.name}
+                                        description={dao.description}
+                                        network={networkDefinitions[dao.network].name}
+                                        logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
+                                        plugin={dao.plugins.map((plugin) => plugin.subdomain).join(',')}
+                                    />
+                                ))}
+                            </DataListRoot>
+                        </Page.Section>
+                    )}
                 </Page.Main>
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.aside.details.title')} inset={false}>

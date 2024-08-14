@@ -227,6 +227,14 @@
             "title": "Other DAO memberships",
             "entity": "DAOs"
           },
+          "proposalsCreation": {
+            "title": "Proposals creation",
+            "entity": "Proposals"
+          },
+          "votingActivity": {
+            "title": "Voting activity",
+            "entity": "Votes"
+          },
           "proposals": "Proposals",
           "votes": "Votes",
           "transactions": "Transactions"

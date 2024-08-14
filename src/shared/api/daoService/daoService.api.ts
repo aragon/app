@@ -1,4 +1,4 @@
-import type { IRequestUrlParams } from '../aragonBackendService';
+import type { IOrderedRequest, IPaginatedRequest, IRequestUrlParams } from '../aragonBackendService';
 
 export interface IGetDaoUrlParams {
     /**
@@ -17,3 +17,9 @@ export interface IGetDaoSettingsUrlParams {
 }
 
 export interface IGetDaoSettingsParams extends IRequestUrlParams<IGetDaoSettingsUrlParams> {}
+
+export interface IGetDaoListByMemberQueryParams extends IPaginatedRequest, IOrderedRequest {
+    address: string;
+}
+
+export interface IGetDaoListByMemberAddressParams extends IRequestUrlParams<IGetDaoListByMemberQueryParams> {}
