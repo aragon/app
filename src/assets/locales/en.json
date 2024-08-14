@@ -202,8 +202,12 @@
             "title": "Delegation statement"
           },
           "delegates": {
-            "delegationCount": "{{count}} Delegations received",
+            "title": "{{count}} Delegations received",
             "entity": "Delegations"
+          },
+          "otherDaos": {
+            "title": "Other DAO memberships",
+            "entity": "DAOs"
           },
           "proposals": "Proposals",
           "votes": "Votes",

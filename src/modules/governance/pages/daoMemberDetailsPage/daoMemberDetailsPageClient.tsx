@@ -189,7 +189,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             count: member.metrics?.delegateReceivedCount,
                         })}
                     >
-                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.delegates.entity')}>
+                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.otherDaos.title')}>
                             {/* {member.metrics.delegateReceivedCount > 0 && (
                                 <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
                                     {delegators?.map((delegator) => {
