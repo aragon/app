@@ -55,7 +55,7 @@ class TokenSettingsUtils {
             minutes: duration.minutes,
         });
 
-        const minProposerVotingPowerFullNumber = Number(minProposerVotingPower ?? '0').toLocaleString('fullwide', {
+        const minProposerVotingPowerFullNumber = Number(minProposerVotingPower).toLocaleString('fullwide', {
             useGrouping: false,
         });
         const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPowerFullNumber), decimals);
