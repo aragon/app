@@ -1,7 +1,7 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { addressUtils, clipboardUtils, IconType } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
 import { type IUserDialogProps, UserDialog } from './userDialog';
 
