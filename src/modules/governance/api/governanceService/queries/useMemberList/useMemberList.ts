@@ -13,7 +13,7 @@ export const memberListOptions = <TMember extends IMember = IMember>(
     queryKey: governanceServiceKeys.memberList(params),
     initialPageParam: params,
     queryFn: ({ pageParam }) => governanceService.getMemberList(pageParam),
-    getNextPageParam: governanceService.getNextPageParams,
+    getNextPageParam: governanceService.getNextPageParamsQuery,
     ...options,
 });
 

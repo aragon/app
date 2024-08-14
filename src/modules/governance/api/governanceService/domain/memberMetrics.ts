@@ -1,4 +1,4 @@
-export interface IMemberMetrics {
+export interface ITokenMemberMetrics {
     /**
      * The number of delegates that the member has received.
      */

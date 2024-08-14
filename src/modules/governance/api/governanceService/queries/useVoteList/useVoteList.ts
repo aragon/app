@@ -13,7 +13,7 @@ export const voteListOptions = <TVote extends IVote = IVote>(
     queryKey: governanceServiceKeys.voteList(params),
     initialPageParam: params,
     queryFn: ({ pageParam }) => governanceService.getVoteList(pageParam),
-    getNextPageParam: governanceService.getNextPageParams,
+    getNextPageParam: governanceService.getNextPageParamsQuery,
     ...options,
 });
 

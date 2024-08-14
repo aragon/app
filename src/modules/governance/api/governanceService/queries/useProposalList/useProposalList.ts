@@ -13,7 +13,7 @@ export const proposalListOptions = <TProposal extends IProposal = IProposal>(
     queryKey: governanceServiceKeys.proposalList(params),
     initialPageParam: params,
     queryFn: ({ pageParam }) => governanceService.getProposalList(pageParam),
-    getNextPageParam: governanceService.getNextPageParams,
+    getNextPageParam: governanceService.getNextPageParamsQuery,
     ...options,
 });
 

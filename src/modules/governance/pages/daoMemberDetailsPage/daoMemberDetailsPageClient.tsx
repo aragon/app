@@ -131,25 +131,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             </Page.Header>
             <Page.Content>
                 <Page.Main>
-                    <Page.Section
-                        title={t('app.governance.daoMemberDetailsPage.main.delegates.title', {
-                            count: member.metrics?.delegateReceivedCount,
-                        })}
-                    >
-                        <DataListRoot entityLabel={t('app.governance.daoMemberDetailsPage.main.delegates.entity')}>
-                            {/* {member.metrics.delegateReceivedCount > 0 && (
-                                <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
-                                    {delegators?.map((delegator) => {
-                                        <MemberDataListItem.Structure
-                                            address={address}
-                                            ensName={delegator.ens}
-                                            avatarSrc={delegator.avatar}
-                                        />;
-                                    })}
-                                </DataListContainer>
-                            )} */}
-                        </DataListRoot>
-                    </Page.Section>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
                         {/* <DataListRoot entityLabel="MOCK">
                             {member.metrics.delegateReceivedCount > 0 && (

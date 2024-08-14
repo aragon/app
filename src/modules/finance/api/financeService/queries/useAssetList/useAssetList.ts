@@ -13,7 +13,7 @@ export const assetListOptions = (
     queryKey: financeServiceKeys.assetList(params),
     initialPageParam: params,
     queryFn: ({ pageParam }) => financeService.getAssetList(pageParam),
-    getNextPageParam: financeService.getNextPageParams,
+    getNextPageParam: financeService.getNextPageParamsQuery,
     ...options,
 });
 

@@ -1,7 +1,6 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IMember, IProposal, IVote } from './domain';
 import type {
-    IGetDelegatesListParams,
     IGetMemberListParams,
     IGetMemberParams,
     IGetProposalListParams,
@@ -25,7 +24,7 @@ class GovernanceService extends AragonBackendService {
         const result = await this.request<IPaginatedResponse<TDelegate>>(this.urls.delegates, params);
 
         return result;
-    }
+    };
 
     getMemberList = async <TMember extends IMember = IMember>(
         params: IGetMemberListParams,

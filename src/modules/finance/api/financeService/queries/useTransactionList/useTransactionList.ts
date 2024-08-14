@@ -13,7 +13,7 @@ export const transactionListOptions = (
     queryKey: financeServiceKeys.transactionList(params),
     initialPageParam: params,
     queryFn: ({ pageParam }) => financeService.getTransactionList(pageParam),
-    getNextPageParam: financeService.getNextPageParams,
+    getNextPageParam: financeService.getNextPageParamsQuery,
     ...options,
 });
 
