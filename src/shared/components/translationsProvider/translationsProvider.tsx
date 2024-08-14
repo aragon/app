@@ -7,8 +7,10 @@ export interface ITranslationContext {
     /**
      * Function to process the given translation (e.g. replace keys with given values).
      */
-    t: (translation: string, options?: ITFuncOptions) => string;
+    t: TranslationFunction;
 }
+
+export type TranslationFunction = (translation: string, options?: ITFuncOptions) => string;
 
 const translationsContext = createContext<ITranslationContext | null>(null);
 

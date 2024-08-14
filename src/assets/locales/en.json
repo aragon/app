@@ -234,6 +234,10 @@
           "proposal": "Proposal",
           "readMore": "Read more",
           "readLess": "Read less",
+          "actions": {
+            "header": "Actions",
+            "description": "The following actions will execute if all voting stages are approved."
+          },
           "governance": "Governance"
         },
         "aside": {

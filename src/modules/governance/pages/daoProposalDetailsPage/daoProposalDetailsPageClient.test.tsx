@@ -1,3 +1,9 @@
+import {
+    DaoProposalDetailsPageClient,
+    type IDaoProposalDetailsPageClientProps,
+} from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
+import { generateProposal, generateProposalActionChangeMembers } from '@/modules/governance/testUtils';
+import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
@@ -7,8 +13,6 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { generateProposal } from '../../testUtils';
-import { DaoProposalDetailsPageClient, type IDaoProposalDetailsPageClientProps } from './daoProposalDetailsPageClient';
 
 jest.mock('../../components/proposalVotingTerminal', () => ({
     ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
@@ -16,6 +20,7 @@ jest.mock('../../components/proposalVotingTerminal', () => ({
 
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
+    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
     const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
@@ -27,6 +32,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     afterEach(() => {
         useProposalSpy.mockReset();
+        useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
         useSlotFunctionSpy.mockReset();
         useDaoPluginIdsSpy.mockReset();
@@ -169,6 +175,33 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
         expect(screen.queryByText(/daoProposalDetailsPage.aside.links.title/)).not.toBeInTheDocument();
+    });
+
+    it('renders the proposal actions when defined', () => {
+        const actions = [
+            generateProposalActionChangeMembers({
+                inputData: {
+                    function: 'test1',
+                    contract: 'test',
+                    parameters: [{ name: 'functionName1', type: 'argument', value: '1' }],
+                },
+            }),
+            generateProposalActionChangeMembers({
+                inputData: {
+                    function: 'test2',
+                    contract: 'test',
+                    parameters: [{ name: 'functionName2', type: 'argument', value: '1' }],
+                },
+            }),
+        ];
+        const proposal = generateProposal({ actions });
+        useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+        render(createTestComponent());
+
+        expect(screen.getByText(/daoProposalDetailsPage.main.actions.header/)).toBeInTheDocument();
+        actions.forEach((action) => {
+            expect(screen.getByText(action.inputData!.function)).toBeInTheDocument();
+        });
     });
 
     it('renders the proposal voting terminal', () => {

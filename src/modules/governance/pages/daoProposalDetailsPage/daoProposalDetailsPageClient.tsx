@@ -1,5 +1,6 @@
 'use client';
 
+import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -18,6 +19,7 @@ import {
     formatterUtils,
     IconType,
     Link,
+    ProposalActions,
     type ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
@@ -52,6 +54,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
 
+    const plugins = useDaoPluginIds(daoId);
     const proposalStatus = useSlotFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
@@ -62,7 +65,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         return null;
     }
 
-    const { description, blockTimestamp, creatorAddress, transactionHash, summary, title, resources } = proposal;
+    const { blockTimestamp, creatorAddress, transactionHash, summary, title, description, actions, resources } =
+        proposal;
+
+    const normalizedProposalActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
 
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
@@ -115,6 +121,15 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
                         <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
                     </Page.Section>
+                    {/** TODO should be removed with empty state addition to Proposal Actions (APP-3516) **/}
+                    {normalizedProposalActions.length > 0 && (
+                        <Page.Section
+                            title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
+                            description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
+                        >
+                            <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
+                        </Page.Section>
+                    )}
                 </Page.Main>
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
