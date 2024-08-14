@@ -1,6 +1,6 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
-import { UserDialog } from '../dialogs/userInfoDialog';
+import { UserDialog } from '../dialogs/userDialog';
 
 export enum ApplicationDialog {
     CONNECT_WALLET = 'CONNECT_WALLET',

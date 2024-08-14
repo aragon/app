@@ -1,5 +1,0 @@
-describe('<UserDialog /> component', () => {
-    it('', () => {
-        //
-    });
-});

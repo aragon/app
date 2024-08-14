@@ -59,6 +59,12 @@
           "title": "Connect wallet",
           "description": "Connect your wallet to Aragon App"
         }
+      },
+      "userDialog": {
+        "screenReader": {
+          "title": "Connected user",
+          "description": "Information about the the connected user"
+        }
       }
     },
     "dashboard": {
