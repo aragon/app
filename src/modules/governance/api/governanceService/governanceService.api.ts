@@ -1,11 +1,9 @@
-import type { IProposal } from '@/modules/governance/api/governanceService/domain';
 import type {
     IPaginatedRequest,
     IRequestQueryParams,
     IRequestUrlParams,
     IRequestUrlQueryParams,
 } from '@/shared/api/aragonBackendService';
-import type { IProposalAction } from '@aragon/ods';
 
 export interface IGetProposalListQueryParams extends IPaginatedRequest {
     /**
@@ -58,22 +56,3 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
 }
 
 export interface IGetVoteListParams extends IRequestQueryParams<IGetVoteListQueryParams> {}
-
-export interface INormalizeActionsParams {
-    /**
-     * List of plugins for the DAO.
-     */
-    plugins: string[];
-    /**
-     * List of fetched actions in the proposal.
-     */
-    actions: IProposalAction[];
-    /**
-     * The proposal object with full data.
-     */
-    proposal: IProposal;
-    /**
-     * The DAO ID.
-     */
-    daoId: string;
-}

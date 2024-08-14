@@ -1,15 +1,11 @@
 import { type IProposalAction } from '@aragon/ods';
 
 export const generateProposalAction = (action?: Partial<IProposalAction>): IProposalAction => ({
-    type: '',
-    from: '',
-    to: '',
-    data: '',
-    value: '',
-    inputData: {
-        function: '',
-        contract: '',
-        parameters: [{ name: '', type: '', value: '' }],
-    },
+    type: 'unknown',
+    from: '0x123',
+    to: '0x456',
+    data: '0x',
+    value: '0',
+    inputData: null,
     ...action,
 });

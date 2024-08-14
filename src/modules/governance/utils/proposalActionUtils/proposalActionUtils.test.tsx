@@ -130,7 +130,7 @@ describe('proposalActionUtils', () => {
 
         const result = proposalActionUtils.normalizeActions({
             actions: [action],
-            plugins: [],
+            pluginIds: [],
             proposal: generateProposal(),
             daoId: 'daoId',
         });

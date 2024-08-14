@@ -1,3 +1,4 @@
+import { type IToken } from '@/modules/finance/api/financeService';
 import { type ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum';
 import { type IProposalActionTokenMint as OdsIProposalActionTokenMint } from '@aragon/ods';
 
@@ -7,22 +8,9 @@ export interface IProposalActionTokenMint extends Omit<OdsIProposalActionTokenMi
      */
     type: ProposalActionType.MINT;
     /**
-     * The token to be minted.
+     * The token minted.
      */
-    token: {
-        /**
-         * The address of the token.
-         */
-        address: string;
-        /**
-         * The symbol of the token.
-         */
-        symbol: string;
-        /**
-         * The decimals of the token.
-         */
-        decimals: number;
-    };
+    token: IToken;
     /**
      * The receiver of the minted tokens.
      */

@@ -54,7 +54,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
 
-    const plugins = useDaoPluginIds(daoId);
     const proposalStatus = useSlotFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
@@ -68,7 +67,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { blockTimestamp, creatorAddress, transactionHash, summary, title, description, actions, resources } =
         proposal;
 
-    const normalizedProposalActions = proposalActionUtils.normalizeActions({ plugins, actions, proposal, daoId });
+    const normalizedProposalActions = proposalActionUtils.normalizeActions({ pluginIds, actions, proposal, daoId });
 
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,

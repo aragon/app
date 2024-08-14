@@ -35,7 +35,9 @@ describe('useMultisigGovernanceSettings', () => {
     });
 
     afterEach(() => {
-        jest.resetAllMocks();
+        useDaoSettingsSpy.mockReset();
+        useMemberListSpy.mockReset();
+        parseSettingsSpy.mockReset();
     });
 
     it('returns empty array when settings are not passed and data is not returned', () => {

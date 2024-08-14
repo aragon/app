@@ -1,30 +1,15 @@
-import { type ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum';
-import { type IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
-import { type IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
+import { type IDaoSettings } from '@/shared/api/daoService';
 import { type IProposalActionChangeSettings as OdsIProposalActionChangeSettings } from '@aragon/ods';
+import { type ProposalActionType } from './enum';
 
-export interface IProposalActionChangeSettings
+export interface IProposalActionChangeSettings<TSettings extends IDaoSettings['settings'] = IDaoSettings['settings']>
     extends Omit<OdsIProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
     /**
      * The type of the proposal action.
      */
-    type: ProposalActionType.UPDATE_MULTISIG_SETTINGS;
+    type: ProposalActionType.UPDATE_MULTISIG_SETTINGS | ProposalActionType.UPDATE_VOTE_SETTINGS;
     /**
      * The proposed settings to be updated.
      */
-    proposedSettings: IDaoMultisigSettings;
+    proposedSettings: TSettings;
 }
-
-export interface IProposalActionChangeTokenSettings
-    extends Omit<OdsIProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
-    /**
-     * The type of the proposal action.
-     */
-    type: ProposalActionType.UPDATE_VOTE_SETTINGS;
-    /**
-     * The proposed settings to be updated.
-     */
-    proposedSettings: IDaoTokenSettings;
-}
-
-export type ExtendedProposalActionChangeSettings = IProposalActionChangeSettings | IProposalActionChangeTokenSettings;

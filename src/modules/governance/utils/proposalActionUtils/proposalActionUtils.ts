@@ -1,6 +1,5 @@
 import {
     ProposalActionType,
-    type INormalizeActionsParams,
     type IProposal,
     type IProposalActionChangeMembers,
     type IProposalActionChangeSettings,
@@ -23,6 +22,25 @@ import {
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
 
+export interface INormalizeActionsParams {
+    /**
+     * List of plugins for the DAO.
+     */
+    pluginIds: string[];
+    /**
+     * List of fetched actions in the proposal.
+     */
+    actions: OdsIProposalAction[];
+    /**
+     * The proposal object with full data.
+     */
+    proposal: IProposal;
+    /**
+     * The DAO ID.
+     */
+    daoId: string;
+}
+
 class ProposalActionUtils {
     actionTypeMapping = {
         [ProposalActionType.TRANSFER]: OdsProposalActionType.WITHDRAW_TOKEN,
@@ -35,14 +53,14 @@ class ProposalActionUtils {
     } as const;
 
     normalizeActions = (params: INormalizeActionsParams): OdsIProposalAction[] => {
-        const { plugins, actions, proposal, daoId } = params;
+        const { pluginIds, actions, proposal, daoId } = params;
 
         return actions.map((action) => {
             if (this.isWithdrawTokenAction(action)) {
                 return this.normalizeTransferAction(action);
             }
             if (this.isChangeSettingsAction(action)) {
-                return this.normalizeChangeSettingsAction(action, plugins, proposal, daoId);
+                return this.normalizeChangeSettingsAction(action, pluginIds, proposal, daoId);
             }
             if (this.isChangeMembersAction(action)) {
                 return this.normalizeChangeMembersAction(action);
@@ -71,26 +89,22 @@ class ProposalActionUtils {
 
     normalizeChangeSettingsAction = (
         action: IProposalActionChangeSettings,
-        plugins: string[],
+        pluginIds: string[],
         proposal: IProposal,
         daoId: string,
     ): OdsIProposalActionChangeSettings => {
         const { type, proposedSettings, ...otherValues } = action;
         const { settings: existingSettings } = proposal;
-        const supportedPlugin = plugins.find((plugin) => pluginRegistryUtils.getPlugin(plugin) != null);
+        const supportedPlugin = pluginIds.find((id) => pluginRegistryUtils.getPlugin(id) != null);
 
         const parsingFunction = pluginRegistryUtils.getSlotFunction({
             pluginId: supportedPlugin!,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         })!;
 
-        // TODO: must cast to object (APP-3483)
-        const completeProposedSettings = {
-            ...(existingSettings as object),
-            ...proposedSettings,
-        };
+        const completeProposedSettings = { ...existingSettings, ...proposedSettings };
 
-        // TODO: remove settings objects and deepMerge helper when settings interface is cleaned up (APP-3483)
+        // TODO: remove custom settings object and plugin-specific logic when settings interface is cleaned up (APP-3483)
         const settingsObjectExisting = {
             settings: existingSettings,
             token: (proposal as unknown as Record<string, unknown>).token,
@@ -100,8 +114,8 @@ class ProposalActionUtils {
             token: (proposal as unknown as Record<string, unknown>).token,
         };
 
-        const parsedExistingSettings = parsingFunction && parsingFunction({ settings: settingsObjectExisting, daoId });
-        const parsedProposedSettings = parsingFunction && parsingFunction({ settings: settingsObjectProposed, daoId });
+        const parsedExistingSettings = parsingFunction({ settings: settingsObjectExisting, daoId });
+        const parsedProposedSettings = parsingFunction({ settings: settingsObjectProposed, daoId });
 
         return {
             ...otherValues,
@@ -124,23 +138,19 @@ class ProposalActionUtils {
     normalizeUpdateMetaDataAction = (action: IProposalActionUpdateMetadata): OdsIProposalActionUpdateMetadata => {
         const { type, proposedMetadata, existingMetadata, ...otherValues } = action;
 
-        const mapLinks = (links: IDaoLink[]): IProposalActionUpdateMetadataDaoMetadataLink[] => {
-            return links.map((link: IDaoLink) => ({
-                label: link.name,
-                href: link.url,
-            }));
-        };
+        const normalizeLinks = (links: IDaoLink[]): IProposalActionUpdateMetadataDaoMetadataLink[] =>
+            links.map((link: IDaoLink) => ({ label: link.name, href: link.url }));
 
         return {
             ...otherValues,
             type: this.actionTypeMapping[type],
             proposedMetadata: {
                 ...proposedMetadata,
-                links: mapLinks(proposedMetadata.links),
+                links: normalizeLinks(proposedMetadata.links),
             },
             existingMetadata: {
                 ...existingMetadata,
-                links: mapLinks(existingMetadata.links),
+                links: normalizeLinks(existingMetadata.links),
             },
         };
     };
