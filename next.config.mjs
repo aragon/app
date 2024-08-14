@@ -29,6 +29,12 @@ const nextConfig = {
     env: {
         version: packageInfo.version,
     },
+    webpack: (config) => {
+        // Configs needed by wallet-connect (see https://docs.walletconnect.com/appkit/next/core/installation#extra-configuration)
+        config.externals.push('pino-pretty', 'lokijs', 'encoding');
+
+        return config;
+    },
 };
 
 export default withBundleAnalyzer(nextConfig);
