@@ -11,6 +11,12 @@ jest.mock('@/shared/components/translationsProvider', () => ({
     ),
 }));
 
+jest.mock('@/shared/components/dialogProvider', () => ({
+    DialogProvider: (props: { children: ReactNode }) => <div data-testid="dialog-provider-mock">{props.children}</div>,
+}));
+
+jest.mock('@/shared/components/dialogRoot', () => ({ DialogRoot: () => <div data-testid="dialog-root-mock" /> }));
+
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
     OdsModulesProvider: (props: { children: ReactNode }) => (
@@ -45,5 +51,11 @@ describe('<Providers /> component', () => {
         const children = 'test-child';
         render(createTestComponent({ children }));
         expect(screen.getByText(children)).toBeInTheDocument();
+    });
+
+    it('renders the DialogProvider provider and DialogRoot component', () => {
+        render(createTestComponent());
+        expect(screen.getByTestId('dialog-provider-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('dialog-root-mock')).toBeInTheDocument();
     });
 });
