@@ -5,7 +5,7 @@ import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 class MockTranslations {
     private shouldMockTranslations = true;
 
-    private tMock = (key: string, options?: ITFuncOptions) => {
+    tMock = (key: string, options?: ITFuncOptions) => {
         if (options == null) {
             return key;
         }

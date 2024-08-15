@@ -1,5 +1,6 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import type { IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
+import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
 import { useDaoSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IDaoSettingTermAndDefinition } from '../../../../modules/settings/types';
@@ -28,26 +29,16 @@ export const useMultisigGovernanceSettings = (
         { urlParams: daoSettingsParams },
         { enabled: settings == null },
     );
+
     const processedSettings = settings ?? currentSettings;
 
     if (processedSettings == null || memberList == null) {
         return [];
     }
 
-    return [
-        {
-            term: t('app.plugins.multisig.multisigGovernanceSettings.minimumApproval'),
-            definition: t('app.plugins.multisig.multisigGovernanceSettings.approvals', {
-                min: processedSettings.settings.minApprovals,
-                // TODO: Grab this from Dao settings when available [APP-3470]
-                max: memberList.pages[0].metadata.totalRecords,
-            }),
-        },
-        {
-            term: t('app.plugins.multisig.multisigGovernanceSettings.proposalCreation'),
-            definition: processedSettings.settings.onlyListed
-                ? t('app.plugins.multisig.multisigGovernanceSettings.members')
-                : t('app.plugins.multisig.multisigGovernanceSettings.anyWallet'),
-        },
-    ];
+    return multisigSettingsUtils.parseSettings({
+        settings: processedSettings,
+        membersCount: memberList.pages[0].metadata.totalRecords,
+        t,
+    });
 };

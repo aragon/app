@@ -1,20 +1,20 @@
 import { generateMember } from '@/modules/governance/testUtils';
 import { generateDaoMultisigSettings } from '@/plugins/multisigPlugin/testUtils';
+import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
 import * as daoService from '@/shared/api/daoService';
 import {
     generatePaginatedResponse,
-    generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultError,
     generateReactQueryInfiniteResultSuccess,
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
+import { mockTranslations } from '@/test/utils';
 import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
 
-// Needed to spy usage of useMemberList hook
 jest.mock('../../../../modules/governance/api/governanceService', () => ({
     __esModule: true,
     ...jest.requireActual('../../../../modules/governance/api/governanceService'),
@@ -23,51 +23,58 @@ jest.mock('../../../../modules/governance/api/governanceService', () => ({
 describe('useMultisigGovernanceSettings', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
+    const parseSettingsSpy = jest.spyOn(multisigSettingsUtils, 'parseSettings');
 
     beforeEach(() => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoMultisigSettings() }));
+        useMemberListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [generatePaginatedResponse({ data: [generateMember()] })], pageParams: [] },
+            }),
+        );
     });
 
     afterEach(() => {
         useDaoSettingsSpy.mockReset();
         useMemberListSpy.mockReset();
+        parseSettingsSpy.mockReset();
     });
 
-    it('returns empty array when daoSettings is null', () => {
+    it('returns empty array when settings are not passed and data is not returned', () => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
-            wrapper: ReactQueryWrapper,
-        });
-        expect(result.current).toEqual([]);
-    });
-
-    it('returns empty array when dao members is null', () => {
         useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error() }));
+
         const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
             wrapper: ReactQueryWrapper,
         });
+
         expect(result.current).toEqual([]);
+        expect(parseSettingsSpy).not.toHaveBeenCalled();
     });
 
-    it('fetches the specified DAO terms and definitions for multisig Dao', async () => {
-        const baseSettings = generateDaoMultisigSettings();
-        const mockSettings = {
-            ...baseSettings,
-            settings: {
-                minApprovals: 1,
-                ...baseSettings,
-            },
-        };
-        const members = [generateMember({ address: '0x123' })];
-        const membersMetadata = generatePaginatedResponseMetadata({
-            pageSize: 20,
-            totalRecords: members.length,
-        });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
+    it('does not fetch when settings object passed directly to the hook and calls parseSettings', () => {
+        const mockSettings = generateDaoMultisigSettings();
+        const mockParsedSettings = [{ term: 'mockTerm', definition: 'mockDefinition' }];
+        parseSettingsSpy.mockReturnValue(mockParsedSettings);
 
-        useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
+        const { result } = renderHook(() =>
+            useMultisigGovernanceSettings({ daoId: 'multisig-test-id', settings: mockSettings }),
         );
+
+        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
+            { urlParams: { daoId: 'multisig-test-id' } },
+            expect.objectContaining({ enabled: false }),
+        );
+        expect(parseSettingsSpy).toHaveBeenCalledWith({
+            settings: mockSettings,
+            membersCount: expect.any(Number),
+            t: mockTranslations.tMock,
+        });
+        expect(result.current).toEqual(mockParsedSettings);
+    });
+
+    it('fetches settings when no settings object is passed and calls parseSettings', () => {
+        const mockSettings = generateDaoMultisigSettings();
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
 
         const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
@@ -78,122 +85,11 @@ describe('useMultisigGovernanceSettings', () => {
             { urlParams: { daoId: 'multisig-test-id' } },
             expect.objectContaining({ enabled: true }),
         );
-
-        const [minimumApproval, proposalCreation] = result.current;
-        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-        expect(minimumApproval.definition).toBe(
-            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=1,max=1)',
-        );
-        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
-        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
-    });
-
-    it('handles settings being passed directly to the hook', async () => {
-        const baseSettings = generateDaoMultisigSettings();
-        const mockSettings = {
-            ...baseSettings,
-            settings: {
-                ...baseSettings.settings,
-                minApprovals: 1,
-            },
-        };
-
-        const members = [generateMember({ address: '0x123' })];
-        const membersMetadata = generatePaginatedResponseMetadata({
-            pageSize: 20,
-            totalRecords: members.length,
+        expect(parseSettingsSpy).toHaveBeenCalledWith({
+            settings: mockSettings,
+            membersCount: expect.any(Number),
+            t: mockTranslations.tMock,
         });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
-
-        useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
-        );
-
-        const { result } = renderHook(
-            () => useMultisigGovernanceSettings({ daoId: 'multisig-test-id', settings: mockSettings }),
-            { wrapper: ReactQueryWrapper },
-        );
-
-        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
-            { urlParams: { daoId: 'multisig-test-id' } },
-            expect.objectContaining({ enabled: false }),
-        );
-
-        const [minimumApproval, proposalCreation] = result.current;
-        expect(minimumApproval.term).toBe('app.plugins.multisig.multisigGovernanceSettings.minimumApproval');
-        expect(minimumApproval.definition).toBe(
-            'app.plugins.multisig.multisigGovernanceSettings.approvals (min=1,max=1)',
-        );
-        expect(proposalCreation.term).toBe('app.plugins.multisig.multisigGovernanceSettings.proposalCreation');
-        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.anyWallet');
-    });
-
-    it('correctly handles only members', () => {
-        const baseSettings = generateDaoMultisigSettings();
-        const mockSettings = {
-            ...baseSettings,
-            settings: {
-                ...baseSettings.settings,
-                onlyListed: true,
-            },
-        };
-
-        const members = [generateMember({ address: '0x123' })];
-        const membersMetadata = generatePaginatedResponseMetadata({
-            pageSize: 20,
-            totalRecords: members.length,
-        });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
-
-        useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
-        );
-
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
-        const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
-            wrapper: ReactQueryWrapper,
-        });
-
-        const [, proposalCreation] = result.current;
-
-        expect(proposalCreation.definition).toBe('app.plugins.multisig.multisigGovernanceSettings.members');
-    });
-
-    it('Renders the correct total members of the DAO', async () => {
-        const baseSettings = generateDaoMultisigSettings();
-        const mockSettings = {
-            ...baseSettings,
-            settings: {
-                ...baseSettings.settings,
-                minApprovals: 3,
-            },
-        };
-
-        const members = [
-            generateMember({ address: '0x123' }),
-            generateMember({ address: '0x123' }),
-            generateMember({ address: '0x123' }),
-            generateMember({ address: '0x123' }),
-            generateMember({ address: '0x123' }),
-        ];
-        const membersMetadata = generatePaginatedResponseMetadata({
-            pageSize: 20,
-            totalRecords: members.length,
-        });
-        const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });
-
-        useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
-        );
-
-        const { result } = renderHook(
-            () => useMultisigGovernanceSettings({ daoId: 'multisig-test-id', settings: mockSettings }),
-            { wrapper: ReactQueryWrapper },
-        );
-
-        const [minimumApproval] = result.current;
-        expect(minimumApproval.definition).toBe(
-            `app.plugins.multisig.multisigGovernanceSettings.approvals (min=3,max=5)`,
-        );
+        expect(result.current).toEqual(parseSettingsSpy.mock.results[0].value);
     });
 });

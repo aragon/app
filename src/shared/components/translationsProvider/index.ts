@@ -3,4 +3,5 @@ export {
     useTranslations,
     type ITranslationContext,
     type ITranslationsProviderProps,
+    type TranslationFunction,
 } from './translationsProvider';
