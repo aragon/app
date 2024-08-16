@@ -4,6 +4,7 @@ import { addressUtils, clipboardUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 
+import { DaoList } from '@/modules/explore/components/daoList';
 import { userEvent } from '@testing-library/user-event';
 import { generateMember } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
@@ -11,6 +12,10 @@ import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } fro
 jest.mock('@aragon/ods', () => ({
     ...jest.requireActual('@aragon/ods'),
     MemberAvatar: (props: { src: string }) => <div data-testid="avatar-mock" data-src={props.src} />,
+}));
+
+jest.mock('@/modules/explore/components/DaoList', () => ({
+    DaoList: jest.fn(() => <div data-testid="dao-list-mock" />),
 }));
 
 describe('<DaoMemberDetailsPageClient /> component', () => {
@@ -27,6 +32,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useDaoSpy.mockReset();
         useMemberSpy.mockReset();
         clipboardCopySpy.mockReset();
+        (DaoList as jest.Mock).mockClear();
     });
 
     const createTestComponent = (props?: Partial<IDaoMemberDetailsPageClientProps>) => {
@@ -127,5 +133,27 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivity/)).toBeInTheDocument();
+    });
+
+    it('passes the correct params to the DaoList component', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const daoId = 'dao-id';
+        const member = generateMember({ ens: 'member.eth', address });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+
+        render(createTestComponent({ address, daoId }));
+
+        expect(DaoList).toHaveBeenCalledWith(
+            expect.objectContaining({
+                daoListByMemberParams: {
+                    urlParams: { address },
+                    queryParams: { pageSize: 3 },
+                },
+                daoId: daoId,
+            }),
+            {},
+        );
     });
 });

@@ -96,7 +96,7 @@
     },
     "explore": {
       "daoList": {
-        "entity": "DAO"
+        "entity": "DAOs"
       }
     },
     "finance": {
@@ -214,6 +214,15 @@
             "ens": "ENS",
             "firstActivity": "First activity"
           }
+        },
+        "main": {
+          "otherDaos": {
+            "title": "Other DAO memberships",
+            "entity": "DAOs"
+          },
+          "proposals": "Proposals",
+          "votes": "Votes",
+          "transactions": "Transactions"
         }
       },
       "daoProposalDetailsPage": {
