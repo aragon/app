@@ -10,7 +10,7 @@ export const daoListByMemberAddressOptions = (
     queryKey: daoServiceKeys.daoListByMemberAddress(params),
     initialPageParam: params,
     queryFn: ({ pageParam }) => daoService.getDaoListByMember(pageParam),
-    getNextPageParam: daoService.getNextPageParamsUrl,
+    getNextPageParam: daoService.getNextPageParamsQuery,
     ...options,
 });
 

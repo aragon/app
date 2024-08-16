@@ -40,26 +40,6 @@ export class AragonBackendService {
         };
     };
 
-    getNextPageParamsUrl = <TParams extends IRequestUrlParams<object>, TData = unknown>(
-        lastPage: IPaginatedResponse<TData>,
-        _allPages: Array<IPaginatedResponse<TData>>,
-        previousParams: TParams,
-    ): TParams | undefined => {
-        const { page, totalPages } = lastPage.metadata;
-
-        if (page >= totalPages) {
-            return undefined;
-        }
-
-        return {
-            ...previousParams,
-            queryParams: {
-                ...previousParams.urlParams,
-                page: page + 1,
-            },
-        };
-    };
-
     private buildUrl = <TUrlParams, TQueryParams>(
         url: string,
         params: IRequestParams<TUrlParams, TQueryParams> = {},

@@ -2,7 +2,7 @@
 
 import { useDao } from '@/shared/api/daoService';
 
-import { useDaoListByMemberAddress } from '@/shared/api/daoService/queries/useDaoListByMemberAddress';
+import { DaoList } from '@/modules/explore/components/daoList';
 import { useProposalListByMember } from '@/shared/api/daoService/queries/useProposalListByMemberAddress/useProposalListByMemberAddress';
 import { useVotesListByMember } from '@/shared/api/daoService/queries/useVotesListByMemberAddress/useVotesListByMemberAddress';
 import { Page } from '@/shared/components/page';
@@ -12,13 +12,10 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     addressUtils,
     ChainEntityType,
     clipboardUtils,
-    DaoDataListItem,
     DataListContainer,
     DataListRoot,
     DefinitionList,
@@ -31,7 +28,6 @@ import {
     useBlockExplorer,
     VoteProposalDataListItem,
 } from '@aragon/ods';
-import { useMemo } from 'react';
 import { useMember } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
@@ -103,12 +99,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { data: createdProposals } = useProposalListByMember(useProposalsByMemberQueryParams);
     const proposalListByMember = createdProposals?.pages.flatMap((page) => page.data);
 
-    const useDaoListByMemberUrlParams = { urlParams: memberAddressParams };
-    const { data: membersDaos } = useDaoListByMemberAddress(useDaoListByMemberUrlParams);
-    const daoListByMember = membersDaos?.pages.flatMap((page) => page.data);
-    const otherDaosOfMember = useMemo(() => {
-        return daoListByMember?.filter((memberDao) => memberDao.id !== daoId);
-    }, [daoListByMember, daoId]);
+    const daoListByMemberUrlParams = { urlParams: { address }, queryParams: { pageSize: 3 } };
 
     return (
         <>
@@ -190,32 +181,10 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             </DataListRoot>
                         </Page.Section>
                     )}
-                    {otherDaosOfMember && (
-                        <Page.Section title={t('app.governance.daoMemberDetailsPage.main.otherDaos.title')}>
-                            <DataListRoot entityLabel="Daos">
-                                <DataListContainer SkeletonElement={DaoDataListItem.Skeleton}>
-                                    {otherDaosOfMember.map(
-                                        (dao) => (
-                                            console.log(dao.avatar),
-                                            (
-                                                <DaoDataListItem.Structure
-                                                    key={dao.id}
-                                                    href={`/dao/${dao.id}/dashboard`}
-                                                    ens={daoUtils.getDaoEns(dao)}
-                                                    address={dao.address}
-                                                    name={dao.name}
-                                                    description={dao.description}
-                                                    network={networkDefinitions[dao.network].name}
-                                                    logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
-                                                    plugin={dao.plugins.map((plugin) => plugin.subdomain).join(',')}
-                                                />
-                                            )
-                                        ),
-                                    )}
-                                </DataListContainer>
-                            </DataListRoot>
-                        </Page.Section>
-                    )}
+
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.otherDaos.title')}>
+                        <DaoList daoListByMemberParams={daoListByMemberUrlParams} daoId={daoId} />
+                    </Page.Section>
                 </Page.Main>
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.aside.details.title')} inset={false}>

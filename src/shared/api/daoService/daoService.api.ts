@@ -3,7 +3,9 @@ import type {
     IPaginatedRequest,
     IRequestQueryParams,
     IRequestUrlParams,
+    IRequestUrlQueryParams,
 } from '../aragonBackendService';
+import { IGetDaoListByMemberQueryParams } from './daoService.api';
 
 export interface IGetDaoUrlParams {
     /**
@@ -23,11 +25,17 @@ export interface IGetDaoSettingsUrlParams {
 
 export interface IGetDaoSettingsParams extends IRequestUrlParams<IGetDaoSettingsUrlParams> {}
 
-export interface IGetDaoListByMemberQueryParams extends IPaginatedRequest, IOrderedRequest {
+export interface IGetDaoListByMemberUrlParams extends IPaginatedRequest, IOrderedRequest {
+    /**
+     * Address of the member to fetch the DAOs for
+     */
     address: string;
 }
 
-export interface IGetDaoListByMemberAddressParams extends IRequestUrlParams<IGetDaoListByMemberQueryParams> {}
+export interface IGetDaoListByMemberQueryParams extends IPaginatedRequest, IOrderedRequest {}
+
+export interface IGetDaoListByMemberAddressParams
+    extends IRequestUrlQueryParams<IGetDaoListByMemberUrlParams, IGetDaoListByMemberQueryParams> {}
 
 export interface IGetProposalListByMemberAddressQueryParams extends IPaginatedRequest, IOrderedRequest {
     /**

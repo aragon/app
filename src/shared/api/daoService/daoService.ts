@@ -32,8 +32,14 @@ class DaoService extends AragonBackendService {
         return result;
     };
 
-    getDaoListByMember = async ({ urlParams }: IGetDaoListByMemberAddressParams): Promise<IPaginatedResponse<IDao>> => {
-        const result = await this.request<IPaginatedResponse<IDao>>(this.urls.daoListByMemberAddress, { urlParams });
+    getDaoListByMember = async ({
+        urlParams,
+        queryParams,
+    }: IGetDaoListByMemberAddressParams): Promise<IPaginatedResponse<IDao>> => {
+        const result = await this.request<IPaginatedResponse<IDao>>(this.urls.daoListByMemberAddress, {
+            urlParams,
+            queryParams,
+        });
 
         return result;
     };

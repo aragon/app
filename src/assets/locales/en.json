@@ -96,7 +96,7 @@
     },
     "explore": {
       "daoList": {
-        "entity": "DAO"
+        "entity": "DAOs"
       }
     },
     "finance": {
