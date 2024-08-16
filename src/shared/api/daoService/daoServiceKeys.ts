@@ -3,6 +3,7 @@ import type {
     IGetDaoParams,
     IGetDaoSettingsParams,
     IGetProposalListByMemberAddressParams,
+    IGetVotesListByMemberAddressParams,
 } from './daoService.api';
 
 export enum DaoServiceKey {
@@ -10,6 +11,7 @@ export enum DaoServiceKey {
     DAO_SETTINGS = 'DAO_SETTINGS',
     DAO_LIST_BY_MEMBER_ADDRESS = 'DAO_LIST_BY_MEMBER_ADDRESS',
     PROPOSAL_LIST_BY_MEMBER_ADDRESS = 'PROPOSAL_LIST_BY_MEMBER_ADDRESS',
+    VOTES_LIST_BY_MEMBER_ADDRESS = 'VOTES_LIST_BY_MEMBER_ADDRESS',
 }
 
 export const daoServiceKeys = {
@@ -21,6 +23,10 @@ export const daoServiceKeys = {
     ],
     proposalListByMemberAddress: (params: IGetProposalListByMemberAddressParams) => [
         DaoServiceKey.PROPOSAL_LIST_BY_MEMBER_ADDRESS,
+        params,
+    ],
+    votesListByMemberAddress: (params: IGetVotesListByMemberAddressParams) => [
+        DaoServiceKey.VOTES_LIST_BY_MEMBER_ADDRESS,
         params,
     ],
 };

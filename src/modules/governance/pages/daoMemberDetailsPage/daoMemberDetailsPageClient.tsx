@@ -4,6 +4,7 @@ import { useDao } from '@/shared/api/daoService';
 
 import { useDaoListByMemberAddress } from '@/shared/api/daoService/queries/useDaoListByMemberAddress';
 import { useProposalListByMember } from '@/shared/api/daoService/queries/useProposalListByMemberAddress/useProposalListByMemberAddress';
+import { useVotesListByMember } from '@/shared/api/daoService/queries/useVotesListByMemberAddress/useVotesListByMemberAddress';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -28,6 +29,7 @@ import {
     ProposalDataListItem,
     ProposalStatus,
     useBlockExplorer,
+    VoteProposalDataListItem,
 } from '@aragon/ods';
 import { useMemo } from 'react';
 import { useMember } from '../../api/governanceService';
@@ -55,23 +57,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const daoIdParams = { daoId };
 
     const useMemberUrlQueryParams = { urlParams: memberAddressParams, queryParams: daoIdParams };
-
-    const useDaoListByMemberUrlParams = { urlParams: memberAddressParams };
-
-    const useProposalsByMemberParams = { daoId, creatorAddress: address };
-    const useProposalsByMemberQueryParams = { queryParams: useProposalsByMemberParams };
-
     const { data: member } = useMember(useMemberUrlQueryParams);
-    const { data: membersDaos } = useDaoListByMemberAddress(useDaoListByMemberUrlParams);
-
-    const daoListByMember = membersDaos?.pages.flatMap((page) => page.data);
-    const otherDaosOfMember = useMemo(() => {
-        return daoListByMember?.filter((memberDao) => memberDao.id !== daoId);
-    }, [daoListByMember, daoId]);
-
-    const { data: createdProposals } = useProposalListByMember(useProposalsByMemberQueryParams);
-
-    const proposalListByMember = createdProposals?.pages.flatMap((page) => page.data);
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -106,6 +92,23 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { href: `/dao/${daoId}/members`, label: t('app.governance.daoMemberDetailsPage.header.breadcrumb.members') },
         { label: memberName },
     ];
+
+    const useVotesByMemberParams = { daoId, address };
+    const useVotesByMemberQueryParams = { queryParams: useVotesByMemberParams };
+    const { data: votes } = useVotesListByMember(useVotesByMemberQueryParams);
+    const votesByMember = votes?.pages.flatMap((page) => page.data);
+
+    const useProposalsByMemberParams = { daoId, creatorAddress: address };
+    const useProposalsByMemberQueryParams = { queryParams: useProposalsByMemberParams };
+    const { data: createdProposals } = useProposalListByMember(useProposalsByMemberQueryParams);
+    const proposalListByMember = createdProposals?.pages.flatMap((page) => page.data);
+
+    const useDaoListByMemberUrlParams = { urlParams: memberAddressParams };
+    const { data: membersDaos } = useDaoListByMemberAddress(useDaoListByMemberUrlParams);
+    const daoListByMember = membersDaos?.pages.flatMap((page) => page.data);
+    const otherDaosOfMember = useMemo(() => {
+        return daoListByMember?.filter((memberDao) => memberDao.id !== daoId);
+    }, [daoListByMember, daoId]);
 
     return (
         <>
@@ -143,35 +146,40 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             </Page.Header>
             <Page.Content>
                 <Page.Main>
-                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
-                        {/* <DataListRoot entityLabel="MOCK">
-                            {member.metrics.delegateReceivedCount > 0 && (
-                                <DataListContainer SkeletonElement={MemberDataListItem.Skeleton}>
-                                    {delegators?.map((delegator) => {
-                                        <MemberDataListItem.Structure
-                                            address={address}
-                                            ensName={delegator.ens}
-                                            avatarSrc={delegator.avatar}
-                                        />;
-                                    })}
+                    {votesByMember && (
+                        <Page.Section title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
+                            <DataListRoot entityLabel="MOCK">
+                                <DataListContainer SkeletonElement={VoteProposalDataListItem.Skeleton}>
+                                    {votesByMember.map((vote) => (
+                                        <VoteProposalDataListItem.Structure
+                                            // TODO: Replace with real proposal title
+                                            proposalTitle={vote.network}
+                                            proposalId={`PIP-${vote.proposalId}`}
+                                            key={vote.transactionHash}
+                                            // TODO: Replace with real proposal URL, needs hash or proposal ID from backend
+                                            href={`/dao/${daoId}/proposals/${vote.proposalId}`}
+                                            // TODO: Replace with real vote indicator
+                                            voteIndicator="abstain"
+                                            date={vote.blockTimestamp}
+                                        />
+                                    ))}
                                 </DataListContainer>
-                            )}
-                        </DataListRoot> */}
-                    </Page.Section>
+                            </DataListRoot>
+                        </Page.Section>
+                    )}
                     {proposalListByMember && (
                         <Page.Section title={t('app.governance.daoMemberDetailsPage.main.proposalsCreation.title')}>
                             <DataListRoot entityLabel="MOCK ENTITY">
                                 <DataListContainer SkeletonElement={ProposalDataListItem.Skeleton}>
-                                    {proposalListByMember?.map((proposal) => (
+                                    {proposalListByMember.map((proposal) => (
                                         <ProposalDataListItem.Structure
-                                            className="min-w-0"
+                                            type="approvalThreshold"
                                             key={proposal.id}
                                             title={proposal.title}
                                             summary={proposal.summary}
                                             date={proposal.endDate * 1000}
                                             href={`/dao/${daoId}/proposals/${proposal.id}`}
                                             status={ProposalStatus.ACTIVE}
-                                            type="majorityVoting"
                                             publisher={{
                                                 address: proposal.creatorAddress,
                                                 link: `members/${proposal.creatorAddress}`,
@@ -186,19 +194,24 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                         <Page.Section title={t('app.governance.daoMemberDetailsPage.main.otherDaos.title')}>
                             <DataListRoot entityLabel="Daos">
                                 <DataListContainer SkeletonElement={DaoDataListItem.Skeleton}>
-                                    {otherDaosOfMember.map((dao) => (
-                                        <DaoDataListItem.Structure
-                                            key={dao.id}
-                                            href={`/dao/${dao.id}/dashboard`}
-                                            ens={daoUtils.getDaoEns(dao)}
-                                            address={dao.address}
-                                            name={dao.name}
-                                            description={dao.description}
-                                            network={networkDefinitions[dao.network].name}
-                                            logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
-                                            plugin={dao.plugins.map((plugin) => plugin.subdomain).join(',')}
-                                        />
-                                    ))}
+                                    {otherDaosOfMember.map(
+                                        (dao) => (
+                                            console.log(dao.avatar),
+                                            (
+                                                <DaoDataListItem.Structure
+                                                    key={dao.id}
+                                                    href={`/dao/${dao.id}/dashboard`}
+                                                    ens={daoUtils.getDaoEns(dao)}
+                                                    address={dao.address}
+                                                    name={dao.name}
+                                                    description={dao.description}
+                                                    network={networkDefinitions[dao.network].name}
+                                                    logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
+                                                    plugin={dao.plugins.map((plugin) => plugin.subdomain).join(',')}
+                                                />
+                                            )
+                                        ),
+                                    )}
                                 </DataListContainer>
                             </DataListRoot>
                         </Page.Section>

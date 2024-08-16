@@ -29,16 +29,30 @@ export interface IGetDaoListByMemberQueryParams extends IPaginatedRequest, IOrde
 
 export interface IGetDaoListByMemberAddressParams extends IRequestUrlParams<IGetDaoListByMemberQueryParams> {}
 
-export interface IGetProposalListByMemberQueryParams extends IPaginatedRequest, IOrderedRequest {
+export interface IGetProposalListByMemberAddressQueryParams extends IPaginatedRequest, IOrderedRequest {
     /**
      * Address of the member to fetch the proposals for.
      */
     creatorAddress: string;
     /**
-     * ID of the DAO to fetch the proposals for.
+     * ID of the DAO to fetch the proposals created by the member for.
      */
     daoId: string;
 }
 
 export interface IGetProposalListByMemberAddressParams
-    extends IRequestQueryParams<IGetProposalListByMemberQueryParams> {}
+    extends IRequestQueryParams<IGetProposalListByMemberAddressQueryParams> {}
+
+export interface IGetVotesListByMemberAddressQueryParams extends IPaginatedRequest, IOrderedRequest {
+    /**
+     * Address of the member to fetch the votes for.
+     */
+    address: string;
+    /**
+     * ID of the DAO to fetch the votes of the member for.
+     */
+    daoId: string;
+}
+
+export interface IGetVotesListByMemberAddressParams
+    extends IRequestQueryParams<IGetVotesListByMemberAddressQueryParams> {}

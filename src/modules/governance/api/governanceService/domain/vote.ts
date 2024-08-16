@@ -14,7 +14,23 @@ export interface IVote {
      */
     memberAddress: string;
     /**
-     * Network where the vote has been casted.
+     * Network where the vote has been cast.
      */
     network: Network;
+    /**
+     * ID of the DAO where the vote has been cast.
+     */
+    daoId?: string;
+    /**
+     * ID of the proposal where the vote has been cast.
+     */
+    proposalId?: string;
+    /**
+     * Name of the proposal where the vote has been cast.
+     */
+    proposalName?: string;
+    /**
+     * Vote casted by the member.
+     */
+    vote?: 'yes' | 'no' | 'abstain';
 }
