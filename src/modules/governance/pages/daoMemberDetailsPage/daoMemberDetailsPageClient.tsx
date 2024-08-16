@@ -114,6 +114,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                 </div>
             </Page.Header>
             <Page.Content>
+                {/** BEGIN CONTENT WORK **/}
                 <Page.Main />
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.aside.details.title')} inset={false}>
