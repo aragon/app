@@ -1,7 +1,6 @@
 'use client';
 
-import { type IGetDaoListByMemberAddressParams } from '@/shared/api/daoService';
-import { useDaoListByMemberAddress } from '@/shared/api/daoService/queries/useDaoListByMemberAddress';
+import { useDaoListByMemberAddress, type IGetDaoListByMemberAddressParams } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -57,7 +56,6 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         enabled: !!daoListByMemberParams && !initialParams,
     }) || {};
 
-    // No need for nullish checks; flatMap will just work with the default empty array
     const daoListExplore = daoListData.pages.flatMap((page) => page.data);
     const onlyOtherDaos = useMemo(() => {
         const daoListByMember = daoListByMemberData.pages.flatMap((page) => page.data);

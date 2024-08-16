@@ -1,4 +1,4 @@
-import * as useDaoListByMemberAddress from '@/shared/api/daoService/queries/useDaoListByMemberAddress';
+import * as useDaoListByMemberAddress from '@/shared/api/daoService';
 import {
     generateDao,
     generatePaginatedResponse,

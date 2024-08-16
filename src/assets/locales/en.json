@@ -216,9 +216,8 @@
           }
         },
         "main": {
-          "otherDaos": {
-            "title": "Other DAO memberships",
-            "entity": "DAOs"
+          "daoMemberships": {
+            "title": "Other DAO memberships"
           },
           "proposals": "Proposals",
           "votes": "Votes",

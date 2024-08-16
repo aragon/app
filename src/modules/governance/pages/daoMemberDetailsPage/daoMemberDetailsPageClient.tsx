@@ -118,7 +118,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             </Page.Header>
             <Page.Content>
                 <Page.Main>
-                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.otherDaos.title')}>
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.daoMemberships.title')}>
                         <DaoList daoListByMemberParams={daoListByMemberParams} daoId={daoId} />
                     </Page.Section>
                 </Page.Main>
