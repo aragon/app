@@ -6,6 +6,10 @@ class IpfsUtils {
             return `${this.ipfsGateway}/${cid.replace('://', '/')}`;
         }
 
+        if (cid?.startsWith('https://aragon-1.mypinata.cloud')) {
+            return cid;
+        }
+
         return cid != null ? `${this.ipfsGateway}/ipfs/${cid}` : undefined;
     };
 }
