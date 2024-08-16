@@ -45,7 +45,7 @@
       "connectWalletDialog": {
         "app": "Aragon App",
         "connect": "wants to connect to your wallet",
-        "auditLink": "https://aragon.org",
+        "auditLink": "https://github.com/aragon/osx/blob/v1.3.0/audits/AragonOSx-security-audit-report-halborn.pdf",
         "feature": {
           "permissions": "View only permissions",
           "stats": "Trusted by +7,500 DAOs and +$27B",
@@ -58,6 +58,12 @@
         "screenReader": {
           "title": "Connect wallet",
           "description": "Connect your wallet to Aragon App"
+        }
+      },
+      "userDialog": {
+        "screenReader": {
+          "title": "Connected user",
+          "description": "Information about the the connected user"
         }
       }
     },

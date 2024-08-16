@@ -9,7 +9,7 @@ import { Button, DaoAvatar, IconType, Wallet, addressUtils, clipboardUtils } fro
 import classNames from 'classnames';
 import { useState } from 'react';
 import { mainnet } from 'viem/chains';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
@@ -24,7 +24,6 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const { id, containerClasses, ...otherProps } = props;
 
     const { address, isConnected } = useAccount();
-    const { disconnect } = useDisconnect();
     const { open } = useDialogContext();
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -35,11 +34,8 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const handleCopyClick = () => clipboardUtils.copy(dao!.address);
 
     const handleWalletClick = () => {
-        if (isConnected) {
-            disconnect();
-        } else {
-            open(ApplicationDialog.CONNECT_WALLET);
-        }
+        const dialog = isConnected ? ApplicationDialog.USER : ApplicationDialog.CONNECT_WALLET;
+        open(dialog);
     };
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
