@@ -44,8 +44,10 @@ class DaoService extends AragonBackendService {
         return result;
     };
 
-    getProposalListByMemberAddress = async ({ queryParams }: IGetProposalListByMemberAddressParams) => {
-        const result = await this.request<IPaginatedResponse<IProposal>>(this.urls.proposalListByMemberAddress, {
+    getProposalListByMemberAddress = async <TProposal extends IProposal = IProposal>({
+        queryParams,
+    }: IGetProposalListByMemberAddressParams) => {
+        const result = await this.request<IPaginatedResponse<TProposal>>(this.urls.proposalListByMemberAddress, {
             queryParams,
         });
 

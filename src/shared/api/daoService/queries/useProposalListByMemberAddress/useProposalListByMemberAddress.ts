@@ -6,20 +6,20 @@ import { daoService } from '../../daoService';
 import type { IGetProposalListByMemberAddressParams } from '../../daoService.api';
 import { daoServiceKeys } from '../../daoServiceKeys';
 
-export const proposalListByMemberOptions = (
+export const proposalListByMemberOptions = <TProposal extends IProposal = IProposal>(
     params: IGetProposalListByMemberAddressParams,
-    options?: InfiniteQueryOptions<IPaginatedResponse<IProposal>, IGetProposalListByMemberAddressParams>,
-): SharedInfiniteQueryOptions<IPaginatedResponse<IProposal>, IGetProposalListByMemberAddressParams> => ({
+    options?: InfiniteQueryOptions<IPaginatedResponse<TProposal>, IGetProposalListByMemberAddressParams>,
+): SharedInfiniteQueryOptions<IPaginatedResponse<TProposal>, IGetProposalListByMemberAddressParams> => ({
     queryKey: daoServiceKeys.proposalListByMemberAddress(params),
     initialPageParam: params,
-    queryFn: () => daoService.getProposalListByMemberAddress(params),
+    queryFn: ({ pageParam }) => daoService.getProposalListByMemberAddress(pageParam),
     getNextPageParam: daoService.getNextPageParamsQuery,
     ...options,
 });
 
-export const useProposalListByMember = (
+export const useProposalListByMemberAddress = <TProposal extends IProposal = IProposal>(
     params: IGetProposalListByMemberAddressParams,
-    options?: InfiniteQueryOptions<IPaginatedResponse<IProposal>, IGetProposalListByMemberAddressParams>,
+    options?: InfiniteQueryOptions<IPaginatedResponse<TProposal>, IGetProposalListByMemberAddressParams>,
 ) => {
     return useInfiniteQuery(proposalListByMemberOptions(params, options));
 };

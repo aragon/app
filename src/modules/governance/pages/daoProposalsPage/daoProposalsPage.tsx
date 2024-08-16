@@ -17,7 +17,7 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
     const { params } = props;
 
     const queryClient = new QueryClient();
-
+    console.log('params', params);
     const proposalListQueryParams = { daoId: params.id, pageSize: daoProposalsCount };
     const proposalListParams = { queryParams: proposalListQueryParams };
     await queryClient.prefetchInfiniteQuery(proposalListOptions(proposalListParams));

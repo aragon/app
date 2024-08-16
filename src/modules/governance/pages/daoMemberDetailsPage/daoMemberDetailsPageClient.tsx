@@ -3,7 +3,7 @@
 import { useDao } from '@/shared/api/daoService';
 
 import { DaoList } from '@/modules/explore/components/daoList';
-import { useProposalListByMember } from '@/shared/api/daoService/queries/useProposalListByMemberAddress/useProposalListByMemberAddress';
+import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { useVotesListByMember } from '@/shared/api/daoService/queries/useVotesListByMemberAddress/useVotesListByMemberAddress';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
@@ -23,8 +23,6 @@ import {
     IconType,
     Link,
     MemberAvatar,
-    ProposalDataListItem,
-    ProposalStatus,
     useBlockExplorer,
     VoteProposalDataListItem,
 } from '@aragon/ods';
@@ -94,10 +92,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const { data: votes } = useVotesListByMember(useVotesByMemberQueryParams);
     const votesByMember = votes?.pages.flatMap((page) => page.data);
 
-    const useProposalsByMemberParams = { daoId, creatorAddress: address };
-    const useProposalsByMemberQueryParams = { queryParams: useProposalsByMemberParams };
-    const { data: createdProposals } = useProposalListByMember(useProposalsByMemberQueryParams);
-    const proposalListByMember = createdProposals?.pages.flatMap((page) => page.data);
+    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: 3 } };
 
     const daoListByMemberUrlParams = { urlParams: { address }, queryParams: { pageSize: 3 } };
 
@@ -158,29 +153,10 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             </DataListRoot>
                         </Page.Section>
                     )}
-                    {proposalListByMember && (
-                        <Page.Section title={t('app.governance.daoMemberDetailsPage.main.proposalsCreation.title')}>
-                            <DataListRoot entityLabel="MOCK ENTITY">
-                                <DataListContainer SkeletonElement={ProposalDataListItem.Skeleton}>
-                                    {proposalListByMember.map((proposal) => (
-                                        <ProposalDataListItem.Structure
-                                            type="approvalThreshold"
-                                            key={proposal.id}
-                                            title={proposal.title}
-                                            summary={proposal.summary}
-                                            date={proposal.endDate * 1000}
-                                            href={`/dao/${daoId}/proposals/${proposal.id}`}
-                                            status={ProposalStatus.ACTIVE}
-                                            publisher={{
-                                                address: proposal.creatorAddress,
-                                                link: `members/${proposal.creatorAddress}`,
-                                            }}
-                                        />
-                                    ))}
-                                </DataListContainer>
-                            </DataListRoot>
-                        </Page.Section>
-                    )}
+
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.proposalsCreation.title')}>
+                        <DaoProposalList byMemberAddressParams={proposalsByMemberParams} daoId={daoId} />
+                    </Page.Section>
 
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.otherDaos.title')}>
                         <DaoList daoListByMemberParams={daoListByMemberUrlParams} daoId={daoId} />

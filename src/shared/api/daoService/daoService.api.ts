@@ -5,7 +5,6 @@ import type {
     IRequestUrlParams,
     IRequestUrlQueryParams,
 } from '../aragonBackendService';
-import { IGetDaoListByMemberQueryParams } from './daoService.api';
 
 export interface IGetDaoUrlParams {
     /**

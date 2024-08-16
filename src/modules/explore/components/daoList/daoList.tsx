@@ -31,6 +31,12 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     const { initialParams, daoListByMemberParams, daoId } = props;
     const { t } = useTranslations();
 
+    if (!initialParams && !daoListByMemberParams) {
+        throw new Error(
+            'Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.',
+        );
+    }
+
     const {
         data: daoListData,
         fetchNextPage: fetchNextPageExplore,
@@ -55,16 +61,12 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
 
     const daoListByMember = daoListByMemberData?.pages.flatMap((page) => page.data) ?? [];
 
-    // Filter out the DAO by the provided `daoId`
-    const otherDaosOfMember = useMemo(() => {
+    const onlyOtherDaos = useMemo(() => {
         return daoListByMember.filter((memberDao) => memberDao.id !== daoId);
     }, [daoListByMember, daoId]);
 
-    // Determine which DAO list to display
-    const processedDaoList = initialParams ? daoListExplore : otherDaosOfMember;
     const fetchNextPage = initialParams ? fetchNextPageExplore : fetchNextPageListByMember;
 
-    // Handle loading state and pagination data
     const state = dataListUtils.queryToDataListState({
         status: initialParams ? statusExplore : statusListByMember,
         fetchStatus: initialParams ? fetchStatusExplore : fetchStatusListByMember,
@@ -76,9 +78,14 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         daoListData?.pages[0]?.metadata.pageSize ??
         daoListByMemberParams?.queryParams.pageSize ??
         daoListByMemberData?.pages[0]?.metadata.pageSize;
-    const itemsCount =
-        daoListData?.pages[0]?.metadata.totalRecords ?? daoListByMemberData?.pages[0]?.metadata.totalRecords;
 
+    const itemsCount = initialParams
+        ? daoListData?.pages[0]?.metadata?.totalRecords
+        : daoListByMemberData?.pages[0]?.metadata?.totalRecords !== undefined
+          ? daoListByMemberData.pages[0].metadata.totalRecords - 1
+          : daoListByMemberData?.pages[0]?.metadata?.totalRecords;
+
+    const processedDaoList = initialParams ? daoListExplore : onlyOtherDaos;
     const daoListClassNames = classNames({ 'grid grid-cols-1 lg:grid-cols-2': initialParams != null });
 
     return (
