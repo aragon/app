@@ -14,7 +14,7 @@ jest.mock('@aragon/ods', () => ({
     MemberAvatar: (props: { src: string }) => <div data-testid="avatar-mock" data-src={props.src} />,
 }));
 
-jest.mock('@/modules/explore/components/DaoList', () => ({
+jest.mock('../../../explore/components/daoList', () => ({
     DaoList: jest.fn(() => <div data-testid="dao-list-mock" />),
 }));
 
