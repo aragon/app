@@ -1,5 +1,6 @@
 'use client';
 
+import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
@@ -79,6 +80,8 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { label: memberName },
     ];
 
+    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: 3 } };
+
     return (
         <>
             <Page.Header
@@ -115,7 +118,12 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             </Page.Header>
             <Page.Content>
                 {/** BEGIN CONTENT WORK **/}
-                <Page.Main />
+                <Page.Main>
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.proposalsCreation.title')}>
+                        <DaoProposalList byMemberAddressParams={proposalsByMemberParams} daoId={daoId} />
+                    </Page.Section>
+                </Page.Main>
+                .
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>

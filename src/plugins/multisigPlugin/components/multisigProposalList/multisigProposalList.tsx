@@ -8,12 +8,12 @@ import { MultisigProposalListItem } from './multisigProposalListItem';
 export interface IMultisigProposalListProps extends IDaoProposalListProps {}
 
 export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props) => {
-    const { initialParams, hidePagination, children } = props;
+    const { daoId, initialParams, byMemberAddressParams, hidePagination, children } = props;
 
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
-        useProposalListData<IMultisigProposal>(initialParams);
+        useProposalListData<IMultisigProposal>(initialParams ?? byMemberAddressParams);
 
     return (
         <DataListRoot
@@ -30,11 +30,7 @@ export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props
                 emptyState={emptyState}
             >
                 {proposalList?.map((proposal) => (
-                    <MultisigProposalListItem
-                        key={proposal.id}
-                        proposal={proposal}
-                        daoId={initialParams.queryParams.daoId}
-                    />
+                    <MultisigProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}

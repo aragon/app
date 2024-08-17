@@ -8,12 +8,12 @@ import { TokenProposalListItem } from './tokenProposalListItem';
 export interface ITokenProposalListProps extends IDaoProposalListProps {}
 
 export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
-    const { initialParams, hidePagination, children } = props;
+    const { daoId, initialParams, byMemberAddressParams, hidePagination, children } = props;
 
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
-        useProposalListData<ITokenProposal>(initialParams);
+        useProposalListData<ITokenProposal>(initialParams ?? byMemberAddressParams);
 
     return (
         <DataListRoot
@@ -30,11 +30,7 @@ export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
                 layoutClassName="grid grid-cols-1"
             >
                 {proposalList?.map((proposal) => (
-                    <TokenProposalListItem
-                        key={proposal.id}
-                        proposal={proposal}
-                        daoId={initialParams.queryParams.daoId}
-                    />
+                    <TokenProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}

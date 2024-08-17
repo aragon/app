@@ -214,6 +214,11 @@
             "ens": "ENS",
             "firstActivity": "First activity"
           }
+        },
+        "main": {
+          "proposalsCreation": {
+            "title": "Proposals creation"
+          }
         }
       },
       "daoProposalDetailsPage": {
