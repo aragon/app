@@ -1,6 +1,6 @@
 import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { DaoTokenVotingMode, VoteOption, type ITokenProposal } from '../../types';
+import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
 class TokenProposalUtils {
@@ -11,10 +11,13 @@ class TokenProposalUtils {
         const endDate = DateTime.fromMillis(proposal.endDate * 1000);
 
         const approvalReached = this.isApprovalReached(proposal);
-        const isSignalingProposal = proposal.actions.length === 0;
+        const approvalReachedEarly = this.isApprovalReached(proposal, true);
 
+        const isSignalingProposal = proposal.actions.length === 0;
         const isEarlyExecution = proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION;
-        const isExecutable = approvalReached && (now >= endDate || isEarlyExecution) && !isSignalingProposal;
+
+        const isExecutable =
+            ((approvalReached && now >= endDate) || (isEarlyExecution && approvalReachedEarly)) && !isSignalingProposal;
 
         if (proposal.executed.status === true) {
             return ProposalStatus.EXECUTED;
@@ -35,9 +38,9 @@ class TokenProposalUtils {
         return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED;
     };
 
-    isApprovalReached = (proposal: ITokenProposal): boolean => {
+    isApprovalReached = (proposal: ITokenProposal, early?: boolean): boolean => {
         const isMinParticipationReached = this.isMinParticipationReached(proposal);
-        const isSupportReached = this.isSupportReached(proposal);
+        const isSupportReached = this.isSupportReached(proposal, early);
 
         return isMinParticipationReached && isSupportReached;
     };
@@ -47,32 +50,35 @@ class TokenProposalUtils {
         const { totalSupply } = proposal.token;
 
         const parsedTotalSupply = BigInt(totalSupply);
+        const parsedMinParticipation = BigInt(tokenSettingsUtils.parsePercentageSetting(minParticipation));
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;
         }
 
         const totalVotes = this.getTotalVotes(proposal);
-        const totalVotesPercentage = (totalVotes * BigInt(100)) / parsedTotalSupply;
+        const minVotingPower = (parsedTotalSupply * parsedMinParticipation) / BigInt(100);
 
-        return totalVotesPercentage >= tokenSettingsUtils.parsePercentageSetting(minParticipation);
+        return totalVotes >= minVotingPower;
     };
 
-    isSupportReached = (proposal: ITokenProposal): boolean => {
+    isSupportReached = (proposal: ITokenProposal, early?: boolean): boolean => {
         const { supportThreshold } = proposal.settings;
         const { votesByOption } = proposal.metrics;
+        const { totalSupply } = proposal.token;
 
-        const totalVotes = this.getTotalVotes(proposal);
+        const parsedSupport = BigInt(tokenSettingsUtils.parsePercentageSetting(supportThreshold));
 
-        if (totalVotes === BigInt(0)) {
-            return false;
-        }
+        const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
+        const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
 
-        const yesVotes = votesByOption.find((optionVotes) => optionVotes.type === VoteOption.YES);
-        const parsedYesVotes = BigInt(tokenSettingsUtils.fromScientificNotation(yesVotes?.totalVotingPower));
-        const yesVotesPercentage = (parsedYesVotes * BigInt(100)) / totalVotes;
+        const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
+        const noVotesWorstCase = BigInt(totalSupply) - yesVotes - abstainVotes;
 
-        return yesVotesPercentage >= tokenSettingsUtils.parsePercentageSetting(supportThreshold);
+        // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
+        const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
+
+        return (BigInt(100) - parsedSupport) * yesVotes > parsedSupport * noVotesComparator;
     };
 
     getTotalVotes = (proposal: ITokenProposal): bigint => {
@@ -85,6 +91,12 @@ class TokenProposalUtils {
         );
 
         return totalVotes;
+    };
+
+    getVoteByType = (votes: ITokenProposalOptionVotes[], type: VoteOption) => {
+        const optionVotes = votes.find((option) => option.type === type);
+
+        return BigInt(tokenSettingsUtils.fromScientificNotation(optionVotes?.totalVotingPower));
     };
 }
 
