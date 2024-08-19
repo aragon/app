@@ -9,7 +9,7 @@ describe('<TokenProposalList /> component', () => {
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
-            proposalList: undefined,
+            proposalList: [],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
@@ -25,7 +25,7 @@ describe('<TokenProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenProposalListProps>) => {
         const completeProps: ITokenProposalListProps = {
-            initialParams: { queryParams: { daoId: 'dao-id' } },
+            daoId: 'dao-id',
             ...props,
         };
 
@@ -75,5 +75,41 @@ describe('<TokenProposalList /> component', () => {
         const children = 'test-children';
         render(createTestComponent({ children }));
         expect(screen.getByText(children)).toBeInTheDocument();
+    });
+
+    it('uses initialParams when only initialParams is provided', () => {
+        const initialParams = { queryParams: { daoId: 'dao-test' } };
+        useProposalListDataSpy.mockReturnValue({
+            proposalList: [],
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: 0,
+            onLoadMore: jest.fn(),
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent({ initialParams }));
+
+        expect(useProposalListDataSpy).toHaveBeenCalledWith(initialParams);
+    });
+
+    it('uses byMemberAddressParams when only byMemberAddressParams is provided', () => {
+        const byMemberAddressParams = {
+            queryParams: { daoId: 'dao-test', creatorAddress: '0x1234567890123456789012345678901234567890' },
+        };
+        useProposalListDataSpy.mockReturnValue({
+            proposalList: [],
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: 0,
+            onLoadMore: jest.fn(),
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent({ byMemberAddressParams }));
+
+        expect(useProposalListDataSpy).toHaveBeenCalledWith(byMemberAddressParams);
     });
 });

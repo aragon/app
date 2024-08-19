@@ -10,14 +10,15 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(
 ) => {
     const { t } = useTranslations();
 
+    if (initialParams && byMemberAddressParams) {
+        throw new Error('You cannot provide both `initialParams` and `byMemberAddressParams`.');
+    }
     if (!initialParams && !byMemberAddressParams) {
-        throw new Error(
-            'Either `initialParams` or `byMemberAddressParams` must be provided. You can not provide both.',
-        );
+        throw new Error('You must provide either `initialParams` or `byMemberAddressParams`.');
     }
 
     const {
-        data: proposalListData,
+        data: proposalListData = { pages: [] },
         status: proposalListStatus,
         fetchStatus: proposalListFetchStatus,
         isFetchingNextPage: proposalListIsFetchingNextPage,
@@ -27,7 +28,7 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(
     });
 
     const {
-        data: proposalListByMemberData,
+        data: proposalListByMemberData = { pages: [] },
         status: proposalListByMemberStatus,
         fetchStatus: proposalListByMemberFetchStatus,
         isFetchingNextPage: proposalListByMemberIsFetchingNextPage,
@@ -42,23 +43,19 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(
     const proposalList = initialParams
         ? proposalListData?.pages.flatMap((page) => page.data)
         : proposalListByMemberData?.pages.flatMap((page) => page.data);
-    const state = initialParams
-        ? dataListUtils.queryToDataListState({
-              status: proposalListStatus,
-              fetchStatus: proposalListFetchStatus,
-              isFetchingNextPage: proposalListIsFetchingNextPage,
-          })
-        : dataListUtils.queryToDataListState({
-              status: proposalListByMemberStatus,
-              fetchStatus: proposalListByMemberFetchStatus,
-              isFetchingNextPage: proposalListByMemberIsFetchingNextPage,
-          });
+
+    const state = dataListUtils.queryToDataListState({
+        status: initialParams ? proposalListStatus : proposalListByMemberStatus,
+        fetchStatus: initialParams ? proposalListFetchStatus : proposalListByMemberFetchStatus,
+        isFetchingNextPage: initialParams ? proposalListIsFetchingNextPage : proposalListByMemberIsFetchingNextPage,
+    });
 
     const pageSize =
         initialParams?.queryParams.pageSize ??
         proposalListData?.pages[0]?.metadata.pageSize ??
         byMemberAddressParams?.queryParams.pageSize ??
         proposalListByMemberData?.pages[0]?.metadata.pageSize;
+
     const itemsCount =
         proposalListData?.pages[0]?.metadata.totalRecords ?? proposalListByMemberData?.pages[0]?.metadata.totalRecords;
 
