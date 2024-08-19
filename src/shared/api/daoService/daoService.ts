@@ -1,4 +1,4 @@
-import { IProposal } from '@/modules/governance/api/governanceService';
+import { type IProposal } from '@/modules/governance/api/governanceService';
 import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
 import type { IGetDaoParams, IGetDaoSettingsParams, IGetProposalListByMemberAddressParams } from './daoService.api';
 import type { IDao, IDaoSettings } from './domain';

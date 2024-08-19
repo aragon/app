@@ -120,7 +120,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             <Page.Content>
                 <Page.Main>
                     <Page.Section title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
-                        <DaoProposalList initialParams={proposalListParams} hidePagination={true}>
+                        <DaoProposalList initialParams={proposalListParams} hidePagination={true} daoId={daoId}>
                             <Button
                                 className="self-start"
                                 variant="tertiary"

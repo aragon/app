@@ -1,5 +1,5 @@
-import { IGetProposalListParams } from '@/modules/governance/api/governanceService';
-import { IGetProposalListByMemberAddressParams } from '@/shared/api/daoService';
+import { type IGetProposalListParams } from '@/modules/governance/api/governanceService';
+import { type IGetProposalListByMemberAddressParams } from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
