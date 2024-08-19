@@ -97,6 +97,46 @@ describe('tokenProposal utils', () => {
         });
     });
 
+    describe('getWinningOption', () => {
+        const isSupportReachedSpy = jest.spyOn(tokenProposalUtils, 'isSupportReached');
+
+        afterEach(() => {
+            isSupportReachedSpy.mockReset();
+        });
+
+        it('returns undefined on empty votes list', () => {
+            const proposal = generateTokenProposal({ metrics: { votesByOption: [] } });
+            expect(tokenProposalUtils.getWinningOption(proposal)).toBeUndefined();
+        });
+
+        it('returns yes when support is reached', () => {
+            const votes = [{ type: VoteOption.YES, totalVotingPower: '10' }];
+            const proposal = generateTokenProposal({ metrics: { votesByOption: votes } });
+            isSupportReachedSpy.mockReturnValue(true);
+            expect(tokenProposalUtils.getWinningOption(proposal)).toEqual(VoteOption.YES);
+        });
+
+        it('returns abstain when support is not reached and abstain votes are greater than the no votes', () => {
+            isSupportReachedSpy.mockReturnValue(false);
+            const votes = [
+                { type: VoteOption.ABSTAIN, totalVotingPower: '500' },
+                { type: VoteOption.NO, totalVotingPower: '400' },
+            ];
+            const proposal = generateTokenProposal({ metrics: { votesByOption: votes } });
+            expect(tokenProposalUtils.getWinningOption(proposal)).toEqual(VoteOption.ABSTAIN);
+        });
+
+        it('returns no when support is not reached and no votes are greater than the abstain votes', () => {
+            isSupportReachedSpy.mockReturnValue(false);
+            const votes = [
+                { type: VoteOption.ABSTAIN, totalVotingPower: '100' },
+                { type: VoteOption.NO, totalVotingPower: '120' },
+            ];
+            const proposal = generateTokenProposal({ metrics: { votesByOption: votes } });
+            expect(tokenProposalUtils.getWinningOption(proposal)).toEqual(VoteOption.NO);
+        });
+    });
+
     describe('isApprovalReached', () => {
         const isMinParticipationReachedSpy = jest.spyOn(tokenProposalUtils, 'isMinParticipationReached');
         const isSupportReachedSpy = jest.spyOn(tokenProposalUtils, 'isSupportReached');
@@ -262,6 +302,16 @@ describe('tokenProposal utils', () => {
             const votesByOption: ITokenProposalOptionVotes[] = [];
             const proposal = generateTokenProposal({ metrics: { votesByOption } });
             expect(tokenProposalUtils.getTotalVotes(proposal)).toEqual(BigInt('0'));
+        });
+
+        it('excludes the abstain votes when excludeAbstain parameter is set to true', () => {
+            const votesByOption = [
+                { type: VoteOption.YES, totalVotingPower: '15' },
+                { type: VoteOption.NO, totalVotingPower: '40' },
+                { type: VoteOption.ABSTAIN, totalVotingPower: '80' },
+            ];
+            const proposal = generateTokenProposal({ metrics: { votesByOption } });
+            expect(tokenProposalUtils.getTotalVotes(proposal, true)).toEqual(BigInt('55'));
         });
     });
 

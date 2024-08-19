@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat, ProposalDataListItem } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { type ITokenProposal, VoteOption } from '../../types';
+import { type ITokenProposal } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 
 export interface ITokenProposalListItemProps {
@@ -17,21 +17,13 @@ export interface ITokenProposalListItemProps {
 
 const getWinningOption = (proposal: ITokenProposal) => {
     const { votesByOption } = proposal.metrics;
-    const { decimals } = proposal.token;
+    const { decimals, symbol } = proposal.token;
 
-    if (!votesByOption.length) {
+    const winningOption = tokenProposalUtils.getWinningOption(proposal);
+
+    if (!winningOption) {
         return undefined;
     }
-
-    const abstainVotes = tokenProposalUtils.getVoteByType(votesByOption, VoteOption.ABSTAIN);
-    const noVotes = tokenProposalUtils.getVoteByType(votesByOption, VoteOption.NO);
-    const yesVotes = tokenProposalUtils.getVoteByType(votesByOption, VoteOption.YES);
-
-    const winningOption = tokenProposalUtils.isSupportReached(proposal)
-        ? VoteOption.YES
-        : abstainVotes > noVotes
-          ? VoteOption.ABSTAIN
-          : VoteOption.NO;
 
     const winningOptionAmount = tokenProposalUtils.getVoteByType(votesByOption, winningOption);
     const parsedWinningOptionAmount = formatUnits(winningOptionAmount, decimals);
@@ -39,12 +31,12 @@ const getWinningOption = (proposal: ITokenProposal) => {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     })!;
 
-    const yesNoVotes = yesVotes + noVotes;
+    const yesNoVotes = tokenProposalUtils.getTotalVotes(proposal, true);
     const winningOptionPercentage = yesNoVotes > 0 ? (winningOptionAmount * BigInt(100)) / yesNoVotes : 100;
 
     return {
         option: `app.plugins.token.tokenProposalListItem.${winningOption}`,
-        voteAmount: formattedWinningOptionAmount,
+        voteAmount: `${formattedWinningOptionAmount} ${symbol}`,
         votePercentage: Number(winningOptionPercentage),
     };
 };

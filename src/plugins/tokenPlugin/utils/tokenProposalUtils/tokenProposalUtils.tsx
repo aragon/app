@@ -38,6 +38,25 @@ class TokenProposalUtils {
         return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED;
     };
 
+    getWinningOption = (proposal: ITokenProposal): VoteOption | undefined => {
+        const { votesByOption } = proposal.metrics;
+
+        if (!votesByOption.length) {
+            return undefined;
+        }
+
+        const abstainVotes = tokenProposalUtils.getVoteByType(votesByOption, VoteOption.ABSTAIN);
+        const noVotes = tokenProposalUtils.getVoteByType(votesByOption, VoteOption.NO);
+
+        const winningOption = tokenProposalUtils.isSupportReached(proposal)
+            ? VoteOption.YES
+            : abstainVotes > noVotes
+              ? VoteOption.ABSTAIN
+              : VoteOption.NO;
+
+        return winningOption;
+    };
+
     isApprovalReached = (proposal: ITokenProposal, early?: boolean): boolean => {
         const isMinParticipationReached = this.isMinParticipationReached(proposal);
         const isSupportReached = this.isSupportReached(proposal, early);
@@ -81,19 +100,21 @@ class TokenProposalUtils {
         return (BigInt(100) - parsedSupport) * yesVotes > parsedSupport * noVotesComparator;
     };
 
-    getTotalVotes = (proposal: ITokenProposal): bigint => {
+    getTotalVotes = (proposal: ITokenProposal, excludeAbstain?: boolean): bigint => {
         const { votesByOption } = proposal.metrics;
 
-        const totalVotes = votesByOption.reduce(
-            (accumulator, current) =>
-                accumulator + BigInt(tokenSettingsUtils.fromScientificNotation(current.totalVotingPower)),
-            BigInt(0),
-        );
+        const totalVotes = votesByOption.reduce((accumulator, current) => {
+            if (excludeAbstain && current.type === VoteOption.ABSTAIN) {
+                return accumulator;
+            }
+
+            return accumulator + BigInt(tokenSettingsUtils.fromScientificNotation(current.totalVotingPower));
+        }, BigInt(0));
 
         return totalVotes;
     };
 
-    getVoteByType = (votes: ITokenProposalOptionVotes[], type: VoteOption) => {
+    getVoteByType = (votes: ITokenProposalOptionVotes[], type: VoteOption): bigint => {
         const optionVotes = votes.find((option) => option.type === type);
 
         return BigInt(tokenSettingsUtils.fromScientificNotation(optionVotes?.totalVotingPower));
