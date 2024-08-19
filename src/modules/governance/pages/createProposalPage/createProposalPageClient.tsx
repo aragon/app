@@ -1,5 +1,6 @@
 'use client';
 
+import { usePinJson } from '@/shared/api/ipfsService/mutations/usePinJson';
 import { Page } from '@/shared/components/page';
 import { Wizard } from '@/shared/components/wizard';
 import { type ICreateProposalFormData } from '../../components/createProposalForm';
@@ -14,8 +15,11 @@ const createProposalSteps = [
 ];
 
 export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = () => {
+    const { mutate } = usePinJson({ onSuccess: (result) => console.log('success', result) });
+
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         console.log({ values });
+        mutate({ body: values });
     };
 
     return (
