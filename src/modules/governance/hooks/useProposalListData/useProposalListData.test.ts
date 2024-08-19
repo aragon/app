@@ -7,6 +7,7 @@ import {
     generateReactQueryInfiniteResultSuccess,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
+import { testLogger } from '@/test/utils';
 import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
@@ -94,5 +95,19 @@ describe('useProposalListData hook', () => {
         });
 
         expect(result.current.pageSize).toEqual(pageSize);
+    });
+
+    it('throws an error if both initialParams and byMemberAddressParams are provided', () => {
+        testLogger.suppressErrors();
+        const initialParams = { queryParams: { daoId: 'dao-test' } };
+        const byMemberAddressParams = {
+            queryParams: { daoId: 'dao-test', creatorAddress: '0x1234567890123456789012345678901234567890' },
+        };
+
+        expect(() =>
+            renderHook(() => useProposalListData(initialParams, byMemberAddressParams), {
+                wrapper: ReactQueryWrapper,
+            }),
+        ).toThrow('You cannot provide both `initialParams` and `byMemberAddressParams. You can not do both.`');
     });
 });

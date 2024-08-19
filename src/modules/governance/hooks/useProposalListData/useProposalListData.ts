@@ -10,54 +10,40 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(
 ) => {
     const { t } = useTranslations();
 
-    if (initialParams && byMemberAddressParams) {
-        throw new Error('You cannot provide both `initialParams` and `byMemberAddressParams`.');
-    }
-    if (!initialParams && !byMemberAddressParams) {
-        throw new Error('You must provide either `initialParams` or `byMemberAddressParams`.');
+    if ((initialParams && byMemberAddressParams) || (!initialParams && !byMemberAddressParams)) {
+        throw new Error('You cannot provide both `initialParams` and `byMemberAddressParams. You can not do both.`.');
     }
 
-    const {
-        data: proposalListData = { pages: [] },
-        status: proposalListStatus,
-        fetchStatus: proposalListFetchStatus,
-        isFetchingNextPage: proposalListIsFetchingNextPage,
-        fetchNextPage: fetchNextPageProposalList,
-    } = useProposalList<TProposal>(initialParams ?? { queryParams: { daoId: '' } }, {
+    const proposalListData = useProposalList<TProposal>(initialParams ?? { queryParams: { daoId: '' } }, {
         enabled: !!initialParams && !byMemberAddressParams,
     });
 
-    const {
-        data: proposalListByMemberData = { pages: [] },
-        status: proposalListByMemberStatus,
-        fetchStatus: proposalListByMemberFetchStatus,
-        isFetchingNextPage: proposalListByMemberIsFetchingNextPage,
-        fetchNextPage: fetchNextPageProposalListByMember,
-    } = useProposalListByMemberAddress<TProposal>(
+    const proposalListByMemberData = useProposalListByMemberAddress<TProposal>(
         byMemberAddressParams ?? { queryParams: { daoId: '', creatorAddress: '' } },
         {
             enabled: !!byMemberAddressParams && !initialParams,
         },
     );
 
-    const proposalList = initialParams
-        ? proposalListData?.pages.flatMap((page) => page.data)
-        : proposalListByMemberData?.pages.flatMap((page) => page.data);
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = initialParams
+        ? proposalListData
+        : proposalListByMemberData;
+
+    const proposalList = data?.pages.flatMap((page) => page.data) ?? [];
 
     const state = dataListUtils.queryToDataListState({
-        status: initialParams ? proposalListStatus : proposalListByMemberStatus,
-        fetchStatus: initialParams ? proposalListFetchStatus : proposalListByMemberFetchStatus,
-        isFetchingNextPage: initialParams ? proposalListIsFetchingNextPage : proposalListByMemberIsFetchingNextPage,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
     });
 
     const pageSize =
         initialParams?.queryParams.pageSize ??
-        proposalListData?.pages[0]?.metadata.pageSize ??
         byMemberAddressParams?.queryParams.pageSize ??
-        proposalListByMemberData?.pages[0]?.metadata.pageSize;
+        data?.pages[0]?.metadata.pageSize ??
+        20;
 
-    const itemsCount =
-        proposalListData?.pages[0]?.metadata.totalRecords ?? proposalListByMemberData?.pages[0]?.metadata.totalRecords;
+    const itemsCount = data?.pages[0]?.metadata.totalRecords ?? 0;
 
     const errorState = {
         heading: t('app.governance.daoProposalList.error.title'),
@@ -69,13 +55,5 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(
         description: t('app.governance.daoProposalList.empty.description'),
     };
 
-    return {
-        onLoadMore: initialParams ? fetchNextPageProposalList : fetchNextPageProposalListByMember,
-        proposalList,
-        state,
-        pageSize,
-        itemsCount,
-        emptyState,
-        errorState,
-    };
+    return { proposalList, onLoadMore: fetchNextPage, state, pageSize, itemsCount, emptyState, errorState };
 };
