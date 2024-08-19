@@ -414,6 +414,11 @@
           "report": "Report issue"
         }
       },
+      "formField": {
+        "error": {
+          "required": "{{name}} is mandatory"
+        }
+      },
       "wizard": {
         "container": {
           "step": "Step {{number}}",

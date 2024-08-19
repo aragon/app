@@ -1,0 +1,5 @@
+describe('<CreateProposalPage /> component', () => {
+    it('', () => {
+        //
+    });
+});

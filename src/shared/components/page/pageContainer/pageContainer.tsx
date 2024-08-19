@@ -1,4 +1,5 @@
 import { HydrationBoundary, dehydrate, type QueryClient } from '@tanstack/react-query';
+import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 
 export interface IPageContainerProps extends ComponentProps<'div'> {
@@ -9,11 +10,11 @@ export interface IPageContainerProps extends ComponentProps<'div'> {
 }
 
 export const PageContainer: React.FC<IPageContainerProps> = (props) => {
-    const { queryClient, ...otherProps } = props;
+    const { queryClient, className, ...otherProps } = props;
 
     return (
         <HydrationBoundary state={queryClient ? dehydrate(queryClient) : null}>
-            <div {...otherProps} />
+            <div className={classNames('h-full', className)} {...otherProps} />
         </HydrationBoundary>
     );
 };

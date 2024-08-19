@@ -23,18 +23,24 @@ export interface IPageMainProps extends ComponentProps<'main'> {
      * Action displayed beside the title. The action won't be displayed if the title is not defined.
      */
     action?: IPageMainAction;
+    /**
+     * Renders a full-width page layout when set to true.
+     */
+    fullWidth?: boolean;
 }
 
 const mainContextValues = { contentType: 'main' as const };
 
 export const PageMain: React.FC<IPageMainProps> = (props) => {
-    const { className, children, title, action, ...otherProps } = props;
+    const { className, children, title, action, fullWidth, ...otherProps } = props;
 
     return (
         <PageContextProvider value={mainContextValues}>
             <main
                 className={classNames(
-                    'flex flex-col lg:w-2/3',
+                    'flex flex-col',
+                    { 'lg:w-2/3': !fullWidth },
+                    { 'm-auto h-full max-w-[1024px] px-28 pb-20 pt-12': fullWidth },
                     { 'gap-20': title == null },
                     { 'gap-6': title != null },
                     className,
