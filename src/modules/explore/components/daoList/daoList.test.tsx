@@ -4,8 +4,10 @@ import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
+    ReactQueryWrapper,
 } from '@/shared/testUtils';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { testLogger } from '@/test/utils';
+import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import * as useDaoList from '../../api/daoExplorerService';
 import { DaoList, type IDaoListProps } from './daoList';
@@ -29,9 +31,9 @@ describe('<DaoList /> component', () => {
         };
 
         return (
-            <QueryClientProvider client={queryClient}>
+            <ReactQueryWrapper>
                 <DaoList {...completeProps} />
-            </QueryClientProvider>
+            </ReactQueryWrapper>
         );
     };
 
@@ -97,14 +99,12 @@ describe('<DaoList /> component', () => {
     });
 
     it('throws an error when both initialParams and daoListByMemberParams are provided', () => {
+        testLogger.suppressErrors();
         const initialParams = { queryParams: { pageSize: 10 } };
         const daoListByMemberParams = { urlParams: { address: 'testAddress' }, queryParams: {} };
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
         expect(() => render(createTestComponent({ initialParams, daoListByMemberParams }))).toThrow(
             Error('Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.'),
         );
-
-        consoleErrorSpy.mockRestore();
     });
 });

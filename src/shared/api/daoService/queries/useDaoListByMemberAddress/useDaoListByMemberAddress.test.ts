@@ -1,10 +1,10 @@
-import { daoService } from '@/shared/api/daoService/daoService';
+import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
 import { ReactQueryWrapper, generateDao, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useDaoListByMemberAddress } from './useDaoListByMemberAddress';
 
 describe('useDaoListByMemberAddress query', () => {
-    const getDaoListByMemberSpy = jest.spyOn(daoService, 'getDaoListByMemberAddress');
+    const getDaoListByMemberSpy = jest.spyOn(daoExplorerService, 'getDaoListByMemberAddress');
 
     afterEach(() => {
         getDaoListByMemberSpy.mockReset();

@@ -8,7 +8,6 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
 import classNames from 'classnames';
-import { useMemo } from 'react';
 import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService';
 
 export interface IDaoListProps {
@@ -20,14 +19,10 @@ export interface IDaoListProps {
      * Member parameters to use for fetching the list of DAOs for a given address.
      */
     daoListByMemberParams?: IGetDaoListByMemberAddressParams;
-    /**
-     * DAO id to filter against current view.
-     */
-    daoId?: string;
 }
 
 export const DaoList: React.FC<IDaoListProps> = (props) => {
-    const { initialParams, daoListByMemberParams, daoId } = props;
+    const { initialParams, daoListByMemberParams } = props;
     const { t } = useTranslations();
 
     if ((!initialParams && !daoListByMemberParams) || (initialParams && daoListByMemberParams)) {
@@ -36,54 +31,40 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         );
     }
 
-    const {
-        data: daoListData = { pages: [] },
-        fetchNextPage: fetchNextPageExplore = () => {},
-        status: statusExplore,
-        fetchStatus: fetchStatusExplore,
-        isFetchingNextPage: isFetchingNextPageExplore,
-    } = useDaoList(initialParams ?? { queryParams: {} }, {
+    const daoListResult = useDaoList(initialParams ?? { queryParams: {} }, {
         enabled: !!initialParams && !daoListByMemberParams,
-    }) || {};
+    });
 
-    const {
-        data: daoListByMemberData = { pages: [] },
-        fetchNextPage: fetchNextPageListByMember = () => {},
-        status: statusListByMember,
-        fetchStatus: fetchStatusListByMember,
-        isFetchingNextPage: isFetchingNextPageListByMember,
-    } = useDaoListByMemberAddress(daoListByMemberParams ?? { urlParams: { address: '' }, queryParams: {} }, {
-        enabled: !!daoListByMemberParams && !initialParams,
-    }) || {};
+    const daoListByMember = useDaoListByMemberAddress(
+        daoListByMemberParams ?? { urlParams: { address: '' }, queryParams: {} },
+        {
+            enabled: !!daoListByMemberParams && !initialParams,
+        },
+    );
 
-    const daoListExplore = daoListData.pages.flatMap((page) => page.data);
-    const onlyOtherDaos = useMemo(() => {
-        const daoListByMember = daoListByMemberData.pages.flatMap((page) => page.data);
-        return daoListByMember.filter((memberDao) => memberDao.id !== daoId);
-    }, [daoId, daoListByMemberData]);
+    const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } = initialParams
+        ? daoListResult
+        : daoListByMember;
 
-    const fetchNextPage = initialParams ? fetchNextPageExplore : fetchNextPageListByMember;
+    const daoList = data?.pages.flatMap((page) => page.data);
 
     const state = dataListUtils.queryToDataListState({
-        status: initialParams ? statusExplore : statusListByMember,
-        fetchStatus: initialParams ? fetchStatusExplore : fetchStatusListByMember,
-        isFetchingNextPage: initialParams ? isFetchingNextPageExplore : isFetchingNextPageListByMember,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
     });
 
     const pageSize =
         initialParams?.queryParams.pageSize ??
-        daoListData.pages[0]?.metadata?.pageSize ??
         daoListByMemberParams?.queryParams.pageSize ??
-        daoListByMemberData.pages[0]?.metadata?.pageSize;
+        data?.pages[0]?.metadata?.pageSize ??
+        20;
 
-    const itemsCount = initialParams
-        ? daoListData.pages[0]?.metadata?.totalRecords
-        : daoListByMemberData.pages[0]?.metadata?.totalRecords !== undefined
-          ? daoListByMemberData.pages[0].metadata.totalRecords - 1
-          : daoListByMemberData.pages[0]?.metadata?.totalRecords;
+    const itemsCount = data?.pages[0]?.metadata?.totalRecords ?? 0;
 
-    const processedDaoList = initialParams ? daoListExplore : onlyOtherDaos;
-    const daoListClassNames = classNames({ 'grid grid-cols-1 lg:grid-cols-2': initialParams != null });
+    const daoListClassNames = classNames({
+        'grid grid-cols-1 lg:grid-cols-2': initialParams != null,
+    });
 
     return (
         <DataListRoot
@@ -94,7 +75,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             itemsCount={itemsCount}
         >
             <DataListContainer className={daoListClassNames} SkeletonElement={DaoDataListItem.Skeleton}>
-                {processedDaoList.map((dao) => (
+                {daoList?.map((dao) => (
                     <DaoDataListItem.Structure
                         key={dao.id}
                         href={`/dao/${dao.id}/dashboard`}
@@ -102,7 +83,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         address={dao.address}
                         name={dao.name}
                         description={dao.description}
-                        network={networkDefinitions[dao.network]?.name}
+                        network={networkDefinitions[dao.network].name}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
                         plugin={dao.plugins.map((plugin) => plugin.subdomain).join(',')}
                     />

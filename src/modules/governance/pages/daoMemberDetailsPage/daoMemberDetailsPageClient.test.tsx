@@ -151,7 +151,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                     urlParams: { address },
                     queryParams: { pageSize: 3 },
                 },
-                daoId: daoId,
             }),
             {},
         );

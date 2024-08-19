@@ -1,4 +1,4 @@
-import { generateDao, generateDaoSettings, generatePaginatedResponse } from '@/shared/testUtils';
+import { generateDao, generateDaoSettings } from '@/shared/testUtils';
 import { daoService } from './daoService';
 
 describe('dao service', () => {
@@ -28,17 +28,5 @@ describe('dao service', () => {
 
         expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].daoSettings, params);
         expect(result).toEqual(settings);
-    });
-
-    it('getDaoListByMember fetches a paginated list of DAOs for a given member address', async () => {
-        const daoList = [generateDao({ id: '0x1' }), generateDao({ id: '0x2' }), generateDao({ id: '0x3' })];
-        const daoListByMemberResponse = generatePaginatedResponse({ data: daoList });
-        const params = { urlParams: { address: 'testAddress' }, queryParams: { pageSize: 3 } };
-
-        requestSpy.mockResolvedValue(daoListByMemberResponse);
-        const result = await daoService.getDaoListByMemberAddress(params);
-
-        expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].daoListByMemberAddress, params);
-        expect(result).toEqual(daoListByMemberResponse);
     });
 });

@@ -218,10 +218,7 @@
         "main": {
           "daoMemberships": {
             "title": "Other DAO memberships"
-          },
-          "proposals": "Proposals",
-          "votes": "Votes",
-          "transactions": "Transactions"
+          }
         }
       },
       "daoProposalDetailsPage": {

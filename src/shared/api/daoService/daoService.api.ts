@@ -23,7 +23,7 @@ export interface IGetDaoSettingsUrlParams {
 
 export interface IGetDaoSettingsParams extends IRequestUrlParams<IGetDaoSettingsUrlParams> {}
 
-export interface IGetDaoListByMemberUrlParams extends IPaginatedRequest, IOrderedRequest {
+export interface IGetDaoListByMemberUrlParams {
     /**
      * Address of the member to fetch the DAOs for
      */
