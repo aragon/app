@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
-import { IWizardContext, WizardProvider } from '../wizardProvider';
+import { type IWizardContext, WizardProvider } from '../wizardProvider';
 import { type IWizardStepProps, WizardStep } from './wizardStep';
 
 // Needed to spy usage of useFormContext hook

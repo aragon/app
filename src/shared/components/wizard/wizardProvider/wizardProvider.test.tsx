@@ -1,7 +1,7 @@
 import { testLogger } from '@/test/utils';
 import { render, renderHook, screen } from '@testing-library/react';
-import { ProviderProps } from 'react';
-import { IWizardContext, WizardProvider, useWizardContext } from './wizardProvider';
+import { type ProviderProps } from 'react';
+import { type IWizardContext, WizardProvider, useWizardContext } from './wizardProvider';
 
 describe('<WizardProvider /> component', () => {
     const createTestComponent = (props?: Partial<ProviderProps<IWizardContext>>) => {
