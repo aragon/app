@@ -15,6 +15,7 @@ export interface IStepperStep<TMeta = undefined> {
 
 export class StepperUtils<TMeta = undefined> {
     private steps: Array<IStepperStep<TMeta>>;
+
     private activeStep?: string;
 
     constructor(steps: Array<IStepperStep<TMeta>> = [], activeStep?: string) {
