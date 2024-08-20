@@ -1,5 +1,6 @@
-import type { IPaginatedRequest, IRequestQueryParams } from '@/shared/api/aragonBackendService';
+import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
+import type { IRequestQueryParams } from '@/shared/api/httpService';
 
 export interface IGetAssetListQueryParams extends IPaginatedRequest {
     /**

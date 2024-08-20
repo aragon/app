@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat, ProposalDataListItem } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { type ITokenProposal } from '../../types';
+import { VoteOption, type ITokenProposal } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 
 export interface ITokenProposalListItemProps {
@@ -14,6 +14,12 @@ export interface ITokenProposalListItemProps {
      */
     daoId: string;
 }
+
+const voteOptionToLabel: Record<VoteOption, string> = {
+    [VoteOption.ABSTAIN]: 'app.plugins.token.tokenProposalListItem.abstain',
+    [VoteOption.YES]: 'app.plugins.token.tokenProposalListItem.yes',
+    [VoteOption.NO]: 'app.plugins.token.tokenProposalListItem.no',
+};
 
 const getWinningOption = (proposal: ITokenProposal) => {
     const { votesByOption } = proposal.metrics;
@@ -35,7 +41,7 @@ const getWinningOption = (proposal: ITokenProposal) => {
     const winningOptionPercentage = yesNoVotes > 0 ? (winningOptionAmount * BigInt(100)) / yesNoVotes : 100;
 
     return {
-        option: `app.plugins.token.tokenProposalListItem.${winningOption}`,
+        option: voteOptionToLabel[winningOption],
         voteAmount: `${formattedWinningOptionAmount} ${symbol}`,
         votePercentage: Number(winningOptionPercentage),
     };
