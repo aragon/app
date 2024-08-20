@@ -26,7 +26,7 @@ describe('<TokenProposalList /> component', () => {
     const createTestComponent = (props?: Partial<ITokenProposalListProps>) => {
         const completeProps: ITokenProposalListProps = {
             daoId: 'dao-id',
-            initialParams: { queryParams: { daoId: 'dao-id' } },
+            params: { queryParams: { daoId: 'dao-id' } },
             ...props,
         };
 
@@ -78,8 +78,8 @@ describe('<TokenProposalList /> component', () => {
         expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('uses initialParams correctly', () => {
-        const initialParams = { queryParams: { daoId: 'dao-test' } };
+    it('uses params correctly', () => {
+        const params = { queryParams: { daoId: 'dao-test' } };
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
             state: 'idle',
@@ -90,8 +90,8 @@ describe('<TokenProposalList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
-        render(createTestComponent({ initialParams }));
+        render(createTestComponent({ params }));
 
-        expect(useProposalListDataSpy).toHaveBeenCalledWith(initialParams);
+        expect(useProposalListDataSpy).toHaveBeenCalledWith(params);
     });
 });

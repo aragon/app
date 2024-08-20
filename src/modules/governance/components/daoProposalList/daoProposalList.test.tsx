@@ -5,12 +5,12 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 
 jest.mock('@/shared/components/pluginComponent', () => ({
-    PluginComponent: (props: { slotId: string; pluginIds: string[]; initialParams?: IGetProposalListParams }) => (
+    PluginComponent: (props: { slotId: string; pluginIds: string[]; params?: IGetProposalListParams }) => (
         <div
             data-testid="plugin-component-mock"
             data-slotid={props.slotId}
             data-pluginids={props.pluginIds}
-            data-initialparams={props.initialParams}
+            data-params={props.params}
         />
     ),
 }));
@@ -25,7 +25,7 @@ describe('<DaoProposalList /> component', () => {
     const createTestComponent = (props?: Partial<IDaoProposalListProps>) => {
         const completeProps: IDaoProposalListProps = {
             daoId: '',
-            initialParams: { queryParams: { daoId: '' } },
+            params: { queryParams: { daoId: '' } },
             ...props,
         };
 
@@ -43,18 +43,20 @@ describe('<DaoProposalList /> component', () => {
     });
 
     it('passes the initial params to the plugin component', () => {
-        const initialParams: IGetProposalListParams = { queryParams: { daoId: 'test-id' } };
-        render(createTestComponent({ initialParams }));
+        const params = { queryParams: { daoId: 'test-id' } };
+        render(createTestComponent({ params }));
+
         const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent.dataset.initialparams).toEqual(initialParams.toString());
+        expect(pluginComponent.dataset.params).toEqual(params.toString());
     });
 
     it('passes the by initial params with creator address query to the plugin component', () => {
-        const initialParams = {
+        const params = {
             queryParams: { daoId: 'test-id', creatorAddress: '0x1234567890123456789012345678901234567890' },
         };
-        render(createTestComponent({ initialParams }));
+        render(createTestComponent({ params }));
+
         const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent.dataset.initialParams).toEqual(initialParams.toString());
+        expect(pluginComponent.dataset.params).toEqual(params.toString());
     });
 });

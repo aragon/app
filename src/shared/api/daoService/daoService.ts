@@ -1,13 +1,11 @@
-import { type IProposal } from '@/modules/governance/api/governanceService';
-import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
-import type { IGetDaoParams, IGetDaoSettingsParams, IGetProposalListByMemberAddressParams } from './daoService.api';
+import { AragonBackendService } from '../aragonBackendService';
+import type { IGetDaoParams, IGetDaoSettingsParams } from './daoService.api';
 import type { IDao, IDaoSettings } from './domain';
 
 class DaoService extends AragonBackendService {
     private urls = {
         dao: '/daos/:id',
         daoSettings: '/settings/active/:daoId',
-        proposalListByMemberAddress: '/proposals',
     };
 
     getDao = async (params: IGetDaoParams): Promise<IDao> => {
@@ -20,16 +18,6 @@ class DaoService extends AragonBackendService {
         params: IGetDaoSettingsParams,
     ): Promise<TSettings> => {
         const result = await this.request<TSettings>(this.urls.daoSettings, params);
-
-        return result;
-    };
-
-    getProposalListByMemberAddress = async <TProposal extends IProposal = IProposal>({
-        queryParams,
-    }: IGetProposalListByMemberAddressParams) => {
-        const result = await this.request<IPaginatedResponse<TProposal>>(this.urls.proposalListByMemberAddress, {
-            queryParams,
-        });
 
         return result;
     };

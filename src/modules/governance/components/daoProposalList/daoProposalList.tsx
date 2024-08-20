@@ -12,9 +12,9 @@ export interface IDaoProposalListProps {
      */
     daoId: string;
     /**
-     * Initial parameters to use for fetching the proposal list.
+     * Parameters to use for fetching the proposal list.
      */
-    initialParams: IGetProposalListParams;
+    params: IGetProposalListParams;
     /**
      * Hides the pagination when set to true.
      */
@@ -26,7 +26,7 @@ export interface IDaoProposalListProps {
 }
 
 export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
-    const { daoId, initialParams, ...otherProps } = props;
+    const { daoId, params, ...otherProps } = props;
 
     const pluginIds = useDaoPluginIds(daoId);
 
@@ -34,7 +34,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
         <PluginComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
             pluginIds={pluginIds}
-            initialParams={initialParams}
+            params={params}
             daoId={daoId}
             {...otherProps}
         />

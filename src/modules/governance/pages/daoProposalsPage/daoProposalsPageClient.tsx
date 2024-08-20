@@ -21,7 +21,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     return (
         <>
             <Page.Main title={t('app.governance.daoProposalsPage.main.title')}>
-                <DaoProposalList initialParams={initialParams} daoId={initialParams.queryParams.daoId} />
+                <DaoProposalList params={initialParams} daoId={initialParams.queryParams.daoId} />
             </Page.Main>
             <Page.Aside>
                 <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={false}>
