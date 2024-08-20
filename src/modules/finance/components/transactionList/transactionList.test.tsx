@@ -52,9 +52,8 @@ describe('<TransactionList /> component', () => {
 
     it('renders the correct token amount in usd', () => {
         const transaction = generateTransaction({
-            token: generateToken({ symbol: 'ETH' }),
-            value: '1',
-            amountUsd: '123.00',
+            token: generateToken({ symbol: 'AAA', priceUsd: '12.5' }),
+            value: '150',
         });
 
         useTransactionListDataSpy.mockReturnValue({
@@ -69,6 +68,6 @@ describe('<TransactionList /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('$123.00')).toBeInTheDocument();
+        expect(screen.getByText('$1.88K')).toBeInTheDocument();
     });
 });
