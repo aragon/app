@@ -64,9 +64,7 @@ describe('Http service', () => {
             const baseUrl = 'https://test.com';
             const url = '/api';
             const expectedUrl = `${baseUrl}${url}`;
-
-            process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL = baseUrl;
-            serviceTest = generateHttpService();
+            serviceTest = generateHttpService(baseUrl);
             expect(serviceTest['buildUrl'](url)).toEqual(expectedUrl);
         });
 
@@ -75,9 +73,7 @@ describe('Http service', () => {
             const url = '/proposals/:proposalId';
             const urlParams = { proposalId: 'id-test' };
             const expectedUrl = `${baseUrl}/proposals/${urlParams.proposalId}`;
-
-            process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL = baseUrl;
-            serviceTest = generateHttpService();
+            serviceTest = generateHttpService(baseUrl);
             expect(serviceTest['buildUrl'](url, { urlParams })).toEqual(expectedUrl);
         });
 
@@ -87,9 +83,7 @@ describe('Http service', () => {
             const queryParams = { includeProposals: true, another: 'yes' };
             const urlParams = { daoId: 'test-dao' };
             const expectedUrl = `${baseUrl}/dao/${urlParams.daoId}?includeProposals=true&another=yes`;
-
-            process.env.NEXT_PUBLIC_ARAGAGON_BACKEND_URL = baseUrl;
-            serviceTest = generateHttpService();
+            serviceTest = generateHttpService(baseUrl);
             expect(serviceTest['buildUrl'](url, { queryParams, urlParams })).toEqual(expectedUrl);
         });
     });
