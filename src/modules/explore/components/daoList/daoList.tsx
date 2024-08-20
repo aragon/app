@@ -1,6 +1,6 @@
 'use client';
 
-import { useDaoListByMemberAddress, type IGetDaoListByMemberAddressParams } from '@/shared/api/daoService';
+import { useDaoListByMemberAddress } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -8,7 +8,11 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot, invariant } from '@aragon/ods';
 import classNames from 'classnames';
-import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService';
+import {
+    useDaoList,
+    type IGetDaoListByMemberAddressParams,
+    type IGetDaoListParams,
+} from '../../api/daoExplorerService';
 
 export interface IDaoListProps {
     /**
