@@ -1,7 +1,7 @@
 import { AlertCard, Button, Heading, IconType } from '@aragon/ods';
 import classNames from 'classnames';
 import { useEffect, type ComponentProps } from 'react';
-import { useFormContext, type FieldErrors } from 'react-hook-form';
+import { useFormContext, type FieldErrors, type FieldValues } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { useWizardContext } from '../wizardProvider';
 import type { IWizardStepperStep } from '../wizardProvider/wizardProvider';
@@ -21,9 +21,9 @@ export interface IWizardStepProps extends IWizardStepperStep, Omit<ComponentProp
     hidden?: boolean;
 }
 
-const getValidationError = (errors: FieldErrors) => {
-    const requiredErrors = Object.keys(errors).map((key) => errors[key]?.type === 'required');
-    const invalidErrors = Object.keys(errors).map((key) => errors[key]?.type !== 'required');
+const getValidationError = <TFormFields extends FieldValues = FieldValues>(errors: FieldErrors<TFormFields>) => {
+    const requiredErrors = Object.keys(errors).filter((key) => errors[key]?.type === 'required');
+    const invalidErrors = Object.keys(errors).filter((key) => errors[key]?.type !== 'required');
 
     if (!requiredErrors.length && !invalidErrors.length) {
         return undefined;
@@ -36,19 +36,21 @@ const getValidationError = (errors: FieldErrors) => {
           : 'invalid';
 };
 
-export const WizardStep: React.FC<IWizardStepProps> = (props) => {
+export const WizardStep = <TFormFields extends FieldValues = FieldValues>(props: IWizardStepProps) => {
     const { title, description, id, hidden, meta, order, children, className, ...otherProps } = props;
 
     const { submitLabel, activeStep, hasNext, hasPrevious, previousStep, registerStep, unregisterStep } =
         useWizardContext();
 
     const { t } = useTranslations();
-    const { formState } = useFormContext();
+    const { formState } = useFormContext<TFormFields>();
     const { isSubmitted, errors } = formState;
 
     const validationError = getValidationError(errors);
     const displayValidationError = isSubmitted && validationError != null;
+
     const submitButtonVariant = displayValidationError ? 'critical' : !hasNext ? 'primary' : 'tertiary';
+    const submitButtonLabel = hasNext ? t('app.shared.wizard.step.next') : submitLabel;
 
     useEffect(() => {
         if (hidden) {
@@ -57,8 +59,6 @@ export const WizardStep: React.FC<IWizardStepProps> = (props) => {
             registerStep({ id, order, meta });
         }
     }, [hidden, unregisterStep, registerStep, id, order, meta]);
-
-    const submitButtonLabel = hasNext ? t('app.shared.wizard.step.next') : submitLabel;
 
     if (activeStep !== id) {
         return null;
