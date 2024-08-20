@@ -102,7 +102,7 @@
     },
     "explore": {
       "daoList": {
-        "entity": "DAO"
+        "entity": "DAOs"
       }
     },
     "finance": {
@@ -219,6 +219,11 @@
             "address": "Address",
             "ens": "ENS",
             "firstActivity": "First activity"
+          }
+        },
+        "main": {
+          "daoMemberships": {
+            "title": "Other DAO memberships"
           }
         }
       },
