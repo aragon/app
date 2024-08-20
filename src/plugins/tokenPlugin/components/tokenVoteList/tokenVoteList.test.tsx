@@ -58,8 +58,8 @@ describe('<TokenVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toMatch(votes[0].memberAddress);
-        expect(links[1].getAttribute('href')).toMatch(votes[1].memberAddress);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].memberAddress}`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].memberAddress}`);
 
         expect(screen.getByText(addressUtils.truncateAddress(votes[0].memberAddress))).toBeInTheDocument();
         expect(screen.getByText('997.85K ABC')).toBeInTheDocument();
@@ -68,5 +68,30 @@ describe('<TokenVoteList /> component', () => {
         expect(screen.getByText(addressUtils.truncateAddress(votes[1].memberAddress))).toBeInTheDocument();
         expect(screen.getByText('465.32 ABC')).toBeInTheDocument();
         expect(screen.getByText('yes')).toBeInTheDocument();
+    });
+
+    it('calls useVoteListData with the correct query params', () => {
+        const params = {
+            queryParams: {
+                daoId: 'test-dao',
+                address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+                includeInfo: true,
+                pageSize: 5,
+            },
+        };
+
+        useVoteListDataSpy.mockReturnValue({
+            voteList: [],
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: 0,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent({ params }));
+
+        expect(useVoteListDataSpy).toHaveBeenCalledWith(params);
     });
 });

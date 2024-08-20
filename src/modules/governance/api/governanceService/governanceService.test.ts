@@ -62,4 +62,15 @@ describe('governance service', () => {
         expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].votes, params);
         expect(result).toEqual(votes);
     });
+
+    it('getVoteList fetches all votes of a user with address query', async () => {
+        const votes = [generateVote({ transactionHash: '0' }), generateVote({ transactionHash: '1' })];
+        const params = { queryParams: { address: '0x123' } };
+
+        requestSpy.mockResolvedValue(votes);
+        const result = await governanceService.getVoteList(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].votes, params);
+        expect(result).toEqual(votes);
+    });
 });
