@@ -1,14 +1,17 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import { InputText, RadioCard, RadioGroup, TextArea, TextAreaRichText } from '@aragon/ods';
-import { CreateProposalAddActionValue } from '../createProposalFormUtils';
+import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
 
 export interface ICreateProposalFormMetadataProps {}
 
 export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataProps> = () => {
     const titleField = useFormField('title', { label: 'Title', rules: { required: true }, defaultValue: '' });
     const summaryField = useFormField('summary', { label: 'Summary', rules: { required: true } });
-    const { ref, ...bodyField } = useFormField('body', { label: 'Body' });
-    const addActionsField = useFormField('addActions', { defaultValue: CreateProposalAddActionValue.YES });
+
+    const { ref: bodyRef, ...bodyField } = useFormField('body', { label: 'Body' });
+    const { ref: addActionsRef, ...addActionsField } = useFormField('addActions', {
+        label: 'Would you like to add actions to this proposal?',
+        defaultValue: true,
+    });
 
     return (
         <div className="flex flex-col gap-10">
@@ -26,20 +29,16 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 helpText="Write the body of the proposal"
                 placeholder="Type a proposal body"
                 isOptional={true}
+                immediatelyRender={false}
                 {...bodyField}
             />
-            <RadioGroup onValueChange={addActionsField.onChange} {...addActionsField}>
-                <RadioCard
-                    description="Actions are added and will execute once the governance parameters are met."
-                    label="Yes"
-                    value={CreateProposalAddActionValue.YES}
-                />
-                <RadioCard
-                    description="It's a signalling proposal and won't have any binding onchain actions"
-                    label="No"
-                    value={CreateProposalAddActionValue.NO}
-                />
-            </RadioGroup>
+            <Switch
+                helpText="If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met."
+                inlineLabel="Binding onchain actions"
+                onCheckedChanged={addActionsField.onChange}
+                checked={addActionsField.value}
+                {...addActionsField}
+            />
         </div>
     );
 };

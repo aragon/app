@@ -2,7 +2,7 @@
 
 import { Wizard } from '@/shared/components/wizard';
 import { useWatch } from 'react-hook-form';
-import { CreateProposalAddActionValue, CreateProposalForm } from '../../components/createProposalForm';
+import { CreateProposalForm } from '../../components/createProposalForm';
 
 export interface ICreateProposalPageClientStepsProps {}
 
@@ -27,7 +27,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
             <Wizard.Step
                 title="Set actions"
                 description="These actions can be executed only once the governance parameters are met"
-                hidden={addActions === CreateProposalAddActionValue.NO}
+                hidden={addActions === false}
                 {...createProposalSteps[1]}
             >
                 <CreateProposalForm.Actions />
