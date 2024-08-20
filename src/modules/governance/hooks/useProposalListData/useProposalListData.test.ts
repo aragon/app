@@ -18,7 +18,7 @@ describe('useProposalListData hook', () => {
         useProposalListSpy.mockReset();
     });
 
-    it('fetches and returns the data for proposals with initial params and creator address query', () => {
+    it('fetches proposals with initial params and creator address query', () => {
         const proposals = [generateProposal()];
         const proposalsMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: proposals.length });
         const proposalsResponse = generatePaginatedResponse({ data: proposals, metadata: proposalsMetadata });
