@@ -1,9 +1,5 @@
-import type {
-    IPaginatedRequest,
-    IRequestQueryParams,
-    IRequestUrlParams,
-    IRequestUrlQueryParams,
-} from '@/shared/api/aragonBackendService';
+import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
+import type { IRequestQueryParams, IRequestUrlParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
 
 export interface IGetProposalListQueryParams extends IPaginatedRequest {
     /**
