@@ -1,5 +1,7 @@
 import * as useStepper from '@/shared/hooks/useStepper';
+import { Button } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { type IWizardContainerProps, WizardContainer } from './wizardContainer';
 
 describe('<WizardContainer /> component', () => {
@@ -58,5 +60,41 @@ describe('<WizardContainer /> component', () => {
         useStepperSpy.mockReturnValue({ activeStepIndex, hasNext, steps } as useStepper.IUseStepperReturn<unknown>);
         render(createTestComponent());
         expect(screen.queryByText(/wizard.container.next/)).not.toBeInTheDocument();
+    });
+
+    it('proceeds to the next step when active step is not the last step on submit', async () => {
+        const children = <Button type="submit">Submit</Button>;
+        const hasNext = true;
+        const nextStep = jest.fn();
+        const activeStepIndex = 0;
+        const steps = [
+            { id: '0', order: 0, meta: { name: 'step-0' } },
+            { id: '1', order: 1, meta: { name: 'step-1' } },
+        ];
+        useStepperSpy.mockReturnValue({
+            hasNext,
+            nextStep,
+            activeStepIndex,
+            steps,
+        } as unknown as useStepper.IUseStepperReturn<unknown>);
+        render(createTestComponent({ children }));
+        await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+        expect(nextStep).toHaveBeenCalled();
+    });
+
+    it('triggers the onSubmit callback when active step is the last step on submit', async () => {
+        const children = <Button type="submit">Submit</Button>;
+        const hasNext = false;
+        const onSubmit = jest.fn();
+        const activeStepIndex = 0;
+        const steps = [{ id: '0', order: 0, meta: { name: 'step-0' } }];
+        useStepperSpy.mockReturnValue({
+            hasNext,
+            steps,
+            activeStepIndex,
+        } as unknown as useStepper.IUseStepperReturn<unknown>);
+        render(createTestComponent({ children, onSubmit }));
+        await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+        expect(onSubmit).toHaveBeenCalled();
     });
 });
