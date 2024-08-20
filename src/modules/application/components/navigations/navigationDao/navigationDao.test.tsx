@@ -34,13 +34,11 @@ describe('<NavigationDao /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
-    const useDisconnectSpy = jest.spyOn(wagmi, 'useDisconnect');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         usePathnameSpy.mockReturnValue('');
         useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
-        useDisconnectSpy.mockReturnValue({} as wagmi.UseDisconnectReturnType);
         useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
     });
 
@@ -50,7 +48,6 @@ describe('<NavigationDao /> component', () => {
         hasSupportedPluginsSpy.mockReset();
         useDialogContextSpy.mockReset();
         useAccountSpy.mockReset();
-        useDisconnectSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
@@ -169,16 +166,15 @@ describe('<NavigationDao /> component', () => {
         expect(open).toHaveBeenCalledWith(ApplicationDialog.CONNECT_WALLET);
     });
 
-    it('renders the user avatar on a button to disconnect the user', async () => {
+    it('renders the user avatar on a button opening the user dialog', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
         const address = '0x097d5e2325C2a98d3Adb0FE771ef66584698c59e';
-        const disconnect = jest.fn();
         useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
-        useDisconnectSpy.mockReturnValue({ disconnect } as unknown as wagmi.UseDisconnectReturnType);
-
         render(createTestComponent());
         const button = screen.getByText(address);
         expect(button).toBeInTheDocument();
         await userEvent.click(button);
-        expect(disconnect).toHaveBeenCalled();
+        expect(open).toHaveBeenCalledWith(ApplicationDialog.USER);
     });
 });
