@@ -7,12 +7,12 @@ import { type IMultisigVote } from '../../types';
 export interface IMultisigVoteListProps extends IVoteListProps {}
 
 export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
-    const { initialParams, daoId } = props;
+    const { params, daoId } = props;
 
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, voteList } =
-        useVoteListData<IMultisigVote>(initialParams);
+        useVoteListData<IMultisigVote>(params);
 
     return (
         <DataListRoot

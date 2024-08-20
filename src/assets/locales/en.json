@@ -220,6 +220,11 @@
             "ens": "ENS",
             "firstActivity": "First activity"
           }
+        },
+        "main": {
+          "votingActivity": {
+            "title": "Voting activity"
+          }
         }
       },
       "daoProposalDetailsPage": {

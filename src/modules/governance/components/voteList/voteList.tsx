@@ -7,9 +7,9 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IVoteListProps {
     /**
-     * Initial parameters to use for fetching the proposal votes.
+     * Parameters to use for fetching the proposal votes.
      */
-    initialParams: IGetVoteListParams;
+    params: IGetVoteListParams;
     /**
      * ID of the DAO related to the votes.
      */
@@ -17,15 +17,16 @@ export interface IVoteListProps {
 }
 
 export const VoteList: React.FC<IVoteListProps> = (props) => {
-    const { initialParams, daoId } = props;
+    const { params, daoId, ...otherProps } = props;
     const pluginIds = useDaoPluginIds(daoId);
 
     return (
         <PluginComponent
             slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
             pluginIds={pluginIds}
-            initialParams={initialParams}
+            params={params}
             daoId={daoId}
+            {...otherProps}
         />
     );
 };

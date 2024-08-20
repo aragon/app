@@ -21,12 +21,12 @@ const voteOptionToIndicator: Record<VoteOption, IVoteDataListItemStructureProps[
 };
 
 export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
-    const { initialParams, daoId } = props;
+    const { params, daoId } = props;
 
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, voteList } =
-        useVoteListData<ITokenVote>(initialParams);
+        useVoteListData<ITokenVote>(params);
 
     return (
         <DataListRoot

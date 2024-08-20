@@ -1,5 +1,6 @@
 'use client';
 
+import { VoteList } from '@/modules/governance/components/voteList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
@@ -79,6 +80,8 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { label: memberName },
     ];
 
+    const votesByMemberAddressQueryParams = { queryParams: { daoId, address, includeInfo: true, pageSize: 5 } };
+
     return (
         <>
             <Page.Header
@@ -114,8 +117,11 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                 </div>
             </Page.Header>
             <Page.Content>
-                {/** BEGIN CONTENT WORK **/}
-                <Page.Main />
+                <Page.Main>
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
+                        <VoteList params={votesByMemberAddressQueryParams} daoId={daoId} />
+                    </Page.Section>
+                </Page.Main>
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
