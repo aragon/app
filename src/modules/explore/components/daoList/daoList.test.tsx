@@ -74,28 +74,21 @@ describe('<DaoList /> component', () => {
             }),
         );
 
-        render(
-            createTestComponent({
-                initialParams,
-                daoListByMemberParams,
-            }),
-        );
+        render(createTestComponent({ initialParams, daoListByMemberParams }));
 
         expect(screen.getAllByRole('link').length).toEqual(daos.length);
         expect(screen.getByText(daos[0].name)).toBeInTheDocument();
         expect(screen.getByText(daos[1].name)).toBeInTheDocument();
     });
 
-    it('throws an error when neither initialParams nor daoListByMemberParams is provided', () => {
+    it('throws an error when initialParams and daoListByMemberParams are not provided', () => {
+        testLogger.suppressErrors();
         const initialParams = undefined;
         const daoListByMemberParams = undefined;
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
         expect(() => render(createTestComponent({ initialParams, daoListByMemberParams }))).toThrow(
             Error('Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.'),
         );
-
-        consoleErrorSpy.mockRestore();
     });
 
     it('throws an error when both initialParams and daoListByMemberParams are provided', () => {

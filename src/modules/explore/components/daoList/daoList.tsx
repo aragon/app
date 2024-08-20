@@ -6,7 +6,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
+import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot, invariant } from '@aragon/ods';
 import classNames from 'classnames';
 import { useDaoList, type IGetDaoListParams } from '../../api/daoExplorerService';
 
@@ -25,22 +25,18 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     const { initialParams, daoListByMemberParams } = props;
     const { t } = useTranslations();
 
-    if ((!initialParams && !daoListByMemberParams) || (initialParams && daoListByMemberParams)) {
-        throw new Error(
-            'Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.',
-        );
-    }
+    invariant(
+        !((!initialParams && !daoListByMemberParams) || (initialParams && daoListByMemberParams)),
+        'Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.',
+    );
 
-    const daoListResult = useDaoList(initialParams ?? { queryParams: {} }, {
+    const daoListResult = useDaoList(initialParams!, {
         enabled: !!initialParams && !daoListByMemberParams,
     });
 
-    const daoListByMember = useDaoListByMemberAddress(
-        daoListByMemberParams ?? { urlParams: { address: '' }, queryParams: {} },
-        {
-            enabled: !!daoListByMemberParams && !initialParams,
-        },
-    );
+    const daoListByMember = useDaoListByMemberAddress(daoListByMemberParams!, {
+        enabled: !!daoListByMemberParams && !initialParams,
+    });
 
     const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } = initialParams
         ? daoListResult
@@ -57,10 +53,9 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     const pageSize =
         initialParams?.queryParams.pageSize ??
         daoListByMemberParams?.queryParams.pageSize ??
-        data?.pages[0]?.metadata?.pageSize ??
-        20;
+        data?.pages[0]?.metadata?.pageSize;
 
-    const itemsCount = data?.pages[0]?.metadata?.totalRecords ?? 0;
+    const itemsCount = data?.pages[0]?.metadata?.totalRecords;
 
     const daoListClassNames = classNames({
         'grid grid-cols-1 lg:grid-cols-2': initialParams != null,
