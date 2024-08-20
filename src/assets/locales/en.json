@@ -403,7 +403,7 @@
       "wizard": {
         "container": {
           "step": "Step {{number}}",
-          "total": " of {{total}}",
+          "total": "of {{total}}",
           "next": "Next:"
         },
         "step": {
