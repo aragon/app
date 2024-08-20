@@ -18,7 +18,7 @@ describe('<VoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<IVoteListProps>) => {
         const completeProps: IVoteListProps = {
-            initialParams: { queryParams: {} },
+            params: { queryParams: {} },
             daoId: 'dao',
             ...props,
         };

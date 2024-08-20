@@ -13,7 +13,7 @@ describe('<MultisigVoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
         const completeProps: IMultisigVoteListProps = {
-            initialParams: { queryParams: {} },
+            params: { queryParams: {} },
             daoId: 'test-id',
             ...props,
         };

@@ -15,7 +15,7 @@ describe('<TokenVoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenVoteListProps>) => {
         const completeProps: ITokenVoteListProps = {
-            initialParams: { queryParams: {} },
+            params: { queryParams: {} },
             daoId: 'test-id',
             ...props,
         };
