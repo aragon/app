@@ -1,9 +1,5 @@
-import type {
-    IOrderedRequest,
-    IPaginatedRequest,
-    IRequestQueryParams,
-    IRequestUrlQueryParams,
-} from '@/shared/api/aragonBackendService';
+import type { IOrderedRequest, IPaginatedRequest } from '@/shared/api/aragonBackendService';
+import type { IRequestQueryParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
 
 export interface IGetDaoListQueryParams extends IPaginatedRequest, IOrderedRequest {}
 

@@ -37,6 +37,8 @@ jobs:
         run: yarn install --immutable
       - name: Prepare STG build
         run: yarn setup ${{ env.APP_ENV }}
+      - name: Prepare secrets
+        run: echo "NEXT_SECRET_IPFS_JWT=${{secrets.NEXT_SECRET_IPFS_JWT}}" >> .env
       - name: Bundle Vercel application
         run: yarn vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Vercel deployment

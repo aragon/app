@@ -55,6 +55,7 @@ describe('<TokenProposalListItem /> component', () => {
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
         render(createTestComponent({ proposal }));
         expect(screen.getByText('Winning Option')).toBeInTheDocument();
+        expect(screen.getByText(/tokenProposalListItem.yes/)).toBeInTheDocument();
         expect(screen.getByText('80%')).toBeInTheDocument();
         expect(screen.getByText('800 TEST')).toBeInTheDocument();
     });
@@ -75,6 +76,7 @@ describe('<TokenProposalListItem /> component', () => {
         getTotalVotesSpy.mockReturnValue(BigInt(0));
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
         render(createTestComponent({ proposal }));
+        expect(screen.getByText(/tokenProposalListItem.abstain/)).toBeInTheDocument();
         expect(screen.getByText('100%')).toBeInTheDocument();
         expect(screen.getByText('0.15 ABS')).toBeInTheDocument();
     });

@@ -1,4 +1,4 @@
-import type { IRequestUrlParams } from '../aragonBackendService';
+import type { IRequestUrlParams } from '../httpService';
 
 export interface IGetDaoUrlParams {
     /**
