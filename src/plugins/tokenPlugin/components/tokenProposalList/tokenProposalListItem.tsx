@@ -41,7 +41,7 @@ const getWinningOption = (proposal: ITokenProposal) => {
     const winningOptionPercentage = yesNoVotes > 0 ? (winningOptionAmount * BigInt(100)) / yesNoVotes : 100;
 
     return {
-        option: winningOption,
+        option: voteOptionToLabel[winningOption],
         voteAmount: `${formattedWinningOptionAmount} ${symbol}`,
         votePercentage: Number(winningOptionPercentage),
     };
@@ -53,8 +53,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
     const { t } = useTranslations();
 
     const winningOption = getWinningOption(proposal);
-    const proposalResult =
-        winningOption != null ? { ...winningOption, option: t(voteOptionToLabel[winningOption.option]) } : undefined;
+    const proposalResult = winningOption != null ? { ...winningOption, option: t(winningOption.option) } : undefined;
 
     return (
         <ProposalDataListItem.Structure
