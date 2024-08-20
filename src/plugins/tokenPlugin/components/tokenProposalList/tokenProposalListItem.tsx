@@ -1,9 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat, ProposalDataListItem } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { type ITokenProposal, VoteOption } from '../../types';
+import { type ITokenProposal } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
-import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 
 export interface ITokenProposalListItemProps {
     /**
@@ -16,27 +15,30 @@ export interface ITokenProposalListItemProps {
     daoId: string;
 }
 
-const voteOptionToLabel: Record<VoteOption, string> = {
-    [VoteOption.ABSTAIN]: 'app.plugins.token.tokenProposalListItem.abstain',
-    [VoteOption.YES]: 'app.plugins.token.tokenProposalListItem.yes',
-    [VoteOption.NO]: 'app.plugins.token.tokenProposalListItem.no',
-};
-
 const getWinningOption = (proposal: ITokenProposal) => {
     const { votesByOption } = proposal.metrics;
+    const { decimals, symbol } = proposal.token;
 
-    if (!votesByOption.length) {
-        return { type: VoteOption.YES, totalVotingPower: '0' };
+    const winningOption = tokenProposalUtils.getWinningOption(proposal);
+
+    if (!winningOption) {
+        return undefined;
     }
 
-    return votesByOption.reduce(
-        (highestVotes, current) =>
-            BigInt(tokenSettingsUtils.fromScientificNotation(current.totalVotingPower)) >
-            BigInt(tokenSettingsUtils.fromScientificNotation(highestVotes.totalVotingPower))
-                ? current
-                : highestVotes,
-        votesByOption[0],
-    );
+    const winningOptionAmount = tokenProposalUtils.getVoteByType(votesByOption, winningOption);
+    const parsedWinningOptionAmount = formatUnits(winningOptionAmount, decimals);
+    const formattedWinningOptionAmount = formatterUtils.formatNumber(parsedWinningOptionAmount, {
+        format: NumberFormat.TOKEN_AMOUNT_SHORT,
+    })!;
+
+    const yesNoVotes = tokenProposalUtils.getTotalVotes(proposal, true);
+    const winningOptionPercentage = yesNoVotes > 0 ? (winningOptionAmount * BigInt(100)) / yesNoVotes : 100;
+
+    return {
+        option: `app.plugins.token.tokenProposalListItem.${winningOption}`,
+        voteAmount: `${formattedWinningOptionAmount} ${symbol}`,
+        votePercentage: Number(winningOptionPercentage),
+    };
 };
 
 export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (props) => {
@@ -45,15 +47,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
     const { t } = useTranslations();
 
     const winningOption = getWinningOption(proposal);
-
-    const parsedWinningOption = formatUnits(
-        BigInt(tokenSettingsUtils.fromScientificNotation(winningOption?.totalVotingPower)),
-        proposal.token.decimals,
-    );
-
-    const formattedWinningOption = formatterUtils.formatNumber(parsedWinningOption, {
-        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
+    const proposalResult = winningOption != null ? { ...winningOption, option: t(winningOption.option) } : undefined;
 
     return (
         <ProposalDataListItem.Structure
@@ -66,16 +60,9 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             status={tokenProposalUtils.getProposalStatus(proposal)}
             type="majorityVoting"
             // TODO: provide the correct voted status (APP-3394)
-            voted={true}
-            publisher={{
-                address: proposal.creatorAddress,
-                link: `members/${proposal.creatorAddress}`,
-            }}
-            result={{
-                option: t(voteOptionToLabel[winningOption.type]),
-                voteAmount: `${formattedWinningOption} ${proposal.token.symbol}`,
-                votePercentage: 15,
-            }}
+            voted={false}
+            publisher={{ address: proposal.creatorAddress, link: `members/${proposal.creatorAddress}` }}
+            result={proposalResult}
         />
     );
 };
