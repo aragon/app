@@ -1,0 +1,5 @@
+describe('<WizardProvider /> component', () => {
+    it('', () => {
+        //
+    });
+});

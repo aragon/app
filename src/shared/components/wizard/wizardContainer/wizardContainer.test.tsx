@@ -1,0 +1,5 @@
+describe('<WizardContainer /> component', () => {
+    it('', () => {
+        //
+    });
+});
