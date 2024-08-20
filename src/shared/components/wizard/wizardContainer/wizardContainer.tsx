@@ -54,25 +54,25 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
         <FormProvider {...formMethods}>
             <WizardProvider value={wizardContextValues}>
                 <form
-                    className="flex h-full flex-col gap-6"
+                    className="flex h-full flex-col gap-4 md:gap-6"
                     onSubmit={formMethods.handleSubmit(handleSubmit)}
                     {...otherProps}
                 >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-1.5 md:gap-3">
                         <div className="flex flex-row justify-between">
-                            <p className="text-base font-normal leading-tight">
+                            <div className="flex flex-row gap-1 text-base font-normal leading-tight">
                                 <span className="text-primary-400">
                                     {t('app.shared.wizard.container.step', { number: activeStepIndex + 1 })}
                                 </span>
                                 <span className="text-neutral-500">
                                     {t('app.shared.wizard.container.total', { total: steps.length })}
                                 </span>
-                            </p>
+                            </div>
                             {nextStepName != null && (
-                                <p className="text-base font-normal leading-tight">
+                                <div className="flex flex-row gap-1 text-base font-normal leading-tight">
                                     <span className="text-neutral-500">{t('app.shared.wizard.container.next')}</span>
-                                    <span className="text-neutral-800">{` ${nextStepName}`}</span>
-                                </p>
+                                    <span className="text-neutral-800">{nextStepName}</span>
+                                </div>
                             )}
                         </div>
                         <Progress value={wizardProgress} variant="primary" size="sm" />
