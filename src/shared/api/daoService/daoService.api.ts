@@ -23,16 +23,3 @@ export interface IGetDaoSettingsUrlParams {
 
 export interface IGetDaoSettingsParams extends IRequestUrlParams<IGetDaoSettingsUrlParams> {}
 
-export interface IGetProposalListByMemberAddressQueryParams extends IPaginatedRequest, IOrderedRequest {
-    /**
-     * Address of the member to fetch the proposals for.
-     */
-    creatorAddress: string;
-    /**
-     * ID of the DAO to fetch the proposals created by the member for.
-     */
-    daoId: string;
-}
-
-export interface IGetProposalListByMemberAddressParams
-    extends IRequestQueryParams<IGetProposalListByMemberAddressQueryParams> {}

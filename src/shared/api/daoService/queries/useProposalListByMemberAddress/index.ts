@@ -1,1 +1,0 @@
-export { useProposalListByMemberAddress } from './useProposalListByMemberAddress';

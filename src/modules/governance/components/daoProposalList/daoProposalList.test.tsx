@@ -1,23 +1,16 @@
 import { type IGetProposalListParams } from '@/modules/governance/api/governanceService';
-import { type IGetProposalListByMemberAddressParams } from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 
 jest.mock('@/shared/components/pluginComponent', () => ({
-    PluginComponent: (props: {
-        slotId: string;
-        pluginIds: string[];
-        initialParams?: IGetProposalListParams;
-        byMemberAddressParams?: IGetProposalListByMemberAddressParams;
-    }) => (
+    PluginComponent: (props: { slotId: string; pluginIds: string[]; initialParams?: IGetProposalListParams }) => (
         <div
             data-testid="plugin-component-mock"
             data-slotid={props.slotId}
             data-pluginids={props.pluginIds}
             data-initialparams={props.initialParams}
-            data-bymemberaddressparams={props.byMemberAddressParams}
         />
     ),
 }));
@@ -31,7 +24,8 @@ describe('<DaoProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<IDaoProposalListProps>) => {
         const completeProps: IDaoProposalListProps = {
-            daoId: 'test-id',
+            daoId: '',
+            initialParams: { queryParams: { daoId: '' } },
             ...props,
         };
 
@@ -53,16 +47,14 @@ describe('<DaoProposalList /> component', () => {
         render(createTestComponent({ initialParams }));
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent.dataset.initialparams).toEqual(initialParams.toString());
-        expect(pluginComponent.dataset.bymemberaddressparams).toBe(undefined);
     });
 
-    it('passes the by member address params to the plugin component', () => {
-        const byMemberAddressParams: IGetProposalListByMemberAddressParams = {
+    it('passes the by initial params with creator address query to the plugin component', () => {
+        const initialParams = {
             queryParams: { daoId: 'test-id', creatorAddress: '0x1234567890123456789012345678901234567890' },
         };
-        render(createTestComponent({ byMemberAddressParams }));
+        render(createTestComponent({ initialParams }));
         const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent.dataset.bymemberaddressparams).toEqual(byMemberAddressParams.toString());
-        expect(pluginComponent.dataset.initialparams).toBe(undefined);
+        expect(pluginComponent.dataset.initialParams).toEqual(initialParams.toString());
     });
 });

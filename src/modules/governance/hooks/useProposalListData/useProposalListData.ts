@@ -1,33 +1,11 @@
-import { type IGetProposalListByMemberAddressParams } from '@/shared/api/daoService';
-import { useProposalListByMemberAddress } from '@/shared/api/daoService/queries/useProposalListByMemberAddress';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { useProposalList, type IGetProposalListParams, type IProposal } from '../../api/governanceService';
 
-export const useProposalListData = <TProposal extends IProposal = IProposal>(
-    initialParams?: IGetProposalListParams,
-    byMemberAddressParams?: IGetProposalListByMemberAddressParams,
-) => {
+export const useProposalListData = <TProposal extends IProposal = IProposal>(initialParams: IGetProposalListParams) => {
     const { t } = useTranslations();
 
-    if ((initialParams && byMemberAddressParams) || (!initialParams && !byMemberAddressParams)) {
-        throw new Error('You cannot provide both `initialParams` and `byMemberAddressParams. You can not do both.`.');
-    }
-
-    const proposalListData = useProposalList<TProposal>(initialParams ?? { queryParams: { daoId: '' } }, {
-        enabled: !!initialParams && !byMemberAddressParams,
-    });
-
-    const proposalListByMemberData = useProposalListByMemberAddress<TProposal>(
-        byMemberAddressParams ?? { queryParams: { daoId: '', creatorAddress: '' } },
-        {
-            enabled: !!byMemberAddressParams && !initialParams,
-        },
-    );
-
-    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = initialParams
-        ? proposalListData
-        : proposalListByMemberData;
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useProposalList<TProposal>(initialParams);
 
     const proposalList = data?.pages.flatMap((page) => page.data) ?? [];
 
@@ -37,13 +15,9 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(
         isFetchingNextPage,
     });
 
-    const pageSize =
-        initialParams?.queryParams.pageSize ??
-        byMemberAddressParams?.queryParams.pageSize ??
-        data?.pages[0]?.metadata.pageSize ??
-        20;
+    const pageSize = initialParams?.queryParams.pageSize ?? data?.pages[0]?.metadata.pageSize;
 
-    const itemsCount = data?.pages[0]?.metadata.totalRecords ?? 0;
+    const itemsCount = data?.pages[0]?.metadata.totalRecords;
 
     const errorState = {
         heading: t('app.governance.daoProposalList.error.title'),

@@ -1,4 +1,3 @@
-import * as useProposalListByMemberAddress from '@/shared/api/daoService/queries/useProposalListByMemberAddress';
 import {
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
@@ -7,21 +6,22 @@ import {
     generateReactQueryInfiniteResultSuccess,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
-import { testLogger } from '@/test/utils';
 import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
 import { useProposalListData } from './useProposalListData';
 
+// Needed to spy usage of useProposalList hook
+jest.mock('../../api/governanceService', () => ({
+    __esModule: true,
+    ...jest.requireActual('../../api/governanceService'),
+}));
+
 describe('useProposalListData hook', () => {
     const useProposalListSpy = jest.spyOn(governanceService, 'useProposalList');
-    const useProposalListByMemberAddressSpy = jest.spyOn(
-        useProposalListByMemberAddress,
-        'useProposalListByMemberAddress',
-    );
 
     afterEach(() => {
-        jest.clearAllMocks();
+        useProposalListSpy.mockReset();
     });
 
     it('fetches and returns the data needed to display the proposal list with initialParams', () => {
@@ -29,13 +29,12 @@ describe('useProposalListData hook', () => {
         const proposalsMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: proposals.length });
         const proposalsResponse = generatePaginatedResponse({ data: proposals, metadata: proposalsMetadata });
         const initialParams = { queryParams: { daoId: 'dao-test' } };
-        const byMemberAddressParams = undefined;
 
         useProposalListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [proposalsResponse], pageParams: [] } }),
         );
 
-        const { result } = renderHook(() => useProposalListData(initialParams, byMemberAddressParams), {
+        const { result } = renderHook(() => useProposalListData(initialParams), {
             wrapper: ReactQueryWrapper,
         });
 
@@ -49,24 +48,23 @@ describe('useProposalListData hook', () => {
         expect(result.current.state).toEqual('idle');
     });
 
-    it('fetches and returns the data for proposals by member address with byMemberAddressParams', () => {
+    it('fetches and returns the data for proposals with creator address query', () => {
         const proposals = [generateProposal()];
         const proposalsMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: proposals.length });
         const proposalsResponse = generatePaginatedResponse({ data: proposals, metadata: proposalsMetadata });
-        const initialParams = undefined;
-        const byMemberAddressParams = {
+        const initialParams = {
             queryParams: { daoId: 'dao-test', creatorAddress: '0x1234567890123456789012345678901234567890' },
         };
 
-        useProposalListByMemberAddressSpy.mockReturnValue(
+        useProposalListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [proposalsResponse], pageParams: [] } }),
         );
 
-        const { result } = renderHook(() => useProposalListData(initialParams, byMemberAddressParams), {
+        const { result } = renderHook(() => useProposalListData(initialParams), {
             wrapper: ReactQueryWrapper,
         });
 
-        expect(useProposalListByMemberAddressSpy).toHaveBeenCalledWith(byMemberAddressParams, { enabled: true });
+        expect(useProposalListSpy).toHaveBeenCalledWith(initialParams, { enabled: true });
         expect(result.current.proposalList).toEqual(proposals);
         expect(result.current.onLoadMore).toBeDefined();
         expect(result.current.pageSize).toEqual(proposalsMetadata.pageSize);
@@ -95,19 +93,5 @@ describe('useProposalListData hook', () => {
         });
 
         expect(result.current.pageSize).toEqual(pageSize);
-    });
-
-    it('throws an error if both initialParams and byMemberAddressParams are provided', () => {
-        testLogger.suppressErrors();
-        const initialParams = { queryParams: { daoId: 'dao-test' } };
-        const byMemberAddressParams = {
-            queryParams: { daoId: 'dao-test', creatorAddress: '0x1234567890123456789012345678901234567890' },
-        };
-
-        expect(() =>
-            renderHook(() => useProposalListData(initialParams, byMemberAddressParams), {
-                wrapper: ReactQueryWrapper,
-            }),
-        ).toThrow('You cannot provide both `initialParams` and `byMemberAddressParams. You can not do both.`');
     });
 });

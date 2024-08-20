@@ -25,7 +25,8 @@ describe('<MultisigProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigProposalListProps>) => {
         const completeProps: IMultisigProposalListProps = {
-            daoId: 'dao-id',
+            daoId: '',
+            initialParams: { queryParams: { daoId: '' } },
             ...props,
         };
 
@@ -78,7 +79,7 @@ describe('<MultisigProposalList /> component', () => {
         expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('uses initialParams when only initialParams is provided', () => {
+    it('uses initialParams correctly', () => {
         const initialParams = { queryParams: { daoId: 'dao-test' } };
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
@@ -93,24 +94,5 @@ describe('<MultisigProposalList /> component', () => {
         render(createTestComponent({ initialParams }));
 
         expect(useProposalListDataSpy).toHaveBeenCalledWith(initialParams);
-    });
-
-    it('uses byMemberAddressParams when only byMemberAddressParams is provided', () => {
-        const byMemberAddressParams = {
-            queryParams: { daoId: 'dao-test', creatorAddress: '0x1234567890123456789012345678901234567890' },
-        };
-        useProposalListDataSpy.mockReturnValue({
-            proposalList: [],
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 0,
-            onLoadMore: jest.fn(),
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        render(createTestComponent({ byMemberAddressParams }));
-
-        expect(useProposalListDataSpy).toHaveBeenCalledWith(byMemberAddressParams);
     });
 });

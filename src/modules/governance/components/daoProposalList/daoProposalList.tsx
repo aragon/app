@@ -1,6 +1,5 @@
 'use client';
 
-import { type IGetProposalListByMemberAddressParams } from '@/shared/api/daoService';
 import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import type { ReactNode } from 'react';
@@ -15,11 +14,7 @@ export interface IDaoProposalListProps {
     /**
      * Initial parameters to use for fetching the proposal list.
      */
-    initialParams?: IGetProposalListParams;
-    /**
-     * Parameters to use for fetching the proposal list created by a given member.
-     */
-    byMemberAddressParams?: IGetProposalListByMemberAddressParams;
+    initialParams: IGetProposalListParams;
     /**
      * Hides the pagination when set to true.
      */
@@ -31,11 +26,9 @@ export interface IDaoProposalListProps {
 }
 
 export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
-    const { daoId, initialParams, byMemberAddressParams, ...otherProps } = props;
+    const { daoId, initialParams, ...otherProps } = props;
 
     const pluginIds = useDaoPluginIds(daoId);
-
-    const activeParams = initialParams ? { initialParams } : { byMemberAddressParams };
 
     return (
         <PluginComponent
@@ -43,7 +36,6 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
             pluginIds={pluginIds}
             initialParams={initialParams}
             daoId={daoId}
-            {...activeParams}
             {...otherProps}
         />
     );

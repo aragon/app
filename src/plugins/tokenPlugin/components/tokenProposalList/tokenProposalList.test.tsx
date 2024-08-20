@@ -26,6 +26,7 @@ describe('<TokenProposalList /> component', () => {
     const createTestComponent = (props?: Partial<ITokenProposalListProps>) => {
         const completeProps: ITokenProposalListProps = {
             daoId: 'dao-id',
+            initialParams: { queryParams: { daoId: 'dao-id' } },
             ...props,
         };
 
@@ -77,7 +78,7 @@ describe('<TokenProposalList /> component', () => {
         expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('uses initialParams when only initialParams is provided', () => {
+    it('uses initialParams correctly', () => {
         const initialParams = { queryParams: { daoId: 'dao-test' } };
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
@@ -92,24 +93,5 @@ describe('<TokenProposalList /> component', () => {
         render(createTestComponent({ initialParams }));
 
         expect(useProposalListDataSpy).toHaveBeenCalledWith(initialParams);
-    });
-
-    it('uses byMemberAddressParams when only byMemberAddressParams is provided', () => {
-        const byMemberAddressParams = {
-            queryParams: { daoId: 'dao-test', creatorAddress: '0x1234567890123456789012345678901234567890' },
-        };
-        useProposalListDataSpy.mockReturnValue({
-            proposalList: [],
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 0,
-            onLoadMore: jest.fn(),
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        render(createTestComponent({ byMemberAddressParams }));
-
-        expect(useProposalListDataSpy).toHaveBeenCalledWith(byMemberAddressParams);
     });
 });
