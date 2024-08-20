@@ -62,7 +62,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                     proposalId={proposal.id}
                 />
                 <ProposalVoting.Votes>
-                    <VoteList initialParams={voteListParams} daoId={daoId} />
+                    <VoteList params={voteListParams} daoId={daoId} />
                 </ProposalVoting.Votes>
                 <ProposalVoting.Details settings={proposalSettings} />
             </ProposalVoting.Stage>
