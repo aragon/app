@@ -24,15 +24,10 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(par
         description: t('app.governance.daoProposalList.error.description'),
     };
 
-    const emptyState = params.queryParams.creatorAddress
-        ? {
-              heading: t('app.governance.daoProposalList.empty.title'),
-              description: t('app.governance.daoProposalList.empty.description'),
-          }
-        : {
-              heading: t('app.governance.daoProposalList.empty.title'),
-              description: t('app.governance.daoProposalList.empty.description'),
-          };
+    const emptyState = {
+        heading: t('app.governance.daoProposalList.empty.title'),
+        description: t('app.governance.daoProposalList.empty.description'),
+    };
 
     return { proposalList, onLoadMore: fetchNextPage, state, pageSize, itemsCount, emptyState, errorState };
 };

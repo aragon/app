@@ -184,7 +184,7 @@
         },
         "error": {
           "title": "Error loading members",
-          "description": "There was an error loading the DAO members, try again later."
+          "description": "There was an error loading the DAO members. Please try again later."
         }
       },
       "daoProposalsPage": {
@@ -204,7 +204,7 @@
         },
         "error": {
           "title": "Error loading proposals",
-          "description": "There was an error loading the DAO proposals, try again later."
+          "description": "There was an error loading the DAO proposals. Please try again later."
         }
       },
       "daoMemberDetailsPage": {
@@ -318,7 +318,7 @@
         },
         "error": {
           "title": "Error loading votes",
-          "description": "There was an error loading the votes, try again later."
+          "description": "There was an error loading the votes. Please try again later."
         }
       }
     },
