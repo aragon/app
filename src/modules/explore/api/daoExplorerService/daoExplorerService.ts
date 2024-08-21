@@ -1,6 +1,6 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { IDao, IGetDaoListByMemberAddressParams } from '@/shared/api/daoService';
-import type { IGetDaoListParams } from './daoExplorerService.api';
+import type { IDao } from '@/shared/api/daoService';
+import type { IGetDaoListByMemberAddressParams, IGetDaoListParams } from './daoExplorerService.api';
 
 class DaoExplorerService extends AragonBackendService {
     private urls = {

@@ -1,4 +1,3 @@
-import * as useDaoListByMemberAddress from '@/shared/api/daoService';
 import {
     generateDao,
     generatePaginatedResponse,
@@ -14,7 +13,7 @@ import { DaoList, type IDaoListProps } from './daoList';
 
 describe('<DaoList /> component', () => {
     const useDaoListSpy = jest.spyOn(useDaoList, 'useDaoList');
-    const useDaoListByMemberAddressSpy = jest.spyOn(useDaoListByMemberAddress, 'useDaoListByMemberAddress');
+    const useDaoListByMemberAddressSpy = jest.spyOn(useDaoList, 'useDaoListByMemberAddress');
 
     const queryClient = new QueryClient();
 
