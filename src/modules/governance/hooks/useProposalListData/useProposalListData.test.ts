@@ -4,7 +4,6 @@ import {
     generateReactQueryInfiniteResultError,
     generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
-    ReactQueryWrapper,
 } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../api/governanceService';
@@ -30,9 +29,7 @@ describe('useProposalListData hook', () => {
             generateReactQueryInfiniteResultSuccess({ data: { pages: [proposalsResponse], pageParams: [] } }),
         );
 
-        const { result } = renderHook(() => useProposalListData(params), {
-            wrapper: ReactQueryWrapper,
-        });
+        const { result } = renderHook(() => useProposalListData(params));
 
         expect(useProposalListSpy).toHaveBeenCalledWith(params);
         expect(result.current.proposalList).toEqual(proposals);
@@ -47,9 +44,7 @@ describe('useProposalListData hook', () => {
     it('returns error state if fetching proposals fails', () => {
         useProposalListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
 
-        const { result } = renderHook(() => useProposalListData({ queryParams: { daoId: '' } }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const { result } = renderHook(() => useProposalListData({ queryParams: { daoId: '' } }));
 
         expect(result.current.state).toEqual('error');
     });
@@ -58,9 +53,7 @@ describe('useProposalListData hook', () => {
         useProposalListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
 
         const pageSize = 6;
-        const { result } = renderHook(() => useProposalListData({ queryParams: { daoId: '', pageSize } }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const { result } = renderHook(() => useProposalListData({ queryParams: { daoId: '', pageSize } }));
 
         expect(result.current.pageSize).toEqual(pageSize);
     });
