@@ -3,8 +3,7 @@ import { Progress } from '@aragon/ods';
 import { useMemo, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
-import { WizardProvider } from '../wizardProvider';
-import type { IWizardStepperStep } from '../wizardProvider/wizardProvider';
+import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
 
 export interface IWizardContainerProps<TFormData extends FieldValues = FieldValues>
     extends Omit<ComponentProps<'form'>, 'onSubmit'> {

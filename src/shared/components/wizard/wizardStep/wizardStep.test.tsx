@@ -128,7 +128,9 @@ describe('<WizardStep /> component', () => {
         const context = { activeStep: id, hasPrevious };
         const props = { id };
         render(createTestComponent({ context, props }));
-        expect(screen.getByRole('button', { name: /wizard.step.back/ }).classList).toContain('invisible');
+        const button = screen.getByRole('button', { name: /wizard.step.back/ });
+        expect(button).toBeInTheDocument();
+        expect(button.classList).toContain('invisible');
     });
 
     it('displays a required error feedback when form is submitted with required validation errors', () => {

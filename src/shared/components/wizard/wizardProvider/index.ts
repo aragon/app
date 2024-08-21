@@ -1,1 +1,1 @@
-export { WizardProvider, useWizardContext, type IWizardContext } from './wizardProvider';
+export { WizardProvider, useWizardContext, type IWizardContext, type IWizardStepperStep } from './wizardProvider';
