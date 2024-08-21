@@ -7,7 +7,7 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(par
 
     const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useProposalList<TProposal>(params);
 
-    const proposalList = data?.pages.flatMap((page) => page.data) ?? [];
+    const proposalList = data?.pages.flatMap((page) => page.data);
 
     const state = dataListUtils.queryToDataListState({
         status,
@@ -15,9 +15,9 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(par
         isFetchingNextPage,
     });
 
-    const pageSize = params?.queryParams.pageSize ?? data?.pages[0]?.metadata.pageSize;
+    const pageSize = params.queryParams.pageSize ?? data?.pages[0].metadata.pageSize;
 
-    const itemsCount = data?.pages[0]?.metadata.totalRecords;
+    const itemsCount = data?.pages[0].metadata.totalRecords;
 
     const errorState = {
         heading: t('app.governance.daoProposalList.error.title'),

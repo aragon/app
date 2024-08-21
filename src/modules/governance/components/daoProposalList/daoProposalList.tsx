@@ -8,13 +8,13 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoProposalListProps {
     /**
-     * DAO id to use for fetching the plugin ids.
-     */
-    daoId: string;
-    /**
      * Parameters to use for fetching the proposal list.
      */
     params: IGetProposalListParams;
+    /**
+     * DAO id to use for fetching the plugin ids.
+     */
+    daoId: string;
     /**
      * Hides the pagination when set to true.
      */

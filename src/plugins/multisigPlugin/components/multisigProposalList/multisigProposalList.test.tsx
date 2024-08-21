@@ -1,11 +1,11 @@
-import * as useProposalListDataHook from '@/modules/governance/hooks/useProposalListData';
+import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigProposal } from '../../testUtils';
 import { MultisigProposalList, type IMultisigProposalListProps } from './multisigProposalList';
 
 describe('<MultisigProposalList /> component', () => {
-    const useProposalListDataSpy = jest.spyOn(useProposalListDataHook, 'useProposalListData');
+    const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
@@ -20,7 +20,7 @@ describe('<MultisigProposalList /> component', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        useProposalListDataSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IMultisigProposalListProps>) => {

@@ -222,7 +222,7 @@
           }
         },
         "main": {
-          "proposalsCreation": {
+          "proposalCreation": {
             "title": "Proposal creation"
           },
           "daoMemberships": {
