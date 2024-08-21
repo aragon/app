@@ -1,12 +1,10 @@
-import {
-    daoExplorerService,
-    daoExplorerServiceKeys,
-    type IGetDaoListByMemberAddressParams,
-} from '@/modules/explore/api/daoExplorerService';
 import { type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import { type IDao } from '@/shared/api/daoService';
 import type { InfiniteQueryOptions, SharedInfiniteQueryOptions } from '@/shared/types';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { daoExplorerService } from '../../daoExplorerService';
+import { type IGetDaoListByMemberAddressParams } from '../../daoExplorerService.api';
+import { daoExplorerServiceKeys } from '../../daoExplorerServiceKeys';
 
 export const daoListByMemberAddressOptions = (
     params: IGetDaoListByMemberAddressParams,

@@ -222,6 +222,9 @@
           }
         },
         "main": {
+          "votingActivity": {
+            "title": "Voting activity"
+          },
           "daoMemberships": {
             "title": "Other DAO memberships"
           }
@@ -398,6 +401,31 @@
         "link": {
           "explore": "Explore DAOs",
           "report": "Report issue"
+        }
+      },
+      "wizard": {
+        "container": {
+          "step": "Step {{number}}",
+          "total": "of {{total}}",
+          "next": "Next:"
+        },
+        "step": {
+          "back": "Back",
+          "next": "Next",
+          "error": {
+            "invalid": {
+              "title": "Invalid data",
+              "description": "Some values are not valid. Review and fix the invalid data to proceed."
+            },
+            "required": {
+              "title": "Missing data",
+              "description": "Some inputs are not filled. Review and fill out all mandatory data to proceed."
+            },
+            "invalid-required": {
+              "title": "Missing and invalid data",
+              "description": "Some inputs are not filled and not valid. Review, fix and fill out all mandatory data to proceed."
+            }
+          }
         }
       }
     }

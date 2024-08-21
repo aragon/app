@@ -5,13 +5,14 @@ import { useVoteList, type IGetVoteListParams, type IVote } from '../../api/gove
 export const useVoteListData = <TVote extends IVote = IVote>(params: IGetVoteListParams) => {
     const { t } = useTranslations();
 
-    const { data: voteListData, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useVoteList<TVote>(params);
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useVoteList<TVote>(params);
 
-    const voteList = voteListData?.pages.flatMap((page) => page.data);
+    const voteList = data?.pages.flatMap((page) => page.data);
     const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
-    const pageSize = params.queryParams.pageSize ?? voteListData?.pages[0].metadata.pageSize;
-    const itemsCount = voteListData?.pages[0].metadata.totalRecords;
+    const pageSize = params.queryParams.pageSize ?? data?.pages[0].metadata.pageSize;
+
+    const itemsCount = data?.pages[0].metadata.totalRecords;
 
     const errorState = {
         heading: t('app.governance.voteList.error.title'),

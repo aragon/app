@@ -1,11 +1,11 @@
+import { DaoList } from '@/modules/explore/components/daoList';
+import { VoteList } from '@/modules/governance/components/voteList';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { addressUtils, clipboardUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import * as governanceService from '../../api/governanceService';
-
-import { DaoList } from '@/modules/explore/components/daoList';
 import { userEvent } from '@testing-library/user-event';
+import * as governanceService from '../../api/governanceService';
 import { generateMember } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
 
@@ -16,6 +16,10 @@ jest.mock('@aragon/ods', () => ({
 
 jest.mock('../../../explore/components/daoList', () => ({
     DaoList: jest.fn(() => <div data-testid="dao-list-mock" />),
+}));
+
+jest.mock('@/modules/governance/components/voteList', () => ({
+    VoteList: jest.fn(() => <div data-testid="vote-list-mock" />),
 }));
 
 describe('<DaoMemberDetailsPageClient /> component', () => {
@@ -33,6 +37,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useMemberSpy.mockReset();
         clipboardCopySpy.mockReset();
         (DaoList as jest.Mock).mockClear();
+        (VoteList as jest.Mock).mockClear();
     });
 
     const createTestComponent = (props?: Partial<IDaoMemberDetailsPageClientProps>) => {
@@ -53,10 +58,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         const address = '0x1234567890123456789012345678901234567890';
         const daoId = 'dao-id';
         const ens = 'member.eth';
-        const member = generateMember({
-            ens,
-            address,
-        });
+        const member = generateMember({ ens, address });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         render(createTestComponent({ address, daoId }));
 
@@ -106,10 +108,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     it('renders the member information', () => {
         const ens = 'member.eth';
         const address = '0x1234567890123456789012345678901234567890';
-        const member = generateMember({
-            ens,
-            address,
-        });
+        const member = generateMember({ ens, address });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         render(createTestComponent({ address }));
 
@@ -149,8 +148,34 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             expect.objectContaining({
                 daoListByMemberParams: {
                     urlParams: { address },
-                    queryParams: { pageSize: 3 },
+                    queryParams: { pageSize: 3, excludeDaoId: 'dao-id' },
                 },
+            }),
+            {},
+        );
+    });
+
+    it('passes the correct params to the VoteList component', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const daoId = 'dao-id';
+        const member = generateMember({ ens: 'member.eth', address });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+
+        render(createTestComponent({ address, daoId }));
+
+        expect(VoteList).toHaveBeenCalledWith(
+            expect.objectContaining({
+                initialParams: {
+                    queryParams: {
+                        daoId,
+                        address,
+                        includeInfo: true,
+                        pageSize: 5,
+                    },
+                },
+                daoId,
             }),
             {},
         );

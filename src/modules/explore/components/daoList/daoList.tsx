@@ -1,6 +1,5 @@
 'use client';
 
-import { useDaoListByMemberAddress } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -10,6 +9,7 @@ import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot, i
 import classNames from 'classnames';
 import {
     useDaoList,
+    useDaoListByMemberAddress,
     type IGetDaoListByMemberAddressParams,
     type IGetDaoListParams,
 } from '../../api/daoExplorerService';
