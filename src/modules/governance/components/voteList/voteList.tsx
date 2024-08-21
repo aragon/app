@@ -7,7 +7,7 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IVoteListProps {
     /**
-     * Initial parameters to use for fetching the proposal votes.
+     * Parameters to use for fetching the proposal votes.
      */
     initialParams: IGetVoteListParams;
     /**
