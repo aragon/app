@@ -12,7 +12,12 @@ export interface IGetDaoListByMemberUrlParams {
     address: string;
 }
 
-export interface IGetDaoListByMemberQueryParams extends IPaginatedRequest, IOrderedRequest {}
+export interface IGetDaoListByMemberQueryParams extends IPaginatedRequest, IOrderedRequest {
+    /**
+     * DAO ID to filter out from the list
+     */
+    excludeDaoId?: string;
+}
 
 export interface IGetDaoListByMemberAddressParams
     extends IRequestUrlQueryParams<IGetDaoListByMemberUrlParams, IGetDaoListByMemberQueryParams> {}

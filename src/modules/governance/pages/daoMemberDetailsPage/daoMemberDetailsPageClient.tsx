@@ -80,7 +80,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { label: memberName },
     ];
 
-    const daoListByMemberParams = { urlParams: { address }, queryParams: { pageSize: 3 } };
+    const daoListByMemberParams = { urlParams: { address }, queryParams: { pageSize: 3, excludeDaoId: daoId } };
 
     return (
         <>
