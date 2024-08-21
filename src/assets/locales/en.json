@@ -102,7 +102,15 @@
     },
     "explore": {
       "daoList": {
-        "entity": "DAOs"
+        "entity": "DAOs",
+        "emptyState": {
+          "heading": "No DAOs found",
+          "description": "This will show relevant DAOs when available."
+        },
+        "errorState": {
+          "heading": "Error loading DAOs",
+          "description": "There was an error loading the DAOs. Please try again later."
+        }
       }
     },
     "finance": {
@@ -192,7 +200,7 @@
       "daoProposalList": {
         "empty": {
           "title": "No proposals found",
-          "description": "DAO has currently no proposals."
+          "description": "This will show relevant proposals when available."
         },
         "error": {
           "title": "Error loading proposals",
@@ -224,6 +232,7 @@
         "main": {
           "proposalCreation": {
             "title": "Proposal creation"
+
           },
           "votingActivity": {
             "title": "Voting activity"

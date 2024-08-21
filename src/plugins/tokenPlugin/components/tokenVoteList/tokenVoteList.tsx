@@ -7,6 +7,7 @@ import {
     DataListRoot,
     type IVoteDataListItemStructureProps,
     VoteDataListItem,
+    VoteProposalDataListItem,
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import { type ITokenVote, VoteOption } from '../../types';
@@ -37,20 +38,35 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
             itemsCount={itemsCount}
         >
             <DataListContainer
-                SkeletonElement={VoteDataListItem.Skeleton}
+                SkeletonElement={
+                    initialParams.queryParams.includeInfo === true
+                        ? VoteProposalDataListItem.Skeleton
+                        : VoteDataListItem.Skeleton
+                }
                 emptyState={emptyState}
                 errorState={errorState}
             >
-                {voteList?.map((vote) => (
-                    <VoteDataListItem.Structure
-                        key={vote.transactionHash}
-                        href={`/dao/${daoId}/members/${vote.memberAddress}`}
-                        voteIndicator={voteOptionToIndicator[vote.voteOption]}
-                        voter={{ address: vote.memberAddress }}
-                        votingPower={formatUnits(BigInt(vote.votingPower), vote.token.decimals)}
-                        tokenSymbol={vote.token.symbol}
-                    />
-                ))}
+                {voteList?.map((vote) =>
+                    initialParams.queryParams.includeInfo === true ? (
+                        //TODO: Implement proposal id and index for PIP when available from backend (APP-3588)
+                        <VoteProposalDataListItem.Structure
+                            key={vote.transactionHash}
+                            href={`/dao/${daoId}/proposals`}
+                            voteIndicator="approve"
+                            proposalId="PIP-00"
+                            proposalTitle={vote.proposalInfo!.title}
+                        />
+                    ) : (
+                        <VoteDataListItem.Structure
+                            key={vote.transactionHash}
+                            href={`/dao/${daoId}/members/${vote.memberAddress}`}
+                            voteIndicator={voteOptionToIndicator[vote.voteOption]}
+                            voter={{ address: vote.memberAddress }}
+                            votingPower={formatUnits(BigInt(vote.votingPower), vote.token.decimals)}
+                            tokenSymbol={vote.token.symbol}
+                        />
+                    ),
+                )}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>
