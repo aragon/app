@@ -10,12 +10,6 @@ import * as governanceService from '../../api/governanceService';
 import { generateVote } from '../../testUtils';
 import { useVoteListData } from './useVoteListData';
 
-// Needed to spy usage of useVoteList hook
-jest.mock('../../api/governanceService', () => ({
-    __esModule: true,
-    ...jest.requireActual('../../api/governanceService'),
-}));
-
 describe('useVoteListData hook', () => {
     const useVoteListSpy = jest.spyOn(governanceService, 'useVoteList');
 
@@ -28,9 +22,11 @@ describe('useVoteListData hook', () => {
         const votesMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: votes.length });
         const votesResponse = generatePaginatedResponse({ data: votes, metadata: votesMetadata });
         const params = { queryParams: { proposalId: 'my-proposal' } };
+
         useVoteListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [votesResponse], pageParams: [] } }),
         );
+
         const { result } = renderHook(() => useVoteListData(params));
 
         expect(useVoteListSpy).toHaveBeenCalledWith(params);
@@ -43,16 +39,20 @@ describe('useVoteListData hook', () => {
         expect(result.current.state).toEqual('idle');
     });
 
-    it('returns error state of fetch members error', () => {
+    it('returns error state when fetching votes fails', () => {
         useVoteListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
+
         const { result } = renderHook(() => useVoteListData({ queryParams: {} }));
+
         expect(result.current.state).toEqual('error');
     });
 
-    it('returns the pageSize set as hook parameter when data is loading', () => {
+    it('returns the pageSize set as a hook parameter when data is loading', () => {
         useVoteListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
+
         const pageSize = 6;
         const { result } = renderHook(() => useVoteListData({ queryParams: { pageSize } }));
+
         expect(result.current.pageSize).toEqual(pageSize);
     });
 });

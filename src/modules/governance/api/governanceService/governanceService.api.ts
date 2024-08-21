@@ -53,6 +53,18 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
      * ID of the proposal to fetch the votes for.
      */
     proposalId?: string;
+    /**
+     * ID of the DAO to fetch the votes from.
+     */
+    daoId?: string;
+    /**
+     * Address of the member to fetch the votes for.
+     */
+    address?: string;
+    /**
+     * Option to show extra proposal information.
+     */
+    includeInfo?: boolean;
 }
 
 export interface IGetVoteListParams extends IRequestQueryParams<IGetVoteListQueryParams> {}
