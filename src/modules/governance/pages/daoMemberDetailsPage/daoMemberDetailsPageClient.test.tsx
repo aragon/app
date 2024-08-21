@@ -167,7 +167,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
         expect(VoteList).toHaveBeenCalledWith(
             expect.objectContaining({
-                params: {
+                initialParams: {
                     queryParams: {
                         daoId,
                         address,

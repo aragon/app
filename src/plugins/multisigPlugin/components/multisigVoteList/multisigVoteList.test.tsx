@@ -13,7 +13,7 @@ describe('<MultisigVoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
         const completeProps: IMultisigVoteListProps = {
-            params: { queryParams: {} },
+            initialParams: { queryParams: {} },
             daoId: 'test-id',
             ...props,
         };
@@ -57,8 +57,8 @@ describe('<MultisigVoteList /> component', () => {
         expect(screen.getAllByText('approve')).toHaveLength(2);
     });
 
-    it('calls useVoteListData with the correct query params', () => {
-        const params = {
+    it('calls useVoteListData with the correct query initialParams', () => {
+        const initialParams = {
             queryParams: {
                 daoId: 'test-dao',
                 address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
@@ -77,8 +77,8 @@ describe('<MultisigVoteList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
-        render(createTestComponent({ params }));
+        render(createTestComponent({ initialParams }));
 
-        expect(useVoteListDataSpy).toHaveBeenCalledWith(params);
+        expect(useVoteListDataSpy).toHaveBeenCalledWith(initialParams);
     });
 });
