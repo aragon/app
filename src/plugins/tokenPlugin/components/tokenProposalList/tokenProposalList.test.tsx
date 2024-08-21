@@ -9,7 +9,7 @@ describe('<TokenProposalList /> component', () => {
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
-            proposalList: undefined,
+            proposalList: [],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
@@ -75,5 +75,22 @@ describe('<TokenProposalList /> component', () => {
         const children = 'test-children';
         render(createTestComponent({ children }));
         expect(screen.getByText(children)).toBeInTheDocument();
+    });
+
+    it('uses initialParams correctly', () => {
+        const initialParams = { queryParams: { daoId: 'dao-test' } };
+        useProposalListDataSpy.mockReturnValue({
+            proposalList: [],
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: 0,
+            onLoadMore: jest.fn(),
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent({ initialParams }));
+
+        expect(useProposalListDataSpy).toHaveBeenCalledWith(initialParams);
     });
 });

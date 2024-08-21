@@ -8,7 +8,7 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoProposalListProps {
     /**
-     * Initial parameters to use for fetching the proposal list.
+     * Parameters to use for fetching the proposal list.
      */
     initialParams: IGetProposalListParams;
     /**
@@ -23,7 +23,9 @@ export interface IDaoProposalListProps {
 
 export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
     const { initialParams, ...otherProps } = props;
-    const pluginIds = useDaoPluginIds(initialParams.queryParams.daoId);
+    const { daoId } = initialParams.queryParams;
+
+    const pluginIds = useDaoPluginIds(daoId);
 
     return (
         <PluginComponent

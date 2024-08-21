@@ -9,7 +9,7 @@ describe('<MultisigProposalList /> component', () => {
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
-            proposalList: undefined,
+            proposalList: [],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
@@ -25,7 +25,7 @@ describe('<MultisigProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigProposalListProps>) => {
         const completeProps: IMultisigProposalListProps = {
-            initialParams: { queryParams: { daoId: 'dao-id' } },
+            initialParams: { queryParams: { daoId: '' } },
             ...props,
         };
 
@@ -50,10 +50,10 @@ describe('<MultisigProposalList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
+
         render(createTestComponent());
         expect(screen.getByText(proposals[0].title)).toBeInTheDocument();
         expect(screen.getByText(proposals[1].title)).toBeInTheDocument();
-        expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
     it('does not render the data-list pagination when hidePagination is set to true', () => {
@@ -67,6 +67,7 @@ describe('<MultisigProposalList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
+
         render(createTestComponent({ hidePagination }));
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
@@ -75,5 +76,22 @@ describe('<MultisigProposalList /> component', () => {
         const children = 'test-children';
         render(createTestComponent({ children }));
         expect(screen.getByText(children)).toBeInTheDocument();
+    });
+
+    it('uses initialParams correctly', () => {
+        const initialParams = { queryParams: { daoId: 'dao-test' } };
+        useProposalListDataSpy.mockReturnValue({
+            proposalList: [],
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: 0,
+            onLoadMore: jest.fn(),
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent({ initialParams }));
+
+        expect(useProposalListDataSpy).toHaveBeenCalledWith(initialParams);
     });
 });

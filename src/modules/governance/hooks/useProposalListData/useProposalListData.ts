@@ -5,19 +5,19 @@ import { useProposalList, type IGetProposalListParams, type IProposal } from '..
 export const useProposalListData = <TProposal extends IProposal = IProposal>(params: IGetProposalListParams) => {
     const { t } = useTranslations();
 
-    const {
-        data: proposalListData,
+    const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useProposalList<TProposal>(params);
+
+    const proposalList = data?.pages.flatMap((page) => page.data);
+
+    const state = dataListUtils.queryToDataListState({
         status,
         fetchStatus,
         isFetchingNextPage,
-        fetchNextPage,
-    } = useProposalList<TProposal>(params);
+    });
 
-    const proposalList = proposalListData?.pages.flatMap((page) => page.data);
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const pageSize = params.queryParams.pageSize ?? data?.pages[0].metadata.pageSize;
 
-    const pageSize = params.queryParams.pageSize ?? proposalListData?.pages[0].metadata.pageSize;
-    const itemsCount = proposalListData?.pages[0].metadata.totalRecords;
+    const itemsCount = data?.pages[0].metadata.totalRecords;
 
     const errorState = {
         heading: t('app.governance.daoProposalList.error.title'),
@@ -29,13 +29,5 @@ export const useProposalListData = <TProposal extends IProposal = IProposal>(par
         description: t('app.governance.daoProposalList.empty.description'),
     };
 
-    return {
-        onLoadMore: fetchNextPage,
-        proposalList,
-        state,
-        pageSize,
-        itemsCount,
-        emptyState,
-        errorState,
-    };
+    return { proposalList, onLoadMore: fetchNextPage, state, pageSize, itemsCount, emptyState, errorState };
 };

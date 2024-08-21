@@ -1,6 +1,7 @@
 'use client';
 
 import { DaoList } from '@/modules/explore/components/daoList';
+import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { VoteList } from '@/modules/governance/components/voteList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -81,6 +82,8 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { label: memberName },
     ];
 
+    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: 3 } };
+
     const votesByMemberAddressQueryParams = { queryParams: { daoId, address, includeInfo: true, pageSize: 5 } };
 
     const daoListByMemberParams = { urlParams: { address }, queryParams: { pageSize: 3, excludeDaoId: daoId } };
@@ -123,6 +126,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                 <Page.Main>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
                         <VoteList initialParams={votesByMemberAddressQueryParams} daoId={daoId} />
+                    </Page.Section>
+                    <Page.Section title={t('app.governance.daoMemberDetailsPage.main.proposalsCreation.title')}>
+                        <DaoProposalList initialParams={proposalsByMemberParams} />
                     </Page.Section>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.daoMemberships.title')}>
                         <DaoList daoListByMemberParams={daoListByMemberParams} />

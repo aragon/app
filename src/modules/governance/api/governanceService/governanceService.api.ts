@@ -6,6 +6,10 @@ export interface IGetProposalListQueryParams extends IPaginatedRequest {
      * ID of the Dao to fetch the proposals from.
      */
     daoId: string;
+    /**
+     * Filter proposals by creator address.
+     */
+    creatorAddress?: string;
 }
 
 export interface IGetProposalListParams extends IRequestQueryParams<IGetProposalListQueryParams> {}

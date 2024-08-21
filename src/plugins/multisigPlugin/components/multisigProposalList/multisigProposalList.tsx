@@ -9,6 +9,7 @@ export interface IMultisigProposalListProps extends IDaoProposalListProps {}
 
 export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props) => {
     const { initialParams, hidePagination, children } = props;
+    const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
 
@@ -30,11 +31,7 @@ export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props
                 emptyState={emptyState}
             >
                 {proposalList?.map((proposal) => (
-                    <MultisigProposalListItem
-                        key={proposal.id}
-                        proposal={proposal}
-                        daoId={initialParams.queryParams.daoId}
-                    />
+                    <MultisigProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}

@@ -222,6 +222,9 @@
           }
         },
         "main": {
+          "proposalCreation": {
+            "title": "Proposal creation"
+          },
           "votingActivity": {
             "title": "Voting activity"
           },
