@@ -25,7 +25,6 @@ describe('<TokenProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenProposalListProps>) => {
         const completeProps: ITokenProposalListProps = {
-            daoId: 'dao-id',
             initialParams: { queryParams: { daoId: 'dao-id' } },
             ...props,
         };

@@ -8,7 +8,8 @@ import { TokenProposalListItem } from './tokenProposalListItem';
 export interface ITokenProposalListProps extends IDaoProposalListProps {}
 
 export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
-    const { daoId, initialParams, hidePagination, children } = props;
+    const { initialParams, hidePagination, children } = props;
+    const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
 

@@ -122,7 +122,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             <Page.Content>
                 <Page.Main>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.proposalsCreation.title')}>
-                        <DaoProposalList initialParams={proposalsByMemberParams} daoId={daoId} />
+                        <DaoProposalList initialParams={proposalsByMemberParams} />
                     </Page.Section>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.daoMemberships.title')}>
                         <DaoList daoListByMemberParams={daoListByMemberParams} />

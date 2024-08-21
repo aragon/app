@@ -25,7 +25,6 @@ describe('<MultisigProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigProposalListProps>) => {
         const completeProps: IMultisigProposalListProps = {
-            daoId: '',
             initialParams: { queryParams: { daoId: '' } },
             ...props,
         };

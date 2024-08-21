@@ -8,7 +8,8 @@ import { MultisigProposalListItem } from './multisigProposalListItem';
 export interface IMultisigProposalListProps extends IDaoProposalListProps {}
 
 export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props) => {
-    const { daoId, initialParams, hidePagination, children } = props;
+    const { initialParams, hidePagination, children } = props;
+    const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
 
