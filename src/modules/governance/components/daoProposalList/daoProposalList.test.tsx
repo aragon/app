@@ -5,12 +5,12 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 
 jest.mock('@/shared/components/pluginComponent', () => ({
-    PluginComponent: (props: { slotId: string; pluginIds: string[]; params?: IGetProposalListParams }) => (
+    PluginComponent: (props: { slotId: string; pluginIds: string[]; initialParams?: IGetProposalListParams }) => (
         <div
             data-testid="plugin-component-mock"
             data-slotid={props.slotId}
             data-pluginids={props.pluginIds}
-            data-params={props.params}
+            data-initialparams={props.initialParams}
         />
     ),
 }));
@@ -25,7 +25,7 @@ describe('<DaoProposalList /> component', () => {
     const createTestComponent = (props?: Partial<IDaoProposalListProps>) => {
         const completeProps: IDaoProposalListProps = {
             daoId: 'dao-id',
-            params: { queryParams: { daoId: 'dao-id' } },
+            initialParams: { queryParams: { daoId: 'dao-id' } },
             ...props,
         };
 
@@ -42,13 +42,13 @@ describe('<DaoProposalList /> component', () => {
         expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.join(','));
     });
 
-    it('passes the initial params with creator address query to the plugin component', () => {
-        const params = {
+    it('passes the initial initialParams with creator address query to the plugin component', () => {
+        const initialParams = {
             queryParams: { daoId: 'test-id', creatorAddress: '0x1234567890123456789012345678901234567890' },
         };
-        render(createTestComponent({ params }));
+        render(createTestComponent({ initialParams }));
 
         const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent.dataset.params).toEqual(params.toString());
+        expect(pluginComponent.dataset.initialparams).toEqual(initialParams.toString());
     });
 });

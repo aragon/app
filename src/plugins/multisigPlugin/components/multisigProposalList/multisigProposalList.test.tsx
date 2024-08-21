@@ -26,7 +26,7 @@ describe('<MultisigProposalList /> component', () => {
     const createTestComponent = (props?: Partial<IMultisigProposalListProps>) => {
         const completeProps: IMultisigProposalListProps = {
             daoId: '',
-            params: { queryParams: { daoId: '' } },
+            initialParams: { queryParams: { daoId: '' } },
             ...props,
         };
 
@@ -79,8 +79,8 @@ describe('<MultisigProposalList /> component', () => {
         expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('uses params correctly', () => {
-        const params = { queryParams: { daoId: 'dao-test' } };
+    it('uses initialParams correctly', () => {
+        const initialParams = { queryParams: { daoId: 'dao-test' } };
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
             state: 'idle',
@@ -91,8 +91,8 @@ describe('<MultisigProposalList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
-        render(createTestComponent({ params }));
+        render(createTestComponent({ initialParams }));
 
-        expect(useProposalListDataSpy).toHaveBeenCalledWith(params);
+        expect(useProposalListDataSpy).toHaveBeenCalledWith(initialParams);
     });
 });
