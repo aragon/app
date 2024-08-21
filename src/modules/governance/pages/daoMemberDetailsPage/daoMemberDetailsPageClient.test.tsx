@@ -138,6 +138,8 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         const address = '0x1234567890123456789012345678901234567890';
         const daoId = 'dao-id';
         const member = generateMember({ ens: 'member.eth', address });
+        const pageSize = 3;
+        const excludeDaoId = daoId;
 
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -148,7 +150,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             expect.objectContaining({
                 daoListByMemberParams: {
                     urlParams: { address },
-                    queryParams: { pageSize: 3 },
+                    queryParams: { pageSize, excludeDaoId },
                 },
             }),
             {},
@@ -159,6 +161,8 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         const address = '0x1234567890123456789012345678901234567890';
         const daoId = 'dao-id';
         const member = generateMember({ ens: 'member.eth', address });
+        const pageSize = 5;
+        const includeInfo = true;
 
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -171,8 +175,8 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                     queryParams: {
                         daoId,
                         address,
-                        includeInfo: true,
-                        pageSize: 5,
+                        includeInfo,
+                        pageSize,
                     },
                 },
                 daoId,

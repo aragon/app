@@ -83,7 +83,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
 
     const votesByMemberAddressQueryParams = { queryParams: { daoId, address, includeInfo: true, pageSize: 5 } };
 
-    const daoListByMemberParams = { urlParams: { address }, queryParams: { pageSize: 3 } };
+    const daoListByMemberParams = { urlParams: { address }, queryParams: { pageSize: 3, excludeDaoId: daoId } };
 
     return (
         <>

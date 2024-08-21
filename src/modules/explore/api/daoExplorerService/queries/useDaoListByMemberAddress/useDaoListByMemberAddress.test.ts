@@ -1,6 +1,6 @@
-import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
 import { ReactQueryWrapper, generateDao, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { daoExplorerService } from '../../daoExplorerService';
 import { useDaoListByMemberAddress } from './useDaoListByMemberAddress';
 
 describe('useDaoListByMemberAddress query', () => {
