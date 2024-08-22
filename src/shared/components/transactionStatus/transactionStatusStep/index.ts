@@ -1,1 +1,5 @@
-export { TransactionStatusStep, type ITransactionStatusStepProps } from './transactionStatusStep';
+export {
+    TransactionStatusStep,
+    type ITransactionStatusStep,
+    type ITransactionStatusStepProps,
+} from './transactionStatusStep';
