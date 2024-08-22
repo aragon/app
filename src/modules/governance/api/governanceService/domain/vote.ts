@@ -1,4 +1,4 @@
-import { IVoteProposalInfo } from '@/modules/governance/api/governanceService/domain/voteProposalInfo';
+import { type IVoteProposalInfo } from '@/modules/governance/api/governanceService/domain/voteProposalInfo';
 import type { Network } from '@/shared/api/daoService';
 
 export interface IVote {

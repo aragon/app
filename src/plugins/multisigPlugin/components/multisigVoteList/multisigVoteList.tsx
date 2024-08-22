@@ -42,7 +42,7 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                         //TODO: Implement proposal id and index for PIP when available from backend (APP-3588)
                         <VoteProposalDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/proposals`}
+                            href={`/dao/${daoId}/proposals/${vote.proposalInfo?.id}`}
                             voteIndicator="approve"
                             proposalId={`${vote.proposalInfo?.proposalId}`}
                             proposalTitle={`${vote.proposalInfo?.title}`}
