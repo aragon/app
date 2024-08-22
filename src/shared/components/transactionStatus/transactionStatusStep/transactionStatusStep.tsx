@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import { useEffect, type ComponentProps } from 'react';
 import { useTransactionStatusContext, type ITransactionStatusMeta } from '../transactionStatusProvider';
 
-export interface ITransactionStatusStepProps
-    extends IStepperStep<ITransactionStatusMeta>,
-        Omit<ComponentProps<'div'>, 'id'> {}
+export interface ITransactionStatusStep extends IStepperStep<ITransactionStatusMeta> {}
+
+export interface ITransactionStatusStepProps extends ITransactionStatusStep, Omit<ComponentProps<'div'>, 'id'> {}
 
 export const TransactionStatusStep: React.FC<ITransactionStatusStepProps> = (props) => {
     const { id, order, meta, className, ...otherProps } = props;
@@ -22,9 +22,9 @@ export const TransactionStatusStep: React.FC<ITransactionStatusStepProps> = (pro
 
     return (
         <div className={classNames('flex flex-row justify-between gap-2', className)} {...otherProps}>
-            <div className="flex flex-row gap-2 md:gap-3">
+            <div className="flex flex-row items-center gap-2 md:gap-3">
                 {state === 'pending' && <Spinner size="md" variant="primary" />}
-                {state === 'idle' && <div className="size-6 rounded-full border-neutral-500" />}
+                {state === 'idle' && <div className="size-6 rounded-full border border-neutral-100 p-0.5" />}
                 {state === 'error' && <AvatarIcon icon={IconType.CRITICAL} size="sm" variant="critical" />}
                 {state === 'success' && <AvatarIcon icon={IconType.CHECKMARK} size="sm" variant="success" />}
                 <p
