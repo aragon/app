@@ -1,0 +1,5 @@
+describe('<CreateProposalPageClient /> component', () => {
+    it('', () => {
+        //
+    });
+});
