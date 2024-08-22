@@ -48,13 +48,12 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
             >
                 {voteList?.map((vote) =>
                     initialParams.queryParams.includeInfo === true ? (
-                        //TODO: Implement proposal id and index for PIP when available from backend (APP-3588)
                         <VoteProposalDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/proposals/${vote.proposalInfo?.id}`}
+                            href={`/dao/${daoId}/proposals/${vote.proposalInfo!.id}`}
                             voteIndicator={voteOptionToIndicator[vote.voteOption]}
-                            proposalId={`${vote.proposalInfo?.proposalId}`}
-                            proposalTitle={`${vote.proposalInfo?.title}`}
+                            proposalId={vote.proposalInfo!.proposalId.toString()}
+                            proposalTitle={vote.proposalInfo!.title}
                             date={vote.blockTimestamp * 1000}
                         />
                     ) : (
