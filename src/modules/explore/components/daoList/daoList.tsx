@@ -61,6 +61,16 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
 
     const itemsCount = data?.pages[0]?.metadata?.totalRecords;
 
+    const emptyState = {
+        heading: t('app.explore.daoList.emptyState.heading'),
+        description: t('app.explore.daoList.emptyState.description'),
+    };
+
+    const errorState = {
+        heading: t('app.explore.daoList.errorState.heading'),
+        description: t('app.explore.daoList.errorState.description'),
+    };
+
     const daoListClassNames = classNames({
         'grid grid-cols-1 lg:grid-cols-2': initialParams != null,
     });
@@ -73,7 +83,12 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             pageSize={pageSize}
             itemsCount={itemsCount}
         >
-            <DataListContainer className={daoListClassNames} SkeletonElement={DaoDataListItem.Skeleton}>
+            <DataListContainer
+                errorState={errorState}
+                emptyState={emptyState}
+                className={daoListClassNames}
+                SkeletonElement={DaoDataListItem.Skeleton}
+            >
                 {daoList?.map((dao) => (
                     <DaoDataListItem.Structure
                         key={dao.id}

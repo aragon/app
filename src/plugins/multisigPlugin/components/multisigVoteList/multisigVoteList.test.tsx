@@ -25,7 +25,7 @@ describe('<MultisigVoteList /> component', () => {
         );
     };
 
-    it('fetches and renders the list of token votes', () => {
+    it('renders a data list with VoteDataListItem when includeInfo is false or not set', () => {
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
@@ -36,6 +36,7 @@ describe('<MultisigVoteList /> component', () => {
                 memberAddress: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
             }),
         ];
+
         useVoteListDataSpy.mockReturnValue({
             voteList: votes,
             onLoadMore: jest.fn(),
@@ -45,15 +46,60 @@ describe('<MultisigVoteList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
+
         render(createTestComponent());
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toMatch(votes[0].memberAddress);
-        expect(links[1].getAttribute('href')).toMatch(votes[1].memberAddress);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].memberAddress}`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].memberAddress}`);
 
         expect(screen.getByText(addressUtils.truncateAddress(votes[0].memberAddress))).toBeInTheDocument();
         expect(screen.getByText(addressUtils.truncateAddress(votes[1].memberAddress))).toBeInTheDocument();
+        expect(screen.getAllByText('approve')).toHaveLength(2);
+    });
+
+    it('renders a data list with VoteProposalDataListItem when includeInfo is true', () => {
+        const votes = [
+            generateMultisigVote({
+                transactionHash: '0x123',
+                proposalInfo: {
+                    id: 'network-0x123-1',
+                    proposalId: 1,
+                    title: 'Test Proposal 1',
+                },
+                blockTimestamp: 1234567890,
+            }),
+            generateMultisigVote({
+                transactionHash: '0x456',
+                proposalInfo: {
+                    id: 'network-0x456-2',
+                    proposalId: 2,
+                    title: 'Test Proposal 2',
+                },
+                blockTimestamp: 1234567890,
+            }),
+        ];
+
+        useVoteListDataSpy.mockReturnValue({
+            voteList: votes,
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: votes.length,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent({ initialParams: { queryParams: { includeInfo: true } } }));
+
+        const links = screen.getAllByRole('link');
+        expect(links).toHaveLength(2);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[0].proposalInfo?.id}`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[1].proposalInfo?.id}`);
+
+        expect(screen.getByText('Test Proposal 1')).toBeInTheDocument();
+        expect(screen.getByText('Test Proposal 2')).toBeInTheDocument();
         expect(screen.getAllByText('approve')).toHaveLength(2);
     });
 

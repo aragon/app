@@ -1,7 +1,13 @@
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DataListContainer, DataListPagination, DataListRoot, VoteDataListItem } from '@aragon/ods';
+import {
+    DataListContainer,
+    DataListPagination,
+    DataListRoot,
+    VoteDataListItem,
+    VoteProposalDataListItem,
+} from '@aragon/ods';
 import { type IMultisigVote } from '../../types';
 
 export interface IMultisigVoteListProps extends IVoteListProps {}
@@ -23,18 +29,33 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
             itemsCount={itemsCount}
         >
             <DataListContainer
-                SkeletonElement={VoteDataListItem.Skeleton}
+                SkeletonElement={
+                    initialParams.queryParams.includeInfo === true
+                        ? VoteProposalDataListItem.Skeleton
+                        : VoteDataListItem.Skeleton
+                }
                 emptyState={emptyState}
                 errorState={errorState}
             >
-                {voteList?.map((vote) => (
-                    <VoteDataListItem.Structure
-                        key={vote.transactionHash}
-                        href={`/dao/${daoId}/members/${vote.memberAddress}`}
-                        voteIndicator="approve"
-                        voter={{ address: vote.memberAddress }}
-                    />
-                ))}
+                {voteList?.map((vote) =>
+                    initialParams.queryParams.includeInfo === true ? (
+                        <VoteProposalDataListItem.Structure
+                            key={vote.transactionHash}
+                            href={`/dao/${daoId}/proposals/${vote.proposalInfo!.id}`}
+                            voteIndicator="approve"
+                            proposalId={vote.proposalInfo!.proposalId.toString()}
+                            proposalTitle={vote.proposalInfo!.title}
+                            date={vote.blockTimestamp * 1000}
+                        />
+                    ) : (
+                        <VoteDataListItem.Structure
+                            key={vote.transactionHash}
+                            href={`/dao/${daoId}/members/${vote.memberAddress}`}
+                            voteIndicator="approve"
+                            voter={{ address: vote.memberAddress }}
+                        />
+                    ),
+                )}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>

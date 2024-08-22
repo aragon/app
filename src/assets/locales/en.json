@@ -102,7 +102,15 @@
     },
     "explore": {
       "daoList": {
-        "entity": "DAOs"
+        "entity": "DAOs",
+        "emptyState": {
+          "heading": "No DAOs found",
+          "description": "This will show relevant DAOs when available."
+        },
+        "errorState": {
+          "heading": "Error loading DAOs",
+          "description": "There was an error loading the DAOs. Please try again later."
+        }
       }
     },
     "finance": {
@@ -176,7 +184,7 @@
         },
         "error": {
           "title": "Error loading members",
-          "description": "There was an error loading the DAO members, try again later."
+          "description": "There was an error loading the DAO members. Please try again later."
         }
       },
       "daoProposalsPage": {
@@ -192,11 +200,11 @@
       "daoProposalList": {
         "empty": {
           "title": "No proposals found",
-          "description": "DAO has currently no proposals."
+          "description": "This will show relevant proposals when available."
         },
         "error": {
           "title": "Error loading proposals",
-          "description": "There was an error loading the DAO proposals, try again later."
+          "description": "There was an error loading the DAO proposals. Please try again later."
         }
       },
       "daoMemberDetailsPage": {
@@ -309,7 +317,7 @@
         },
         "error": {
           "title": "Error loading votes",
-          "description": "There was an error loading the votes, try again later."
+          "description": "There was an error loading the votes. Please try again later."
         }
       }
     },
