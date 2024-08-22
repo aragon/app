@@ -1,53 +1,54 @@
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import type { IconType } from '@aragon/ods';
+import { AvatarIcon, Button, Icon, IconType, Spinner } from '@aragon/ods';
+import classNames from 'classnames';
+import { useEffect, type ComponentProps } from 'react';
+import { useTransactionStatusContext, type ITransactionStatusMeta } from '../transactionStatusProvider';
 
-export type TransactionStatusState = 'pending' | 'error' | 'warning' | 'idle' | 'success';
+export interface ITransactionStatusStepProps
+    extends IStepperStep<ITransactionStatusMeta>,
+        Omit<ComponentProps<'div'>, 'id'> {}
 
-export interface ITransactionStatusStepMetaInfo {
-    /**
-     * Icon of the step info.
-     */
-    icon?: IconType;
-    /**
-     * Text of the step info.
-     */
-    text: string;
-}
+export const TransactionStatusStep: React.FC<ITransactionStatusStepProps> = (props) => {
+    const { id, order, meta, className, ...otherProps } = props;
+    const { label, addon, state } = meta;
 
-export interface ITransactionStatusStepMetaLink {
-    /**
-     * URL of the link.
-     */
-    href: string;
-    /**
-     * Label of the link.
-     */
-    label: string;
-}
+    const { registerStep } = useTransactionStatusContext();
 
-export interface ITransactionStatusStepMeta {
-    /**
-     * Label of the step.
-     */
-    label: string;
-    /**
-     * State of the step, defaults to 'idle' if step is active and to 'success' if it is a previous step.
-     */
-    state?: TransactionStatusState;
-    /**
-     * Label displayed depending on the current state, defaults to label.
-     */
-    stateLabel?: Partial<Record<TransactionStatusState, string>>;
-    /**
-     * Step info displayed beside the label.
-     */
-    info?: ITransactionStatusStepMetaLink | ITransactionStatusStepMetaInfo;
-}
+    useEffect(() => {
+        registerStep({ id, order, meta });
+    }, [id, order, meta, registerStep]);
 
-export interface ITransactionStatusStep extends IStepperStep<ITransactionStatusStepMeta> {}
+    const isLinkAddon = addon?.href != null;
 
-export interface ITransactionStatusStepProps extends ITransactionStatusStep {}
-
-export const TransactionStatusStep: React.FC<ITransactionStatusStepProps> = () => {
-    return <div />;
+    return (
+        <div className={classNames('flex flex-row justify-between gap-2', className)} {...otherProps}>
+            <div className="flex flex-row gap-2 md:gap-3">
+                {state === 'pending' && <Spinner size="md" variant="primary" />}
+                {state === 'idle' && <div className="size-6 rounded-full border-neutral-500" />}
+                {state === 'error' && <AvatarIcon icon={IconType.CRITICAL} size="sm" variant="critical" />}
+                {state === 'success' && <AvatarIcon icon={IconType.CHECKMARK} size="sm" variant="success" />}
+                <p
+                    className={classNames('text-base font-normal leading-tight', {
+                        'text-primary-400': state === 'pending',
+                        'text-critical-800': state === 'error',
+                        'text-success-800': state === 'success',
+                        'text-neutral-500': state === 'idle',
+                    })}
+                >
+                    {label}
+                </p>
+            </div>
+            {isLinkAddon && (
+                <Button href={addon.href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                    {addon.text}
+                </Button>
+            )}
+            {addon != null && !isLinkAddon && (
+                <div className="flex flex-row gap-2">
+                    <p className="text-sm font-normal leading-tight text-neutral-500 md:text-base">{addon.text}</p>
+                    {addon.icon && <Icon icon={IconType.BLOCKCHAIN_WALLET} size="sm" responsiveSize={{ md: 'md' }} />}
+                </div>
+            )}
+        </div>
+    );
 };

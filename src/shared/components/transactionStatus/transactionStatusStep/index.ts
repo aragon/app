@@ -1,8 +1,1 @@
-export {
-    TransactionStatusStep,
-    type ITransactionStatusStep,
-    type ITransactionStatusStepMeta,
-    type ITransactionStatusStepMetaInfo,
-    type ITransactionStatusStepMetaLink,
-    type ITransactionStatusStepProps,
-} from './transactionStatusStep';
+export { TransactionStatusStep, type ITransactionStatusStepProps } from './transactionStatusStep';
