@@ -44,8 +44,8 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                             key={vote.transactionHash}
                             href={`/dao/${daoId}/proposals`}
                             voteIndicator="approve"
-                            proposalId={`${vote.proposalId}`}
-                            proposalTitle={vote.proposalInfo!.title}
+                            proposalId={`${vote.proposalInfo?.proposalId}`}
+                            proposalTitle={`${vote.proposalInfo?.title}`}
                             date={vote.blockTimestamp * 1000}
                         />
                     ) : (

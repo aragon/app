@@ -19,10 +19,6 @@ export interface IVote {
      */
     network: Network;
     /**
-     * Proposal index.
-     */
-    proposalId: number;
-    /**
      * Extra information about the proposal if includeInfo is true on the query.
      */
     proposalInfo?: IVoteProposalInfo;
