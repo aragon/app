@@ -52,9 +52,10 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                         <VoteProposalDataListItem.Structure
                             key={vote.transactionHash}
                             href={`/dao/${daoId}/proposals`}
-                            voteIndicator="approve"
-                            proposalId="PIP-00"
+                            voteIndicator={voteOptionToIndicator[vote.voteOption]}
+                            proposalId={`0${vote.proposalId + 1}`}
                             proposalTitle={vote.proposalInfo!.title}
+                            date={vote.blockTimestamp * 1000}
                         />
                     ) : (
                         <VoteDataListItem.Structure

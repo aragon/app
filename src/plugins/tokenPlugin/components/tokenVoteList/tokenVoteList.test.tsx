@@ -27,7 +27,7 @@ describe('<TokenVoteList /> component', () => {
         );
     };
 
-    it('fetches and renders the list of token votes', () => {
+    it('renders a data list with VoteDataListItem when includeInfo is false or not set', () => {
         const token = generateToken({ symbol: 'ABC', decimals: 18 });
         const votes = [
             generateTokenVote({
@@ -45,6 +45,7 @@ describe('<TokenVoteList /> component', () => {
                 token,
             }),
         ];
+
         useVoteListDataSpy.mockReturnValue({
             voteList: votes,
             onLoadMore: jest.fn(),
@@ -54,6 +55,7 @@ describe('<TokenVoteList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
+
         render(createTestComponent());
 
         const links = screen.getAllByRole('link');
@@ -68,6 +70,56 @@ describe('<TokenVoteList /> component', () => {
         expect(screen.getByText(addressUtils.truncateAddress(votes[1].memberAddress))).toBeInTheDocument();
         expect(screen.getByText('465.32 ABC')).toBeInTheDocument();
         expect(screen.getByText('yes')).toBeInTheDocument();
+    });
+
+    it('renders a data list with VoteProposalDataListItem when includeInfo is true', () => {
+        const token = generateToken({ symbol: 'ABC', decimals: 18 });
+        const votes = [
+            generateTokenVote({
+                transactionHash: '0x123',
+                voteOption: VoteOption.YES,
+                proposalInfo: {
+                    id: 'network-0x123-1',
+                    proposalId: 1,
+                    title: 'Test Proposal 1',
+                },
+                blockTimestamp: 1234567890,
+                token,
+            }),
+            generateTokenVote({
+                transactionHash: '0x456',
+                voteOption: VoteOption.NO,
+                proposalInfo: {
+                    id: 'network-0x456-2',
+                    proposalId: 2,
+                    title: 'Test Proposal 2',
+                },
+                blockTimestamp: 1234567890,
+                token,
+            }),
+        ];
+
+        useVoteListDataSpy.mockReturnValue({
+            voteList: votes,
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: votes.length,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent({ initialParams: { queryParams: { includeInfo: true } } }));
+
+        const links = screen.getAllByRole('link');
+        expect(links).toHaveLength(2);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals`);
+
+        expect(screen.getByText('Test Proposal 1')).toBeInTheDocument();
+        expect(screen.getByText('Test Proposal 2')).toBeInTheDocument();
+        expect(screen.getAllByText('yes')).toHaveLength(1);
+        expect(screen.getAllByText('no')).toHaveLength(1);
     });
 
     it('calls useVoteListData with the correct query initialParams', () => {
