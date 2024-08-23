@@ -419,6 +419,17 @@
           "required": "{{name}} is mandatory"
         }
       },
+      "transactionDialog": {
+        "footer": {
+          "retry": "Retry",
+          "cancel": "Cancel",
+          "approve": {
+            "idle": "Approve transaction",
+            "pending": "Awaiting approval",
+            "error": "Resend to wallet"
+          }
+        }
+      },
       "wizard": {
         "container": {
           "step": "Step {{number}}",

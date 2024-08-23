@@ -8,7 +8,7 @@ import type { ICreateProposalFormData } from '../../components/createProposalFor
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 export enum PublishProposalStep {
-    IPFS = 'IPFS',
+    PIN_METADATA = 'PIN_METADATA',
 }
 
 export interface IPublishProposalDialogProps extends IDialogComponentProps<ICreateProposalFormData> {}
@@ -21,17 +21,22 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { title, summary } = formValues;
 
     const stepper = useStepper<ITransactionStatusMeta, PublishProposalStep | TransactionDialogStep>({
-        initialActiveStep: PublishProposalStep.IPFS,
+        initialActiveStep: PublishProposalStep.PIN_METADATA,
     });
 
     const { status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
-    const pinMetadataStep = {
-        id: PublishProposalStep.IPFS,
-        order: 0,
-        meta: { label: 'Pin data on IPFS', errorLabel: 'Unable to pin data on IPFS', state: status },
-        action: () => pinJson({ body: {} }),
-    };
+    const handlePinMetadata = () => pinJson({ body: publishProposalDialogUtils.prepareMetadata() });
+
+    const customSteps = [
+        {
+            id: PublishProposalStep.PIN_METADATA,
+            order: 0,
+            meta: { label: 'Pin data on IPFS', errorLabel: 'Unable to pin data on IPFS', state: status },
+            action: handlePinMetadata,
+            auto: true,
+        },
+    ];
 
     return (
         <TransactionDialog<PublishProposalStep>
@@ -39,8 +44,8 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             description="To publish your proposal you have to confirm the onchain transaction with your wallet."
             submitLabel="Publish proposal"
             stepper={stepper}
-            customSteps={[pinMetadataStep]}
-            prepareTransaction={() => publishProposalDialogUtils.prepareTransaction()}
+            customSteps={customSteps}
+            prepareTransaction={publishProposalDialogUtils.buildTransaction}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure
