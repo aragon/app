@@ -1,0 +1,5 @@
+describe('<TransactionStatusStep /> component', () => {
+    it('', () => {
+        //
+    });
+});

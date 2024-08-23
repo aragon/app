@@ -1,0 +1,5 @@
+describe('<PublishProposalDialog /> component', () => {
+    it('', () => {
+        //
+    });
+});
