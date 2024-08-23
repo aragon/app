@@ -1,7 +1,11 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 
 class PublishProposalDialogUtils {
-    prepareTransaction = () => {
+    prepareMetadata = () => {
+        return { test: 'value' };
+    };
+
+    buildTransaction = () => {
         const transaction: TransactionDialogPrepareReturn = {
             to: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
             data: '0x',

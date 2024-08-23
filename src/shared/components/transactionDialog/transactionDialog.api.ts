@@ -18,6 +18,10 @@ export interface ITransactionDialogStep<TCustomStepId> extends ITransactionStatu
      * Action to be triggered to advance the custom step.
      */
     action?: () => void;
+    /**
+     * Automatically triggers the action when the step is active when set to true.
+     */
+    auto?: boolean;
 }
 
 export interface ITransactionDialogProps<TCustomStepId = string> {
