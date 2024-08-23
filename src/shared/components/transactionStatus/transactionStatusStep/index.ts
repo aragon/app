@@ -1,5 +1,8 @@
-export {
-    TransactionStatusStep,
-    type ITransactionStatusStep,
-    type ITransactionStatusStepProps,
-} from './transactionStatusStep';
+export { TransactionStatusStep } from './transactionStatusStep';
+export type {
+    ITransactionStatusMeta,
+    ITransactionStatusMetaAddon,
+    ITransactionStatusStep,
+    ITransactionStatusStepProps,
+    TransactionStatusState,
+} from './transactionStatusStep.api';

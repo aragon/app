@@ -1,0 +1,5 @@
+describe('<TransactionDialog /> component', () => {
+    it('', () => {
+        //
+    });
+});
