@@ -1,10 +1,15 @@
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { TransactionDialog, type TransactionDialogStep } from '@/shared/components/transactionDialog';
-import type { ITransactionDialogStepMeta } from '@/shared/components/transactionDialog/transactionDialog.api';
+import {
+    type ITransactionDialogActionParams,
+    type ITransactionDialogStep,
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    type TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -27,7 +32,15 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     const { status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
-    const customSteps = useMemo(
+    const handlePinJson = useCallback(
+        (params: ITransactionDialogActionParams) => {
+            const proposalMetadata = publishProposalDialogUtils.prepareMetadata();
+            pinJson({ body: proposalMetadata }, params);
+        },
+        [pinJson],
+    );
+
+    const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
         () => [
             {
                 id: PublishProposalStep.PIN_METADATA,
@@ -36,12 +49,12 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
                     label: 'Pin data on IPFS',
                     errorLabel: 'Unable to pin data on IPFS',
                     state: status,
-                    action: () => pinJson({ body: publishProposalDialogUtils.prepareMetadata() }),
+                    action: handlePinJson,
                     auto: true,
                 },
             },
         ],
-        [status, pinJson],
+        [status, handlePinJson],
     );
 
     return (

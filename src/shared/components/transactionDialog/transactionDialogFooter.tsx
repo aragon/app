@@ -2,15 +2,11 @@ import { DialogFooter, IconType } from '@aragon/ods';
 import { useDialogContext } from '../dialogProvider';
 import { type TransactionStatusState } from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
-import { type ITransactionDialogStep, TransactionDialogStep } from './transactionDialog.api';
-
-const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record<TransactionStatusState, string>>>> = {
-    [TransactionDialogStep.APPROVE]: {
-        idle: 'app.shared.transactionDialog.footer.approve.idle',
-        pending: 'app.shared.transactionDialog.footer.approve.pending',
-        error: 'app.shared.transactionDialog.footer.approve.error',
-    },
-};
+import {
+    type ITransactionDialogActionParams,
+    type ITransactionDialogStep,
+    TransactionDialogStep,
+} from './transactionDialog.api';
 
 export interface ITransactionDialogFooterProps<TCustomStepId> {
     /**
@@ -21,24 +17,37 @@ export interface ITransactionDialogFooterProps<TCustomStepId> {
      * Information about the current active step.
      */
     activeStep?: ITransactionDialogStep<TCustomStepId>;
+    /**
+     * Callback to be called on transaction error.
+     */
+    onError: ITransactionDialogActionParams['onError'];
 }
+
+const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record<TransactionStatusState, string>>>> = {
+    [TransactionDialogStep.APPROVE]: {
+        idle: 'app.shared.transactionDialog.footer.approve.idle',
+        pending: 'app.shared.transactionDialog.footer.approve.pending',
+        error: 'app.shared.transactionDialog.footer.approve.error',
+    },
+};
 
 export const TransactionDialogFooter = <TCustomStepId extends string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
-    const { submitLabel, activeStep } = props;
-    const { id, meta } = activeStep ?? {};
+    const { submitLabel, activeStep, onError } = props;
+
+    const { id: stepId, meta } = activeStep ?? {};
+    const { state, action } = meta ?? {};
 
     const { close } = useDialogContext();
     const { t } = useTranslations();
 
-    const isErrorState = meta?.state === 'error';
-    const isSuccessState = meta?.state === 'success';
-    const isLoadingState = meta?.state === 'pending';
+    const isErrorState = state === 'error';
+    const isSuccessState = state === 'success';
 
-    const isCancelDisabled = id === TransactionDialogStep.CONFIRM && (isSuccessState || isErrorState);
+    const isCancelDisabled = stepId === TransactionDialogStep.CONFIRM && (isSuccessState || isErrorState);
 
-    const customSubmitLabel = id != null && meta != null ? stepStateSubmitLabel[id]?.[meta.state] : undefined;
+    const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState ? t('app.shared.transactionDialog.footer.retry') : submitLabel;
 
     const processedSubmitLabel = customSubmitLabel != null ? t(customSubmitLabel) : defaultSubmitLabel;
@@ -47,9 +56,9 @@ export const TransactionDialogFooter = <TCustomStepId extends string>(
         <DialogFooter
             primaryAction={{
                 label: processedSubmitLabel,
-                onClick: activeStep?.meta.action,
+                onClick: () => action?.({ onError }),
                 iconLeft: isErrorState ? IconType.RELOAD : undefined,
-                isLoading: isLoadingState,
+                isLoading: state === 'pending',
             }}
             secondaryAction={{
                 label: t('app.shared.transactionDialog.footer.cancel'),
