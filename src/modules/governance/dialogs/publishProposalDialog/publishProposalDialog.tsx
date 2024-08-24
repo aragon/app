@@ -1,9 +1,10 @@
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { TransactionDialog, type TransactionDialogStep } from '@/shared/components/transactionDialog';
-import type { ITransactionStatusMeta } from '@/shared/components/transactionStatus';
+import type { ITransactionDialogStepMeta } from '@/shared/components/transactionDialog/transactionDialog.api';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
+import { useMemo } from 'react';
 import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -20,23 +21,28 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     invariant(formValues != null, 'PublishProposalDialog: formValues parameter must not be undefined.');
     const { title, summary } = formValues;
 
-    const stepper = useStepper<ITransactionStatusMeta, PublishProposalStep | TransactionDialogStep>({
+    const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
     });
 
     const { status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
-    const handlePinMetadata = () => pinJson({ body: publishProposalDialogUtils.prepareMetadata() });
-
-    const customSteps = [
-        {
-            id: PublishProposalStep.PIN_METADATA,
-            order: 0,
-            meta: { label: 'Pin data on IPFS', errorLabel: 'Unable to pin data on IPFS', state: status },
-            action: handlePinMetadata,
-            auto: true,
-        },
-    ];
+    const customSteps = useMemo(
+        () => [
+            {
+                id: PublishProposalStep.PIN_METADATA,
+                order: 0,
+                meta: {
+                    label: 'Pin data on IPFS',
+                    errorLabel: 'Unable to pin data on IPFS',
+                    state: status,
+                    action: () => pinJson({ body: publishProposalDialogUtils.prepareMetadata() }),
+                    auto: true,
+                },
+            },
+        ],
+        [status, pinJson],
+    );
 
     return (
         <TransactionDialog<PublishProposalStep>

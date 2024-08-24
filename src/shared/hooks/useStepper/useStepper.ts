@@ -31,6 +31,11 @@ export const useStepper = <TMeta, TStepId>(
         [stepperUtils],
     );
 
+    const updateSteps = useCallback(
+        (steps: Array<IStepperStep<TMeta, TStepId>>) => setSteps(stepperUtils.setSteps(steps)),
+        [stepperUtils],
+    );
+
     return {
         steps,
         activeStep,
@@ -42,5 +47,6 @@ export const useStepper = <TMeta, TStepId>(
         nextStep,
         previousStep,
         updateActiveStep,
+        updateSteps,
     };
 };

@@ -420,6 +420,20 @@
         }
       },
       "transactionDialog": {
+        "step": {
+          "PREPARE": {
+            "label": "Prepare transaction",
+            "errorLabel": "Unable to prepare transaction"
+          },
+          "APPROVE": {
+            "label": "Approve transaction",
+            "errorLabel": "Rejected by wallet"
+          },
+          "CONFIRM": {
+            "label": "Onchain confirmation",
+            "errorLabel": "Confirmation failed"
+          }
+        },
         "footer": {
           "retry": "Retry",
           "cancel": "Cancel",

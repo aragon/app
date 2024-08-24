@@ -1,20 +1,12 @@
-import { AvatarIcon, Button, Icon, IconType, invariant, Spinner } from '@aragon/ods';
+import { AvatarIcon, Button, Icon, IconType, Spinner } from '@aragon/ods';
 import classNames from 'classnames';
-import { useEffect } from 'react';
-import type { ITransactionStatusStepProps } from './transactionStatusStep.api';
+import type { ITransactionStatusStepMeta, ITransactionStatusStepProps } from './transactionStatusStep.api';
 
-export const TransactionStatusStep: React.FC<ITransactionStatusStepProps> = (props) => {
-    const { id, order, label, addon, state, errorLabel, registerStep, className, ...otherProps } = props;
-
-    invariant(
-        registerStep != null,
-        'TransactionStatusStep: component must be used inside a TransactionStatusContainer to work properly.',
-    );
-
-    useEffect(() => {
-        const meta = { label, addon, state };
-        registerStep({ id, order, meta });
-    }, [id, order, label, addon, state, registerStep]);
+export const TransactionStatusStep = <TMeta extends ITransactionStatusStepMeta, TStepId extends string>(
+    props: ITransactionStatusStepProps<TMeta, TStepId>,
+) => {
+    const { id, order, meta, className, ...otherProps } = props;
+    const { addon, state, errorLabel, label } = meta;
 
     const isLinkAddon = addon?.href != null;
     const processedLabel = state === 'error' && errorLabel != null ? errorLabel : label;
