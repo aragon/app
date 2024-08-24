@@ -7,6 +7,13 @@ import type { ITransactionStatusStepMeta } from '../transactionStatus';
 // Return type for the prepareTransaction property of the TransactionDialog component
 export type TransactionDialogPrepareReturn = SendTransactionParameters;
 
+export interface ITransactionDialogActionParams {
+    /**
+     * Callback to be triggered if an error occurs to propertly monitor the transaction status.
+     */
+    onError: (error: unknown) => void;
+}
+
 // Default steps of the TransactionDialog component
 export enum TransactionDialogStep {
     PREPARE = 'PREPARE',
@@ -18,14 +25,14 @@ export interface ITransactionDialogStepMeta extends ITransactionStatusStepMeta {
     /**
      * Action to be triggered to advance the transaction step.
      */
-    action?: () => void;
+    action?: (params: ITransactionDialogActionParams) => void;
     /**
      * Automatically triggers the action when the step is active.
      */
     auto?: boolean;
 }
 
-export interface ITransactionDialogStep<TCustomStepId>
+export interface ITransactionDialogStep<TCustomStepId = string>
     extends IStepperStep<ITransactionDialogStepMeta, TCustomStepId> {}
 
 export interface ITransactionDialogProps<TCustomStepId = string> {

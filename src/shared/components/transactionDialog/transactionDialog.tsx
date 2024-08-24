@@ -21,6 +21,10 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     const { t } = useTranslations();
 
+    const handleTransactionError = useCallback(() => {
+        // TODO: Report the error to an error reporting service (APP-3107)
+    }, []);
+
     const {
         mutate: prepareTransactionMutate,
         status: prepareTransactionStatus,
@@ -42,8 +46,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             return;
         }
 
-        sendTransaction({ ...transaction, gas: null });
-    }, [transaction, sendTransaction]);
+        sendTransaction({ ...transaction, gas: null }, { onError: handleTransactionError });
+    }, [transaction, sendTransaction, handleTransactionError]);
 
     const handleRetryTransaction = useCallback(() => {
         updateActiveStep(TransactionDialogStep.APPROVE);
@@ -93,13 +97,11 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
         // Use setTimeout to avoid double mutation on dev + StrictMode
         // (see https://github.com/TanStack/query/issues/5341)
-        const timeout = setTimeout(() => action(), 100);
+        const timeout = setTimeout(() => action({ onError: handleTransactionError }), 100);
         return () => clearTimeout(timeout);
-    }, [activeStepInfo]);
+    }, [activeStepInfo, handleTransactionError]);
 
-    useEffect(() => {
-        updateSteps([...customSteps, ...transactionSteps]);
-    }, [customSteps, transactionSteps, updateSteps]);
+    useEffect(() => updateSteps([...customSteps, ...transactionSteps]), [customSteps, transactionSteps, updateSteps]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -115,7 +117,11 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                     ))}
                 </TransactionStatus.Container>
             </DialogContent>
-            <TransactionDialogFooter submitLabel={submitLabel} activeStep={activeStepInfo} />
+            <TransactionDialogFooter
+                submitLabel={submitLabel}
+                activeStep={activeStepInfo}
+                onError={handleTransactionError}
+            />
         </div>
     );
 };
