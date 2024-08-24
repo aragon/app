@@ -18,10 +18,6 @@ export interface ITransactionDialogFooterProps<TCustomStepId> {
      */
     submitLabel: string;
     /**
-     * Callback called on next step click.
-     */
-    onNextStepClick: () => void;
-    /**
      * Information about the current active step.
      */
     activeStep?: ITransactionDialogStep<TCustomStepId>;
@@ -30,7 +26,7 @@ export interface ITransactionDialogFooterProps<TCustomStepId> {
 export const TransactionDialogFooter = <TCustomStepId extends string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
-    const { submitLabel, onNextStepClick, activeStep } = props;
+    const { submitLabel, activeStep } = props;
     const { id, meta } = activeStep ?? {};
 
     const { close } = useDialogContext();
@@ -51,7 +47,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string>(
         <DialogFooter
             primaryAction={{
                 label: processedSubmitLabel,
-                onClick: onNextStepClick,
+                onClick: activeStep?.meta.action,
                 iconLeft: isErrorState ? IconType.RELOAD : undefined,
                 isLoading: isLoadingState,
             }}

@@ -37,6 +37,12 @@ export class StepperUtils<TMeta = undefined, TStepId = string> {
 
     getSteps = () => this.steps;
 
+    setSteps = (steps: Array<IStepperStep<TMeta, TStepId>>) => {
+        this.steps = steps;
+
+        return this.steps;
+    };
+
     findStepIndex = (stepId?: TStepId) => this.steps.findIndex((step) => step.id === stepId);
 
     hasPrevious = () => this.findStepIndex(this.activeStep) > 0;

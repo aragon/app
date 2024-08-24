@@ -1,24 +1,23 @@
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import classNames from 'classnames';
-import React, { Children, type ComponentProps } from 'react';
-import type { ITransactionStatusMeta } from '../transactionStatusStep';
+import { type ComponentProps } from 'react';
+import { type ITransactionStatusStepMeta } from '../transactionStatusStep';
 
-export interface ITransactionStatusContainerProps<TStepId = string> extends ComponentProps<'div'> {
+export interface ITransactionStatusContainerProps<TMeta extends ITransactionStatusStepMeta, TStepId = string>
+    extends ComponentProps<'div'> {
     /**
      * Information about the stepper steps and state.
      */
-    stepper: IUseStepperReturn<ITransactionStatusMeta, TStepId>;
+    steps: IUseStepperReturn<TMeta, TStepId>['steps'];
 }
 
-export const TransactionStatusContainer = <TStepId extends string>(
-    props: ITransactionStatusContainerProps<TStepId>,
+export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepMeta, TStepId extends string>(
+    props: ITransactionStatusContainerProps<TMeta, TStepId>,
 ) => {
-    const { stepper, className, children, ...otherProps } = props;
+    const { steps, className, children, ...otherProps } = props;
 
-    const processedChildren = Children.toArray(children);
-
-    const hasError = stepper.steps.some((step) => step.meta.state === 'error');
-    const isSuccess = stepper.steps.every((step) => step.meta.state === 'success');
+    const hasError = steps.some((step) => step.meta.state === 'error');
+    const isSuccess = steps.every((step) => step.meta.state === 'success');
 
     return (
         <div
@@ -31,11 +30,7 @@ export const TransactionStatusContainer = <TStepId extends string>(
             )}
             {...otherProps}
         >
-            {processedChildren.map((child) =>
-                React.isValidElement(child)
-                    ? React.cloneElement(child, { ...child.props, registerStep: stepper.registerStep })
-                    : child,
-            )}
+            {children}
         </div>
     );
 };

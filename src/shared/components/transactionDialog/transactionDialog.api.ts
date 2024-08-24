@@ -1,7 +1,8 @@
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
+import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ReactNode } from 'react';
 import type { SendTransactionParameters } from 'wagmi/actions';
-import type { ITransactionStatusMeta, ITransactionStatusStep } from '../transactionStatus';
+import type { ITransactionStatusStepMeta } from '../transactionStatus';
 
 // Return type for the prepareTransaction property of the TransactionDialog component
 export type TransactionDialogPrepareReturn = SendTransactionParameters;
@@ -13,16 +14,19 @@ export enum TransactionDialogStep {
     CONFIRM = 'CONFIRM',
 }
 
-export interface ITransactionDialogStep<TCustomStepId> extends ITransactionStatusStep<TCustomStepId> {
+export interface ITransactionDialogStepMeta extends ITransactionStatusStepMeta {
     /**
-     * Action to be triggered to advance the custom step.
+     * Action to be triggered to advance the transaction step.
      */
     action?: () => void;
     /**
-     * Automatically triggers the action when the step is active when set to true.
+     * Automatically triggers the action when the step is active.
      */
     auto?: boolean;
 }
+
+export interface ITransactionDialogStep<TCustomStepId>
+    extends IStepperStep<ITransactionDialogStepMeta, TCustomStepId> {}
 
 export interface ITransactionDialogProps<TCustomStepId = string> {
     /**
@@ -44,7 +48,7 @@ export interface ITransactionDialogProps<TCustomStepId = string> {
     /**
      * Stepper utilities for the transaction state.
      */
-    stepper: IUseStepperReturn<ITransactionStatusMeta, TCustomStepId | TransactionDialogStep>;
+    stepper: IUseStepperReturn<ITransactionDialogStepMeta, TCustomStepId | TransactionDialogStep>;
     /**
      * Callback to be used for preparing the transaction to send to the wallet.
      */

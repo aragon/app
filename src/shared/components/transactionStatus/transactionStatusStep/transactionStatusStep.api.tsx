@@ -5,7 +5,7 @@ import { type ComponentProps } from 'react';
 
 export type TransactionStatusState = 'pending' | 'error' | 'warning' | 'idle' | 'success';
 
-export interface ITransactionStatusMetaAddon {
+export interface ITransactionStatusStepMetaAddon {
     /**
      * Icon of the addon.
      */
@@ -20,7 +20,7 @@ export interface ITransactionStatusMetaAddon {
     href?: string;
 }
 
-export interface ITransactionStatusMeta {
+export interface ITransactionStatusStepMeta {
     /**
      * Label of the step.
      */
@@ -36,17 +36,17 @@ export interface ITransactionStatusMeta {
     /**
      * Addon displayed beside the step label.
      */
-    addon?: ITransactionStatusMetaAddon;
+    addon?: ITransactionStatusStepMetaAddon;
 }
 
-export interface ITransactionStatusStep<TStepId = string> extends IStepperStep<ITransactionStatusMeta, TStepId> {}
+export interface ITransactionStatusStep<TMeta extends ITransactionStatusStepMeta, TStepId = string>
+    extends IStepperStep<TMeta, TStepId> {}
 
-export interface ITransactionStatusStepProps
-    extends Omit<ITransactionStatusStep, 'meta'>,
-        ITransactionStatusMeta,
+export interface ITransactionStatusStepProps<TMeta extends ITransactionStatusStepMeta, TStepId = string>
+    extends ITransactionStatusStep<TMeta, TStepId>,
         Omit<ComponentProps<'div'>, 'id'> {
     /**
      * Callback to register the step.
      */
-    registerStep?: IUseStepperReturn<ITransactionStatusMeta>['registerStep'];
+    registerStep?: IUseStepperReturn<TMeta, TStepId>['registerStep'];
 }

@@ -4,17 +4,22 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import type { UseQueryReturnType } from 'wagmi/query';
 import { TransactionStatus, type TransactionStatusState } from '../transactionStatus';
+import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
 
-const queryToStepState = ({ status, fetchStatus }: UseQueryReturnType): TransactionStatusState =>
-    status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status;
+const queryToStepState = (
+    status: UseQueryReturnType['status'],
+    fetchStatus: UseQueryReturnType['fetchStatus'],
+): TransactionStatusState => (status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status);
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const { title, description, customSteps = [], stepper, submitLabel, children, prepareTransaction } = props;
 
-    const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep } = stepper;
+    const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
+
+    const { t } = useTranslations();
 
     const {
         mutate: prepareTransactionMutate,
@@ -28,7 +33,9 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         data: transactionHash,
     } = useSendTransaction({ mutation: { onSuccess: nextStep } });
 
-    const waitForTransactionQuery = useWaitForTransactionReceipt({ hash: transactionHash });
+    const { status: waitTxStatus, fetchStatus: waitTxFetchStatus } = useWaitForTransactionReceipt({
+        hash: transactionHash,
+    });
 
     const handleSendTransaction = useCallback(() => {
         if (transaction == null) {
@@ -43,58 +50,44 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         handleSendTransaction();
     }, [updateActiveStep, handleSendTransaction]);
 
-    const prepareStep = useMemo(
+    const transactionStepActions: Record<TransactionDialogStep, () => void> = useMemo(
         () => ({
-            id: TransactionDialogStep.PREPARE,
-            action: prepareTransactionMutate,
-            auto: true,
-            meta: {
-                label: 'Prepare transaction',
-                errorLabel: 'Unable to prepare transaction',
-                state: prepareTransactionStatus,
-            },
+            [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
+            [TransactionDialogStep.APPROVE]: handleSendTransaction,
+            [TransactionDialogStep.CONFIRM]: handleRetryTransaction,
         }),
-        [prepareTransactionMutate, prepareTransactionStatus],
+        [prepareTransactionMutate, handleSendTransaction, handleRetryTransaction],
     );
 
-    const approveStep = useMemo(
+    const transactionStepStates: Record<TransactionDialogStep, TransactionStatusState> = useMemo(
         () => ({
-            id: TransactionDialogStep.APPROVE,
-            action: handleSendTransaction,
-            auto: false,
-            meta: {
-                label: 'Approve transaction',
-                errorLabel: 'Rejected by wallet',
-                state: approveTransactionStatus,
-            },
+            [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
+            [TransactionDialogStep.APPROVE]: approveTransactionStatus,
+            [TransactionDialogStep.CONFIRM]: queryToStepState(waitTxStatus, waitTxFetchStatus),
         }),
-        [handleSendTransaction, approveTransactionStatus],
+        [prepareTransactionStatus, approveTransactionStatus, waitTxStatus, waitTxFetchStatus],
     );
 
-    const confirmStep = useMemo(
-        () => ({
-            id: TransactionDialogStep.CONFIRM,
-            action: handleRetryTransaction,
-            auto: false,
+    const transactionSteps = useMemo(() => {
+        const stepKeys = Object.keys(TransactionDialogStep) as TransactionDialogStep[];
+
+        return stepKeys.map((stepId, index) => ({
+            id: stepId,
+            order: customSteps.length + index,
             meta: {
-                label: 'Onchain confirmation',
-                errorLabel: 'Confirmation failed',
-                state: queryToStepState(waitForTransactionQuery),
+                label: t(`app.shared.transactionDialog.step.${stepId}.label`),
+                errorLabel: t(`app.shared.transactionDialog.step.${stepId}.errorLabel`),
+                state: transactionStepStates[stepId],
+                action: transactionStepActions[stepId],
+                auto: stepId === TransactionDialogStep.PREPARE,
             },
-        }),
-        [handleRetryTransaction, waitForTransactionQuery],
-    );
-
-    const staticSteps = useMemo(() => [prepareStep, approveStep, confirmStep], [prepareStep, approveStep, confirmStep]);
-    const completeSteps = useMemo(() => [...customSteps, ...staticSteps], [customSteps, staticSteps]);
-
-    const handleNextStep = () => completeSteps[activeStepIndex]?.action?.();
+        }));
+    }, [transactionStepActions, transactionStepStates, customSteps, t]);
 
     useEffect(() => {
-        const isIdle = activeStepInfo?.meta.state === 'idle';
-        const { action, auto } = completeSteps[activeStepIndex] ?? {};
+        const { state, action, auto } = activeStepInfo?.meta ?? {};
 
-        if (action == null || !isIdle || !auto) {
+        if (action == null || state !== 'idle' || !auto) {
             return;
         }
 
@@ -102,7 +95,11 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         // (see https://github.com/TanStack/query/issues/5341)
         const timeout = setTimeout(() => action(), 100);
         return () => clearTimeout(timeout);
-    }, [completeSteps, activeStepIndex, activeStepInfo]);
+    }, [activeStepInfo]);
+
+    useEffect(() => {
+        updateSteps([...customSteps, ...transactionSteps]);
+    }, [customSteps, transactionSteps, updateSteps]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -112,17 +109,13 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                     <p className="text-sm font-normal leading-normal text-neutral-800">{description}</p>
                 </div>
                 {children}
-                <TransactionStatus.Container stepper={stepper}>
-                    {completeSteps.map((step, index) => (
-                        <TransactionStatus.Step key={step.id} id={step.id} order={index} {...step.meta} />
+                <TransactionStatus.Container steps={steps}>
+                    {steps.map((step) => (
+                        <TransactionStatus.Step key={step.id} {...step} />
                     ))}
                 </TransactionStatus.Container>
             </DialogContent>
-            <TransactionDialogFooter
-                submitLabel={submitLabel}
-                onNextStepClick={handleNextStep}
-                activeStep={activeStepInfo}
-            />
+            <TransactionDialogFooter submitLabel={submitLabel} activeStep={activeStepInfo} />
         </div>
     );
 };
