@@ -1,4 +1,5 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import type { TransactionReceipt } from 'viem';
 
 class PublishProposalDialogUtils {
     prepareMetadata = () => {
@@ -13,6 +14,8 @@ class PublishProposalDialogUtils {
 
         return Promise.resolve(transaction);
     };
+
+    getProposalId = (receipt: TransactionReceipt) => receipt.to;
 }
 
 export const publishProposalDialogUtils = new PublishProposalDialogUtils();

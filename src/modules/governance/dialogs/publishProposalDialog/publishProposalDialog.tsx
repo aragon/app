@@ -10,6 +10,7 @@ import {
 import { useStepper } from '@/shared/hooks/useStepper';
 import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
+import type { TransactionReceipt } from 'viem';
 import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -40,6 +41,9 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         [pinJson],
     );
 
+    const getProposalLink = (txReceipt: TransactionReceipt) =>
+        `/dao/daoId/proposals/${publishProposalDialogUtils.getProposalId(txReceipt)}`;
+
     const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
         () => [
             {
@@ -62,6 +66,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             title="Publish proposal"
             description="To publish your proposal you have to confirm the onchain transaction with your wallet."
             submitLabel="Publish proposal"
+            successLink={{ label: 'View proposal', href: getProposalLink }}
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={publishProposalDialogUtils.buildTransaction}
