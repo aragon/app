@@ -24,7 +24,7 @@ export class StepperUtils<TMeta = undefined, TStepId = string> {
     }
 
     static sortSteps = <TMeta = undefined, TStepId = string>(
-        steps: Array<IStepperStep<TMeta, TStepId>> = [],
+        steps: Array<IStepperStep<TMeta, TStepId>>,
     ): Array<IStepperStep<TMeta, TStepId>> => [...steps].sort((stepA, stepB) => stepA.order - stepB.order);
 
     getActiveStep = () => this.activeStep;
