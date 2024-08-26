@@ -50,15 +50,12 @@ export class StepperUtils<TMeta = undefined, TStepId = string> {
     hasNext = () => this.findStepIndex(this.activeStep) < this.steps.length - 1;
 
     addStep = (step: IStepperStep<TMeta, TStepId>) => {
-        const stepIndex = this.findStepIndex(step.id);
-        const newSteps = [...this.steps];
-
-        if (stepIndex >= 0) {
-            newSteps[stepIndex] = step;
-        } else {
-            newSteps.splice(step.order, 0, step);
+        if (this.findStepIndex(step.id) >= 0) {
+            return this.steps;
         }
 
+        const newSteps = [...this.steps];
+        newSteps.splice(step.order, 0, step);
         this.steps = newSteps;
 
         return this.steps;
