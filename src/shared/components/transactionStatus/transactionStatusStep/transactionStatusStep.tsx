@@ -1,4 +1,4 @@
-import { AvatarIcon, Button, Icon, IconType, Spinner } from '@aragon/ods';
+import { AvatarIcon, Icon, IconType, Link, Spinner } from '@aragon/ods';
 import classNames from 'classnames';
 import type {
     ITransactionStatusStepMeta,
@@ -48,14 +48,21 @@ export const TransactionStatusStep = <
                 </p>
             </div>
             {isLinkAddon && (
-                <Button href={addon.href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                <Link href={addon.href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                     {addon.label}
-                </Button>
+                </Link>
             )}
             {addon != null && !isLinkAddon && (
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row items-center gap-2">
                     <p className="text-sm font-normal leading-tight text-neutral-500 md:text-base">{addon.label}</p>
-                    {addon.icon && <Icon icon={IconType.BLOCKCHAIN_WALLET} size="sm" responsiveSize={{ md: 'md' }} />}
+                    {addon.icon && (
+                        <Icon
+                            icon={IconType.BLOCKCHAIN_WALLET}
+                            size="sm"
+                            responsiveSize={{ md: 'md' }}
+                            className="text-neutral-300"
+                        />
+                    )}
                 </div>
             )}
         </li>
