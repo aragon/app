@@ -142,8 +142,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     useEffect(() => updateSteps([...customSteps, ...transactionSteps]), [customSteps, transactionSteps, updateSteps]);
 
     return (
-        <div className="flex flex-col gap-4">
-            <DialogContent className="flex flex-col gap-6 pt-6">
+        <>
+            <DialogContent className="flex flex-col gap-6 pb-4 pt-6">
                 <div className="flex flex-col gap-2">
                     <Heading size="h2">{title}</Heading>
                     <p className="text-sm font-normal leading-normal text-neutral-800">{description}</p>
@@ -162,6 +162,6 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 activeStep={activeStepInfo}
                 onError={handleTransactionError}
             />
-        </div>
+        </>
     );
 };
