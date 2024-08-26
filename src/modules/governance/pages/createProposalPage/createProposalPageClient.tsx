@@ -1,10 +1,8 @@
 'use client';
 
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { Wizard } from '@/shared/components/wizard';
 import { type ICreateProposalFormData } from '../../components/createProposalForm';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 
 export interface ICreateProposalPageClientProps {}
@@ -16,10 +14,9 @@ const createProposalSteps = [
 ];
 
 export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = () => {
-    const { open } = useDialogContext();
-
     const handleFormSubmit = (values: ICreateProposalFormData) => {
-        open(GovernanceDialogs.PUBLISH_PROPOSAL, { params: values });
+        // eslint-disable-next-line no-console
+        console.log({ values });
     };
 
     return (

@@ -8,9 +8,7 @@ export const pinJsonAction = async ({ body: bodyParam }: IPinJsonParams): Promis
     const headers = { Authorization: `Bearer ${ipfsService.jwt}`, 'Content-Type': 'application/json' };
     const body = JSON.stringify({ pinataContent: bodyParam });
     const options = { headers, method: 'POST' };
-    // const result = await ipfsService.request<string>(ipfsService.urls.pinJson, { body }, options);
-    await new Promise((resolve) => setTimeout(() => resolve(true), 1000));
-    const result = 'abc';
+    const result = await ipfsService.request<string>(ipfsService.urls.pinJson, { body }, options);
 
     return result;
 };
