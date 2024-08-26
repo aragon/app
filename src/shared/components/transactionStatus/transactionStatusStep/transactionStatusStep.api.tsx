@@ -11,9 +11,9 @@ export interface ITransactionStatusStepMetaAddon {
      */
     icon?: IconType;
     /**
-     * Text of the addon.
+     * Label of the addon.
      */
-    text: string;
+    label: string;
     /**
      * Link of the addon.
      */
@@ -34,17 +34,25 @@ export interface ITransactionStatusStepMeta {
      */
     errorLabel?: string;
     /**
+     * Label displayed when state is warning, defaults to label when not set.
+     */
+    warningLabel?: string;
+    /**
      * Addon displayed beside the step label.
      */
     addon?: ITransactionStatusStepMetaAddon;
 }
 
-export interface ITransactionStatusStep<TMeta extends ITransactionStatusStepMeta, TStepId = string>
-    extends IStepperStep<TMeta, TStepId> {}
+export interface ITransactionStatusStep<
+    TMeta extends ITransactionStatusStepMeta = ITransactionStatusStepMeta,
+    TStepId extends string = string,
+> extends IStepperStep<TMeta, TStepId> {}
 
-export interface ITransactionStatusStepProps<TMeta extends ITransactionStatusStepMeta, TStepId = string>
-    extends ITransactionStatusStep<TMeta, TStepId>,
-        Omit<ComponentProps<'div'>, 'id'> {
+export interface ITransactionStatusStepProps<
+    TMeta extends ITransactionStatusStepMeta = ITransactionStatusStepMeta,
+    TStepId extends string = string,
+> extends ITransactionStatusStep<TMeta, TStepId>,
+        Omit<ComponentProps<'li'>, 'id'> {
     /**
      * Callback to register the step.
      */
