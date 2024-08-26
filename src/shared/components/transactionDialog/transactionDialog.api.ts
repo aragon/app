@@ -1,7 +1,7 @@
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ReactNode } from 'react';
-import { TransactionReceipt } from 'viem';
+import type { TransactionReceipt } from 'viem';
 import type { SendTransactionParameters } from 'wagmi/actions';
 import type { ITransactionStatusStepMeta } from '../transactionStatus';
 
