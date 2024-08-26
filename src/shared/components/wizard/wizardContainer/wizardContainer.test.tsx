@@ -5,7 +5,9 @@ import { userEvent } from '@testing-library/user-event';
 import { type IWizardContainerProps, WizardContainer } from './wizardContainer';
 
 describe('<WizardContainer /> component', () => {
-    const useStepperSpy = jest.spyOn(useStepper, 'useStepper');
+    const useStepperSpy = jest.spyOn(useStepper, 'useStepper') as jest.SpyInstance<
+        useStepper.IUseStepperReturn<unknown, string>
+    >;
 
     afterEach(() => {
         useStepperSpy.mockReset();

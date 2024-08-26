@@ -17,6 +17,7 @@ describe('<WizardProvider /> component', () => {
                 updateActiveStep: jest.fn(),
                 registerStep: jest.fn(),
                 unregisterStep: jest.fn(),
+                updateSteps: jest.fn(),
             },
             ...props,
         };
