@@ -32,10 +32,10 @@ export interface ITransactionDialogStepMeta extends ITransactionStatusStepMeta {
     auto?: boolean;
 }
 
-export interface ITransactionDialogStep<TCustomStepId = string>
+export interface ITransactionDialogStep<TCustomStepId extends string = string>
     extends IStepperStep<ITransactionDialogStepMeta, TCustomStepId> {}
 
-export interface ITransactionDialogProps<TCustomStepId = string> {
+export interface ITransactionDialogProps<TCustomStepId extends string = string> {
     /**
      * Title of the dialog.
      */
