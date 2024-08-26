@@ -8,6 +8,9 @@ import type { ITransactionStatusStepMeta } from '../transactionStatus';
 // Return type for the prepareTransaction property of the TransactionDialog component
 export type TransactionDialogPrepareReturn = SendTransactionParameters;
 
+// Static or dynamic link based on the transaction receipt.
+export type TransactionDialogSuccessLinkHref = string | ((receipt: TransactionReceipt) => string);
+
 export interface ITransactionDialogActionParams {
     /**
      * Callback to be triggered if an error occurs to propertly monitor the transaction status.
@@ -38,13 +41,13 @@ export interface ITransactionDialogStep<TCustomStepId extends string = string>
 
 export interface ITransactionDialogSuccessLink {
     /**
-     * Label of the success button.
+     * Label of the success link.
      */
     label: string;
     /**
-     * Static link of function to build the success link.
+     * URL of the success link.
      */
-    href: string | ((receipt: TransactionReceipt) => string);
+    href: TransactionDialogSuccessLinkHref;
 }
 
 export interface ITransactionDialogProps<TCustomStepId extends string = string> {

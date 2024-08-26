@@ -8,6 +8,7 @@ import {
     type ITransactionDialogProps,
     type ITransactionDialogStep,
     TransactionDialogStep,
+    type TransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';
 
 export interface ITransactionDialogFooterProps<TCustomStepId extends string = string> {
@@ -41,10 +42,7 @@ const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record
     },
 };
 
-const buildSuccessLink = (
-    successHref: ITransactionDialogProps['successLink']['href'],
-    txReceipt?: TransactionReceipt,
-) => {
+const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, txReceipt?: TransactionReceipt) => {
     if (typeof successHref === 'string') {
         return successHref;
     }
