@@ -1,15 +1,15 @@
 import { render, screen } from '@testing-library/react';
-import { LayoutProcess, type ILayoutProcessProps } from './layoutProcess';
+import { LayoutWizard, type ILayoutProcessProps } from './layoutWizard';
 
-jest.mock('../../navigations/navigationProcess', () => ({
-    NavigationProcess: () => <div data-testid="navigation-process-mock" />,
+jest.mock('../../navigations/navigationWizard', () => ({
+    NavigationWizard: () => <div data-testid="navigation-process-mock" />,
 }));
 
-describe('<LayoutProcess /> component', () => {
+describe('<LayoutWizard /> component', () => {
     const createTestComponent = (props?: Partial<ILayoutProcessProps>) => {
         const completeProps: ILayoutProcessProps = { ...props };
 
-        return <LayoutProcess {...completeProps} />;
+        return <LayoutWizard {...completeProps} />;
     };
 
     it('renders the navigation process and children property', () => {

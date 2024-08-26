@@ -1,3 +1,3 @@
-import { LayoutProcess } from '@/modules/application/components/layouts/layoutProcess';
+import { LayoutWizard } from '@/modules/application/components/layouts/layoutWizard';
 
-export default LayoutProcess;
+export default LayoutWizard;

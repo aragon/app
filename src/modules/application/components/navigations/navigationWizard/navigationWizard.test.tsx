@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { NavigationProcess, type INavigationProcessProps } from './navigationProcess';
+import { NavigationWizard, type INavigationProcessProps } from './navigationWizard';
 
-describe('<NavigationProcess /> component', () => {
+describe('<NavigationWizard /> component', () => {
     const createTestComponent = (props?: Partial<INavigationProcessProps>) => {
         const completeProps: INavigationProcessProps = { ...props };
 
-        return <NavigationProcess {...completeProps} />;
+        return <NavigationWizard {...completeProps} />;
     };
 
     it('renders the process title and subtitle', () => {

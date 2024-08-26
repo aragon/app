@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { NavigationProcess } from '../../navigations/navigationProcess';
+import { NavigationWizard } from '../../navigations/navigationWizard';
 
 export interface ILayoutProcessProps {
     /**
@@ -8,12 +8,12 @@ export interface ILayoutProcessProps {
     children?: ReactNode;
 }
 
-export const LayoutProcess: React.FC<ILayoutProcessProps> = (props) => {
+export const LayoutWizard: React.FC<ILayoutProcessProps> = (props) => {
     const { children } = props;
 
     return (
         <>
-            <NavigationProcess />
+            <NavigationWizard />
             {children}
         </>
     );
