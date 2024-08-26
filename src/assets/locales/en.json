@@ -427,11 +427,13 @@
           },
           "APPROVE": {
             "label": "Approve transaction",
-            "errorLabel": "Rejected by wallet"
+            "errorLabel": "Rejected by wallet",
+            "addon": "Wallet"
           },
           "CONFIRM": {
             "label": "Onchain confirmation",
-            "errorLabel": "Confirmation failed"
+            "errorLabel": "Confirmation failed",
+            "addon": "Details"
           }
         },
         "footer": {

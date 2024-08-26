@@ -1,6 +1,7 @@
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ReactNode } from 'react';
+import { TransactionReceipt } from 'viem';
 import type { SendTransactionParameters } from 'wagmi/actions';
 import type { ITransactionStatusStepMeta } from '../transactionStatus';
 
@@ -35,6 +36,17 @@ export interface ITransactionDialogStepMeta extends ITransactionStatusStepMeta {
 export interface ITransactionDialogStep<TCustomStepId extends string = string>
     extends IStepperStep<ITransactionDialogStepMeta, TCustomStepId> {}
 
+export interface ITransactionDialogSuccessLink {
+    /**
+     * Label of the success button.
+     */
+    label: string;
+    /**
+     * Static link of function to build the success link.
+     */
+    href: string | ((receipt: TransactionReceipt) => string);
+}
+
 export interface ITransactionDialogProps<TCustomStepId extends string = string> {
     /**
      * Title of the dialog.
@@ -48,6 +60,10 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      * Label for the submit button used as fallback when the specific step state label is not set.
      */
     submitLabel: string;
+    /**
+     * Label for the submit button used when the transaction has been successful.
+     */
+    successLink: ITransactionDialogSuccessLink;
     /**
      * Custom steps needed for the transaction.
      */

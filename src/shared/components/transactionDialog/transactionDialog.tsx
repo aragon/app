@@ -1,9 +1,13 @@
-import { DialogContent, Heading } from '@aragon/ods';
+import { ChainEntityType, DialogContent, Heading, IconType, useBlockExplorer } from '@aragon/ods';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
+import { useChainId, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import type { UseQueryReturnType } from 'wagmi/query';
-import { TransactionStatus, type TransactionStatusState } from '../transactionStatus';
+import {
+    TransactionStatus,
+    type ITransactionStatusStepMetaAddon,
+    type TransactionStatusState,
+} from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
@@ -14,12 +18,23 @@ const queryToStepState = (
 ): TransactionStatusState => (status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status);
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
-    const { title, description, customSteps = [], stepper, submitLabel, children, prepareTransaction } = props;
+    const {
+        title,
+        description,
+        customSteps = [],
+        stepper,
+        submitLabel,
+        successLink,
+        children,
+        prepareTransaction,
+    } = props;
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
 
     const { t } = useTranslations();
+    const chainId = useChainId();
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const handleTransactionError = useCallback(() => {
         // TODO: Report the error to an error reporting service (APP-3107)
@@ -37,16 +52,20 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         data: transactionHash,
     } = useSendTransaction({ mutation: { onSuccess: nextStep } });
 
-    const { status: waitTxStatus, fetchStatus: waitTxFetchStatus } = useWaitForTransactionReceipt({
+    const {
+        data: txReceipt,
+        status: waitTxStatus,
+        fetchStatus: waitTxFetchStatus,
+    } = useWaitForTransactionReceipt({
         hash: transactionHash,
     });
 
     const handleSendTransaction = useCallback(() => {
         if (transaction == null) {
-            return;
+            handleTransactionError();
+        } else {
+            sendTransaction({ ...transaction, gas: null }, { onError: handleTransactionError });
         }
-
-        sendTransaction({ ...transaction, gas: null }, { onError: handleTransactionError });
     }, [transaction, sendTransaction, handleTransactionError]);
 
     const handleRetryTransaction = useCallback(() => {
@@ -72,6 +91,24 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         [prepareTransactionStatus, approveTransactionStatus, waitTxStatus, waitTxFetchStatus],
     );
 
+    const transactionStepAddon: Record<TransactionDialogStep, ITransactionStatusStepMetaAddon | undefined> = useMemo(
+        () => ({
+            [TransactionDialogStep.PREPARE]: undefined,
+            [TransactionDialogStep.APPROVE]: {
+                label: t(`app.shared.transactionDialog.step.${TransactionDialogStep.APPROVE}.addon`),
+                icon: IconType.BLOCKCHAIN_WALLET,
+            },
+            [TransactionDialogStep.CONFIRM]:
+                transactionHash != null
+                    ? {
+                          label: t(`app.shared.transactionDialog.step.${TransactionDialogStep.CONFIRM}.addon`),
+                          href: buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash }),
+                      }
+                    : undefined,
+        }),
+        [t, buildEntityUrl, transactionHash],
+    );
+
     const transactionSteps = useMemo(() => {
         const stepKeys = Object.keys(TransactionDialogStep) as TransactionDialogStep[];
 
@@ -84,9 +121,10 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 state: transactionStepStates[stepId],
                 action: transactionStepActions[stepId],
                 auto: stepId === TransactionDialogStep.PREPARE,
+                addon: transactionStepAddon[stepId],
             },
         }));
-    }, [transactionStepActions, transactionStepStates, customSteps, t]);
+    }, [transactionStepActions, transactionStepStates, transactionStepAddon, customSteps, t]);
 
     useEffect(() => {
         const { state, action, auto } = activeStepInfo?.meta ?? {};
@@ -119,6 +157,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             </DialogContent>
             <TransactionDialogFooter
                 submitLabel={submitLabel}
+                successLink={successLink}
+                txReceipt={txReceipt}
                 activeStep={activeStepInfo}
                 onError={handleTransactionError}
             />
