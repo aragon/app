@@ -1,3 +1,4 @@
+import { generateStepperResult } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
 import { type IWizardContext, WizardProvider } from '../wizardProvider';
@@ -31,16 +32,7 @@ describe('<WizardStep /> component', () => {
 
         const completeContext: IWizardContext = {
             submitLabel: 'submit',
-            steps: [],
-            activeStepIndex: 0,
-            hasNext: false,
-            hasPrevious: false,
-            registerStep: jest.fn(),
-            unregisterStep: jest.fn(),
-            nextStep: jest.fn(),
-            previousStep: jest.fn(),
-            updateActiveStep: jest.fn(),
-            updateSteps: jest.fn(),
+            ...generateStepperResult(),
             ...values?.context,
         };
 

@@ -2,7 +2,7 @@ import { type IStepperStep, StepperUtils } from '@/shared/utils/stepperUtils';
 import { useCallback, useMemo, useState } from 'react';
 import type { IUseStepperParams, IUseStepperReturn } from './useStepper.api';
 
-export const useStepper = <TMeta, TStepId>(
+export const useStepper = <TMeta, TStepId extends string = string>(
     params?: IUseStepperParams<TMeta, TStepId>,
 ): IUseStepperReturn<TMeta, TStepId> => {
     const { initialSteps, initialActiveStep } = params ?? {};
