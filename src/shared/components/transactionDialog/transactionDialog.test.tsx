@@ -1,8 +1,9 @@
 import { generateStepperResult } from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { IconType, OdsModulesProvider } from '@aragon/ods';
 import * as ReactQuery from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
+import { polygon } from 'viem/chains';
 import * as Wagmi from 'wagmi';
 import { TransactionDialog } from './transactionDialog';
 import {
@@ -18,15 +19,20 @@ jest.mock('@tanstack/react-query', () => ({ __esModule: true, ...jest.requireAct
 describe('<TransactionDialog /> component', () => {
     const useSendTransactionSpy = jest.spyOn(Wagmi, 'useSendTransaction');
     const useMutationSpy = jest.spyOn(ReactQuery, 'useMutation');
+    const useWaitForTransactionReceiptSpy = jest.spyOn(Wagmi, 'useWaitForTransactionReceipt');
+    const useChainIdSpy = jest.spyOn(Wagmi, 'useChainId');
 
     beforeEach(() => {
         useSendTransactionSpy.mockReturnValue({} as Wagmi.UseSendTransactionReturnType);
         useMutationSpy.mockReturnValue({} as ReactQuery.UseMutationResult);
+        useWaitForTransactionReceiptSpy.mockReturnValue({} as Wagmi.UseWaitForTransactionReceiptReturnType);
     });
 
     afterEach(() => {
         useSendTransactionSpy.mockReset();
         useMutationSpy.mockReset();
+        useChainIdSpy.mockReset();
+        useWaitForTransactionReceiptSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
@@ -129,6 +135,7 @@ describe('<TransactionDialog /> component', () => {
                     label: expect.stringMatching(/APPROVE.label/),
                     errorLabel: expect.stringMatching(/APPROVE.errorLabel/),
                     auto: false,
+                    addon: { label: expect.stringMatching(/APPROVE.addon/), icon: IconType.BLOCKCHAIN_WALLET },
                 }),
             },
             {
@@ -209,4 +216,40 @@ describe('<TransactionDialog /> component', () => {
         expect(sendTransaction).toHaveBeenCalledWith(expect.objectContaining(transaction), expect.anything());
         expect(updateActiveStep).toHaveBeenCalledWith(TransactionDialogStep.APPROVE);
     });
+
+    it('displays the link to the block explorer for the confirmation step on transaction success', () => {
+        const transactionHash = '0x1234';
+        useChainIdSpy.mockReturnValue(polygon.id);
+        useSendTransactionSpy.mockReturnValue({
+            data: transactionHash,
+        } as unknown as Wagmi.UseSendTransactionReturnType);
+        render(createTestComponent());
+        const updateSteps = jest.fn();
+        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        render(createTestComponent({ stepper }));
+        const confirmStep = updateSteps.mock.calls[0][0][2];
+        expect(confirmStep.meta.addon).toEqual({
+            label: expect.stringMatching(/CONFIRM.addon/),
+            href: `https://polygonscan.com/tx/${transactionHash}`,
+        });
+    });
+
+    it.each([
+        { status: 'pending', fetchStatus: 'idle', expected: 'idle' },
+        { status: 'error', fetchStatus: 'idle', expected: 'error' },
+        { status: 'pending', fetchStatus: 'fetching', expected: 'pending' },
+    ])(
+        'correctly parsers the wait-tx query status to $expected when on status $status and fetchStatus $fetchStatus',
+        ({ status, fetchStatus, expected }) => {
+            useWaitForTransactionReceiptSpy.mockReturnValue({
+                status,
+                fetchStatus,
+            } as Wagmi.UseWaitForTransactionReceiptReturnType);
+            const updateSteps = jest.fn();
+            const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+            render(createTestComponent({ stepper }));
+            const confirmStep = updateSteps.mock.calls[0][0][2];
+            expect(confirmStep.meta.state).toEqual(expected);
+        },
+    );
 });
