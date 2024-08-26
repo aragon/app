@@ -419,6 +419,33 @@
           "required": "{{name}} is mandatory"
         }
       },
+      "transactionDialog": {
+        "step": {
+          "PREPARE": {
+            "label": "Prepare transaction",
+            "errorLabel": "Unable to prepare transaction"
+          },
+          "APPROVE": {
+            "label": "Approve transaction",
+            "errorLabel": "Rejected by wallet",
+            "addon": "Wallet"
+          },
+          "CONFIRM": {
+            "label": "Onchain confirmation",
+            "errorLabel": "Confirmation failed",
+            "addon": "Details"
+          }
+        },
+        "footer": {
+          "retry": "Retry",
+          "cancel": "Cancel",
+          "approve": {
+            "idle": "Approve transaction",
+            "pending": "Awaiting approval",
+            "error": "Resend to wallet"
+          }
+        }
+      },
       "wizard": {
         "container": {
           "step": "Step {{number}}",
