@@ -1,1 +1,1 @@
-export { NavigationWizard, type INavigationProcessProps } from './navigationWizard';
+export { NavigationWizard, type INavigationWizardProps } from './navigationWizard';
