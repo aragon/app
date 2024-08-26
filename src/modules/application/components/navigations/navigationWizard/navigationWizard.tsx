@@ -40,7 +40,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const walletUser = address != null ? { address } : undefined;
 
     const urlParams = { id };
-    const { data: dao } = useDao({ urlParams });
+    const { data: dao } = useDao({ urlParams }, { enabled: id != null });
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 
