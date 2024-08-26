@@ -1,47 +1,63 @@
 import { AvatarIcon, Button, Icon, IconType, Spinner } from '@aragon/ods';
 import classNames from 'classnames';
-import type { ITransactionStatusStepMeta, ITransactionStatusStepProps } from './transactionStatusStep.api';
+import type {
+    ITransactionStatusStepMeta,
+    ITransactionStatusStepProps,
+    TransactionStatusState,
+} from './transactionStatusStep.api';
 
-export const TransactionStatusStep = <TMeta extends ITransactionStatusStepMeta, TStepId extends string>(
+const stateToLabelClassName: Record<TransactionStatusState, string> = {
+    pending: 'text-primary-400',
+    error: 'text-critical-800',
+    success: 'text-success-800',
+    idle: 'text-neutral-500',
+    warning: 'text-warning-800',
+};
+
+export const TransactionStatusStep = <
+    TMeta extends ITransactionStatusStepMeta = ITransactionStatusStepMeta,
+    TStepId extends string = string,
+>(
     props: ITransactionStatusStepProps<TMeta, TStepId>,
 ) => {
     const { id, order, meta, className, ...otherProps } = props;
-    const { addon, state, errorLabel, label } = meta;
+    const { addon, state, errorLabel, warningLabel, label } = meta;
+
+    const stateLabel = state === 'error' ? errorLabel : state === 'warning' ? warningLabel : undefined;
+    const processedLabel = stateLabel ?? label;
 
     const isLinkAddon = addon?.href != null;
-    const processedLabel = state === 'error' && errorLabel != null ? errorLabel : label;
-
-    const labelClassName = classNames('text-base font-normal leading-tight', {
-        'text-primary-400': state === 'pending',
-        'text-critical-800': state === 'error',
-        'text-success-800': state === 'success',
-        'text-neutral-500': state === 'idle',
-    });
 
     return (
-        <div className={classNames('flex flex-row justify-between gap-2', className)} {...otherProps}>
+        <li className={classNames('flex flex-row justify-between gap-2', className)} {...otherProps}>
             <div className="flex flex-row items-center gap-2 md:gap-3">
                 {['pending', 'idle'].includes(state) && (
                     <div className="p-0.5">
-                        {state === 'pending' && <Spinner size="md" variant="primary" />}
-                        {state === 'idle' && <div className="size-5 rounded-full border-2 border-neutral-100" />}
+                        <Spinner
+                            size="md"
+                            variant={state === 'pending' ? 'primary' : 'neutral'}
+                            isLoading={state === 'pending'}
+                        />
                     </div>
                 )}
+                {state === 'warning' && <AvatarIcon icon={IconType.WARNING} size="sm" variant="warning" />}
                 {state === 'error' && <AvatarIcon icon={IconType.CRITICAL} size="sm" variant="critical" />}
                 {state === 'success' && <AvatarIcon icon={IconType.CHECKMARK} size="sm" variant="success" />}
-                <p className={labelClassName}>{processedLabel}</p>
+                <p className={classNames('text-base font-normal leading-tight', stateToLabelClassName[state])}>
+                    {processedLabel}
+                </p>
             </div>
             {isLinkAddon && (
                 <Button href={addon.href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                    {addon.text}
+                    {addon.label}
                 </Button>
             )}
             {addon != null && !isLinkAddon && (
                 <div className="flex flex-row gap-2">
-                    <p className="text-sm font-normal leading-tight text-neutral-500 md:text-base">{addon.text}</p>
+                    <p className="text-sm font-normal leading-tight text-neutral-500 md:text-base">{addon.label}</p>
                     {addon.icon && <Icon icon={IconType.BLOCKCHAIN_WALLET} size="sm" responsiveSize={{ md: 'md' }} />}
                 </div>
             )}
-        </div>
+        </li>
     );
 };

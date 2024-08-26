@@ -3,8 +3,10 @@ import classNames from 'classnames';
 import { type ComponentProps } from 'react';
 import { type ITransactionStatusStepMeta } from '../transactionStatusStep';
 
-export interface ITransactionStatusContainerProps<TMeta extends ITransactionStatusStepMeta, TStepId = string>
-    extends ComponentProps<'div'> {
+export interface ITransactionStatusContainerProps<
+    TMeta extends ITransactionStatusStepMeta = ITransactionStatusStepMeta,
+    TStepId extends string = string,
+> extends ComponentProps<'ul'> {
     /**
      * Information about the stepper steps and state.
      */
@@ -20,7 +22,7 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
     const isSuccess = steps.every((step) => step.meta.state === 'success');
 
     return (
-        <div
+        <ul
             className={classNames(
                 'flex flex-col gap-3 rounded-xl border bg-neutral-0 p-4 md:gap-4 md:p-6',
                 { 'border-critical-300 shadow-critical': hasError },
@@ -31,6 +33,6 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
             {...otherProps}
         >
             {children}
-        </div>
+        </ul>
     );
 };
