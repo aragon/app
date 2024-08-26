@@ -40,6 +40,7 @@ describe('<WizardStep /> component', () => {
             nextStep: jest.fn(),
             previousStep: jest.fn(),
             updateActiveStep: jest.fn(),
+            updateSteps: jest.fn(),
             ...values?.context,
         };
 
