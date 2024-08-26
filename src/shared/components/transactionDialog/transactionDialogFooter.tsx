@@ -8,7 +8,7 @@ import {
     TransactionDialogStep,
 } from './transactionDialog.api';
 
-export interface ITransactionDialogFooterProps<TCustomStepId> {
+export interface ITransactionDialogFooterProps<TCustomStepId extends string = string> {
     /**
      * Label to be used by default for the submit button.
      */
@@ -31,7 +31,7 @@ const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record
     },
 };
 
-export const TransactionDialogFooter = <TCustomStepId extends string>(
+export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
     const { submitLabel, activeStep, onError } = props;
@@ -44,8 +44,9 @@ export const TransactionDialogFooter = <TCustomStepId extends string>(
 
     const isErrorState = state === 'error';
     const isSuccessState = state === 'success';
+    const isPendingState = state === 'pending';
 
-    const isCancelDisabled = stepId === TransactionDialogStep.CONFIRM && (isSuccessState || isErrorState);
+    const isCancelDisabled = stepId === TransactionDialogStep.CONFIRM && (isSuccessState || isPendingState);
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState ? t('app.shared.transactionDialog.footer.retry') : submitLabel;
