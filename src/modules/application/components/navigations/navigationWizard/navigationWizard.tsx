@@ -56,7 +56,9 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
                 <div className="flex flex-col gap-0.5">
-                    <p className="text-nowrap text-base leading-tight text-neutral-800">{processStep}</p>
+                    {processStep && (
+                        <p className="text-nowrap text-base leading-tight text-neutral-800">{processStep}</p>
+                    )}
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
                             <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">{dao?.name}</p>
