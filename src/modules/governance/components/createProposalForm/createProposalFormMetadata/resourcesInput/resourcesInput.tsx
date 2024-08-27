@@ -1,25 +1,24 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, Card, IconType, InputText, Tag } from '@aragon/ods';
+import { Button, Card, IconType, Tag } from '@aragon/ods';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { ResourceItem } from '../resourceItem';
 
-export const ResourcesInput = () => {
+export interface IResourcesInputProps {}
+
+export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
     const { t } = useTranslations();
 
-    const { control, register, watch } = useForm({
+    const { control } = useForm({
         defaultValues: {
             resources: [{ label: '', link: '' }],
         },
+        mode: 'onBlur',
     });
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'resources',
     });
-
-    const resources = watch('resources');
-
-    const isLastItemEmpty =
-        resources.length > 0 && (!resources[resources.length - 1]?.label || !resources[resources.length - 1]?.link);
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
@@ -36,27 +35,18 @@ export const ResourcesInput = () => {
                 </p>
             </label>
 
-            <Card className="flex flex-col gap-3 p-6 md:gap-2">
-                {fields.map((item, index) => (
-                    <li className="flex items-center gap-2" key={item.id}>
-                        <InputText placeholder="Type a label" {...register(`resources.${index}.label`)} />
-                        <InputText placeholder="https://" {...register(`resources.${index}.link`)} />
-                        <Button
-                            variant="tertiary"
-                            iconLeft={IconType.DOTS_VERTICAL}
-                            type="button"
-                            onClick={() => remove(index)}
-                            disabled={!resources[index]?.label && !resources[index]?.link}
-                        />
-                    </li>
-                ))}
-            </Card>
+            {fields.length > 0 && (
+                <Card className="flex flex-col gap-3 p-6 md:gap-2">
+                    {fields.map((field, index) => (
+                        <ResourceItem key={field.id} index={index} remove={remove} />
+                    ))}
+                </Card>
+            )}
             <Button
                 className="w-fit"
                 iconLeft={IconType.PLUS}
                 type="button"
                 onClick={() => append({ label: '', link: '' })}
-                disabled={isLastItemEmpty}
             >
                 Add
             </Button>

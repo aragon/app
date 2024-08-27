@@ -416,7 +416,8 @@
       },
       "formField": {
         "error": {
-          "required": "{{name}} is mandatory"
+          "required": "{{name}} is mandatory",
+          "pattern": "Invalid {{name}} format"
         }
       },
       "wizard": {
@@ -470,7 +471,16 @@
         "resources": {
           "title": "Resources",
           "placeholder": "Type a resource",
-          "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
+          "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post.",
+          "removeResource": "Remove Link",
+          "labelInput": {
+            "title": "Label",
+            "placeholder": "Type a label"
+          },
+          "linkInput": {
+            "title": "Link",
+            "placeholder": "https://"
+          }
         }
       }
     }

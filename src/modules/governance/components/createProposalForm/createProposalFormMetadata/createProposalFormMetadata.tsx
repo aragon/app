@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
-import { ResourcesInput } from '../resourcesInput';
+import { ResourcesInput } from './resourcesInput';
 
 export interface ICreateProposalFormMetadataProps {}
 
