@@ -3,7 +3,13 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, Dropdown, IconType, InputText } from '@aragon/ods';
 
 export interface IResourceItemProps {
+    /**
+     * The index of the resource item in the list.
+     */
     index: number;
+    /**
+     * Callback to remove the resource item.
+     */
     remove: (index: number) => void;
 }
 
