@@ -15,15 +15,14 @@ export interface ILayoutWizardProps {
      * URL parameters of the layout.
      */
     params: IDaoPageParams;
-    /**
-     * Title of the navigation action.
-     */
-    title?: string;
 }
 
 export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
-    const { params, title, children } = props;
+    const { params, children } = props;
     const { id } = params;
+
+    //TODO: Remove default with LayoutWizardCreateProposal (APP-3537)
+    const processStep = 'Create Proposal';
 
     const queryClient = new QueryClient();
 
@@ -44,7 +43,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWizard id={id} title={title} />
+            <NavigationWizard id={id} processStep={processStep} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

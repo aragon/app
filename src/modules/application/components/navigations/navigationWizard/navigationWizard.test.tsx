@@ -6,7 +6,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { AppRouterInstance, NavigateOptions } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import { NavigationWizard, type INavigationWizardProps } from './navigationWizard';
@@ -69,37 +69,17 @@ describe('<NavigationWizard /> component', () => {
         expect(screen.getByText('Test DAO')).toBeInTheDocument();
     });
 
-    it('renders the default title if no title is provided', () => {
-        render(createTestComponent());
-        expect(screen.getByText('Create Proposal')).toBeInTheDocument();
+    it('renders the process step name if provided if provided', () => {
+        const processStep = 'Create A New Test Proposal';
+        render(createTestComponent({ processStep }));
+        expect(screen.getByText(processStep)).toBeInTheDocument();
     });
 
     it('calls router back on back button click', async () => {
         const mockBack = jest.fn();
         useRouterMock.mockReturnValue({
             back: mockBack,
-            push: function <RouteType>(
-                href: __next_route_internal_types__.RouteImpl<RouteType>,
-                options?: NavigateOptions,
-            ): void {
-                throw new Error('Function not implemented.');
-            },
-            replace: function <RouteType>(
-                href: __next_route_internal_types__.RouteImpl<RouteType>,
-                options?: NavigateOptions,
-            ): void {
-                throw new Error('Function not implemented.');
-            },
-            prefetch: function <RouteType>(href: __next_route_internal_types__.RouteImpl<RouteType>): void {
-                throw new Error('Function not implemented.');
-            },
-            forward: function (): void {
-                throw new Error('Function not implemented.');
-            },
-            refresh: function (): void {
-                throw new Error('Function not implemented.');
-            },
-        });
+        } as unknown as AppRouterInstance);
 
         render(createTestComponent());
 

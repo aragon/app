@@ -13,9 +13,9 @@ import { Navigation, type INavigationContainerProps } from '../navigation';
 
 export interface INavigationWizardProps extends INavigationContainerProps {
     /**
-     * Title of the navigation process.
+     * Name of the navigation process step.
      */
-    title?: string;
+    processStep?: string;
     /**
      * ID of the DAO to display the data for.
      */
@@ -23,8 +23,8 @@ export interface INavigationWizardProps extends INavigationContainerProps {
 }
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    //TODO: Remove default with LayoutWizardCreateProposal (APP-3537)
-    const { title = 'Create Proposal', id } = props;
+   
+    const { processStep, id } = props;
 
     const { address, isConnected } = useAccount();
 
@@ -45,7 +45,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 
     const buttonClassName = classNames(
-        'p-4 items-center gap-3 rounded-full border border-neutral-100 text-neutral-300 transition-all',
+        'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
         'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
         'focus:outline-none focus-visible:ring focus-visible:ring-primary focus-visible:ring-offset',
     );
@@ -57,7 +57,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
                 <div className="flex flex-col gap-0.5">
-                    <p className="text-nowrap text-base leading-tight text-neutral-800">{title}</p>
+                    <p className="text-nowrap text-base leading-tight text-neutral-800">{processStep}</p>
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
                             <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">{dao?.name}</p>
