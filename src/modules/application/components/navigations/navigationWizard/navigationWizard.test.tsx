@@ -69,7 +69,7 @@ describe('<NavigationWizard /> component', () => {
         expect(screen.getByText('Test DAO')).toBeInTheDocument();
     });
 
-    it('renders the process step name if provided if provided', () => {
+    it('renders the process step name if provided', () => {
         const processStep = 'Create A New Test Proposal';
         render(createTestComponent({ processStep }));
         expect(screen.getByText(processStep)).toBeInTheDocument();
