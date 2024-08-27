@@ -49,7 +49,7 @@ describe('<NavigationWizard /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<INavigationWizardProps>) => {
-        const completeProps: INavigationWizardProps = { id: 'test-id', ...props };
+        const completeProps: INavigationWizardProps = { wizardName: '', ...props };
         return (
             <OdsModulesProvider>
                 <NavigationWizard {...completeProps} />
@@ -69,10 +69,10 @@ describe('<NavigationWizard /> component', () => {
         expect(screen.getByText('Test DAO')).toBeInTheDocument();
     });
 
-    it('renders the process step name if provided', () => {
-        const processStep = 'Create A New Test Proposal';
-        render(createTestComponent({ processStep }));
-        expect(screen.getByText(processStep)).toBeInTheDocument();
+    it('renders the wizard name', () => {
+        const wizardName = 'Create A New Test Proposal';
+        render(createTestComponent({ wizardName }));
+        expect(screen.getByText(wizardName)).toBeInTheDocument();
     });
 
     it('calls router back on back button click', async () => {

@@ -21,7 +21,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
     const { params, children } = props;
 
     //TODO: Remove default with LayoutWizardCreateProposal (APP-3537)
-    const processStep = 'Create Proposal';
+    const wizardName = 'Create Proposal';
 
     const queryClient = new QueryClient();
 
@@ -45,7 +45,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWizard id={params?.id} processStep={processStep} />
+            <NavigationWizard id={params?.id} wizardName={wizardName} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );
