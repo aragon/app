@@ -28,9 +28,9 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
     try {
         if (params?.id != null) {
             const daoUrlParams = { id: params.id };
-            const daoSettingsUrlParams = { daoId: params.id };
-
             await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
+
+            const daoSettingsUrlParams = { daoId: params.id };
             await queryClient.fetchQuery(daoSettingsOptions({ urlParams: daoSettingsUrlParams }));
         }
     } catch (error: unknown) {
