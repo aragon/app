@@ -23,7 +23,6 @@ export interface INavigationWizardProps extends INavigationContainerProps {
 }
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-   
     const { processStep, id } = props;
 
     const { address, isConnected } = useAccount();
