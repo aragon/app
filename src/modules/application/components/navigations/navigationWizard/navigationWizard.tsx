@@ -19,7 +19,7 @@ export interface INavigationWizardProps extends INavigationContainerProps {
     /**
      * ID of the DAO to display the data for.
      */
-    id: string;
+    id?: string;
 }
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
@@ -38,8 +38,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     const walletUser = address != null ? { address } : undefined;
 
-    const urlParams = { id };
-    const { data: dao } = useDao({ urlParams }, { enabled: id != null });
+    const { data: dao } = useDao({ urlParams: { id: id ?? '' } }, { enabled: id != null });
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 

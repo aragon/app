@@ -89,12 +89,14 @@ describe('<NavigationWizard /> component', () => {
     });
 
     it('renders the user wallet address and opens the user dialog when clicked', async () => {
+        const address = '0xUser123';
         const open = jest.fn();
+        useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
 
         render(createTestComponent());
 
-        const walletButton = screen.getByText('0x123');
+        const walletButton = screen.getByText(address);
         expect(walletButton).toBeInTheDocument();
 
         await userEvent.click(walletButton);

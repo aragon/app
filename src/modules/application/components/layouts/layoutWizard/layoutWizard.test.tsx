@@ -20,21 +20,17 @@ jest.mock('../../navigations/navigationWizard', () => ({
 
 describe('<LayoutWizard /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
-    const consoleErrorSpy = jest.spyOn(console, 'error');
 
     beforeEach(() => {
-        consoleErrorSpy.mockImplementation(jest.fn());
         fetchQuerySpy.mockImplementation(jest.fn());
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
-        consoleErrorSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutWizardProps>) => {
         const completeProps: ILayoutWizardProps = {
-            params: { id: 'test-wizard' },
             ...props,
         };
 
@@ -49,10 +45,15 @@ describe('<LayoutWizard /> component', () => {
         expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('prefetches the DAO data from the url param when provided', async () => {
+    it('prefetches the DAO data when the DAO id is provided by params', async () => {
         const params = { id: 'my-wizard' };
         render(await createTestComponent({ params }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: params.id } }).queryKey);
+    });
+
+    it('does not prefetch the DAO data when the DAO id is not provided by params', async () => {
+        render(await createTestComponent());
+        expect(fetchQuerySpy).not.toHaveBeenCalled();
     });
 
     it('dehydrates the query client state', async () => {
@@ -75,7 +76,7 @@ describe('<LayoutWizard /> component', () => {
         const daoId = 'wizard-id';
         fetchQuerySpy.mockRejectedValue('error');
         render(await createTestComponent({ params: { id: daoId } }));
-        const errorLink = screen.getByRole('link', { name: /app.shared.wizard.notFound.action/ });
+        const errorLink = screen.getByRole('link', { name: /app.shared.layoutWizard.notFound.action/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/`);
     });

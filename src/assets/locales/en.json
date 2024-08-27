@@ -419,6 +419,13 @@
           "required": "{{name}} is mandatory"
         }
       },
+      "layoutWizard": {
+        "notFound": {
+          "title": "DAO not found",
+          "description": "We couldn't find the DAO that you're looking for.",
+          "action": "Explore DAOs"
+        }
+      },
       "wizard": {
         "container": {
           "step": "Step {{number}}",
@@ -442,11 +449,6 @@
               "description": "Some inputs are not filled and not valid. Review, fix and fill out all mandatory data to proceed."
             }
           }
-        },
-        "notFound": {
-          "title": "Action not found",
-          "description": "We couldn't find the action that you're looking for.",
-          "action": "Explore DAOs"
         }
       }
     }
