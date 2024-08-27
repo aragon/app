@@ -61,7 +61,7 @@
         }
       },
       "layoutWizardCreateProposal": {
-        "wizardName": "Create Proposal"
+        "name": "Create Proposal"
       },
       "userDialog": {
         "screenReader": {

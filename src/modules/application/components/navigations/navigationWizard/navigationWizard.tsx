@@ -16,7 +16,7 @@ export interface INavigationWizardProps extends INavigationContainerProps {
     /**
      * Name of the wizard to display.
      */
-    wizardName: string;
+    name: string;
     /**
      * ID of the DAO to display the data for.
      */
@@ -24,7 +24,7 @@ export interface INavigationWizardProps extends INavigationContainerProps {
 }
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    const { wizardName, id } = props;
+    const { name, id } = props;
 
     const { address, isConnected } = useAccount();
 
@@ -45,8 +45,6 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 
-    const intlWizardName = t(wizardName);
-
     const buttonClassName = classNames(
         'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
         'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
@@ -60,7 +58,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
                 <div className="flex grow flex-col gap-y-0.5">
-                    <p className="text-nowrap text-base leading-tight text-neutral-800">{intlWizardName}</p>
+                    <p className="text-nowrap text-base leading-tight text-neutral-800">{t(name)}</p>
 
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
