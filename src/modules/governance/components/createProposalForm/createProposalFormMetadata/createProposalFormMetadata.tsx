@@ -1,40 +1,52 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
 
 export interface ICreateProposalFormMetadataProps {}
 
 export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataProps> = () => {
-    const titleField = useFormField('title', { label: 'Title', rules: { required: true }, defaultValue: '' });
-    const summaryField = useFormField('summary', { label: 'Summary', rules: { required: true } });
+    const { t } = useTranslations();
 
-    const { ref: bodyRef, ...bodyField } = useFormField('body', { label: 'Body' });
+    const titleField = useFormField('title', {
+        label: t('app.createProposal.createProposalForm.title.title'),
+        rules: { required: true },
+        defaultValue: '',
+    });
+    const summaryField = useFormField('summary', {
+        label: t('app.createProposal.createProposalForm.summary.title'),
+        rules: { required: true },
+    });
+
+    const { ref: bodyRef, ...bodyField } = useFormField('body', {
+        label: t('app.createProposal.createProposalForm.body.title'),
+    });
     const { ref: addActionsRef, ...addActionsField } = useFormField('addActions', {
-        label: 'Would you like to add actions to this proposal?',
+        label: t('app.createProposal.createProposalForm.actions.title'),
         defaultValue: true,
     });
 
     return (
         <div className="flex flex-col gap-10">
             <InputText
-                helpText="Give your proposal a title. This will appear in the proposal overview."
-                placeholder="Title"
+                helpText={t('app.createProposal.createProposalForm.title.helpText')}
+                placeholder={t('app.createProposal.createProposalForm.title.placeholder')}
                 {...titleField}
             />
             <TextArea
-                helpText="Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview."
-                placeholder="Summary"
+                helpText={t('app.createProposal.createProposalForm.summary.helpText')}
+                placeholder={t('app.createProposal.createProposalForm.summary.placeholder')}
                 {...summaryField}
             />
             <TextAreaRichText
-                helpText="Write the body of the proposal"
-                placeholder="Type a proposal body"
+                helpText={t('app.createProposal.createProposalForm.body.helpText')}
+                placeholder={t('app.createProposal.createProposalForm.body.placeholder')}
                 isOptional={true}
                 immediatelyRender={false}
                 {...bodyField}
             />
             <Switch
-                helpText="If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met."
-                inlineLabel="Binding onchain actions"
+                helpText={t('app.createProposal.createProposalForm.actions.helpText')}
+                inlineLabel={t('app.createProposal.createProposalForm.actions.label')}
                 onCheckedChanged={addActionsField.onChange}
                 checked={addActionsField.value}
                 {...addActionsField}

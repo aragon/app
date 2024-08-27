@@ -444,6 +444,30 @@
           }
         }
       }
+    },
+    "createProposal": {
+      "createProposalForm": {
+        "title": {
+          "title": "Title",
+          "placeholder": "Type a title",
+          "helpText": "Give your proposal a title. This will appear in the proposal overview."
+        },
+        "summary": {
+          "title": "Summary",
+          "placeholder": "Type a summary",
+          "helpText": "Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview."
+        },
+        "body": {
+          "title": "Body",
+          "placeholder": "Type a proposal body",
+          "helpText": "Write the body of the proposal."
+        },
+        "actions": {
+          "title": "Would you like to add actions to this proposal?",
+          "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
+          "label": "Binding onchain actions"
+        }
+      }
     }
   }
 }
