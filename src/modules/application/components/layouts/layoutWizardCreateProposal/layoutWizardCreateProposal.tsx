@@ -21,7 +21,7 @@ export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalPro
     const { params, children } = props;
     const { id } = params;
 
-    const processStep = 'Create Proposal';
+    const processStep = 'app.application.layoutWizardCreateProposal.processStep';
 
     const queryClient = new QueryClient();
 

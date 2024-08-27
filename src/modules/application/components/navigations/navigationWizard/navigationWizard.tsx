@@ -3,6 +3,7 @@
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/ods';
 import classNames from 'classnames';
@@ -23,12 +24,13 @@ export interface INavigationWizardProps extends INavigationContainerProps {
 }
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-   
     const { processStep, id } = props;
 
     const { address, isConnected } = useAccount();
 
     const router = useRouter();
+
+    const { t } = useTranslations();
 
     const { open } = useDialogContext();
 
@@ -44,6 +46,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 
+    const translatedProcessStep = processStep ? t(processStep) : undefined;
+
     const buttonClassName = classNames(
         'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
         'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
@@ -57,7 +61,9 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
                 <div className="flex flex-col gap-0.5">
-                    <p className="text-nowrap text-base leading-tight text-neutral-800">{processStep}</p>
+                    {translatedProcessStep != null && (
+                        <p className="text-nowrap text-base leading-tight text-neutral-800">{translatedProcessStep}</p>
+                    )}
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
                             <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">{dao?.name}</p>
