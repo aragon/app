@@ -1,6 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
+import { ResourcesInput } from '../resourcesInput';
 
 export interface ICreateProposalFormMetadataProps {}
 
@@ -44,6 +45,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 immediatelyRender={false}
                 {...bodyField}
             />
+            <ResourcesInput />
             <Switch
                 helpText={t('app.createProposal.createProposalForm.actions.helpText')}
                 inlineLabel={t('app.createProposal.createProposalForm.actions.label')}

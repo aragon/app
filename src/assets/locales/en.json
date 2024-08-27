@@ -466,6 +466,11 @@
           "title": "Would you like to add actions to this proposal?",
           "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
           "label": "Binding onchain actions"
+        },
+        "resources": {
+          "title": "Resources",
+          "placeholder": "Type a resource",
+          "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
         }
       }
     }
