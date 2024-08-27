@@ -1,7 +1,8 @@
 import type { ComponentType } from 'react';
 
 // Default properties type for dialog components.
-export type DialogComponentProps = Record<string, unknown>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DialogComponentProps = any;
 
 export interface IDialogLocation<TParams extends DialogComponentProps = DialogComponentProps> {
     /**
@@ -43,11 +44,11 @@ export interface IDialogComponentProps<TParams extends DialogComponentProps = Di
     location: IDialogLocation<TParams>;
 }
 
-export interface IDialogComponentDefinitions {
+export interface IDialogComponentDefinitions<TParams extends DialogComponentProps = DialogComponentProps> {
     /**
      * Component to be rendered.
      */
-    Component: ComponentType<IDialogComponentProps>;
+    Component: ComponentType<IDialogComponentProps<TParams>>;
     /**
      * Optional hidden title (as translation key) for screen readers, usually used for Dialogs without a Dialog.Header
      * component.

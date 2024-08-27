@@ -2,7 +2,9 @@ import { type IStepperStep, StepperUtils } from '@/shared/utils/stepperUtils';
 import { useCallback, useMemo, useState } from 'react';
 import type { IUseStepperParams, IUseStepperReturn } from './useStepper.api';
 
-export const useStepper = <TMeta>(params?: IUseStepperParams<TMeta>): IUseStepperReturn<TMeta> => {
+export const useStepper = <TMeta, TStepId extends string = string>(
+    params?: IUseStepperParams<TMeta, TStepId>,
+): IUseStepperReturn<TMeta, TStepId> => {
     const { initialSteps, initialActiveStep } = params ?? {};
 
     const stepperUtils = useMemo(
@@ -10,22 +12,27 @@ export const useStepper = <TMeta>(params?: IUseStepperParams<TMeta>): IUseSteppe
         [initialSteps, initialActiveStep],
     );
 
-    const [steps, setSteps] = useState<Array<IStepperStep<TMeta>>>(stepperUtils.getSteps());
-    const [activeStep, setActiveStep] = useState<string | undefined>(stepperUtils.getActiveStep());
+    const [steps, setSteps] = useState<Array<IStepperStep<TMeta, TStepId>>>(stepperUtils.getSteps());
+    const [activeStep, setActiveStep] = useState<TStepId | undefined>(stepperUtils.getActiveStep());
 
     const registerStep = useCallback(
-        (newStep: IStepperStep<TMeta>) => setSteps(stepperUtils.addStep(newStep)),
+        (newStep: IStepperStep<TMeta, TStepId>) => setSteps(stepperUtils.addStep(newStep)),
         [stepperUtils],
     );
 
-    const unregisterStep = useCallback((stepId: string) => setSteps(stepperUtils.removeStep(stepId)), [stepperUtils]);
+    const unregisterStep = useCallback((stepId: TStepId) => setSteps(stepperUtils.removeStep(stepId)), [stepperUtils]);
 
     const nextStep = useCallback(() => setActiveStep(stepperUtils.next()), [setActiveStep, stepperUtils]);
 
     const previousStep = useCallback(() => setActiveStep(stepperUtils.previous()), [setActiveStep, stepperUtils]);
 
     const updateActiveStep = useCallback(
-        (stepId: string) => setActiveStep(stepperUtils.setActiveStep(stepId)),
+        (stepId: TStepId) => setActiveStep(stepperUtils.setActiveStep(stepId)),
+        [stepperUtils],
+    );
+
+    const updateSteps = useCallback(
+        (steps: Array<IStepperStep<TMeta, TStepId>>) => setSteps(stepperUtils.setSteps(steps)),
         [stepperUtils],
     );
 
@@ -40,5 +47,6 @@ export const useStepper = <TMeta>(params?: IUseStepperParams<TMeta>): IUseSteppe
         nextStep,
         previousStep,
         updateActiveStep,
+        updateSteps,
     };
 };

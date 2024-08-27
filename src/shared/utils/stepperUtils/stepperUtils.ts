@@ -1,8 +1,8 @@
-export interface IStepperStep<TMeta = undefined> {
+export interface IStepperStep<TMeta = undefined, TStepId = string> {
     /**
      * ID of the step.
      */
-    id: string;
+    id: TStepId;
     /**
      * Order of the step inside the steps array.
      */
@@ -13,22 +13,23 @@ export interface IStepperStep<TMeta = undefined> {
     meta: TMeta;
 }
 
-export class StepperUtils<TMeta = undefined> {
-    private steps: Array<IStepperStep<TMeta>>;
+export class StepperUtils<TMeta = undefined, TStepId = string> {
+    private steps: Array<IStepperStep<TMeta, TStepId>>;
 
-    private activeStep?: string;
+    private activeStep?: TStepId;
 
-    constructor(steps: Array<IStepperStep<TMeta>> = [], activeStep?: string) {
+    constructor(steps: Array<IStepperStep<TMeta, TStepId>> = [], activeStep?: TStepId) {
         this.steps = StepperUtils.sortSteps(steps);
         this.activeStep = activeStep ?? this.steps[0]?.id;
     }
 
-    static sortSteps = <TMeta = undefined>(steps: Array<IStepperStep<TMeta>> = []): Array<IStepperStep<TMeta>> =>
-        [...steps].sort((stepA, stepB) => stepA.order - stepB.order);
+    static sortSteps = <TMeta = undefined, TStepId = string>(
+        steps: Array<IStepperStep<TMeta, TStepId>>,
+    ): Array<IStepperStep<TMeta, TStepId>> => [...steps].sort((stepA, stepB) => stepA.order - stepB.order);
 
     getActiveStep = () => this.activeStep;
 
-    setActiveStep = (stepId: string) => {
+    setActiveStep = (stepId: TStepId) => {
         this.activeStep = stepId;
 
         return this.activeStep;
@@ -36,13 +37,19 @@ export class StepperUtils<TMeta = undefined> {
 
     getSteps = () => this.steps;
 
-    findStepIndex = (stepId?: string) => this.steps.findIndex((step) => step.id === stepId);
+    setSteps = (steps: Array<IStepperStep<TMeta, TStepId>>) => {
+        this.steps = steps;
+
+        return this.steps;
+    };
+
+    findStepIndex = (stepId?: TStepId) => this.steps.findIndex((step) => step.id === stepId);
 
     hasPrevious = () => this.findStepIndex(this.activeStep) > 0;
 
     hasNext = () => this.findStepIndex(this.activeStep) < this.steps.length - 1;
 
-    addStep = (step: IStepperStep<TMeta>) => {
+    addStep = (step: IStepperStep<TMeta, TStepId>) => {
         if (this.findStepIndex(step.id) >= 0) {
             return this.steps;
         }
@@ -54,7 +61,7 @@ export class StepperUtils<TMeta = undefined> {
         return this.steps;
     };
 
-    removeStep = (stepId: string) => {
+    removeStep = (stepId: TStepId) => {
         this.steps = this.findStepIndex(stepId) < 0 ? this.steps : this.steps.filter((step) => step.id !== stepId);
 
         return this.steps;
