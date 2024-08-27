@@ -67,6 +67,15 @@ describe('useStepper hook', () => {
         expect(result.current.activeStep).toEqual(initialSteps[0].id);
     });
 
+    it('updateSteps updates the stepper steps', () => {
+        const initialSteps = [{ id: '0', order: 0, meta: null }];
+        const newSteps = [{ id: '2', order: 2, meta: null }];
+        const { result } = renderHook(() => useStepper({ initialSteps }));
+        expect(result.current.steps).toEqual(initialSteps);
+        act(() => result.current.updateSteps(newSteps));
+        expect(result.current.steps).toEqual(newSteps);
+    });
+
     it('returns properties set to true when current step has a previous and next step', () => {
         const initialSteps = [
             { id: '000', order: 0, meta: null },

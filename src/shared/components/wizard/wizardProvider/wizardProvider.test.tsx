@@ -1,3 +1,4 @@
+import { generateStepperResult } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
 import { render, renderHook, screen } from '@testing-library/react';
 import { type ProviderProps } from 'react';
@@ -7,16 +8,8 @@ describe('<WizardProvider /> component', () => {
     const createTestComponent = (props?: Partial<ProviderProps<IWizardContext>>) => {
         const completeProps: ProviderProps<IWizardContext> = {
             value: {
-                hasNext: false,
-                hasPrevious: false,
-                activeStepIndex: 0,
                 submitLabel: 'submit',
-                steps: [],
-                nextStep: jest.fn(),
-                previousStep: jest.fn(),
-                updateActiveStep: jest.fn(),
-                registerStep: jest.fn(),
-                unregisterStep: jest.fn(),
+                ...generateStepperResult(),
             },
             ...props,
         };

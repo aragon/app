@@ -1,4 +1,4 @@
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
@@ -14,35 +14,35 @@ export interface ILayoutWizardCreateProposalProps {
     /**
      * URL parameters of the layout.
      */
-    params: IDaoPageParams;
+    params?: IDaoPageParams;
 }
 
 export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalProps> = async (props) => {
     const { params, children } = props;
-    const { id } = params;
-
-    const processStep = 'app.application.layoutWizardCreateProposal.processStep';
 
     const queryClient = new QueryClient();
 
     try {
-        const daoUrlParams = { id };
-        if (id) {
+        if (params?.id != null) {
+            const daoUrlParams = { id: params.id };
             await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
+
+            const daoSettingsUrlParams = { daoId: params.id };
+            await queryClient.fetchQuery(daoSettingsOptions({ urlParams: daoSettingsUrlParams }));
         }
     } catch (error: unknown) {
         return (
             <Page.Error
                 error={JSON.parse(JSON.stringify(error))}
                 actionLink="/"
-                notFoundNamespace="app.shared.wizard"
+                notFoundNamespace="app.shared.layoutWizard"
             />
         );
     }
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWizard id={id} processStep={processStep} />
+            <NavigationWizard id={params?.id} wizardName="app.application.layoutWizardCreateProposal.wizardName" />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

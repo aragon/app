@@ -1,4 +1,5 @@
 import * as useStepper from '@/shared/hooks/useStepper';
+import { generateStepperResult } from '@/shared/testUtils';
 import { Button } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -29,7 +30,7 @@ describe('<WizardContainer /> component', () => {
             { id: '2', order: 2, meta: { name: 'step-2' } },
             { id: '3', order: 3, meta: { name: 'step-3' } },
         ];
-        useStepperSpy.mockReturnValue({ activeStepIndex, hasNext, steps } as useStepper.IUseStepperReturn<unknown>);
+        useStepperSpy.mockReturnValue(generateStepperResult<unknown, string>({ activeStepIndex, hasNext, steps }));
         render(createTestComponent());
         expect(screen.getByText(/wizard.container.step \(number=1\)/)).toBeInTheDocument();
         expect(screen.getByText(/wizard.container.total \(total=4\)/)).toBeInTheDocument();
@@ -48,7 +49,7 @@ describe('<WizardContainer /> component', () => {
             { id: '1', order: 1, meta: { name: 'step-1' } },
         ];
         const finalStep = 'publish';
-        useStepperSpy.mockReturnValue({ activeStepIndex, hasNext, steps } as useStepper.IUseStepperReturn<unknown>);
+        useStepperSpy.mockReturnValue(generateStepperResult<unknown, string>({ activeStepIndex, hasNext, steps }));
         render(createTestComponent({ finalStep }));
         expect(screen.getByText(finalStep)).toBeInTheDocument();
     });
@@ -57,7 +58,7 @@ describe('<WizardContainer /> component', () => {
         const activeStepIndex = 0;
         const hasNext = false;
         const steps = [{ id: '0', order: 0, meta: { name: 'step-0' } }];
-        useStepperSpy.mockReturnValue({ activeStepIndex, hasNext, steps } as useStepper.IUseStepperReturn<unknown>);
+        useStepperSpy.mockReturnValue(generateStepperResult<unknown, string>({ activeStepIndex, hasNext, steps }));
         render(createTestComponent());
         expect(screen.queryByText(/wizard.container.next/)).not.toBeInTheDocument();
     });
@@ -71,12 +72,8 @@ describe('<WizardContainer /> component', () => {
             { id: '0', order: 0, meta: { name: 'step-0' } },
             { id: '1', order: 1, meta: { name: 'step-1' } },
         ];
-        useStepperSpy.mockReturnValue({
-            hasNext,
-            nextStep,
-            activeStepIndex,
-            steps,
-        } as unknown as useStepper.IUseStepperReturn<unknown>);
+        const stepperResult = generateStepperResult<unknown, string>({ hasNext, nextStep, activeStepIndex, steps });
+        useStepperSpy.mockReturnValue(stepperResult);
         render(createTestComponent({ children }));
         await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
         expect(nextStep).toHaveBeenCalled();
@@ -88,11 +85,7 @@ describe('<WizardContainer /> component', () => {
         const onSubmit = jest.fn();
         const activeStepIndex = 0;
         const steps = [{ id: '0', order: 0, meta: { name: 'step-0' } }];
-        useStepperSpy.mockReturnValue({
-            hasNext,
-            steps,
-            activeStepIndex,
-        } as unknown as useStepper.IUseStepperReturn<unknown>);
+        useStepperSpy.mockReturnValue(generateStepperResult<unknown, string>({ hasNext, steps, activeStepIndex }));
         render(createTestComponent({ children, onSubmit }));
         await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
         expect(onSubmit).toHaveBeenCalled();

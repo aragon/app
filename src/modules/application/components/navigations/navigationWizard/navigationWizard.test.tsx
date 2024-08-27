@@ -49,7 +49,7 @@ describe('<NavigationWizard /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<INavigationWizardProps>) => {
-        const completeProps: INavigationWizardProps = { id: 'test-id', ...props };
+        const completeProps: INavigationWizardProps = { wizardName: '', ...props };
         return (
             <OdsModulesProvider>
                 <NavigationWizard {...completeProps} />
@@ -69,10 +69,10 @@ describe('<NavigationWizard /> component', () => {
         expect(screen.getByText('Test DAO')).toBeInTheDocument();
     });
 
-    it('renders the process step name if provided if provided', () => {
-        const processStep = 'Create A New Test Proposal';
-        render(createTestComponent({ processStep }));
-        expect(screen.getByText(processStep)).toBeInTheDocument();
+    it('renders the wizard name', () => {
+        const wizardName = 'Create A New Test Proposal';
+        render(createTestComponent({ wizardName }));
+        expect(screen.getByText(wizardName)).toBeInTheDocument();
     });
 
     it('calls router back on back button click', async () => {
@@ -89,12 +89,14 @@ describe('<NavigationWizard /> component', () => {
     });
 
     it('renders the user wallet address and opens the user dialog when clicked', async () => {
+        const address = '0xUser123';
         const open = jest.fn();
+        useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
 
         render(createTestComponent());
 
-        const walletButton = screen.getByText('0x123');
+        const walletButton = screen.getByText(address);
         expect(walletButton).toBeInTheDocument();
 
         await userEvent.click(walletButton);
