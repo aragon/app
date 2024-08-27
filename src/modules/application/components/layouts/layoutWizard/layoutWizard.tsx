@@ -42,7 +42,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWizard id={params?.id} wizardName="Create Proposal" />
+            <NavigationWizard id={params?.id} name="Create Proposal" />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

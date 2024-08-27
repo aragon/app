@@ -49,7 +49,7 @@ describe('<NavigationWizard /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<INavigationWizardProps>) => {
-        const completeProps: INavigationWizardProps = { wizardName: '', ...props };
+        const completeProps: INavigationWizardProps = { name: '', ...props };
         return (
             <OdsModulesProvider>
                 <NavigationWizard {...completeProps} />
@@ -70,9 +70,9 @@ describe('<NavigationWizard /> component', () => {
     });
 
     it('renders the wizard name', () => {
-        const wizardName = 'Create A New Test Proposal';
-        render(createTestComponent({ wizardName }));
-        expect(screen.getByText(wizardName)).toBeInTheDocument();
+        const name = 'Create A New Test Proposal';
+        render(createTestComponent({ name }));
+        expect(screen.getByText(name)).toBeInTheDocument();
     });
 
     it('calls router back on back button click', async () => {
