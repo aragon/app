@@ -1,10 +1,44 @@
 import { FormWrapper } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type IResourceItemProps, ResourceItem } from './resourceItem';
+import * as useFormField from '@/shared/hooks/useFormField';
+
+// // Mock the useFormField hook
+// jest.mock('@/shared/hooks/useFormField', () => ({
+//     useFormField: jest.fn((name, options) => ({
+//         name,
+//         onChange: jest.fn(),
+//         onBlur: jest.fn(),
+//         value: '',
+//         ref: jest.fn(),
+//         variant: 'default',
+//         alert: undefined,
+//         label: options?.label,
+//     })),
+// }));
 
 describe('<ResourceItem /> component', () => {
     const mockRemove = jest.fn();
+    const useFormFieldSpy = jest.spyOn(useFormField, 'useFormField');
+
+    beforeEach(() => {
+        useFormFieldSpy.mockImplementation(() => ({
+            name: 'name',
+            onChange: jest.fn(),
+            onBlur: jest.fn(),
+            value: '',
+            ref: jest.fn(),
+            variant: 'default',
+            alert: undefined,
+            label: 'Label',
+        }));
+    });
+
+    afterEach(() => {
+        useFormFieldSpy.mockReset();
+        mockRemove.mockReset();
+    });
 
     const createTestComponent = (props?: Partial<IResourceItemProps>) => {
         const defaultProps: IResourceItemProps = {
@@ -54,18 +88,32 @@ describe('<ResourceItem /> component', () => {
         expect(screen.queryByText('app.shared.formField.error.pattern')).not.toBeInTheDocument();
     });
 
-    // it('validates URL format in link input', async () => {
-    //     render(createTestComponent());
+    it('validates URL format in link input', async () => {
+        useFormFieldSpy.mockImplementationOnce((name, options) => ({
+            name,
+            onChange: jest.fn(),
+            onBlur: jest.fn(),
+            value: '',
+            ref: jest.fn(),
+            variant: 'critical',
+            alert: {
+                message: 'Invalid URL format',
+                variant: 'critical',
+            },
+            label: options?.label,
+        }));
 
-    //     const linkInput = screen.getByPlaceholderText(
-    //         'app.createProposal.createProposalForm.resources.linkInput.placeholder',
-    //     );
+        render(createTestComponent());
 
-    //     await userEvent.type(linkInput, 'broken link');
-    //     await userEvent.tab();
+        const linkInput = screen.getByPlaceholderText(
+            'app.createProposal.createProposalForm.resources.linkInput.placeholder',
+        );
 
-    //     await waitFor(() => {
-    //         expect(screen.getByText('app.shared.formField.error.pattern')).toBeInTheDocument();
-    //     });
-    // });
+        await userEvent.type(linkInput, 'broken link');
+        await userEvent.tab();
+
+        await waitFor(() => {
+            expect(screen.getByText('Invalid URL format')).toBeInTheDocument();
+        });
+    });
 });
