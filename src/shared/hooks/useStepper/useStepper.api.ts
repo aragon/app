@@ -1,25 +1,25 @@
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 
-export interface IUseStepperParams<TMeta = undefined> {
+export interface IUseStepperParams<TMeta = undefined, TStepId extends string = string> {
     /**
      * Initial steps used to populate the steps array.
      */
-    initialSteps?: Array<IStepperStep<TMeta>>;
+    initialSteps?: Array<IStepperStep<TMeta, TStepId>>;
     /**
      * Initial active step, defaults to the first element on the initialSteps array.
      */
-    initialActiveStep?: string;
+    initialActiveStep?: TStepId;
 }
 
-export interface IUseStepperReturn<TMeta = undefined> {
+export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = string> {
     /**
      * Array of steps ordered by order value.
      */
-    steps: Array<IStepperStep<TMeta>>;
+    steps: Array<IStepperStep<TMeta, TStepId>>;
     /**
      * Current active step id.
      */
-    activeStep?: string;
+    activeStep?: TStepId;
     /**
      * Index of the active step id inside the steps array. Defaults to -1 when there is no active step.
      */
@@ -35,11 +35,11 @@ export interface IUseStepperReturn<TMeta = undefined> {
     /**
      * Registers the defined step at the specified order.
      */
-    registerStep: (step: IStepperStep<TMeta>) => void;
+    registerStep: (step: IStepperStep<TMeta, TStepId>) => void;
     /**
      * Unregisters the step with the specified id.
      */
-    unregisterStep: (stepId: string) => void;
+    unregisterStep: (stepId: TStepId) => void;
     /**
      * Updates the active step to the next one on the step list. Does nothing when active step has no next step.
      */
@@ -51,5 +51,9 @@ export interface IUseStepperReturn<TMeta = undefined> {
     /**
      * Updates the active step.
      */
-    updateActiveStep: (stepId: string) => void;
+    updateActiveStep: (stepId: TStepId) => void;
+    /**
+     *
+     */
+    updateSteps: (steps: Array<IStepperStep<TMeta, TStepId>>) => void;
 }

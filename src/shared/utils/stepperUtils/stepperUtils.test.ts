@@ -52,15 +52,13 @@ describe('stepper utils', () => {
         });
     });
 
-    describe('getActiveStep', () => {
-        it('returns the active step', () => {
+    describe('activeStep getter/setter', () => {
+        it('getActiveStep returns the active step', () => {
             const activeStep = 'step';
             expect(new StepperUtils(undefined, activeStep).getActiveStep()).toEqual(activeStep);
         });
-    });
 
-    describe('setActiveStep', () => {
-        it('updates the current active step and returns it', () => {
+        it('setActiveStep updates the current active step and returns it', () => {
             const activeStep = '001';
             const newActiveStep = '002';
             const instance = new StepperUtils(undefined, activeStep);
@@ -69,13 +67,21 @@ describe('stepper utils', () => {
         });
     });
 
-    describe('getSteps', () => {
-        it('returns the steps array', () => {
+    describe('steps getter/setter', () => {
+        it('getSteps returns the steps array', () => {
             const steps = [
                 { id: '1', order: 1, meta: null },
                 { id: '2', order: 2, meta: null },
             ];
             expect(new StepperUtils(steps).getSteps()).toEqual(steps);
+        });
+
+        it('setSteps updates and returns the steps array', () => {
+            const steps = [{ id: '0', order: 0, meta: null }];
+            const newSteps = [{ id: '1', order: 1, meta: null }];
+            const instance = new StepperUtils(steps);
+            expect(instance.setSteps(newSteps)).toEqual(newSteps);
+            expect(instance['steps']).toEqual(newSteps);
         });
     });
 
