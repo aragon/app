@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationWizard } from '../../navigations/navigationWizard';
 
-export interface ILayoutWizardProps {
+export interface ILayoutWizardCreateProposalProps {
     /**
      * Children of the layout.
      */
@@ -17,9 +17,11 @@ export interface ILayoutWizardProps {
     params: IDaoPageParams;
 }
 
-export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
+export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalProps> = async (props) => {
     const { params, children } = props;
     const { id } = params;
+
+    const processStep = 'Create Proposal';
 
     const queryClient = new QueryClient();
 
@@ -40,7 +42,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWizard id={id} />
+            <NavigationWizard id={id} processStep={processStep} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );
