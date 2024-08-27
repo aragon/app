@@ -13,7 +13,7 @@ import { Navigation, type INavigationContainerProps } from '../navigation';
 
 export interface INavigationWizardProps extends INavigationContainerProps {
     /**
-     * Name of the navigation process step.
+     * Name of the wizard to display.
      */
     wizardName: string;
     /**
