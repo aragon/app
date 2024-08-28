@@ -46,7 +46,7 @@ export const ResourceItem: React.FC<IResourceItemProps> = ({ index, remove }) =>
                 placeholder={t('app.createProposal.createProposalForm.resources.linkInput.placeholder')}
                 {...linkField}
             />
-            <div className="mt-9">
+            <div className="mt-0 md:mt-9">
                 <Dropdown.Container
                     constrainContentWidth={false}
                     size="md"
