@@ -66,7 +66,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         initialActiveStep: PublishProposalStep.PIN_METADATA,
     });
 
-    const { data: metadataCid, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
+    const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
@@ -77,7 +77,8 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     );
 
     const handlePrepareTransaction = () => {
-        invariant(metadataCid != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
+        invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
+        const metadataCid = pinJsonData.IpfsHash;
 
         return publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin: supportedPlugin! });
     };
