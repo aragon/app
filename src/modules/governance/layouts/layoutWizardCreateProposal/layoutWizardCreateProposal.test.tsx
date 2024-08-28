@@ -27,7 +27,6 @@ jest.mock('@/modules/application/components/navigations/navigationWizard', () =>
 describe('<LayoutWizardCreateProposal /> component', () => {
     const createTestComponent = (props?: Partial<ILayoutWizardCreateProposalProps>) => {
         const completeProps: ILayoutWizardCreateProposalProps = {
-            name: 'test-wiz',
             ...props,
         };
 

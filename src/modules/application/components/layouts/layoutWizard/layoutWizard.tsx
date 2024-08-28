@@ -47,7 +47,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWizard id={params?.id} name={name ?? 'Create DAO'} />
+            <NavigationWizard id={params?.id} name={name} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );
