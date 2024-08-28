@@ -4,20 +4,6 @@ import { userEvent } from '@testing-library/user-event';
 import { type IResourceItemProps, ResourceItem } from './resourceItem';
 import * as useFormField from '@/shared/hooks/useFormField';
 
-// // Mock the useFormField hook
-// jest.mock('@/shared/hooks/useFormField', () => ({
-//     useFormField: jest.fn((name, options) => ({
-//         name,
-//         onChange: jest.fn(),
-//         onBlur: jest.fn(),
-//         value: '',
-//         ref: jest.fn(),
-//         variant: 'default',
-//         alert: undefined,
-//         label: options?.label,
-//     })),
-// }));
-
 describe('<ResourceItem /> component', () => {
     const mockRemove = jest.fn();
     const useFormFieldSpy = jest.spyOn(useFormField, 'useFormField');

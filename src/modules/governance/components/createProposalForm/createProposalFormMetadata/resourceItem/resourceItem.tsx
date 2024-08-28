@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, Dropdown, IconType, InputText } from '@aragon/ods';
+import { Button, Card, Dropdown, IconType, InputText } from '@aragon/ods';
 
 export interface IResourceItemProps {
     /**
@@ -35,7 +35,7 @@ export const ResourceItem: React.FC<IResourceItemProps> = ({ index, remove }) =>
     });
 
     return (
-        <li className="flex gap-2">
+        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <InputText
                 placeholder={t('app.createProposal.createProposalForm.resources.labelInput.placeholder')}
                 {...labelField}
@@ -55,6 +55,6 @@ export const ResourceItem: React.FC<IResourceItemProps> = ({ index, remove }) =>
                     </Dropdown.Item>
                 </Dropdown.Container>
             </div>
-        </li>
+        </Card>
     );
 };

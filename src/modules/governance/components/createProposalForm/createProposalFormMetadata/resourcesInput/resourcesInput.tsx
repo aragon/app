@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, Card, IconType, Tag } from '@aragon/ods';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Button, IconType, Tag } from '@aragon/ods';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { ResourceItem } from '../resourceItem';
 
 export interface IResourcesInputProps {}
@@ -8,17 +8,21 @@ export interface IResourcesInputProps {}
 export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
     const { t } = useTranslations();
 
-    const { control } = useForm({
-        defaultValues: {
-            resources: [{ label: '', link: '' }],
-        },
-        mode: 'onBlur',
-    });
+    const { control } = useForm();
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'resources',
     });
+
+    const resources = useWatch({ control, name: 'resources' });
+    const isLastItemEmpty =
+        resources &&
+        resources.length > 0 &&
+        (resources[resources.length - 1].label === '' || resources[resources.length - 1].link === '');
+
+    console.log(isLastItemEmpty);
+    console.log(resources);
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
@@ -36,11 +40,11 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
             </label>
 
             {fields.length > 0 && (
-                <Card className="flex flex-col gap-3 p-6 md:gap-2">
+                <div className="flex flex-col gap-3 md:gap-2">
                     {fields.map((field, index) => (
                         <ResourceItem key={field.id} index={index} remove={remove} />
                     ))}
-                </Card>
+                </div>
             )}
             <Button
                 className="w-fit"
