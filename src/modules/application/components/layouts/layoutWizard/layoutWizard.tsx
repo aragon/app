@@ -35,7 +35,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
             <Page.Error
                 error={JSON.parse(JSON.stringify(error))}
                 actionLink="/"
-                notFoundNamespace="app.shared.layoutWizard"
+                notFoundNamespace="app.application.layoutWizard"
             />
         );
     }
