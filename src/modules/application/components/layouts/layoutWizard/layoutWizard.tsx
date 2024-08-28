@@ -1,10 +1,11 @@
+import { ErrorBoundary } from '@/modules/application/components/errorBoundary';
+import { NavigationWizard } from '@/modules/application/components/navigations/navigationWizard';
 import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
+
 import type { ReactNode } from 'react';
-import { ErrorBoundary } from '../../errorBoundary';
-import { NavigationWizard } from '../../navigations/navigationWizard';
 
 export interface ILayoutWizardProps {
     /**
@@ -15,10 +16,14 @@ export interface ILayoutWizardProps {
      * URL parameters of the layout.
      */
     params?: IDaoPageParams;
+    /**
+     * Name of the wizard to display.
+     */
+    name: string;
 }
 
 export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
-    const { params, children } = props;
+    const { params, name, children } = props;
 
     const queryClient = new QueryClient();
 
@@ -42,7 +47,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWizard id={params?.id} name="Create DAO" />
+            <NavigationWizard id={params?.id} name={name ?? 'Create DAO'} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

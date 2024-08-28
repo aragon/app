@@ -1,3 +1,3 @@
-import { LayoutWizardCreateProposal } from '@/modules/application/components/layouts/layoutWizardCreateProposal';
+import { LayoutWizardCreateProposal } from '@/modules/governance/layouts/layoutWizardCreateProposal';
 
 export default LayoutWizardCreateProposal;
