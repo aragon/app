@@ -13,25 +13,29 @@ describe('<ResourceInput /> component', () => {
         );
     };
 
-    it('renders the component with initial empty resource', () => {
+    it('renders the component with no initial resources', () => {
         render(createTestComponent());
 
         expect(screen.getByText(/createProposal.createProposalForm.resources.title/)).toBeInTheDocument();
         expect(screen.getByText('Optional')).toBeInTheDocument();
         expect(screen.getByText(/createProposal.createProposalForm.resources.helpText/)).toBeInTheDocument();
         expect(
-            screen.getByPlaceholderText(/createProposal.createProposalForm.resources.labelInput.placeholder/),
+            screen.getByRole('button', { name: /createProposal.createProposalForm.resources.add/ }),
         ).toBeInTheDocument();
+
+        // Check that no input fields are initially present
         expect(
-            screen.getByPlaceholderText(/createProposal.createProposalForm.resources.linkInput.placeholder/),
-        ).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Add/i })).toBeInTheDocument();
+            screen.queryByPlaceholderText(/createProposal.createProposalForm.resources.labelInput.placeholder/),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByPlaceholderText(/createProposal.createProposalForm.resources.linkInput.placeholder/),
+        ).not.toBeInTheDocument();
     });
 
     it('adds a new resource when "Add" button is clicked', async () => {
         render(createTestComponent());
 
-        const addButton = screen.getByRole('button', { name: /Add/i });
+        const addButton = screen.getByRole('button', { name: /createProposal.createProposalForm.resources.add/ });
         await userEvent.click(addButton);
 
         const labelInputs = screen.getAllByPlaceholderText(
@@ -41,18 +45,19 @@ describe('<ResourceInput /> component', () => {
             /createProposal.createProposalForm.resources.linkInput.placeholder/,
         );
 
-        expect(labelInputs).toHaveLength(2);
-        expect(linkInputs).toHaveLength(2);
+        expect(labelInputs).toHaveLength(1);
+        expect(linkInputs).toHaveLength(1);
     });
 
-    it('removes a resource when remove button is clicked', async () => {
+    it('adds multiple resources and removes one', async () => {
         render(createTestComponent());
 
-        // Add a second resource
         const addButton = screen.getByRole('button', { name: /createProposal.createProposalForm.resources.add/ });
+
+        // Add two resources
+        await userEvent.click(addButton);
         await userEvent.click(addButton);
 
-        // Chewck second resource was added
         let labelInputs = screen.getAllByPlaceholderText(
             /createProposal.createProposalForm.resources.labelInput.placeholder/,
         );
@@ -66,7 +71,7 @@ describe('<ResourceInput /> component', () => {
         const removeButtons = screen.getAllByTestId('DOTS_VERTICAL');
         await userEvent.click(removeButtons[1]);
 
-        // remove the resource
+        // Remove the resource
         const removeOption = screen.getByText(/createProposal.createProposalForm.resources.removeResource/);
         await userEvent.click(removeOption);
 

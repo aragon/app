@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, Tag } from '@aragon/ods';
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { ResourceItem } from '../resourceItem';
 
 export interface IResourcesInputProps {}
@@ -14,15 +14,6 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
         control,
         name: 'resources',
     });
-
-    const resources = useWatch({ control, name: 'resources' });
-    const isLastItemEmpty =
-        resources &&
-        resources.length > 0 &&
-        (resources[resources.length - 1].label === '' || resources[resources.length - 1].link === '');
-
-    console.log(isLastItemEmpty);
-    console.log(resources);
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">

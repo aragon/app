@@ -29,7 +29,9 @@ export const ResourceItem: React.FC<IResourceItemProps> = ({ index, remove }) =>
             required: true,
             pattern: {
                 value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
-                message: 'Invalid URL format',
+                message: t('app.shared.formField.error.pattern', {
+                    name: t('app.createProposal.createProposalForm.resources.linkInput.title'),
+                }),
             },
         },
     });
