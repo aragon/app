@@ -1,7 +1,7 @@
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
-import { CreateProposalFormMetadata, type ICreateProposalFormMetadataProps } from './createProposalFormMetadata';
 import { userEvent } from '@testing-library/user-event';
+import { CreateProposalFormMetadata, type ICreateProposalFormMetadataProps } from './createProposalFormMetadata';
 
 describe('<CreateProposalFormMetadata /> component', () => {
     const createTestComponent = (props?: Partial<ICreateProposalFormMetadataProps>) => {
@@ -13,13 +13,6 @@ describe('<CreateProposalFormMetadata /> component', () => {
             </FormWrapper>
         );
     };
-
-    it('renders the title field', () => {
-        render(createTestComponent());
-        expect(
-            screen.getByRole('textbox', { name: /createProposal.createProposalForm.title.title/ }),
-        ).toBeInTheDocument();
-    });
 
     it('renders all form fields', () => {
         render(createTestComponent());

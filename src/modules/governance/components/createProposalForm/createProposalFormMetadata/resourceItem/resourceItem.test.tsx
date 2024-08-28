@@ -1,8 +1,8 @@
+import * as useFormField from '@/shared/hooks/useFormField';
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type IResourceItemProps, ResourceItem } from './resourceItem';
-import * as useFormField from '@/shared/hooks/useFormField';
 
 describe('<ResourceItem /> component', () => {
     const mockRemove = jest.fn();
