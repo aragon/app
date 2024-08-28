@@ -319,6 +319,20 @@
           "title": "Error loading votes",
           "description": "There was an error loading the votes. Please try again later."
         }
+      },
+      "publishProposalDialog": {
+        "title": "Publish proposal",
+        "description": "To publish your proposal you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "label": "Pin data on IPFS",
+            "errorLabel": "Unable to pin data on IPFS"
+          }
+        },
+        "button": {
+          "submit": "Publish proposal",
+          "success": "View proposal"
+        }
       }
     },
     "plugins": {

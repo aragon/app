@@ -1,1 +1,1 @@
-export { useTokenGovernanceSettings } from './useTokenGovernanceSettings';
+export { useTokenGovernanceSettings, type IUseTokenGovernanceSettingsParams } from './useTokenGovernanceSettings';

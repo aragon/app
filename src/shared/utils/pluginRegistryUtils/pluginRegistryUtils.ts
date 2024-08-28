@@ -59,6 +59,17 @@ export interface IGetSlotFunctionParams {
     pluginId: PluginId;
 }
 
+export interface IGetSupportedSlotFunctionParams {
+    /**
+     * Id of the slot.
+     */
+    slotId: SlotId;
+    /**
+     * List of plugin Ids to get the slot function from.
+     */
+    pluginIds: PluginId[];
+}
+
 export class PluginRegistryUtils {
     private pluginRegistry: IPluginRegistry = {
         plugins: [],
@@ -88,11 +99,22 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getSlotFunction = (params: IGetSlotFunctionParams): PluginFunction | undefined => {
+    getSlotFunction = <TParams, TResult>(
+        params: IGetSlotFunctionParams,
+    ): PluginFunction<TParams, TResult> | undefined => {
         const { slotId, pluginId } = params;
         const func = this.pluginRegistry.slotFunctions[slotId]?.[pluginId];
 
         return func;
+    };
+
+    getSupportedSlotFunction = <TParams, TResult>(
+        params: IGetSupportedSlotFunctionParams,
+    ): PluginFunction<TParams, TResult> | undefined => {
+        const { pluginIds, slotId } = params;
+        const firstSupportedPluginId = pluginIds.find((id) => pluginRegistryUtils.getPlugin(id) != null);
+
+        return firstSupportedPluginId ? this.getSlotFunction({ pluginId: firstSupportedPluginId, slotId }) : undefined;
     };
 
     registerSlotComponent = (params: IRegisterSlotComponentParams): PluginRegistryUtils => {

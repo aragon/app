@@ -19,7 +19,8 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
-        open(GovernanceDialogs.PUBLISH_PROPOSAL, { params: values });
+        const params = { values };
+        open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
     };
 
     return (

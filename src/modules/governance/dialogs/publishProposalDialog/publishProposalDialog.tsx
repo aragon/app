@@ -7,10 +7,13 @@ import {
     TransactionDialog,
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
+import { useAccount, useEnsName } from 'wagmi';
 import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -18,28 +21,50 @@ export enum PublishProposalStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
-export interface IPublishProposalDialogProps extends IDialogComponentProps<ICreateProposalFormData> {}
+export interface IPublushProposalDialogParams {
+    /**
+     * Values of the create-proposal form.
+     */
+    values: ICreateProposalFormData;
+    /**
+     * ID of the DAO to create the proposal for.
+     */
+    daoId: string;
+}
+
+export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublushProposalDialogParams> {}
 
 export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (props) => {
     const { location } = props;
-    const { params: formValues } = location;
 
-    invariant(formValues != null, 'PublishProposalDialog: formValues parameter must not be undefined.');
-    const { title, summary } = formValues;
+    invariant(location.params != null, 'PublishProposalDialog: required parameters must be set.');
+    const { values, daoId } = location.params;
+    const { title, summary } = values;
+
+    const { t } = useTranslations();
+    const { address } = useAccount();
+    const { data: ensName } = useEnsName({ address });
+    const pluginIds = useDaoPluginIds(daoId);
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
     });
 
-    const { status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
+    const { data: metadataCid, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = publishProposalDialogUtils.prepareMetadata();
+            const proposalMetadata = publishProposalDialogUtils.prepareMetadata(values);
             pinJson({ body: proposalMetadata }, params);
         },
-        [pinJson],
+        [pinJson, values],
     );
+
+    const handlePrepareTransaction = () => {
+        invariant(metadataCid != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
+
+        return publishProposalDialogUtils.buildTransaction({ values, metadataCid });
+    };
 
     const getProposalLink = (txReceipt: TransactionReceipt) =>
         `/dao/daoId/proposals/${publishProposalDialogUtils.getProposalId(txReceipt)}`;
@@ -50,34 +75,38 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
                 id: PublishProposalStep.PIN_METADATA,
                 order: 0,
                 meta: {
-                    label: 'Pin data on IPFS',
-                    errorLabel: 'Unable to pin data on IPFS',
+                    label: t(`app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.label`),
+                    errorLabel: t(
+                        `app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.errorLabel`,
+                    ),
                     state: status,
                     action: handlePinJson,
                     auto: true,
                 },
             },
         ],
-        [status, handlePinJson],
+        [status, handlePinJson, t],
     );
+
+    const publisher = { address: address!, name: ensName ?? undefined };
 
     return (
         <TransactionDialog<PublishProposalStep>
-            title="Publish proposal"
-            description="To publish your proposal you have to confirm the onchain transaction with your wallet."
-            submitLabel="Publish proposal"
-            successLink={{ label: 'View proposal', href: getProposalLink }}
+            title={t('app.governance.publishProposalDialog.title')}
+            description={t('app.governance.publishProposalDialog.description')}
+            submitLabel={t('app.governance.publishProposalDialog.button.submit')}
+            successLink={{ label: t('app.governance.publishProposalDialog.button.success'), href: getProposalLink }}
             stepper={stepper}
             customSteps={customSteps}
-            prepareTransaction={publishProposalDialogUtils.buildTransaction}
+            prepareTransaction={handlePrepareTransaction}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure
                     title={title}
                     summary={summary}
-                    publisher={{ address: '' }}
+                    publisher={publisher}
                     status={ProposalStatus.DRAFT}
-                    type="majorityVoting"
+                    type="majorityVoting" // TODO: update ODS component to remove type requirement
                 />
             </DataList.Root>
         </TransactionDialog>
