@@ -1,10 +1,11 @@
 import type { IProposalAction } from '@aragon/ods';
+import type { Hex } from 'viem';
 
 export interface IBuildCreateProposalDataParams {
     /**
-     * Metadata of the proposal as bytes array.
+     * Metadata of the proposal in Hex format.
      */
-    metadata: Uint8Array;
+    metadata: Hex;
     /**
      * Actions to be executed.
      */

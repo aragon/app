@@ -8,8 +8,8 @@ import {
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin/useSupportedDaoPlugin';
 import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
@@ -21,7 +21,7 @@ export enum PublishProposalStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
-export interface IPublushProposalDialogParams {
+export interface IPublishProposalDialogParams {
     /**
      * Values of the create-proposal form.
      */
@@ -32,19 +32,35 @@ export interface IPublushProposalDialogParams {
     daoId: string;
 }
 
-export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublushProposalDialogParams> {}
+export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
+
+const generateMockValues = (values?: Partial<ICreateProposalFormData>): ICreateProposalFormData => ({
+    title: 'Withdraw funds to pay taxes',
+    summary: 'Withdraw 2000 USDC for taxes purposes.',
+    addActions: false,
+    startTimeMode: 'now',
+    endTimeMode: 'duration',
+    endTimeDuration: { days: 5, hours: 0, minutes: 0 },
+    resources: [],
+    actions: [],
+    ...values,
+});
 
 export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (props) => {
     const { location } = props;
 
     invariant(location.params != null, 'PublishProposalDialog: required parameters must be set.');
-    const { values, daoId } = location.params;
+
+    // TODO: remove mock values and useRef workaround
+    const { daoId, values: partialValues } = location.params;
+    const values = useMemo(() => generateMockValues(partialValues), [partialValues]);
+
     const { title, summary } = values;
 
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: ensName } = useEnsName({ address });
-    const pluginIds = useDaoPluginIds(daoId);
+    const supportedPlugin = useSupportedDaoPlugin(daoId);
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
@@ -63,7 +79,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const handlePrepareTransaction = () => {
         invariant(metadataCid != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
 
-        return publishProposalDialogUtils.buildTransaction({ values, metadataCid });
+        return publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin: supportedPlugin! });
     };
 
     const getProposalLink = (txReceipt: TransactionReceipt) =>

@@ -1,8 +1,9 @@
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { type Hex, stringToBytes, type TransactionReceipt } from 'viem';
+import { type Hex, toHex, type TransactionReceipt } from 'viem';
 import type { ICreateProposalFormData, ICreateProposalFormFixedDateTime } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
@@ -17,9 +18,9 @@ export interface IBuildTransactionParams {
      */
     metadataCid: string;
     /**
-     * List of plugin IDs of the DAO.
+     * Plugin of the DAO to interact with.
      */
-    pluginIds: string[];
+    plugin: IDaoPlugin;
 }
 
 class PublishProposalDialogUtils {
@@ -30,15 +31,15 @@ class PublishProposalDialogUtils {
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { values, metadataCid, pluginIds } = params;
+        const { values, metadataCid, plugin } = params;
 
         const actions = this.formToProposalActions(values.actions);
         const metadata = this.metadataToBytes(metadataCid);
         const startDate = this.parseStartDate(values);
         const endDate = this.parseEndDate(values);
 
-        const buildDataFunction = pluginRegistryUtils.getSupportedSlotFunction<IBuildCreateProposalDataParams, Hex>({
-            pluginIds: pluginIds,
+        const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildCreateProposalDataParams, Hex>({
+            pluginId: plugin.subdomain,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
@@ -46,7 +47,7 @@ class PublishProposalDialogUtils {
         const transactionData = buildDataFunction(buildDataParams);
 
         const transaction: TransactionDialogPrepareReturn = {
-            to: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+            to: plugin.address as Hex,
             data: transactionData,
         };
 
@@ -103,7 +104,7 @@ class PublishProposalDialogUtils {
 
     private dateToSeconds = (date: DateTime): number => Math.round(date.toMillis() / 1000);
 
-    private metadataToBytes = (metadataUri: string): Uint8Array => stringToBytes(`ipfs://${metadataUri}`);
+    private metadataToBytes = (metadataUri: string): Hex => toHex(`ipfs://${metadataUri}`);
 
     private formToProposalActions = (actions: IProposalAction[]) =>
         actions.map(({ to, value, data }) => ({ to, value, data }));

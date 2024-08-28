@@ -5,9 +5,15 @@ import { Page } from '@/shared/components/page';
 import { Wizard } from '@/shared/components/wizard';
 import { type ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 
-export interface ICreateProposalPageClientProps {}
+export interface ICreateProposalPageClientProps {
+    /**
+     * ID of the current DAO.
+     */
+    daoId: string;
+}
 
 const createProposalSteps = [
     { id: 'metadata', order: 0, meta: { name: 'Define content' } },
@@ -15,11 +21,13 @@ const createProposalSteps = [
     { id: 'settings', order: 2, meta: { name: 'Initiate voting' } },
 ];
 
-export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = () => {
+export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = (props) => {
+    const { daoId } = props;
+
     const { open } = useDialogContext();
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
-        const params = { values };
+        const params: IPublishProposalDialogParams = { values, daoId };
         open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
     };
 
