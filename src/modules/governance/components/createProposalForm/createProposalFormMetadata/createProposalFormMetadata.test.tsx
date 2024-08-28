@@ -58,7 +58,9 @@ describe('<CreateProposalFormMetadata /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByText('app.createProposal.createProposalForm.resources.title')).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Add/ })).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: /createProposal.createProposalForm.resources.add/ }),
+        ).toBeInTheDocument();
     });
 
     it('allows toggling of addActions switch', async () => {

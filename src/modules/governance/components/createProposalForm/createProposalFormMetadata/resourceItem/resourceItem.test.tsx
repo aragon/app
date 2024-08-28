@@ -58,10 +58,10 @@ describe('<ResourceItem /> component', () => {
     it('renders the label and link input fields', () => {
         render(createTestComponent());
         expect(
-            screen.getByPlaceholderText('app.createProposal.createProposalForm.resources.labelInput.placeholder'),
+            screen.getByPlaceholderText(/createProposal.createProposalForm.resources.labelInput.placeholder/),
         ).toBeInTheDocument();
         expect(
-            screen.getByPlaceholderText('app.createProposal.createProposalForm.resources.linkInput.placeholder'),
+            screen.getByPlaceholderText(/createProposal.createProposalForm.resources.linkInput.placeholder/),
         ).toBeInTheDocument();
     });
 
@@ -70,7 +70,7 @@ describe('<ResourceItem /> component', () => {
         const dropdownTrigger = screen.getByTestId('DOTS_VERTICAL');
         await userEvent.click(dropdownTrigger);
 
-        const removeButton = screen.getByText('app.createProposal.createProposalForm.resources.removeResource');
+        const removeButton = screen.getByText(/createProposal.createProposalForm.resources.removeResource/);
         await userEvent.click(removeButton);
 
         expect(mockRemove).toHaveBeenCalledWith(0);
@@ -79,13 +79,13 @@ describe('<ResourceItem /> component', () => {
     it('accepts valid URL format in link input', async () => {
         render(createTestComponent());
         const linkInput = screen.getByPlaceholderText(
-            'app.createProposal.createProposalForm.resources.linkInput.placeholder',
+            /createProposal.createProposalForm.resources.linkInput.placeholder/,
         );
 
         await userEvent.type(linkInput, 'https://example.com');
         await userEvent.tab();
 
-        expect(screen.queryByText('app.shared.formField.error.pattern')).not.toBeInTheDocument();
+        expect(screen.queryByText(/shared.formField.error.pattern/)).not.toBeInTheDocument();
     });
 
     it('validates URL format in link input', async () => {
@@ -106,7 +106,7 @@ describe('<ResourceItem /> component', () => {
         render(createTestComponent());
 
         const linkInput = screen.getByPlaceholderText(
-            'app.createProposal.createProposalForm.resources.linkInput.placeholder',
+            /createProposal.createProposalForm.resources.linkInput.placeholder/,
         );
 
         await userEvent.type(linkInput, 'broken link');

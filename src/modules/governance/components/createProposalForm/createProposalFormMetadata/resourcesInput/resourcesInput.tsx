@@ -48,7 +48,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
                 type="button"
                 onClick={() => append({ label: '', link: '' })}
             >
-                Add
+                {t('app.createProposal.createProposalForm.resources.add')}
             </Button>
         </div>
     );

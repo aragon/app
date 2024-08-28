@@ -480,7 +480,8 @@
           "linkInput": {
             "title": "Link",
             "placeholder": "https://"
-          }
+          },
+          "add": "Add"
         }
       }
     }
