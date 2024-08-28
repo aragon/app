@@ -1,7 +1,7 @@
-import { ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
+import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
 import {
-    INavigationWizardProps,
     NavigationWizard,
+    type INavigationWizardProps,
 } from '@/modules/application/components/navigations/navigationWizard';
 import { render, screen } from '@testing-library/react';
 import { LayoutWizardCreateProposal, type ILayoutWizardCreateProposalProps } from './layoutWizardCreateProposal';
