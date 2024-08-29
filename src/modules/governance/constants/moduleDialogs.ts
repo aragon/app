@@ -8,7 +8,7 @@ export enum GovernanceDialogs {
 export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefinitions> = {
     [GovernanceDialogs.PUBLISH_PROPOSAL]: {
         Component: PublishProposalDialog,
-        title: 'app.application.connectWalletDialog.screenReader.title', // TODO
-        description: 'app.application.connectWalletDialog.screenReader.description', // TODO
+        title: 'app.governance.publishProposalDialog.title',
+        description: 'app.governance.publishProposalDialog.description',
     },
 };
