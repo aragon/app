@@ -34,7 +34,7 @@ class PublishProposalDialogUtils {
         const { values, metadataCid, plugin } = params;
 
         const actions = this.formToProposalActions(values.actions);
-        const metadata = this.metadataToBytes(metadataCid);
+        const metadata = this.metadataToHex(metadataCid);
         const startDate = this.parseStartDate(values);
         const endDate = this.parseEndDate(values);
 
@@ -114,7 +114,7 @@ class PublishProposalDialogUtils {
 
     private dateToSeconds = (date: DateTime): number => Math.round(date.toMillis() / 1000);
 
-    private metadataToBytes = (metadataUri: string): Hex => toHex(`ipfs://${metadataUri}`);
+    private metadataToHex = (metadataUri: string): Hex => toHex(`ipfs://${metadataUri}`);
 
     private formToProposalActions = (actions: IProposalAction[]) =>
         actions.map(({ to, value, data }) => ({ to, value, data }));
