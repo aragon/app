@@ -8,7 +8,7 @@ import { addressUtils, ChainEntityType, DefinitionList, IconType, Link, useBlock
 
 export interface IDaoVersionInfoProps {
     /**
-     * Dao Object.
+     * Dao to display the info for.
      */
     dao: IDao;
 }
