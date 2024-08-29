@@ -2,7 +2,6 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useRouter } from 'next/navigation';
 import { DaoGovernanceInfo } from '../../../settings/components/daoGovernanceInfo';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
@@ -17,8 +16,6 @@ export interface IDaoProposalsPageClientProps {
 export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (props) => {
     const { initialParams } = props;
 
-    const router = useRouter();
-
     const { t } = useTranslations();
 
     return (
@@ -27,7 +24,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 title={t('app.governance.daoProposalsPage.main.title')}
                 action={{
                     label: t('app.governance.daoProposalsPage.main.action'),
-                    onClick: () => router.push(`/dao/${initialParams.queryParams.daoId}/create/proposal`),
+                    href: `/dao/${initialParams.queryParams.daoId}/create/proposal`,
                 }}
             >
                 <DaoProposalList initialParams={initialParams} />

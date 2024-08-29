@@ -1,7 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import * as NextNavigation from 'next/navigation';
 import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
 
 jest.mock('../../components/daoProposalList', () => ({
@@ -12,21 +9,7 @@ jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
     DaoGovernanceInfo: () => <div data-testid="governance-info-mock" />,
 }));
 
-jest.mock('next/navigation', () => ({
-    useRouter: jest.fn(),
-}));
-
 describe('<DaoProposalsPageClient /> component', () => {
-    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
-
-    beforeEach(() => {
-        useRouterSpy.mockReturnValue({ push: jest.fn() } as unknown as AppRouterInstance);
-    });
-
-    afterEach(() => {
-        useRouterSpy.mockReset();
-    });
-
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
         const completeProps: IDaoProposalsPageClientProps = {
             initialParams: { queryParams: { daoId: 'test-id' } },
@@ -44,14 +27,14 @@ describe('<DaoProposalsPageClient /> component', () => {
         expect(screen.getByTestId('governance-info-mock')).toBeInTheDocument();
     });
 
-    it('renders the create proposal button with navigation functionality', async () => {
-        const mockPush = jest.fn();
-        useRouterSpy.mockReturnValue({ push: mockPush } as unknown as AppRouterInstance);
-        render(createTestComponent());
-        const createProposalButton = screen.getByText(/app.governance.daoProposalsPage.main.action/);
+    it('renders the create proposal button with the correct link', () => {
+        const daoId = 'test-id';
+        const initialParams = { queryParams: { daoId } };
+        render(createTestComponent({ initialParams }));
+        const createProposalButton = screen.getByRole<HTMLAnchorElement>('link', {
+            name: /app.governance.daoProposalsPage.main.action/,
+        });
         expect(createProposalButton).toBeInTheDocument();
-
-        await userEvent.click(createProposalButton);
-        expect(mockPush).toHaveBeenCalled();
+        expect(createProposalButton).toHaveAttribute('href', `/dao/${daoId}/create/proposal`);
     });
 });
