@@ -2,6 +2,7 @@ import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type IResourcesInputProps, ResourcesInput } from './resourcesInput';
+import { IconType } from '@aragon/ods';
 
 describe('<ResourceInput /> component', () => {
     const createTestComponent = (props?: Partial<IResourcesInputProps>) => {
@@ -64,7 +65,7 @@ describe('<ResourceInput /> component', () => {
         expect(linkInputs).toHaveLength(2);
 
         // Click the dropdown for second resource
-        const removeButtons = screen.getAllByTestId('DOTS_VERTICAL');
+        const removeButtons = screen.getAllByTestId(IconType.DOTS_VERTICAL);
         await userEvent.click(removeButtons[1]);
 
         // Remove the resource

@@ -37,12 +37,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
                     ))}
                 </div>
             )}
-            <Button
-                className="w-fit"
-                iconLeft={IconType.PLUS}
-                type="button"
-                onClick={() => append({ label: '', link: '' })}
-            >
+            <Button className="w-fit" iconLeft={IconType.PLUS} onClick={() => append({ label: '', link: '' })}>
                 {t('app.governance.createProposalForm.metadata.resources.add')}
             </Button>
         </div>
