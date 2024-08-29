@@ -1,15 +1,20 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/ods';
 import { useFieldArray } from 'react-hook-form';
-import { ResourceItem } from '../resourceItem';
+import { ResourceItem } from './resourceItem';
 
-export interface IResourcesInputProps {}
+export interface IResourcesInputProps {
+    /**
+     * The name of the field in the form.
+     */
+    name: string;
+}
 
-export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
+export const ResourcesInput: React.FC<IResourcesInputProps> = ({ name }) => {
     const { t } = useTranslations();
 
     const { fields, append, remove } = useFieldArray({
-        name: 'resources',
+        name: name,
     });
 
     return (

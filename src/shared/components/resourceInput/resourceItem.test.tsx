@@ -5,7 +5,6 @@ import { userEvent } from '@testing-library/user-event';
 import { type IResourceItemProps, ResourceItem } from './resourceItem';
 
 describe('<ResourceItem /> component', () => {
-    const mockRemove = jest.fn();
     const useFormFieldSpy = jest.spyOn(useFormField, 'useFormField');
 
     beforeEach(() => {
@@ -23,16 +22,14 @@ describe('<ResourceItem /> component', () => {
 
     afterEach(() => {
         useFormFieldSpy.mockReset();
-        mockRemove.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IResourceItemProps>) => {
-        const defaultProps: IResourceItemProps = {
+        const completeProps: IResourceItemProps = {
             index: 0,
-            remove: mockRemove,
+            remove: jest.fn(),
+            ...props,
         };
-
-        const completeProps: IResourceItemProps = { ...defaultProps, ...props };
 
         return (
             <FormWrapper>
@@ -52,14 +49,15 @@ describe('<ResourceItem /> component', () => {
     });
 
     it('calls remove function when remove button is clicked', async () => {
-        render(createTestComponent());
+        const remove = jest.fn();
+        render(createTestComponent({ remove }));
         const dropdownTrigger = screen.getByTestId('DOTS_VERTICAL');
         await userEvent.click(dropdownTrigger);
 
         const removeButton = screen.getByText(/createProposalForm.metadata.resources.removeResource/);
         await userEvent.click(removeButton);
 
-        expect(mockRemove).toHaveBeenCalledWith(0);
+        expect(remove).toHaveBeenCalledWith(0);
     });
 
     it('accepts valid URL format in link input', async () => {
