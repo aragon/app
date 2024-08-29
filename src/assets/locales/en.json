@@ -470,7 +470,6 @@
         },
         "resources": {
           "title": "Resources",
-          "placeholder": "Type a resource",
           "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post.",
           "removeResource": "Remove Link",
           "labelInput": {
