@@ -50,9 +50,8 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { location } = props;
 
     invariant(location.params != null, 'PublishProposalDialog: required parameters must be set.');
-
-    // TODO: remove mock values and useRef workaround
     const { daoId, values: partialValues } = location.params;
+    // TODO: remove mock values and useMemo
     const values = useMemo(() => generateMockValues(partialValues), [partialValues]);
 
     const { title, summary } = values;
@@ -118,12 +117,12 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             prepareTransaction={handlePrepareTransaction}
         >
             <DataList.Root entityLabel="">
+                {/* @ts-expect-error TODO: update ODS component to remove type requirement (APP-3590) */}
                 <ProposalDataListItem.Structure
                     title={title}
                     summary={summary}
                     publisher={publisher}
                     status={ProposalStatus.DRAFT}
-                    type="majorityVoting" // TODO: update ODS component to remove type requirement
                 />
             </DataList.Root>
         </TransactionDialog>

@@ -1,0 +1,5 @@
+describe('publishProposalDialog utils', () => {
+    it('', () => {
+        //
+    });
+});
