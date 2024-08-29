@@ -319,6 +319,44 @@
           "title": "Error loading votes",
           "description": "There was an error loading the votes. Please try again later."
         }
+      },
+      "createProposalForm": {
+        "metadata": {
+          "title": {
+            "title": "Title",
+            "placeholder": "Type a title",
+            "helpText": "Give your proposal a title. This will appear in the proposal overview."
+          },
+          "summary": {
+            "title": "Summary",
+            "placeholder": "Type a summary",
+            "helpText": "Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview."
+          },
+          "body": {
+            "title": "Body",
+            "placeholder": "Type a proposal body",
+            "helpText": "Describe the proposal fully for voters."
+          },
+          "actions": {
+            "title": "Would you like to add actions to this proposal?",
+            "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
+            "label": "Binding onchain actions"
+          },
+          "resources": {
+            "title": "Resources",
+            "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post.",
+            "removeResource": "Remove Link",
+            "labelInput": {
+              "title": "Label",
+              "placeholder": "Type a label"
+            },
+            "linkInput": {
+              "title": "Link",
+              "placeholder": "https://"
+            },
+            "add": "Add"
+          }
+        }
       }
     },
     "plugins": {
@@ -443,44 +481,6 @@
               "description": "Some inputs are not filled and not valid. Review, fix and fill out all mandatory data to proceed."
             }
           }
-        }
-      }
-    },
-    "createProposalForm": {
-      "metadata": {
-        "title": {
-          "title": "Title",
-          "placeholder": "Type a title",
-          "helpText": "Give your proposal a title. This will appear in the proposal overview."
-        },
-        "summary": {
-          "title": "Summary",
-          "placeholder": "Type a summary",
-          "helpText": "Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview."
-        },
-        "body": {
-          "title": "Body",
-          "placeholder": "Type a proposal body",
-          "helpText": "Describe the proposal fully for voters."
-        },
-        "actions": {
-          "title": "Would you like to add actions to this proposal?",
-          "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
-          "label": "Binding onchain actions"
-        },
-        "resources": {
-          "title": "Resources",
-          "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post.",
-          "removeResource": "Remove Link",
-          "labelInput": {
-            "title": "Label",
-            "placeholder": "Type a label"
-          },
-          "linkInput": {
-            "title": "Link",
-            "placeholder": "https://"
-          },
-          "add": "Add"
         }
       }
     }
