@@ -20,13 +20,13 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
             <label className="flex flex-col gap-0.5 md:gap-1">
                 <div className="flex flex-row items-center gap-3">
                     <p className="text-base font-normal leading-tight text-neutral-800 md:text-lg">
-                        {t('app.createProposal.createProposalForm.resources.title')}
+                        {t('app.createProposalForm.metadata.resources.title')}
                     </p>
                     <Tag variant="neutral" label="Optional" />
                 </div>
 
                 <p className="text-sm font-normal leading-normal text-neutral-500 md:text-base">
-                    {t('app.createProposal.createProposalForm.resources.helpText')}
+                    {t('app.createProposalForm.metadata.resources.helpText')}
                 </p>
             </label>
 
@@ -43,7 +43,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = () => {
                 type="button"
                 onClick={() => append({ label: '', link: '' })}
             >
-                {t('app.createProposal.createProposalForm.resources.add')}
+                {t('app.createProposalForm.metadata.resources.add')}
             </Button>
         </div>
     );

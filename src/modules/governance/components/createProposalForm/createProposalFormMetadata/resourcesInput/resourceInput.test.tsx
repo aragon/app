@@ -16,33 +16,31 @@ describe('<ResourceInput /> component', () => {
     it('renders the component with no initial resources', () => {
         render(createTestComponent());
 
-        expect(screen.getByText(/createProposal.createProposalForm.resources.title/)).toBeInTheDocument();
+        expect(screen.getByText(/createProposalForm.metadata.resources.title/)).toBeInTheDocument();
         expect(screen.getByText('Optional')).toBeInTheDocument();
-        expect(screen.getByText(/createProposal.createProposalForm.resources.helpText/)).toBeInTheDocument();
-        expect(
-            screen.getByRole('button', { name: /createProposal.createProposalForm.resources.add/ }),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/createProposalForm.metadata.resources.helpText/)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /createProposalForm.metadata.resources.add/ })).toBeInTheDocument();
 
         // Check that no input fields are initially present
         expect(
-            screen.queryByPlaceholderText(/createProposal.createProposalForm.resources.labelInput.placeholder/),
+            screen.queryByPlaceholderText(/createProposalForm.metadata.resources.labelInput.placeholder/),
         ).not.toBeInTheDocument();
         expect(
-            screen.queryByPlaceholderText(/createProposal.createProposalForm.resources.linkInput.placeholder/),
+            screen.queryByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/),
         ).not.toBeInTheDocument();
     });
 
     it('adds a new resource when "Add" button is clicked', async () => {
         render(createTestComponent());
 
-        const addButton = screen.getByRole('button', { name: /createProposal.createProposalForm.resources.add/ });
+        const addButton = screen.getByRole('button', { name: /createProposalForm.metadata.resources.add/ });
         await userEvent.click(addButton);
 
         const labelInputs = screen.getAllByPlaceholderText(
-            /createProposal.createProposalForm.resources.labelInput.placeholder/,
+            /createProposalForm.metadata.resources.labelInput.placeholder/,
         );
         const linkInputs = screen.getAllByPlaceholderText(
-            /createProposal.createProposalForm.resources.linkInput.placeholder/,
+            /createProposalForm.metadata.resources.linkInput.placeholder/,
         );
 
         expect(labelInputs).toHaveLength(1);
@@ -52,18 +50,16 @@ describe('<ResourceInput /> component', () => {
     it('adds multiple resources and removes one', async () => {
         render(createTestComponent());
 
-        const addButton = screen.getByRole('button', { name: /createProposal.createProposalForm.resources.add/ });
+        const addButton = screen.getByRole('button', { name: /createProposalForm.metadata.resources.add/ });
 
         // Add two resources
         await userEvent.click(addButton);
         await userEvent.click(addButton);
 
         let labelInputs = screen.getAllByPlaceholderText(
-            /createProposal.createProposalForm.resources.labelInput.placeholder/,
+            /createProposalForm.metadata.resources.labelInput.placeholder/,
         );
-        let linkInputs = screen.getAllByPlaceholderText(
-            /createProposal.createProposalForm.resources.linkInput.placeholder/,
-        );
+        let linkInputs = screen.getAllByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/);
         expect(labelInputs).toHaveLength(2);
         expect(linkInputs).toHaveLength(2);
 
@@ -72,16 +68,12 @@ describe('<ResourceInput /> component', () => {
         await userEvent.click(removeButtons[1]);
 
         // Remove the resource
-        const removeOption = screen.getByText(/createProposal.createProposalForm.resources.removeResource/);
+        const removeOption = screen.getByText(/createProposalForm.metadata.resources.removeResource/);
         await userEvent.click(removeOption);
 
         // Check we only have one remaining resource
-        labelInputs = screen.getAllByPlaceholderText(
-            /createProposal.createProposalForm.resources.labelInput.placeholder/,
-        );
-        linkInputs = screen.getAllByPlaceholderText(
-            /createProposal.createProposalForm.resources.linkInput.placeholder/,
-        );
+        labelInputs = screen.getAllByPlaceholderText(/createProposalForm.metadata.resources.labelInput.placeholder/);
+        linkInputs = screen.getAllByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/);
         expect(labelInputs).toHaveLength(1);
         expect(linkInputs).toHaveLength(1);
     });

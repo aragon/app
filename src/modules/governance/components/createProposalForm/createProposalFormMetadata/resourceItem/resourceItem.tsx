@@ -17,20 +17,20 @@ export const ResourceItem: React.FC<IResourceItemProps> = ({ index, remove }) =>
     const { t } = useTranslations();
 
     const labelField = useFormField(`resources.${index}.label`, {
-        label: t('app.createProposal.createProposalForm.resources.labelInput.title'),
+        label: t('app.createProposalForm.metadata.resources.labelInput.title'),
         rules: { required: true },
         defaultValue: '',
     });
 
     const linkField = useFormField(`resources.${index}.link`, {
-        label: t('app.createProposal.createProposalForm.resources.linkInput.title'),
+        label: t('app.createProposalForm.metadata.resources.linkInput.title'),
         defaultValue: '',
         rules: {
             required: true,
             pattern: {
                 value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
                 message: t('app.shared.formField.error.pattern', {
-                    name: t('app.createProposal.createProposalForm.resources.linkInput.title'),
+                    name: t('app.createProposalForm.metadata.resources.linkInput.title'),
                 }),
             },
         },
@@ -39,11 +39,11 @@ export const ResourceItem: React.FC<IResourceItemProps> = ({ index, remove }) =>
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <InputText
-                placeholder={t('app.createProposal.createProposalForm.resources.labelInput.placeholder')}
+                placeholder={t('app.createProposalForm.metadata.resources.labelInput.placeholder')}
                 {...labelField}
             />
             <InputText
-                placeholder={t('app.createProposal.createProposalForm.resources.linkInput.placeholder')}
+                placeholder={t('app.createProposalForm.metadata.resources.linkInput.placeholder')}
                 {...linkField}
             />
             <div className="mt-0 md:mt-9">
@@ -53,7 +53,7 @@ export const ResourceItem: React.FC<IResourceItemProps> = ({ index, remove }) =>
                     customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
                 >
                     <Dropdown.Item onClick={() => remove(index)}>
-                        {t('app.createProposal.createProposalForm.resources.removeResource')}
+                        {t('app.createProposalForm.metadata.resources.removeResource')}
                     </Dropdown.Item>
                 </Dropdown.Container>
             </div>

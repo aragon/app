@@ -44,10 +44,10 @@ describe('<ResourceItem /> component', () => {
     it('renders the label and link input fields', () => {
         render(createTestComponent());
         expect(
-            screen.getByPlaceholderText(/createProposal.createProposalForm.resources.labelInput.placeholder/),
+            screen.getByPlaceholderText(/createProposalForm.metadata.resources.labelInput.placeholder/),
         ).toBeInTheDocument();
         expect(
-            screen.getByPlaceholderText(/createProposal.createProposalForm.resources.linkInput.placeholder/),
+            screen.getByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/),
         ).toBeInTheDocument();
     });
 
@@ -56,7 +56,7 @@ describe('<ResourceItem /> component', () => {
         const dropdownTrigger = screen.getByTestId('DOTS_VERTICAL');
         await userEvent.click(dropdownTrigger);
 
-        const removeButton = screen.getByText(/createProposal.createProposalForm.resources.removeResource/);
+        const removeButton = screen.getByText(/createProposalForm.metadata.resources.removeResource/);
         await userEvent.click(removeButton);
 
         expect(mockRemove).toHaveBeenCalledWith(0);
@@ -64,9 +64,7 @@ describe('<ResourceItem /> component', () => {
 
     it('accepts valid URL format in link input', async () => {
         render(createTestComponent());
-        const linkInput = screen.getByPlaceholderText(
-            /createProposal.createProposalForm.resources.linkInput.placeholder/,
-        );
+        const linkInput = screen.getByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/);
 
         await userEvent.type(linkInput, 'https://example.com');
         await userEvent.tab();
@@ -91,9 +89,7 @@ describe('<ResourceItem /> component', () => {
 
         render(createTestComponent());
 
-        const linkInput = screen.getByPlaceholderText(
-            /createProposal.createProposalForm.resources.linkInput.placeholder/,
-        );
+        const linkInput = screen.getByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/);
 
         await userEvent.type(linkInput, 'broken link');
         await userEvent.tab();

@@ -446,8 +446,8 @@
         }
       }
     },
-    "createProposal": {
-      "createProposalForm": {
+    "createProposalForm": {
+      "metadata": {
         "title": {
           "title": "Title",
           "placeholder": "Type a title",
@@ -461,7 +461,7 @@
         "body": {
           "title": "Body",
           "placeholder": "Type a proposal body",
-          "helpText": "Write the body of the proposal."
+          "helpText": "Describe the proposal fully for voters."
         },
         "actions": {
           "title": "Would you like to add actions to this proposal?",
