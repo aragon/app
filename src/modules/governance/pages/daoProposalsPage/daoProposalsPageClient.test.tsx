@@ -48,7 +48,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         const mockPush = jest.fn();
         useRouterSpy.mockReturnValue({ push: mockPush } as unknown as AppRouterInstance);
         render(createTestComponent());
-        const createProposalButton = screen.getByText('Proposal');
+        const createProposalButton = screen.getByText(/app.governance.daoProposalsPage.main.action/);
         expect(createProposalButton).toBeInTheDocument();
 
         await userEvent.click(createProposalButton);
