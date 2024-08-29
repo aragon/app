@@ -9,7 +9,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin/useSupportedDaoPlugin';
+import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';

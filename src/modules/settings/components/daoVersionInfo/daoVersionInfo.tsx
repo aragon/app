@@ -2,7 +2,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
-import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin/useSupportedDaoPlugin';
+import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, ChainEntityType, DefinitionList, IconType, Link, useBlockExplorer } from '@aragon/ods';
 
