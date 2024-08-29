@@ -1,4 +1,4 @@
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { type PluginFunction, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { renderHook } from '@testing-library/react';
 import { useSlotFunction } from './useSlotFunction';
 
@@ -14,7 +14,7 @@ describe('useSlotFunction hook', () => {
         const pluginId = 'plugin-id';
         const slotId = 'slot-id';
         const slotFunction = (value: number) => value * 2;
-        getSlotFunctionSpy.mockReturnValue(slotFunction);
+        getSlotFunctionSpy.mockReturnValue(slotFunction as PluginFunction);
         const { result } = renderHook(() => useSlotFunction({ params, slotId, pluginIds: [pluginId] }));
 
         expect(getSlotFunctionSpy).toHaveBeenCalledWith({ slotId, pluginId });
@@ -25,7 +25,7 @@ describe('useSlotFunction hook', () => {
         const pluginId = 'plugin-id';
         const slotId = 'slot-id';
         getSlotFunctionSpy.mockReturnValue(undefined);
-        const { result } = renderHook(() => useSlotFunction({ slotId, pluginIds: [pluginId] }));
+        const { result } = renderHook(() => useSlotFunction({ slotId, pluginIds: [pluginId], params: {} }));
         expect(result.current).toBeUndefined();
     });
 
@@ -36,7 +36,7 @@ describe('useSlotFunction hook', () => {
             .mockReturnValueOnce(undefined)
             .mockReturnValueOnce(() => 'multisig-stats')
             .mockReturnValueOnce(() => 'token-voting-stats');
-        const { result } = renderHook(() => useSlotFunction({ slotId, pluginIds }));
+        const { result } = renderHook(() => useSlotFunction({ slotId, pluginIds, params: {} }));
 
         expect(result.current).toEqual('multisig-stats');
     });
