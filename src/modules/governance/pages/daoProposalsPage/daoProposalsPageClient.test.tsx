@@ -27,7 +27,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         expect(screen.getByTestId('governance-info-mock')).toBeInTheDocument();
     });
 
-    it('renders the create proposal button with the correct link', () => {
+    it('renders the create proposal button with the correct link and label', () => {
         const daoId = 'test-id';
         const initialParams = { queryParams: { daoId } };
         render(createTestComponent({ initialParams }));
