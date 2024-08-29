@@ -13,7 +13,7 @@ describe('usePinJson mutation', () => {
     it('pins the specified data on IPFS and returns the hash', async () => {
         const data = { key: 'value' };
         const ipfsHash = 'qwao42347uroif78';
-        pinJsonActionSpy.mockResolvedValue(ipfsHash);
+        pinJsonActionSpy.mockResolvedValue({ IpfsHash: ipfsHash });
         const { result } = renderHook(() => usePinJson(), { wrapper: ReactQueryWrapper });
         act(() => result.current.mutate({ body: data }));
         await waitFor(() => expect(result.current.data).toEqual(ipfsHash));
