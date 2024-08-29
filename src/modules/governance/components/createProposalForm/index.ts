@@ -9,6 +9,6 @@ export const CreateProposalForm = {
 };
 
 export * from './createProposalFormActions';
+export * from './createProposalFormDefinitions';
 export * from './createProposalFormMetadata';
 export * from './createProposalFormSettings';
-export * from './createProposalFormUtils';
