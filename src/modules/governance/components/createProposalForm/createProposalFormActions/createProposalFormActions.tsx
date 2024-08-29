@@ -9,14 +9,14 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     return (
         <div className="flex flex-col gap-y-10">
             <CardEmptyState
-                heading={t('app.governance.createProposal.createProposalFormActions.emptyState.heading')}
-                description={t('app.governance.createProposal.createProposalFormActions.emptyState.description')}
+                heading={t('app.governance.createProposalForm.actions.empty.heading')}
+                description={t('app.governance.createProposalForm.actions.empty.description')}
                 objectIllustration={{ object: 'SMART_CONTRACT' }}
                 isStacked={false}
             />
             <div>
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS}>
-                    {t('app.governance.createProposal.createProposalFormActions.buttons.action')}
+                    {t('app.governance.createProposalForm.actions.action')}
                 </Button>
             </div>
         </div>

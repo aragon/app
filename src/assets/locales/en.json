@@ -173,15 +173,13 @@
       }
     },
     "governance": {
-      "createProposal": {
-        "createProposalFormActions": {
-          "emptyState": {
+      "createProposalForm": {
+        "actions": {
+          "empty": {
             "heading": "No actions added",
             "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
           },
-          "buttons": {
-            "action": "Action"
-          }
+          "action": "Action"
         }
       },
       "daoMembersPage": {

@@ -10,15 +10,16 @@ describe('<CreateProposalFormActions /> component', () => {
 
     it('renders an empty state', () => {
         render(createTestComponent());
-        expect(
-            screen.getByText(/app.governance.createProposal.createProposalFormActions.emptyState.heading/),
-        ).toBeInTheDocument();
+        screen.debug();
+        const emptyState = screen.getByText(/app.governance.createProposalForm.actions.empty.heading/);
+        expect(emptyState).toBeInTheDocument();
     });
 
     it('renders a button to add an action', () => {
         render(createTestComponent());
-        expect(
-            screen.getByText(/app.governance.createProposal.createProposalFormActions.buttons.action/),
-        ).toBeInTheDocument();
+        const actionButton = screen.getByRole('button', {
+            name: /app.governance.createProposalForm.actions.action/,
+        });
+        expect(actionButton).toBeInTheDocument();
     });
 });
