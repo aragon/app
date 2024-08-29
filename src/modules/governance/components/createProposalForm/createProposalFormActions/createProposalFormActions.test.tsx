@@ -8,8 +8,17 @@ describe('<CreateProposalFormActions /> component', () => {
         return <CreateProposalFormActions {...completeProps} />;
     };
 
-    it('renders placeholder text', () => {
+    it('renders an empty state', () => {
         render(createTestComponent());
-        expect(screen.getByText('Add actions')).toBeInTheDocument();
+        expect(
+            screen.getByText(/app.governance.createProposal.createProposalFormActions.emptyState.heading/),
+        ).toBeInTheDocument();
+    });
+
+    it('renders a button to add an action', () => {
+        render(createTestComponent());
+        expect(
+            screen.getByText(/app.governance.createProposal.createProposalFormActions.buttons.action/),
+        ).toBeInTheDocument();
     });
 });
