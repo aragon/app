@@ -3,7 +3,7 @@ import type { TransactionDialogPrepareReturn } from '@/shared/components/transac
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { type Hex, toHex, type TransactionReceipt } from 'viem';
+import { decodeAbiParameters, type Hex, toHex, type TransactionReceipt } from 'viem';
 import type { ICreateProposalFormData, ICreateProposalFormFixedDateTime } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
@@ -54,7 +54,17 @@ class PublishProposalDialogUtils {
         return Promise.resolve(transaction);
     };
 
-    getProposalId = (receipt: TransactionReceipt) => receipt.to;
+    getProposalId = (receipt: TransactionReceipt) => {
+        const proposalIdTopic = receipt.logs[0].topics[1]!;
+        const decodedParams = decodeAbiParameters(
+            [{ name: 'proposalId', internalType: 'uint256', type: 'uint256', indexed: true }],
+            proposalIdTopic,
+        );
+
+        const decodedProposalId = decodedParams[0].toString();
+
+        return decodedProposalId;
+    };
 
     private parseStartDate = (formValues: ICreateProposalFormData): number => {
         const { startTimeMode, startTimeFixed } = formValues;

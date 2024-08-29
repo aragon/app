@@ -82,8 +82,13 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         return publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin: supportedPlugin! });
     };
 
-    const getProposalLink = (txReceipt: TransactionReceipt) =>
-        `/dao/daoId/proposals/${publishProposalDialogUtils.getProposalId(txReceipt)}`;
+    const getProposalLink = (txReceipt: TransactionReceipt) => {
+        const { transactionHash } = txReceipt;
+        const proposalId = publishProposalDialogUtils.getProposalId(txReceipt);
+        const extendedProposalId = `${transactionHash}-${supportedPlugin}-${proposalId}`;
+
+        return `/dao/${daoId}/proposals/${extendedProposalId}`;
+    };
 
     const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
         () => [
