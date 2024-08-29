@@ -3,7 +3,7 @@ import { Button, CardEmptyState, IconType } from '@aragon/ods';
 
 export interface ICreateProposalFormActionsProps {}
 
-export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
+export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = () => {
     const { t } = useTranslations();
 
     return (
@@ -14,8 +14,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 objectIllustration={{ object: 'SMART_CONTRACT' }}
                 isStacked={false}
             />
-
-            <div className="flex w-full justify-between">
+            <div>
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS}>
                     {t('app.governance.createProposal.createProposalFormActions.buttons.action')}
                 </Button>
