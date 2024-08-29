@@ -310,6 +310,9 @@
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}"
       },
+      "layoutWizardCreateProposal": {
+        "name": "Create Proposal"
+      },
       "voteList": {
         "empty": {
           "title": "No votes found",
