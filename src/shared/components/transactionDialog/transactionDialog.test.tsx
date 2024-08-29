@@ -105,7 +105,7 @@ describe('<TransactionDialog /> component', () => {
         await waitFor(() => expect(stepAction).not.toHaveBeenCalled());
     });
 
-    it('currectly set the transaction steps when having custom steps', () => {
+    it('correctly set the transaction steps when having custom steps', () => {
         const customSteps = [
             {
                 id: 'pin-metadata',

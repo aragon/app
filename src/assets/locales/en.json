@@ -32,6 +32,13 @@
           "action": "Explore DAOs"
         }
       },
+      "layoutWizard": {
+        "notFound": {
+          "title": "DAO not found",
+          "description": "We couldn't find the DAO that you're looking for.",
+          "action": "Explore DAOs"
+        }
+      },
       "notFoundBase": {
         "title": "Page not found",
         "description": "We couldn't find the page that you're looking for.",
@@ -309,6 +316,9 @@
         "osValue": "Aragon OSx",
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}"
+      },
+      "layoutWizardCreateProposal": {
+        "name": "Create Proposal"
       },
       "voteList": {
         "empty": {
