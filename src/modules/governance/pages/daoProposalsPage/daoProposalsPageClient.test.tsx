@@ -32,7 +32,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         const initialParams = { queryParams: { daoId } };
         render(createTestComponent({ initialParams }));
         const createProposalButton = screen.getByRole<HTMLAnchorElement>('link', {
-            name: /app.governance.daoProposalsPage.main.action/,
+            name: /daoProposalsPage.main.action/,
         });
         expect(createProposalButton).toBeInTheDocument();
         expect(createProposalButton).toHaveAttribute('href', `/dao/${daoId}/create/proposal`);
