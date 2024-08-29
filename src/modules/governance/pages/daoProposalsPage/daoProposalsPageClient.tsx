@@ -26,7 +26,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
             <Page.Main
                 title={t('app.governance.daoProposalsPage.main.title')}
                 action={{
-                    label: 'Proposal',
+                    label: t('app.governance.daoProposalsPage.main.action'),
                     onClick: () => router.push(`/dao/${initialParams.queryParams.daoId}/create/proposal`),
                 }}
             >
