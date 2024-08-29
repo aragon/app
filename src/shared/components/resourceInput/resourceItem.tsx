@@ -27,12 +27,7 @@ export const ResourceItem: React.FC<IResourceItemProps> = ({ index, remove }) =>
         defaultValue: '',
         rules: {
             required: true,
-            pattern: {
-                value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
-                message: t('app.shared.formField.error.pattern', {
-                    name: t('app.governance.createProposalForm.metadata.resources.linkInput.title'),
-                }),
-            },
+            pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
         },
     });
 
