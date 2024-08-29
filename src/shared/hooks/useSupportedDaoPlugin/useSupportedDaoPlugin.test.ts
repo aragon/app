@@ -1,5 +1,11 @@
 import * as daoService from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin, generatePlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generatePlugin,
+    generateReactQueryResultError,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { renderHook } from '@testing-library/react';
 import { useSupportedDaoPlugin } from './useSupportedDaoPlugin';
@@ -31,6 +37,12 @@ describe('useSupportedDaoPlugin', () => {
         getPluginSpy.mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         const { result } = renderHook(() => useSupportedDaoPlugin(daoId));
+        expect(result.current).toBeUndefined();
+    });
+
+    it('returns undefined on fetch DAO error', () => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        const { result } = renderHook(() => useSupportedDaoPlugin('dao-id'));
         expect(result.current).toBeUndefined();
     });
 });
