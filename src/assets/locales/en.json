@@ -343,18 +343,7 @@
             "label": "Binding onchain actions"
           },
           "resources": {
-            "title": "Resources",
-            "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post.",
-            "removeResource": "Remove Link",
-            "labelInput": {
-              "title": "Label",
-              "placeholder": "Type a label"
-            },
-            "linkInput": {
-              "title": "Link",
-              "placeholder": "https://"
-            },
-            "add": "Add"
+            "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
           }
         }
       }
@@ -482,6 +471,19 @@
             }
           }
         }
+      },
+      "resourcesInput": {
+        "title": "Resources",
+        "removeResource": "Remove Link",
+        "labelInput": {
+          "title": "Label",
+          "placeholder": "Type a label"
+        },
+        "linkInput": {
+          "title": "Link",
+          "placeholder": "https://"
+        },
+        "add": "Add"
       }
     }
   }

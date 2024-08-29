@@ -2,7 +2,7 @@ import * as useFormField from '@/shared/hooks/useFormField';
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { type IResourceItemProps, ResourceItem } from './resourceItem';
+import { type IResourceInputItemProps, ResourceInputItem } from './resourceInputItem';
 
 describe('<ResourceItem /> component', () => {
     const useFormFieldSpy = jest.spyOn(useFormField, 'useFormField');
@@ -24,8 +24,8 @@ describe('<ResourceItem /> component', () => {
         useFormFieldSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IResourceItemProps>) => {
-        const completeProps: IResourceItemProps = {
+    const createTestComponent = (props?: Partial<IResourceInputItemProps>) => {
+        const completeProps: IResourceInputItemProps = {
             index: 0,
             remove: jest.fn(),
             ...props,
@@ -33,19 +33,15 @@ describe('<ResourceItem /> component', () => {
 
         return (
             <FormWrapper>
-                <ResourceItem {...completeProps} />
+                <ResourceInputItem {...completeProps} />
             </FormWrapper>
         );
     };
 
     it('renders the label and link input fields', () => {
         render(createTestComponent());
-        expect(
-            screen.getByPlaceholderText(/createProposalForm.metadata.resources.labelInput.placeholder/),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/),
-        ).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/shared.resourcesInput.labelInput.placeholder/)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/)).toBeInTheDocument();
     });
 
     it('calls remove function when remove button is clicked', async () => {
@@ -54,7 +50,7 @@ describe('<ResourceItem /> component', () => {
         const dropdownTrigger = screen.getByTestId('DOTS_VERTICAL');
         await userEvent.click(dropdownTrigger);
 
-        const removeButton = screen.getByText(/createProposalForm.metadata.resources.removeResource/);
+        const removeButton = screen.getByText(/shared.resourcesInput.removeResource/);
         await userEvent.click(removeButton);
 
         expect(remove).toHaveBeenCalledWith(0);
@@ -62,7 +58,7 @@ describe('<ResourceItem /> component', () => {
 
     it('accepts valid URL format in link input', async () => {
         render(createTestComponent());
-        const linkInput = screen.getByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/);
+        const linkInput = screen.getByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/);
 
         await userEvent.type(linkInput, 'https://example.com');
         await userEvent.tab();
@@ -87,7 +83,7 @@ describe('<ResourceItem /> component', () => {
 
         render(createTestComponent());
 
-        const linkInput = screen.getByPlaceholderText(/createProposalForm.metadata.resources.linkInput.placeholder/);
+        const linkInput = screen.getByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/);
 
         await userEvent.type(linkInput, 'broken link');
         await userEvent.tab();

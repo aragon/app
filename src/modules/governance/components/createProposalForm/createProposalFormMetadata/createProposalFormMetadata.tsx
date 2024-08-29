@@ -45,7 +45,10 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 immediatelyRender={false}
                 {...bodyField}
             />
-            <ResourcesInput name="resources" />
+            <ResourcesInput
+                name="resources"
+                helpText={t('app.governance.createProposalForm.metadata.resources.helpText')}
+            />
             <Switch
                 helpText={t('app.governance.createProposalForm.metadata.actions.helpText')}
                 inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}

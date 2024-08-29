@@ -26,7 +26,7 @@ describe('<CreateProposalFormMetadata /> component', () => {
         expect(screen.getByText(/createProposalForm.metadata.body.title/)).toBeInTheDocument();
         expect(screen.getByText(/createProposalForm.metadata.body.helpText/)).toBeInTheDocument();
 
-        expect(screen.getByText(/createProposalForm.metadata.resources.title/)).toBeInTheDocument();
+        expect(screen.getByText(/shared.resourcesInput.title/)).toBeInTheDocument();
 
         expect(screen.getByRole('switch', { name: /createProposalForm.metadata.actions.label/ })).toBeInTheDocument();
         expect(screen.getByText(/createProposalForm.metadata.actions.helpText/)).toBeInTheDocument();
@@ -44,8 +44,8 @@ describe('<CreateProposalFormMetadata /> component', () => {
     it('renders ResourcesInput component', () => {
         render(createTestComponent());
 
-        expect(screen.getByText(/createProposalForm.metadata.resources.title/)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /createProposalForm.metadata.resources.add/ })).toBeInTheDocument();
+        expect(screen.getByText(/shared.resourcesInput.title/)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /shared.resourcesInput.add/ })).toBeInTheDocument();
     });
 
     it('allows toggling of addActions switch', async () => {
