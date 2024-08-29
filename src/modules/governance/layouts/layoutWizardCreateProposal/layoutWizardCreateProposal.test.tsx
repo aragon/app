@@ -21,7 +21,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
     it('renders and passes its hardcoded name prop to children', () => {
         render(createTestComponent());
         expect(screen.getByTestId('layout-wizard-mock')).toHaveTextContent(
-            'app.application.layoutWizardCreateProposal.name',
+            'app.governance.layoutWizardCreateProposal.name',
         );
     });
 });

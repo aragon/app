@@ -60,9 +60,6 @@
           "description": "Connect your wallet to Aragon App"
         }
       },
-      "layoutWizardCreateProposal": {
-        "name": "Create Proposal"
-      },
       "userDialog": {
         "screenReader": {
           "title": "Connected user",
@@ -312,6 +309,9 @@
         "osValue": "Aragon OSx",
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}"
+      },
+      "layoutWizardCreateProposal": {
+        "name": "Create Proposal"
       },
       "voteList": {
         "empty": {
