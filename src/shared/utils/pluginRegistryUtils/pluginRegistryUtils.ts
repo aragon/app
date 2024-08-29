@@ -112,9 +112,9 @@ export class PluginRegistryUtils {
         params: IGetSupportedSlotFunctionParams,
     ): PluginFunction<TParams, TResult> | undefined => {
         const { pluginIds, slotId } = params;
-        const firstSupportedPluginId = pluginIds.find((id) => pluginRegistryUtils.getPlugin(id) != null);
+        const slotFunctions = pluginIds.map((id) => this.getSlotFunction<TParams, TResult>({ slotId, pluginId: id }));
 
-        return firstSupportedPluginId ? this.getSlotFunction({ pluginId: firstSupportedPluginId, slotId }) : undefined;
+        return slotFunctions.find((slotFunction) => slotFunction != null);
     };
 
     registerSlotComponent = (params: IRegisterSlotComponentParams): PluginRegistryUtils => {
