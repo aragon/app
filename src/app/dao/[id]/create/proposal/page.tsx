@@ -1,3 +1,17 @@
 import { CreateProposalPage } from '@/modules/governance/pages/createProposalPage';
+import { type IDaoPageParams } from '@/shared/types';
 
-export default CreateProposalPage;
+export interface ICreateProposalPageProps {
+    /**
+     * DAO page parameters.
+     */
+    params: IDaoPageParams;
+}
+
+const CreateProposal: React.FC<ICreateProposalPageProps> = (props) => {
+    const { params } = props;
+
+    return <CreateProposalPage daoId={params.id} />;
+};
+
+export default CreateProposal;

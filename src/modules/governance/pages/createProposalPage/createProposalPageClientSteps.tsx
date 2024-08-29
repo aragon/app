@@ -4,7 +4,12 @@ import { Wizard } from '@/shared/components/wizard';
 import { useWatch } from 'react-hook-form';
 import { CreateProposalForm } from '../../components/createProposalForm';
 
-export interface ICreateProposalPageClientStepsProps {}
+export interface ICreateProposalPageClientStepsProps {
+    /**
+     * The DAO ID.
+     */
+    daoId: string;
+}
 
 const createProposalSteps = [
     { id: 'metadata', order: 0, meta: { name: 'Define content' } },
@@ -12,7 +17,7 @@ const createProposalSteps = [
     { id: 'settings', order: 2, meta: { name: 'Initiate voting' } },
 ];
 
-export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientStepsProps> = () => {
+export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientStepsProps> = ({ daoId }) => {
     const addActions = useWatch({ name: 'addActions' });
 
     return (
@@ -37,7 +42,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 description="Set start date, and end date for your vote."
                 {...createProposalSteps[2]}
             >
-                <CreateProposalForm.Settings />
+                <CreateProposalForm.Settings daoId={daoId} />
             </Wizard.Step>
         </>
     );

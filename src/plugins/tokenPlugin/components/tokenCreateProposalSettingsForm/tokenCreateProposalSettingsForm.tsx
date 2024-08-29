@@ -3,7 +3,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertCard, Card, InputDate, InputNumber, InputText, InputTime } from '@aragon/ods';
 import { useState } from 'react';
 
-export interface IMultisigCreateProposalSettingsFormProps {}
+export interface ITokenCreateProposalSettingsFormProps {}
 
 export interface ICreateProposalFormFixedDateTime {
     date: string;
@@ -24,7 +24,7 @@ export interface ICreateProposalFormData {
     endTimeFixed: ICreateProposalFormFixedDateTime;
 }
 
-export const MultisigCreateProposalSettingsForm: React.FC<IMultisigCreateProposalSettingsFormProps> = () => {
+export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSettingsFormProps> = () => {
     const [startTimeMode, setStartTimeMode] = useState<'now' | 'fixed'>('now');
     const [endTimeMode, setEndTimeMode] = useState<'duration' | 'fixed'>('duration');
 
