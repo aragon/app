@@ -1,26 +1,11 @@
 import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
-import {
-    NavigationWizard,
-    type INavigationWizardProps,
-} from '@/modules/application/components/navigations/navigationWizard';
 import { render, screen } from '@testing-library/react';
-import { LayoutWizardCreateProposal, type ILayoutWizardCreateProposalProps } from './layoutWizardCreateProposal';
+import { type ILayoutWizardCreateProposalProps, LayoutWizardCreateProposal } from './layoutWizardCreateProposal';
 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
     LayoutWizard: (props: ILayoutWizardProps) => {
         const { name } = props;
-        return (
-            <div data-testid="layout-wizard-mock">
-                <NavigationWizard name={name} />
-            </div>
-        );
-    },
-}));
-
-jest.mock('@/modules/application/components/navigations/navigationWizard', () => ({
-    NavigationWizard: (props: INavigationWizardProps) => {
-        const { name } = props;
-        return <div data-testid="navigation-wizard-mock">{name}</div>;
+        return <div data-testid="layout-wizard-mock">{name}</div>;
     },
 }));
 
@@ -33,8 +18,10 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         return <LayoutWizardCreateProposal {...completeProps} />;
     };
 
-    it('renders its hardcoded name all the way to its children', () => {
+    it('renders and passes its hardcoded name prop to children', () => {
         render(createTestComponent());
-        expect(screen.getByText('app.application.layoutWizardCreateProposal.name')).toBeInTheDocument();
+        expect(screen.getByTestId('layout-wizard-mock')).toHaveTextContent(
+            'app.application.layoutWizardCreateProposal.name',
+        );
     });
 });
