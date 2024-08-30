@@ -65,7 +65,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.DURATION });
 
     const parsedFirstActivity = member?.firstActivity ? member.firstActivity * 1000 : undefined;
-    const firstActivityDate =
+    const formattedFirstActivity =
         formatterUtils.formatDate(parsedFirstActivity, {
             format: DateFormat.YEAR_MONTH_DAY,
         }) ?? '-';
@@ -176,7 +176,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             >
                                 {/* TODO: Display real first activity date (APP-3405) */}
                                 <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
-                                    {firstActivityDate}
+                                    {formattedFirstActivity}
                                 </Link>
                             </DefinitionList.Item>
                         </DefinitionList.Container>
