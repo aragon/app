@@ -12,5 +12,11 @@ export interface ICreateProposalFormSettingsProps {
 export const CreateProposalFormSettings: React.FC<ICreateProposalFormSettingsProps> = ({ daoId }) => {
     const pluginIds = useDaoPluginIds(daoId);
 
-    return <PluginComponent slotId={GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM} pluginIds={pluginIds} />;
+    return (
+        <PluginComponent
+            slotId={GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM}
+            pluginIds={pluginIds}
+            daoId={daoId}
+        />
+    );
 };
