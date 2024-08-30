@@ -59,12 +59,9 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                 </button>
                 <div className="flex min-w-0 flex-col gap-y-0.5">
                     <p className="text-nowrap text-base leading-tight text-neutral-800">{t(name)}</p>
-
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
-                            <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">
-                                An extremely long test name which goes like this
-                            </p>
+                            <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">{dao?.name}</p>
                             <DaoAvatar name={dao?.name} src={daoAvatar} size="sm" />
                         </div>
                     )}
