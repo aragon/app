@@ -196,7 +196,8 @@
       },
       "daoProposalsPage": {
         "main": {
-          "title": "Proposals"
+          "title": "Proposals",
+          "action": "Proposal"
         },
         "aside": {
           "details": {
