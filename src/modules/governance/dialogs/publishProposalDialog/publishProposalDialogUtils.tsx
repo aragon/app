@@ -4,7 +4,11 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { decodeAbiParameters, type Hex, toHex, type TransactionReceipt } from 'viem';
-import type { ICreateProposalFormData, ICreateProposalFormFixedDateTime } from '../../components/createProposalForm';
+import type {
+    ICreateProposalFormData,
+    ICreateProposalFormDuration,
+    ICreateProposalFormFixedDateTime,
+} from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
 
@@ -85,13 +89,25 @@ class PublishProposalDialogUtils {
     };
 
     private parseEndDate = (formValues: ICreateProposalFormData): number => {
-        const { startTimeMode, startTimeFixed, endTimeMode, endTimeDuration, endTimeFixed } = formValues;
+        const { startTimeMode, startTimeFixed, endTimeMode, endTimeDuration, endTimeFixed, minimumDuration } =
+            formValues;
         const { hours, minutes, days } = endTimeDuration ?? {};
 
         invariant(
             endTimeMode === 'duration' ? endTimeDuration != null : endTimeFixed != null,
             'PublishProposalDialogUtils.parseEndDate: endTimeDuration/endTimeFixed must be properly set.',
         );
+
+        // Return 0 when startTime is now and endTime equals minimumDuration to let smart contract set the correct end
+        // time when the transaction is executed, otherwise the end time will be set as a few seconds before the minimum
+        // duration and the transaction would fail.
+        if (
+            endTimeMode === 'duration' &&
+            startTimeMode === 'now' &&
+            this.compareTimeDuration(minimumDuration, endTimeDuration)
+        ) {
+            return 0;
+        }
 
         if (endTimeMode === 'duration') {
             const startDate = startTimeMode === 'now' ? DateTime.now() : this.parseFixedDate(startTimeFixed!);
@@ -118,6 +134,9 @@ class PublishProposalDialogUtils {
 
     private formToProposalActions = (actions: IProposalAction[]) =>
         actions.map(({ to, value, data }) => ({ to, value, data }));
+
+    private compareTimeDuration = (first?: ICreateProposalFormDuration, second?: ICreateProposalFormDuration) =>
+        first?.days === second?.days && first?.hours === second?.hours && first?.minutes === second?.minutes;
 }
 
 export const publishProposalDialogUtils = new PublishProposalDialogUtils();

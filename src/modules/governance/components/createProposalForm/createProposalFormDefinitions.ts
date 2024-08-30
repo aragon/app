@@ -71,7 +71,7 @@ export interface ICreateProposalFormData {
      */
     startTimeFixed?: ICreateProposalFormFixedDateTime;
     /**
-     * Defines if the end time of the proposal is
+     * Defines if the end time of the proposal is with duration or fixed format.
      */
     endTimeMode: 'duration' | 'fixed';
     /**
@@ -82,4 +82,8 @@ export interface ICreateProposalFormData {
      * Fixed end time only set when endTimeMode is set to fixed.
      */
     endTimeFixed?: ICreateProposalFormFixedDateTime;
+    /**
+     * Minimum duration of the proposal in seconds.
+     */
+    minimumDuration?: ICreateProposalFormDuration;
 }
