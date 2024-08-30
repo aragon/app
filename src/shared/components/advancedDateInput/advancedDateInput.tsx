@@ -18,7 +18,7 @@ export interface IAdvancedDateInputProps {
     /**
      * Min date for the input.
      */
-    minDuration: number;
+    minDuration?: number;
     /**
      * Start time to be used for validation.
      */
@@ -29,7 +29,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
     useDuration,
     label,
     helpText,
-    minDuration,
+    minDuration = 0,
     startTime,
 }) => {
     //const [value, setValue] = useState<'now' | 'duration' |'fixed'>(useDuration ? 'duration' : 'now');
@@ -91,7 +91,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                 return selectedDate >= minDate;
             },
         },
-       defaultValue: defaultValues.dateTime.date,
+        defaultValue: defaultValues.dateTime.date,
     });
 
     const timeField = useFormField(`${label}Time`, {
