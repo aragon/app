@@ -13,7 +13,7 @@ import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
-import { useAccount, useEnsName } from 'wagmi';
+import { useAccount } from 'wagmi';
 import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -34,31 +34,15 @@ export interface IPublishProposalDialogParams {
 
 export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
 
-const generateMockValues = (values?: Partial<ICreateProposalFormData>): ICreateProposalFormData => ({
-    title: 'Withdraw funds to pay taxes',
-    summary: 'Withdraw 2000 USDC for taxes purposes.',
-    addActions: false,
-    startTimeMode: 'now',
-    endTimeMode: 'duration',
-    endTimeDuration: { days: 5, hours: 0, minutes: 0 },
-    resources: [],
-    actions: [],
-    ...values,
-});
-
 export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (props) => {
     const { location } = props;
 
     invariant(location.params != null, 'PublishProposalDialog: required parameters must be set.');
-    const { daoId, values: partialValues } = location.params;
-    // TODO: remove mock values and useMemo
-    const values = useMemo(() => generateMockValues(partialValues), [partialValues]);
-
+    const { daoId, values } = location.params;
     const { title, summary } = values;
 
     const { t } = useTranslations();
     const { address } = useAccount();
-    const { data: ensName } = useEnsName({ address });
     const supportedPlugin = useSupportedDaoPlugin(daoId);
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
@@ -109,8 +93,6 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         [status, handlePinJson, t],
     );
 
-    const publisher = { address: address!, name: ensName ?? undefined };
-
     return (
         <TransactionDialog<PublishProposalStep>
             title={t('app.governance.publishProposalDialog.title')}
@@ -126,7 +108,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
                 <ProposalDataListItem.Structure
                     title={title}
                     summary={summary}
-                    publisher={publisher}
+                    publisher={{ address: address! }}
                     status={ProposalStatus.DRAFT}
                 />
             </DataList.Root>
