@@ -1,3 +1,4 @@
-import { LayoutWizard } from '@/modules/application/components/layouts/layoutWizard';
+import { LayoutWizardCreateProposal } from '@/modules/governance/components/layoutWizardCreateProposal';
 
-export default LayoutWizard;
+//TODO: Update the export for LayoutWizardCreateDao when available (APP-3589)
+export default LayoutWizardCreateProposal;

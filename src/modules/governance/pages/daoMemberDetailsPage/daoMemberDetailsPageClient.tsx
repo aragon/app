@@ -131,7 +131,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                         <DaoProposalList initialParams={proposalsByMemberParams} />
                     </Page.Section>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.daoMemberships.title')}>
-                        <DaoList daoListByMemberParams={daoListByMemberParams} />
+                        <DaoList daoListByMemberParams={daoListByMemberParams} layoutClassNames="grid grid-cols-1" />
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>

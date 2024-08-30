@@ -32,6 +32,13 @@
           "action": "Explore DAOs"
         }
       },
+      "layoutWizard": {
+        "notFound": {
+          "title": "DAO not found",
+          "description": "We couldn't find the DAO that you're looking for.",
+          "action": "Explore DAOs"
+        }
+      },
       "notFoundBase": {
         "title": "Page not found",
         "description": "We couldn't find the page that you're looking for.",
@@ -189,7 +196,8 @@
       },
       "daoProposalsPage": {
         "main": {
-          "title": "Proposals"
+          "title": "Proposals",
+          "action": "Proposal"
         },
         "aside": {
           "details": {
@@ -310,6 +318,9 @@
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}"
       },
+      "layoutWizardCreateProposal": {
+        "name": "Create Proposal"
+      },
       "voteList": {
         "empty": {
           "title": "No votes found",
@@ -318,6 +329,40 @@
         "error": {
           "title": "Error loading votes",
           "description": "There was an error loading the votes. Please try again later."
+        }
+      },
+      "createProposalForm": {
+        "metadata": {
+          "title": {
+            "title": "Title",
+            "placeholder": "Type a title",
+            "helpText": "Give your proposal a title. This will appear in the proposal overview."
+          },
+          "summary": {
+            "title": "Summary",
+            "placeholder": "Type a summary",
+            "helpText": "Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview."
+          },
+          "body": {
+            "title": "Body",
+            "placeholder": "Type a proposal body",
+            "helpText": "Describe the proposal fully for voters."
+          },
+          "actions": {
+            "title": "Would you like to add actions to this proposal?",
+            "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
+            "label": "Binding onchain actions"
+          },
+          "resources": {
+            "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
+          }
+        },
+        "actions": {
+          "empty": {
+            "heading": "No actions added",
+            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
+          },
+          "action": "Action"
         }
       }
     },
@@ -416,14 +461,35 @@
       },
       "formField": {
         "error": {
-          "required": "{{name}} is mandatory"
+          "required": "{{name}} is mandatory",
+          "pattern": "Invalid {{name}} format"
         }
       },
-      "layoutWizard": {
-        "notFound": {
-          "title": "DAO not found",
-          "description": "We couldn't find the DAO that you're looking for.",
-          "action": "Explore DAOs"
+      "transactionDialog": {
+        "step": {
+          "PREPARE": {
+            "label": "Prepare transaction",
+            "errorLabel": "Unable to prepare transaction"
+          },
+          "APPROVE": {
+            "label": "Approve transaction",
+            "errorLabel": "Rejected by wallet",
+            "addon": "Wallet"
+          },
+          "CONFIRM": {
+            "label": "Onchain confirmation",
+            "errorLabel": "Confirmation failed",
+            "addon": "Details"
+          }
+        },
+        "footer": {
+          "retry": "Retry",
+          "cancel": "Cancel",
+          "approve": {
+            "idle": "Approve transaction",
+            "pending": "Awaiting approval",
+            "error": "Resend to wallet"
+          }
         }
       },
       "wizard": {
@@ -448,6 +514,21 @@
               "title": "Missing and invalid data",
               "description": "Some inputs are not filled and not valid. Review, fix and fill out all mandatory data to proceed."
             }
+          }
+        }
+      },
+      "resourcesInput": {
+        "title": "Resources",
+        "add": "Add",
+        "item": {
+          "removeResource": "Remove Link",
+          "labelInput": {
+            "title": "Label",
+            "placeholder": "Type a label"
+          },
+          "linkInput": {
+            "title": "Link",
+            "placeholder": "https://"
           }
         }
       }

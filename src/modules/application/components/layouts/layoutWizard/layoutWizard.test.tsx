@@ -31,6 +31,7 @@ describe('<LayoutWizard /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutWizardProps>) => {
         const completeProps: ILayoutWizardProps = {
+            name: 'test-wiz',
             ...props,
         };
 
@@ -80,7 +81,7 @@ describe('<LayoutWizard /> component', () => {
         const daoId = 'wizard-id';
         fetchQuerySpy.mockRejectedValue('error');
         render(await createTestComponent({ params: { id: daoId } }));
-        const errorLink = screen.getByRole('link', { name: /app.shared.layoutWizard.notFound.action/ });
+        const errorLink = screen.getByRole('link', { name: /layoutWizard.notFound.action/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/`);
     });

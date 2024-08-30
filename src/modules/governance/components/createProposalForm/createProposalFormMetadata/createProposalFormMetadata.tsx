@@ -1,40 +1,57 @@
+import { ResourcesInput } from '@/shared/components/resourceInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
 
 export interface ICreateProposalFormMetadataProps {}
 
 export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataProps> = () => {
-    const titleField = useFormField('title', { label: 'Title', rules: { required: true }, defaultValue: '' });
-    const summaryField = useFormField('summary', { label: 'Summary', rules: { required: true } });
+    const { t } = useTranslations();
 
-    const { ref: bodyRef, ...bodyField } = useFormField('body', { label: 'Body' });
+    const titleField = useFormField('title', {
+        label: t('app.governance.createProposalForm.metadata.title.title'),
+        rules: { required: true },
+        defaultValue: '',
+    });
+    const summaryField = useFormField('summary', {
+        label: t('app.governance.createProposalForm.metadata.summary.title'),
+        rules: { required: true },
+    });
+
+    const { ref: bodyRef, ...bodyField } = useFormField('body', {
+        label: t('app.governance.createProposalForm.metadata.body.title'),
+    });
     const { ref: addActionsRef, ...addActionsField } = useFormField('addActions', {
-        label: 'Would you like to add actions to this proposal?',
+        label: t('app.governance.createProposalForm.metadata.actions.title'),
         defaultValue: true,
     });
 
     return (
         <div className="flex flex-col gap-10">
             <InputText
-                helpText="Give your proposal a title. This will appear in the proposal overview."
-                placeholder="Title"
+                helpText={t('app.governance.createProposalForm.metadata.title.helpText')}
+                placeholder={t('app.governance.createProposalForm.metadata.title.placeholder')}
                 {...titleField}
             />
             <TextArea
-                helpText="Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview."
-                placeholder="Summary"
+                helpText={t('app.governance.createProposalForm.metadata.summary.helpText')}
+                placeholder={t('app.governance.createProposalForm.metadata.summary.placeholder')}
                 {...summaryField}
             />
             <TextAreaRichText
-                helpText="Write the body of the proposal"
-                placeholder="Type a proposal body"
+                helpText={t('app.governance.createProposalForm.metadata.body.helpText')}
+                placeholder={t('app.governance.createProposalForm.metadata.body.placeholder')}
                 isOptional={true}
                 immediatelyRender={false}
                 {...bodyField}
             />
+            <ResourcesInput
+                name="resources"
+                helpText={t('app.governance.createProposalForm.metadata.resources.helpText')}
+            />
             <Switch
-                helpText="If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met."
-                inlineLabel="Binding onchain actions"
+                helpText={t('app.governance.createProposalForm.metadata.actions.helpText')}
+                inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}
                 onCheckedChanged={addActionsField.onChange}
                 checked={addActionsField.value}
                 {...addActionsField}

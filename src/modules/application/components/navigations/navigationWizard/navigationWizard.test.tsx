@@ -26,14 +26,14 @@ jest.mock('next/navigation', () => ({
 describe('<NavigationWizard /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
-    const useRouterMock = jest.spyOn(NextNavigation, 'useRouter');
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         cidToSrcSpy.mockReturnValue('ipfs://avatar-cid');
-        useRouterMock.mockReturnValue({
+        useRouterSpy.mockReturnValue({
             back: jest.fn(),
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({ address: '0x123', isConnected: true } as unknown as wagmi.UseAccountReturnType);
@@ -43,7 +43,7 @@ describe('<NavigationWizard /> component', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
-        useRouterMock.mockReset();
+        useRouterSpy.mockReset();
         useAccountSpy.mockReset();
         useDialogContextSpy.mockReset();
     });
@@ -77,7 +77,7 @@ describe('<NavigationWizard /> component', () => {
 
     it('calls router back on back button click', async () => {
         const mockBack = jest.fn();
-        useRouterMock.mockReturnValue({
+        useRouterSpy.mockReturnValue({
             back: mockBack,
         } as unknown as AppRouterInstance);
 

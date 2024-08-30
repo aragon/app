@@ -3,6 +3,7 @@
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/ods';
 import classNames from 'classnames';
@@ -28,6 +29,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { address, isConnected } = useAccount();
 
     const router = useRouter();
+
+    const { t } = useTranslations();
 
     const { open } = useDialogContext();
 
@@ -55,7 +58,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
                 <div className="flex grow flex-col gap-y-0.5">
-                    <p className="text-nowrap text-base leading-tight text-neutral-800">{name}</p>
+                    <p className="text-nowrap text-base leading-tight text-neutral-800">{t(name)}</p>
 
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
