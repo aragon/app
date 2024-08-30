@@ -187,24 +187,22 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
     it('renders fallback of `-` when lastActivity is null', () => {
         const address = '0x1234567890123456789012345678901234567890';
-        const daoId = 'dao-id';
         const member = generateMember({ ens: 'member.eth', address, lastActivity: null, firstActivity: 1723472877 });
 
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 
-        render(createTestComponent({ address, daoId }));
+        render(createTestComponent({ address }));
 
         expect(screen.getByText('-')).toBeInTheDocument();
     });
 
     it('renders the correct last activity date', () => {
         const address = '0x1234567890123456789012345678901234567890';
-        const daoId = 'dao-id';
         const member = generateMember({ ens: 'member.eth', address, lastActivity: 1723472877 });
 
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 
-        render(createTestComponent({ address, daoId }));
+        render(createTestComponent({ address }));
 
         const duration = formatterUtils.formatDate(member.lastActivity! * 1000, { format: DateFormat.DURATION });
         const [value] = duration?.split(' ') ?? [];
@@ -215,26 +213,24 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
     it('renders fallback of `-` when firstActivity is null', () => {
         const address = '0x1234567890123456789012345678901234567890';
-        const daoId = 'dao-id';
         const lastActivity = 1723472877;
         const member = generateMember({ ens: 'member.eth', address, firstActivity: null, lastActivity });
 
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 
-        render(createTestComponent({ address, daoId }));
+        render(createTestComponent({ address }));
 
         expect(screen.getByText('-')).toBeInTheDocument();
     });
 
     it('renders the correct first activity date', () => {
         const address = '0x1234567890123456789012345678901234567890';
-        const daoId = 'dao-id';
         const firstActivity = 1723472877;
         const member = generateMember({ ens: 'member.eth', address, firstActivity });
 
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 
-        render(createTestComponent({ address, daoId }));
+        render(createTestComponent({ address }));
 
         const firstActivityDate = formatterUtils.formatDate(firstActivity * 1000, {
             format: DateFormat.YEAR_MONTH_DAY,
