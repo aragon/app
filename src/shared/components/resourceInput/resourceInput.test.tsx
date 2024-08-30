@@ -23,8 +23,8 @@ describe('<ResourceInput /> component', () => {
         expect(screen.getByRole('button', { name: /shared.resourcesInput.add/ })).toBeInTheDocument();
 
         // Check that no input fields are initially present
-        expect(screen.queryByPlaceholderText(/shared.resourcesInput.labelInput.placeholder/)).not.toBeInTheDocument();
-        expect(screen.queryByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/)).not.toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/item.labelInput.placeholder/)).not.toBeInTheDocument();
+        expect(screen.queryByPlaceholderText(/item.linkInput.placeholder/)).not.toBeInTheDocument();
     });
 
     it('adds a new resource when "Add" button is clicked', async () => {
@@ -33,8 +33,8 @@ describe('<ResourceInput /> component', () => {
         const addButton = screen.getByRole('button', { name: /shared.resourcesInput.add/ });
         await userEvent.click(addButton);
 
-        const labelInputs = screen.getAllByPlaceholderText(/shared.resourcesInput.labelInput.placeholder/);
-        const linkInputs = screen.getAllByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/);
+        const labelInputs = screen.getAllByPlaceholderText(/item.labelInput.placeholder/);
+        const linkInputs = screen.getAllByPlaceholderText(/item.linkInput.placeholder/);
 
         expect(labelInputs).toHaveLength(1);
         expect(linkInputs).toHaveLength(1);
@@ -49,8 +49,8 @@ describe('<ResourceInput /> component', () => {
         await userEvent.click(addButton);
         await userEvent.click(addButton);
 
-        let labelInputs = screen.getAllByPlaceholderText(/shared.resourcesInput.labelInput.placeholder/);
-        let linkInputs = screen.getAllByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/);
+        let labelInputs = screen.getAllByPlaceholderText(/item.labelInput.placeholder/);
+        let linkInputs = screen.getAllByPlaceholderText(/item.linkInput.placeholder/);
         expect(labelInputs).toHaveLength(2);
         expect(linkInputs).toHaveLength(2);
 
@@ -59,12 +59,12 @@ describe('<ResourceInput /> component', () => {
         await userEvent.click(removeButtons[1]);
 
         // Remove the resource
-        const removeOption = screen.getByText(/shared.resourcesInput.removeResource/);
+        const removeOption = screen.getByText(/item.removeResource/);
         await userEvent.click(removeOption);
 
         // Check we only have one remaining resource
-        labelInputs = screen.getAllByPlaceholderText(/shared.resourcesInput.labelInput.placeholder/);
-        linkInputs = screen.getAllByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/);
+        labelInputs = screen.getAllByPlaceholderText(/item.labelInput.placeholder/);
+        linkInputs = screen.getAllByPlaceholderText(/item.linkInput.placeholder/);
         expect(labelInputs).toHaveLength(1);
         expect(linkInputs).toHaveLength(1);
     });

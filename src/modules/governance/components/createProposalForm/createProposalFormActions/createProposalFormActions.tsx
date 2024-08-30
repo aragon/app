@@ -14,11 +14,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 objectIllustration={{ object: 'SMART_CONTRACT' }}
                 isStacked={false}
             />
-            <div>
-                <Button variant="primary" size="md" iconLeft={IconType.PLUS}>
-                    {t('app.governance.createProposalForm.actions.action')}
-                </Button>
-            </div>
+            <Button variant="primary" size="md" iconLeft={IconType.PLUS} className="self-start">
+                {t('app.governance.createProposalForm.actions.action')}
+            </Button>
         </div>
     );
 };

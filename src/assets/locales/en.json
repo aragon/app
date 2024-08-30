@@ -173,15 +173,6 @@
       }
     },
     "governance": {
-      "createProposalForm": {
-        "actions": {
-          "empty": {
-            "heading": "No actions added",
-            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
-          },
-          "action": "Action"
-        }
-      },
       "daoMembersPage": {
         "main": {
           "title": "Members"
@@ -365,6 +356,13 @@
           "resources": {
             "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
           }
+        },
+        "actions": {
+          "empty": {
+            "heading": "No actions added",
+            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
+          },
+          "action": "Action"
         }
       }
     },
@@ -521,16 +519,18 @@
       },
       "resourcesInput": {
         "title": "Resources",
-        "removeResource": "Remove Link",
-        "labelInput": {
-          "title": "Label",
-          "placeholder": "Type a label"
-        },
-        "linkInput": {
-          "title": "Link",
-          "placeholder": "https://"
-        },
-        "add": "Add"
+        "add": "Add",
+        "item": {
+          "removeResource": "Remove Link",
+          "labelInput": {
+            "title": "Label",
+            "placeholder": "Type a label"
+          },
+          "linkInput": {
+            "title": "Link",
+            "placeholder": "https://"
+          }
+        }
       }
     }
   }

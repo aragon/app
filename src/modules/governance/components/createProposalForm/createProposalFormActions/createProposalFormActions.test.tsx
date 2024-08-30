@@ -16,9 +16,7 @@ describe('<CreateProposalFormActions /> component', () => {
 
     it('renders a button to add an action', () => {
         render(createTestComponent());
-        const actionButton = screen.getByRole('button', {
-            name: /createProposalForm.actions.action/,
-        });
+        const actionButton = screen.getByRole('button', { name: /createProposalForm.actions.action/ });
         expect(actionButton).toBeInTheDocument();
     });
 });

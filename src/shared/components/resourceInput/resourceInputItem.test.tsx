@@ -40,8 +40,8 @@ describe('<ResourceItem /> component', () => {
 
     it('renders the label and link input fields', () => {
         render(createTestComponent());
-        expect(screen.getByPlaceholderText(/shared.resourcesInput.labelInput.placeholder/)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/shared.resourcesInput.item.labelInput.placeholder/)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/shared.resourcesInput.item.linkInput.placeholder/)).toBeInTheDocument();
     });
 
     it('calls remove function when remove button is clicked', async () => {
@@ -50,7 +50,7 @@ describe('<ResourceItem /> component', () => {
         const dropdownTrigger = screen.getByTestId('DOTS_VERTICAL');
         await userEvent.click(dropdownTrigger);
 
-        const removeButton = screen.getByText(/shared.resourcesInput.removeResource/);
+        const removeButton = screen.getByText(/shared.resourcesInput.item.removeResource/);
         await userEvent.click(removeButton);
 
         expect(remove).toHaveBeenCalledWith(0);
@@ -58,7 +58,7 @@ describe('<ResourceItem /> component', () => {
 
     it('accepts valid URL format in link input', async () => {
         render(createTestComponent());
-        const linkInput = screen.getByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/);
+        const linkInput = screen.getByPlaceholderText(/shared.resourcesInput.item.linkInput.placeholder/);
 
         await userEvent.type(linkInput, 'https://example.com');
         await userEvent.tab();
@@ -83,7 +83,7 @@ describe('<ResourceItem /> component', () => {
 
         render(createTestComponent());
 
-        const linkInput = screen.getByPlaceholderText(/shared.resourcesInput.linkInput.placeholder/);
+        const linkInput = screen.getByPlaceholderText(/shared.resourcesInput.item.linkInput.placeholder/);
 
         await userEvent.type(linkInput, 'broken link');
         await userEvent.tab();
