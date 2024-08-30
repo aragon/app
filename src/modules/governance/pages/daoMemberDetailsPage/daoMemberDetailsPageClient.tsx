@@ -64,6 +64,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const parsedLatestActivity = member?.lastActivity ? member.lastActivity * 1000 : undefined;
     const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.DURATION });
 
+    // TODO: For both first & latest: use fallback functionality instead of nullish from the formatterUtils when available (APP-3592)
     const parsedFirstActivity = member?.firstActivity ? member.firstActivity * 1000 : undefined;
     const formattedFirstActivity =
         formatterUtils.formatDate(parsedFirstActivity, {
@@ -174,7 +175,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             <DefinitionList.Item
                                 term={t('app.governance.daoMemberDetailsPage.aside.details.firstActivity')}
                             >
-                                {/* TODO: Display real first activity date (APP-3405) */}
                                 <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
                                     {formattedFirstActivity}
                                 </Link>
