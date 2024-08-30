@@ -2,9 +2,10 @@ import { DaoList } from '@/modules/explore/components/daoList';
 import { VoteList } from '@/modules/governance/components/voteList';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { addressUtils, clipboardUtils, OdsModulesProvider } from '@aragon/ods';
+import { addressUtils, clipboardUtils, DateFormat, formatterUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { Settings } from 'luxon';
 import * as governanceService from '../../api/governanceService';
 import { generateMember } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
@@ -26,6 +27,8 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
+    const originalDateLocale = formatterUtils.dateLocale;
+    const originalNumberLocale = formatterUtils.numberLocale;
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -39,6 +42,15 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         (DaoList as jest.Mock).mockClear();
         (VoteList as jest.Mock).mockClear();
     });
+
+    const setTime = (now?: string) => {
+        Settings.now = () => (now != null ? new Date(now) : new Date()).valueOf();
+    };
+
+    const setLocale = (locales: { number?: string; date?: string }) => {
+        formatterUtils.dateLocale = locales.date ?? originalDateLocale;
+        formatterUtils.numberLocale = locales.number ?? originalNumberLocale;
+    };
 
     const createTestComponent = (props?: Partial<IDaoMemberDetailsPageClientProps>) => {
         const completeProps: IDaoMemberDetailsPageClientProps = {
@@ -183,5 +195,63 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             }),
             {},
         );
+    });
+
+    it('renders fallback of `-` when lastActivity is null', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const daoId = 'dao-id';
+        const member = generateMember({ ens: 'member.eth', address, lastActivity: null, firstActivity: 1723472877 });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+
+        render(createTestComponent({ address, daoId }));
+
+        expect(screen.getByText('-')).toBeInTheDocument();
+    });
+
+    it('renders the correct last activity date', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const daoId = 'dao-id';
+        const member = generateMember({ ens: 'member.eth', address, lastActivity: 1723472877 });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+
+        render(createTestComponent({ address, daoId }));
+
+        const duration = formatterUtils.formatDate(member.lastActivity! * 1000, { format: DateFormat.DURATION });
+        const [value] = duration?.split(' ') ?? [];
+
+        expect(screen.getByText(value)).toBeInTheDocument();
+        expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit/)).toBeInTheDocument();
+    });
+
+    it('renders fallback of `-` when firstActivity is null', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const daoId = 'dao-id';
+        const lastActivity = 1723472877;
+        const member = generateMember({ ens: 'member.eth', address, firstActivity: null, lastActivity });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+
+        render(createTestComponent({ address, daoId }));
+
+        expect(screen.getByText('-')).toBeInTheDocument();
+    });
+
+    it('renders the correct first activity date', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const daoId = 'dao-id';
+        const firstActivity = 1723472877;
+        const member = generateMember({ ens: 'member.eth', address, firstActivity });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+
+        render(createTestComponent({ address, daoId }));
+
+        const firstActivityDate = formatterUtils.formatDate(firstActivity * 1000, {
+            format: DateFormat.YEAR_MONTH_DAY,
+        });
+
+        expect(screen.getByText(firstActivityDate!)).toBeInTheDocument();
     });
 });

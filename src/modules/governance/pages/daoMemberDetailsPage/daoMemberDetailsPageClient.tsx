@@ -15,8 +15,10 @@ import {
     addressUtils,
     ChainEntityType,
     clipboardUtils,
+    DateFormat,
     DefinitionList,
     Dropdown,
+    formatterUtils,
     IconType,
     Link,
     MemberAvatar,
@@ -59,10 +61,28 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         pluginIds,
     });
 
-    // TODO: Display real last activity date (APP-3405)
+    const parsedLatestActivity = member?.lastActivity ? member.lastActivity * 1000 : undefined;
+    const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.DURATION });
+
+    const parsedFirstActivity = member?.firstActivity ? member.firstActivity * 1000 : undefined;
+    const firstActivityDate =
+        formatterUtils.formatDate(parsedFirstActivity, {
+            format: DateFormat.YEAR_MONTH_DAY,
+        }) ?? '-';
+
+    const [value, unit] = formattedLatestActivity?.split(' ') ?? [];
+
     const stats = [
         ...(pluginStats ?? []),
-        { label: t('app.governance.daoMemberDetailsPage.header.stat.latestActivity'), value: 3, suffix: 'days ago' },
+        {
+            label: t('app.governance.daoMemberDetailsPage.header.stat.latestActivity'),
+            value: value ?? '-',
+            suffix: unit
+                ? t('app.governance.daoMemberDetailsPage.header.stat.latestActivityUnit', {
+                      unit: unit,
+                  })
+                : undefined,
+        },
     ];
 
     if (member == null || dao == null) {
@@ -156,7 +176,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             >
                                 {/* TODO: Display real first activity date (APP-3405) */}
                                 <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
-                                    October 23, 2024
+                                    {firstActivityDate}
                                 </Link>
                             </DefinitionList.Item>
                         </DefinitionList.Container>

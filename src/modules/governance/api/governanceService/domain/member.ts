@@ -11,4 +11,12 @@ export interface IMember {
      * Type of the member.
      */
     type: string;
+    /**
+     * Date of the first activity.
+     */
+    firstActivity: number | null;
+    /**
+     * Date of the last activity.
+     */
+    lastActivity: number | null;
 }
