@@ -6,7 +6,6 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot, invariant } from '@aragon/ods';
-import classNames from 'classnames';
 import {
     useDaoList,
     useDaoListByMemberAddress,
@@ -23,10 +22,14 @@ export interface IDaoListProps {
      * Member parameters to use for fetching the list of DAOs for a given address.
      */
     daoListByMemberParams?: IGetDaoListByMemberAddressParams;
+    /**
+     * Overrides the custom layout classes when set.
+     */
+    layoutClassNames?: string;
 }
 
 export const DaoList: React.FC<IDaoListProps> = (props) => {
-    const { initialParams, daoListByMemberParams } = props;
+    const { initialParams, daoListByMemberParams, layoutClassNames } = props;
     const { t } = useTranslations();
 
     invariant(
@@ -34,13 +37,11 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         'Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.',
     );
 
-    const daoListResult = useDaoList(initialParams!, {
-        enabled: !!initialParams && !daoListByMemberParams,
-    });
+    const enableDaoList = initialParams != null && !daoListByMemberParams;
+    const daoListResult = useDaoList(initialParams!, { enabled: enableDaoList });
 
-    const daoListByMember = useDaoListByMemberAddress(daoListByMemberParams!, {
-        enabled: !!daoListByMemberParams && !initialParams,
-    });
+    const enableDaoListByMember = daoListByMemberParams != null && !initialParams;
+    const daoListByMember = useDaoListByMemberAddress(daoListByMemberParams!, { enabled: enableDaoListByMember });
 
     const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } = initialParams
         ? daoListResult
@@ -48,11 +49,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
 
     const daoList = data?.pages.flatMap((page) => page.data);
 
-    const state = dataListUtils.queryToDataListState({
-        status,
-        fetchStatus,
-        isFetchingNextPage,
-    });
+    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
 
     const pageSize =
         initialParams?.queryParams.pageSize ??
@@ -71,9 +68,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         description: t('app.explore.daoList.errorState.description'),
     };
 
-    const daoListClassNames = classNames({
-        'grid grid-cols-1 lg:grid-cols-2': initialParams != null,
-    });
+    const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2';
 
     return (
         <DataListRoot
@@ -86,7 +81,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}
-                className={daoListClassNames}
+                className={processedLayoutClassNames}
                 SkeletonElement={DaoDataListItem.Skeleton}
             >
                 {daoList?.map((dao) => (

@@ -32,6 +32,13 @@
           "action": "Explore DAOs"
         }
       },
+      "layoutWizard": {
+        "notFound": {
+          "title": "DAO not found",
+          "description": "We couldn't find the DAO that you're looking for.",
+          "action": "Explore DAOs"
+        }
+      },
       "notFoundBase": {
         "title": "Page not found",
         "description": "We couldn't find the page that you're looking for.",
@@ -422,11 +429,31 @@
           "required": "{{name}} is mandatory"
         }
       },
-      "layoutWizard": {
-        "notFound": {
-          "title": "DAO not found",
-          "description": "We couldn't find the DAO that you're looking for.",
-          "action": "Explore DAOs"
+      "transactionDialog": {
+        "step": {
+          "PREPARE": {
+            "label": "Prepare transaction",
+            "errorLabel": "Unable to prepare transaction"
+          },
+          "APPROVE": {
+            "label": "Approve transaction",
+            "errorLabel": "Rejected by wallet",
+            "addon": "Wallet"
+          },
+          "CONFIRM": {
+            "label": "Onchain confirmation",
+            "errorLabel": "Confirmation failed",
+            "addon": "Details"
+          }
+        },
+        "footer": {
+          "retry": "Retry",
+          "cancel": "Cancel",
+          "approve": {
+            "idle": "Approve transaction",
+            "pending": "Awaiting approval",
+            "error": "Resend to wallet"
+          }
         }
       },
       "wizard": {
