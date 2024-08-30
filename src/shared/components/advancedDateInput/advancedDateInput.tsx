@@ -1,7 +1,6 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertCard, Card, InputDate, InputNumber, InputText, InputTime, RadioCard, RadioGroup } from '@aragon/ods';
 import { useState } from 'react';
-import { Controller } from 'react-hook-form';
 
 export interface IAdvancedDateInputProps {
     /**
@@ -20,17 +19,9 @@ export interface IAdvancedDateInputProps {
      * Min date for the input.
      */
     minDuration: number;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    control: any;
 }
 
-export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
-    useDuration,
-    label,
-    helpText,
-    minDuration,
-    control,
-}) => {
+export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({ useDuration, label, helpText, minDuration }) => {
     //const [value, setValue] = useState<'now' | 'duration' |'fixed'>(useDuration ? 'duration' : 'now');
     const [value, setValue] = useState<string>(useDuration ? 'duration' : 'now');
 
@@ -111,7 +102,6 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                 />
                 <RadioCard className="w-full" label="Specific date & time" description="" value="fixed" />
             </RadioGroup>
-            <Controller name="test" control={control} defaultValue="" render={({ field }) => <input {...field} />} />
             {value === 'fixed' && (
                 <Card className="flex flex-col gap-4 p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">

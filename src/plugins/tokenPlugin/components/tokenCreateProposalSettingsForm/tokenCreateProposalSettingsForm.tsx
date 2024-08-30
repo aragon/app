@@ -1,7 +1,6 @@
 import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';
 
 export interface ITokenCreateProposalSettingsFormProps {
@@ -16,10 +15,10 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
     const { data: dao } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
     const minDuration = dao?.settings.minDuration;
 
-    const { watch, control } = useForm();
+    const startDate = useWatch({ name: 'Start TimeDate' });
+    const startTime = useWatch({ name: 'Start TimeTime' });
 
-    console.debug('watch', watch());
-
+    console.debug('Start', startDate, startTime);
     return (
         <>
             <AdvancedDateInput
@@ -27,14 +26,12 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 helpText="Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing."
                 useDuration={false}
                 minDuration={0}
-                control={control}
             />
             <AdvancedDateInput
                 label="End Time"
                 helpText="Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal."
                 useDuration={true}
                 minDuration={minDuration ?? 0}
-                control={control}
             />
         </>
     );
