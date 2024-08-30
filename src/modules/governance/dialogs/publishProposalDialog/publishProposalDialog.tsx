@@ -69,7 +69,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const getProposalLink = (txReceipt: TransactionReceipt) => {
         const { transactionHash } = txReceipt;
         const proposalId = publishProposalDialogUtils.getProposalId(txReceipt);
-        const extendedProposalId = `${transactionHash}-${supportedPlugin}-${proposalId}`;
+        const extendedProposalId = `${transactionHash}-${supportedPlugin?.address}-${proposalId}`;
 
         return `/dao/${daoId}/proposals/${extendedProposalId}`;
     };
