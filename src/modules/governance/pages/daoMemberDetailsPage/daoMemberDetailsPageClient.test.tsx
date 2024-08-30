@@ -5,7 +5,6 @@ import { generateDao, generateReactQueryResultError, generateReactQueryResultSuc
 import { addressUtils, clipboardUtils, DateFormat, formatterUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { Settings } from 'luxon';
 import * as governanceService from '../../api/governanceService';
 import { generateMember } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
@@ -27,8 +26,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
-    const originalDateLocale = formatterUtils.dateLocale;
-    const originalNumberLocale = formatterUtils.numberLocale;
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -42,15 +39,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         (DaoList as jest.Mock).mockClear();
         (VoteList as jest.Mock).mockClear();
     });
-
-    const setTime = (now?: string) => {
-        Settings.now = () => (now != null ? new Date(now) : new Date()).valueOf();
-    };
-
-    const setLocale = (locales: { number?: string; date?: string }) => {
-        formatterUtils.dateLocale = locales.date ?? originalDateLocale;
-        formatterUtils.numberLocale = locales.number ?? originalNumberLocale;
-    };
 
     const createTestComponent = (props?: Partial<IDaoMemberDetailsPageClientProps>) => {
         const completeProps: IDaoMemberDetailsPageClientProps = {
