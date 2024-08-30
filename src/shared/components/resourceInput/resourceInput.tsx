@@ -37,7 +37,13 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = ({ name, helpText 
                     ))}
                 </div>
             )}
-            <Button className="w-fit" iconLeft={IconType.PLUS} onClick={() => append({ label: '', link: '' })}>
+            <Button
+                size="md"
+                variant="tertiary"
+                className="w-fit"
+                iconLeft={IconType.PLUS}
+                onClick={() => append({ label: '', link: '' })}
+            >
                 {t('app.shared.resourcesInput.add')}
             </Button>
         </div>
