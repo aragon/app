@@ -17,13 +17,13 @@ export const ResourceInputItem: React.FC<IResourceInputItemProps> = ({ index, re
     const { t } = useTranslations();
 
     const labelField = useFormField(`resources.${index}.label`, {
-        label: t('app.shared.resourcesInput.labelInput.title'),
+        label: t('app.shared.resourcesInput.item.labelInput.title'),
         rules: { required: true },
         defaultValue: '',
     });
 
     const linkField = useFormField(`resources.${index}.link`, {
-        label: t('app.shared.resourcesInput.linkInput.title'),
+        label: t('app.shared.resourcesInput.item.linkInput.title'),
         defaultValue: '',
         rules: {
             required: true,
@@ -33,8 +33,8 @@ export const ResourceInputItem: React.FC<IResourceInputItemProps> = ({ index, re
 
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <InputText placeholder={t('app.shared.resourcesInput.labelInput.placeholder')} {...labelField} />
-            <InputText placeholder={t('app.shared.resourcesInput.linkInput.placeholder')} {...linkField} />
+            <InputText placeholder={t('app.shared.resourcesInput.item.labelInput.placeholder')} {...labelField} />
+            <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...linkField} />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container
                     constrainContentWidth={false}
@@ -42,7 +42,7 @@ export const ResourceInputItem: React.FC<IResourceInputItemProps> = ({ index, re
                     customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
                 >
                     <Dropdown.Item onClick={() => remove(index)}>
-                        {t('app.shared.resourcesInput.removeResource')}
+                        {t('app.shared.resourcesInput.item.removeResource')}
                     </Dropdown.Item>
                 </Dropdown.Container>
             </div>

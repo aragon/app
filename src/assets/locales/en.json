@@ -32,6 +32,13 @@
           "action": "Explore DAOs"
         }
       },
+      "layoutWizard": {
+        "notFound": {
+          "title": "DAO not found",
+          "description": "We couldn't find the DAO that you're looking for.",
+          "action": "Explore DAOs"
+        }
+      },
       "notFoundBase": {
         "title": "Page not found",
         "description": "We couldn't find the page that you're looking for.",
@@ -189,7 +196,8 @@
       },
       "daoProposalsPage": {
         "main": {
-          "title": "Proposals"
+          "title": "Proposals",
+          "action": "Proposal"
         },
         "aside": {
           "details": {
@@ -310,6 +318,9 @@
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}"
       },
+      "layoutWizardCreateProposal": {
+        "name": "Create Proposal"
+      },
       "voteList": {
         "empty": {
           "title": "No votes found",
@@ -345,6 +356,13 @@
           "resources": {
             "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
           }
+        },
+        "actions": {
+          "empty": {
+            "heading": "No actions added",
+            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
+          },
+          "action": "Action"
         }
       }
     },
@@ -447,6 +465,33 @@
           "pattern": "Invalid {{name}} format"
         }
       },
+      "transactionDialog": {
+        "step": {
+          "PREPARE": {
+            "label": "Prepare transaction",
+            "errorLabel": "Unable to prepare transaction"
+          },
+          "APPROVE": {
+            "label": "Approve transaction",
+            "errorLabel": "Rejected by wallet",
+            "addon": "Wallet"
+          },
+          "CONFIRM": {
+            "label": "Onchain confirmation",
+            "errorLabel": "Confirmation failed",
+            "addon": "Details"
+          }
+        },
+        "footer": {
+          "retry": "Retry",
+          "cancel": "Cancel",
+          "approve": {
+            "idle": "Approve transaction",
+            "pending": "Awaiting approval",
+            "error": "Resend to wallet"
+          }
+        }
+      },
       "wizard": {
         "container": {
           "step": "Step {{number}}",
@@ -474,16 +519,18 @@
       },
       "resourcesInput": {
         "title": "Resources",
-        "removeResource": "Remove Link",
-        "labelInput": {
-          "title": "Label",
-          "placeholder": "Type a label"
-        },
-        "linkInput": {
-          "title": "Link",
-          "placeholder": "https://"
-        },
-        "add": "Add"
+        "add": "Add",
+        "item": {
+          "removeResource": "Remove Link",
+          "labelInput": {
+            "title": "Label",
+            "placeholder": "Type a label"
+          },
+          "linkInput": {
+            "title": "Link",
+            "placeholder": "https://"
+          }
+        }
       }
     }
   }

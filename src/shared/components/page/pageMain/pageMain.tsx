@@ -12,6 +12,10 @@ export interface IPageMainAction {
      * Callback called on action click.
      */
     onClick?: () => void;
+    /**
+     * Link to navigate to on action click.
+     */
+    href?: string;
 }
 
 export interface IPageMainProps extends ComponentProps<'main'> {
@@ -51,7 +55,13 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
                     <header className="flex flex-row justify-between gap-6">
                         <Heading size="h1">{title}</Heading>
                         {action && (
-                            <Button variant="primary" size="md" onClick={action.onClick} iconLeft={IconType.PLUS}>
+                            <Button
+                                variant="primary"
+                                size="md"
+                                onClick={action.onClick}
+                                href={action.href}
+                                iconLeft={IconType.PLUS}
+                            >
                                 {action.label}
                             </Button>
                         )}
