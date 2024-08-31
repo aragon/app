@@ -23,6 +23,10 @@ export interface IAdvancedDateInputProps {
      * Start time to be used for validation.
      */
     startTime?: { date: string; time: string };
+    /**
+     *   Boolean to indicate if start time
+     */
+    isStartField: boolean;
 }
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
@@ -31,6 +35,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
     helpText,
     minDuration = 0,
     startTime,
+    isStartField,
 }) => {
     //const [value, setValue] = useState<'now' | 'duration' |'fixed'>(useDuration ? 'duration' : 'now');
     const [value, setValue] = useState<string>(useDuration ? 'duration' : 'now');
@@ -86,6 +91,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
             required: value === 'fixed',
             validate: (date: string) => {
                 if (value !== 'fixed') return true;
+                if (!isStartField) return true;
                 const selectedDate = new Date(date);
                 const minDate = getMinDate();
                 return selectedDate >= minDate;
@@ -113,7 +119,11 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
 
     const durationMinutesField = useFormField(`${label}Minutes`, {
         label: 'Minutes',
-        rules: { required: value === 'duration', min: 0, max: 59 },
+        rules: {
+            required: value === 'duration',
+            min: 0,
+            max: 59,
+        },
         defaultValue: defaultValues.duration.minutes,
     });
 
@@ -160,15 +170,17 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                         <InputTime className="w-full md:w-1/3" {...timeField} />
                         <InputText className="w-full md:w-1/3" label="Timezone" placeholder="UTC +2" disabled={true} />
                     </div>
-                    <AlertCard
-                        message={label}
-                        description={
-                            fixedErrors
-                                ? 'One hour is the minimum expiration time'
-                                : "It's recommended to have an expiration time of five days, so you have a clean proposal list."
-                        }
-                        variant={fixedErrors ? 'critical' : 'info'}
-                    />
+                    {!isStartField && (
+                        <AlertCard
+                            message={label}
+                            description={
+                                fixedErrors
+                                    ? 'One hour is the minimum expiration time'
+                                    : "It's recommended to have an expiration time of five days, so you have a clean proposal list."
+                            }
+                            variant={fixedErrors ? 'critical' : 'info'}
+                        />
+                    )}
                 </Card>
             )}
             {value === 'duration' && (

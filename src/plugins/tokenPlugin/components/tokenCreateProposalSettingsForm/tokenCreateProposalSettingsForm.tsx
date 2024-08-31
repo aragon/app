@@ -25,6 +25,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 label="Start Time"
                 helpText="Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing."
                 useDuration={false}
+                isStartField={true}
             />
             <AdvancedDateInput
                 label="End Time"
@@ -32,7 +33,9 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 useDuration={true}
                 minDuration={minDuration ?? 0}
                 startTime={startDate && startTime ? { date: startDate, time: startTime } : undefined}
+                isStartField={false}
             />
         </>
     );
 };
+
