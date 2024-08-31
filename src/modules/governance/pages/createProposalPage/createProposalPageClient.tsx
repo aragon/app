@@ -1,33 +1,41 @@
 'use client';
 
 import { Page } from '@/shared/components/page';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
+import { useMemo } from 'react';
 import { type ICreateProposalFormData } from '../../components/createProposalForm';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
+import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientProps {}
 
-const createProposalSteps = [
-    { id: 'metadata', order: 0, meta: { name: 'Define content' } },
-    { id: 'actions', order: 1, meta: { name: 'Set actions' } },
-    { id: 'settings', order: 2, meta: { name: 'Initiate voting' } },
-];
-
 export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = () => {
+    const { t } = useTranslations();
+
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         // eslint-disable-next-line no-console
         console.log({ values });
     };
 
+    const processedSteps = useMemo(
+        () =>
+            createProposalWizardSteps.map((step) => ({
+                ...step,
+                meta: { ...step.meta, name: t(step.meta.name) },
+            })),
+        [t],
+    );
+
     return (
         <Page.Main fullWidth={true}>
             <Wizard.Container
-                finalStep="Publish proposal"
-                submitLabel="Publish proposal"
-                initialSteps={createProposalSteps}
+                finalStep={t('app.governance.createProposalPage.finalStep')}
+                submitLabel={t('app.governance.createProposalPage.submitLabel')}
+                initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
             >
-                <CreateProposalPageClientSteps />
+                <CreateProposalPageClientSteps steps={processedSteps} />
             </Wizard.Container>
         </Page.Main>
     );

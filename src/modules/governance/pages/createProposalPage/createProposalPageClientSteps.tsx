@@ -1,41 +1,54 @@
 'use client';
 
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
+import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvider';
 import { useWatch } from 'react-hook-form';
-import { CreateProposalForm } from '../../components/createProposalForm';
+import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
+import { CreateProposalWizardStep } from './createProposalPageDefinitions';
 
-export interface ICreateProposalPageClientStepsProps {}
+export interface ICreateProposalPageClientStepsProps {
+    /**
+     * Steps of the wizard.
+     */
+    steps: IWizardStepperStep[];
+}
 
-const createProposalSteps = [
-    { id: 'metadata', order: 0, meta: { name: 'Define content' } },
-    { id: 'actions', order: 1, meta: { name: 'Set actions' } },
-    { id: 'settings', order: 2, meta: { name: 'Initiate voting' } },
-];
+export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientStepsProps> = (props) => {
+    const { steps } = props;
 
-export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientStepsProps> = () => {
-    const addActions = useWatch({ name: 'addActions' });
+    const { t } = useTranslations();
+    const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
+
+    const [metadataStep, actionsStep, settingsStep] = steps;
 
     return (
         <>
             <Wizard.Step
-                title="Define content"
-                description="Provide the information voters will need to make their decision here"
-                {...createProposalSteps[0]}
+                title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.METADATA}.title`)}
+                description={t(
+                    `app.governance.createProposalPage.steps.${CreateProposalWizardStep.METADATA}.description`,
+                )}
+                {...metadataStep}
             >
                 <CreateProposalForm.Metadata />
             </Wizard.Step>
             <Wizard.Step
-                title="Set actions"
-                description="These actions can be executed only once the governance parameters are met"
+                title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.title`)}
+                description={t(
+                    `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`,
+                )}
                 hidden={addActions === false}
-                {...createProposalSteps[1]}
+                {...actionsStep}
             >
                 <CreateProposalForm.Actions />
             </Wizard.Step>
             <Wizard.Step
-                title="Initiate the vote"
-                description="Set start date, and end date for your vote."
-                {...createProposalSteps[2]}
+                title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.title`)}
+                description={t(
+                    `app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.description`,
+                )}
+                {...settingsStep}
             >
                 <CreateProposalForm.Settings />
             </Wizard.Step>
