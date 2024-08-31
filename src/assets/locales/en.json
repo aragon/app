@@ -226,7 +226,8 @@
             "members": "Members"
           },
           "stat": {
-            "latestActivity": "Latest activity"
+            "latestActivity": "Latest activity",
+            "latestActivityUnit": "{{unit}} ago"
           }
         },
         "aside": {
@@ -344,6 +345,27 @@
           "submit": "Publish proposal",
           "success": "View proposal"
         }
+      },
+      "createProposalPage": {
+        "steps": {
+          "METADATA": {
+            "name": "Define content",
+            "title": "Define content",
+            "description": "Provide the information voters will need to make their decision here"
+          },
+          "ACTIONS": {
+            "name": "Set actions",
+            "title": "Define content",
+            "description": "These actions can be executed only once the governance parameters are met"
+          },
+          "SETTINGS": {
+            "name": "Initiate voting",
+            "title": "Initiate the vote",
+            "description": "Set start date, and end date for your vote."
+          }
+        },
+        "finalStep": "Publish proposal",
+        "submitLabel": "Publish proposal"
       },
       "createProposalForm": {
         "metadata": {

@@ -49,7 +49,7 @@ export const WizardStep = <TFormFields extends FieldValues = FieldValues>(props:
     const validationError = getValidationError(errors);
     const displayValidationError = isSubmitted && validationError != null;
 
-    const submitButtonVariant = displayValidationError ? 'critical' : !hasNext ? 'primary' : 'tertiary';
+    const submitButtonVariant = displayValidationError ? 'critical' : !hasNext ? 'primary' : 'secondary';
     const submitButtonLabel = hasNext ? t('app.shared.wizard.step.next') : submitLabel;
 
     useEffect(() => {
@@ -87,11 +87,11 @@ export const WizardStep = <TFormFields extends FieldValues = FieldValues>(props:
                         iconLeft={IconType.CHEVRON_LEFT}
                         onClick={previousStep}
                         variant="tertiary"
-                        size="md"
+                        size="lg"
                     >
                         {t('app.shared.wizard.step.back')}
                     </Button>
-                    <Button iconRight={IconType.CHEVRON_RIGHT} variant={submitButtonVariant} size="md" type="submit">
+                    <Button iconRight={IconType.CHEVRON_RIGHT} variant={submitButtonVariant} size="lg" type="submit">
                         {submitButtonLabel}
                     </Button>
                 </div>
