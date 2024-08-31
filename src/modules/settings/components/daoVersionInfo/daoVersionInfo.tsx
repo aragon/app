@@ -27,12 +27,12 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.governance.daoVersionInfo.app')}>
+            <DefinitionList.Item term={t('app.settings.daoVersionInfo.app')}>
                 <Link href="/" iconRight={IconType.LINK_EXTERNAL} target="_blank">
                     {version}
                 </Link>
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.governance.daoVersionInfo.osLabel')}>
+            <DefinitionList.Item term={t('app.settings.daoVersionInfo.osLabel')}>
                 {/* TODO: Fetch this operating system value from backend when available (APP-3484) */}
                 <Link
                     description={addressUtils.truncateAddress(dao.address)}
@@ -40,18 +40,18 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                     href=""
                     target="_blank"
                 >
-                    {t('app.governance.daoVersionInfo.osValue')}
+                    {t('app.settings.daoVersionInfo.osValue')}
                 </Link>
             </DefinitionList.Item>
             {supportedPlugin && (
-                <DefinitionList.Item term={t('app.governance.daoVersionInfo.governanceLabel')}>
+                <DefinitionList.Item term={t('app.settings.daoVersionInfo.governanceLabel')}>
                     <Link
                         description={addressUtils.truncateAddress(supportedPlugin.address)}
                         iconRight={IconType.LINK_EXTERNAL}
                         href={pluginLink}
                         target="_blank"
                     >
-                        {t('app.governance.daoVersionInfo.governanceValue', {
+                        {t('app.settings.daoVersionInfo.governanceValue', {
                             name: daoUtils.formatPluginName(supportedPlugin.subdomain),
                             release: supportedPlugin.release,
                             build: supportedPlugin.build,

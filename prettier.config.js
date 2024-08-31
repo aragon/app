@@ -5,6 +5,7 @@ module.exports = {
     singleQuote: true,
     trailingComma: 'all',
     arrowParens: 'always',
+    jsonRecursiveSort: true,
     overrides: [
         {
             files: '*.{json,json5,css,scss,yml}',
@@ -26,5 +27,9 @@ module.exports = {
             },
         },
     ],
-    plugins: [require.resolve('prettier-plugin-organize-imports'), 'prettier-plugin-tailwindcss'],
+    plugins: [
+        require.resolve('prettier-plugin-organize-imports'),
+        'prettier-plugin-tailwindcss',
+        'prettier-plugin-sort-json',
+    ],
 };
