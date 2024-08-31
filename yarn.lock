@@ -84,6 +84,7 @@ __metadata:
     postcss: "npm:^8.4.41"
     prettier: "npm:^3.3.3"
     prettier-plugin-organize-imports: "npm:^4.0.0"
+    prettier-plugin-sort-json: "npm:^4.0.0"
     prettier-plugin-tailwindcss: "npm:^0.6.6"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -12008,6 +12009,15 @@ __metadata:
     vue-tsc:
       optional: true
   checksum: 10c0/6c3c2a0680540c2c27d8e0e47c7cb69d374e47534c467877a99031defa087d52a4fc972156321dadbadc10b2eb90d67398110a0be65f5b3c9db93b85a546d8f7
+  languageName: node
+  linkType: hard
+
+"prettier-plugin-sort-json@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "prettier-plugin-sort-json@npm:4.0.0"
+  peerDependencies:
+    prettier: ^3.0.0
+  checksum: 10c0/1e1aa9e2d56cbc4644cc5360feac52d95fb8699aaf400e96baa99b0561cf6b6416e3858612548d64614d47f17dd6c0e801e92b102ce3cef84e8e0a638735441a
   languageName: node
   linkType: hard
 

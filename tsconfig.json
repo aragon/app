@@ -1,28 +1,28 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
+    "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@aragon/ods": ["./src/shared/lib/@aragon/ods"],
+      "@aragon/ods-original": ["./node_modules/@aragon/ods"]
+    },
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "paths": {
-      "@/*": ["./src/*"],
-      "@aragon/ods": ["./src/shared/lib/@aragon/ods"],
-      "@aragon/ods-original": ["./node_modules/@aragon/ods"]
-    }
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true
   },
-  "include": ["src", "next-env.d.ts", ".next/types/**/*.ts", "*.config.js", "*.config.mjs", ".eslintrc.js"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "include": ["src", "next-env.d.ts", ".next/types/**/*.ts", "*.config.js", "*.config.mjs", ".eslintrc.js"]
 }
