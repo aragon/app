@@ -2,7 +2,7 @@ import { DaoList } from '@/modules/explore/components/daoList';
 import { VoteList } from '@/modules/governance/components/voteList';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { addressUtils, clipboardUtils, OdsModulesProvider } from '@aragon/ods';
+import { addressUtils, clipboardUtils, DateFormat, formatterUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
@@ -183,5 +183,59 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             }),
             {},
         );
+    });
+
+    it('renders fallback of `-` when lastActivity is null', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const member = generateMember({ ens: 'member.eth', address, lastActivity: null, firstActivity: 1723472877 });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+
+        render(createTestComponent({ address }));
+
+        expect(screen.getByText('-')).toBeInTheDocument();
+    });
+
+    it('renders the correct last activity date', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const member = generateMember({ ens: 'member.eth', address, lastActivity: 1723472877 });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+
+        render(createTestComponent({ address }));
+
+        const duration = formatterUtils.formatDate(member.lastActivity! * 1000, { format: DateFormat.DURATION });
+        const [value] = duration?.split(' ') ?? [];
+
+        expect(screen.getByText(value)).toBeInTheDocument();
+        expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit/)).toBeInTheDocument();
+    });
+
+    it('renders fallback of `-` when firstActivity is null', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const lastActivity = 1723472877;
+        const member = generateMember({ ens: 'member.eth', address, firstActivity: null, lastActivity });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+
+        render(createTestComponent({ address }));
+
+        expect(screen.getByText('-')).toBeInTheDocument();
+    });
+
+    it('renders the correct first activity date', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        const firstActivity = 1723472877;
+        const member = generateMember({ ens: 'member.eth', address, firstActivity });
+
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+
+        render(createTestComponent({ address }));
+
+        const firstActivityDate = formatterUtils.formatDate(firstActivity * 1000, {
+            format: DateFormat.YEAR_MONTH_DAY,
+        });
+
+        expect(screen.getByText(firstActivityDate!)).toBeInTheDocument();
     });
 });

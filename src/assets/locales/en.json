@@ -226,7 +226,8 @@
             "members": "Members"
           },
           "stat": {
-            "latestActivity": "Latest activity"
+            "latestActivity": "Latest activity",
+            "latestActivityUnit": "{{unit}} ago"
           }
         },
         "aside": {

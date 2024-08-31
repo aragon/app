@@ -11,4 +11,12 @@ export interface IMember {
      * Type of the member.
      */
     type: string;
+    /**
+     * Block timestamp of the first activity.
+     */
+    firstActivity: number | null;
+    /**
+     * Block timestamp of the latest activity.
+     */
+    lastActivity: number | null;
 }
