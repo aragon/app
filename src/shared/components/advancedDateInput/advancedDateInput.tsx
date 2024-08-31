@@ -152,7 +152,11 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
             {value === 'fixed' && (
                 <Card className="flex flex-col gap-4 p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">
-                        <InputDate className="w-full md:w-1/3" {...dateField} />
+                        <InputDate
+                            min={new Date().toISOString().split('T')[0]}
+                            className="w-full md:w-1/3"
+                            {...dateField}
+                        />
                         <InputTime className="w-full md:w-1/3" {...timeField} />
                         <InputText className="w-full md:w-1/3" label="Timezone" placeholder="UTC +2" disabled={true} />
                     </div>
