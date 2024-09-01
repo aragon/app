@@ -1,20 +1,63 @@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AvatarIcon, Dialog, IconType, Link } from '@aragon/gov-ui-kit';
-import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useWeb3Modal, useWeb3ModalState } from '@web3modal/wagmi/react';
+import { useCallback, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import { AragonLogo } from '../../components/aragonLogo';
 
-export interface IConnectWalletDialogProps extends IDialogComponentProps {}
+export interface IConnectWalletDialogParams {
+    /**
+     * Callback triggered on connection success.
+     */
+    onSuccess?: () => void;
+    /**
+     * Callback triggered when the dialog is closed and the user is still not connected.
+     */
+    onError?: () => void;
+}
 
-export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = () => {
-    const { close } = useDialogContext();
+export interface IConnectWalletDialogProps extends IDialogComponentProps<IConnectWalletDialogParams> {}
+
+export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) => {
+    const { params, id } = props.location;
+    const { onSuccess, onError } = params ?? {};
+
+    const { close, updateOptions } = useDialogContext();
     const { open: openWeb3Modal } = useWeb3Modal();
+    const { open: isWeb3ModalOpen } = useWeb3ModalState();
+    const { isConnected, chainId } = useAccount();
     const { t } = useTranslations();
 
-    const handleConnectClick = () => {
-        close();
-        openWeb3Modal();
-    };
+    const handleConnectClick = () => openWeb3Modal();
+
+    // Custom close callback to trigger onError property when dialog is closed and user is not connected
+    const handleDialogClose = useCallback(() => {
+        onError?.();
+        close(id);
+    }, [onError, close, id]);
+
+    useEffect(() => {
+        if (isConnected) {
+            onSuccess?.();
+            close(id);
+        }
+    }, [isConnected, onSuccess, close, chainId, id]);
+
+    // Disable closing the dialog on outside click when web3Modal is open to keep the connect-wallet dialog open
+    // and track the wallet-connection status
+    useEffect(() => {
+        const disableOutsideClick = isWeb3ModalOpen;
+        updateOptions({ disableOutsideClick });
+    }, [updateOptions, isWeb3ModalOpen]);
+
+    useEffect(() => {
+        updateOptions({ onClose: handleDialogClose });
+    }, [handleDialogClose, updateOptions]);
+
+    if (isWeb3ModalOpen) {
+        return null;
+    }
 
     return (
         <div className="flex flex-col gap-4 pt-10 md:gap-8">
@@ -55,7 +98,10 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = () => {
                     label: t('app.application.connectWalletDialog.action.connect'),
                     onClick: handleConnectClick,
                 }}
-                secondaryAction={{ label: t('app.application.connectWalletDialog.action.cancel'), onClick: close }}
+                secondaryAction={{
+                    label: t('app.application.connectWalletDialog.action.cancel'),
+                    onClick: handleDialogClose,
+                }}
             />
         </div>
     );

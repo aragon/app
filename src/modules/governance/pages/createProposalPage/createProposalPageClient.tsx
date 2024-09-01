@@ -1,10 +1,12 @@
 'use client';
 
+import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
-import { useCallback, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ProposalActionType } from '../../api/governanceService';
 import {
     CreateProposalForm,
@@ -12,14 +14,15 @@ import {
     type PrepareProposalActionFunction,
     type PrepareProposalActionMap,
 } from '../../components/createProposalForm';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/moduleDialogs';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
+import { useCanCreateProposalGuard } from '../../hooks/useCanCreateProposalGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientProps {
     /**
-     * ID of the current DAO.
+     * ID of the DAO to create a proposal for.
      */
     daoId: string;
     /**
@@ -31,8 +34,22 @@ export interface ICreateProposalPageClientProps {
 export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = (props) => {
     const { daoId, pluginAddress } = props;
 
-    const { open } = useDialogContext();
     const { t } = useTranslations();
+    const { open } = useDialogContext();
+    const router = useRouter();
+
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const proposalsUrl: __next_route_internal_types__.DynamicRoutes<string> = `/dao/${dao!.id}/proposals`;
+
+    const test = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
+
+    const { check: networkGuard, result: isCorrectNetwork } = useCanCreateProposalGuard({
+        onError: test,
+        network: dao!.network,
+        daoId,
+    });
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
 
@@ -44,7 +61,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
-        open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
+        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };
 
     const contextValues = useMemo(() => ({ prepareActions, addPrepareAction }), [prepareActions, addPrepareAction]);
@@ -57,6 +74,12 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
             })),
         [t],
     );
+
+    useEffect(() => {
+        if (!isCorrectNetwork) {
+            networkGuard();
+        }
+    }, [networkGuard, isCorrectNetwork]);
 
     return (
         <Page.Main fullWidth={true}>

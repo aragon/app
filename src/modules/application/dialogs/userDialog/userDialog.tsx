@@ -6,7 +6,9 @@ import { useAccount, useDisconnect, useEnsName } from 'wagmi';
 
 export interface IUserDialogProps extends IDialogComponentProps {}
 
-export const UserDialog: React.FC<IUserDialogProps> = () => {
+export const UserDialog: React.FC<IUserDialogProps> = (props) => {
+    const { id } = props.location;
+
     const { close } = useDialogContext();
     const { address } = useAccount();
     const { disconnect } = useDisconnect();
@@ -16,17 +18,12 @@ export const UserDialog: React.FC<IUserDialogProps> = () => {
     const formattedAddress = addressUtils.truncateAddress(address);
     const userName = ensName ?? formattedAddress;
 
-    const handleDisconnectClick = () => {
-        close();
-        disconnect();
-    };
-
     // Close dialog if user disconnects
     useEffect(() => {
         if (address == null) {
-            close();
+            close(id);
         }
-    }, [address, close]);
+    }, [address, id, close]);
 
     if (address == null) {
         return null;
@@ -50,7 +47,7 @@ export const UserDialog: React.FC<IUserDialogProps> = () => {
                     responsiveSize={{ md: 'lg' }}
                 />
                 <Button
-                    onClick={handleDisconnectClick}
+                    onClick={() => disconnect()}
                     iconLeft={IconType.LOGOUT}
                     size="md"
                     variant="tertiary"

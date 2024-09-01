@@ -1,18 +1,20 @@
 'use client';
 
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { DaoGovernanceInfo } from '../../../settings/components/daoGovernanceInfo';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/moduleDialogs';
 import type { ISelectPluginDialogParams } from '../../dialogs/selectPluginDialog';
+import { useCanCreateProposalGuard } from '../../hooks/useCanCreateProposalGuard';
 
 export interface IDaoProposalsPageClientProps {
     /**
@@ -23,32 +25,46 @@ export interface IDaoProposalsPageClientProps {
 
 export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (props) => {
     const { initialParams } = props;
-
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const router = useRouter();
 
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
     const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
 
-    const buildCreateProposalUrl = (plugin: IDaoPlugin) => `/dao/${daoId}/create/${plugin.address}/proposal`;
+    const buildCreateProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes<string> =>
+        `/dao/${daoId}/create/${plugin.address}/proposal`;
+    const createProposalUrl = buildCreateProposalUrl(selectedPlugin.meta);
 
     const openSelectPluginDialog = () => {
         const params: ISelectPluginDialogParams = { daoId, buildSelectedPluginHref: buildCreateProposalUrl };
-        open(GovernanceDialogs.SELECT_PLUGIN, { params });
+        open(GovernanceDialog.SELECT_PLUGIN, { params });
     };
+
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const { check: networkGuard, result: isCorrectNetwork } = useCanCreateProposalGuard({
+        onSuccess: () => router.push(createProposalUrl),
+        network: dao!.network,
+        daoId,
+    });
 
     const actionProps =
         processPlugins.length > 1
-            ? { onClick: openSelectPluginDialog }
-            : { href: buildCreateProposalUrl(selectedPlugin.meta) };
+            ? { onClick: isCorrectNetwork ? openSelectPluginDialog : networkGuard }
+            : { href: isCorrectNetwork ? createProposalUrl : undefined };
 
     return (
         <>
             <Page.Main
                 title={t('app.governance.daoProposalsPage.main.title')}
-                action={{ label: t('app.governance.daoProposalsPage.main.action'), ...actionProps }}
+                action={{
+                    label: t('app.governance.daoProposalsPage.main.action'),
+                    ...actionProps,
+                }}
             >
                 <DaoProposalList.Container
                     initialParams={initialParams}

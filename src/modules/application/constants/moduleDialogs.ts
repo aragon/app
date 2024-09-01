@@ -1,10 +1,12 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { ChangeNetworkDialog } from '../dialogs/changeNetworkDialog';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
 import { UserDialog } from '../dialogs/userDialog';
 
 export enum ApplicationDialog {
     CONNECT_WALLET = 'CONNECT_WALLET',
     USER = 'USER',
+    CHANGE_NETWORK = 'CHANGE_NETWORK',
 }
 
 export const applicationDialogs: Record<ApplicationDialog, IDialogComponentDefinitions> = {
@@ -18,4 +20,5 @@ export const applicationDialogs: Record<ApplicationDialog, IDialogComponentDefin
         title: 'app.application.userDialog.screenReader.title',
         description: 'app.application.userDialog.screenReader.description',
     },
+    [ApplicationDialog.CHANGE_NETWORK]: { Component: ChangeNetworkDialog },
 };
