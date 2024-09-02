@@ -53,13 +53,12 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     return (
         <Navigation.Container containerClasses="flex flex-row items-center gap-x-6 justify-between py-5">
-            <div className="flex grow items-center gap-x-3 md:gap-x-4">
+            <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
                 <button onClick={router.back} className={buttonClassName}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
-                <div className="flex grow flex-col gap-y-0.5">
+                <div className="flex min-w-0 flex-col gap-y-0.5">
                     <p className="text-nowrap text-base leading-tight text-neutral-800">{t(name)}</p>
-
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
                             <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">{dao?.name}</p>

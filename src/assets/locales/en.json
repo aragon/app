@@ -4,533 +4,557 @@
       "applicationTags": {
         "beta": "Beta"
       },
+      "connectWalletDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "connect": "Connect"
+        },
+        "app": "Aragon App",
+        "auditLink": "https://github.com/aragon/osx/blob/v1.3.0/audits/AragonOSx-security-audit-report-halborn.pdf",
+        "connect": "wants to connect to your wallet",
+        "feature": {
+          "permissions": "View only permissions",
+          "smartContracts": "Audited Smart Contracts",
+          "stats": "Trusted by +7,500 DAOs and +$27B"
+        },
+        "screenReader": {
+          "description": "Connect your wallet to Aragon App",
+          "title": "Connect wallet"
+        }
+      },
       "footer": {
         "copyright": "© {{year}} Aragon",
         "link": {
-          "explore": "Explore",
-          "learn": "Learn",
           "build": "Build",
+          "explore": "Explore",
           "help": "Help",
+          "learn": "Learn",
           "privacy": "Privacy",
           "termsOfService": "Terms of Service"
         }
       },
-      "navigationDao": {
-        "link": {
-          "dashboard": "Dashboard",
-          "proposals": "Proposals",
-          "members": "Members",
-          "assets": "Assets",
-          "transactions": "Transactions",
-          "settings": "Settings"
-        }
-      },
       "layoutDao": {
         "notFound": {
-          "title": "DAO not found",
+          "action": "Explore DAOs",
           "description": "We couldn't find the DAO that you're looking for.",
-          "action": "Explore DAOs"
+          "title": "DAO not found"
         }
       },
       "layoutWizard": {
         "notFound": {
-          "title": "DAO not found",
+          "action": "Explore DAOs",
           "description": "We couldn't find the DAO that you're looking for.",
-          "action": "Explore DAOs"
+          "title": "DAO not found"
+        }
+      },
+      "navigationDao": {
+        "link": {
+          "assets": "Assets",
+          "dashboard": "Dashboard",
+          "members": "Members",
+          "proposals": "Proposals",
+          "settings": "Settings",
+          "transactions": "Transactions"
         }
       },
       "notFoundBase": {
-        "title": "Page not found",
+        "action": "Explore DAO's",
         "description": "We couldn't find the page that you're looking for.",
-        "action": "Explore DAO's"
+        "title": "Page not found"
       },
       "notFoundDao": {
-        "title": "Page not found",
+        "action": "Go to dashboard",
         "description": "We couldn't find the page that you're looking for.",
-        "action": "Go to dashboard"
-      },
-      "connectWalletDialog": {
-        "app": "Aragon App",
-        "connect": "wants to connect to your wallet",
-        "auditLink": "https://github.com/aragon/osx/blob/v1.3.0/audits/AragonOSx-security-audit-report-halborn.pdf",
-        "feature": {
-          "permissions": "View only permissions",
-          "stats": "Trusted by +7,500 DAOs and +$27B",
-          "smartContracts": "Audited Smart Contracts"
-        },
-        "action": {
-          "connect": "Connect",
-          "cancel": "Cancel"
-        },
-        "screenReader": {
-          "title": "Connect wallet",
-          "description": "Connect your wallet to Aragon App"
-        }
+        "title": "Page not found"
       },
       "userDialog": {
         "screenReader": {
-          "title": "Connected user",
-          "description": "Information about the the connected user"
+          "description": "Information about the the connected user",
+          "title": "Connected user"
         }
       }
     },
     "dashboard": {
       "daoDashboardPage": {
+        "aside": {
+          "details": {
+            "address": "Contract address",
+            "blockchain": "Blockchain",
+            "ens": "ENS name",
+            "launched": "Launched at",
+            "title": "Details"
+          },
+          "links": "Links"
+        },
         "header": {
           "stat": {
-            "proposals": "Proposals",
             "members": "Members",
+            "proposals": "Proposals",
             "treasury": "Treasury value"
           }
         },
         "main": {
-          "proposals": {
-            "title": "Latest proposals"
-          },
           "assets": {
             "title": "Top assets"
           },
           "members": {
             "title": "Members"
           },
-          "viewAll": "View all"
-        },
-        "aside": {
-          "details": {
-            "title": "Details",
-            "blockchain": "Blockchain",
-            "address": "Contract address",
-            "ens": "ENS name",
-            "launched": "Launched at"
+          "proposals": {
+            "title": "Latest proposals"
           },
-          "links": "Links"
+          "viewAll": "View all"
         }
       }
     },
     "explore": {
       "daoList": {
-        "entity": "DAOs",
         "emptyState": {
-          "heading": "No DAOs found",
-          "description": "This will show relevant DAOs when available."
+          "description": "This will show relevant DAOs when available.",
+          "heading": "No DAOs found"
         },
+        "entity": "DAOs",
         "errorState": {
-          "heading": "Error loading DAOs",
-          "description": "There was an error loading the DAOs. Please try again later."
+          "description": "There was an error loading the DAOs. Please try again later.",
+          "heading": "Error loading DAOs"
         }
       }
     },
     "finance": {
       "assetList": {
-        "entity": "Assets",
         "emptyState": {
-          "heading": "No assets found",
-          "description": "This will show the DAO's onchain assets when available."
+          "description": "This will show the DAO's onchain assets when available.",
+          "heading": "No assets found"
         },
+        "entity": "Assets",
         "errorState": {
-          "heading": "Error loading assets",
-          "description": "There was an error loading the assets. Please try again later."
+          "description": "There was an error loading the assets. Please try again later.",
+          "heading": "Error loading assets"
         }
       },
       "daoAssetsPage": {
-        "main": {
-          "title": "Assets"
-        },
         "aside": {
           "details": {
-            "title": "Details",
-            "blockchain": "Blockchain"
+            "blockchain": "Blockchain",
+            "title": "Details"
           }
+        },
+        "main": {
+          "title": "Assets"
+        }
+      },
+      "daoTransactionsPage": {
+        "aside": {
+          "details": {
+            "blockchain": "Blockchain",
+            "title": "Details"
+          }
+        },
+        "main": {
+          "title": "Transactions"
         }
       },
       "financeDetailsList": {
-        "title": "Details",
         "blockchain": "Blockchain",
+        "title": "Details",
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
       },
       "transactionList": {
-        "entity": "Transactions",
         "emptyState": {
-          "heading": "No transactions found",
-          "description": "This will show the DAO's onchain actions when available."
+          "description": "This will show the DAO's onchain actions when available.",
+          "heading": "No transactions found"
         },
+        "entity": "Transactions",
         "errorState": {
-          "heading": "Error loading transactions",
-          "description": "There was an error loading the transactions. Please try again later."
-        }
-      },
-      "daoTransactionsPage": {
-        "main": {
-          "title": "Transactions"
-        },
-        "aside": {
-          "details": {
-            "title": "Details",
-            "blockchain": "Blockchain"
-          }
+          "description": "There was an error loading the transactions. Please try again later.",
+          "heading": "Error loading transactions"
         }
       }
     },
     "governance": {
-      "daoMembersPage": {
-        "main": {
-          "title": "Members"
+      "createProposalForm": {
+        "actions": {
+          "action": "Action",
+          "empty": {
+            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp.",
+            "heading": "No actions added"
+          }
         },
-        "aside": {
-          "details": {
-            "title": "Details",
-            "blockchain": "Blockchain"
+        "metadata": {
+          "actions": {
+            "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
+            "label": "Binding onchain actions",
+            "title": "Would you like to add actions to this proposal?"
+          },
+          "body": {
+            "helpText": "Describe the proposal fully for voters.",
+            "placeholder": "Type a proposal body",
+            "title": "Body"
+          },
+          "resources": {
+            "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
+          },
+          "summary": {
+            "helpText": "Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview.",
+            "placeholder": "Type a summary",
+            "title": "Summary"
+          },
+          "title": {
+            "helpText": "Give your proposal a title. This will appear in the proposal overview.",
+            "placeholder": "Type a title",
+            "title": "Title"
           }
         }
       },
-      "daoMemberList": {
-        "empty": {
-          "title": "No members found",
-          "description": "DAO has currently no members."
-        },
-        "error": {
-          "title": "Error loading members",
-          "description": "There was an error loading the DAO members. Please try again later."
-        }
-      },
-      "daoProposalsPage": {
-        "main": {
-          "title": "Proposals",
-          "action": "Proposal"
-        },
-        "aside": {
-          "details": {
-            "title": "Details"
+      "createProposalPage": {
+        "finalStep": "Publish proposal",
+        "steps": {
+          "ACTIONS": {
+            "description": "These actions can be executed only once the governance parameters are met",
+            "name": "Set actions",
+            "title": "Define content"
+          },
+          "METADATA": {
+            "description": "Provide the information voters will need to make their decision here",
+            "name": "Define content",
+            "title": "Define content"
+          },
+          "SETTINGS": {
+            "description": "Set start date, and end date for your vote.",
+            "name": "Initiate voting",
+            "title": "Initiate the vote"
           }
-        }
-      },
-      "daoProposalList": {
-        "empty": {
-          "title": "No proposals found",
-          "description": "This will show relevant proposals when available."
         },
-        "error": {
-          "title": "Error loading proposals",
-          "description": "There was an error loading the DAO proposals. Please try again later."
-        }
+        "submitLabel": "Publish proposal"
       },
       "daoMemberDetailsPage": {
-        "notFound": {
-          "title": "Member not found",
-          "description": "We couldn't find the member that you're looking for.",
-          "action": "Explore members"
+        "aside": {
+          "details": {
+            "address": "Address",
+            "ens": "ENS",
+            "firstActivity": "First activity",
+            "title": "Details"
+          }
         },
         "header": {
           "breadcrumb": {
             "members": "Members"
           },
           "stat": {
-            "latestActivity": "Latest activity"
-          }
-        },
-        "aside": {
-          "details": {
-            "title": "Details",
-            "address": "Address",
-            "ens": "ENS",
-            "firstActivity": "First activity"
+            "latestActivity": "Latest activity",
+            "latestActivityUnit": "{{unit}} ago"
           }
         },
         "main": {
+          "daoMemberships": {
+            "title": "Other DAO memberships"
+          },
           "proposalCreation": {
             "title": "Proposal creation"
           },
           "votingActivity": {
             "title": "Voting activity"
-          },
-          "daoMemberships": {
-            "title": "Other DAO memberships"
           }
+        },
+        "notFound": {
+          "action": "Explore members",
+          "description": "We couldn't find the member that you're looking for.",
+          "title": "Member not found"
         }
       },
-      "daoProposalDetailsPage": {
-        "notFound": {
-          "title": "Proposal not found",
-          "description": "We couldn't find the proposal that you're looking for.",
-          "action": "Explore proposals"
+      "daoMemberList": {
+        "empty": {
+          "description": "DAO has currently no members.",
+          "title": "No members found"
         },
-        "header": {
-          "breadcrumb": {
-            "proposals": "Proposals"
-          },
-          "action": {
-            "share": "Share"
+        "error": {
+          "description": "There was an error loading the DAO members. Please try again later.",
+          "title": "Error loading members"
+        }
+      },
+      "daoMembersPage": {
+        "aside": {
+          "details": {
+            "blockchain": "Blockchain",
+            "title": "Details"
           }
         },
         "main": {
-          "proposal": "Proposal",
-          "readMore": "Read more",
-          "readLess": "Read less",
-          "actions": {
-            "header": "Actions",
-            "description": "The following actions will execute if all voting stages are approved."
-          },
-          "governance": "Governance"
-        },
+          "title": "Members"
+        }
+      },
+      "daoProposalDetailsPage": {
         "aside": {
           "details": {
-            "title": "Details",
+            "creator": "Proposed by",
             "id": "ID",
             "published": "Published",
-            "creator": "Proposed by",
-            "status": "Status"
+            "status": "Status",
+            "title": "Details"
           },
           "links": {
             "title": "Links"
           }
-        }
-      },
-      "proposalVotingTerminal": {
-        "title": "Voting",
-        "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute."
-      },
-      "daoSettingsPage": {
-        "main": {
-          "title": "Settings",
-          "settingsInfoTitle": "DAO",
-          "governanceInfoTitle": "Governance",
-          "membersInfoTitle": "Members"
         },
-        "aside": {
-          "versionInfoTitle": "Version Info"
+        "header": {
+          "action": {
+            "share": "Share"
+          },
+          "breadcrumb": {
+            "proposals": "Proposals"
+          }
+        },
+        "main": {
+          "actions": {
+            "description": "The following actions will execute if all voting stages are approved.",
+            "header": "Actions"
+          },
+          "governance": "Governance",
+          "proposal": "Proposal",
+          "readLess": "Read less",
+          "readMore": "Read more"
+        },
+        "notFound": {
+          "action": "Explore proposals",
+          "description": "We couldn't find the proposal that you're looking for.",
+          "title": "Proposal not found"
         }
       },
-      "daoSettingsInfo": {
-        "name": "Name",
-        "blockchain": "Blockchain",
-        "ens": "ENS name",
-        "summary": "Summary",
-        "links": "Links",
-        "readMore": "Read more",
-        "readLess": "Read less",
-        "notChangeable": "Not changeable"
+      "daoProposalList": {
+        "empty": {
+          "description": "This will show relevant proposals when available.",
+          "title": "No proposals found"
+        },
+        "error": {
+          "description": "There was an error loading the DAO proposals. Please try again later.",
+          "title": "Error loading proposals"
+        }
       },
-      "daoVersionInfo": {
-        "app": "App",
-        "osLabel": "Operating system",
-        "osValue": "Aragon OSx",
-        "governanceLabel": "Governance",
-        "governanceValue": "{{name}} v{{release}}.{{build}}"
+      "daoProposalsPage": {
+        "aside": {
+          "details": {
+            "title": "Details"
+          }
+        },
+        "main": {
+          "action": "Proposal",
+          "title": "Proposals"
+        }
       },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal"
       },
+      "proposalVotingTerminal": {
+        "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
+        "title": "Voting"
+      },
       "voteList": {
         "empty": {
-          "title": "No votes found",
-          "description": "No votes have been found."
+          "description": "No votes have been found.",
+          "title": "No votes found"
         },
         "error": {
-          "title": "Error loading votes",
-          "description": "There was an error loading the votes. Please try again later."
-        }
-      },
-      "createProposalForm": {
-        "metadata": {
-          "title": {
-            "title": "Title",
-            "placeholder": "Type a title",
-            "helpText": "Give your proposal a title. This will appear in the proposal overview."
-          },
-          "summary": {
-            "title": "Summary",
-            "placeholder": "Type a summary",
-            "helpText": "Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview."
-          },
-          "body": {
-            "title": "Body",
-            "placeholder": "Type a proposal body",
-            "helpText": "Describe the proposal fully for voters."
-          },
-          "actions": {
-            "title": "Would you like to add actions to this proposal?",
-            "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
-            "label": "Binding onchain actions"
-          },
-          "resources": {
-            "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
-          }
-        },
-        "actions": {
-          "empty": {
-            "heading": "No actions added",
-            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
-          },
-          "action": "Action"
+          "description": "There was an error loading the votes. Please try again later.",
+          "title": "Error loading votes"
         }
       }
     },
     "plugins": {
-      "token": {
-        "tokenMemberList": {
-          "entity": "Members"
-        },
-        "tokenProposalList": {
-          "entity": "Proposals"
-        },
-        "tokenMemberStats": {
-          "votingPower": "Voting power",
-          "tokenBalance": "Token balance",
-          "delegations": "Delegations"
-        },
-        "tokenMemberInfo": {
-          "eligibleVoters": "Eligible voters",
-          "tokenLabel": "Token",
-          "distribution": "Distribution",
-          "supply": "Supply",
-          "members": "Members",
-          "tokenHolders": "Token holders",
-          "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
-          "tokenDistribution": "{{count}} token holders",
-          "tokenLinkDescription": "View all token holders",
-          "tokenSupply": "{{supply}} {{symbol}}"
-        },
-        "tokenGovernanceSettings": {
-          "approvalThreshold": "Approval threshold",
-          "approval": "> {{approvalThreshold}}",
-          "minimumParticipation": "Minimum participation",
-          "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
-          "minimumDuration": "Minimum duration",
-          "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
-          "earlyExecution": "Early execution",
-          "voteChange": "Vote change",
-          "proposalThreshold": "Proposal threshold",
-          "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
-          "yes": "Yes",
-          "no": "No"
-        },
-        "tokenVoteList": {
-          "entity": "Votes"
-        },
-        "tokenProposalListItem": {
-          "abstain": "Abstain",
-          "yes": "Yes",
-          "no": "No"
-        }
-      },
       "multisig": {
+        "multisigGovernanceSettings": {
+          "anyWallet": "Any wallet",
+          "approvals": "{{min}} of {{max}} authorized addresses",
+          "members": "Multisig members",
+          "minimumApproval": "Minimum approval",
+          "proposalCreation": "Proposal creation"
+        },
         "multisigMemberList": {
           "entity": "Members"
+        },
+        "multisigMembersInfo": {
+          "eligibleVoters": "Eligible voters",
+          "linkDescription": "View all members",
+          "membersCount": "See {{count}} addresses",
+          "membersLabel": "Members",
+          "multisigMembers": "Multisig members"
         },
         "multisigProposalList": {
           "entity": "Proposals"
         },
-        "multisigMembersInfo": {
-          "eligibleVoters": "Eligible voters",
-          "membersLabel": "Members",
-          "multisigMembers": "Multisig members",
-          "linkDescription": "View all members",
-          "membersCount": "See {{count}} addresses"
-        },
-        "multisigGovernanceSettings": {
-          "minimumApproval": "Minimum approval",
-          "proposalCreation": "Proposal creation",
-          "members": "Multisig members",
-          "anyWallet": "Any wallet",
-          "approvals": "{{min}} of {{max}} authorized addresses"
-        },
         "multisigVoteList": {
+          "entity": "Votes"
+        }
+      },
+      "token": {
+        "tokenGovernanceSettings": {
+          "approval": "> {{approvalThreshold}}",
+          "approvalThreshold": "Approval threshold",
+          "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "earlyExecution": "Early execution",
+          "minimumDuration": "Minimum duration",
+          "minimumParticipation": "Minimum participation",
+          "no": "No",
+          "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
+          "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
+          "proposalThreshold": "Proposal threshold",
+          "voteChange": "Vote change",
+          "yes": "Yes"
+        },
+        "tokenMemberInfo": {
+          "distribution": "Distribution",
+          "eligibleVoters": "Eligible voters",
+          "members": "Members",
+          "supply": "Supply",
+          "tokenDistribution": "{{count}} token holders",
+          "tokenHolders": "Token holders",
+          "tokenLabel": "Token",
+          "tokenLinkDescription": "View all token holders",
+          "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
+          "tokenSupply": "{{supply}} {{symbol}}"
+        },
+        "tokenMemberList": {
+          "entity": "Members"
+        },
+        "tokenMemberStats": {
+          "delegations": "Delegations",
+          "tokenBalance": "Token balance",
+          "votingPower": "Voting power"
+        },
+        "tokenProposalList": {
+          "entity": "Proposals"
+        },
+        "tokenProposalListItem": {
+          "abstain": "Abstain",
+          "no": "No",
+          "yes": "Yes"
+        },
+        "tokenVoteList": {
           "entity": "Votes"
         }
       }
     },
+    "settings": {
+      "daoSettingsInfo": {
+        "blockchain": "Blockchain",
+        "ens": "ENS name",
+        "links": "Links",
+        "name": "Name",
+        "notChangeable": "Not changeable",
+        "readLess": "Read less",
+        "readMore": "Read more",
+        "summary": "Summary"
+      },
+      "daoSettingsPage": {
+        "aside": {
+          "versionInfoTitle": "Version Info"
+        },
+        "main": {
+          "governanceInfoTitle": "Governance",
+          "membersInfoTitle": "Members",
+          "settingsInfoTitle": "DAO",
+          "title": "Settings"
+        }
+      },
+      "daoVersionInfo": {
+        "app": "App",
+        "governanceLabel": "Governance",
+        "governanceValue": "{{name}} v{{release}}.{{build}}",
+        "osLabel": "Operating system",
+        "osValue": "Aragon OSx"
+      }
+    },
     "shared": {
+      "errorFeedback": {
+        "description": "If you'd like to help, please report the issue to our team.",
+        "link": {
+          "explore": "Explore DAOs",
+          "report": "Report issue"
+        },
+        "title": "Something went wrong"
+      },
+      "formField": {
+        "error": {
+          "pattern": "Invalid {{name}} format",
+          "required": "{{name}} is mandatory",
+          "validate": "{{name}} is invalid"
+        }
+      },
       "page": {
         "header": {
-          "readMore": "Read more",
-          "readLess": "Read less"
+          "readLess": "Read less",
+          "readMore": "Read more"
+        }
+      },
+      "resourcesInput": {
+        "add": "Add",
+        "item": {
+          "labelInput": {
+            "placeholder": "Type a label",
+            "title": "Label"
+          },
+          "linkInput": {
+            "placeholder": "https://",
+            "title": "Link"
+          },
+          "removeResource": "Remove Link"
+        },
+        "title": "Resources"
+      },
+      "transactionDialog": {
+        "footer": {
+          "approve": {
+            "error": "Resend to wallet",
+            "idle": "Approve transaction",
+            "pending": "Awaiting approval"
+          },
+          "cancel": "Cancel",
+          "retry": "Retry"
+        },
+        "step": {
+          "APPROVE": {
+            "addon": "Wallet",
+            "errorLabel": "Rejected by wallet",
+            "label": "Approve transaction"
+          },
+          "CONFIRM": {
+            "addon": "Details",
+            "errorLabel": "Confirmation failed",
+            "label": "Onchain confirmation"
+          },
+          "PREPARE": {
+            "errorLabel": "Unable to prepare transaction",
+            "label": "Prepare transaction"
+          }
         }
       },
       "useApplicationVersion": {
         "version": "v{{version}}",
         "versionEnv": "v{{version}} ({{env}})"
       },
-      "errorFeedback": {
-        "title": "Something went wrong",
-        "description": "If you'd like to help, please report the issue to our team.",
-        "link": {
-          "explore": "Explore DAOs",
-          "report": "Report issue"
-        }
-      },
-      "formField": {
-        "error": {
-          "required": "{{name}} is mandatory",
-          "pattern": "Invalid {{name}} format",
-          "validate": "{{name}} is invalid"
-        }
-      },
-      "transactionDialog": {
-        "step": {
-          "PREPARE": {
-            "label": "Prepare transaction",
-            "errorLabel": "Unable to prepare transaction"
-          },
-          "APPROVE": {
-            "label": "Approve transaction",
-            "errorLabel": "Rejected by wallet",
-            "addon": "Wallet"
-          },
-          "CONFIRM": {
-            "label": "Onchain confirmation",
-            "errorLabel": "Confirmation failed",
-            "addon": "Details"
-          }
-        },
-        "footer": {
-          "retry": "Retry",
-          "cancel": "Cancel",
-          "approve": {
-            "idle": "Approve transaction",
-            "pending": "Awaiting approval",
-            "error": "Resend to wallet"
-          }
-        }
-      },
       "wizard": {
         "container": {
+          "next": "Next:",
           "step": "Step {{number}}",
-          "total": "of {{total}}",
-          "next": "Next:"
+          "total": "of {{total}}"
         },
         "step": {
           "back": "Back",
-          "next": "Next",
           "error": {
             "invalid": {
-              "title": "Invalid data",
-              "description": "Some values are not valid. Review and fix the invalid data to proceed."
-            },
-            "required": {
-              "title": "Missing data",
-              "description": "Some inputs are not filled. Review and fill out all mandatory data to proceed."
+              "description": "Some values are not valid. Review and fix the invalid data to proceed.",
+              "title": "Invalid data"
             },
             "invalid-required": {
-              "title": "Missing and invalid data",
-              "description": "Some inputs are not filled and not valid. Review, fix and fill out all mandatory data to proceed."
+              "description": "Some inputs are not filled and not valid. Review, fix and fill out all mandatory data to proceed.",
+              "title": "Missing and invalid data"
+            },
+            "required": {
+              "description": "Some inputs are not filled. Review and fill out all mandatory data to proceed.",
+              "title": "Missing data"
             }
-          }
-        }
-      },
-      "resourcesInput": {
-        "title": "Resources",
-        "add": "Add",
-        "item": {
-          "removeResource": "Remove Link",
-          "labelInput": {
-            "title": "Label",
-            "placeholder": "Type a label"
           },
-          "linkInput": {
-            "title": "Link",
-            "placeholder": "https://"
-          }
+          "next": "Next"
         }
       }
     }

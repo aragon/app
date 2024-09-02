@@ -15,7 +15,6 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
     });
     const summaryField = useFormField('summary', {
         label: t('app.governance.createProposalForm.metadata.summary.title'),
-        rules: { required: true },
     });
 
     const { ref: bodyRef, ...bodyField } = useFormField('body', {
@@ -31,11 +30,14 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
             <InputText
                 helpText={t('app.governance.createProposalForm.metadata.title.helpText')}
                 placeholder={t('app.governance.createProposalForm.metadata.title.placeholder')}
+                maxLength={128}
                 {...titleField}
             />
             <TextArea
                 helpText={t('app.governance.createProposalForm.metadata.summary.helpText')}
                 placeholder={t('app.governance.createProposalForm.metadata.summary.placeholder')}
+                isOptional={true}
+                maxLength={480}
                 {...summaryField}
             />
             <TextAreaRichText
