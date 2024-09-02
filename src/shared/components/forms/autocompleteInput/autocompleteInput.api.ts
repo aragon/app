@@ -39,4 +39,8 @@ export interface IAutocompleteInputProps {
      * Items to be rendered.
      */
     items: IAutocompleteInputItem[];
+    /**
+     * Information about the item groups.
+     */
+    groups?: IAutocompleteInputItemGroup[];
 }
