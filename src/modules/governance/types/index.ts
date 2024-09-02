@@ -4,3 +4,4 @@ export type { ICanCreateProposalResult } from './canCreateProposalResult';
 export type { ICreateProposalPageParams } from './createProposalPageParams';
 export type { IDaoMemberPageParams } from './daoMemberPageParams';
 export type { IDaoProposalPageParams } from './daoProposalPageParams';
+export type { IPermissionCheckGuardResult, IPermissionCheckGuardSetting } from './permissionCheckGuardResult';

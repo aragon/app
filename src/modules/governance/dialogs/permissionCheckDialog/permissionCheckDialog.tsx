@@ -3,37 +3,45 @@ import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import { Dialog, Spinner } from '@aragon/ods';
 import { useCallback, useEffect } from 'react';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { type ICanCreateProposalResult } from '../../types';
+import { type IUsePermissionCheckBaseParams } from '../../hooks/usePermissionCheckGuard';
+import type { IPermissionCheckGuardResult } from '../../types';
 
-export interface IPermissionCheckDialogParams {
+export interface IPermissionCheckDialogParams<TSlotParams extends IUsePermissionCheckBaseParams> {
     /**
-     *
+     * Parameters to be forwarded to the slot-function to check for permissions.
      */
-    daoId: string;
+    params: TSlotParams;
     /**
-     *
+     * ID of the slot to be used to retrieve the related slot-function.
+     */
+    slotId: string;
+    /**
+     * Callback called on permission check success.
      */
     onSuccess?: () => void;
     /**
-     *
+     * Callback called when closing the permission check dialog.
      */
     onError?: () => void;
 }
 
-export interface IPermissionCheckDialogProps extends IDialogComponentProps<IPermissionCheckDialogParams> {}
+export interface IPermissionCheckDialogProps<TSlotParams extends IUsePermissionCheckBaseParams>
+    extends IDialogComponentProps<IPermissionCheckDialogParams<TSlotParams>> {}
 
-export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (props) => {
+export const PermissionCheckDialog = <TSlotParams extends IUsePermissionCheckBaseParams>(
+    props: IPermissionCheckDialogProps<TSlotParams>,
+) => {
     const { params } = props.location;
-    const { daoId, onSuccess, onError } = params ?? {};
+    const { params: slotParams, slotId, onSuccess, onError } = params ?? {};
+    const { daoId } = slotParams ?? {};
 
     const { close, updateOptions } = useDialogContext();
     const pluginIds = useDaoPluginIds(daoId!);
 
-    const { canCreateProposal, isLoading, settings } = useSlotFunction<ICanCreateProposalResult, string>({
-        slotId: GovernanceSlotId.GOVERNANCE_CAN_CREATE_PROPOSAL,
+    const { hasPermission, isLoading, settings } = useSlotFunction<IPermissionCheckGuardResult, TSlotParams>({
+        slotId: slotId!,
         pluginIds,
-        params: daoId,
+        params: slotParams,
     })!;
 
     const handleDialogClose = useCallback(() => {
@@ -42,11 +50,11 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     }, [close, onError]);
 
     useEffect(() => {
-        if (canCreateProposal) {
+        if (hasPermission) {
             onSuccess?.();
             close();
         }
-    }, [canCreateProposal, onSuccess, close]);
+    }, [hasPermission, onSuccess, close]);
 
     useEffect(() => {
         updateOptions({ onClose: handleDialogClose });

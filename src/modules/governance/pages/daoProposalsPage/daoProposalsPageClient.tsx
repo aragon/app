@@ -49,13 +49,15 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const { check: networkGuard, result: isCorrectNetwork } = useCanCreateProposalGuard({
         onSuccess: () => router.push(createProposalUrl),
         network: dao!.network,
-        daoId,
     });
 
     const actionProps =
         processPlugins.length > 1
             ? { onClick: isCorrectNetwork ? openSelectPluginDialog : networkGuard }
-            : { href: isCorrectNetwork ? createProposalUrl : undefined };
+            : {
+                  onClick: isCorrectNetwork ? undefined : networkGuard,
+                  href: isCorrectNetwork ? createProposalUrl : undefined,
+              };
 
     return (
         <>

@@ -4,26 +4,40 @@ import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import { useCallback } from 'react';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
-import type { ICanCreateProposalResult } from '../../types';
+import type { IPermissionCheckGuardResult } from '../../types';
 
-export interface IUseCanCreateProposalGuardParams extends IUseNetworkGuardParams {
+export interface IUsePermissionCheckBaseParams {
     /**
      * ID of the DAO.
      */
     daoId: string;
 }
 
-export const useCanCreateProposalGuard = (params: IUseCanCreateProposalGuardParams) => {
-    const { daoId, network, onSuccess, onError } = params;
+export interface IUsePermissionCheckGuard<TSlotParams extends IUsePermissionCheckBaseParams>
+    extends IUseNetworkGuardParams {
+    /**
+     * Parameters to be forwarded to the plugin-specific slot function.
+     */
+    params: TSlotParams;
+    /**
+     * Slot ID to use for checking the user permissions.
+     */
+    slotId: string;
+}
+
+export const usePermissionCheckGuard = <TSlotParams extends IUsePermissionCheckBaseParams>(
+    params: IUsePermissionCheckGuard<TSlotParams>,
+) => {
+    const { params: slotParams, slotId, network, onSuccess, onError } = params;
+    const { daoId } = slotParams;
 
     const pluginIds = useDaoPluginIds(daoId);
     const { open } = useDialogContext();
 
-    const { canCreateProposal } = useSlotFunction<ICanCreateProposalResult, string>({
-        slotId: GovernanceSlotId.GOVERNANCE_CAN_CREATE_PROPOSAL,
+    const { hasPermission } = useSlotFunction<IPermissionCheckGuardResult, TSlotParams>({
+        slotId,
         pluginIds,
-        params: daoId,
+        params: slotParams,
     })!;
 
     const handleChangeNetworkSuccess = useCallback(() => {
@@ -37,5 +51,5 @@ export const useCanCreateProposalGuard = (params: IUseCanCreateProposalGuardPara
         onSuccess: handleChangeNetworkSuccess,
     });
 
-    return { check: checkNetwork, result: isCorretNetwork && canCreateProposal };
+    return { check: checkNetwork, result: isCorretNetwork && hasPermission };
 };
