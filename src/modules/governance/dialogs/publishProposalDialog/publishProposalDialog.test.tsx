@@ -38,8 +38,8 @@ describe('<PublishProposalDialog /> component', () => {
     const getProposalIdSpy = jest.spyOn(publishProposalDialogUtils, 'getProposalId');
 
     beforeEach(() => {
-        useAccountSpy.mockReturnValue({} as Wagmi.UseAccountReturnType);
-        useSupportedDaoPluginSpy.mockReturnValue(undefined);
+        useAccountSpy.mockReturnValue({ address: '0x123' } as unknown as Wagmi.UseAccountReturnType);
+        useSupportedDaoPluginSpy.mockReturnValue(generateDaoPlugin());
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle());
         buildTransactionSpy.mockReturnValue({} as Promise<TransactionDialogPrepareReturn>);
     });
@@ -69,6 +69,22 @@ describe('<PublishProposalDialog /> component', () => {
     it('throws error when dialog parameters are not set', () => {
         testLogger.suppressErrors();
         const location = { id: 'test', params: undefined };
+        expect(() => render(createTestComponent({ location }))).toThrow();
+    });
+
+    it('throws error when user is not connected', () => {
+        testLogger.suppressErrors();
+        const params = { values: generateCreateProposalFormData(), daoId: 'test' };
+        const location = { id: '', params };
+        useAccountSpy.mockReturnValue({ address: undefined } as Wagmi.UseAccountReturnType);
+        expect(() => render(createTestComponent({ location }))).toThrow();
+    });
+
+    it('throws error when DAO has no supported plugin', () => {
+        testLogger.suppressErrors();
+        const params = { values: generateCreateProposalFormData(), daoId: 'test' };
+        const location = { id: '', params };
+        useSupportedDaoPluginSpy.mockReturnValue(undefined);
         expect(() => render(createTestComponent({ location }))).toThrow();
     });
 

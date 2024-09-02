@@ -38,12 +38,17 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { location } = props;
 
     invariant(location.params != null, 'PublishProposalDialog: required parameters must be set.');
+
+    const { address } = useAccount();
+    invariant(address != null, 'PublishProposalDialog: user must be connected.');
+
+    const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
+    invariant(supportedPlugin != null, 'PublishProposalDialog: DAO has no supported plugin.');
+
     const { daoId, values } = location.params;
     const { title, summary } = values;
 
     const { t } = useTranslations();
-    const { address } = useAccount();
-    const supportedPlugin = useSupportedDaoPlugin(daoId);
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
@@ -63,13 +68,13 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
         const metadataCid = pinJsonData.IpfsHash;
 
-        return publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin: supportedPlugin! });
+        return publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin: supportedPlugin });
     };
 
     const getProposalLink = (txReceipt: TransactionReceipt) => {
         const { transactionHash } = txReceipt;
         const proposalId = publishProposalDialogUtils.getProposalId(txReceipt);
-        const extendedProposalId = `${transactionHash}-${supportedPlugin?.address}-${proposalId}`;
+        const extendedProposalId = `${transactionHash}-${supportedPlugin.address}-${proposalId}`;
 
         return `/dao/${daoId}/proposals/${extendedProposalId}`;
     };
@@ -108,7 +113,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
                 <ProposalDataListItem.Structure
                     title={title}
                     summary={summary}
-                    publisher={{ address: address! }}
+                    publisher={{ address }}
                     status={ProposalStatus.DRAFT}
                 />
             </DataList.Root>
