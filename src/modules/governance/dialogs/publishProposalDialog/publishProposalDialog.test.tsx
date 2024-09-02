@@ -11,7 +11,7 @@ import {
     generateReactQueryMutationResultSuccess,
 } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { modulesCopy, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
@@ -81,7 +81,7 @@ describe('<PublishProposalDialog /> component', () => {
                 title: expect.stringMatching(/publishProposalDialog.title/),
                 description: expect.stringMatching(/publishProposalDialog.description/),
             }),
-            expect.anything(),
+            {},
         );
     });
 
@@ -92,7 +92,7 @@ describe('<PublishProposalDialog /> component', () => {
             address: '0xD740fd724D616795120BC363316580dAFf41129A',
         } as unknown as Wagmi.UseAccountReturnType);
         render(createTestComponent({ location }));
-        expect(screen.getByText('Draft')).toBeInTheDocument();
+        expect(screen.getByText(modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT)).toBeInTheDocument();
         expect(screen.getByText(values.title)).toBeInTheDocument();
         expect(screen.getByText(values.summary)).toBeInTheDocument();
         expect(screen.getByText('0xD7…129A')).toBeInTheDocument();
