@@ -3,6 +3,7 @@ import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
 import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { convertSecondsToDaysHoursMinutes } from '@/shared/utils/createProposalUtils';
 
 export interface ITokenCreateProposalSettingsFormProps {
     /**
@@ -11,14 +12,6 @@ export interface ITokenCreateProposalSettingsFormProps {
     daoId: string;
 }
 
-const convertSecondsToDHM = (seconds: number) => {
-    const days = Math.floor(seconds / (24 * 60 * 60));
-    seconds -= days * 24 * 60 * 60;
-    const hours = Math.floor(seconds / (60 * 60));
-    seconds -= hours * 60 * 60;
-    const minutes = Math.floor(seconds / 60);
-    return { days, hours, minutes };
-};
 
 export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSettingsFormProps> = ({ daoId }) => {
     const daoSettingsParams = { daoId };
@@ -30,7 +23,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
 
     const startTime = useWatch({ name: 'startTimeFixed' });
 
-    const { days, hours, minutes } = convertSecondsToDHM(minDuration ?? 0);
+    const { days, hours, minutes } = convertSecondsToDaysHoursMinutes(minDuration ?? 0);
 
     return (
         <>

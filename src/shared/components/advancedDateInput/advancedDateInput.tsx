@@ -1,7 +1,7 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertCard, Card, InputDate, InputNumber, InputText, InputTime, RadioCard, RadioGroup } from '@aragon/ods';
 import { useCallback, useEffect } from 'react';
-import { useDefaultValues } from './utils/defaultValues';
+import { useDefaultValues } from './hooks/useDefaultValues';
 import { DateTime, Duration } from 'luxon';
 import { useFormContext, useWatch } from 'react-hook-form';
 import {

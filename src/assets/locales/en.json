@@ -592,7 +592,8 @@
         "hours": "Hours",
         "days": "Days",
         "date": "Date",
-        "time": "Time"
+        "time": "Time",
+        "invalid": "{{label}} is invalid"
       }
     }
   }
