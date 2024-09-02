@@ -1,19 +1,30 @@
 import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useWatch } from 'react-hook-form';
 
 export interface IMultisigCreateProposalSettingsFormProps {}
 
 export const MultisigCreateProposalSettingsForm: React.FC<IMultisigCreateProposalSettingsFormProps> = () => {
+    const { t } = useTranslations();
+
+    const startTime = useWatch({ name: 'startTimeFixed' });
+
     return (
         <>
             <AdvancedDateInput
-                label="Start Time"
-                helpText="Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing."
-                useDuration={false}
+                label={t('app.plugins.multisig.createProposalSettingsForm.startTime.label')}
+                helpText={t('app.plugins.multisig.createProposalSettingsForm.startTime.helpText')}
+                field={t('app.plugins.multisig.createProposalSettingsForm.startTime.field')}
+                infoText={t('app.plugins.multisig.createProposalSettingsForm.startTime.infoText')}
+                isStartField={true}
             />
             <AdvancedDateInput
-                label="Expiration Time"
-                helpText="Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal."
+                label={t('app.plugins.multisig.createProposalSettingsForm.endTime.label')}
+                helpText={t('app.plugins.multisig.createProposalSettingsForm.endTime.helpText')}
+                field={t('app.plugins.multisig.createProposalSettingsForm.endTime.field')}
+                infoText={t('app.plugins.multisig.createProposalSettingsForm.endTime.infoText')}
                 useDuration={true}
+                startTime={startTime}
             />
         </>
     );

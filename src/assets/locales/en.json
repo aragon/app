@@ -384,6 +384,19 @@
         },
         "multisigVoteList": {
           "entity": "Votes"
+        },
+        "createProposalSettingsForm": {
+          "startTime": {
+            "label": "Start time",
+            "field": "startTime",
+            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing."
+          },
+          "endTime": {
+            "label": "Expiration time",
+            "field": "endTime",
+            "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
+            "infoText": "It’s recommended to have an expiration time of five days, so you have a clean proposal list."
+          }
         }
       },
       "token": {
@@ -431,6 +444,19 @@
         },
         "tokenVoteList": {
           "entity": "Votes"
+        },
+        "createProposalSettingsForm": {
+          "startTime": {
+            "label": "Start time",
+            "field": "startTime",
+            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing."
+          },
+          "endTime": {
+            "label": "Expiration time",
+            "field": "endTime",
+            "infoText": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO governance settings",
+            "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude."
+          }
         }
       }
     },
@@ -556,6 +582,17 @@
           },
           "next": "Next"
         }
+      },
+      "advancedDateInput": {
+        "duration": "Duration",
+        "now": "Now",
+        "specific": "Specific date & time",
+        "timezone": "Timezone",
+        "minutes": "Minutes",
+        "hours": "Hours",
+        "days": "Days",
+        "date": "Date",
+        "time": "Time"
       }
     }
   }
