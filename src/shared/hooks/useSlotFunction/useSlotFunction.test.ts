@@ -13,8 +13,8 @@ describe('useSlotFunction hook', () => {
         const params = 5;
         const pluginId = 'plugin-id';
         const slotId = 'slot-id';
-        const slotFunction = (value: number) => value * 2;
-        getSlotFunctionSpy.mockReturnValue(slotFunction as PluginFunction);
+        const slotFunction: PluginFunction = (value: number) => value * 2;
+        getSlotFunctionSpy.mockReturnValue(slotFunction);
         const { result } = renderHook(() => useSlotFunction({ params, slotId, pluginIds: [pluginId] }));
 
         expect(getSlotFunctionSpy).toHaveBeenCalledWith({ slotId, pluginId });
