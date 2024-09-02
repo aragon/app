@@ -462,7 +462,8 @@
       "formField": {
         "error": {
           "required": "{{name}} is mandatory",
-          "pattern": "Invalid {{name}} format"
+          "pattern": "Invalid {{name}} format",
+          "validate": "{{name}} is invalid"
         }
       },
       "transactionDialog": {

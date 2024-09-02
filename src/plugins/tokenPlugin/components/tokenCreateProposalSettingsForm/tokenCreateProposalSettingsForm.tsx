@@ -17,18 +17,20 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
 
     const startDate = useWatch({ name: 'Start TimeDate' });
     const startTime = useWatch({ name: 'Start TimeTime' });
-
-    console.debug('Start', startDate, startTime);
+    console.debug('startDate', startDate);
+    console.debug('startTime', startTime);
     return (
         <>
             <AdvancedDateInput
                 label="Start Time"
+                field="startTime"
                 helpText="Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing."
                 useDuration={false}
                 isStartField={true}
             />
             <AdvancedDateInput
                 label="End Time"
+                field="endTime"
                 helpText="Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal."
                 useDuration={true}
                 minDuration={minDuration ?? 0}

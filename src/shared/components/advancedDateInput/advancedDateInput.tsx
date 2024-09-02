@@ -3,7 +3,7 @@ import { AlertCard, Card, InputDate, InputNumber, InputText, InputTime, RadioCar
 import { useCallback, useState } from 'react';
 import { useDefaultValues } from './utils/defaultValues';
 import { DateTime, Duration } from 'luxon';
-import { useForm, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 export interface IAdvancedDateInputProps {
     /**
@@ -14,6 +14,10 @@ export interface IAdvancedDateInputProps {
      * Label for the input.
      */
     label: string;
+    /**
+     * Field for the input to help parsing data.
+     */
+    field: string;
     /**
      * Help text for the input.
      */
@@ -39,8 +43,9 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
     minDuration = 0,
     startTime,
     isStartField,
+    field,
 }) => {
-    const { setValue, trigger } = useForm();
+    const { clearErrors, setValue, trigger } = useFormContext();
     const [inputMode, setInputMode] = useState<string>(useDuration ? 'duration' : 'now');
     const isNow = inputMode === 'now';
 
@@ -56,7 +61,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
         return DateTime.now().plus({ seconds: minDuration }).startOf('day');
     };
 
-    const dateField = useFormField(`${label}Date`, {
+    const dateField = useFormField(`${field}Date`, {
         label: 'Date',
         rules: {
             required: inputMode === 'fixed',
@@ -71,7 +76,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
         defaultValue: defaultValues.dateTime.date,
     });
 
-    const timeField = useFormField(`${label}Time`, {
+    const timeField = useFormField(`${field}Time`, {
         label: 'Time',
         rules: {
             required: inputMode === 'fixed',
@@ -86,15 +91,9 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
         defaultValue: defaultValues.dateTime.time,
     });
 
-    const watchedDuration = useWatch({
-        name: `${label}Duration`,
-        defaultValue: defaultValues.duration,
-    });
-
     const validateDuration = useCallback(
         (value: { days: number; hours: number; minutes: number }) => {
             if (inputMode !== 'duration') return true;
-            console.debug('Validate duration', value);
             const safeValue = {
                 days: Number(value.days) || 0,
                 hours: Number(value.hours) || 0,
@@ -113,58 +112,55 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
         [inputMode, minDuration],
     );
 
-    // const durationField = useFormField(`${label}Duration`, {
-    //     rules: {
-    //         validate: validateDuration,
-    //     },
-    //     defaultValue: defaultValues.duration,
-    // });
+    const durationField = useFormField(`${label}Duration`, {
+        rules: {
+            validate: validateDuration,
+        },
+        defaultValue: defaultValues.duration,
+    });
 
-    // const handleDurationChange =
-    //     (field: 'days' | 'hours' | 'minutes') => (event: React.ChangeEvent<HTMLInputElement>) => {
-    //         console.debug('Duration change', field, event.target.value);
-    //         const value = parseInt(event.target.value, 10) || 0;
-    //         setValue(`${label}Duration`, { ...durationField.value, [field]: value }, { shouldValidate: true });
-    //         trigger(`${label}Duration`);
-    //     };
+    const handleDurationChange =
+        (field: 'days' | 'hours' | 'minutes') => (event: React.ChangeEvent<HTMLInputElement>) => {
+            const value = parseInt(event.target.value, 10) || 0;
+            setValue(`${label}Duration`, { ...durationField.value, [field]: value }, { shouldValidate: false });
+            clearErrors(`${label}Duration`);
+            trigger(`${label}Duration`);
+        };
 
-    const durationMinutesField = useFormField(`${label}Duration.minutes`, {
+    const durationMinutesField = useFormField(`${field}Duration.minutes`, {
         label: 'Minutes',
         rules: {
             required: inputMode === 'duration',
             min: 0,
             max: 59,
-            //onChange: handleDurationChange('minutes'),
-            validate: (value) => validateDuration({ ...watchedDuration, minutes: value }),
+            onChange: handleDurationChange('minutes'),
         },
         defaultValue: defaultValues.duration.minutes,
     });
 
-    const durationHoursField = useFormField(`${label}Duration.hours`, {
+    const durationHoursField = useFormField(`${field}Duration.hours`, {
         label: 'Hours',
         rules: {
             required: inputMode === 'duration',
             min: 0,
             max: 23,
-            //onChange: handleDurationChange('hours'),
-            validate: (value) => validateDuration({ ...watchedDuration, hours: value }),
+            onChange: handleDurationChange('hours'),
         },
         defaultValue: defaultValues.duration.hours,
     });
 
-    const durationDaysField = useFormField(`${label}Duration.days`, {
+    const durationDaysField = useFormField(`${field}Duration.days`, {
         label: 'Days',
         rules: {
             required: inputMode === 'duration',
             min: 0,
-            //onChange: handleDurationChange('days'),
-            validate: (value) => validateDuration({ ...watchedDuration, days: value }),
+            onChange: handleDurationChange('days'),
         },
         defaultValue: defaultValues.duration.days,
     });
 
     const fixedErrors = dateField.alert ?? timeField.alert;
-    const durationErrors = durationDaysField.alert ?? durationHoursField.alert ?? durationMinutesField.alert;
+    const durationErrors = !!durationField.alert;
 
     return (
         <>
