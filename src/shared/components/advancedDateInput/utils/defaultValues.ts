@@ -1,40 +1,46 @@
 import { useMemo } from 'react';
+import { DateTime, Duration } from 'luxon';
 
 export interface IUseDefaultValuesProps {
     minDuration: number;
     startTime?: { date: string; time: string };
+    isNow: boolean;
 }
 
-export const useDefaultValues = ({ minDuration, startTime }: IUseDefaultValuesProps) => {
+export const useDefaultValues = ({ minDuration, startTime, isNow }: IUseDefaultValuesProps) => {
     return useMemo(() => {
-        const getDefaultDateTime = () => {
-            let defaultDate = new Date();
-            if (startTime) {
-                const [year, month, day] = startTime.date.split('-').map(Number);
-                const [hours, minutes] = startTime.time.split(':').map(Number);
-                defaultDate = new Date(year, month - 1, day, hours, minutes);
+        const getDefaultDateTime = (): { date: string; time: string } => {
+            let defaultDateTime: DateTime;
 
+            if (isNow) {
+                defaultDateTime = DateTime.now();
+            } else if (startTime) {
+                defaultDateTime = DateTime.fromISO(`${startTime.date}T${startTime.time}`);
                 if (minDuration > 0) {
-                    defaultDate.setSeconds(defaultDate.getSeconds() + minDuration);
+                    defaultDateTime = defaultDateTime.plus({ seconds: minDuration });
                 } else {
-                    defaultDate.setDate(defaultDate.getDate() + 5); // Add 5 days if no minDuration
+                    defaultDateTime = defaultDateTime.plus({ days: 5 });
                 }
             } else if (minDuration > 0) {
-                defaultDate.setSeconds(defaultDate.getSeconds() + minDuration);
+                defaultDateTime = DateTime.now().plus({ seconds: minDuration });
+            } else {
+                defaultDateTime = DateTime.now().plus({ days: 5 });
             }
 
             return {
-                date: defaultDate.toISOString().split('T')[0],
-                time: defaultDate.toTimeString().slice(0, 5),
+                date: defaultDateTime.toISODate() ?? '',
+                time: defaultDateTime.toFormat('HH:mm'),
             };
         };
 
         const getDefaultDuration = () => {
             if (minDuration > 0) {
-                const days = Math.floor(minDuration / 86400);
-                const hours = Math.floor((minDuration % 86400) / 3600);
-                const minutes = Math.floor((minDuration % 3600) / 60);
-                return { days, hours, minutes };
+                const duration = Duration.fromMillis(minDuration * 1000);
+                return {
+                    days: Math.floor(duration.as('days')),
+                    hours: Math.floor(duration.as('hours') % 24),
+                    minutes: Math.floor(duration.as('minutes') % 60),
+                };
             }
             return { days: 5, hours: 0, minutes: 0 };
         };
@@ -43,5 +49,5 @@ export const useDefaultValues = ({ minDuration, startTime }: IUseDefaultValuesPr
         const duration = getDefaultDuration();
 
         return { dateTime, duration };
-    }, [minDuration, startTime]);
+    }, [minDuration, startTime, isNow]);
 };
