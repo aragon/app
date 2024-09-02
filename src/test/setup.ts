@@ -3,7 +3,7 @@
 import '@testing-library/jest-dom';
 import 'jest-canvas-mock';
 import { TextDecoder, TextEncoder } from 'util';
-import { mockFetch, mockTranslations, testLogger } from './utils';
+import { mockFetch, mockTranslations, testLogger, timeUtils } from './utils';
 
 // Setup test logger
 testLogger.setup();
@@ -13,6 +13,9 @@ mockFetch();
 
 // Setup test translations
 mockTranslations.setup();
+
+// Setup test times
+timeUtils.setup();
 
 // Globally setup TextEncoder/TextDecoder needed by viem
 Object.assign(global, { TextDecoder, TextEncoder });

@@ -1,21 +1,12 @@
 import { generateToken } from '@/modules/finance/testUtils';
+import { timeUtils } from '@/test/utils';
 import { ProposalStatus, type IProposalAction } from '@aragon/ods';
-import { DateTime, Settings } from 'luxon';
+import { DateTime } from 'luxon';
 import { generateTokenProposal } from '../../testUtils';
 import { DaoTokenVotingMode, VoteOption, type IDaoTokenSettings, type ITokenProposalOptionVotes } from '../../types';
 import { tokenProposalUtils } from './tokenProposalUtils';
 
 describe('tokenProposal utils', () => {
-    const originalNow = Settings.now;
-
-    afterEach(() => {
-        Settings.now = originalNow;
-    });
-
-    const setNow = (now?: string) => {
-        Settings.now = () => (now != null ? new Date(now) : new Date()).valueOf();
-    };
-
     describe('getProposalStatus', () => {
         const isApprovalReachedSpy = jest.spyOn(tokenProposalUtils, 'isApprovalReached');
 
@@ -36,7 +27,7 @@ describe('tokenProposal utils', () => {
             const now = '2022-02-10T07:55:55.868Z';
             const startDate = DateTime.fromISO('2022-02-10T08:00:00.000Z').toMillis() / 1000;
             const proposal = generateTokenProposal({ startDate });
-            setNow(now);
+            timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.PENDING);
         });
 
@@ -48,7 +39,7 @@ describe('tokenProposal utils', () => {
                 { from: '0', to: '1', data: '', value: '0', type: '', inputData: null },
             ];
             const proposal = generateTokenProposal({ startDate, settings, actions });
-            setNow(now);
+            timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValueOnce(false).mockReturnValueOnce(true);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
         });
@@ -61,7 +52,7 @@ describe('tokenProposal utils', () => {
                 { from: '0', to: '1', data: '', value: '0', type: '', inputData: null },
             ];
             const proposal = generateTokenProposal({ startDate, endDate, actions });
-            setNow(now);
+            timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
         });
@@ -71,7 +62,7 @@ describe('tokenProposal utils', () => {
             const startDate = DateTime.fromISO('2022-02-05T08:00:00.000Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2022-02-12T08:00:00.000Z').toMillis() / 1000;
             const proposal = generateTokenProposal({ startDate, endDate });
-            setNow(now);
+            timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACTIVE);
         });
 
@@ -82,7 +73,7 @@ describe('tokenProposal utils', () => {
             const actions: IProposalAction[] = [];
             const proposal = generateTokenProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
-            setNow(now);
+            timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACCEPTED);
         });
 
@@ -92,7 +83,7 @@ describe('tokenProposal utils', () => {
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
             const proposal = generateTokenProposal({ startDate, endDate });
             isApprovalReachedSpy.mockReturnValue(false);
-            setNow(now);
+            timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.REJECTED);
         });
     });

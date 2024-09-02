@@ -1,20 +1,11 @@
+import { timeUtils } from '@/test/utils';
 import { ProposalStatus, type IProposalAction } from '@aragon/ods';
-import { DateTime, Settings } from 'luxon';
+import { DateTime } from 'luxon';
 import { generateMultisigProposal } from '../../testUtils';
 import type { IDaoMultisigSettings } from '../../types';
 import { multisigProposalUtils } from './multisigProposalUtils';
 
 describe('multisigProposal utils', () => {
-    const originalNow = Settings.now;
-
-    afterEach(() => {
-        Settings.now = originalNow;
-    });
-
-    const setNow = (now?: string) => {
-        Settings.now = () => (now != null ? new Date(now) : new Date()).valueOf();
-    };
-
     describe('getProposalStatus', () => {
         const isApprovalReachedSpy = jest.spyOn(multisigProposalUtils, 'isApprovalReached');
 
@@ -35,7 +26,7 @@ describe('multisigProposal utils', () => {
             const now = '2024-08-07T09:49:56.868Z';
             const startDate = DateTime.fromISO('2024-08-10T09:49:56.868Z').toMillis() / 1000;
             const proposal = generateMultisigProposal({ startDate });
-            setNow(now);
+            timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.PENDING);
         });
 
@@ -48,7 +39,7 @@ describe('multisigProposal utils', () => {
             ];
             const proposal = generateMultisigProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
-            setNow(now);
+            timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
         });
 
@@ -57,7 +48,7 @@ describe('multisigProposal utils', () => {
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
             const proposal = generateMultisigProposal({ startDate, endDate });
-            setNow(now);
+            timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACTIVE);
         });
 
@@ -68,7 +59,7 @@ describe('multisigProposal utils', () => {
             const actions: IProposalAction[] = [];
             const proposal = generateMultisigProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
-            setNow(now);
+            timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACCEPTED);
         });
 
@@ -81,7 +72,7 @@ describe('multisigProposal utils', () => {
             ];
             const proposal = generateMultisigProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
-            setNow(now);
+            timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXPIRED);
         });
 
@@ -91,7 +82,7 @@ describe('multisigProposal utils', () => {
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
             const proposal = generateMultisigProposal({ startDate, endDate });
             isApprovalReachedSpy.mockReturnValue(false);
-            setNow(now);
+            timeUtils.setTime(now);
             expect(multisigProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.REJECTED);
         });
     });

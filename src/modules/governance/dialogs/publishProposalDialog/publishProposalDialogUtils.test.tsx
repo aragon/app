@@ -1,6 +1,7 @@
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { DateTime, Settings } from 'luxon';
+import { timeUtils } from '@/test/utils';
+import { DateTime } from 'luxon';
 import type { TransactionReceipt } from 'viem';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
@@ -11,17 +12,11 @@ import {
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 describe('publishProposalDialog utils', () => {
-    const originalNow = Settings.now;
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 
     afterEach(() => {
-        Settings.now = originalNow;
         getSlotFunctionSpy.mockReset();
     });
-
-    const setNow = (now?: string) => {
-        Settings.now = () => (now != null ? new Date(now) : new Date()).valueOf();
-    };
 
     describe('prepareMetadata', () => {
         it('correctly map form values to metadata object', () => {
@@ -140,7 +135,7 @@ describe('publishProposalDialog utils', () => {
         });
 
         it('returns the parsed end date in seconds as an integer by adding the defined duration to the current time', () => {
-            setNow('2020-12-20T15:30:00');
+            timeUtils.setTime('2020-12-20T15:30:00');
             const startTimeMode = 'now';
             const endTimeMode = 'duration';
             const endTimeDuration = { days: 3, hours: 0, minutes: 30 };
