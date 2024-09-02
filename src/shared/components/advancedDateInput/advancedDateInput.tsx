@@ -196,7 +196,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                     {!isStartField && (
                         <AlertCard
                             message={label}
-                            description={fixedErrors ? 'One hour is the minimum expiration time' : infoText}
+                            description={fixedErrors ? t('app.shared.advancedDateInput.invalid', { label }) : infoText}
                             variant={fixedErrors ? 'critical' : 'info'}
                         />
                     )}
@@ -231,7 +231,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                     </div>
                     <AlertCard
                         message={label}
-                        description={durationErrors ? 'One hour is the minimum expiration time' : infoText}
+                        description={durationErrors ? t('app.shared.advancedDateInput.invalid', { label }) : infoText}
                         variant={durationErrors ? 'critical' : 'info'}
                     />
                 </Card>
