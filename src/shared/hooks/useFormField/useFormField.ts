@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useController, type FieldPath, type FieldValues } from 'react-hook-form';
+import { FieldValue, Path, RegisterOptions, useController, type FieldPath, type FieldValues } from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
 
 export const useFormField = <
@@ -11,8 +11,30 @@ export const useFormField = <
 ): IUseFormFieldReturn => {
     const { t } = useTranslations();
 
-    const { label, ...otherOptions } = options ?? {};
-    const { field, fieldState } = useController({ name, ...otherOptions });
+    const { label, rules, ...otherOptions } = options ?? {};
+
+    const baseRules: RegisterOptions<TFieldValues, TName> = {
+        ...rules,
+        validate: {
+            ...(rules?.validate as Record<string, (value: FieldValue<TFieldValues>) => string | boolean>),
+            noEmptyStrings: (value: FieldValue<TFieldValues>) => {
+                if (typeof value === 'string') {
+                    const trimmedValue = value.trim();
+                    if (rules?.required || trimmedValue !== '') {
+                        return !!value.trim();
+                    }
+                }
+                return true;
+            },
+        },
+        deps: rules?.deps as Path<TFieldValues> | Array<Path<TFieldValues>> | undefined,
+    };
+
+    const { field, fieldState } = useController({
+        name,
+        ...otherOptions,
+        rules: baseRules,
+    });
 
     const variant = fieldState.error != null ? 'critical' : 'default';
 

@@ -490,7 +490,8 @@
       "formField": {
         "error": {
           "pattern": "Invalid {{name}} format",
-          "required": "{{name}} is mandatory"
+          "required": "{{name}} is mandatory",
+          "noEmptyStrings": "{{name}} cannot be an empty string"
         }
       },
       "page": {

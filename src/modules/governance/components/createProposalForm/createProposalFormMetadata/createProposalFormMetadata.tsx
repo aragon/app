@@ -10,7 +10,12 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
 
     const titleField = useFormField('title', {
         label: t('app.governance.createProposalForm.metadata.title.title'),
-        rules: { required: true },
+        rules: {
+            required: true,
+            validate: {
+                noEmptyStrings: (value) => value.trim() !== '' || 'Title field cannot be empty or just spaces',
+            },
+        },
         defaultValue: '',
     });
     const summaryField = useFormField('summary', {
