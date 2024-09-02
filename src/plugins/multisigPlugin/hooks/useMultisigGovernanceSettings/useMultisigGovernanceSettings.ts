@@ -3,18 +3,9 @@ import type { IDaoMultisigSettings } from '@/plugins/multisigPlugin/types';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
 import { useDaoSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IDaoSettingTermAndDefinition } from '../../../../modules/settings/types';
+import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '../../../../modules/settings/types';
 
-interface IUseMultisigGovernanceSettingsParams {
-    /**
-     * ID of the Dao.
-     */
-    daoId: string;
-    /**
-     * Settings of the multisig based Dao.
-     */
-    settings?: IDaoMultisigSettings;
-}
+export interface IUseMultisigGovernanceSettingsParams extends IUseGovernanceSettingsParams<IDaoMultisigSettings> {}
 
 export const useMultisigGovernanceSettings = (
     params: IUseMultisigGovernanceSettingsParams,

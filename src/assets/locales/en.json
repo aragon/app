@@ -349,6 +349,20 @@
         "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
         "title": "Voting"
       },
+      "publishProposalDialog": {
+        "button": {
+          "submit": "Publish proposal",
+          "success": "View proposal"
+        },
+        "description": "To publish your proposal you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Publish proposal"
+      },
       "voteList": {
         "empty": {
           "description": "No votes have been found.",

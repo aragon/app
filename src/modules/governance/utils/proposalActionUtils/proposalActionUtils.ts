@@ -8,6 +8,7 @@ import {
     type IProposalActionWithdrawToken,
 } from '@/modules/governance/api/governanceService';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { type IDaoLink } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
@@ -95,10 +96,12 @@ class ProposalActionUtils {
     ): OdsIProposalActionChangeSettings => {
         const { type, proposedSettings, ...otherValues } = action;
         const { settings: existingSettings } = proposal;
-        const supportedPlugin = pluginIds.find((id) => pluginRegistryUtils.getPlugin(id) != null);
 
-        const parsingFunction = pluginRegistryUtils.getSlotFunction({
-            pluginId: supportedPlugin!,
+        const parsingFunction = pluginRegistryUtils.getSupportedSlotFunction<
+            IUseGovernanceSettingsParams,
+            IDaoSettingTermAndDefinition[]
+        >({
+            pluginIds: pluginIds,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         })!;
 
