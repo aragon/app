@@ -15,10 +15,9 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
     const { data: dao } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
     const minDuration = dao?.settings.minDuration;
 
-    const startDate = useWatch({ name: 'Start TimeDate' });
-    const startTime = useWatch({ name: 'Start TimeTime' });
-    console.debug('startDate', startDate);
-    console.debug('startTime', startTime);
+    const startTime = useWatch({ name: 'startTimeFixed' });
+    console.debug('startDate', startTime);
+
     return (
         <>
             <AdvancedDateInput
@@ -34,7 +33,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 helpText="Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal."
                 useDuration={true}
                 minDuration={minDuration ?? 0}
-                startTime={startDate && startTime ? { date: startDate, time: startTime } : undefined}
+                startTime={startTime}
                 isStartField={false}
             />
         </>

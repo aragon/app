@@ -1,6 +1,6 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertCard, Card, InputDate, InputNumber, InputText, InputTime, RadioCard, RadioGroup } from '@aragon/ods';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDefaultValues } from './utils/defaultValues';
 import { DateTime, Duration } from 'luxon';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -29,11 +29,37 @@ export interface IAdvancedDateInputProps {
     /**
      * Start time to be used for validation.
      */
-    startTime?: { date: string; time: string };
+    startTime?: ICreateProposalFormFixedDateTime;
     /**
      *   Boolean to indicate if start time
      */
     isStartField: boolean;
+}
+
+interface ICreateProposalFormFixedDateTime {
+    /**
+     * Date in YYYY-MM-DD format.
+     */
+    date: string;
+    /**
+     * Time in HH:MM format.
+     */
+    time: string;
+}
+
+interface ICreateProposalFormDuration {
+    /**
+     * Minutes as a number between [0, 59] range.
+     */
+    minutes: number;
+    /**
+     * Hours as a number between [0, 23] range.
+     */
+    hours: number;
+    /**
+     * Number of days.
+     */
+    days: number;
 }
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
@@ -46,8 +72,9 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
     field,
 }) => {
     const { clearErrors, setValue, trigger } = useFormContext();
-    const [inputMode, setInputMode] = useState<string>(useDuration ? 'duration' : 'now');
-    const isNow = inputMode === 'now';
+    const modeField = useFormField(`${field}Mode`, { defaultValue: useDuration ? 'duration' : 'now' });
+    const inputMode = useWatch({ name: `${field}Mode` });
+    const isNow = inputMode === 'now' || isStartField;
 
     const defaultValues = useDefaultValues({
         minDuration,
@@ -57,50 +84,57 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
         isNow,
     });
 
-    const getMinDate = () => {
-        return DateTime.now().plus({ seconds: minDuration }).startOf('day');
-    };
+    useEffect(() => {
+        if (inputMode === 'fixed') {
+            setValue(`${field}Fixed`, defaultValues.dateTime);
+        } else if (inputMode === 'duration') {
+            setValue(`${field}Duration`, defaultValues.duration);
+        }
+        trigger(field);
+    }, [inputMode, field]);
 
-    const dateField = useFormField(`${field}Date`, {
-        label: 'Date',
-        rules: {
-            required: inputMode === 'fixed',
-            validate: (date: string) => {
-                if (inputMode !== 'fixed') return true;
-                if (!isStartField) return true;
-                const selectedDate = DateTime.fromISO(date);
-                const minDate = getMinDate();
-                return selectedDate >= minDate;
-            },
+    const handleModeChange = useCallback(
+        (newMode: string) => {
+            setValue(`${field}Mode`, newMode);
         },
-        defaultValue: defaultValues.dateTime.date,
-    });
+        [setValue, field],
+    );
 
-    const timeField = useFormField(`${field}Time`, {
-        label: 'Time',
-        rules: {
-            required: inputMode === 'fixed',
-            validate: (time: string) => {
-                if (inputMode !== 'fixed') return true;
-                const [hours, minutes] = time.split(':').map(Number);
-                const selectedDateTime = DateTime.fromISO(dateField.value).set({ hour: hours, minute: minutes });
-                const minDateTime = DateTime.now().plus({ seconds: minDuration });
-                return selectedDateTime >= minDateTime;
-            },
+    const validateFixedDateTime = useCallback(
+        (value: ICreateProposalFormFixedDateTime) => {
+            if (inputMode !== 'fixed') {
+                return true;
+            }
+            if (isStartField) {
+                return true; // No validation for start time
+            }
+
+            const selectedDateTime = DateTime.fromISO(`${value.date}T${value.time}`);
+            const minDateTime = DateTime.now().plus({ seconds: minDuration });
+
+            if (startTime) {
+                const startDateTime = DateTime.fromISO(`${startTime.date}T${startTime.time}`);
+                if (selectedDateTime <= startDateTime) {
+                    return 'End time must be after the start time';
+                }
+            }
+
+            if (selectedDateTime < minDateTime) {
+                return 'End time must be at least one hour in the future';
+            }
+
+            return true;
         },
-        defaultValue: defaultValues.dateTime.time,
-    });
+        [inputMode, isStartField, minDuration, startTime],
+    );
 
     const validateDuration = useCallback(
-        (value: { days: number; hours: number; minutes: number }) => {
-            if (inputMode !== 'duration') return true;
-            const safeValue = {
-                days: Number(value.days) || 0,
-                hours: Number(value.hours) || 0,
-                minutes: Number(value.minutes) || 0,
-            };
+        (value: ICreateProposalFormDuration) => {
+            if (inputMode !== 'duration') {
+                return true;
+            }
 
-            const duration = Duration.fromObject(safeValue);
+            const duration = Duration.fromObject(value);
             const minDurationDuration = Duration.fromObject({ seconds: minDuration });
 
             if (duration < minDurationDuration) {
@@ -112,64 +146,47 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
         [inputMode, minDuration],
     );
 
-    const durationField = useFormField(`${label}Duration`, {
+    const handleFixedDateTimeChange = (type: 'date' | 'time') => (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = { ...fixedDateTimeField.value, [type]: event.target.value };
+        setValue(`${field}Fixed`, newValue, { shouldValidate: false });
+        clearErrors(`${field}Fixed`);
+        trigger(`${field}Fixed`);
+    };
+
+    const handleDurationChange = (type: 'days' | 'hours' | 'minutes') => (value: string) => {
+        const numericValue = parseInt(value, 10) || 0;
+        const newValue = { ...durationField.value, [type]: numericValue };
+        setValue(`${field}Duration`, newValue, { shouldValidate: false });
+        clearErrors(`${field}Duration`);
+        trigger(`${field}Duration`);
+    };
+
+    const fixedDateTimeField = useFormField(`${field}Fixed`, {
+        rules: {
+            validate: validateFixedDateTime,
+        },
+        defaultValue: defaultValues.dateTime,
+    });
+
+    const durationField = useFormField(`${field}Duration`, {
         rules: {
             validate: validateDuration,
         },
         defaultValue: defaultValues.duration,
     });
 
-    const handleDurationChange =
-        (field: 'days' | 'hours' | 'minutes') => (event: React.ChangeEvent<HTMLInputElement>) => {
-            const value = parseInt(event.target.value, 10) || 0;
-            setValue(`${label}Duration`, { ...durationField.value, [field]: value }, { shouldValidate: false });
-            clearErrors(`${label}Duration`);
-            trigger(`${label}Duration`);
-        };
-
-    const durationMinutesField = useFormField(`${field}Duration.minutes`, {
-        label: 'Minutes',
-        rules: {
-            required: inputMode === 'duration',
-            min: 0,
-            max: 59,
-            onChange: handleDurationChange('minutes'),
-        },
-        defaultValue: defaultValues.duration.minutes,
-    });
-
-    const durationHoursField = useFormField(`${field}Duration.hours`, {
-        label: 'Hours',
-        rules: {
-            required: inputMode === 'duration',
-            min: 0,
-            max: 23,
-            onChange: handleDurationChange('hours'),
-        },
-        defaultValue: defaultValues.duration.hours,
-    });
-
-    const durationDaysField = useFormField(`${field}Duration.days`, {
-        label: 'Days',
-        rules: {
-            required: inputMode === 'duration',
-            min: 0,
-            onChange: handleDurationChange('days'),
-        },
-        defaultValue: defaultValues.duration.days,
-    });
-
-    const fixedErrors = dateField.alert ?? timeField.alert;
+    const fixedErrors = !!fixedDateTimeField.alert;
     const durationErrors = !!durationField.alert;
 
     return (
         <>
             <RadioGroup
+                {...modeField}
                 label={label}
                 className="flex gap-4 md:!flex-row"
                 helpText={helpText}
                 value={inputMode}
-                onValueChange={setInputMode}
+                onValueChange={handleModeChange}
             >
                 <RadioCard
                     className="w-full"
@@ -183,11 +200,18 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                 <Card className="flex flex-col gap-4 p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">
                         <InputDate
+                            label="Date"
                             min={new Date().toISOString().split('T')[0]}
                             className="w-full md:w-1/3"
-                            {...dateField}
+                            value={fixedDateTimeField.value.date}
+                            onChange={handleFixedDateTimeChange('date')}
                         />
-                        <InputTime className="w-full md:w-1/3" {...timeField} />
+                        <InputTime
+                            label="Time"
+                            className="w-full md:w-1/3"
+                            value={fixedDateTimeField.value.time}
+                            onChange={handleFixedDateTimeChange('time')}
+                        />
                         <InputText className="w-full md:w-1/3" label="Timezone" placeholder="UTC +2" disabled={true} />
                     </div>
                     {!isStartField && (
@@ -211,16 +235,24 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                             max={59}
                             className="w-full md:w-1/3"
                             placeholder="0 min"
-                            {...durationMinutesField}
+                            value={durationField.value.minutes}
+                            onChange={handleDurationChange('minutes')}
                         />
                         <InputNumber
                             min={0}
                             max={23}
                             className="w-full md:w-1/3"
                             placeholder="0 h"
-                            {...durationHoursField}
+                            value={durationField.value.hours}
+                            onChange={handleDurationChange('hours')}
                         />
-                        <InputNumber min={0} className="w-full md:w-1/3" placeholder="7 d" {...durationDaysField} />
+                        <InputNumber
+                            min={0}
+                            className="w-full md:w-1/3"
+                            placeholder="7 d"
+                            value={durationField.value.days}
+                            onChange={handleDurationChange('days')}
+                        />
                     </div>
                     <AlertCard
                         message="Expiration time"
