@@ -1,10 +1,9 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertCard, Card, InputDate, InputNumber, InputText, InputTime, RadioCard, RadioGroup } from '@aragon/ods';
 import { DateTime, Duration } from 'luxon';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
-import { useDefaultValues } from './hooks/useDefaultValues';
 import {
     DateTimeFields,
     DurationFields,
@@ -13,6 +12,7 @@ import {
     type IAdvancedDateInputProps,
     InputModeOptions,
 } from './advancedInput.api';
+import { dateUtils } from '@/shared/utils/createProposalUtils';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     const { useDuration = false, label, helpText, minDuration = 0, startTime, field, infoText } = props;
@@ -28,23 +28,14 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
 
     const isNow = inputMode === 'now' || !startTime;
 
-    const defaultValues = useDefaultValues({
-        minDuration,
-        startTime:
-            startTime ??
-            (isNow ? { date: DateTime.now().toISODate(), time: DateTime.now().toFormat('HH:mm') } : undefined),
-        isNow,
-    });
+    const getDefaultDateTime = useCallback(() => {
+        return dateUtils.getStartDate({ minDuration, startTime, isNow });
+    }, [minDuration, startTime, isNow]);
 
-    useEffect(() => {
-        if (inputMode === InputModeOptions.FIXED) {
-            setValue(`${field}Fixed`, defaultValues.dateTime);
-        } else if (inputMode === InputModeOptions.DURATION) {
-            setValue(`${field}Duration`, defaultValues.duration);
-        }
-        trigger(field);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [inputMode, field]);
+    const getDefaultDuration = useCallback(() => {
+        const defaultDuration = { days: 5, hours: 0, minutes: 0 };
+        return dateUtils.secondsToDaysHoursMinutes(minDuration) ?? defaultDuration;
+    }, [minDuration]);
 
     const handleModeChange = useCallback(
         (newMode: string) => {
@@ -122,17 +113,17 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     };
 
     const fixedDateTimeField = useFormField(`${field}Fixed`, {
-        rules: {
-            validate: validateFixedDateTime,
-        },
-        defaultValue: defaultValues.dateTime,
-    });
+      rules: {
+          validate: validateFixedDateTime,
+      },
+      defaultValue: getDefaultDateTime(),
+  });
 
     const durationField = useFormField(`${field}Duration`, {
         rules: {
             validate: validateDuration,
         },
-        defaultValue: defaultValues.duration,
+        defaultValue: getDefaultDuration(),
     });
 
     const fixedErrors = !!fixedDateTimeField.alert;
