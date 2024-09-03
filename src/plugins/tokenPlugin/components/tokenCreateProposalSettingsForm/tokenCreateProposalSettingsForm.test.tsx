@@ -10,8 +10,9 @@ import {
     TokenCreateProposalSettingsForm,
     type ITokenCreateProposalSettingsFormProps,
 } from './tokenCreateProposalSettingsForm';
+import * as ReactHookForm from 'react-hook-form';
 
-jest.mock('react-hook-form');
+jest.mock('react-hook-form', () => ({ __esModule: true, ...jest.requireActual('react-hook-form') }));
 jest.mock('@/shared/components/advancedDateInput', () => ({
     AdvancedDateInput: ({
         label,
@@ -38,17 +39,19 @@ jest.mock('@/shared/components/advancedDateInput', () => ({
 
 describe('<TokenCreateProposalSettingsForm /> component', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
-    const usesecondsToDaysHoursMinutesSpy = jest.spyOn(createProposalUtils, 'secondsToDaysHoursMinutes');
+    const useSecondsToDaysHoursMinutesSpy = jest.spyOn(createProposalUtils, 'secondsToDaysHoursMinutes');
+    const useWatchSpy: jest.SpyInstance<unknown> = jest.spyOn(ReactHookForm, 'useWatch');
 
     beforeEach(() => {
-        (useWatch as jest.Mock).mockReturnValue({ date: '2024-09-01', time: '12:00' });
+        useWatchSpy.mockReturnValue({ date: '2024-09-01', time: '12:00' });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
-        usesecondsToDaysHoursMinutesSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
+        useSecondsToDaysHoursMinutesSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
     });
 
     afterEach(() => {
         useDaoSettingsSpy.mockReset();
-        usesecondsToDaysHoursMinutesSpy.mockReset();
+        useSecondsToDaysHoursMinutesSpy.mockReset();
+        useWatchSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenCreateProposalSettingsFormProps>) => {
@@ -117,6 +120,6 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         render(createTestComponent());
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
         expect(endTimeInput).toHaveTextContent('Min Duration: 0');
-        expect(usesecondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(0);
+        expect(useSecondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(0);
     });
 });
