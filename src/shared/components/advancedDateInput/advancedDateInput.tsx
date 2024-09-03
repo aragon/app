@@ -17,16 +17,15 @@ import { dateUtils } from '@/shared/utils/createProposalUtils';
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     const { useDuration = false, label, helpText, minDuration = 0, startTime, field, infoText } = props;
     const { t } = useTranslations();
-
     const { clearErrors, setValue, trigger } = useFormContext();
-
-    const modeField = useFormField(`${field}Mode`, {
-        defaultValue: useDuration ? InputModeOptions.DURATION : InputModeOptions.NOW,
-    });
 
     const inputMode = useWatch({ name: `${field}Mode` });
 
     const isNow = inputMode === 'now' || !startTime;
+
+    const modeField = useFormField(`${field}Mode`, {
+        defaultValue: useDuration ? InputModeOptions.DURATION : InputModeOptions.NOW,
+    });
 
     const getDefaultDateTime = useCallback(() => {
         return dateUtils.getStartDate({ minDuration, startTime, isNow });
@@ -36,13 +35,6 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
         const defaultDuration = { days: 5, hours: 0, minutes: 0 };
         return dateUtils.secondsToDaysHoursMinutes(minDuration) ?? defaultDuration;
     }, [minDuration]);
-
-    const handleModeChange = useCallback(
-        (newMode: string) => {
-            setValue(`${field}Mode`, newMode as InputModeOptions);
-        },
-        [setValue, field],
-    );
 
     const validateFixedDateTime = useCallback(
         (value: IAdvancedDateInputDateFixed) => {
@@ -97,6 +89,13 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
         [inputMode, minDuration],
     );
 
+    const handleModeChange = useCallback(
+        (newMode: string) => {
+            setValue(`${field}Mode`, newMode as InputModeOptions);
+        },
+        [setValue, field],
+    );
+
     const handleFixedDateTimeChange = (type: DateTimeFields) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = { ...fixedDateTimeField.value, [type]: event.target.value };
         setValue(`${field}Fixed`, newValue, { shouldValidate: false });
@@ -112,12 +111,15 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
         trigger(`${field}Duration`);
     };
 
+    // Add min duration to the form values for later use
+    useFormField('minDuration', { defaultValue: minDuration });
+
     const fixedDateTimeField = useFormField(`${field}Fixed`, {
-      rules: {
-          validate: validateFixedDateTime,
-      },
-      defaultValue: getDefaultDateTime(),
-  });
+        rules: {
+            validate: validateFixedDateTime,
+        },
+        defaultValue: getDefaultDateTime(),
+    });
 
     const durationField = useFormField(`${field}Duration`, {
         rules: {
