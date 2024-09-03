@@ -15,7 +15,6 @@ export const MultisigCreateProposalSettingsForm: React.FC<IMultisigCreateProposa
                 label={t('app.plugins.multisig.createProposalSettingsForm.startTime.label')}
                 helpText={t('app.plugins.multisig.createProposalSettingsForm.startTime.helpText')}
                 field={t('app.plugins.multisig.createProposalSettingsForm.startTime.field')}
-                infoText={t('app.plugins.multisig.createProposalSettingsForm.startTime.infoText')}
                 isStartField={true}
             />
             <AdvancedDateInput
