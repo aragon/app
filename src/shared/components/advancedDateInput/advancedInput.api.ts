@@ -44,10 +44,6 @@ export interface IAdvancedDateInputProps {
      * Start time to be used for validation.
      */
     startTime?: IAdvancedDateInputDateFixed;
-    /**
-     *   Boolean to indicate if start time
-     */
-    isStartField?: boolean;
 }
 
 export interface IAdvancedDateInputDateFixed {

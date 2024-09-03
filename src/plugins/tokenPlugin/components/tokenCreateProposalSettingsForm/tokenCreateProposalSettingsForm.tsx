@@ -29,7 +29,6 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
                 field="startTime"
                 helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.helpText')}
-                isStartField={true}
             />
             <AdvancedDateInput
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.label')}

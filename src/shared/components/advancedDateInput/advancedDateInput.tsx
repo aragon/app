@@ -15,16 +15,7 @@ import {
 } from './advancedInput.api';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
-    const {
-        useDuration = false,
-        label,
-        helpText,
-        minDuration = 0,
-        startTime,
-        isStartField = false,
-        field,
-        infoText,
-    } = props;
+    const { useDuration = false, label, helpText, minDuration = 0, startTime, field, infoText } = props;
     const { t } = useTranslations();
 
     const { clearErrors, setValue, trigger } = useFormContext();
@@ -35,7 +26,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
 
     const inputMode = useWatch({ name: `${field}Mode` });
 
-    const isNow = inputMode === 'now' || isStartField;
+    const isNow = inputMode === 'now' || !startTime;
 
     const defaultValues = useDefaultValues({
         minDuration,
@@ -67,7 +58,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
             if (inputMode !== InputModeOptions.FIXED) {
                 return true;
             }
-            if (isStartField) {
+            if (!startTime) {
                 return true; // No validation needed for start time
             }
 
@@ -94,7 +85,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
 
             return true;
         },
-        [inputMode, isStartField, minDuration, startTime],
+        [inputMode, minDuration, startTime],
     );
 
     const validateDuration = useCallback(

@@ -9,21 +9,12 @@ import {
 
 jest.mock('react-hook-form');
 jest.mock('@/shared/components/advancedDateInput', () => ({
-    AdvancedDateInput: ({
-        label,
-        helpText,
-        field,
-        infoText,
-        isStartField,
-        useDuration,
-        startTime,
-    }: IAdvancedDateInputProps) => (
+    AdvancedDateInput: ({ label, helpText, field, infoText, useDuration, startTime }: IAdvancedDateInputProps) => (
         <div data-testid="advanced-date-input">
             <div>Label: {label}</div>
             <div>Help Text: {helpText}</div>
             <div>Field: {field}</div>
             <div>Info Text: {infoText}</div>
-            <div>Is Start Field: {isStartField ? 'true' : 'false'}</div>
             <div>Use Duration: {useDuration ? 'true' : 'false'}</div>
             <div>Start Time: {JSON.stringify(startTime)}</div>
         </div>
@@ -58,7 +49,6 @@ describe('<MultisigCreateProposalSettingsForm /> component', () => {
         expect(startTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.startTime.label/);
         expect(startTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.startTime.helpText/);
         expect(startTimeInput).toHaveTextContent('startTime');
-        expect(startTimeInput).toHaveTextContent('Is Start Field: true');
     });
 
     it('passes correct props to end time AdvancedDateInput', () => {

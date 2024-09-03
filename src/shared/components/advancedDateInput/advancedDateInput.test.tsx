@@ -63,7 +63,6 @@ describe('<AdvancedDateInput /> component', () => {
                 minDuration: 3600, // 1 hour
                 useDuration: false,
                 startTime,
-                isStartField: false,
             }),
         );
 
@@ -96,7 +95,6 @@ describe('<AdvancedDateInput /> component', () => {
                 infoText: 'Minimum duration is 1 hour',
                 minDuration: 3600, // 1 hour
                 useDuration: true,
-                isStartField: false,
             }),
         );
 
@@ -139,7 +137,6 @@ describe('<AdvancedDateInput /> component', () => {
                 minDuration: 3600, // 1 hour
                 useDuration: false,
                 startTime,
-                isStartField: false,
             }),
         );
 

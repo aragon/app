@@ -18,7 +18,6 @@ jest.mock('@/shared/components/advancedDateInput', () => ({
         helpText,
         field,
         infoText,
-        isStartField,
         useDuration,
         startTime,
         minDuration,
@@ -28,7 +27,6 @@ jest.mock('@/shared/components/advancedDateInput', () => ({
             <div>Help Text: {helpText}</div>
             <div>Field: {field}</div>
             <div>Info Text: {infoText}</div>
-            <div>Is Start Field: {isStartField ? 'true' : 'false'}</div>
             <div>Use Duration: {useDuration ? 'true' : 'false'}</div>
             <div>Start Time: {JSON.stringify(startTime)}</div>
             <div>Min Duration: {minDuration}</div>
@@ -77,7 +75,6 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         expect(startTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.startTime.label/);
         expect(startTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.startTime.helpText/);
         expect(startTimeInput).toHaveTextContent('startTime');
-        expect(startTimeInput).toHaveTextContent('Is Start Field: true');
     });
 
     it('passes correct props to end time AdvancedDateInput', () => {
