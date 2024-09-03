@@ -1,9 +1,10 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertCard, Card, InputDate, InputNumber, InputText, InputTime, RadioCard, RadioGroup } from '@aragon/ods';
-import { useCallback, useEffect } from 'react';
-import { useDefaultValues } from './hooks/useDefaultValues';
 import { DateTime, Duration } from 'luxon';
+import { useCallback, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslations } from '../translationsProvider';
+import { useDefaultValues } from './hooks/useDefaultValues';
 import {
     DateTimeFields,
     DurationFields,
@@ -12,7 +13,6 @@ import {
     type ICreateProposalFormFixedDateTime,
     InputModeOptions,
 } from './types';
-import { useTranslations } from '../translationsProvider';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
     useDuration = false,

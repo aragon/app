@@ -362,6 +362,19 @@
     },
     "plugins": {
       "multisig": {
+        "createProposalSettingsForm": {
+          "endTime": {
+            "field": "endTime",
+            "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
+            "infoText": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
+            "label": "Expiration time"
+          },
+          "startTime": {
+            "field": "startTime",
+            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
+            "label": "Start time"
+          }
+        },
         "multisigGovernanceSettings": {
           "anyWallet": "Any wallet",
           "approvals": "{{min}} of {{max}} authorized addresses",
@@ -384,22 +397,22 @@
         },
         "multisigVoteList": {
           "entity": "Votes"
-        },
-        "createProposalSettingsForm": {
-          "startTime": {
-            "label": "Start time",
-            "field": "startTime",
-            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing."
-          },
-          "endTime": {
-            "label": "Expiration time",
-            "field": "endTime",
-            "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
-            "infoText": "It’s recommended to have an expiration time of five days, so you have a clean proposal list."
-          }
         }
       },
       "token": {
+        "createProposalSettingsForm": {
+          "endTime": {
+            "field": "endTime",
+            "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude.",
+            "infoText": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO governance settings",
+            "label": "Expiration time"
+          },
+          "startTime": {
+            "field": "startTime",
+            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
+            "label": "Start time"
+          }
+        },
         "tokenGovernanceSettings": {
           "approval": "> {{approvalThreshold}}",
           "approvalThreshold": "Approval threshold",
@@ -444,19 +457,6 @@
         },
         "tokenVoteList": {
           "entity": "Votes"
-        },
-        "createProposalSettingsForm": {
-          "startTime": {
-            "label": "Start time",
-            "field": "startTime",
-            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing."
-          },
-          "endTime": {
-            "label": "Expiration time",
-            "field": "endTime",
-            "infoText": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO governance settings",
-            "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude."
-          }
         }
       }
     },
@@ -491,6 +491,18 @@
       }
     },
     "shared": {
+      "advancedDateInput": {
+        "date": "Date",
+        "days": "Days",
+        "duration": "Duration",
+        "hours": "Hours",
+        "invalid": "{{label}} is invalid",
+        "minutes": "Minutes",
+        "now": "Now",
+        "specific": "Specific date & time",
+        "time": "Time",
+        "timezone": "Timezone"
+      },
       "errorFeedback": {
         "description": "If you'd like to help, please report the issue to our team.",
         "link": {
@@ -582,18 +594,6 @@
           },
           "next": "Next"
         }
-      },
-      "advancedDateInput": {
-        "duration": "Duration",
-        "now": "Now",
-        "specific": "Specific date & time",
-        "timezone": "Timezone",
-        "minutes": "Minutes",
-        "hours": "Hours",
-        "days": "Days",
-        "date": "Date",
-        "time": "Time",
-        "invalid": "{{label}} is invalid"
       }
     }
   }

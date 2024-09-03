@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 import { MultisigMemberInfo } from './components/multisigMemberInfo';
 import { MultisigMemberList } from './components/multisigMemberList';
 import { MultisigProposalList } from './components/multisigProposalList';
@@ -9,7 +10,6 @@ import { MultisigVoteList } from './components/multisigVoteList';
 import { plugin } from './constants/plugin';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
-import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils

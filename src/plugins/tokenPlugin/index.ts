@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposalSettingsForm';
 import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenProposalList } from './components/tokenProposalList';
@@ -10,7 +11,6 @@ import { plugin } from './constants/plugin';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
-import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposalSettingsForm';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils

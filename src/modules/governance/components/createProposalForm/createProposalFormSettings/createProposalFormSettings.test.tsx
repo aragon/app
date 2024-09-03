@@ -1,7 +1,7 @@
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import { render, screen } from '@testing-library/react';
 import { CreateProposalFormSettings, type ICreateProposalFormSettingsProps } from './createProposalFormSettings';
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 
 jest.mock('@/shared/components/pluginComponent', () => ({
     PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
@@ -10,7 +10,7 @@ jest.mock('@/shared/components/pluginComponent', () => ({
 }));
 
 describe('<CreateProposalFormSettings /> component', () => {
-       const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
+    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
 
     afterEach(() => {
         useDaoPluginIdsSpy.mockReset();

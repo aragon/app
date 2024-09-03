@@ -1,9 +1,9 @@
 import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
-import { useWatch } from 'react-hook-form';
-import { type IDaoTokenSettings } from '../../types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { convertSecondsToDaysHoursMinutes } from '@/shared/utils/createProposalUtils';
+import { useWatch } from 'react-hook-form';
+import { type IDaoTokenSettings } from '../../types';
 
 export interface ITokenCreateProposalSettingsFormProps {
     /**
@@ -11,7 +11,6 @@ export interface ITokenCreateProposalSettingsFormProps {
      */
     daoId: string;
 }
-
 
 export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSettingsFormProps> = ({ daoId }) => {
     const daoSettingsParams = { daoId };
@@ -49,4 +48,3 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
         </>
     );
 };
-
