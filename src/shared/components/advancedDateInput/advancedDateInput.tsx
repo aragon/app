@@ -19,9 +19,14 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     const { t } = useTranslations();
     const { clearErrors, setValue, trigger } = useFormContext();
 
-    const inputMode = useWatch({ name: `${field}Mode` });
+    // Add min duration to the form values for later use
+    useFormField('minDuration', { defaultValue: minDuration });
 
-    const isNow = inputMode === 'now' || !startTime;
+    const modeField = useFormField(`${field}Mode`, {
+        defaultValue: useDuration ? InputModeOptions.DURATION : InputModeOptions.NOW,
+    });
+
+    const isNow = modeField.value === 'now' || !startTime;
 
     const getDefaultDateTime = useCallback(() => {
         return dateUtils.getStartDate({ minDuration, startTime, isNow });
@@ -34,7 +39,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
 
     const validateFixedDateTime = useCallback(
         (value: IAdvancedDateInputDateFixed) => {
-            if (inputMode !== InputModeOptions.FIXED) {
+            if (modeField.value !== InputModeOptions.FIXED) {
                 return true;
             }
             if (!startTime) {
@@ -64,12 +69,12 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
 
             return true;
         },
-        [inputMode, minDuration, startTime],
+        [modeField.value, minDuration, startTime],
     );
 
     const validateDuration = useCallback(
         (value: IAdvancedDateInputDateDuration) => {
-            if (inputMode !== InputModeOptions.DURATION) {
+            if (modeField.value !== InputModeOptions.DURATION) {
                 return true;
             }
 
@@ -82,7 +87,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
 
             return true;
         },
-        [inputMode, minDuration],
+        [modeField.value, minDuration],
     );
 
     const handleFixedDateTimeChange = (type: DateTimeFields) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,13 +104,6 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
         clearErrors(`${field}Duration`);
         trigger(`${field}Duration`);
     };
-
-    // Add min duration to the form values for later use
-    useFormField('minDuration', { defaultValue: minDuration });
-
-    const modeField = useFormField(`${field}Mode`, {
-        defaultValue: useDuration ? InputModeOptions.DURATION : InputModeOptions.NOW,
-    });
 
     const fixedDateTimeField = useFormField(`${field}Fixed`, {
         rules: {
@@ -127,12 +125,11 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     return (
         <>
             <RadioGroup
-                {...modeField}
                 label={label}
                 className="flex gap-4 md:!flex-row"
                 helpText={helpText}
-                value={inputMode}
                 onValueChange={modeField.onChange}
+                {...modeField}
             >
                 <RadioCard
                     className="w-full"
@@ -151,7 +148,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     value="fixed"
                 />
             </RadioGroup>
-            {inputMode === InputModeOptions.FIXED && (
+            {modeField.value === InputModeOptions.FIXED && (
                 <Card className="flex flex-col gap-4 p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">
                         <InputDate
@@ -183,7 +180,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     )}
                 </Card>
             )}
-            {inputMode === InputModeOptions.DURATION && (
+            {modeField.value === InputModeOptions.DURATION && (
                 <Card className="flex flex-col gap-4 p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">
                         <InputNumber
