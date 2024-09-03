@@ -33,8 +33,15 @@ export const ResourceInputItem: React.FC<IResourceInputItemProps> = ({ index, re
 
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <InputText placeholder={t('app.shared.resourcesInput.item.labelInput.placeholder')} {...labelField} />
-            <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...linkField} />
+            <InputText 
+                placeholder={t('app.shared.resourcesInput.item.labelInput.placeholder')} 
+                {...labelField} 
+                maxLength={40}
+            />
+            <InputText 
+                placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} 
+                {...linkField} 
+            />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container
                     constrainContentWidth={false}
