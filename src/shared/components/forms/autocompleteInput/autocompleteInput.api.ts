@@ -1,4 +1,4 @@
-import type { IconType } from '@aragon/ods';
+import type { IconType, IInputTextProps } from '@aragon/ods';
 
 export interface IAutocompleteInputGroup {
     /**
@@ -39,7 +39,14 @@ export interface IAutocompleteInputItem {
     groupId?: string;
 }
 
-export interface IAutocompleteInputProps {
+export interface IAutocompleteInputItemIndex extends IAutocompleteInputItem {
+    /**
+     * Index of the element inside the items array.
+     */
+    index: number;
+}
+
+export interface IAutocompleteInputProps extends Omit<IInputTextProps, 'onChange'> {
     /**
      * Items to be rendered.
      */
@@ -48,4 +55,16 @@ export interface IAutocompleteInputProps {
      * Information about the item groups.
      */
     groups?: IAutocompleteInputGroup[];
+    /**
+     * ID of the current selected item.
+     */
+    value?: string;
+    /**
+     * Callback called with the ID of the item selected.
+     */
+    onChange?: (value: string) => void;
+    /**
+     * Callback called on open property change.
+     */
+    onOpenChange?: (isOpen: boolean) => void;
 }

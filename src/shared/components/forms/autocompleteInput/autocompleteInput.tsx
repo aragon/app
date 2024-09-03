@@ -1,33 +1,48 @@
 import { InputText } from '@aragon/ods';
 import classNames from 'classnames';
-import { type ChangeEvent, type FocusEvent, type KeyboardEvent, useState } from 'react';
-import type { IAutocompleteInputGroup, IAutocompleteInputItem, IAutocompleteInputProps } from './autocompleteInput.api';
+import { type ChangeEvent, type FocusEvent, forwardRef, type KeyboardEvent, useState } from 'react';
+import type {
+    IAutocompleteInputGroup,
+    IAutocompleteInputItem,
+    IAutocompleteInputItemIndex,
+    IAutocompleteInputProps,
+} from './autocompleteInput.api';
 import { AutocompleteInputGroup } from './autocompleteInputGroup';
 import { AutocompleteInputItem } from './autocompleteInputItem';
 import { AutocompleteInputMenu } from './autocompleteInputMenu';
 import { useAutocompleteProps } from './useAutocompleteProps';
 
-export const AutocompleteInput: React.FC<IAutocompleteInputProps> = (props) => {
-    const { items, groups } = props;
+export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInputProps>((props, ref) => {
+    const { items, groups, value, onChange, wrapperClassName, onFocus, onKeyDown, onOpenChange, ...otherProps } = props;
 
     const [isOpen, setIsOpen] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState(items.find((item) => item.id === value)?.name ?? '');
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-    const handleItemSelected = (item: IAutocompleteInputItem) => {
-        setInputValue(item.name);
-        setIsOpen(false);
+    const updateOpenState = (open: boolean) => {
+        setIsOpen(open);
+        onOpenChange?.(open);
     };
 
-    const { inputProps, floatingMenuProps, getMenuItemProps, context } = useAutocompleteProps({
+    const handleItemSelected = (item: IAutocompleteInputItem) => {
+        updateOpenState(false);
+        onChange?.(item.id);
+    };
+
+    const {
+        inputProps: autocompleteInputProps,
+        floatingMenuProps,
+        getMenuItemProps,
+        context,
+    } = useAutocompleteProps({
         isOpen,
-        onOpenChange: setIsOpen,
+        onOpenChange: updateOpenState,
         activeIndex,
         setActiveIndex,
-        onItemSelected: handleItemSelected,
+        inputRef: ref,
     });
 
-    const { onFocus: onInputFocus, onKeyDown: onInputKeyDown, ...otherInputProps } = inputProps;
+    const { onFocus: onInputFocus, onKeyDown: onInputKeyDown, ...otherAutocompleteInputProps } = autocompleteInputProps;
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -36,14 +51,17 @@ export const AutocompleteInput: React.FC<IAutocompleteInputProps> = (props) => {
     };
 
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
-        setIsOpen(true);
+        updateOpenState(true);
         onInputFocus?.(event);
+        onFocus?.(event);
     };
 
     const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         onInputKeyDown?.(event);
+        onKeyDown?.(event);
         if (event.key === 'Enter' && activeIndex != null && items[activeIndex] != null) {
             handleItemSelected(items[activeIndex]);
+            event.preventDefault(); // Prevent default submit behaviour on enter press
         }
     };
 
@@ -59,7 +77,9 @@ export const AutocompleteInput: React.FC<IAutocompleteInputProps> = (props) => {
 
     const isBottomPlacement = context.placement === 'bottom';
 
-    const processedItems = items.filter(filterItem).map((item, index) => ({ ...item, index }));
+    const processedItems: IAutocompleteInputItemIndex[] = items
+        .filter(filterItem)
+        .map((item, index) => ({ ...item, index }));
 
     const groupedItems = Object.groupBy(processedItems, (item) => item.groupId ?? 'default');
 
@@ -67,6 +87,7 @@ export const AutocompleteInput: React.FC<IAutocompleteInputProps> = (props) => {
         { 'shadow-primary-lg': isOpen },
         { 'rounded-b-none border-b-0': isOpen && isBottomPlacement },
         { 'rounded-t-none border-t-0 z-10': isOpen && !isBottomPlacement },
+        wrapperClassName,
     );
 
     return (
@@ -75,11 +96,11 @@ export const AutocompleteInput: React.FC<IAutocompleteInputProps> = (props) => {
                 wrapperClassName={inputWrapperClassName}
                 autoComplete="off"
                 value={inputValue}
-                placeholder="Placeholder"
                 onChange={handleInputChange}
                 onFocus={handleInputFocus}
                 onKeyDown={handleInputKeyDown}
-                {...otherInputProps}
+                {...otherAutocompleteInputProps}
+                {...otherProps}
             />
             <AutocompleteInputMenu isOpen={isOpen} context={context} {...floatingMenuProps}>
                 {Object.keys(groupedItems).map((groupId) => (
@@ -89,7 +110,7 @@ export const AutocompleteInput: React.FC<IAutocompleteInputProps> = (props) => {
                                 key={item.id}
                                 isActive={activeIndex === item.index}
                                 item={item}
-                                {...getMenuItemProps(item)}
+                                {...getMenuItemProps(item.index, { onMouseDown: () => handleItemSelected(item) })}
                             />
                         ))}
                     </AutocompleteInputGroup>
@@ -97,4 +118,6 @@ export const AutocompleteInput: React.FC<IAutocompleteInputProps> = (props) => {
             </AutocompleteInputMenu>
         </>
     );
-};
+});
+
+AutocompleteInput.displayName = 'AutocompleteInput';

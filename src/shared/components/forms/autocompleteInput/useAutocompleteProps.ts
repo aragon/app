@@ -1,3 +1,4 @@
+import { mergeRefs } from '@aragon/ods';
 import {
     autoUpdate,
     flip,
@@ -9,8 +10,7 @@ import {
     useListNavigation,
     useRole,
 } from '@floating-ui/react';
-import { type ComponentProps, useRef } from 'react';
-import type { IAutocompleteInputItem } from './autocompleteInput.api';
+import { type ComponentProps, type ForwardedRef, type HTMLProps, useRef } from 'react';
 
 export interface IUseAutocompletePropsParams {
     /**
@@ -30,13 +30,13 @@ export interface IUseAutocompletePropsParams {
      */
     setActiveIndex: (index: number | null) => void;
     /**
-     * Callback called on item selected.
+     * Ref for the autocomplete input.
      */
-    onItemSelected: (item: IAutocompleteInputItem) => void;
+    inputRef?: ForwardedRef<HTMLInputElement>;
 }
 
 export const useAutocompleteProps = (params: IUseAutocompletePropsParams) => {
-    const { isOpen, onOpenChange, activeIndex, setActiveIndex, onItemSelected } = params;
+    const { isOpen, onOpenChange, activeIndex, setActiveIndex, inputRef } = params;
 
     const listRef = useRef<Array<HTMLElement | null>>([]);
 
@@ -63,19 +63,15 @@ export const useAutocompleteProps = (params: IUseAutocompletePropsParams) => {
 
     const floatingMenuProps = getFloatingProps({ ref: refs.setFloating, style: floatingStyles });
 
-    const inputProps: ComponentProps<'input'> = getReferenceProps({ ref: refs.setReference });
+    const combinedInputRefs = mergeRefs([refs.setReference, inputRef]);
+    const inputProps: ComponentProps<'input'> = getReferenceProps({ ref: combinedInputRefs });
 
-    const handleItemSelected = (item: IAutocompleteInputItem) => {
-        onItemSelected?.(item);
-        refs.domReference.current?.focus();
-    };
-
-    const getMenuItemProps = (item: IAutocompleteInputItem & { index: number }) => {
+    const getMenuItemProps = (itemIndex: number, props: HTMLProps<HTMLElement>) => {
         const updateListRef = (node: HTMLElement | null) => {
-            listRef.current[item.index] = node;
+            listRef.current[itemIndex] = node;
         };
 
-        return getItemProps({ onClick: () => handleItemSelected(item), ref: updateListRef });
+        return getItemProps({ ref: updateListRef, ...props });
     };
 
     return { inputProps, floatingMenuProps, getMenuItemProps, context };
