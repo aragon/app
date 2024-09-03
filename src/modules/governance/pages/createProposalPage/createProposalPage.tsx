@@ -1,17 +1,20 @@
 import { Page } from '@/shared/components/page';
+import type { IDaoPageParams } from '@/shared/types';
 import { CreateProposalPageClient } from './createProposalPageClient';
 
 export interface ICreateProposalPageProps {
     /**
-     * The DAO ID.
+     * DAO page parameters.
      */
-    daoId: string;
+    params: IDaoPageParams;
 }
 
-export const CreateProposalPage: React.FC<ICreateProposalPageProps> = ({ daoId }) => {
+export const CreateProposalPage: React.FC<ICreateProposalPageProps> = (props) => {
+    const { id } = props.params;
+
     return (
         <Page.Container>
-            <CreateProposalPageClient daoId={daoId} />
+            <CreateProposalPageClient daoId={id} />
         </Page.Container>
     );
 };

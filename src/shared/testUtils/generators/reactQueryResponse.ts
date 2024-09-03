@@ -3,9 +3,12 @@ import type {
     InfiniteQueryObserverLoadingErrorResult,
     InfiniteQueryObserverLoadingResult,
     InfiniteQueryObserverSuccessResult,
+    MutationObserverIdleResult,
+    MutationObserverSuccessResult,
     QueryObserverBaseResult,
     QueryObserverLoadingErrorResult,
     QueryObserverSuccessResult,
+    UseMutationResult,
 } from '@tanstack/react-query';
 
 const generateReactQueryResultBase = <TData, TError>(
@@ -68,7 +71,7 @@ export const generateReactQueryResultError = <TData, TError>(
     status: 'error',
 });
 
-export const generateReactQueryInfiniteResultBase = <TData, TError>(
+const generateReactQueryInfiniteResultBase = <TData, TError>(
     result?: Partial<InfiniteQueryObserverBaseResult<TData, TError>>,
 ): InfiniteQueryObserverBaseResult<TData, TError> => ({
     ...generateReactQueryResultBase(result),
@@ -132,4 +135,48 @@ export const generateReactQueryInfiniteResultLoading = <TData, TError>(
     isFetchNextPageError: false,
     isFetchPreviousPageError: false,
     status: 'pending',
+});
+
+export const generateReactQueryMutationResultIdle = <TData, TError, TVars>(
+    result?: Partial<MutationObserverIdleResult<TData, TError, TVars>>,
+): UseMutationResult<TData, TError, TVars> => ({
+    data: undefined,
+    variables: undefined,
+    error: null,
+    isError: false,
+    isIdle: true,
+    isPending: false,
+    isSuccess: false,
+    status: 'idle',
+    mutate: jest.fn(),
+    mutateAsync: jest.fn(),
+    reset: jest.fn(),
+    context: undefined,
+    failureCount: 0,
+    failureReason: null,
+    isPaused: false,
+    submittedAt: 0,
+    ...result,
+});
+
+export const generateReactQueryMutationResultSuccess = <TData, TError, TVars>(
+    result?: Partial<MutationObserverSuccessResult<TData, TError, TVars>>,
+): UseMutationResult<TData, TError, TVars> => ({
+    data: undefined as TData,
+    variables: undefined as TVars,
+    error: null,
+    isError: false,
+    isIdle: false,
+    isPending: false,
+    isSuccess: true,
+    status: 'success',
+    mutate: jest.fn(),
+    mutateAsync: jest.fn(),
+    reset: jest.fn(),
+    context: undefined,
+    failureCount: 0,
+    failureReason: null,
+    isPaused: false,
+    submittedAt: 0,
+    ...result,
 });

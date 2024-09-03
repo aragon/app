@@ -10,6 +10,7 @@ import { MultisigVoteList } from './components/multisigVoteList';
 import { plugin } from './constants/plugin';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
+import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -46,6 +47,11 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM,
             pluginId: plugin.id,
             component: MultisigCreateProposalSettingsForm,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
+            pluginId: plugin.id,
+            function: multisigTransactionUtils.buildCreateProposalData,
         })
 
         // Settings module slots
