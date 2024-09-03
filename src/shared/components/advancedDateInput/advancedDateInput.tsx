@@ -51,6 +51,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
             setValue(`${field}Duration`, defaultValues.duration);
         }
         trigger(field);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputMode, field]);
 
     const handleModeChange = useCallback(
