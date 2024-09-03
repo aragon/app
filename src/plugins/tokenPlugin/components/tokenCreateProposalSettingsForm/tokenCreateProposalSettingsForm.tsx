@@ -1,7 +1,7 @@
 import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { convertSecondsToDaysHoursMinutes } from '@/shared/utils/createProposalUtils';
+import { secondsToDaysHoursMinutes } from '@/shared/utils/createProposalUtils';
 import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';
 
@@ -18,31 +18,31 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
 
     const { t } = useTranslations();
 
-    const minDuration = dao?.settings.minDuration;
+    const minDuration = dao?.settings.minDuration ?? 0;
 
     const startTime = useWatch({ name: 'startTimeFixed' });
 
-    const { days, hours, minutes } = convertSecondsToDaysHoursMinutes(minDuration ?? 0);
+    const { days, hours, minutes } = secondsToDaysHoursMinutes(minDuration);
 
     return (
         <>
             <AdvancedDateInput
-                label={t('app.plugins.token.createProposalSettingsForm.startTime.label')}
-                field={t('app.plugins.token.createProposalSettingsForm.startTime.field')}
-                helpText={t('app.plugins.token.createProposalSettingsForm.startTime.helpText')}
+                label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
+                field="startTime"
+                helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.helpText')}
                 isStartField={true}
             />
             <AdvancedDateInput
-                label={t('app.plugins.token.createProposalSettingsForm.endTime.label')}
-                field={t('app.plugins.token.createProposalSettingsForm.endTime.field')}
-                helpText={t('app.plugins.token.createProposalSettingsForm.endTime.helpText')}
-                infoText={t('app.plugins.token.createProposalSettingsForm.endTime.infoText', {
+                label={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.label')}
+                field="endTime"
+                helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.helpText')}
+                infoText={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.infoText', {
                     days,
                     hours,
                     minutes,
                 })}
                 useDuration={true}
-                minDuration={minDuration ?? 0}
+                minDuration={minDuration}
                 startTime={startTime}
             />
         </>

@@ -31,8 +31,8 @@ describe('<AdvancedDateInput /> component', () => {
     it('renders switches between input modes', async () => {
         render(createTestComponent({ useDuration: true }));
 
-        const durationRadio = screen.getByRole('radio', { name: /shared.advancedDateInput.duration/ });
-        const fixedRadio = screen.getByRole('radio', { name: /shared.advancedDateInput.specific/ });
+        const durationRadio = screen.getByRole('radio', { name: /shared.advancedDateInput.duration.label/ });
+        const fixedRadio = screen.getByRole('radio', { name: /shared.advancedDateInput.fixed.label/ });
 
         // Check initial state
         expect(durationRadio.getAttribute('aria-checked')).toBe('false');
@@ -42,8 +42,8 @@ describe('<AdvancedDateInput /> component', () => {
         await userEvent.click(fixedRadio);
         expect(fixedRadio.getAttribute('aria-checked')).toBe('true');
         expect(durationRadio.getAttribute('aria-checked')).toBe('false');
-        expect(screen.getByLabelText(/shared.advancedDateInput.date/)).toBeInTheDocument();
-        expect(screen.getByLabelText(/shared.advancedDateInput.time/)).toBeInTheDocument();
+        expect(screen.getByLabelText(/shared.advancedDateInput.fixed.date/)).toBeInTheDocument();
+        expect(screen.getByLabelText(/shared.advancedDateInput.fixed.time/)).toBeInTheDocument();
 
         // Switch to duration mode
         await userEvent.click(durationRadio);
@@ -68,10 +68,10 @@ describe('<AdvancedDateInput /> component', () => {
         );
 
         // Switch to fixed mode
-        await userEvent.click(screen.getByRole('radio', { name: /shared.advancedDateInput.specific/ }));
+        await userEvent.click(screen.getByRole('radio', { name: /shared.advancedDateInput.fixed.label/ }));
 
-        const dateInput = screen.getByLabelText(/shared.advancedDateInput.date/);
-        const timeInput = screen.getByLabelText(/shared.advancedDateInput.time/);
+        const dateInput = screen.getByLabelText(/shared.advancedDateInput.fixed.date/);
+        const timeInput = screen.getByLabelText(/shared.advancedDateInput.fixed.time/);
         const alert = screen.getByRole('alert');
         expect(dateInput).toBeInTheDocument();
         expect(timeInput).toBeInTheDocument();
@@ -100,11 +100,11 @@ describe('<AdvancedDateInput /> component', () => {
             }),
         );
 
-        await user.click(screen.getByRole('radio', { name: /shared.advancedDateInput.duration/ }));
+        await user.click(screen.getByRole('radio', { name: /shared.advancedDateInput.duration.label/ }));
 
-        const minutesInput = screen.getByLabelText(/shared.advancedDateInput.minutes/);
-        const hoursInput = screen.getByLabelText(/shared.advancedDateInput.hours/);
-        const daysInput = screen.getByLabelText(/shared.advancedDateInput.days/);
+        const minutesInput = screen.getByLabelText(/shared.advancedDateInput.duration.minutes/);
+        const hoursInput = screen.getByLabelText(/shared.advancedDateInput.duration.hours/);
+        const daysInput = screen.getByLabelText(/shared.advancedDateInput.duration.days/);
         const alert = screen.getByRole('alert');
 
         expect(minutesInput).toBeInTheDocument();
@@ -144,10 +144,10 @@ describe('<AdvancedDateInput /> component', () => {
         );
 
         // Switch to fixed mode
-        await userEvent.click(screen.getByRole('radio', { name: /shared.advancedDateInput.specific/ }));
+        await userEvent.click(screen.getByRole('radio', { name: /shared.advancedDateInput.fixed.label/ }));
 
-        const dateInput = screen.getByLabelText(/shared.advancedDateInput.date/);
-        const timeInput = screen.getByLabelText(/shared.advancedDateInput.time/);
+        const dateInput = screen.getByLabelText(/shared.advancedDateInput.fixed.date/);
+        const timeInput = screen.getByLabelText(/shared.advancedDateInput.fixed.time/);
         const alert = screen.getByRole('alert');
 
         expect(dateInput).toBeInTheDocument();

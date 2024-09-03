@@ -36,9 +36,12 @@ describe('<MultisigCreateProposalSettingsForm /> component', () => {
     });
 
     const createTestComponent = (props?: Partial<IMultisigCreateProposalSettingsFormProps>) => {
+        const completeProps: IMultisigCreateProposalSettingsFormProps = {
+            ...props,
+        };
         return (
             <FormWrapper>
-                <MultisigCreateProposalSettingsForm {...props} />
+                <MultisigCreateProposalSettingsForm {...completeProps} />
             </FormWrapper>
         );
     };
@@ -52,19 +55,19 @@ describe('<MultisigCreateProposalSettingsForm /> component', () => {
     it('passes correct props to start time AdvancedDateInput', () => {
         render(createTestComponent());
         const startTimeInput = screen.getAllByTestId('advanced-date-input')[0];
-        expect(startTimeInput).toHaveTextContent(/plugins.multisig.createProposalSettingsForm.startTime.label/);
-        expect(startTimeInput).toHaveTextContent(/plugins.multisig.createProposalSettingsForm.startTime.helpText/);
-        expect(startTimeInput).toHaveTextContent(/plugins.multisig.createProposalSettingsForm.startTime.field/);
+        expect(startTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.startTime.label/);
+        expect(startTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.startTime.helpText/);
+        expect(startTimeInput).toHaveTextContent('startTime');
         expect(startTimeInput).toHaveTextContent('Is Start Field: true');
     });
 
     it('passes correct props to end time AdvancedDateInput', () => {
         render(createTestComponent());
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
-        expect(endTimeInput).toHaveTextContent(/plugins.multisig.createProposalSettingsForm.endTime.label/);
-        expect(endTimeInput).toHaveTextContent(/plugins.multisig.createProposalSettingsForm.endTime.helpText/);
-        expect(endTimeInput).toHaveTextContent(/plugins.multisig.createProposalSettingsForm.endTime.field/);
-        expect(endTimeInput).toHaveTextContent(/plugins.multisig.createProposalSettingsForm.endTime.infoText/);
+        expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.label/);
+        expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.helpText/);
+        expect(endTimeInput).toHaveTextContent('endTime');
+        expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.infoText/);
         expect(endTimeInput).toHaveTextContent('Use Duration: true');
         expect(endTimeInput).toHaveTextContent('Start Time: {"date":"2024-09-01","time":"12:00"}');
     });

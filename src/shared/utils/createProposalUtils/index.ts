@@ -1,1 +1,1 @@
-export { convertSecondsToDaysHoursMinutes } from './convertSecondsToDaysHoursMinutes';
+export { secondsToDaysHoursMinutes } from './secondsToDaysHoursMinutes';

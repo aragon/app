@@ -14,16 +14,17 @@ import {
     InputModeOptions,
 } from './types';
 
-export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
-    useDuration = false,
-    label,
-    helpText,
-    minDuration = 0,
-    startTime,
-    isStartField = false,
-    field,
-    infoText,
-}) => {
+export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
+    const {
+        useDuration = false,
+        label,
+        helpText,
+        minDuration = 0,
+        startTime,
+        isStartField = false,
+        field,
+        infoText,
+    } = props;
     const { t } = useTranslations();
 
     const { clearErrors, setValue, trigger } = useFormContext();
@@ -159,14 +160,16 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                 <RadioCard
                     className="w-full"
                     label={
-                        useDuration ? t('app.shared.advancedDateInput.duration') : t('app.shared.advancedDateInput.now')
+                        useDuration
+                            ? t('app.shared.advancedDateInput.duration.label')
+                            : t('app.shared.advancedDateInput.now')
                     }
                     description=""
                     value={useDuration ? InputModeOptions.DURATION : InputModeOptions.NOW}
                 />
                 <RadioCard
                     className="w-full"
-                    label={t('app.shared.advancedDateInput.specific')}
+                    label={t('app.shared.advancedDateInput.fixed.label')}
                     description=""
                     value="fixed"
                 />
@@ -175,14 +178,14 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                 <Card className="flex flex-col gap-4 p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">
                         <InputDate
-                            label={t('app.shared.advancedDateInput.date')}
-                            min={new Date().toISOString().split('T')[0]}
+                            label={t('app.shared.advancedDateInput.fixed.date')}
+                            min={DateTime.now().toFormat('yyyy-MM-dd')}
                             className="w-full md:w-1/3"
                             value={fixedDateTimeField.value.date}
                             onChange={handleFixedDateTimeChange(DateTimeFields.DATE)}
                         />
                         <InputTime
-                            label={t('app.shared.advancedDateInput.time')}
+                            label={t('app.shared.advancedDateInput.fixed.time')}
                             className="w-full md:w-1/3"
                             value={fixedDateTimeField.value.time}
                             onChange={handleFixedDateTimeChange(DateTimeFields.TIME)}
@@ -194,7 +197,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                             disabled={true}
                         />
                     </div>
-                    {!isStartField && (
+                    {(infoText ?? fixedErrors) && (
                         <AlertCard
                             message={label}
                             description={fixedErrors ? t('app.shared.advancedDateInput.invalid', { label }) : infoText}
@@ -207,7 +210,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                 <Card className="flex flex-col gap-4 p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">
                         <InputNumber
-                            label={t('app.shared.advancedDateInput.minutes')}
+                            label={t('app.shared.advancedDateInput.duration.minutes')}
                             min={0}
                             max={59}
                             className="w-full md:w-1/3"
@@ -216,7 +219,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                             onChange={handleDurationChange(DurationFields.MINUTES)}
                         />
                         <InputNumber
-                            label={t('app.shared.advancedDateInput.hours')}
+                            label={t('app.shared.advancedDateInput.duration.hours')}
                             min={0}
                             max={23}
                             className="w-full md:w-1/3"
@@ -225,7 +228,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                             onChange={handleDurationChange(DurationFields.HOURS)}
                         />
                         <InputNumber
-                            label={t('app.shared.advancedDateInput.days')}
+                            label={t('app.shared.advancedDateInput.duration.days')}
                             min={0}
                             className="w-full md:w-1/3"
                             placeholder="7 d"

@@ -376,7 +376,7 @@
     },
     "plugins": {
       "multisig": {
-        "createProposalSettingsForm": {
+        "multisigCreateProposalSettingsForm": {
           "endTime": {
             "field": "endTime",
             "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
@@ -414,15 +414,13 @@
         }
       },
       "token": {
-        "createProposalSettingsForm": {
+        "tokenCreateProposalSettingsForm": {
           "endTime": {
-            "field": "endTime",
             "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude.",
             "infoText": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO governance settings",
             "label": "Expiration time"
           },
           "startTime": {
-            "field": "startTime",
             "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
             "label": "Start time"
           }
@@ -506,15 +504,19 @@
     },
     "shared": {
       "advancedDateInput": {
-        "date": "Date",
-        "days": "Days",
-        "duration": "Duration",
-        "hours": "Hours",
+        "duration": {
+          "days": "Days",
+          "hours": "Hours",
+          "label": "Duration",
+          "minutes": "Minutes"
+        },
+        "fixed": {
+          "date": "Date",
+          "label": "Specific date & time",
+          "time": "Time"
+        },
         "invalid": "{{label}} is invalid",
-        "minutes": "Minutes",
         "now": "Now",
-        "specific": "Specific date & time",
-        "time": "Time",
         "timezone": "Timezone"
       },
       "errorFeedback": {

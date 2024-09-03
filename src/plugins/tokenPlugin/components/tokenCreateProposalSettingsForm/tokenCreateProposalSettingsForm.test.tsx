@@ -2,7 +2,7 @@ import * as daoService from '@/shared/api/daoService';
 import { type IAdvancedDateInputProps } from '@/shared/components/advancedDateInput/types';
 import { FormWrapper, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import * as createProposalUtils from '@/shared/utils/createProposalUtils';
-import { convertSecondsToDaysHoursMinutes } from '@/shared/utils/createProposalUtils';
+import { secondsToDaysHoursMinutes } from '@/shared/utils/createProposalUtils';
 import { render, screen } from '@testing-library/react';
 import { useWatch } from 'react-hook-form';
 import { generateDaoTokenSettings } from '../../testUtils';
@@ -38,17 +38,17 @@ jest.mock('@/shared/components/advancedDateInput', () => ({
 
 describe('<TokenCreateProposalSettingsForm /> component', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
-    const useConvertSecondsToDaysHoursMinutesSpy = jest.spyOn(createProposalUtils, 'convertSecondsToDaysHoursMinutes');
+    const usesecondsToDaysHoursMinutesSpy = jest.spyOn(createProposalUtils, 'secondsToDaysHoursMinutes');
 
     beforeEach(() => {
         (useWatch as jest.Mock).mockReturnValue({ date: '2024-09-01', time: '12:00' });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
-        useConvertSecondsToDaysHoursMinutesSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
+        usesecondsToDaysHoursMinutesSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
     });
 
     afterEach(() => {
         useDaoSettingsSpy.mockReset();
-        useConvertSecondsToDaysHoursMinutesSpy.mockReset();
+        usesecondsToDaysHoursMinutesSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenCreateProposalSettingsFormProps>) => {
@@ -72,20 +72,20 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
     it('passes correct props to start time AdvancedDateInput', () => {
         render(createTestComponent());
         const startTimeInput = screen.getAllByTestId('advanced-date-input')[0];
-        expect(startTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.startTime.label/);
-        expect(startTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.startTime.helpText/);
-        expect(startTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.startTime.field/);
+        expect(startTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.startTime.label/);
+        expect(startTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.startTime.helpText/);
+        expect(startTimeInput).toHaveTextContent('startTime');
         expect(startTimeInput).toHaveTextContent('Is Start Field: true');
     });
 
     it('passes correct props to end time AdvancedDateInput', () => {
         render(createTestComponent());
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
-        expect(endTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.endTime.label/);
-        expect(endTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.endTime.helpText/);
-        expect(endTimeInput).toHaveTextContent(/app.plugins.token.createProposalSettingsForm.endTime.field/);
+        expect(endTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.endTime.label/);
+        expect(endTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.endTime.helpText/);
+        expect(endTimeInput).toHaveTextContent('endTime');
         expect(endTimeInput).toHaveTextContent(
-            /plugins.token.createProposalSettingsForm.endTime.infoText \(days=0,hours=1,minutes=0\)/,
+            /tokenCreateProposalSettingsForm.endTime.infoText \(days=0,hours=1,minutes=0\)/,
         );
         expect(endTimeInput).toHaveTextContent('Use Duration: true');
         expect(endTimeInput).toHaveTextContent('Start Time: {"date":"2024-09-01","time":"12:00"}');
@@ -110,13 +110,13 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoSettings }));
         render(createTestComponent());
-        expect(convertSecondsToDaysHoursMinutes).toHaveBeenCalledWith(3600);
+        expect(secondsToDaysHoursMinutes).toHaveBeenCalledWith(3600);
     });
 
     it('handles undefined minDuration', () => {
         render(createTestComponent());
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
         expect(endTimeInput).toHaveTextContent('Min Duration: 0');
-        expect(useConvertSecondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(0);
+        expect(usesecondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(0);
     });
 });
