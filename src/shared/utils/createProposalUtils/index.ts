@@ -1,1 +1,1 @@
-export { secondsToDaysHoursMinutes } from './secondsToDaysHoursMinutes';
+export { dateUtils } from './dateUtils';
