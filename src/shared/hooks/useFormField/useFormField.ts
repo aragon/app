@@ -1,5 +1,12 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { FieldValue, Path, RegisterOptions, useController, type FieldPath, type FieldValues } from 'react-hook-form';
+import {
+    useController,
+    type FieldPath,
+    type FieldValue,
+    type FieldValues,
+    type Path,
+    type RegisterOptions,
+} from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
 
 export const useFormField = <
