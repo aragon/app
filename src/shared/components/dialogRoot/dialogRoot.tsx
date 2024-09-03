@@ -1,6 +1,7 @@
 'use client';
 
-import { Dialog, type IDialogRootProps as IOdsDialogRootProps } from '@aragon/ods';
+import { DialogAlertRootHiddenElement } from '@/shared/components/dialogRoot/dialogAlertRootHiddenElement';
+import { Dialog, DialogAlert, type IDialogRootProps as IOdsDialogRootProps } from '@aragon/ods';
 import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
 import { DialogRootHiddenElement } from './dialogRootHiddenElement';
 
@@ -17,16 +18,32 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
 
     const isOpen = location != null;
     const activeDialog = location != null ? dialogs[location.id] : undefined;
+    console.log('activeDialog', activeDialog);
 
     return (
-        <Dialog.Root {...props} open={isOpen} onOpenChange={close}>
-            {activeDialog && (
-                <>
-                    <DialogRootHiddenElement labelKey={activeDialog.title} type="title" />
-                    <DialogRootHiddenElement labelKey={activeDialog.description} type="description" />
-                    <activeDialog.Component location={location!} />
-                </>
+        <>
+            {activeDialog?.isAlert === true && (
+                <DialogAlert.Root variant="warning" {...props} open={isOpen} onOpenChange={close}>
+                    {activeDialog && (
+                        <>
+                            <DialogAlertRootHiddenElement labelKey={activeDialog.title} type="title" />
+                            <DialogAlertRootHiddenElement labelKey={activeDialog.description} type="description" />
+                            <activeDialog.Component location={location!} />
+                        </>
+                    )}
+                </DialogAlert.Root>
             )}
-        </Dialog.Root>
+            {activeDialog?.isAlert === false && (
+                <Dialog.Root {...props} open={isOpen} onOpenChange={close}>
+                    {activeDialog && (
+                        <>
+                            <DialogRootHiddenElement labelKey={activeDialog.title} type="title" />
+                            <DialogRootHiddenElement labelKey={activeDialog.description} type="description" />
+                            <activeDialog.Component location={location!} />
+                        </>
+                    )}
+                </Dialog.Root>
+            )}
+        </>
     );
 };

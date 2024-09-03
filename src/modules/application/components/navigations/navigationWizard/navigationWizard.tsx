@@ -1,13 +1,14 @@
 'use client';
 
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
+import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
+import { IPublishProposalExitDialogParams } from '@/modules/governance/dialogs/publishProposalExitDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/ods';
 import classNames from 'classnames';
-import { useRouter } from 'next/navigation';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
@@ -24,11 +25,9 @@ export interface INavigationWizardProps extends INavigationContainerProps {
 }
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    const { name, id } = props;
+    const { name, id: daoId } = props;
 
     const { address, isConnected } = useAccount();
-
-    const router = useRouter();
 
     const { t } = useTranslations();
 
@@ -39,9 +38,14 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
         open(dialog);
     };
 
+    const handleProposalExitOpen = () => {
+        const params: IPublishProposalExitDialogParams = { daoId };
+        return open(GovernanceDialogs.EXIT_PUBLISH_PROPOSAL, { params });
+    };
+
     const walletUser = address != null ? { address } : undefined;
 
-    const { data: dao } = useDao({ urlParams: { id: id ?? '' } }, { enabled: id != null });
+    const { data: dao } = useDao({ urlParams: { id: daoId ?? '' } }, { enabled: daoId != null });
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 
@@ -54,7 +58,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     return (
         <Navigation.Container containerClasses="flex flex-row items-center gap-x-6 justify-between py-5">
             <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
-                <button onClick={router.back} className={buttonClassName}>
+                <button onClick={handleProposalExitOpen} className={buttonClassName}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
                 <div className="flex min-w-0 flex-col gap-y-0.5">

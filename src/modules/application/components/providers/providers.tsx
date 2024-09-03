@@ -1,5 +1,6 @@
 'use client';
 
+import { providersDialogs } from '@/modules/application/components/providers/providersDialogs';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { DialogRoot } from '@/shared/components/dialogRoot';
 import { Image } from '@/shared/components/image';
@@ -12,7 +13,6 @@ import { type State } from 'wagmi';
 import { initialisePlugins } from '../../../../plugins';
 import { wagmiConfig } from '../../constants/wagmi';
 import { queryClientUtils } from '../../utils/queryClientUtils';
-import { providersDialogs } from './providersDialogs';
 
 export interface IProvidersProps {
     /**

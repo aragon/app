@@ -12,10 +12,12 @@ export const applicationDialogs: Record<ApplicationDialog, IDialogComponentDefin
         Component: ConnectWalletDialog,
         title: 'app.application.connectWalletDialog.screenReader.title',
         description: 'app.application.connectWalletDialog.screenReader.description',
+        isAlert: false,
     },
     [ApplicationDialog.USER]: {
         Component: UserDialog,
         title: 'app.application.userDialog.screenReader.title',
         description: 'app.application.userDialog.screenReader.description',
+        isAlert: false,
     },
 };

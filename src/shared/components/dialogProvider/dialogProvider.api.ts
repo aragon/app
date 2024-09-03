@@ -59,4 +59,8 @@ export interface IDialogComponentDefinitions<TParams extends DialogComponentProp
      * description on the relative Dialog.Header component.
      */
     description?: string;
+    /**
+     * Flag to indicate whether the dialog is an alert dialog.
+     */
+    isAlert: boolean;
 }
