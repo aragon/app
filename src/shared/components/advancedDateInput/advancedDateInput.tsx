@@ -206,6 +206,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                 <Card className="flex flex-col gap-4 p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row">
                         <InputNumber
+                            label={t('app.shared.advancedDateInput.minutes')}
                             min={0}
                             max={59}
                             className="w-full md:w-1/3"
@@ -214,6 +215,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                             onChange={handleDurationChange(DurationFields.MINUTES)}
                         />
                         <InputNumber
+                            label={t('app.shared.advancedDateInput.hours')}
                             min={0}
                             max={23}
                             className="w-full md:w-1/3"
@@ -222,6 +224,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = ({
                             onChange={handleDurationChange(DurationFields.HOURS)}
                         />
                         <InputNumber
+                            label={t('app.shared.advancedDateInput.days')}
                             min={0}
                             className="w-full md:w-1/3"
                             placeholder="7 d"
