@@ -69,6 +69,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 onChange={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
+                selectItemLabel="Add action"
+                placeholder="Filter by action, contract name or address"
             />
         </div>
     );

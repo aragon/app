@@ -13,7 +13,18 @@ import { AutocompleteInputMenu } from './autocompleteInputMenu';
 import { useAutocompleteProps } from './useAutocompleteProps';
 
 export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInputProps>((props, ref) => {
-    const { items, groups, value, onChange, wrapperClassName, onFocus, onKeyDown, onOpenChange, ...otherProps } = props;
+    const {
+        items,
+        groups,
+        value,
+        onChange,
+        wrapperClassName,
+        onFocus,
+        onKeyDown,
+        onOpenChange,
+        selectItemLabel,
+        ...otherProps
+    } = props;
 
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState(items.find((item) => item.id === value)?.name ?? '');
@@ -102,7 +113,12 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
                 {...otherAutocompleteInputProps}
                 {...otherProps}
             />
-            <AutocompleteInputMenu isOpen={isOpen} context={context} {...floatingMenuProps}>
+            <AutocompleteInputMenu
+                isOpen={isOpen}
+                context={context}
+                selectItemLabel={selectItemLabel}
+                {...floatingMenuProps}
+            >
                 {Object.keys(groupedItems).map((groupId) => (
                     <AutocompleteInputGroup key={groupId} group={getGroupById(groupId)}>
                         {groupedItems[groupId]?.map((item) => (

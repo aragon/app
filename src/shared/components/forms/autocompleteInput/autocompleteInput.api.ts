@@ -67,4 +67,8 @@ export interface IAutocompleteInputProps extends Omit<IInputTextProps, 'onChange
      * Callback called on open property change.
      */
     onOpenChange?: (isOpen: boolean) => void;
+    /**
+     * Label displayed on the menu footer for selecting an item.
+     */
+    selectItemLabel: string;
 }

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { ComponentProps } from 'react';
+import type { ComponentProps } from 'react';
 
 export interface IKeyboardShortcutProps extends ComponentProps<'div'> {}
 

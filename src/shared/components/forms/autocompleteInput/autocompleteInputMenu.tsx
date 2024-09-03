@@ -2,6 +2,7 @@ import { FloatingFocusManager, FloatingPortal, type UseFloatingReturn } from '@f
 import classNames from 'classnames';
 import { type ComponentProps, forwardRef } from 'react';
 import { KeyboardShortcut } from '../../keyboardShortcut';
+import { useTranslations } from '../../translationsProvider';
 
 export interface IAutocompleteInputMenuProps extends ComponentProps<'div'> {
     /**
@@ -12,10 +13,17 @@ export interface IAutocompleteInputMenuProps extends ComponentProps<'div'> {
      * Context of the floating menu.
      */
     context: UseFloatingReturn['context'];
+    /**
+     * Label displayed on the menu footer.
+     */
+    selectItemLabel: string;
 }
 
 export const AutocompleteInputMenu = forwardRef<HTMLDivElement, IAutocompleteInputMenuProps>((props, ref) => {
-    const { isOpen, context, children, ...otherProps } = props;
+    const { isOpen, context, selectItemLabel, children, ...otherProps } = props;
+
+    const { t } = useTranslations();
+
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
@@ -40,10 +48,10 @@ export const AutocompleteInputMenu = forwardRef<HTMLDivElement, IAutocompleteInp
                             <div className="flex flex-row items-center gap-1">
                                 <KeyboardShortcut>↑</KeyboardShortcut>
                                 <KeyboardShortcut>↓</KeyboardShortcut>
-                                <p className="text-neutral-500">Select</p>
+                                <p className="text-neutral-500">{t('app.shared.autocompleteInput.menu.select')}</p>
                             </div>
                             <div className="flex flex-row items-center gap-1">
-                                <p className="text-neutral-500">Add action</p>
+                                <p className="text-neutral-500">{selectItemLabel}</p>
                                 <KeyboardShortcut>↵</KeyboardShortcut>
                             </div>
                         </div>
