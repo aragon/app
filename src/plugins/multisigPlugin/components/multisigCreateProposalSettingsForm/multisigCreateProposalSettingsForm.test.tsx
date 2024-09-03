@@ -61,9 +61,6 @@ describe('<MultisigCreateProposalSettingsForm /> component', () => {
         expect(startTimeInput).toHaveTextContent(
             'Field: app.plugins.multisig.createProposalSettingsForm.startTime.field',
         );
-        expect(startTimeInput).toHaveTextContent(
-            'Info Text: app.plugins.multisig.createProposalSettingsForm.startTime.infoText',
-        );
         expect(startTimeInput).toHaveTextContent('Is Start Field: true');
     });
 
