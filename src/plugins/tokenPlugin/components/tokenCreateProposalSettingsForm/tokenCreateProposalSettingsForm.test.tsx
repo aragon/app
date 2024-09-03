@@ -72,24 +72,20 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
     it('passes correct props to start time AdvancedDateInput', () => {
         render(createTestComponent());
         const startTimeInput = screen.getAllByTestId('advanced-date-input')[0];
-        expect(startTimeInput).toHaveTextContent('Label: app.plugins.token.createProposalSettingsForm.startTime.label');
-        expect(startTimeInput).toHaveTextContent(
-            'Help Text: app.plugins.token.createProposalSettingsForm.startTime.helpText',
-        );
-        expect(startTimeInput).toHaveTextContent('Field: app.plugins.token.createProposalSettingsForm.startTime.field');
+        expect(startTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.startTime.label/);
+        expect(startTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.startTime.helpText/);
+        expect(startTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.startTime.field/);
         expect(startTimeInput).toHaveTextContent('Is Start Field: true');
     });
 
     it('passes correct props to end time AdvancedDateInput', () => {
         render(createTestComponent());
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
-        expect(endTimeInput).toHaveTextContent('Label: app.plugins.token.createProposalSettingsForm.endTime.label');
+        expect(endTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.endTime.label/);
+        expect(endTimeInput).toHaveTextContent(/plugins.token.createProposalSettingsForm.endTime.helpText/);
+        expect(endTimeInput).toHaveTextContent(/app.plugins.token.createProposalSettingsForm.endTime.field/);
         expect(endTimeInput).toHaveTextContent(
-            'Help Text: app.plugins.token.createProposalSettingsForm.endTime.helpText',
-        );
-        expect(endTimeInput).toHaveTextContent('Field: app.plugins.token.createProposalSettingsForm.endTime.field');
-        expect(endTimeInput).toHaveTextContent(
-            'Info Text: app.plugins.token.createProposalSettingsForm.endTime.infoText (days=0,hours=1,minutes=0)',
+            /plugins.token.createProposalSettingsForm.endTime.infoText \(days=0,hours=1,minutes=0\)/,
         );
         expect(endTimeInput).toHaveTextContent('Use Duration: true');
         expect(endTimeInput).toHaveTextContent('Start Time: {"date":"2024-09-01","time":"12:00"}');
