@@ -1,0 +1,5 @@
+describe('<AutocompleteInputItem /> component', () => {
+    it('', () => {
+        //
+    });
+});

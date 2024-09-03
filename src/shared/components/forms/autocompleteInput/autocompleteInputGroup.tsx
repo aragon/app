@@ -1,12 +1,12 @@
 import classNames from 'classnames';
-import { ComponentProps } from 'react';
-import { IAutocompleteInputItemGroup } from './autocompleteInput.api';
+import type { ComponentProps } from 'react';
+import { type IAutocompleteInputGroup } from './autocompleteInput.api';
 
 export interface IAutocompleteInputGroupProps extends ComponentProps<'div'> {
     /**
      * Information about the group header.
      */
-    group?: IAutocompleteInputItemGroup;
+    group?: IAutocompleteInputGroup;
 }
 
 export const AutocompleteInputGroup: React.FC<IAutocompleteInputGroupProps> = (props) => {

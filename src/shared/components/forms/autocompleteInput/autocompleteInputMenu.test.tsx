@@ -1,0 +1,5 @@
+describe('<AutocompleteInputMenu /> component', () => {
+    it('', () => {
+        //
+    });
+});

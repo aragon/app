@@ -1,0 +1,5 @@
+describe('<AutocompleteInputGroup /> component', () => {
+    it('', () => {
+        //
+    });
+});

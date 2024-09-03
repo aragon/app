@@ -1,6 +1,6 @@
 import type { IconType } from '@aragon/ods';
 
-export interface IAutocompleteInputItemGroup {
+export interface IAutocompleteInputGroup {
     /**
      * ID of the group.
      */
@@ -13,6 +13,11 @@ export interface IAutocompleteInputItemGroup {
      * Additional information of the group.
      */
     info: string;
+    /**
+     * Array of data strings to be used for indexing the group. The group will be displayed on the result list when one
+     * of the string matches the current input search value.
+     */
+    indexData?: string[];
 }
 
 export interface IAutocompleteInputItem {
@@ -42,5 +47,5 @@ export interface IAutocompleteInputProps {
     /**
      * Information about the item groups.
      */
-    groups?: IAutocompleteInputItemGroup[];
+    groups?: IAutocompleteInputGroup[];
 }

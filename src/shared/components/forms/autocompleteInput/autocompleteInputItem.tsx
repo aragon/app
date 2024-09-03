@@ -1,7 +1,7 @@
 import { Icon } from '@aragon/ods';
 import classNames from 'classnames';
-import { ComponentProps, forwardRef } from 'react';
-import { IAutocompleteInputItem } from './autocompleteInput.api';
+import { type ComponentProps, forwardRef } from 'react';
+import type { IAutocompleteInputItem } from './autocompleteInput.api';
 
 export interface IAutocompleteInputItemProps extends ComponentProps<'div'> {
     /**
@@ -15,22 +15,17 @@ export interface IAutocompleteInputItemProps extends ComponentProps<'div'> {
 }
 
 export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInputItemProps>((props, ref) => {
-    const { isActive, item, className, ...other } = props;
+    const { isActive, item, className, ...otherProps } = props;
     const { id, icon, name } = item;
 
+    const itemClassName = classNames(
+        'flex flex-row items-center gap-4 rounded-lg p-3 hover:cursor-pointer',
+        { 'bg-neutral-50 text-neutral-800': isActive },
+        className,
+    );
+
     return (
-        <div
-            ref={ref}
-            className={classNames(
-                'flex flex-row items-center gap-4 rounded-lg px-3 py-3 hover:cursor-pointer',
-                { 'bg-neutral-50 text-neutral-800': isActive },
-                className,
-            )}
-            role="option"
-            id={id}
-            aria-selected={isActive}
-            {...other}
-        >
+        <div ref={ref} className={itemClassName} role="option" id={id} aria-selected={isActive} {...otherProps}>
             <Icon icon={icon} className={classNames({ 'text-neutral-300': !isActive })} />
             <p className={classNames('text-base font-normal leading-tight', { 'text-neutral-500': !isActive })}>
                 {name}
@@ -38,3 +33,5 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
         </div>
     );
 });
+
+AutocompleteInputItem.displayName = 'AutocompleteInputItem';
