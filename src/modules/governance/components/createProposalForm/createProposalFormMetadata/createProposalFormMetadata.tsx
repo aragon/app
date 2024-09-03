@@ -2,6 +2,7 @@ import { ResourcesInput } from '@/shared/components/resourceInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
+import { type FieldPath, type FieldValues, type UseControllerReturn } from 'react-hook-form';
 
 export interface ICreateProposalFormMetadataProps {}
 
@@ -12,9 +13,6 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
         label: t('app.governance.createProposalForm.metadata.title.title'),
         rules: {
             required: true,
-            validate: {
-                noEmptyStrings: (value) => value.trim() !== '' || 'Title field cannot be empty or just spaces',
-            },
         },
         defaultValue: '',
     });
@@ -30,6 +28,17 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
         defaultValue: true,
     });
 
+    function handleBlur<TFieldValues extends FieldValues>(
+        e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLDivElement>,
+        field: UseControllerReturn<TFieldValues, FieldPath<TFieldValues>>['field'],
+    ) {
+        if ('value' in e.target) {
+            const trimmedValue = e.target.value.trim();
+            field.onChange(trimmedValue);
+        }
+        field.onBlur();
+    }
+
     return (
         <div className="flex flex-col gap-10">
             <InputText
@@ -37,6 +46,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 placeholder={t('app.governance.createProposalForm.metadata.title.placeholder')}
                 maxLength={128}
                 {...titleField}
+                onBlur={(e) => handleBlur(e, titleField)}
             />
             <TextArea
                 helpText={t('app.governance.createProposalForm.metadata.summary.helpText')}
@@ -44,6 +54,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 isOptional={true}
                 maxLength={480}
                 {...summaryField}
+                onBlur={(e) => handleBlur(e, summaryField)}
             />
             <TextAreaRichText
                 helpText={t('app.governance.createProposalForm.metadata.body.helpText')}
@@ -55,6 +66,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
             <ResourcesInput
                 name="resources"
                 helpText={t('app.governance.createProposalForm.metadata.resources.helpText')}
+                trim={(e, field) => handleBlur(e, field)}
             />
             <Switch
                 helpText={t('app.governance.createProposalForm.metadata.actions.helpText')}

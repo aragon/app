@@ -25,11 +25,8 @@ export const useFormField = <
         validate: {
             ...(rules?.validate as Record<string, (value: FieldValue<TFieldValues>) => string | boolean>),
             noEmptyStrings: (value: FieldValue<TFieldValues>) => {
-                if (typeof value === 'string') {
-                    const trimmedValue = value.trim();
-                    if (rules?.required || trimmedValue !== '') {
-                        return !!value.trim();
-                    }
+                if (typeof value === 'string' && value !== '') {
+                    return !!value.trim();
                 }
                 return true;
             },
