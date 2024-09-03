@@ -4,13 +4,13 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { decodeAbiParameters, type Hex, toHex, type TransactionReceipt } from 'viem';
-import type {
-    ICreateProposalFormData,
-    ICreateProposalFormDuration,
-    ICreateProposalFormFixedDateTime,
-} from '../../components/createProposalForm';
+import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
+import type {
+    IAdvancedDateInputDateDuration,
+    IAdvancedDateInputDateFixed,
+} from '@/shared/components/advancedDateInput';
 
 export interface IBuildTransactionParams {
     /**
@@ -121,7 +121,7 @@ class PublishProposalDialogUtils {
         return this.dateToSeconds(parsedEndDate);
     };
 
-    private parseFixedDate = ({ date, time }: ICreateProposalFormFixedDateTime): DateTime => {
+    private parseFixedDate = ({ date, time }: IAdvancedDateInputDateFixed): DateTime => {
         const { hour, minute } = DateTime.fromISO(time);
         const parsedDate = DateTime.fromISO(date).set({ hour, minute });
 
@@ -135,7 +135,7 @@ class PublishProposalDialogUtils {
     private formToProposalActions = (actions: IProposalAction[]) =>
         actions.map(({ to, value, data }) => ({ to, value, data }));
 
-    private compareTimeDuration = (first?: ICreateProposalFormDuration, second?: ICreateProposalFormDuration) =>
+    private compareTimeDuration = (first?: IAdvancedDateInputDateDuration, second?: IAdvancedDateInputDateDuration) =>
         first?.days === second?.days && first?.hours === second?.hours && first?.minutes === second?.minutes;
 }
 

@@ -2,7 +2,7 @@ import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { AdvancedDateInput } from './advancedDateInput';
-import { type IAdvancedDateInputProps, type ICreateProposalFormFixedDateTime } from './types';
+import type { IAdvancedDateInputDateFixed, IAdvancedDateInputProps } from './advancedInput.api';
 
 describe('<AdvancedDateInput /> component', () => {
     const createTestComponent = (props?: Partial<IAdvancedDateInputProps>) => {
@@ -52,7 +52,7 @@ describe('<AdvancedDateInput /> component', () => {
     });
 
     it('validates fixed date-time input for end time', async () => {
-        const startTime: ICreateProposalFormFixedDateTime = { date: '2024-09-01', time: '12:00' };
+        const startTime: IAdvancedDateInputDateFixed = { date: '2024-09-01', time: '12:00' };
 
         render(
             createTestComponent({
@@ -129,7 +129,7 @@ describe('<AdvancedDateInput /> component', () => {
     });
 
     it('handles start time prop correctly', async () => {
-        const startTime: ICreateProposalFormFixedDateTime = { date: '2024-09-01', time: '10:00' };
+        const startTime: IAdvancedDateInputDateFixed = { date: '2024-09-01', time: '10:00' };
         render(
             createTestComponent({
                 label: 'End Time',

@@ -43,14 +43,14 @@ export interface IAdvancedDateInputProps {
     /**
      * Start time to be used for validation.
      */
-    startTime?: ICreateProposalFormFixedDateTime;
+    startTime?: IAdvancedDateInputDateFixed;
     /**
      *   Boolean to indicate if start time
      */
     isStartField?: boolean;
 }
 
-export interface ICreateProposalFormFixedDateTime {
+export interface IAdvancedDateInputDateFixed {
     /**
      * Date in YYYY-MM-DD format.
      */
@@ -61,7 +61,7 @@ export interface ICreateProposalFormFixedDateTime {
     time: string;
 }
 
-export interface ICreateProposalFormDuration {
+export interface IAdvancedDateInputDateDuration {
     /**
      * Minutes as a number between [0, 59] range.
      */

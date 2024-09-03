@@ -1,5 +1,5 @@
 import * as daoService from '@/shared/api/daoService';
-import { type IAdvancedDateInputProps } from '@/shared/components/advancedDateInput/types';
+import type { IAdvancedDateInputProps } from '@/shared/components/advancedDateInput';
 import { FormWrapper, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { dateUtils } from '@/shared/utils/createProposalUtils';
 import { render, screen } from '@testing-library/react';

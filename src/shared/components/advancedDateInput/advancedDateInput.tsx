@@ -8,11 +8,11 @@ import { useDefaultValues } from './hooks/useDefaultValues';
 import {
     DateTimeFields,
     DurationFields,
+    type IAdvancedDateInputDateDuration,
+    type IAdvancedDateInputDateFixed,
     type IAdvancedDateInputProps,
-    type ICreateProposalFormDuration,
-    type ICreateProposalFormFixedDateTime,
     InputModeOptions,
-} from './types';
+} from './advancedInput.api';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     const {
@@ -63,7 +63,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     );
 
     const validateFixedDateTime = useCallback(
-        (value: ICreateProposalFormFixedDateTime) => {
+        (value: IAdvancedDateInputDateFixed) => {
             if (inputMode !== InputModeOptions.FIXED) {
                 return true;
             }
@@ -98,7 +98,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     );
 
     const validateDuration = useCallback(
-        (value: ICreateProposalFormDuration) => {
+        (value: IAdvancedDateInputDateDuration) => {
             if (inputMode !== InputModeOptions.DURATION) {
                 return true;
             }

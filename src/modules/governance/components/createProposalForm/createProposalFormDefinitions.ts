@@ -1,3 +1,7 @@
+import type {
+    IAdvancedDateInputDateDuration,
+    IAdvancedDateInputDateFixed,
+} from '@/shared/components/advancedDateInput';
 import type { IProposalAction } from '@aragon/ods';
 
 export interface ICreateProposalFormResources {
@@ -9,32 +13,6 @@ export interface ICreateProposalFormResources {
      * URL of the resource.
      */
     url: string;
-}
-
-export interface ICreateProposalFormFixedDateTime {
-    /**
-     * Date in YYYY-MM-DD format.
-     */
-    date: string;
-    /**
-     * Time in HH:MM format.
-     */
-    time: string;
-}
-
-export interface ICreateProposalFormDuration {
-    /**
-     * Minutes as a number between [0, 59] range.
-     */
-    minutes: number;
-    /**
-     * Hours as a number between [0, 23] range.
-     */
-    hours: number;
-    /**
-     * Number of days.
-     */
-    days: number;
 }
 
 export interface ICreateProposalFormData {
@@ -69,7 +47,7 @@ export interface ICreateProposalFormData {
     /**
      * Fixed start time only set when startTimeMode is set to fixed.
      */
-    startTimeFixed?: ICreateProposalFormFixedDateTime;
+    startTimeFixed?: IAdvancedDateInputDateFixed;
     /**
      * Defines if the end time of the proposal is with duration or fixed format.
      */
@@ -77,13 +55,13 @@ export interface ICreateProposalFormData {
     /**
      * End time of the proposal in duration (minutes, hours, days) format only set when endTimeMode is set to duration.
      */
-    endTimeDuration?: ICreateProposalFormDuration;
+    endTimeDuration?: IAdvancedDateInputDateDuration;
     /**
      * Fixed end time only set when endTimeMode is set to fixed.
      */
-    endTimeFixed?: ICreateProposalFormFixedDateTime;
+    endTimeFixed?: IAdvancedDateInputDateFixed;
     /**
      * Minimum duration of the proposal in seconds.
      */
-    minimumDuration?: ICreateProposalFormDuration;
+    minimumDuration?: IAdvancedDateInputDateDuration;
 }

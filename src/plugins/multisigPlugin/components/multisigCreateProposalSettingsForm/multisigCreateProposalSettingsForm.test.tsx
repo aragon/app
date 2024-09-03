@@ -1,4 +1,4 @@
-import { type IAdvancedDateInputProps } from '@/shared/components/advancedDateInput/types';
+import type { IAdvancedDateInputProps } from '@/shared/components/advancedDateInput';
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { useWatch } from 'react-hook-form';
