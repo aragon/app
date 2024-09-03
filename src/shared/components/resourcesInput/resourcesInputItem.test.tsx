@@ -1,10 +1,11 @@
 import * as useFormField from '@/shared/hooks/useFormField';
 import { FormWrapper } from '@/shared/testUtils';
-import { render, screen, waitFor } from '@testing-library/react';
+import { IconType } from '@aragon/ods';
+import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { type IResourceInputItemProps, ResourceInputItem } from './resourceInputItem';
+import { type IResourcesInputItemProps, ResourcesInputItem } from './resourcesInputItem';
 
-describe('<ResourceItem /> component', () => {
+describe('<ResourcesInputItem /> component', () => {
     const useFormFieldSpy = jest.spyOn(useFormField, 'useFormField');
 
     beforeEach(() => {
@@ -24,8 +25,9 @@ describe('<ResourceItem /> component', () => {
         useFormFieldSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IResourceInputItemProps>) => {
-        const completeProps: IResourceInputItemProps = {
+    const createTestComponent = (props?: Partial<IResourcesInputItemProps>) => {
+        const completeProps: IResourcesInputItemProps = {
+            name: 'resources',
             index: 0,
             remove: jest.fn(),
             ...props,
@@ -33,24 +35,24 @@ describe('<ResourceItem /> component', () => {
 
         return (
             <FormWrapper>
-                <ResourceInputItem {...completeProps} />
+                <ResourcesInputItem {...completeProps} />
             </FormWrapper>
         );
     };
 
     it('renders the label and link input fields', () => {
         render(createTestComponent());
-        expect(screen.getByPlaceholderText(/shared.resourcesInput.item.labelInput.placeholder/)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/shared.resourcesInput.item.linkInput.placeholder/)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/resourcesInput.item.labelInput.placeholder/)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/resourcesInput.item.linkInput.placeholder/)).toBeInTheDocument();
     });
 
     it('calls remove function when remove button is clicked', async () => {
         const remove = jest.fn();
         render(createTestComponent({ remove }));
-        const dropdownTrigger = screen.getByTestId('DOTS_VERTICAL');
+        const dropdownTrigger = screen.getByTestId(IconType.DOTS_VERTICAL);
         await userEvent.click(dropdownTrigger);
 
-        const removeButton = screen.getByText(/shared.resourcesInput.item.removeResource/);
+        const removeButton = screen.getByText(/resourcesInput.item.removeResource/);
         await userEvent.click(removeButton);
 
         expect(remove).toHaveBeenCalledWith(0);
@@ -58,12 +60,12 @@ describe('<ResourceItem /> component', () => {
 
     it('accepts valid URL format in link input', async () => {
         render(createTestComponent());
-        const linkInput = screen.getByPlaceholderText(/shared.resourcesInput.item.linkInput.placeholder/);
+        const linkInput = screen.getByPlaceholderText(/resourcesInput.item.linkInput.placeholder/);
 
         await userEvent.type(linkInput, 'https://example.com');
         await userEvent.tab();
 
-        expect(screen.queryByText(/shared.formField.error.pattern/)).not.toBeInTheDocument();
+        expect(screen.queryByText(/formField.error.pattern/)).not.toBeInTheDocument();
     });
 
     it('validates URL format in link input', async () => {
@@ -74,22 +76,24 @@ describe('<ResourceItem /> component', () => {
             value: '',
             ref: jest.fn(),
             variant: 'critical',
-            alert: {
-                message: 'Invalid URL format',
-                variant: 'critical',
-            },
+            alert: { message: 'Invalid URL format', variant: 'critical' },
             label: options?.label,
         }));
 
         render(createTestComponent());
 
-        const linkInput = screen.getByPlaceholderText(/shared.resourcesInput.item.linkInput.placeholder/);
+        const linkInput = screen.getByPlaceholderText(/resourcesInput.item.linkInput.placeholder/);
 
         await userEvent.type(linkInput, 'broken link');
         await userEvent.tab();
 
-        await waitFor(() => {
-            expect(screen.getByText('Invalid URL format')).toBeInTheDocument();
-        });
+        expect(await screen.findByText('Invalid URL format')).toBeInTheDocument();
+    });
+
+    it('sets a max length requirement for the resource label', () => {
+        render(createTestComponent());
+        /* eslint-disable-next-line testing-library/no-node-access */
+        const container = screen.getByPlaceholderText(/labelInput.placeholder/).parentElement?.parentElement;
+        expect(within(container!).getByText('0/40')).toBeInTheDocument();
     });
 });
