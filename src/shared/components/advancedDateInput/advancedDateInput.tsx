@@ -2,7 +2,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertCard, Card, InputDate, InputNumber, InputText, InputTime, RadioCard, RadioGroup } from '@aragon/ods';
 import { DateTime, Duration } from 'luxon';
 import { useCallback } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
 import {
     DateTimeFields,
