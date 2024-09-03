@@ -10,8 +10,7 @@ export interface ICreateProposalPageProps {
 
 const CreateProposal: React.FC<ICreateProposalPageProps> = (props) => {
     const { params } = props;
-
-    return <CreateProposalPage daoId={params.id} />;
+    return <CreateProposalPage params={params} />;
 };
 
 export default CreateProposal;
