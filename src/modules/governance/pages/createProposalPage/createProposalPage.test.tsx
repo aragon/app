@@ -13,7 +13,7 @@ jest.mock('./createProposalPageClient', () => ({
 
 describe('<CreateProposalPage /> component', () => {
     const createTestComponent = (props?: Partial<ICreateProposalPageProps>) => {
-        const completeProps: ICreateProposalPageProps = { ...props };
+        const completeProps: ICreateProposalPageProps = { daoId: 'test', ...props };
 
         return <CreateProposalPage {...completeProps} />;
     };
