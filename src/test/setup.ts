@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import 'jest-canvas-mock';
 import { TextDecoder, TextEncoder } from 'util';
 import { mockFetch, mockTranslations, testLogger, timeUtils } from './utils';
-import './utils/polyfill';
 
 // Setup test logger
 testLogger.setup();
