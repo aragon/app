@@ -47,6 +47,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
         rules: {
             validate: validateDuration,
         },
+        label,
         shouldUnregister: true,
         defaultValue: getDefaultDuration(),
     });
@@ -85,7 +86,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
             </div>
             <AlertCard
                 message={label}
-                description={durationErrors ? t('app.shared.advancedDateInput.invalid', { label }) : infoText}
+                description={durationErrors ? durationField.alert?.message : infoText}
                 variant={durationErrors ? 'critical' : 'info'}
             />
         </Card>

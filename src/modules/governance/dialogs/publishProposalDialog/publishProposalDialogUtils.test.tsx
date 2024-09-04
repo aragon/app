@@ -10,6 +10,7 @@ import {
     generateProposalActionUpdateMetadata,
 } from '../../testUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
+import { dateUtils } from '@/shared/utils/createProposalUtils';
 
 describe('publishProposalDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
@@ -179,7 +180,7 @@ describe('publishProposalDialog utils', () => {
         it('returns a DateTime object from the given date and time', () => {
             const date = '2024-08-29';
             const time = '16:47';
-            const parsedDate = publishProposalDialogUtils['parseFixedDate']({ date, time });
+            const parsedDate = dateUtils.parseFixedDate({ date, time });
             expect(parsedDate.toISO()).toEqual('2024-08-29T16:47:00.000+00:00');
         });
     });

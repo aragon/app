@@ -20,7 +20,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const { setValue, trigger } = useFormContext();
 
     const getDefaultDateTime = useCallback(() => {
-        return dateUtils.getStartDate({ minDuration, startTime, isNow: isStartField });
+        return dateUtils.getStartDate({ minDuration: minDuration ?? 0, startTime, isNow: isStartField });
     }, [minDuration, startTime, isStartField]);
 
     const handleFixedDateTimeChange = (type: DateTimeFields) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,12 +35,12 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
                 return true;
             }
 
-            const selectedDateTime = DateTime.fromISO(`${value.date}T${value.time}`);
+            const selectedDateTime = dateUtils.parseFixedDate(value);
             const now = DateTime.now();
             const minDateTime = now.plus({ seconds: minDuration });
 
             if (startTime) {
-                const startDateTime = DateTime.fromISO(`${startTime.date}T${startTime.time}`);
+                const startDateTime = dateUtils.parseFixedDate(startTime);
                 const minEndDateTime = startDateTime.plus({ seconds: minDuration });
 
                 if (selectedDateTime <= startDateTime) {
@@ -66,6 +66,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
         },
         defaultValue: getDefaultDateTime(),
         shouldUnregister: true,
+        label,
     });
 
     const fixedErrors = !!fixedDateTimeField.alert;
@@ -96,7 +97,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
             {(infoText ?? fixedErrors) && (
                 <AlertCard
                     message={label}
-                    description={fixedErrors ? t('app.shared.advancedDateInput.invalid', { label }) : infoText}
+                    description={fixedErrors ? fixedDateTimeField.alert?.message : infoText}
                     variant={fixedErrors ? 'critical' : 'info'}
                 />
             )}

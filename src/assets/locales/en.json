@@ -513,7 +513,6 @@
           "label": "Specific date & time",
           "time": "Time"
         },
-        "invalid": "{{label}} is invalid",
         "now": "Now",
         "timezone": "Timezone"
       },

@@ -50,7 +50,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         await userEvent.clear(timeInput);
         await userEvent.type(timeInput, '12:30');
 
-        expect(alert).toHaveTextContent(/shared.advancedDateInput.invalid \(label=End Time\)/);
+        expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=End Time\)/);
 
         // Set a valid date-time
         await userEvent.clear(timeInput);

@@ -1,3 +1,4 @@
+import { type IAdvancedDateInputDateFixed } from '@/shared/components/advancedDateInput';
 import { DateTime } from 'luxon';
 
 interface GetStartDateParams {
@@ -12,6 +13,11 @@ class DateUtils {
         const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
         const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
         return { days, hours, minutes };
+    };
+
+    parseFixedDate = ({ date, time }: IAdvancedDateInputDateFixed): DateTime => {
+        const { hour, minute } = DateTime.fromISO(time);
+        return DateTime.fromISO(date).set({ hour, minute });
     };
 
     getStartDate = ({ minDuration, startTime, isNow }: GetStartDateParams): { date: string; time: string } => {
