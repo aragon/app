@@ -40,10 +40,7 @@ export interface IAdvancedDateInputProps {
      * Min date for the input.
      */
     minDuration?: number;
-    /**
-     * Start time to be used for validation.
-     */
-    startTime?: IAdvancedDateInputDateFixed;
+    isStartField?: boolean;
 }
 
 export interface IAdvancedDateInputDateFixed {

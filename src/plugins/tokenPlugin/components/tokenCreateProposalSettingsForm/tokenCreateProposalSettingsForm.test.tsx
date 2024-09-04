@@ -3,32 +3,20 @@ import type { IAdvancedDateInputProps } from '@/shared/components/advancedDateIn
 import { FormWrapper, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { dateUtils } from '@/shared/utils/createProposalUtils';
 import { render, screen } from '@testing-library/react';
-import * as ReactHookForm from 'react-hook-form';
-import { useWatch } from 'react-hook-form';
 import { generateDaoTokenSettings } from '../../testUtils';
 import {
     TokenCreateProposalSettingsForm,
     type ITokenCreateProposalSettingsFormProps,
 } from './tokenCreateProposalSettingsForm';
 
-jest.mock('react-hook-form', () => ({ __esModule: true, ...jest.requireActual('react-hook-form') }));
 jest.mock('@/shared/components/advancedDateInput', () => ({
-    AdvancedDateInput: ({
-        label,
-        helpText,
-        field,
-        infoText,
-        useDuration,
-        startTime,
-        minDuration,
-    }: IAdvancedDateInputProps) => (
+    AdvancedDateInput: ({ label, helpText, field, infoText, useDuration, minDuration }: IAdvancedDateInputProps) => (
         <div data-testid="advanced-date-input">
             <div>Label: {label}</div>
             <div>Help Text: {helpText}</div>
             <div>Field: {field}</div>
             <div>Info Text: {infoText}</div>
             <div>Use Duration: {useDuration ? 'true' : 'false'}</div>
-            <div>Start Time: {JSON.stringify(startTime)}</div>
             <div>Min Duration: {minDuration}</div>
         </div>
     ),
@@ -37,10 +25,8 @@ jest.mock('@/shared/components/advancedDateInput', () => ({
 describe('<TokenCreateProposalSettingsForm /> component', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
     const useDateUtilsSpy = jest.spyOn(dateUtils, 'secondsToDaysHoursMinutes');
-    const useWatchSpy: jest.SpyInstance<unknown> = jest.spyOn(ReactHookForm, 'useWatch');
 
     beforeEach(() => {
-        useWatchSpy.mockReturnValue({ date: '2024-09-01', time: '12:00' });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
         useDateUtilsSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
     });
@@ -48,7 +34,6 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
     afterEach(() => {
         useDaoSettingsSpy.mockReset();
         useDateUtilsSpy.mockReset();
-        useWatchSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenCreateProposalSettingsFormProps>) => {
@@ -87,18 +72,12 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
             /tokenCreateProposalSettingsForm.endTime.infoText \(days=0,hours=1,minutes=0\)/,
         );
         expect(endTimeInput).toHaveTextContent('Use Duration: true');
-        expect(endTimeInput).toHaveTextContent('Start Time: {"date":"2024-09-01","time":"12:00"}');
         expect(endTimeInput).toHaveTextContent('Min Duration: 0');
     });
 
     it('fetches DAO settings with correct params', () => {
         render(createTestComponent({ daoId: 'My DAO' }));
         expect(useDaoSettingsSpy).toHaveBeenCalledWith({ urlParams: { daoId: 'My DAO' } });
-    });
-
-    it('watches for startTimeFixed changes', () => {
-        render(createTestComponent());
-        expect(useWatch).toHaveBeenCalledWith({ name: 'startTimeFixed' });
     });
 
     it('fetches the correct min duration from the dao settings', () => {

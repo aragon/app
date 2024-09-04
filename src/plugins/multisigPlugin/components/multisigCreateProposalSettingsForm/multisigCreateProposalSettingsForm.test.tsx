@@ -1,31 +1,24 @@
 import type { IAdvancedDateInputProps } from '@/shared/components/advancedDateInput';
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
-import { useWatch } from 'react-hook-form';
 import {
     MultisigCreateProposalSettingsForm,
     type IMultisigCreateProposalSettingsFormProps,
 } from './multisigCreateProposalSettingsForm';
 
-jest.mock('react-hook-form');
 jest.mock('@/shared/components/advancedDateInput', () => ({
-    AdvancedDateInput: ({ label, helpText, field, infoText, useDuration, startTime }: IAdvancedDateInputProps) => (
+    AdvancedDateInput: ({ label, helpText, field, infoText, useDuration }: IAdvancedDateInputProps) => (
         <div data-testid="advanced-date-input">
             <div>Label: {label}</div>
             <div>Help Text: {helpText}</div>
             <div>Field: {field}</div>
             <div>Info Text: {infoText}</div>
             <div>Use Duration: {useDuration ? 'true' : 'false'}</div>
-            <div>Start Time: {JSON.stringify(startTime)}</div>
         </div>
     ),
 }));
 
 describe('<MultisigCreateProposalSettingsForm /> component', () => {
-    beforeEach(() => {
-        (useWatch as jest.Mock).mockReturnValue({ date: '2024-09-01', time: '12:00' });
-    });
-
     const createTestComponent = (props?: Partial<IMultisigCreateProposalSettingsFormProps>) => {
         const completeProps: IMultisigCreateProposalSettingsFormProps = {
             ...props,
@@ -59,11 +52,5 @@ describe('<MultisigCreateProposalSettingsForm /> component', () => {
         expect(endTimeInput).toHaveTextContent('endTime');
         expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.infoText/);
         expect(endTimeInput).toHaveTextContent('Use Duration: true');
-        expect(endTimeInput).toHaveTextContent('Start Time: {"date":"2024-09-01","time":"12:00"}');
-    });
-
-    it('watches for startTimeFixed changes', () => {
-        render(createTestComponent());
-        expect(useWatch).toHaveBeenCalledWith({ name: 'startTimeFixed' });
     });
 });

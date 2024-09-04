@@ -2,7 +2,6 @@ import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
-import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';
 
 export interface ITokenCreateProposalSettingsFormProps {
@@ -20,7 +19,6 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
 
     const minDuration = dao?.settings.minDuration ?? 0;
 
-    const startTime = useWatch({ name: 'startTimeFixed' });
     const { days, hours, minutes } = dateUtils.secondsToDaysHoursMinutes(minDuration);
 
     return (
@@ -29,6 +27,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
                 field="startTime"
                 helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.helpText')}
+                isStartField={true}
             />
             <AdvancedDateInput
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.label')}
@@ -41,7 +40,6 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 })}
                 useDuration={true}
                 minDuration={minDuration}
-                startTime={startTime}
             />
         </>
     );
