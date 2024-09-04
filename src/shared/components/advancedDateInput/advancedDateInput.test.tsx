@@ -1,9 +1,9 @@
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import * as ReactHookForm from 'react-hook-form';
 import { AdvancedDateInput } from './advancedDateInput';
 import type { IAdvancedDateInputProps } from './advancedInput.api';
-import * as ReactHookForm from 'react-hook-form';
 
 jest.mock('react-hook-form', () => ({
     __esModule: true,

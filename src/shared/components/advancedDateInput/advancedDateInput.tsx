@@ -1,11 +1,11 @@
+import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/ods';
 import { useWatch } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
-import { type IAdvancedDateInputProps, InputModeOptions } from './advancedInput.api';
-import { AdvancedDateInputFixed } from './advancedDateInputFixed';
 import { AdvancedDateInputDuration } from './advancedDateInputDuration';
-import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
+import { AdvancedDateInputFixed } from './advancedDateInputFixed';
+import { type IAdvancedDateInputProps, InputModeOptions } from './advancedInput.api';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     const { useDuration = false, label, helpText, minDuration = 0, field, infoText, isStartField = false } = props;
