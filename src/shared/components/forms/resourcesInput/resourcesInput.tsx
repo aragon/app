@@ -18,11 +18,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
     const { name, helpText } = props;
 
     const { t } = useTranslations();
-<<<<<<<< HEAD:src/shared/components/resourcesInput/resourcesInput.tsx
-    const { fields, append, remove } = useFieldArray({ name: name });
-========
     const { fields, append, remove } = useFieldArray({ name });
->>>>>>>> 2698044 (Start implementation of autocomplete component):src/shared/components/forms/resourceInput/resourceInput.tsx
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">

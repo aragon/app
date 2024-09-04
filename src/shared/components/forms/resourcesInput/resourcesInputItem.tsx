@@ -17,13 +17,8 @@ export interface IResourcesInputItemProps {
     remove: (index: number) => void;
 }
 
-<<<<<<<< HEAD:src/shared/components/resourcesInput/resourcesInputItem.tsx
 export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) => {
     const { name, index, remove } = props;
-========
-export const ResourceInputItem: React.FC<IResourceInputItemProps> = (props) => {
-    const { index, remove } = props;
->>>>>>>> 2698044 (Start implementation of autocomplete component):src/shared/components/forms/resourceInput/resourceInputItem.tsx
 
     const { t } = useTranslations();
 
