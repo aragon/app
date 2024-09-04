@@ -1,20 +1,16 @@
 import { renderHook } from '@testing-library/react';
-import { IUseAutocompletePropsParams, useAutocompleteProps } from './useAutocompleteProps';
+import { type IUseAutocompletePropsParams, useAutocompleteProps } from './useAutocompleteProps';
 
 describe('useAutocompleteProps hook', () => {
-    const renderTestHook = (params?: Partial<IUseAutocompletePropsParams>) => {
-        const completeParams: IUseAutocompletePropsParams = {
-            onOpenChange: jest.fn(),
-            activeIndex: null,
-            setActiveIndex: jest.fn(),
-            ...params,
-        };
-
-        return useAutocompleteProps(completeParams);
-    };
+    const generateParams = (params?: Partial<IUseAutocompletePropsParams>): IUseAutocompletePropsParams => ({
+        onOpenChange: jest.fn(),
+        activeIndex: null,
+        setActiveIndex: jest.fn(),
+        ...params,
+    });
 
     it('returns correct props for autocomplete input component', () => {
-        const { result } = renderHook(() => renderTestHook());
+        const { result } = renderHook(() => useAutocompleteProps(generateParams()));
         expect(result.current.inputProps).toEqual(
             expect.objectContaining({
                 role: 'combobox',
@@ -26,7 +22,7 @@ describe('useAutocompleteProps hook', () => {
     });
 
     it('returns correct props for autocomplete floating menu', () => {
-        const { result } = renderHook(() => renderTestHook());
+        const { result } = renderHook(() => useAutocompleteProps(generateParams()));
         expect(result.current.floatingMenuProps).toEqual(
             expect.objectContaining({
                 role: 'listbox',
@@ -37,12 +33,12 @@ describe('useAutocompleteProps hook', () => {
     });
 
     it('returns floating menu context', () => {
-        const { result } = renderHook(() => renderTestHook());
+        const { result } = renderHook(() => useAutocompleteProps(generateParams()));
         expect(result.current.context).toBeDefined();
     });
 
     it('returns a function to build the item-menu props', () => {
-        const { result } = renderHook(() => renderTestHook());
+        const { result } = renderHook(() => useAutocompleteProps(generateParams()));
         const itemProps = result.current.getMenuItemProps(0, {});
         expect(itemProps).toEqual(
             expect.objectContaining({
