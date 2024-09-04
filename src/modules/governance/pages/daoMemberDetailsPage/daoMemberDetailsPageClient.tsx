@@ -175,9 +175,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             <DefinitionList.Item
                                 term={t('app.governance.daoMemberDetailsPage.aside.details.firstActivity')}
                             >
-                                <Link iconRight={IconType.LINK_EXTERNAL} href={addressUrl} target="_blank">
-                                    {formattedFirstActivity}
-                                </Link>
+                                {formattedFirstActivity}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.Section>
