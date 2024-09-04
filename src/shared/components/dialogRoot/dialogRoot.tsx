@@ -1,8 +1,13 @@
 'use client';
 
-import { DialogAlertRootHiddenElement } from '@/shared/components/dialogRoot/dialogAlertRootHiddenElement';
-import { Dialog, DialogAlert, type IDialogRootProps as IOdsDialogRootProps } from '@aragon/ods';
+import {
+    Dialog,
+    DialogAlert,
+    type IDialogAlertRootProps as IOdsDialogAlertRootProps,
+    type IDialogRootProps as IOdsDialogRootProps,
+} from '@aragon/ods';
 import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
+import { DialogAlertRootHiddenElement } from './dialogAlertRootHiddenElement';
 import { DialogRootHiddenElement } from './dialogRootHiddenElement';
 
 export interface IDialogRootProps extends IOdsDialogRootProps {
@@ -12,7 +17,14 @@ export interface IDialogRootProps extends IOdsDialogRootProps {
     dialogs: Record<string, IDialogComponentDefinitions>;
 }
 
-export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
+export interface IDialogAlertRootProps extends IOdsDialogAlertRootProps {
+    /**
+     * Dialogs of the application.
+     */
+    dialogs: Record<string, IDialogComponentDefinitions>;
+}
+
+export const DialogRoot: React.FC<IDialogRootProps | IDialogAlertRootProps> = (props) => {
     const { dialogs } = props;
     const { location, close } = useDialogContext();
 

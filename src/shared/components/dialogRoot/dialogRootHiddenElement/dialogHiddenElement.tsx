@@ -1,8 +1,8 @@
-import { Description, Title } from '@radix-ui/react-alert-dialog';
+import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { useTranslations } from '../translationsProvider';
+import { useTranslations } from '../../translationsProvider';
 
-export interface IDialogAlertRootHiddenElementProps {
+export interface IDialogRootHiddenElementProps {
     /**
      * Key of the label only rendered for screen readers.
      */
@@ -13,7 +13,7 @@ export interface IDialogAlertRootHiddenElementProps {
     type: 'title' | 'description';
 }
 
-export const DialogAlertRootHiddenElement: React.FC<IDialogAlertRootHiddenElementProps> = (props) => {
+export const DialogRootHiddenElement: React.FC<IDialogRootHiddenElementProps> = (props) => {
     const { labelKey, type } = props;
     const { t } = useTranslations();
 
@@ -21,7 +21,7 @@ export const DialogAlertRootHiddenElement: React.FC<IDialogAlertRootHiddenElemen
         return null;
     }
 
-    const LabelComponent = type === 'title' ? Title : Description;
+    const LabelComponent = type === 'title' ? DialogTitle : DialogDescription;
 
     return (
         <VisuallyHidden asChild={true}>

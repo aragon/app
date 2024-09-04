@@ -59,6 +59,28 @@ describe('<DialogRoot /> component', () => {
         expect(screen.getByText(description)).toBeInTheDocument();
     });
 
+    it('renders DialogAlert.Root when isAlert is true', () => {
+        const dialogId = 'alert-dialog';
+        const dialogContent = 'alert-dialog-content';
+        const isAlert = true;
+        const dialogs = {
+            [dialogId]: {
+                Component: () => dialogContent,
+                isAlert,
+                title: 'Alert Title',
+                description: 'Alert Description',
+            },
+        };
+        const location = { id: dialogId };
+        useDialogContextSpy.mockReturnValue({ location, open: jest.fn(), close: jest.fn() });
+        render(createTestComponent({ dialogs }));
+
+        expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+        expect(screen.getByText('alert-dialog-content')).toBeInTheDocument();
+        expect(screen.getByText('Alert Title')).toBeInTheDocument();
+        expect(screen.getByText('Alert Description')).toBeInTheDocument();
+    });
+
     it('calls the close function set on the dialog-provider on dialog close', async () => {
         const dialogId = 'test';
         const dialogs = { [dialogId]: { Component: () => null, isAlert: false } };

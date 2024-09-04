@@ -1,20 +1,25 @@
-import { DialogAlertRoot } from '@aragon/ods';
+import { DialogRoot } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DialogAlertRootHiddenElement, type IDialogAlertRootHiddenElementProps } from './dialogAlertRootHiddenElement';
+import { DialogRootHiddenElement, type IDialogRootHiddenElementProps } from '.';
 
 describe('<DialogRootHiddenElement /> component', () => {
-    const createTestComponent = (props?: Partial<IDialogAlertRootHiddenElementProps>) => {
-        const completeProps: IDialogAlertRootHiddenElementProps = {
+    const createTestComponent = (props?: Partial<IDialogRootHiddenElementProps>) => {
+        const completeProps: IDialogRootHiddenElementProps = {
             type: 'title',
             ...props,
         };
 
         return (
-            <DialogAlertRoot open={true}>
-                <DialogAlertRootHiddenElement {...completeProps} />
-            </DialogAlertRoot>
+            <DialogRoot open={true}>
+                <DialogRootHiddenElement {...completeProps} />
+            </DialogRoot>
         );
     };
+
+    it('renders empty container when label is not defined', () => {
+        const { container } = render(createTestComponent({ labelKey: undefined }));
+        expect(container).toBeEmptyDOMElement();
+    });
 
     it('renders the specified title', () => {
         const labelKey = 'test-title';

@@ -13,6 +13,9 @@ class TestLogger {
             } else if (/`DialogContent` requires a `DialogTitle`/.test(params[0])) {
                 // Suppress radix-ui error about title missing on Dialog component
                 return;
+            } else if (/`AlertDialogContent` requires a `AlertDialogTitle`/.test(params[0])) {
+                // Suppress radix-ui error about title missing on AlertDialog component
+                return;
             }
 
             this.originalConsoleError.apply(console, params);
@@ -22,7 +25,10 @@ class TestLogger {
     private testWarnLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
             if (/Missing `Description`/.test(params[0])) {
-                // Suppress radix-ui error about title missing on Dialog component
+                // Suppress radix-ui error about description missing on Dialog component
+                return;
+            } else if (/`AlertDialogContent` requires a description/.test(params[0])) {
+                // Suppress radix-ui error about description missing on AlertDialog component
                 return;
             }
 

@@ -2,6 +2,7 @@ import * as useDialogContext from '@/shared/components/dialogProvider';
 import { IExitDialogProps } from '@/shared/components/exitDialog';
 import { render, screen } from '@testing-library/react';
 import { PublishProposalExitDialog, type IPublishProposalExitDialogProps } from './publishProposalExitDialog';
+import { DialogAlertRootHiddenElement } from '@/shared/components/dialogRoot';
 
 jest.mock('@/shared/components/exitDialog', () => ({
     ExitDialog: (props: IExitDialogProps) => {

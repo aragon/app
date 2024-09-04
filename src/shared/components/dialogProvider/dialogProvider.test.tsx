@@ -1,60 +1,43 @@
-import {
-    type IPublishProposalExitDialogProps,
-    PublishProposalExitDialog,
-} from '@/modules/governance/dialogs/publishProposalExitDialog';
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { testLogger } from '@/test/utils';
+import { act, render, renderHook, screen } from '@testing-library/react';
+import { DialogProvider, type IDialogProviderProps, useDialogContext } from './dialogProvider';
 
-// Mocking the ExitDialog and ensuring the onClick works as expected
-jest.mock('@/shared/components/exitDialog', () => ({
-    ExitDialog: (props: any) => {
-        const { title, description, acceptAction, denyAction } = props;
-        return (
-            <div data-testid="exit-dialog-mock">
-                <p>{title}</p>
-                <p>{description}</p>
-                <button onClick={acceptAction.onClick} data-testid="accept-btn">
-                    {acceptAction.label}
-                </button>
-                <button onClick={denyAction.onClick} data-testid="deny-btn">
-                    {denyAction.label}
-                </button>
-            </div>
-        );
-    },
-}));
+describe('<DialogProvider /> component', () => {
+    const createTestComponent = (props?: Partial<IDialogProviderProps>) => {
+        const completeProps: IDialogProviderProps = { ...props };
 
-describe('<PublishProposalExitDialog /> component', () => {
-    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
-
-    beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
-    });
-
-    afterEach(() => {
-        useDialogContextSpy.mockReset();
-    });
-
-    const createTestComponent = (props?: Partial<IPublishProposalExitDialogProps>) => {
-        const defaultProps = {
-            location: { params: { daoId: 'test-dao' }, id: 'test-dao' },
-            ...props,
-        };
-
-        return <PublishProposalExitDialog {...defaultProps} />;
+        return <DialogProvider {...completeProps} />;
     };
 
-    it('renders the ExitDialog component with the correct props', () => {
-        render(createTestComponent());
+    it('renders the children component', () => {
+        const children = 'test-children';
+        render(createTestComponent({ children }));
+        expect(screen.getByText(children)).toBeInTheDocument();
+    });
 
-        // Assert that the mocked ExitDialog receives the correct title and description
-        expect(screen.getByTestId('exit-dialog-mock')).toBeInTheDocument();
-        expect(screen.getByText(/publishProposalExitDialog.title/)).toBeInTheDocument();
-        expect(screen.getByText(/publishProposalExitDialog.description/)).toBeInTheDocument();
+    describe('useDialogContext hook', () => {
+        it('throws error when used outside the DialogProvider', () => {
+            testLogger.suppressErrors();
+            expect(() => renderHook(() => useDialogContext())).toThrow();
+        });
 
-        // Assert that accept and deny buttons have correct labels
-        expect(screen.getByText(/publishProposalExitDialog.button.accept/)).toBeInTheDocument();
-        expect(screen.getByText(/publishProposalExitDialog.button.deny/)).toBeInTheDocument();
+        it('returns the dialog context values', () => {
+            const { result } = renderHook(() => useDialogContext(), { wrapper: createTestComponent });
+            expect(result.current.open).toBeDefined();
+            expect(result.current.close).toBeDefined();
+            expect(result.current.location).not.toBeDefined();
+        });
+
+        it('updates active location on dialog open and close', () => {
+            const newLocation = { id: 'dialog-id', params: { customDialogParams: 'value' } };
+            const { result } = renderHook(() => useDialogContext(), { wrapper: createTestComponent });
+            expect(result.current.location).not.toBeDefined();
+
+            act(() => result.current.open(newLocation.id, { params: newLocation.params }));
+            expect(result.current.location).toEqual(newLocation);
+
+            act(() => result.current.close());
+            expect(result.current.location).not.toBeDefined();
+        });
     });
 });
