@@ -9,7 +9,6 @@ describe('<AdvancedDateInputFixed /> component', () => {
             field: 'testField',
             label: 'Test Label',
             minDuration: 3600,
-            isStartField: false,
             ...props,
         };
 
@@ -34,7 +33,6 @@ describe('<AdvancedDateInputFixed /> component', () => {
                 label: 'End Time',
                 infoText: 'End time must be after start time',
                 startTime,
-                isStartField: false,
             }),
         );
 

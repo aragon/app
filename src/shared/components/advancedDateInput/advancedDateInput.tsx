@@ -8,7 +8,7 @@ import { AdvancedDateInputFixed } from './advancedDateInputFixed';
 import { type IAdvancedDateInputProps, InputModeOptions } from './advancedInput.api';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
-    const { useDuration = false, label, helpText, minDuration = 0, field, infoText, isStartField = false } = props;
+    const { useDuration = false, label, helpText, minDuration = 0, field, infoText } = props;
     const { t } = useTranslations();
 
     // Add min duration to the form values for later use
@@ -52,7 +52,6 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     infoText={infoText}
                     minDuration={minDuration}
                     startTime={startTime}
-                    isStartField={isStartField}
                 />
             )}
             {modeField.value === InputModeOptions.DURATION && (

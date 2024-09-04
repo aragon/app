@@ -40,7 +40,6 @@ export interface IAdvancedDateInputProps {
      * Min date for the input.
      */
     minDuration?: number;
-    isStartField?: boolean;
 }
 
 export interface IAdvancedDateInputDateFixed {

@@ -7,21 +7,18 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
 import { DateTimeFields, type IAdvancedDateInputDateFixed, type IAdvancedDateInputProps } from './advancedInput.api';
 
-export type IAdvancedDateInputFixedProps = Pick<
-    IAdvancedDateInputProps,
-    'field' | 'label' | 'infoText' | 'minDuration' | 'isStartField'
-> & {
+export type IAdvancedDateInputFixedProps = Pick<IAdvancedDateInputProps, 'field' | 'label' | 'infoText' | 'minDuration'> & {
     startTime?: IAdvancedDateInputDateFixed;
 };
 export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (props) => {
-    const { field, label, infoText, minDuration = 0, startTime, isStartField = false } = props;
+    const { field, label, infoText, minDuration = 0, startTime } = props;
     const { t } = useTranslations();
 
     const { setValue, trigger } = useFormContext();
 
     const getDefaultDateTime = useCallback(() => {
-        return dateUtils.getStartDate({ minDuration: minDuration ?? 0, startTime, isNow: isStartField });
-    }, [minDuration, startTime, isStartField]);
+        return dateUtils.getStartDate({ minDuration: minDuration ?? 0, startTime, isNow: !minDuration && !startTime });
+    }, [minDuration, startTime]);
 
     const handleFixedDateTimeChange = (type: DateTimeFields) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = { ...fixedDateTimeField.value, [type]: event.target.value };
@@ -31,7 +28,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
 
     const validateFixedDateTime = useCallback(
         (value: IAdvancedDateInputDateFixed) => {
-            if (isStartField) {
+            if (!minDuration && !startTime) {
                 return true;
             }
 
@@ -58,7 +55,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
 
             return true;
         },
-        [isStartField, minDuration, startTime],
+        [minDuration, startTime],
     );
     const fixedDateTimeField = useFormField(`${field}Fixed`, {
         rules: {
