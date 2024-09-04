@@ -1,6 +1,6 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { useTranslations } from '../../translationsProvider';
 
 export interface IDialogRootHiddenElementProps {
     /**

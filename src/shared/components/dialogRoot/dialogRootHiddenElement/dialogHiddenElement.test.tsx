@@ -1,6 +1,6 @@
 import { DialogRoot } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { DialogRootHiddenElement, type IDialogRootHiddenElementProps } from '.';
+import { DialogRootHiddenElement, type IDialogRootHiddenElementProps } from './dialogHiddenElement';
 
 describe('<DialogRootHiddenElement /> component', () => {
     const createTestComponent = (props?: Partial<IDialogRootHiddenElementProps>) => {

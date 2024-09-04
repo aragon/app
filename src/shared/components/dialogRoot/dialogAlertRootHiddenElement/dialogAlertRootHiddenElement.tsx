@@ -1,6 +1,6 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { AlertDialogDescription, AlertDialogTitle } from '@radix-ui/react-alert-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { useTranslations } from '../../translationsProvider';
 
 export interface IDialogAlertRootHiddenElementProps {
     /**

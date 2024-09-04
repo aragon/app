@@ -1,7 +1,6 @@
-import { DialogAlertRootHiddenElement } from '@/shared/components/dialogRoot';
 import { DialogAlert } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
 import { ExitDialog, type IExitDialogProps } from './exitDialog';
 
 describe('<ExitDialog /> component', () => {
@@ -25,9 +24,7 @@ describe('<ExitDialog /> component', () => {
 
         return (
             <DialogAlert.Root open={true}>
-                <DialogAlertRootHiddenElement labelKey="exitDialog.title" type="title" />
-                <DialogAlertRootHiddenElement labelKey="exitDialog.description" type="description" />
-                <ExitDialog {...completeProps}></ExitDialog>
+                <ExitDialog {...completeProps} />
             </DialogAlert.Root>
         );
     };

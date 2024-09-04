@@ -60,6 +60,8 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     };
 
     useEffect(() => {
+        const pushState = () => window.history.pushState(null, '', window.location.href);
+
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             if (isFormDirty) {
                 e.preventDefault();
@@ -68,14 +70,21 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
 
         const handlePopState = (e: PopStateEvent) => {
             if (isFormDirty) {
-                const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-
+                const confirmLeave = window.confirm(t('app.governance.publishProposalExitDialog.description'));
                 if (!confirmLeave) {
                     e.preventDefault();
-                    window.history.pushState(null, '', window.location.href);
+                    pushState();
+                } else {
+                    window.removeEventListener('popstate', handlePopState);
+                    window.history.back();
                 }
+            } else {
+                window.removeEventListener('popstate', handlePopState);
+                window.history.back();
             }
         };
+
+        pushState();
 
         window.addEventListener('beforeunload', handleBeforeUnload);
         window.addEventListener('popstate', handlePopState);
@@ -84,7 +93,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
             window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('popstate', handlePopState);
         };
-    }, [isFormDirty]);
+    }, [isFormDirty, t]);
 
     return (
         <FormProvider {...formMethods}>
