@@ -12,6 +12,8 @@ import { AutocompleteInputItem } from './autocompleteInputItem';
 import { AutocompleteInputMenu } from './autocompleteInputMenu';
 import { useAutocompleteProps } from './useAutocompleteProps';
 
+const ungroupedKey = '_ungrouped';
+
 export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInputProps>((props, ref) => {
     const {
         items,
@@ -58,17 +60,17 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setInputValue(value);
-        setActiveIndex(value != null ? 0 : null);
+        setActiveIndex(0);
     };
 
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
         updateOpenState(true);
-        onInputFocus?.(event);
+        onInputFocus!(event);
         onFocus?.(event);
     };
 
     const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        onInputKeyDown?.(event);
+        onInputKeyDown!(event);
         onKeyDown?.(event);
         if (event.key === 'Enter' && activeIndex != null && items[activeIndex] != null) {
             handleItemSelected(items[activeIndex]);
@@ -90,9 +92,10 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
 
     const processedItems: IAutocompleteInputItemIndex[] = items
         .filter(filterItem)
+        .sort((itemOne, itemTwo) => (!itemTwo.groupId ? 1 : !itemOne.groupId ? -1 : 0))
         .map((item, index) => ({ ...item, index }));
 
-    const groupedItems = Object.groupBy(processedItems, (item) => item.groupId ?? 'default');
+    const groupedItems = Object.groupBy(processedItems, (item) => item.groupId ?? ungroupedKey);
 
     const inputWrapperClassName = classNames(
         { 'shadow-primary-lg': isOpen },

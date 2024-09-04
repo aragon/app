@@ -11,15 +11,13 @@ import { useRef, useState } from 'react';
 export interface ICreateProposalFormActionsProps {}
 
 const items: IAutocompleteInputItem[] = [
-    { id: 'transfer', name: 'Transfer', icon: IconType.APP_TRANSACTIONS },
     { id: 'metadata', name: 'Set metadata', icon: IconType.SETTINGS, groupId: 'dao' },
     { id: 'mint', name: 'Mint', icon: IconType.SETTINGS, groupId: 'token-plugin' },
     { id: 'updateSettings', name: 'Update token settings', icon: IconType.SETTINGS, groupId: 'token-plugin' },
     { id: 'test1', name: 'Test 1', icon: IconType.SETTINGS, groupId: 'test1' },
+    { id: 'test3', name: 'Test 3', icon: IconType.SETTINGS },
     { id: 'test2', name: 'Test 2', icon: IconType.SETTINGS, groupId: 'test1' },
-    { id: 'test3', name: 'Test 3', icon: IconType.SETTINGS, groupId: 'test1' },
-    { id: 'test4', name: 'Test 4', icon: IconType.SETTINGS, groupId: 'test1' },
-    { id: 'test5', name: 'Test 5', icon: IconType.SETTINGS, groupId: 'test1' },
+    { id: 'transfer', name: 'Transfer', icon: IconType.APP_TRANSACTIONS },
 ];
 
 const groups: IAutocompleteInputGroup[] = [
