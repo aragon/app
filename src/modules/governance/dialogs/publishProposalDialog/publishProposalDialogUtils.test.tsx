@@ -1,4 +1,5 @@
 import { generateDaoPlugin } from '@/shared/testUtils';
+import { dateUtils } from '@/shared/utils/createProposalUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { DateTime } from 'luxon';
@@ -10,7 +11,6 @@ import {
     generateProposalActionUpdateMetadata,
 } from '../../testUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
-import { dateUtils } from '@/shared/utils/createProposalUtils';
 
 describe('publishProposalDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');

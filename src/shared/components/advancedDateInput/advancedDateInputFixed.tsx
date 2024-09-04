@@ -7,7 +7,10 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
 import { DateTimeFields, type IAdvancedDateInputDateFixed, type IAdvancedDateInputProps } from './advancedInput.api';
 
-export type IAdvancedDateInputFixedProps = Pick<IAdvancedDateInputProps, 'field' | 'label' | 'infoText' | 'minDuration'> & {
+export type IAdvancedDateInputFixedProps = Pick<
+    IAdvancedDateInputProps,
+    'field' | 'label' | 'infoText' | 'minDuration'
+> & {
     startTime?: IAdvancedDateInputDateFixed;
 };
 export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (props) => {

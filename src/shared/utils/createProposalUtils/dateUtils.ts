@@ -7,7 +7,6 @@ interface GetStartDateParams {
     isNow: boolean;
 }
 
-
 class DateUtils {
     secondsToDaysHoursMinutes = (totalSeconds: number) => {
         const days = Math.floor(totalSeconds / (24 * 60 * 60));

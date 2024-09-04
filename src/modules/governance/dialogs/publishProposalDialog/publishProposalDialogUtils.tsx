@@ -1,6 +1,7 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IAdvancedDateInputDateDuration } from '@/shared/components/advancedDateInput';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { dateUtils } from '@/shared/utils/createProposalUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
 import { DateTime } from 'luxon';
@@ -8,7 +9,6 @@ import { decodeAbiParameters, type Hex, toHex, type TransactionReceipt } from 'v
 import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
-import { dateUtils } from '@/shared/utils/createProposalUtils';
 
 export interface IBuildTransactionParams {
     /**
