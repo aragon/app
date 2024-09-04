@@ -35,22 +35,28 @@ export interface IUseAutocompletePropsParams {
     inputRef?: ForwardedRef<HTMLInputElement>;
 }
 
+// Virtual padding applied to the autocomplete menu to flip it when needed.
+const menuVirtualPadding = 10;
+
 export const useAutocompleteProps = (params: IUseAutocompletePropsParams) => {
     const { isOpen, onOpenChange, activeIndex, setActiveIndex, inputRef } = params;
 
     const listRef = useRef<Array<HTMLElement | null>>([]);
 
     const updateFloatingStyle = (params: MiddlewareState) => {
-        const { elements } = params;
-        const inputWrapperWidth = (elements.reference as Element).parentElement?.offsetWidth;
-        Object.assign(elements.floating.style, { width: `${inputWrapperWidth}px` });
+        const { reference, floating } = params.elements;
+        const inputWrapperWidth = (reference as Element).parentElement?.offsetWidth;
+        Object.assign(floating.style, { width: `${inputWrapperWidth}px` });
     };
 
     const { refs, floatingStyles, context } = useFloating<HTMLInputElement>({
         whileElementsMounted: autoUpdate,
         open: isOpen,
         onOpenChange,
-        middleware: [flip({ padding: 10 }), size({ apply: updateFloatingStyle, padding: 10 })],
+        middleware: [
+            flip({ padding: menuVirtualPadding }), // Update menu placement to keep it in view
+            size({ apply: updateFloatingStyle }), // Match menu width with reference item width
+        ],
     });
 
     const role = useRole(context, { role: 'listbox' });
