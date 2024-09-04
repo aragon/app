@@ -2,7 +2,7 @@
 
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
-import { IPublishProposalExitDialogParams } from '@/modules/governance/dialogs/publishProposalExitDialog';
+import type { IPublishProposalExitDialogParams } from '@/modules/governance/dialogs/publishProposalExitDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';

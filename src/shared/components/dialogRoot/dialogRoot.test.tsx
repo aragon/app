@@ -31,8 +31,14 @@ describe('<DialogRoot /> component', () => {
 
     it('renders the component linked to the current active dialog', () => {
         const dialogId = 'connect-wallet';
-        const dialogContent = 'connect-wallet-content';
-        const dialogs = { [dialogId]: { Component: () => dialogContent } };
+        const dialogContent = 'content-for-dialog';
+        const isAlert = false;
+        const dialogs = {
+            [dialogId]: {
+                Component: () => dialogContent,
+                isAlert,
+            },
+        };
         const location = { id: dialogId };
         useDialogContextSpy.mockReturnValue({ location, open: jest.fn(), close: jest.fn() });
         render(createTestComponent({ dialogs }));
@@ -44,7 +50,8 @@ describe('<DialogRoot /> component', () => {
         const dialogId = 'connect-wallet';
         const title = 'test-title';
         const description = 'test-description';
-        const dialogs = { [dialogId]: { Component: () => 'test', title, description } };
+        const isAlert = false;
+        const dialogs = { [dialogId]: { Component: () => 'test', title, description, isAlert } };
         const location = { id: dialogId };
         useDialogContextSpy.mockReturnValue({ location, open: jest.fn(), close: jest.fn() });
         render(createTestComponent({ dialogs }));
@@ -54,7 +61,7 @@ describe('<DialogRoot /> component', () => {
 
     it('calls the close function set on the dialog-provider on dialog close', async () => {
         const dialogId = 'test';
-        const dialogs = { [dialogId]: { Component: () => null } };
+        const dialogs = { [dialogId]: { Component: () => null, isAlert: false } };
         const location = { id: dialogId };
         const close = jest.fn();
         useDialogContextSpy.mockReturnValue({ location, open: jest.fn(), close });

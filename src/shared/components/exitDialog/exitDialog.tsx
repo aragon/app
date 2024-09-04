@@ -1,4 +1,4 @@
-import { DialogAlert, IDialogAlertFooterAction } from '@aragon/ods';
+import { DialogAlert, type IDialogAlertFooterAction } from '@aragon/ods';
 
 export interface IExitDialogProps {
     /**

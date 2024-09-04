@@ -14,6 +14,7 @@ describe('<WizardContainer /> component', () => {
 
     const createTestComponent = (props?: Partial<IWizardContainerProps>) => {
         const completeProps: IWizardContainerProps = {
+            daoId: 'test-dao',
             submitLabel: 'submit',
             ...props,
         };

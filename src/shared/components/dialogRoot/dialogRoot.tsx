@@ -18,7 +18,6 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
 
     const isOpen = location != null;
     const activeDialog = location != null ? dialogs[location.id] : undefined;
-    console.log('activeDialog', activeDialog);
 
     return (
         <>

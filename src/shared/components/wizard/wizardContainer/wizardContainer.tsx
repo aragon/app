@@ -1,7 +1,5 @@
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
-import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
@@ -37,10 +35,6 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     const { initialSteps = [], finalStep, children, daoId, onSubmit, submitLabel, ...otherProps } = props;
 
     const [isFormDirty, setIsFormDirty] = useState(false);
-    const [nextRoute, setNextRoute] = useState<string | null>(null);
-
-    const router = useRouter();
-    const { open } = useDialogContext();
 
     const { t } = useTranslations();
     const formMethods = useForm<TFormData>({ mode: 'onTouched' });
@@ -75,7 +69,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
         const handlePopState = (e: PopStateEvent) => {
             if (isFormDirty) {
                 const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-                console.log(confirmLeave);
+
                 if (!confirmLeave) {
                     e.preventDefault();
                     window.history.pushState(null, '', window.location.href);
