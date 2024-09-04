@@ -42,6 +42,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
     const handleItemSelected = (item: string) => {
+        // TODO: implement proposal action handling (APP-3558)
+        // eslint-disable-next-line no-console
         console.log('selected item', { item });
     };
 

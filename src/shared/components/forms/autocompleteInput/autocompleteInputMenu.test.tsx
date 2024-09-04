@@ -1,5 +1,11 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { AutocompleteInputMenu, type IAutocompleteInputMenuProps } from './autocompleteInputMenu';
+
+jest.mock('@floating-ui/react', () => ({
+    ...jest.requireActual('@floating-ui/react'),
+    FloatingFocusManager: (props: { children: ReactNode }) => props.children,
+}));
 
 describe('<AutocompleteInputMenu /> component', () => {
     const createTestComponent = (props?: Partial<IAutocompleteInputMenuProps>) => {
@@ -17,5 +23,15 @@ describe('<AutocompleteInputMenu /> component', () => {
         const isOpen = false;
         const { container } = render(createTestComponent({ isOpen }));
         expect(container).toBeEmptyDOMElement();
+    });
+
+    it('renders the children property, the select-item label and the menu footer when open', () => {
+        const isOpen = true;
+        const children = 'test-children';
+        const selectItemLabel = 'select-item';
+        render(createTestComponent({ isOpen, children, selectItemLabel }));
+        expect(screen.getByText(children)).toBeInTheDocument();
+        expect(screen.getByText(/autocompleteInput.menu.select/)).toBeInTheDocument();
+        expect(screen.getByText(selectItemLabel)).toBeInTheDocument();
     });
 });
