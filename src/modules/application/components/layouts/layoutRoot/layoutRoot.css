@@ -1,6 +1,8 @@
 :root {
   --ods-avatar-container-position: relative;
 
+  --ods-text-area-rich-text-expanded-z-index: 10;
+
   --ods-dialog-overlay-z-index: 20;
   --ods-dialog-alert-overlay-z-index: 20;
 

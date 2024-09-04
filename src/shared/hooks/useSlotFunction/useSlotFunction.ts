@@ -4,7 +4,7 @@ export interface IUseSlotFunctionParams<TParams> {
     /**
      * Parameters to be passed to the slot function.
      */
-    params?: TParams;
+    params: TParams;
     /**
      * Slot ID to load the slot-function.
      */
@@ -19,7 +19,7 @@ export const useSlotFunction = <TResult = unknown, TParams = unknown>(params: IU
     const { params: functionParams, slotId, pluginIds } = params;
 
     const slotFunction = pluginIds
-        .map((pluginId) => pluginRegistryUtils.getSlotFunction({ slotId, pluginId }))
+        .map((pluginId) => pluginRegistryUtils.getSlotFunction<TParams, TResult>({ slotId, pluginId }))
         .find((slotFunction) => slotFunction != null);
 
     const result = slotFunction?.(functionParams) as TResult | undefined;

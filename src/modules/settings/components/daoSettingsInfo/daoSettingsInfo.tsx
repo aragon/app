@@ -35,20 +35,20 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
     return (
         <Card className="p-6">
             <DefinitionList.Container>
-                <DefinitionList.Item term={t('app.governance.daoSettingsInfo.name')}>
+                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.name')}>
                     <div className="flex items-center gap-2">
                         <p className="text-neutral-500">{dao.name}</p>
                         <DaoAvatar src={daoAvatar} name={dao.name} size="md" />
                     </div>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.governance.daoSettingsInfo.blockchain')}>
+                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.blockchain')}>
                     <div className="flex items-center justify-between">
                         <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
-                        <Tag label={t('app.governance.daoSettingsInfo.notChangeable')} />
+                        <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} />
                     </div>
                 </DefinitionList.Item>
                 {dao.subdomain && (
-                    <DefinitionList.Item term={t('app.governance.daoSettingsInfo.ens')}>
+                    <DefinitionList.Item term={t('app.settings.daoSettingsInfo.ens')}>
                         <div className="flex items-center justify-between">
                             <Link
                                 description={addressUtils.truncateAddress(dao.address)}
@@ -58,22 +58,22 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                             >
                                 {daoUtils.getDaoEns(dao)}
                             </Link>
-                            <Tag label={t('app.governance.daoSettingsInfo.notChangeable')} />
+                            <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} />
                         </div>
                     </DefinitionList.Item>
                 )}
-                <DefinitionList.Item term={t('app.governance.daoSettingsInfo.summary')}>
+                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.summary')}>
                     <Collapsible
                         collapsedSize="sm"
                         customCollapsedHeight={60}
-                        buttonLabelClosed={t('app.governance.daoSettingsInfo.readMore')}
-                        buttonLabelOpened={t('app.governance.daoSettingsInfo.readLess')}
+                        buttonLabelClosed={t('app.settings.daoSettingsInfo.readMore')}
+                        buttonLabelOpened={t('app.settings.daoSettingsInfo.readLess')}
                     >
                         <p className="text-neutral-500">{dao.description}</p>
                     </Collapsible>
                 </DefinitionList.Item>
                 {dao.links && dao.links.length > 0 && (
-                    <DefinitionList.Item term={t('app.governance.daoSettingsInfo.links')}>
+                    <DefinitionList.Item term={t('app.settings.daoSettingsInfo.links')}>
                         <div className="flex flex-col gap-3">
                             {dao.links.map((link) => (
                                 <Link

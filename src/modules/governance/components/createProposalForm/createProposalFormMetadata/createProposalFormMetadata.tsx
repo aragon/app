@@ -1,4 +1,4 @@
-import { ResourcesInput } from '@/shared/components/resourceInput';
+import { ResourcesInput } from '@/shared/components/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
@@ -15,7 +15,6 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
     });
     const summaryField = useFormField('summary', {
         label: t('app.governance.createProposalForm.metadata.summary.title'),
-        rules: { required: true },
     });
 
     const { ref: bodyRef, ...bodyField } = useFormField('body', {
@@ -31,11 +30,14 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
             <InputText
                 helpText={t('app.governance.createProposalForm.metadata.title.helpText')}
                 placeholder={t('app.governance.createProposalForm.metadata.title.placeholder')}
+                maxLength={128}
                 {...titleField}
             />
             <TextArea
                 helpText={t('app.governance.createProposalForm.metadata.summary.helpText')}
                 placeholder={t('app.governance.createProposalForm.metadata.summary.placeholder')}
+                isOptional={true}
+                maxLength={480}
                 {...summaryField}
             />
             <TextAreaRichText

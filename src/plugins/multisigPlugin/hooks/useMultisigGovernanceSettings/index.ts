@@ -1,1 +1,4 @@
-export { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
+export {
+    useMultisigGovernanceSettings,
+    type IUseMultisigGovernanceSettingsParams,
+} from './useMultisigGovernanceSettings';

@@ -1,16 +1,20 @@
 import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
-import { generateDao, generateDaoPlugin, generatePlugin } from '@/shared/testUtils';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import * as useSupportedDaoPlugin from '@/shared/hooks/useSupportedDaoPlugin';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';
 
 describe('<DaoVersionInfo /> component', () => {
-    const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
+    const useSupportedDaoPluginSpy = jest.spyOn(useSupportedDaoPlugin, 'useSupportedDaoPlugin');
     const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
+    beforeEach(() => {
+        useSupportedDaoPluginSpy.mockReturnValue(undefined);
+    });
+
     afterEach(() => {
-        getPluginSpy.mockReset();
+        useSupportedDaoPluginSpy.mockReset();
         useApplicationVersionSpy.mockReset();
     });
 
@@ -41,7 +45,7 @@ describe('<DaoVersionInfo /> component', () => {
         const dao = generateDao({ plugins: [plugin] });
         const appVersion = '1.0.0';
 
-        getPluginSpy.mockReturnValue(generatePlugin());
+        useSupportedDaoPluginSpy.mockReturnValue(plugin);
         useApplicationVersionSpy.mockReturnValue(appVersion);
 
         render(createTestComponent({ dao: dao }));
@@ -57,7 +61,7 @@ describe('<DaoVersionInfo /> component', () => {
         const plugin = generateDaoPlugin({ address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c' });
         const dao = generateDao({ plugins: [plugin] });
 
-        getPluginSpy.mockReturnValue(generatePlugin());
+        useSupportedDaoPluginSpy.mockReturnValue(plugin);
         render(createTestComponent({ dao: dao }));
 
         const linkElement = screen.getByRole('link', { name: /daoVersionInfo.governanceValue .* 0x89…437c/ });

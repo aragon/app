@@ -2,7 +2,11 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, Card, Dropdown, IconType, InputText } from '@aragon/ods';
 
-export interface IResourceInputItemProps {
+export interface IResourcesInputItemProps {
+    /**
+     * Name of the field.
+     */
+    name: string;
     /**
      * The index of the resource item in the list.
      */
@@ -13,16 +17,18 @@ export interface IResourceInputItemProps {
     remove: (index: number) => void;
 }
 
-export const ResourceInputItem: React.FC<IResourceInputItemProps> = ({ index, remove }) => {
+export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) => {
+    const { name, index, remove } = props;
+
     const { t } = useTranslations();
 
-    const labelField = useFormField(`resources.${index}.label`, {
+    const labelField = useFormField(`${name}.${index}.label`, {
         label: t('app.shared.resourcesInput.item.labelInput.title'),
         rules: { required: true },
         defaultValue: '',
     });
 
-    const linkField = useFormField(`resources.${index}.link`, {
+    const linkField = useFormField(`${name}.${index}.link`, {
         label: t('app.shared.resourcesInput.item.linkInput.title'),
         defaultValue: '',
         rules: {
@@ -33,7 +39,11 @@ export const ResourceInputItem: React.FC<IResourceInputItemProps> = ({ index, re
 
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <InputText placeholder={t('app.shared.resourcesInput.item.labelInput.placeholder')} {...labelField} />
+            <InputText
+                placeholder={t('app.shared.resourcesInput.item.labelInput.placeholder')}
+                maxLength={40}
+                {...labelField}
+            />
             <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...linkField} />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container

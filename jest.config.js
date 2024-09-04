@@ -12,6 +12,7 @@ const config = {
         '/testUtils/',
     ],
     setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
+    globalSetup: '<rootDir>/src/test/globalSetup.ts',
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
     },
