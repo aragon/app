@@ -69,8 +69,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     const { onFocus: onInputFocus, onKeyDown: onInputKeyDown, ...otherAutocompleteInputProps } = autocompleteInputProps;
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setInputValue(value);
+        setInputValue(event.target.value);
         setActiveIndex(0);
     };
 
@@ -83,6 +82,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         onInputKeyDown!(event);
         onKeyDown?.(event);
+
         if (event.key === 'Enter' && activeIndex != null && items[activeIndex] != null) {
             handleItemSelected(items[activeIndex]);
             event.preventDefault(); // Prevent default submit behaviour on enter press
@@ -99,14 +99,14 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
         return searchStrings.some((stringValue) => stringValue?.toLowerCase().includes(inputValue.toLowerCase()));
     };
 
-    const isBottomPlacement = context.placement === 'bottom';
-
     const processedItems: IAutocompleteInputItemIndex[] = items
         .filter(filterItem)
         .sort((itemOne, itemTwo) => (!itemTwo.groupId ? 1 : !itemOne.groupId ? -1 : 0))
         .map((item, index) => ({ ...item, index }));
 
     const groupedItems = groupBy(processedItems, (item) => item.groupId ?? ungroupedKey);
+
+    const isBottomPlacement = context.placement === 'bottom';
 
     const inputWrapperClassName = classNames(
         { 'shadow-primary-lg': isOpen },
@@ -140,6 +140,9 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
                                 key={item.id}
                                 isActive={activeIndex === item.index}
                                 item={item}
+                                // Use onMouseDown instead of onClick to make sure the callback is called before any
+                                // onBlur callback which might hide the autocomplete input and prevent the
+                                // handleItemSelected callback from being fired
                                 {...getMenuItemProps(item.index, { onMouseDown: () => handleItemSelected(item) })}
                             />
                         ))}
