@@ -61,9 +61,9 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
         rules: {
             validate: validateFixedDateTime,
         },
-        defaultValue: getDefaultDateTime(),
         shouldUnregister: true,
         label,
+        defaultValue: getDefaultDateTime(),
     });
 
     const fixedErrors = !!fixedDateTimeField.alert;

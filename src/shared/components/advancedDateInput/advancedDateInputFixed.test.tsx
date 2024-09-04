@@ -1,5 +1,5 @@
 import { FormWrapper } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { AdvancedDateInputFixed, type IAdvancedDateInputFixedProps } from './advancedDateInputFixed';
 
@@ -43,17 +43,18 @@ describe('<AdvancedDateInputFixed /> component', () => {
         expect(alert).toHaveTextContent('End time must be after start time');
 
         // Set an end time less than minDuration from start time
-        await userEvent.clear(dateInput);
         await userEvent.type(dateInput, '2024-09-01');
-        await userEvent.clear(timeInput);
         await userEvent.type(timeInput, '12:30');
 
-        expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=End Time\)/);
+        await waitFor(() => {
+            expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=End Time\)/);
+        });
 
         // Set a valid date-time
-        await userEvent.clear(timeInput);
         await userEvent.type(timeInput, '13:30');
 
-        expect(alert).toHaveTextContent('End time must be after start time');
+        await waitFor(() => {
+            expect(alert).toHaveTextContent('End time must be after start time');
+        });
     });
 });
