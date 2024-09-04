@@ -1,4 +1,5 @@
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
+import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
 import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
@@ -75,17 +76,18 @@ describe('<NavigationWizard /> component', () => {
         expect(screen.getByText(name)).toBeInTheDocument();
     });
 
-    it('calls router back on back button click', async () => {
-        const mockBack = jest.fn();
-        useRouterSpy.mockReturnValue({
-            back: mockBack,
-        } as unknown as AppRouterInstance);
+    it('opens the proposal exit dialog on close button click', async () => {
+        const open = jest.fn(); // Mock the open function
+        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
 
         render(createTestComponent());
 
-        const backButton = screen.getByTestId('CLOSE');
-        await userEvent.click(backButton);
-        expect(mockBack).toHaveBeenCalledTimes(1);
+        const closeButton = screen.getByTestId('CLOSE');
+        await userEvent.click(closeButton);
+
+        expect(open).toHaveBeenCalledWith(GovernanceDialogs.EXIT_PUBLISH_PROPOSAL, {
+            params: { daoId: undefined },
+        });
     });
 
     it('renders the user wallet address and opens the user dialog when clicked', async () => {

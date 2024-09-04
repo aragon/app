@@ -1,25 +1,17 @@
-import {
-    type IPublishProposalExitDialogProps,
-    PublishProposalExitDialog,
-} from '@/modules/governance/dialogs/publishProposalExitDialog';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import { IExitDialogProps } from '@/shared/components/exitDialog';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { PublishProposalExitDialog, type IPublishProposalExitDialogProps } from './publishProposalExitDialog';
 
-// Mocking the ExitDialog and ensuring the onClick works as expected
 jest.mock('@/shared/components/exitDialog', () => ({
-    ExitDialog: (props: any) => {
-        const { title, description, acceptAction, denyAction } = props;
+    ExitDialog: (props: IExitDialogProps) => {
+        const { title, description, actionButton, cancelButton } = props;
         return (
             <div data-testid="exit-dialog-mock">
                 <p>{title}</p>
                 <p>{description}</p>
-                <button onClick={acceptAction.onClick} data-testid="accept-btn">
-                    {acceptAction.label}
-                </button>
-                <button onClick={denyAction.onClick} data-testid="deny-btn">
-                    {denyAction.label}
-                </button>
+                <button>{actionButton.label}</button>
+                <button>{cancelButton.label}</button>
             </div>
         );
     },
@@ -48,12 +40,10 @@ describe('<PublishProposalExitDialog /> component', () => {
     it('renders the ExitDialog component with the correct props', () => {
         render(createTestComponent());
 
-        // Assert that the mocked ExitDialog receives the correct title and description
         expect(screen.getByTestId('exit-dialog-mock')).toBeInTheDocument();
         expect(screen.getByText(/publishProposalExitDialog.title/)).toBeInTheDocument();
         expect(screen.getByText(/publishProposalExitDialog.description/)).toBeInTheDocument();
 
-        // Assert that accept and deny buttons have correct labels
         expect(screen.getByText(/publishProposalExitDialog.button.accept/)).toBeInTheDocument();
         expect(screen.getByText(/publishProposalExitDialog.button.deny/)).toBeInTheDocument();
     });
