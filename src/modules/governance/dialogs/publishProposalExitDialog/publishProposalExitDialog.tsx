@@ -3,22 +3,15 @@ import { ExitDialog } from '@/shared/components/exitDialog/exitDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { invariant } from '@aragon/ods';
 
-export interface IPublishProposalExitFormData {
-    /**
-     * Title of the proposal.
-     */
-    title: string;
-    /**
-     * Summary of the proposal.
-     */
-    description: string;
-}
-
 export interface IPublishProposalExitDialogParams {
     /**
      * ID of the DAO where proposal creation is taking place.
      */
     daoId?: string;
+    /**
+     * Callback called when the user accepts the dialog.
+     */
+    onAccept?: () => void;
 }
 
 export interface IPublishProposalExitDialogProps extends IDialogComponentProps<IPublishProposalExitDialogParams> {}
@@ -27,15 +20,22 @@ export const PublishProposalExitDialog: React.FC<IPublishProposalExitDialogProps
     const { location } = props;
 
     invariant(location.params != null, 'PublishProposalExitDialog: required parameters must be set.');
-    const { daoId } = location.params;
+    const { daoId, onAccept } = location.params;
 
     const { t } = useTranslations();
 
     const { close } = useDialogContext();
 
+    const handleAcceptAction = () => {
+        if (onAccept != null) {
+            onAccept();
+        }
+        close();
+    };
+
     const acceptAction = {
         href: `/dao/${daoId}/proposals/`,
-        onClick: () => close(),
+        onClick: handleAcceptAction,
         label: t('app.governance.publishProposalExitDialog.button.accept'),
     };
 

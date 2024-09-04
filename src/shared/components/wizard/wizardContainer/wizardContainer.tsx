@@ -1,6 +1,8 @@
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
-import { useMemo, type ComponentProps } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
@@ -20,6 +22,10 @@ export interface IWizardContainerProps<TFormData extends FieldValues = FieldValu
      */
     submitLabel: string;
     /**
+     * Data of the current DAO.
+     */
+    daoId: string;
+    /**
      * Callback called at the end of the wizard with the form data when the form is valid.
      */
     onSubmit?: (data: TFormData) => void;
@@ -28,7 +34,13 @@ export interface IWizardContainerProps<TFormData extends FieldValues = FieldValu
 export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardContainerProps<TFormData>,
 ) => {
-    const { initialSteps = [], finalStep, children, onSubmit, submitLabel, ...otherProps } = props;
+    const { initialSteps = [], finalStep, children, daoId, onSubmit, submitLabel, ...otherProps } = props;
+
+    const [isFormDirty, setIsFormDirty] = useState(false);
+    const [nextRoute, setNextRoute] = useState<string | null>(null);
+
+    const router = useRouter();
+    const { open } = useDialogContext();
 
     const { t } = useTranslations();
     const formMethods = useForm<TFormData>({ mode: 'onTouched' });
@@ -49,11 +61,43 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
 
+    const handleFormChange = () => {
+        setIsFormDirty(true);
+    };
+
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isFormDirty) {
+                e.preventDefault();
+            }
+        };
+
+        const handlePopState = (e: PopStateEvent) => {
+            if (isFormDirty) {
+                const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+                console.log(confirmLeave);
+                if (!confirmLeave) {
+                    e.preventDefault();
+                    window.history.pushState(null, '', window.location.href);
+                }
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [isFormDirty]);
+
     return (
         <FormProvider {...formMethods}>
             <WizardProvider value={wizardContextValues}>
                 <form
                     className="flex h-full flex-col gap-4 md:gap-6"
+                    onChange={handleFormChange}
                     onSubmit={formMethods.handleSubmit(handleSubmit)}
                     {...otherProps}
                 >
