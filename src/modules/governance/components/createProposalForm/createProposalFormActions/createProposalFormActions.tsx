@@ -57,7 +57,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 variant="primary"
                 size="md"
                 iconLeft={IconType.PLUS}
-                className={classNames('self-start', { 'sr-only opacity-0': displayActionComposer })}
+                className={classNames('self-start', { 'sr-only': displayActionComposer })}
                 onClick={handleAddAction}
             >
                 {t('app.governance.createProposalForm.actions.action')}
@@ -65,7 +65,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             <AutocompleteInput
                 items={items}
                 groups={groups}
-                wrapperClassName={classNames({ 'opacity-0 !sr-only': !displayActionComposer })}
+                wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}
                 onChange={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
