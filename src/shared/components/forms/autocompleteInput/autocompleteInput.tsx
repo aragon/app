@@ -14,7 +14,7 @@ import { useAutocompleteProps } from './useAutocompleteProps';
 
 const ungroupedKey = '_ungrouped';
 
-// Object.groupBy is supported on Node v21, update code to use Object.groupBy and update engines.node version to 22
+// TODO: Object.groupBy is supported on Node v21, update code to use Object.groupBy and update engines.node version to 22 (APP-3603)
 const groupBy = <TItem extends object>(iterable: TItem[], fn: (item: TItem) => string | number) => {
     return [...iterable].reduce<Record<string, TItem[]>>((groups, curr) => {
         const key = fn(curr);
