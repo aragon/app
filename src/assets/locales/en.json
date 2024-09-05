@@ -516,6 +516,11 @@
         "now": "Now",
         "timezone": "Timezone"
       },
+      "autocompleteInput": {
+        "menu": {
+          "select": "Select"
+        }
+      },
       "errorFeedback": {
         "description": "If you'd like to help, please report the issue to our team.",
         "link": {
