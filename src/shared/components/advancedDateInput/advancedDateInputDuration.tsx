@@ -13,13 +13,13 @@ export type IAdvancedDateInputDurationProps = Pick<
 >;
 
 export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
-    const { minDuration = 0, field, label, infoText } = props;
+    const { minDuration, field, label, infoText } = props;
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
     const getDefaultDuration = useCallback(() => {
         const defaultDuration = { days: 5, hours: 0, minutes: 0 };
-        return dateUtils.secondsToDaysHoursMinutes(minDuration) ?? defaultDuration;
+        return minDuration ? dateUtils.secondsToDaysHoursMinutes(minDuration) : defaultDuration;
     }, [minDuration]);
 
     const validateDuration = useCallback(

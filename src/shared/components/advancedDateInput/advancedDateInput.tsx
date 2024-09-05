@@ -15,14 +15,15 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     useFormField('minDuration', { defaultValue: minDuration });
 
     const modeField = useFormField(`${field}Mode`, {
+        label,
         defaultValue: useDuration ? InputModeOptions.DURATION : InputModeOptions.NOW,
     });
 
     const startTime = useWatch<ICreateProposalFormData, 'startTimeFixed'>({ name: 'startTimeFixed' });
+
     return (
         <>
             <RadioGroup
-                label={label}
                 className="flex gap-4 md:!flex-row"
                 helpText={helpText}
                 onValueChange={modeField.onChange}

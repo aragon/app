@@ -34,11 +34,15 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     };
 
     const validateFixedDateTime = useCallback(
-        (value: IAdvancedDateInputDateFixed) => {
+        (value: IAdvancedDateInputDateFixed): boolean => {
+            // No validation needed if there's no minDuration and no startTime
             if (!minDuration && !startTime) {
                 return true;
             }
-
+            // Trigger validation if either date or time is missing
+            if (!value.date || !value.time) {
+                return false;
+            }
             const selectedDateTime = dateUtils.parseFixedDate(value);
             const now = DateTime.now();
             const minDateTime = now.plus({ seconds: minDuration });
@@ -46,24 +50,15 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
             if (startTime) {
                 const startDateTime = dateUtils.parseFixedDate(startTime);
                 const minEndDateTime = startDateTime.plus({ seconds: minDuration });
-
-                if (selectedDateTime <= startDateTime) {
-                    return false;
-                }
-
-                if (selectedDateTime < minEndDateTime) {
-                    return false;
-                }
-            } else {
-                if (selectedDateTime < minDateTime) {
-                    return false;
-                }
+                // Fail if selected time is not after start time or < minDuration
+                return selectedDateTime > startDateTime && selectedDateTime >= minEndDateTime;
             }
-
-            return true;
+            // If no startTime, just check against minDuration
+            return selectedDateTime >= minDateTime;
         },
         [minDuration, startTime],
     );
+
     const fixedDateTimeField = useFormField(`${field}Fixed`, {
         rules: {
             validate: validateFixedDateTime,

@@ -19,7 +19,6 @@ describe('dateUtils', () => {
         });
 
         test('converts a complex time correctly', () => {
-            // 2 days, 3 hours, 45 minutes
             const seconds = 2 * 86400 + 3 * 3600 + 45 * 60;
             expect(dateUtils.secondsToDaysHoursMinutes(seconds)).toEqual({ days: 2, hours: 3, minutes: 45 });
         });
@@ -46,17 +45,17 @@ describe('dateUtils', () => {
         });
 
         test('returns current time when isNow is true', () => {
-            const result = dateUtils.getStartDate({ minDuration: 0, isNow: true });
+            const result = dateUtils.getStartDate({ minDuration: 0, isStart: true });
             expect(result).toEqual({ date: '2024-09-04', time: '12:00' });
         });
 
         test('uses minDuration when provided', () => {
-            const result = dateUtils.getStartDate({ minDuration: 3600, isNow: false });
+            const result = dateUtils.getStartDate({ minDuration: 3600, isStart: false });
             expect(result).toEqual({ date: '2024-09-04', time: '13:00' });
         });
 
         test('uses default duration when minDuration is not provided', () => {
-            const result = dateUtils.getStartDate({ minDuration: 0, isNow: false });
+            const result = dateUtils.getStartDate({ minDuration: 0, isStart: false });
             expect(result).toEqual({ date: '2024-09-09', time: '12:00' });
         });
 
@@ -64,7 +63,7 @@ describe('dateUtils', () => {
             const result = dateUtils.getStartDate({
                 minDuration: 3600,
                 startTime: { date: '2024-09-16', time: '10:00' },
-                isNow: false,
+                isStart: false,
             });
             expect(result).toEqual({ date: '2024-09-16', time: '11:00' });
         });
@@ -73,7 +72,7 @@ describe('dateUtils', () => {
             const result = dateUtils.getStartDate({
                 minDuration: 0,
                 startTime: { date: '2024-09-16', time: '10:00' },
-                isNow: false,
+                isStart: false,
             });
             expect(result).toEqual({ date: '2024-09-21', time: '10:00' });
         });

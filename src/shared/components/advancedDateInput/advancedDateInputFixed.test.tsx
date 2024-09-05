@@ -43,6 +43,8 @@ describe('<AdvancedDateInputFixed /> component', () => {
         expect(alert).toHaveTextContent('End time must be after start time');
 
         // Set an end time less than minDuration from start time
+        await userEvent.clear(dateInput);
+        await userEvent.clear(timeInput);
         await userEvent.type(dateInput, '2024-09-01');
         await userEvent.type(timeInput, '12:30');
 
@@ -51,6 +53,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         });
 
         // Set a valid date-time
+        await userEvent.clear(timeInput);
         await userEvent.type(timeInput, '13:30');
 
         await waitFor(() => {
