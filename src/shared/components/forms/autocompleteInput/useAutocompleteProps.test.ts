@@ -34,7 +34,9 @@ describe('useAutocompleteProps hook', () => {
 
     it('returns floating menu context', () => {
         const { result } = renderHook(() => useAutocompleteProps(generateParams()));
-        expect(result.current.context).toBeDefined();
+        expect(result.current.context.placement).toEqual('bottom');
+        expect(result.current.context.refs).toBeDefined();
+        expect(result.current.context.open).toBeFalsy();
     });
 
     it('returns a function to build the item-menu props', () => {
