@@ -20,7 +20,11 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const { setValue, trigger } = useFormContext();
 
     const getDefaultDateTime = useCallback(() => {
-        return dateUtils.getStartDate({ minDuration: minDuration ?? 0, startTime, isNow: !minDuration && !startTime });
+        return dateUtils.getStartDate({
+            minDuration: minDuration ?? 0,
+            startTime,
+            isStart: !minDuration && !startTime,
+        });
     }, [minDuration, startTime]);
 
     const handleFixedDateTimeChange = (type: DateTimeFields) => (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 interface GetStartDateParams {
     minDuration: number;
     startTime?: { date: string; time: string };
-    isNow: boolean;
+    isStart: boolean;
 }
 
 class DateUtils {
@@ -20,13 +20,13 @@ class DateUtils {
         return DateTime.fromISO(date).set({ hour, minute });
     };
 
-    getStartDate = ({ minDuration, startTime, isNow }: GetStartDateParams): { date: string; time: string } => {
+    getStartDate = ({ minDuration, startTime, isStart }: GetStartDateParams): { date: string; time: string } => {
         const defaultMinDuration = 5 * 24 * 60 * 60; // 5 days in seconds
         const baseTime = startTime ? dateUtils.parseFixedDate(startTime) : DateTime.now();
 
         const duration = minDuration || defaultMinDuration;
 
-        const resultDateTime = isNow ? DateTime.now() : baseTime.plus({ seconds: duration });
+        const resultDateTime = isStart ? DateTime.now() : baseTime.plus({ seconds: duration });
 
         return {
             date: resultDateTime.toISODate() ?? '',
