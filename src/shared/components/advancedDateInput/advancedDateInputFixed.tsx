@@ -35,7 +35,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
 
     const validateFixedDateTime = useCallback(
         (value: IAdvancedDateInputDateFixed): boolean => {
-            // No validation needed if there's no minDuration and no startTime
+            // No validation needed if start field
             if (field === 'startTime') {
                 return true;
             }
