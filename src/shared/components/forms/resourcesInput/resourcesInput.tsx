@@ -18,7 +18,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
     const { name, helpText } = props;
 
     const { t } = useTranslations();
-    const { fields, append, remove } = useFieldArray({ name: name });
+    const { fields, append, remove } = useFieldArray({ name });
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
