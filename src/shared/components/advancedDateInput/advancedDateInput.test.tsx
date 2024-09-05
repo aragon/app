@@ -1,14 +1,9 @@
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import * as ReactHookForm from 'react-hook-form';
+import { DateTime } from 'luxon';
 import { AdvancedDateInput } from './advancedDateInput';
 import type { IAdvancedDateInputProps } from './advancedInput.api';
-
-jest.mock('react-hook-form', () => ({
-    __esModule: true,
-    ...jest.requireActual('react-hook-form'),
-}));
 
 jest.mock('./advancedDateInputFixed', () => ({
     AdvancedDateInputFixed: () => <div data-testid="fixed-input-mock" />,
@@ -19,21 +14,12 @@ jest.mock('./advancedDateInputDuration', () => ({
 }));
 
 describe('<AdvancedDateInput /> component', () => {
-    const useWatchSpy = jest.spyOn(ReactHookForm, 'useWatch');
-
-    beforeEach(() => {
-        useWatchSpy.mockReturnValue({ date: '2024-09-01', time: '12:00' });
-    });
-
-    afterEach(() => {
-        useWatchSpy.mockReset();
-    });
-
     const createTestComponent = (props?: Partial<IAdvancedDateInputProps>) => {
         const completeProps: IAdvancedDateInputProps = {
             label: 'Test Label',
             field: 'testField',
             helpText: 'Test Help Text',
+            minTime: DateTime.now(),
             ...props,
         };
 
@@ -50,11 +36,6 @@ describe('<AdvancedDateInput /> component', () => {
         expect(screen.getByText('Test Help Text')).toBeInTheDocument();
         expect(screen.getByRole('radiogroup')).toBeInTheDocument();
         expect(screen.getAllByRole('radio')).toHaveLength(2);
-    });
-
-    it('watches for startTimeFixed changes', () => {
-        render(createTestComponent());
-        expect(useWatchSpy).toHaveBeenCalledWith({ name: 'startTimeFixed' });
     });
 
     it('renders AdvancedDateInputFixed when mode is FIXED', async () => {

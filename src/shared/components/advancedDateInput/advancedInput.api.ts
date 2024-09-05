@@ -1,3 +1,5 @@
+import type { DateTime } from 'luxon';
+
 export enum InputModeOptions {
     NOW = 'now',
     FIXED = 'fixed',
@@ -33,13 +35,21 @@ export interface IAdvancedDateInputProps {
      */
     infoText?: string;
     /**
+     * Minimum time for fixed input
+     */
+    minTime: DateTime;
+    /**
      * Boolean to enable or disable duration on end time.
      */
     useDuration?: boolean;
     /**
      * Min date for the input.
      */
-    minDuration?: number;
+    minDuration?: IAdvancedDateInputDateDuration;
+    /**
+     * Validate min duration
+     */
+    validateMinDuration?: boolean;
 }
 
 export interface IAdvancedDateInputDateFixed {

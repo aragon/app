@@ -34,47 +34,4 @@ describe('dateUtils', () => {
             expect(result.toISO()).toBe('2023-05-15T14:30:00.000+00:00');
         });
     });
-    describe('getStartDate', () => {
-        beforeAll(() => {
-            jest.useFakeTimers();
-            jest.setSystemTime(new Date('2024-09-04T12:00:00Z'));
-        });
-
-        afterAll(() => {
-            jest.useRealTimers();
-        });
-
-        test('returns current time when isNow is true', () => {
-            const result = dateUtils.getStartDate({ minDuration: 0, isStart: true });
-            expect(result).toEqual({ date: '2024-09-04', time: '12:00' });
-        });
-
-        test('uses minDuration when provided', () => {
-            const result = dateUtils.getStartDate({ minDuration: 3600, isStart: false });
-            expect(result).toEqual({ date: '2024-09-04', time: '13:00' });
-        });
-
-        test('uses default duration when minDuration is not provided', () => {
-            const result = dateUtils.getStartDate({ minDuration: 0, isStart: false });
-            expect(result).toEqual({ date: '2024-09-09', time: '12:00' });
-        });
-
-        test('uses startTime when provided', () => {
-            const result = dateUtils.getStartDate({
-                minDuration: 3600,
-                startTime: { date: '2024-09-16', time: '10:00' },
-                isStart: false,
-            });
-            expect(result).toEqual({ date: '2024-09-16', time: '11:00' });
-        });
-
-        test('uses startTime with default duration when minDuration is 0', () => {
-            const result = dateUtils.getStartDate({
-                minDuration: 0,
-                startTime: { date: '2024-09-16', time: '10:00' },
-                isStart: false,
-            });
-            expect(result).toEqual({ date: '2024-09-21', time: '10:00' });
-        });
-    });
 });

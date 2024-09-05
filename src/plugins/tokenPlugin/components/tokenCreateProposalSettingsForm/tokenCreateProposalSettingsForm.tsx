@@ -1,7 +1,11 @@
+import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
+import { DateTime } from 'luxon';
+import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';
 
 export interface ITokenCreateProposalSettingsFormProps {
@@ -17,9 +21,18 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
 
     const { t } = useTranslations();
 
-    const minDuration = dao?.settings.minDuration ?? 0;
+    const startTimeFixed = useWatch<ICreateProposalFormData, 'startTimeFixed'>({ name: 'startTimeFixed' });
 
-    const { days, hours, minutes } = dateUtils.secondsToDaysHoursMinutes(minDuration);
+    const minDuration = dao?.settings.minDuration ?? 0;
+    const parsedMinDuration = dateUtils.secondsToDaysHoursMinutes(minDuration);
+    const { days, hours, minutes } = parsedMinDuration;
+
+    const minEndTime = startTimeFixed
+        ? DateTime.fromFormat(`${startTimeFixed.date} ${startTimeFixed.time}`, 'yyyy-MM-dd HH:mm')
+        : DateTime.now();
+
+    // Add min duration to the form values for later use
+    useFormField('minDuration', { defaultValue: parsedMinDuration });
 
     return (
         <>
@@ -27,6 +40,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
                 field="startTime"
                 helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.helpText')}
+                minTime={DateTime.now()}
             />
             <AdvancedDateInput
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.label')}
@@ -38,7 +52,9 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                     minutes,
                 })}
                 useDuration={true}
-                minDuration={minDuration}
+                minDuration={parsedMinDuration}
+                minTime={minEndTime}
+                validateMinDuration={true}
             />
         </>
     );

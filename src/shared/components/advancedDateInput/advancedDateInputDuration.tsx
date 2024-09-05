@@ -1,40 +1,26 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import { dateUtils } from '@/shared/utils/createProposalUtils';
 import { AlertCard, Card, InputNumber } from '@aragon/ods';
 import { Duration } from 'luxon';
-import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
 import { DurationFields, type IAdvancedDateInputDateDuration, type IAdvancedDateInputProps } from './advancedInput.api';
 
 export type IAdvancedDateInputDurationProps = Pick<
     IAdvancedDateInputProps,
-    'field' | 'label' | 'infoText' | 'minDuration'
+    'field' | 'label' | 'infoText' | 'minDuration' | 'validateMinDuration'
 >;
 
 export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
-    const { minDuration, field, label, infoText } = props;
+    const { minDuration, field, label, infoText, validateMinDuration } = props;
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
-    const getDefaultDuration = useCallback(() => {
-        const defaultDuration = { days: 5, hours: 0, minutes: 0 };
-        return minDuration ? dateUtils.secondsToDaysHoursMinutes(minDuration) : defaultDuration;
-    }, [minDuration]);
-
-    const validateDuration = useCallback(
-        (value: IAdvancedDateInputDateDuration) => {
-            const duration = Duration.fromObject(value);
-            const minDurationDuration = Duration.fromObject({ seconds: minDuration });
-
-            if (duration < minDurationDuration) {
-                return false;
-            }
-
-            return true;
-        },
-        [minDuration],
-    );
+    const validateDuration = (value: IAdvancedDateInputDateDuration) => {
+        if (validateMinDuration && minDuration) {
+            return Duration.fromObject(value) >= Duration.fromObject(minDuration);
+        }
+        return true;
+    };
 
     const handleDurationChange = (type: DurationFields) => (value: string) => {
         const numericValue = parseInt(value, 10) || 0;
@@ -49,7 +35,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
         },
         label,
         shouldUnregister: true,
-        defaultValue: getDefaultDuration(),
+        defaultValue: minDuration ?? { days: 5, hours: 0, minutes: 0 },
     });
 
     const durationErrors = !!durationField.alert;
