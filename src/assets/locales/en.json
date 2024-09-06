@@ -416,7 +416,7 @@
           "endTime": {
             "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude.",
             "infoText": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO governance settings",
-            "label": "Expiration time"
+            "label": "End time"
           },
           "startTime": {
             "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
