@@ -38,7 +38,7 @@ describe('<AdvancedDateInput /> component', () => {
         expect(screen.getAllByRole('radio')).toHaveLength(2);
     });
 
-    it('renders AdvancedDateInputFixed when mode is FIXED', async () => {
+    it('renders AdvancedDateInputFixed when mode is fixed', async () => {
         render(createTestComponent());
 
         const fixedRadio = screen.getByRole('radio', { name: /shared.advancedDateInput.fixed.label/ });
@@ -47,7 +47,7 @@ describe('<AdvancedDateInput /> component', () => {
         expect(screen.getByTestId('fixed-input-mock')).toBeInTheDocument();
     });
 
-    it('renders AdvancedDateInputDuration when useDuration is true and mode is DURATION', async () => {
+    it('renders AdvancedDateInputDuration when useDuration is true and mode is duration', async () => {
         render(createTestComponent({ useDuration: true }));
 
         const durationRadio = screen.getByRole('radio', { name: /shared.advancedDateInput.duration.label/ });
