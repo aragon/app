@@ -2,7 +2,6 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/createProposalUtils';
 import { AlertCard, Card, InputDate, InputText, InputTime } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
 import { DateTimeFields, type IAdvancedDateInputDateFixed, type IAdvancedDateInputProps } from './advancedInput.api';
@@ -25,22 +24,19 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
         trigger(`${field}Fixed`);
     };
 
-    const validateFixedDateTime = useCallback(
-        (value: IAdvancedDateInputDateFixed): boolean => {
-            if (!value.date.length || !value.time.length) {
-                return false;
-            }
-            const parsedValue = dateUtils.parseFixedDate(value);
-            if (minTime && parsedValue < minTime) {
-                return false;
-            }
-            if (validateMinDuration && minTime && minDuration && parsedValue < minTime.plus(minDuration)) {
-                return false;
-            }
-            return true;
-        },
-        [minDuration, minTime, validateMinDuration],
-    );
+    const validateFixedDateTime = (value: IAdvancedDateInputDateFixed): boolean => {
+        if (!value.date.length || !value.time.length) {
+            return false;
+        }
+        const parsedValue = dateUtils.parseFixedDate(value);
+        if (minTime && parsedValue < minTime) {
+            return false;
+        }
+        if (validateMinDuration && minTime && minDuration && parsedValue < minTime.plus(minDuration)) {
+            return false;
+        }
+        return true;
+    };
 
     const { days = 0, hours = 0, minutes = 0 } = minDuration ?? {};
 
@@ -58,7 +54,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
         },
     });
 
-    const fixedErrors = !!fixedDateTimeField.alert;
+    const hasError = !!fixedDateTimeField.alert;
 
     return (
         <Card className="flex flex-col gap-4 p-6">
@@ -83,11 +79,11 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
                     disabled={true}
                 />
             </div>
-            {(infoText ?? fixedErrors) && (
+            {(infoText ?? hasError) && (
                 <AlertCard
                     message={label}
-                    description={fixedErrors ? fixedDateTimeField.alert?.message : infoText}
-                    variant={fixedErrors ? 'critical' : 'info'}
+                    description={hasError ? fixedDateTimeField.alert?.message : infoText}
+                    variant={hasError ? 'critical' : 'info'}
                 />
             )}
         </Card>

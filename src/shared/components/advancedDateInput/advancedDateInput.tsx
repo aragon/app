@@ -9,7 +9,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     const { useDuration = false, label, helpText, minDuration, field, infoText, minTime, validateMinDuration } = props;
     const { t } = useTranslations();
 
-    const modeField = useFormField(`${field}Mode`, {
+    const inputModeField = useFormField(`${field}Mode`, {
         label,
         defaultValue: useDuration ? InputModeOptions.DURATION : InputModeOptions.NOW,
     });
@@ -19,8 +19,8 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
             <RadioGroup
                 className="flex gap-4 md:!flex-row"
                 helpText={helpText}
-                onValueChange={modeField.onChange}
-                {...modeField}
+                onValueChange={inputModeField.onChange}
+                {...inputModeField}
             >
                 <RadioCard
                     className="w-full"
@@ -39,7 +39,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     value="fixed"
                 />
             </RadioGroup>
-            {modeField.value === InputModeOptions.FIXED && (
+            {inputModeField.value === InputModeOptions.FIXED && (
                 <AdvancedDateInputFixed
                     field={field}
                     label={label}
@@ -49,7 +49,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     validateMinDuration={validateMinDuration}
                 />
             )}
-            {modeField.value === InputModeOptions.DURATION && (
+            {inputModeField.value === InputModeOptions.DURATION && (
                 <AdvancedDateInputDuration
                     field={field}
                     label={label}

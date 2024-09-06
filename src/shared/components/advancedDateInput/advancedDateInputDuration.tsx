@@ -38,7 +38,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
         defaultValue: minDuration ?? { days: 5, hours: 0, minutes: 0 },
     });
 
-    const durationErrors = !!durationField.alert;
+    const hasError = !!durationField.alert;
 
     return (
         <Card className="flex flex-col gap-4 p-6">
@@ -72,8 +72,8 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
             </div>
             <AlertCard
                 message={label}
-                description={durationErrors ? durationField.alert?.message : infoText}
-                variant={durationErrors ? 'critical' : 'info'}
+                description={hasError ? durationField.alert?.message : infoText}
+                variant={hasError ? 'critical' : 'info'}
             />
         </Card>
     );
