@@ -1,11 +1,11 @@
 import { useFormField } from '@/shared/hooks/useFormField';
+import type { IDateFixed } from '@/shared/utils/createProposalUtils';
 import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
 import { AlertCard, Card, InputDate, InputText, InputTime } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
 import type { IAdvancedDateInputProps } from './advancedDateInput.api';
-import type { IDateFixed } from '@/shared/utils/createProposalUtils';
 
 export type IAdvancedDateInputFixedProps = Pick<
     IAdvancedDateInputProps,

@@ -1,9 +1,9 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/ods';
 import { useTranslations } from '../translationsProvider';
+import { type IAdvancedDateInputProps } from './advancedDateInput.api';
 import { AdvancedDateInputDuration } from './advancedDateInputDuration';
 import { AdvancedDateInputFixed } from './advancedDateInputFixed';
-import { type IAdvancedDateInputProps } from './advancedDateInput.api';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     const { useDuration = false, label, helpText, minDuration, field, infoText, minTime, validateMinDuration } = props;

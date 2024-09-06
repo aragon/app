@@ -1,9 +1,9 @@
 import { useFormField } from '@/shared/hooks/useFormField';
+import { dateUtils, type IDateDuration } from '@/shared/utils/createProposalUtils';
 import { AlertCard, Card, InputNumber } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../translationsProvider';
 import type { IAdvancedDateInputFixedProps } from './advancedDateInputFixed';
-import { dateUtils, type IDateDuration } from '@/shared/utils/createProposalUtils';
 
 export type IAdvancedDateInputDurationProps = Pick<
     IAdvancedDateInputFixedProps,
