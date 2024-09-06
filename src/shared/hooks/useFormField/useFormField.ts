@@ -8,8 +8,14 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
-    const { label, ...otherOptions } = options ?? {};
-    const { field, fieldState } = useController<TFieldValues, TName>({ name, ...otherOptions });
+    const { label, fieldPrefix, ...otherOptions } = options ?? {};
+
+    const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
+
+    const { field, fieldState } = useController<TFieldValues, TName>({
+        name: processedFieldName as TName,
+        ...otherOptions,
+    });
 
     const variant = fieldState.error != null ? 'critical' : 'default';
 

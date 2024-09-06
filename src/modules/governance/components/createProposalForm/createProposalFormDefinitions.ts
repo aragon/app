@@ -2,6 +2,13 @@ import type { IResourcesInputResource } from '@/shared/components/forms/resource
 import type { IDateDuration, IDateFixed } from '@/shared/utils/dateUtils';
 import type { IProposalAction } from '@aragon/ods';
 
+export interface IProposalActionIndexed extends IProposalAction {
+    /**
+     * Index of the action inside the form.
+     */
+    index: number;
+}
+
 export interface ICreateProposalFormData {
     /**
      * Title of the proposal.
@@ -26,7 +33,7 @@ export interface ICreateProposalFormData {
     /**
      * List of actions to be executed if the proposal succeeds.
      */
-    actions: IProposalAction[];
+    actions: IProposalActionIndexed[];
     /**
      * Defines if the start time of the proposal is now or at a specific date.
      */
