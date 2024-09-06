@@ -1,13 +1,13 @@
 import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
+import { AdvancedDateInputFields } from '@/shared/components/advancedDateInput/advancedInput.api';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
 import { DateTime } from 'luxon';
 import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';
-import { AdvancedDateInputFields } from '@/shared/components/advancedDateInput/advancedInput.api';
 
 export interface ITokenCreateProposalSettingsFormProps {
     /**
