@@ -44,7 +44,7 @@ describe('<CreateProposalPageClient /> component', () => {
         await userEvent.click(screen.getByTestId('steps-mock'));
         await userEvent.click(screen.getByTestId('steps-mock'));
         await userEvent.click(screen.getByTestId('steps-mock'));
-        const expectedParams = { daoId, values: {} };
+        const expectedParams = { daoId, values: { actions: [] } };
         expect(open).toHaveBeenCalledWith(GovernanceDialogs.PUBLISH_PROPOSAL, { params: expectedParams });
     });
 });

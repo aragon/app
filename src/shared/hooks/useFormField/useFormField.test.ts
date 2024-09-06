@@ -17,7 +17,7 @@ describe('useFormField hook', () => {
         const options = { disabled: false, defaultValue: 'My title' };
         const fieldValues = { field: { onChange: jest.fn() }, fieldState: {} };
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-        const { result } = renderHook(() => useFormField(name, options));
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name, options));
         expect(useControllerSpy).toHaveBeenCalledWith({ name, ...options });
         expect(result.current).toEqual(expect.objectContaining(fieldValues.field));
     });
@@ -26,7 +26,7 @@ describe('useFormField hook', () => {
         const fieldState = { error: 'some-error' };
         const fieldValues = { field: {}, fieldState };
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-        const { result } = renderHook(() => useFormField('field'));
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>('field'));
         expect(result.current.variant).toEqual('critical');
     });
 
@@ -34,7 +34,7 @@ describe('useFormField hook', () => {
         const fieldState = { error: undefined };
         const fieldValues = { field: {}, fieldState };
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-        const { result } = renderHook(() => useFormField('field'));
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>('field'));
         expect(result.current.variant).toEqual('default');
     });
 
@@ -44,7 +44,7 @@ describe('useFormField hook', () => {
         const fieldValues = { field: {}, fieldState };
         const label = 'Summary';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-        const { result } = renderHook(() => useFormField('field-name', { label }));
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>('field-name', { label }));
         expect(result.current.alert?.message).toMatch(/formField.error.required \(name=Summary\)/);
         expect(result.current.alert?.variant).toEqual('critical');
     });
@@ -55,7 +55,7 @@ describe('useFormField hook', () => {
         const fieldValues = { field: {}, fieldState };
         const name = 'field-name';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-        const { result } = renderHook(() => useFormField(name));
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name));
         expect(result.current.alert?.message).toMatch(/formField.error.minLength \(name=field-name\)/);
     });
 
@@ -63,38 +63,17 @@ describe('useFormField hook', () => {
         const fieldState = { error: undefined };
         const fieldValues = { field: {}, fieldState };
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-        const { result } = renderHook(() => useFormField('field'));
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>('field'));
         expect(result.current.alert).toBeUndefined();
     });
 
-    it('passes shouldUnregister option correctly to useController', () => {
+    it('forwards the shouldUnregister option correctly to useController', () => {
         const name = 'testField';
-        const options = { shouldUnregister: true, label: 'Test Field' };
+        const options = { shouldUnregister: true };
         const fieldValues = { field: {}, fieldState: {} };
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
 
-        renderHook(() => useFormField(name, options));
-
-        expect(useControllerSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                name,
-                shouldUnregister: true,
-            }),
-        );
-    });
-
-    it('does not pass shouldUnregister to useController when not provided', () => {
-        const name = 'testField';
-        const options = { label: 'Test Field' };
-        const fieldValues = { field: {}, fieldState: {} };
-        useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
-
-        renderHook(() => useFormField(name, options));
-
-        expect(useControllerSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                shouldUnregister: undefined,
-            }),
-        );
+        renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name, options));
+        expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ name, shouldUnregister: true }));
     });
 });

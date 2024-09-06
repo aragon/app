@@ -17,24 +17,25 @@ export interface IResourcesInputItemProps {
     remove: (index: number) => void;
 }
 
+type ResourcesInputItemBaseForm = Record<string, string>;
+
 export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) => {
     const { name, index, remove } = props;
 
     const { t } = useTranslations();
 
-    const labelField = useFormField(`${name}.${index}.label`, {
+    const nameFieldName = `${name}.${index}.name`;
+    const nameField = useFormField<ResourcesInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
         label: t('app.shared.resourcesInput.item.labelInput.title'),
         rules: { required: true },
         defaultValue: '',
     });
 
-    const linkField = useFormField(`${name}.${index}.link`, {
+    const urlFieldName = `${name}.${index}.url`;
+    const urlField = useFormField<ResourcesInputItemBaseForm, typeof urlFieldName>(urlFieldName, {
         label: t('app.shared.resourcesInput.item.linkInput.title'),
         defaultValue: '',
-        rules: {
-            required: true,
-            pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
-        },
+        rules: { required: true, pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/ },
     });
 
     return (
@@ -42,9 +43,9 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
             <InputText
                 placeholder={t('app.shared.resourcesInput.item.labelInput.placeholder')}
                 maxLength={40}
-                {...labelField}
+                {...nameField}
             />
-            <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...linkField} />
+            <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...urlField} />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container
                     constrainContentWidth={false}

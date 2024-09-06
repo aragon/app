@@ -4,12 +4,14 @@ import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 
 export interface ICreateProposalFormSettingsProps {
     /**
-     * The DAO ID.
+     * The ID of the DAO.
      */
     daoId: string;
 }
 
-export const CreateProposalFormSettings: React.FC<ICreateProposalFormSettingsProps> = ({ daoId }) => {
+export const CreateProposalFormSettings: React.FC<ICreateProposalFormSettingsProps> = (props) => {
+    const { daoId } = props;
+
     const pluginIds = useDaoPluginIds(daoId);
 
     return (

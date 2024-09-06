@@ -2,7 +2,8 @@ import { FormWrapper } from '@/shared/testUtils';
 import { IconType } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { type IResourcesInputProps, ResourcesInput } from './resourcesInput';
+import { ResourcesInput } from './resourcesInput';
+import type { IResourcesInputProps } from './resourcesInput.api';
 
 describe('<ResourcesInput /> component', () => {
     const createTestComponent = (props?: Partial<IResourcesInputProps>) => {

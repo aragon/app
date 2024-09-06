@@ -1,16 +1,6 @@
+import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IDateDuration, IDateFixed } from '@/shared/utils/createProposalUtils';
 import type { IProposalAction } from '@aragon/ods';
-
-export interface ICreateProposalFormResources {
-    /**
-     * Name of the resource.
-     */
-    name: string;
-    /**
-     * URL of the resource.
-     */
-    url: string;
-}
 
 export interface ICreateProposalFormData {
     /**
@@ -32,7 +22,7 @@ export interface ICreateProposalFormData {
     /**
      * Resources of the proposal.
      */
-    resources: ICreateProposalFormResources[];
+    resources: IResourcesInputResource[];
     /**
      * List of actions to be executed if the proposal succeeds.
      */

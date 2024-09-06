@@ -1,4 +1,4 @@
-import type { IAdvancedDateInputProps } from '@/shared/components/advancedDateInput';
+import type { IAdvancedDateInputProps } from '@/shared/components/forms/advancedDateInput';
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import {
@@ -6,7 +6,7 @@ import {
     type IMultisigCreateProposalSettingsFormProps,
 } from './multisigCreateProposalSettingsForm';
 
-jest.mock('@/shared/components/advancedDateInput', () => ({
+jest.mock('@/shared/components/forms/advancedDateInput', () => ({
     AdvancedDateInput: ({ label, helpText, field, infoText, useDuration }: IAdvancedDateInputProps) => (
         <div data-testid="advanced-date-input">
             <div>Label: {label}</div>

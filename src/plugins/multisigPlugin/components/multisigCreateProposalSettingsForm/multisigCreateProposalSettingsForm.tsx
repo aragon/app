@@ -1,5 +1,5 @@
 import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
-import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
+import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dateUtils } from '@/shared/utils/createProposalUtils';
 import { DateTime } from 'luxon';

@@ -3,7 +3,7 @@ import type { TransactionDialogPrepareReturn } from '@/shared/components/transac
 import { dateUtils, type IDateDuration } from '@/shared/utils/createProposalUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 import { decodeAbiParameters, type Hex, toHex, type TransactionReceipt } from 'viem';
 import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -95,14 +95,10 @@ class PublishProposalDialogUtils {
             'PublishProposalDialogUtils.parseEndDate: endTimeDuration/endTimeFixed must be properly set.',
         );
 
-        // Return 0 when startTime is now and endTime equals minimumDuration to let smart contract set the correct end
+        // Return 0 when endTime is set as duration and equals to minimumDuration to let smart contract set the correct end
         // time when the transaction is executed, otherwise the end time will be set as a few seconds before the minimum
         // duration and the transaction would fail.
-        if (
-            endTimeMode === 'duration' &&
-            startTimeMode === 'now' &&
-            this.compareTimeDuration(minimumDuration, endTimeDuration)
-        ) {
+        if (endTimeMode === 'duration' && this.compareTimeDuration(minimumDuration, endTimeDuration)) {
             return 0;
         }
 
@@ -126,7 +122,7 @@ class PublishProposalDialogUtils {
         actions.map(({ to, value, data }) => ({ to, value, data }));
 
     private compareTimeDuration = (first?: IDateDuration, second?: IDateDuration) =>
-        first?.days === second?.days && first?.hours === second?.hours && first?.minutes === second?.minutes;
+        Duration.fromObject(first ?? {}).equals(Duration.fromObject(second ?? {}));
 }
 
 export const publishProposalDialogUtils = new PublishProposalDialogUtils();
