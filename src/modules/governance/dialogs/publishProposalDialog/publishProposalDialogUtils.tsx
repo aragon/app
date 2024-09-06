@@ -1,6 +1,6 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
-import { dateUtils, IDateDuration } from '@/shared/utils/createProposalUtils';
+import { dateUtils, type IDateDuration } from '@/shared/utils/createProposalUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
 import { DateTime } from 'luxon';
