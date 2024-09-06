@@ -1,4 +1,5 @@
 import type { IAdvancedDateInputProps } from '@/shared/components/advancedDateInput';
+import { AdvancedDateInputFields } from '@/shared/components/advancedDateInput/advancedInput.api';
 import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import {
@@ -41,7 +42,7 @@ describe('<MultisigCreateProposalSettingsForm /> component', () => {
         const startTimeInput = screen.getAllByTestId('advanced-date-input')[0];
         expect(startTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.startTime.label/);
         expect(startTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.startTime.helpText/);
-        expect(startTimeInput).toHaveTextContent('startTime');
+        expect(startTimeInput).toHaveTextContent(AdvancedDateInputFields.START_TIME);
     });
 
     it('passes correct props to end time AdvancedDateInput', () => {
@@ -49,7 +50,7 @@ describe('<MultisigCreateProposalSettingsForm /> component', () => {
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
         expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.label/);
         expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.helpText/);
-        expect(endTimeInput).toHaveTextContent('endTime');
+        expect(endTimeInput).toHaveTextContent(AdvancedDateInputFields.END_TIME);
         expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.infoText/);
         expect(endTimeInput).toHaveTextContent('Use Duration: true');
     });

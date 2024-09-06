@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { DateTime } from 'luxon';
 import { AdvancedDateInput } from './advancedDateInput';
-import type { IAdvancedDateInputProps } from './advancedInput.api';
+import { AdvancedDateInputFields, type IAdvancedDateInputProps } from './advancedInput.api';
 
 jest.mock('./advancedDateInputFixed', () => ({
     AdvancedDateInputFixed: () => <div data-testid="fixed-input-mock" />,
@@ -17,7 +17,7 @@ describe('<AdvancedDateInput /> component', () => {
     const createTestComponent = (props?: Partial<IAdvancedDateInputProps>) => {
         const completeProps: IAdvancedDateInputProps = {
             label: 'Test Label',
-            field: 'testField',
+            field: AdvancedDateInputFields.START_TIME,
             helpText: 'Test Help Text',
             minTime: DateTime.now(),
             ...props,

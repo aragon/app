@@ -2,11 +2,12 @@ import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { AdvancedDateInputDuration, type IAdvancedDateInputDurationProps } from './advancedDateInputDuration';
+import { AdvancedDateInputFields } from './advancedInput.api';
 
 describe('<AdvancedDateInputDuration /> component', () => {
     const createTestComponent = (props?: Partial<IAdvancedDateInputDurationProps>) => {
         const completeProps: IAdvancedDateInputDurationProps = {
-            field: 'testField',
+            field: AdvancedDateInputFields.START_TIME,
             label: 'Test Label',
             minDuration: { days: 0, hours: 1, minutes: 0 },
             validateMinDuration: true,

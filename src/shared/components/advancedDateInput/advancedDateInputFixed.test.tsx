@@ -3,11 +3,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { DateTime } from 'luxon';
 import { AdvancedDateInputFixed, type IAdvancedDateInputFixedProps } from './advancedDateInputFixed';
+import { AdvancedDateInputFields } from './advancedInput.api';
 
 describe('<AdvancedDateInputFixed /> component', () => {
     const createTestComponent = (props?: Partial<IAdvancedDateInputFixedProps>) => {
         const completeProps: IAdvancedDateInputFixedProps = {
-            field: 'testField',
+            field: AdvancedDateInputFields.START_TIME,
             label: 'Test Label',
             minDuration: { days: 0, hours: 1, minutes: 0 },
             minTime: DateTime.now(),
@@ -37,6 +38,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
                 minDuration: { days: 0, hours: 1, minutes: 0 },
                 minTime,
                 validateMinDuration: true,
+                field: AdvancedDateInputFields.END_TIME,
             }),
         );
 
@@ -74,6 +76,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
                 minTime,
                 minDuration: undefined,
                 validateMinDuration: false,
+                field: AdvancedDateInputFields.END_TIME,
             }),
         );
 
@@ -109,6 +112,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
                 minTime: now,
                 minDuration: undefined,
                 validateMinDuration: false,
+                field: AdvancedDateInputFields.END_TIME,
             }),
         );
 

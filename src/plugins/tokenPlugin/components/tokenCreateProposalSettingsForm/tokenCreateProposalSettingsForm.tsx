@@ -7,6 +7,7 @@ import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
 import { DateTime } from 'luxon';
 import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';
+import { AdvancedDateInputFields } from '@/shared/components/advancedDateInput/advancedInput.api';
 
 export interface ITokenCreateProposalSettingsFormProps {
     /**
@@ -38,13 +39,13 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
         <>
             <AdvancedDateInput
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
-                field="startTime"
+                field={AdvancedDateInputFields.START_TIME}
                 helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.helpText')}
                 minTime={DateTime.now()}
             />
             <AdvancedDateInput
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.label')}
-                field="endTime"
+                field={AdvancedDateInputFields.END_TIME}
                 helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.helpText')}
                 infoText={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.infoText', {
                     days,

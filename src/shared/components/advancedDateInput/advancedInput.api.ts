@@ -17,6 +17,11 @@ export enum DateTimeFields {
     TIME = 'time',
 }
 
+export enum AdvancedDateInputFields {
+    START_TIME = 'startTime',
+    END_TIME = 'endTime',
+}
+
 export interface IAdvancedDateInputProps {
     /**
      * Label for the input.
@@ -25,7 +30,7 @@ export interface IAdvancedDateInputProps {
     /**
      * Field for the input to help parsing data.
      */
-    field: string;
+    field: AdvancedDateInputFields;
     /**
      * Help text for the input.
      */
