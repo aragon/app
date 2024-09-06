@@ -1,6 +1,6 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import type { IDateFixed } from '@/shared/utils/createProposalUtils';
-import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
+import type { IDateFixed } from '@/shared/utils/dateUtils';
+import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
 import { AlertCard, Card, InputDate, InputText, InputTime } from '@aragon/ods';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';

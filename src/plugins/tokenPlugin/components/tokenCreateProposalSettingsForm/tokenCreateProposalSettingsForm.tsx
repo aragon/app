@@ -3,7 +3,7 @@ import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
+import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
 import { DateTime } from 'luxon';
 import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';

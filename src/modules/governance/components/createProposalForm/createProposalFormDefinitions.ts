@@ -1,5 +1,5 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { IDateDuration, IDateFixed } from '@/shared/utils/createProposalUtils';
+import type { IDateDuration, IDateFixed } from '@/shared/utils/dateUtils';
 import type { IProposalAction } from '@aragon/ods';
 
 export interface ICreateProposalFormData {

@@ -1,5 +1,5 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import { dateUtils, type IDateDuration } from '@/shared/utils/createProposalUtils';
+import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { AlertCard, Card, InputNumber } from '@aragon/ods';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';

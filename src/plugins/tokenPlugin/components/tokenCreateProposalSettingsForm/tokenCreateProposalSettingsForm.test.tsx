@@ -2,7 +2,7 @@ import * as daoService from '@/shared/api/daoService';
 import type { IAdvancedDateInputProps } from '@/shared/components/forms/advancedDateInput';
 
 import { FormWrapper, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { dateUtils } from '@/shared/utils/createProposalUtils';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
 import { generateDaoTokenSettings } from '../../testUtils';

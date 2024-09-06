@@ -1,7 +1,7 @@
 import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { dateUtils } from '@/shared/utils/createProposalUtils';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { DateTime } from 'luxon';
 import { useWatch } from 'react-hook-form';
 

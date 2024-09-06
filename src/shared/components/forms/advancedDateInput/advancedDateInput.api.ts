@@ -1,4 +1,4 @@
-import type { IDateDuration } from '@/shared/utils/createProposalUtils';
+import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { IInputContainerProps } from '@aragon/ods';
 import type { DateTime } from 'luxon';
 
