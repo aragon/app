@@ -1,7 +1,6 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import type { IAdvancedDateInputDateDuration } from '@/shared/components/advancedDateInput';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
-import { dateUtils } from '@/shared/utils/createProposalUtils';
+import { dateUtils, IDateDuration } from '@/shared/utils/createProposalUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
 import { DateTime } from 'luxon';
@@ -126,7 +125,7 @@ class PublishProposalDialogUtils {
     private formToProposalActions = (actions: IProposalAction[]) =>
         actions.map(({ to, value, data }) => ({ to, value, data }));
 
-    private compareTimeDuration = (first?: IAdvancedDateInputDateDuration, second?: IAdvancedDateInputDateDuration) =>
+    private compareTimeDuration = (first?: IDateDuration, second?: IDateDuration) =>
         first?.days === second?.days && first?.hours === second?.hours && first?.minutes === second?.minutes;
 }
 

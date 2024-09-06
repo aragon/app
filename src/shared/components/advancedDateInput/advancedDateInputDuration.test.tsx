@@ -2,12 +2,11 @@ import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { AdvancedDateInputDuration, type IAdvancedDateInputDurationProps } from './advancedDateInputDuration';
-import { AdvancedDateInputFields } from './advancedInput.api';
 
 describe('<AdvancedDateInputDuration /> component', () => {
     const createTestComponent = (props?: Partial<IAdvancedDateInputDurationProps>) => {
         const completeProps: IAdvancedDateInputDurationProps = {
-            field: AdvancedDateInputFields.START_TIME,
+            field: 'startTime',
             label: 'Test Label',
             minDuration: { days: 0, hours: 1, minutes: 0 },
             validateMinDuration: true,
@@ -26,6 +25,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
             createTestComponent({
                 label: 'Duration',
                 infoText: 'Minimum duration is 1 hour',
+                validateMinDuration: true,
             }),
         );
 
@@ -41,6 +41,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
         await userEvent.clear(hoursInput);
         await userEvent.clear(daysInput);
         await userEvent.type(minutesInput, '30');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=Duration\)/);
@@ -49,6 +50,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
         // Set a valid duration
         await userEvent.clear(hoursInput);
         await userEvent.type(hoursInput, '2');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent('Minimum duration is 1 hour');
@@ -61,6 +63,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
                 label: 'Duration',
                 infoText: 'Minimum duration is 2 days',
                 minDuration: { days: 2, hours: 0, minutes: 0 },
+                validateMinDuration: true,
             }),
         );
 
@@ -70,6 +73,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
         // Set a duration less than minDuration
         await userEvent.clear(daysInput);
         await userEvent.type(daysInput, '1');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=Duration\)/);
@@ -78,6 +82,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
         // Set a valid duration
         await userEvent.clear(daysInput);
         await userEvent.type(daysInput, '3');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent('Minimum duration is 2 days');
@@ -90,6 +95,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
                 label: 'Duration',
                 infoText: 'Minimum duration is 1 day and 1 hour',
                 minDuration: { days: 1, hours: 1, minutes: 0 },
+                validateMinDuration: true,
             }),
         );
 
@@ -101,6 +107,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
         await userEvent.clear(hoursInput);
         await userEvent.clear(daysInput);
         await userEvent.type(daysInput, '1');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=Duration\)/);
@@ -109,6 +116,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
         // Set duration to a valid amount
         await userEvent.clear(hoursInput);
         await userEvent.type(hoursInput, '3');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent('Minimum duration is 1 day and 1 hour');

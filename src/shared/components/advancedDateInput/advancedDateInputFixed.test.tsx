@@ -3,12 +3,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { DateTime } from 'luxon';
 import { AdvancedDateInputFixed, type IAdvancedDateInputFixedProps } from './advancedDateInputFixed';
-import { AdvancedDateInputFields } from './advancedInput.api';
 
 describe('<AdvancedDateInputFixed /> component', () => {
     const createTestComponent = (props?: Partial<IAdvancedDateInputFixedProps>) => {
         const completeProps: IAdvancedDateInputFixedProps = {
-            field: AdvancedDateInputFields.START_TIME,
+            field: 'startTime',
             label: 'Test Label',
             minDuration: { days: 0, hours: 1, minutes: 0 },
             minTime: DateTime.now(),
@@ -38,7 +37,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
                 minDuration: { days: 0, hours: 1, minutes: 0 },
                 minTime,
                 validateMinDuration: true,
-                field: AdvancedDateInputFields.END_TIME,
+                field: 'endTime',
             }),
         );
 
@@ -53,6 +52,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         await userEvent.clear(timeInput);
         await userEvent.type(dateInput, '2024-09-01');
         await userEvent.type(timeInput, '12:30');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=End Time\)/);
@@ -61,6 +61,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         // Set a valid date-time
         await userEvent.clear(timeInput);
         await userEvent.type(timeInput, '13:30');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent('End time must be after start time');
@@ -75,8 +76,8 @@ describe('<AdvancedDateInputFixed /> component', () => {
                 infoText: 'End time must be after start time',
                 minTime,
                 minDuration: undefined,
-                validateMinDuration: false,
-                field: AdvancedDateInputFields.END_TIME,
+                validateMinDuration: true,
+                field: 'endTime',
             }),
         );
 
@@ -89,6 +90,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         await userEvent.clear(timeInput);
         await userEvent.type(dateInput, '2024-09-01');
         await userEvent.type(timeInput, '12:00');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent('End time must be after start time');
@@ -97,6 +99,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         // Set a time before minTime
         await userEvent.clear(timeInput);
         await userEvent.type(timeInput, '11:59');
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=End Time\)/);
@@ -111,8 +114,8 @@ describe('<AdvancedDateInputFixed /> component', () => {
                 infoText: 'End time must be in the future',
                 minTime: now,
                 minDuration: undefined,
-                validateMinDuration: false,
-                field: AdvancedDateInputFields.END_TIME,
+                validateMinDuration: true,
+                field: 'endTime',
             }),
         );
 
@@ -125,6 +128,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         await userEvent.clear(timeInput);
         await userEvent.type(dateInput, now.minus({ days: 1 }).toFormat('yyyy-MM-dd'));
         await userEvent.type(timeInput, now.toFormat('HH:mm'));
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=End Time\)/);
@@ -133,6 +137,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         // Set a valid future date
         await userEvent.clear(dateInput);
         await userEvent.type(dateInput, now.plus({ days: 1 }).toFormat('yyyy-MM-dd'));
+        await userEvent.tab();
 
         await waitFor(() => {
             expect(alert).toHaveTextContent('End time must be in the future');

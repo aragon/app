@@ -379,7 +379,7 @@
         "multisigCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
-            "infoText": "It’s recommended to have an expiration time of five days, so you have a clean proposal list.",
+            "infoText": "It’s recommended to have an expiration time of {{days}} days, so you have a clean proposal list.",
             "label": "Expiration time"
           },
           "startTime": {

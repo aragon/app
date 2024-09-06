@@ -1,5 +1,4 @@
 import { generateDaoPlugin } from '@/shared/testUtils';
-import { dateUtils } from '@/shared/utils/createProposalUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { DateTime } from 'luxon';
@@ -173,15 +172,6 @@ describe('publishProposalDialog utils', () => {
             });
             const expectedValue = 1697506920; // value * 1000 in epoch is Tuesday, October 17, 2023 1:42:00 AM
             expect(publishProposalDialogUtils['parseEndDate'](formValues)).toEqual(expectedValue);
-        });
-    });
-
-    describe('parseFixedDate', () => {
-        it('returns a DateTime object from the given date and time', () => {
-            const date = '2024-08-29';
-            const time = '16:47';
-            const parsedDate = dateUtils.parseFixedDate({ date, time });
-            expect(parsedDate.toISO()).toEqual('2024-08-29T16:47:00.000+00:00');
         });
     });
 

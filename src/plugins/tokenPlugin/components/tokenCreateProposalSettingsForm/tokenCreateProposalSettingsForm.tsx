@@ -1,7 +1,6 @@
 import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
-import { AdvancedDateInputFields } from '@/shared/components/advancedDateInput/advancedInput.api';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
@@ -28,9 +27,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
     const parsedMinDuration = dateUtils.secondsToDaysHoursMinutes(minDuration);
     const { days, hours, minutes } = parsedMinDuration;
 
-    const minEndTime = startTimeFixed
-        ? DateTime.fromFormat(`${startTimeFixed.date} ${startTimeFixed.time}`, 'yyyy-MM-dd HH:mm')
-        : DateTime.now();
+    const minEndTime = startTimeFixed ? dateUtils.parseFixedDate(startTimeFixed) : DateTime.now();
 
     // Add min duration to the form values for later use
     useFormField('minDuration', { defaultValue: parsedMinDuration });
@@ -39,13 +36,13 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
         <>
             <AdvancedDateInput
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.label')}
-                field={AdvancedDateInputFields.START_TIME}
+                field="startTime"
                 helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.startTime.helpText')}
                 minTime={DateTime.now()}
             />
             <AdvancedDateInput
                 label={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.label')}
-                field={AdvancedDateInputFields.END_TIME}
+                field="endTime"
                 helpText={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.helpText')}
                 infoText={t('app.plugins.token.tokenCreateProposalSettingsForm.endTime.infoText', {
                     days,

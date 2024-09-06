@@ -1,6 +1,5 @@
 import * as daoService from '@/shared/api/daoService';
 import type { IAdvancedDateInputProps } from '@/shared/components/advancedDateInput';
-import { AdvancedDateInputFields } from '@/shared/components/advancedDateInput/advancedInput.api';
 
 import { FormWrapper, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { dateUtils } from '@/shared/utils/createProposalUtils';
@@ -75,7 +74,7 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         const startTimeInput = screen.getAllByTestId('advanced-date-input')[0];
         expect(startTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.startTime.label/);
         expect(startTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.startTime.helpText/);
-        expect(startTimeInput).toHaveTextContent(AdvancedDateInputFields.START_TIME);
+        expect(startTimeInput).toHaveTextContent('startTime');
     });
 
     it('passes correct props to end time AdvancedDateInput', () => {
@@ -83,7 +82,7 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
         expect(endTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.endTime.label/);
         expect(endTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.endTime.helpText/);
-        expect(endTimeInput).toHaveTextContent(AdvancedDateInputFields.END_TIME);
+        expect(endTimeInput).toHaveTextContent('endTime');
         expect(endTimeInput).toHaveTextContent(
             /tokenCreateProposalSettingsForm.endTime.infoText \(days=0,hours=1,minutes=0\)/,
         );
