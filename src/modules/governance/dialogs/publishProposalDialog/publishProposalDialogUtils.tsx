@@ -1,14 +1,11 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { dateUtils, type IDateDuration } from '@/shared/utils/createProposalUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant, type IProposalAction } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { decodeAbiParameters, type Hex, toHex, type TransactionReceipt } from 'viem';
-import type {
-    ICreateProposalFormData,
-    ICreateProposalFormDuration,
-    ICreateProposalFormFixedDateTime,
-} from '../../components/createProposalForm';
+import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
 
@@ -83,7 +80,7 @@ class PublishProposalDialogUtils {
             return 0;
         }
 
-        const parsedStartDate = this.parseFixedDate(startTimeFixed!);
+        const parsedStartDate = dateUtils.parseFixedDate(startTimeFixed!);
 
         return this.dateToSeconds(parsedStartDate);
     };
@@ -110,22 +107,15 @@ class PublishProposalDialogUtils {
         }
 
         if (endTimeMode === 'duration') {
-            const startDate = startTimeMode === 'now' ? DateTime.now() : this.parseFixedDate(startTimeFixed!);
+            const startDate = startTimeMode === 'now' ? DateTime.now() : dateUtils.parseFixedDate(startTimeFixed!);
             const endDate = startDate.plus({ hours, minutes, days });
 
             return this.dateToSeconds(endDate);
         }
 
-        const parsedEndDate = this.parseFixedDate(endTimeFixed!);
+        const parsedEndDate = dateUtils.parseFixedDate(endTimeFixed!);
 
         return this.dateToSeconds(parsedEndDate);
-    };
-
-    private parseFixedDate = ({ date, time }: ICreateProposalFormFixedDateTime): DateTime => {
-        const { hour, minute } = DateTime.fromISO(time);
-        const parsedDate = DateTime.fromISO(date).set({ hour, minute });
-
-        return parsedDate;
     };
 
     private dateToSeconds = (date: DateTime): number => Math.round(date.toMillis() / 1000);
@@ -135,7 +125,7 @@ class PublishProposalDialogUtils {
     private formToProposalActions = (actions: IProposalAction[]) =>
         actions.map(({ to, value, data }) => ({ to, value, data }));
 
-    private compareTimeDuration = (first?: ICreateProposalFormDuration, second?: ICreateProposalFormDuration) =>
+    private compareTimeDuration = (first?: IDateDuration, second?: IDateDuration) =>
         first?.days === second?.days && first?.hours === second?.hours && first?.minutes === second?.minutes;
 }
 

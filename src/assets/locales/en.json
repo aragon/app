@@ -376,6 +376,17 @@
     },
     "plugins": {
       "multisig": {
+        "multisigCreateProposalSettingsForm": {
+          "endTime": {
+            "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
+            "infoText": "It’s recommended to have an expiration time of {{days}} days, so you have a clean proposal list.",
+            "label": "Expiration time"
+          },
+          "startTime": {
+            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
+            "label": "Start time"
+          }
+        },
         "multisigGovernanceSettings": {
           "anyWallet": "Any wallet",
           "approvals": "{{min}} of {{max}} authorized addresses",
@@ -401,6 +412,17 @@
         }
       },
       "token": {
+        "tokenCreateProposalSettingsForm": {
+          "endTime": {
+            "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude.",
+            "infoText": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO governance settings",
+            "label": "End time"
+          },
+          "startTime": {
+            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
+            "label": "Start time"
+          }
+        },
         "tokenGovernanceSettings": {
           "approval": "> {{approvalThreshold}}",
           "approvalThreshold": "Approval threshold",
@@ -479,6 +501,21 @@
       }
     },
     "shared": {
+      "advancedDateInput": {
+        "duration": {
+          "days": "Days",
+          "hours": "Hours",
+          "label": "Duration",
+          "minutes": "Minutes"
+        },
+        "fixed": {
+          "date": "Date",
+          "label": "Specific date & time",
+          "time": "Time"
+        },
+        "now": "Now",
+        "timezone": "Timezone"
+      },
       "autocompleteInput": {
         "menu": {
           "select": "Select"
@@ -495,7 +532,8 @@
       "formField": {
         "error": {
           "pattern": "Invalid {{name}} format",
-          "required": "{{name}} is mandatory"
+          "required": "{{name}} is mandatory",
+          "validate": "{{name}} is invalid"
         }
       },
       "page": {

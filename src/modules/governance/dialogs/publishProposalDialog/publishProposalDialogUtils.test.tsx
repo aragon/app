@@ -175,15 +175,6 @@ describe('publishProposalDialog utils', () => {
         });
     });
 
-    describe('parseFixedDate', () => {
-        it('returns a DateTime object from the given date and time', () => {
-            const date = '2024-08-29';
-            const time = '16:47';
-            const parsedDate = publishProposalDialogUtils['parseFixedDate']({ date, time });
-            expect(parsedDate.toISO()).toEqual('2024-08-29T16:47:00.000+00:00');
-        });
-    });
-
     describe('dateToSeconds', () => {
         it('parses the given DateTime object to an integer number representing its seconds', () => {
             const date = DateTime.fromISO('2016-05-25T09:08:34.123');

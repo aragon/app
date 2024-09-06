@@ -46,7 +46,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
             >
-                <CreateProposalPageClientSteps steps={processedSteps} />
+                <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} />
             </Wizard.Container>
         </Page.Main>
     );

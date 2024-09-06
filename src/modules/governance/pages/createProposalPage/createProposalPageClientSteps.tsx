@@ -12,10 +12,14 @@ export interface ICreateProposalPageClientStepsProps {
      * Steps of the wizard.
      */
     steps: IWizardStepperStep[];
+    /**
+     * The DAO ID.
+     */
+    daoId: string;
 }
 
 export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientStepsProps> = (props) => {
-    const { steps } = props;
+    const { steps, daoId } = props;
 
     const { t } = useTranslations();
     const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
@@ -50,7 +54,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 )}
                 {...settingsStep}
             >
-                <CreateProposalForm.Settings />
+                <CreateProposalForm.Settings daoId={daoId} />
             </Wizard.Step>
         </>
     );

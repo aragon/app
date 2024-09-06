@@ -27,6 +27,7 @@ export interface IUseFormFieldOptions<
      * Default value of the field.
      */
     defaultValue?: FieldPathValue<TFieldValues, TName>;
+    shouldUnregister?: boolean;
 }
 
 export type IUseFormFieldReturn = UseControllerReturn['field'] & {

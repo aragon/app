@@ -11,8 +11,8 @@ export const useFormField = <
 ): IUseFormFieldReturn => {
     const { t } = useTranslations();
 
-    const { label, ...otherOptions } = options ?? {};
-    const { field, fieldState } = useController({ name, ...otherOptions });
+    const { label, shouldUnregister, ...otherOptions } = options ?? {};
+    const { field, fieldState } = useController({ name, shouldUnregister, ...otherOptions });
 
     const variant = fieldState.error != null ? 'critical' : 'default';
 
