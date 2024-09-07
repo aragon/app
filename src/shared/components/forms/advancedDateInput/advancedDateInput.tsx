@@ -1,7 +1,7 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/ods';
-import { useTranslations } from '../translationsProvider';
-import { type IAdvancedDateInputProps } from './advancedDateInput.api';
+import { useTranslations } from '../../translationsProvider';
+import type { IAdvancedDateInputProps } from './advancedDateInput.api';
 import { AdvancedDateInputDuration } from './advancedDateInputDuration';
 import { AdvancedDateInputFixed } from './advancedDateInputFixed';
 
@@ -9,10 +9,14 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
     const { useDuration = false, label, helpText, minDuration, field, infoText, minTime, validateMinDuration } = props;
     const { t } = useTranslations();
 
-    const inputModeField = useFormField(`${field}Mode`, {
-        label,
-        defaultValue: useDuration ? 'duration' : 'now',
-    });
+    const dateModeFieldName = `${field}Mode`;
+    const dateFixedFieldName = `${field}Fixed`;
+    const dateDurationFieldName = `${field}Duration`;
+
+    const inputModeField = useFormField<Record<string, 'duration' | 'now' | 'fixed'>, typeof dateModeFieldName>(
+        dateModeFieldName,
+        { label, defaultValue: useDuration ? 'duration' : 'now' },
+    );
 
     const radioLabel = useDuration
         ? t('app.shared.advancedDateInput.duration.label')
@@ -41,7 +45,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
             </RadioGroup>
             {inputModeField.value === 'fixed' && (
                 <AdvancedDateInputFixed
-                    field={field}
+                    field={dateFixedFieldName}
                     label={label}
                     infoText={infoText}
                     minDuration={minDuration}
@@ -51,7 +55,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
             )}
             {inputModeField.value === 'duration' && (
                 <AdvancedDateInputDuration
-                    field={field}
+                    field={dateDurationFieldName}
                     label={label}
                     infoText={infoText}
                     minDuration={minDuration}

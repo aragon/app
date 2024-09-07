@@ -1,9 +1,9 @@
 import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import { useDaoSettings } from '@/shared/api/daoService';
-import { AdvancedDateInput } from '@/shared/components/advancedDateInput';
+import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
+import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
 import { DateTime } from 'luxon';
 import { useWatch } from 'react-hook-form';
 import { type IDaoTokenSettings } from '../../types';
@@ -30,7 +30,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
     const minEndTime = startTimeFixed ? dateUtils.parseFixedDate(startTimeFixed) : DateTime.now();
 
     // Add min duration to the form values for later use
-    useFormField('minDuration', { defaultValue: parsedMinDuration });
+    useFormField<ICreateProposalFormData, 'minimumDuration'>('minimumDuration', { defaultValue: parsedMinDuration });
 
     return (
         <>

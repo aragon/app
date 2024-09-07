@@ -1,8 +1,8 @@
 import * as daoService from '@/shared/api/daoService';
-import type { IAdvancedDateInputProps } from '@/shared/components/advancedDateInput';
+import type { IAdvancedDateInputProps } from '@/shared/components/forms/advancedDateInput';
 
 import { FormWrapper, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { dateUtils } from '@/shared/utils/createProposalUtils';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
 import { generateDaoTokenSettings } from '../../testUtils';
@@ -11,12 +11,9 @@ import {
     type ITokenCreateProposalSettingsFormProps,
 } from './tokenCreateProposalSettingsForm';
 
-jest.mock('react-hook-form', () => ({
-    __esModule: true,
-    ...jest.requireActual('react-hook-form'),
-}));
+jest.mock('react-hook-form', () => ({ __esModule: true, ...jest.requireActual('react-hook-form') }));
 
-jest.mock('@/shared/components/advancedDateInput', () => ({
+jest.mock('@/shared/components/forms/advancedDateInput', () => ({
     AdvancedDateInput: ({ label, helpText, field, infoText, useDuration, minDuration }: IAdvancedDateInputProps) => (
         <div data-testid="advanced-date-input">
             <div>Label: {label}</div>
@@ -31,18 +28,18 @@ jest.mock('@/shared/components/advancedDateInput', () => ({
 
 describe('<TokenCreateProposalSettingsForm /> component', () => {
     const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
-    const useDateUtilsSpy = jest.spyOn(dateUtils, 'secondsToDaysHoursMinutes');
+    const secondsToDaysHoursMinutesSpy = jest.spyOn(dateUtils, 'secondsToDaysHoursMinutes');
     const useWatchSpy = jest.spyOn(ReactHookForm, 'useWatch');
 
     beforeEach(() => {
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
-        useDateUtilsSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
+        secondsToDaysHoursMinutesSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
         useWatchSpy.mockReturnValue({ date: '2024-09-01', time: '12:00' });
     });
 
     afterEach(() => {
         useDaoSettingsSpy.mockReset();
-        useDateUtilsSpy.mockReset();
+        secondsToDaysHoursMinutesSpy.mockReset();
         useWatchSpy.mockReset();
     });
 
@@ -103,11 +100,11 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoSettings }));
         render(createTestComponent());
-        expect(useDateUtilsSpy).toHaveBeenCalledWith(3600);
+        expect(secondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(3600);
     });
 
     it('handles undefined minDuration', () => {
         render(createTestComponent());
-        expect(useDateUtilsSpy).toHaveBeenCalledWith(0);
+        expect(secondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(0);
     });
 });

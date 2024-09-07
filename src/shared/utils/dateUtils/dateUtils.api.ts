@@ -12,6 +12,7 @@ export interface IDateDuration {
      */
     days: number;
 }
+
 export interface IDateFixed {
     /**
      * Date in YYYY-MM-DD format.

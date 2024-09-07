@@ -1,42 +1,45 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import { dateUtils, type IDateDuration } from '@/shared/utils/createProposalUtils';
+import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { AlertCard, Card, InputNumber } from '@aragon/ods';
+import classNames from 'classnames';
+import type { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useTranslations } from '../translationsProvider';
-import type { IAdvancedDateInputFixedProps } from './advancedDateInputFixed';
+import { useTranslations } from '../../translationsProvider';
+import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 
-export type IAdvancedDateInputDurationProps = Pick<
-    IAdvancedDateInputFixedProps,
-    'field' | 'label' | 'infoText' | 'minDuration' | 'validateMinDuration'
->;
+export interface IAdvancedDateInputDurationProps
+    extends Omit<IAdvancedDateInputBaseProps, 'minTime'>,
+        ComponentProps<'div'> {}
 
 export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
-    const { minDuration, field, label, infoText, validateMinDuration } = props;
+    const { minDuration, field, label, infoText, validateMinDuration, className, ...otherProps } = props;
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
     const validateDuration = (value: IDateDuration) =>
         validateMinDuration ? dateUtils.validateDuration({ value, minDuration }) : true;
 
-    const handleDurationChange = (type: string) => (value: string) => {
-        const numericValue = parseInt(value, 10) || 0;
-        const newValue = { ...durationField.value, [type]: numericValue };
-        setValue(`${field}Duration`, newValue, { shouldValidate: false });
-    };
-
-    const durationField = useFormField(`${field}Duration`, {
-        rules: {
-            validate: validateDuration,
-        },
+    const durationField = useFormField<Record<string, IDateDuration>, typeof field>(field, {
+        rules: { validate: validateDuration },
         label,
         shouldUnregister: true,
         defaultValue: minDuration,
     });
 
+    const handleDurationChange = (type: string) => (value: string) => {
+        const parsedValue = parseInt(value, 10);
+        const numericValue = isNaN(parsedValue) ? 0 : parsedValue;
+        const newValue = { ...durationField.value, [type]: numericValue };
+        setValue(field, newValue, { shouldValidate: false });
+    };
+
+    const handleInputBlur = () => trigger(field);
+
     const alertDescription = durationField.alert?.message ?? infoText;
+    const alertVariant = durationField.alert != null ? 'critical' : 'info';
 
     return (
-        <Card className="flex flex-col gap-4 p-6">
+        <Card className={classNames('flex flex-col gap-4 p-6', className)} {...otherProps}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputNumber
                     label={t('app.shared.advancedDateInput.duration.minutes')}
@@ -46,7 +49,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     placeholder="0 min"
                     value={durationField.value.minutes}
                     onChange={handleDurationChange('minutes')}
-                    onBlur={() => trigger(`${field}Duration`)}
+                    onBlur={handleInputBlur}
                 />
                 <InputNumber
                     label={t('app.shared.advancedDateInput.duration.hours')}
@@ -56,7 +59,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     placeholder="0 h"
                     value={durationField.value.hours}
                     onChange={handleDurationChange('hours')}
-                    onBlur={() => trigger(`${field}Duration`)}
+                    onBlur={handleInputBlur}
                 />
                 <InputNumber
                     label={t('app.shared.advancedDateInput.duration.days')}
@@ -65,16 +68,10 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     placeholder="7 d"
                     value={durationField.value.days}
                     onChange={handleDurationChange('days')}
-                    onBlur={() => trigger(`${field}Duration`)}
+                    onBlur={handleInputBlur}
                 />
             </div>
-            {alertDescription && (
-                <AlertCard
-                    message={label}
-                    description={alertDescription}
-                    variant={durationField.alert?.message ? 'critical' : 'info'}
-                />
-            )}
+            {alertDescription && <AlertCard message={label} description={alertDescription} variant={alertVariant} />}
         </Card>
     );
 };

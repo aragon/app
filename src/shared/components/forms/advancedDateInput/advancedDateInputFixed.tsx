@@ -1,48 +1,47 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import type { IDateFixed } from '@/shared/utils/createProposalUtils';
-import { dateUtils } from '@/shared/utils/createProposalUtils/dateUtils';
+import type { IDateFixed } from '@/shared/utils/dateUtils';
+import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
 import { AlertCard, Card, InputDate, InputText, InputTime } from '@aragon/ods';
+import classNames from 'classnames';
 import { DateTime } from 'luxon';
+import type { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useTranslations } from '../translationsProvider';
-import type { IAdvancedDateInputProps } from './advancedDateInput.api';
+import { useTranslations } from '../../translationsProvider';
+import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 
-export type IAdvancedDateInputFixedProps = Pick<
-    IAdvancedDateInputProps,
-    'field' | 'label' | 'infoText' | 'minDuration' | 'minTime' | 'validateMinDuration'
->;
+export interface IAdvancedDateInputFixedProps extends IAdvancedDateInputBaseProps, ComponentProps<'div'> {}
 
 export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (props) => {
-    const { field, label, infoText, minDuration, minTime, validateMinDuration } = props;
+    const { field, label, infoText, minDuration, minTime, validateMinDuration, className, ...otherProps } = props;
     const { t } = useTranslations();
 
     const { setValue, trigger } = useFormContext();
 
-    const handleFixedDateTimeChange = (type: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = { ...fixedDateField.value, [type]: event.target.value };
-        setValue(`${field}Fixed`, newValue, { shouldValidate: false });
-    };
+    const { days = 0, hours = 0, minutes = 0 } = minDuration ?? {};
+    const defaultValue = (minTime ?? DateTime.now()).plus({ days, hours, minutes });
 
     const validateFixedTime = (value: IDateFixed) =>
         validateMinDuration ? dateUtils.validateFixedTime({ value, minTime, minDuration }) : true;
 
-    const { days = 0, hours = 0, minutes = 0 } = minDuration ?? {};
-
-    const defaultValue = (minTime ?? DateTime.now()).plus({ days, hours, minutes });
-
-    const fixedDateField = useFormField(`${field}Fixed`, {
-        rules: {
-            validate: validateFixedTime,
-        },
+    const fixedDateField = useFormField<Record<string, IDateFixed>, typeof field>(field, {
+        rules: { validate: validateFixedTime },
         shouldUnregister: true,
         label,
-        defaultValue: dateUtils.dateToFixedDate(defaultValue),
+        defaultValue: dateUtils.dateToFixedDate(defaultValue) ?? undefined,
     });
 
+    const handleFixedDateTimeChange = (type: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = { ...fixedDateField.value, [type]: event.target.value };
+        setValue(field, newValue, { shouldValidate: false });
+    };
+
+    const handleInputBlur = () => trigger(field);
+
     const alertDescription = fixedDateField.alert?.message ?? infoText;
+    const alertVariant = fixedDateField.alert != null ? 'critical' : 'info';
 
     return (
-        <Card className="flex flex-col gap-4 p-6">
+        <Card className={classNames('flex flex-col gap-4 p-6', classNames)} {...otherProps}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputDate
                     label={t('app.shared.advancedDateInput.fixed.date')}
@@ -50,14 +49,14 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
                     className="w-full md:w-1/3"
                     value={fixedDateField.value.date}
                     onChange={handleFixedDateTimeChange('date')}
-                    onBlur={() => trigger(`${field}Fixed`)}
+                    onBlur={handleInputBlur}
                 />
                 <InputTime
                     label={t('app.shared.advancedDateInput.fixed.time')}
                     className="w-full md:w-1/3"
                     value={fixedDateField.value.time}
                     onChange={handleFixedDateTimeChange('time')}
-                    onBlur={() => trigger(`${field}Fixed`)}
+                    onBlur={handleInputBlur}
                 />
                 <InputText
                     className="w-full md:w-1/3"
@@ -66,13 +65,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
                     disabled={true}
                 />
             </div>
-            {alertDescription && (
-                <AlertCard
-                    message={label}
-                    description={alertDescription}
-                    variant={fixedDateField.alert?.message ? 'critical' : 'info'}
-                />
-            )}
+            {alertDescription && <AlertCard message={label} description={alertDescription} variant={alertVariant} />}
         </Card>
     );
 };

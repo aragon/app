@@ -1,1 +1,2 @@
-export { ResourcesInput, type IResourcesInputProps } from './resourcesInput';
+export { ResourcesInput } from './resourcesInput';
+export * from './resourcesInput.api';

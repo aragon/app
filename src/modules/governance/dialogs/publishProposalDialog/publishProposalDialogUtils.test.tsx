@@ -120,13 +120,11 @@ describe('publishProposalDialog utils', () => {
             expect(publishProposalDialogUtils['parseEndDate'](formValues)).toEqual(1611313200);
         });
 
-        it('returns 0 when endTimeMode is duration, startTimeMode is now and minimumDuration equals endTimeDuration', () => {
+        it('returns 0 when endTimeMode is duration and minimumDuration equals endTimeDuration', () => {
             const endTimeMode = 'duration';
-            const startTimeMode = 'now';
             const minimumDuration = { days: 3, hours: 0, minutes: 0 };
             const endTimeDuration = minimumDuration;
             const formValues = generateCreateProposalFormData({
-                startTimeMode,
                 minimumDuration,
                 endTimeMode,
                 endTimeDuration,

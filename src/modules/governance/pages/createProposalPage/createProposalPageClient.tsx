@@ -45,6 +45,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 submitLabel={t('app.governance.createProposalPage.submitLabel')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
+                defaultValues={{ actions: [] }}
             >
                 <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} />
             </Wizard.Container>
