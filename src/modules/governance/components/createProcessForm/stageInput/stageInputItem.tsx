@@ -127,12 +127,22 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         {...timingField}
                     >
                         <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                            <DefinitionList.Item term="Voting period">7 days</DefinitionList.Item>
+                            <DefinitionList.Item term="Voting period">
+                                {`${votingPeriodField.value.days} days, ${votingPeriodField.value.hours} hours, ${votingPeriodField.value.minutes} minutes`}
+                            </DefinitionList.Item>
                             <DefinitionList.Item term="Early stage advance">
-                                <Tag className="w-fit" label="Yes" variant="primary" />
+                                <Tag
+                                    className="w-fit"
+                                    label={earlyStageField.value === true ? 'Yes' : 'No'}
+                                    variant={earlyStageField.value === true ? 'primary' : 'neutral'}
+                                />
                             </DefinitionList.Item>
                             <DefinitionList.Item term="Stage expiration">
-                                <Tag className="w-fit" label="No" variant="neutral" />
+                                <Tag
+                                    className="w-fit"
+                                    label={stageExpirationField.value === true ? 'Yes' : 'No'}
+                                    variant={stageExpirationField.value === true ? 'primary' : 'neutral'}
+                                />
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </InputContainer>
@@ -165,7 +175,11 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     </Button>
                 </div>
             </Card>
-            <Dialog.Root containerClassName="!max-w-[640px]" open={isTimingDialogOpen}>
+            <Dialog.Root
+                containerClassName="!max-w-[640px]"
+                open={isTimingDialogOpen}
+                onOpenChange={() => setIsTimingDialogOpen(false)}
+            >
                 <Dialog.Header title="Timing" />
                 <Dialog.Content className="flex flex-col gap-6">
                     <InputContainer
@@ -221,7 +235,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     />
                 </Dialog.Content>
                 <Dialog.Footer
-                    primaryAction={{ label: 'Save' }}
+                    primaryAction={{ label: 'Save', onClick: () => setIsTimingDialogOpen(false) }}
                     secondaryAction={{ label: 'Cancel', onClick: () => setIsTimingDialogOpen(false) }}
                 />
             </Dialog.Root>
