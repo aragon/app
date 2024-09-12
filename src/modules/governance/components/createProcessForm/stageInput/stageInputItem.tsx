@@ -6,6 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { type IDateDuration } from '@/shared/utils/dateUtils';
 import {
+    Accordion,
     Button,
     Card,
     DefinitionList,
@@ -171,7 +172,38 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     {fields.length > 0 && (
                         <div className="flex flex-col gap-3 md:gap-2">
                             {fields.map((field, index) => (
-                                <p key={field.id}>{`TOUCH MY BODY ${index}`}</p>
+                                <Accordion.Container isMulti={false}>
+                                    <Accordion.Item value={field.id} className="w-full">
+                                        <Accordion.ItemHeader>BODY NAME</Accordion.ItemHeader>
+                                        <Accordion.ItemContent className="flex w-full grow">
+                                            <DefinitionList.Container className="w-full">
+                                                <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
+                                                <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
+                                                <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
+                                            </DefinitionList.Container>
+                                            <div className="flex self-end">
+                                                <Dropdown.Container
+                                                    constrainContentWidth={false}
+                                                    size="md"
+                                                    customTrigger={
+                                                        <Button
+                                                            className="w-fit"
+                                                            variant="tertiary"
+                                                            size="lg"
+                                                            iconLeft={IconType.DOTS_VERTICAL}
+                                                        >
+                                                            More
+                                                        </Button>
+                                                    }
+                                                >
+                                                    <Dropdown.Item onClick={() => removeBody(index)}>
+                                                        Remove body
+                                                    </Dropdown.Item>
+                                                </Dropdown.Container>
+                                            </div>
+                                        </Accordion.ItemContent>
+                                    </Accordion.Item>
+                                </Accordion.Container>
                             ))}
                         </div>
                     )}
