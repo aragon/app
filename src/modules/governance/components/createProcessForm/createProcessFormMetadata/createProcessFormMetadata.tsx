@@ -27,7 +27,7 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
 
     return (
         <div className="flex flex-col gap-10">
-            {/* <InputText
+            <InputText
                 helpText={t('app.governance.createProcessForm.metadata.title.helpText')}
                 placeholder="Give your governance process a name, so member can differenciate it."
                 maxLength={128}
@@ -37,6 +37,8 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
                 helpText="Define a prefix for this governance process to have an unique ID. Something like DPF, which leads to PDF-42 and counting up for each proposal."
                 placeholder="Type an ID"
                 maxLength={5}
+                addon="-42"
+                addonPosition="right"
                 {...idField}
             />
             <TextArea
@@ -49,7 +51,7 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
             <ResourcesInput
                 name="resources"
                 helpText={t('app.governance.createProcessForm.metadata.resources.helpText')}
-            /> */}
+            />
         </div>
     );
 };
