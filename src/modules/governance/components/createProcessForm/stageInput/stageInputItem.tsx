@@ -1,10 +1,10 @@
 import {
     CreateProcessFormTimingDialog,
-    ICreateProcessFormTimingValues,
+    type ICreateProcessFormTimingValues,
 } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog/createProcessFormTimingDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { IDateDuration } from '@/shared/utils/dateUtils';
+import { type IDateDuration } from '@/shared/utils/dateUtils';
 import {
     Button,
     Card,
@@ -18,6 +18,7 @@ import {
 } from '@aragon/ods';
 import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog/createProcessFormAddBodyDialog';
 
 export interface IStageInputItemProps {
     /**
@@ -34,36 +35,38 @@ export interface IStageInputItemProps {
     remove: (index: number) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type StageInputItemBaseForm = Record<string, any>;
 
 export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
+    const [addBodyDialogOpen, setAddBodyDialogOpen] = useState(false);
     const { name, index, remove } = props;
 
-    const { setValue, trigger } = useFormContext();
+    const { setValue } = useFormContext();
 
     const bodyFieldArrayName = `${name}.${index}.body`;
-    const { fields, append, remove: removeBody } = useFieldArray<StageInputItemBaseForm>({ name: bodyFieldArrayName });
+    const { fields, append, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
 
     const { t } = useTranslations();
 
     const nameFieldName = `${name}.${index}.name`;
     const nameField = useFormField<StageInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
-        label: t('app.shared.resourcesInput.labelInput.title'),
+        label: 'Name',
         rules: { required: true },
         defaultValue: '',
     });
 
     const typeFieldName = `${name}.${index}.type`;
     const typeField = useFormField<StageInputItemBaseForm, typeof typeFieldName>(typeFieldName, {
-        label: t('app.shared.resourcesInput.labelInput.title'),
+        label: 'Type',
         rules: { required: true },
         defaultValue: 'normal',
     });
 
     const timingFieldName = `${name}.${index}.timing`;
     const timingField = useFormField<StageInputItemBaseForm, typeof timingFieldName>(timingFieldName, {
-        label: t('app.shared.resourcesInput.labelInput.title'),
+        label: 'Timing',
         rules: { required: true },
         defaultValue: 'normal',
     });
@@ -81,8 +84,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
             },
         },
     );
-
-    console.log('VOTING PERIOD FIELD', votingPeriodField);
 
     const earlyStageFieldName = `${name}.${index}.earlyStage`;
     const earlyStageField = useFormField<StageInputItemBaseForm, typeof earlyStageFieldName>(earlyStageFieldName, {
@@ -106,26 +107,34 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         setIsTimingDialogOpen(false);
     };
 
+    const addBody = () => {
+        setAddBodyDialogOpen(true);
+    };
+
     return (
         <>
             <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
-                <InputText placeholder={t('app.shared.resourcesInput.labelInput.placeholder')} {...nameField} />
+                <InputText
+                    helpText="Name the stage, so members are able to recognize it"
+                    placeholder="Type a name"
+                    {...nameField}
+                />
                 <RadioGroup
-                    {...typeField}
                     className="flex !flex-row gap-x-4"
                     onValueChange={typeField.onChange}
                     helpText="Specify what kind of stage"
+                    {...typeField}
                 >
                     <RadioCard className="w-full" label="Normal" description="" value="normal" />
                     <RadioCard className="w-full" label="Optimistic" description="" value="optimistic" />
                 </RadioGroup>
                 <div className="flex flex-col items-start gap-y-3">
                     <InputContainer
-                        {...timingField}
                         useCustomWrapper={true}
                         className="w-full"
                         id={timingFieldName}
-                        helpText="Define the timing"
+                        helpText="Define the timing of the stage, so all bodies have enough time to execute and advance the proposals."
+                        {...timingField}
                     >
                         <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
                             <DefinitionList.Item term="Voting period">
@@ -154,8 +163,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                 <div className="flex flex-col gap-2 md:gap-3">
                     <InputContainer
                         id="resourcesInput"
-                        label={t('app.shared.title')}
-                        helpText="Add a body"
+                        label="Voting bodies"
+                        helpText="Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage."
                         useCustomWrapper={true}
                     />
                     {fields.length > 0 && (
@@ -165,14 +174,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                             ))}
                         </div>
                     )}
-                    <Button
-                        size="md"
-                        variant="tertiary"
-                        className="w-fit"
-                        iconLeft={IconType.PLUS}
-                        onClick={() => append({ name: '', url: '' })}
-                    >
-                        {t('app.shared.resourcesInput.addBody')}
+                    <Button size="md" variant="tertiary" className="w-fit" iconLeft={IconType.PLUS} onClick={addBody}>
+                        Add a body
                     </Button>
                 </div>
                 <CreateProcessFormTimingDialog
@@ -183,6 +186,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     votingPeriodField={votingPeriodField}
                     handleSaveTimingValues={handleSaveTimingValues}
                 />
+                <CreateProcessFormAddBodyDialog open={addBodyDialogOpen} setOpen={setAddBodyDialogOpen} />
             </Card>
         </>
     );
