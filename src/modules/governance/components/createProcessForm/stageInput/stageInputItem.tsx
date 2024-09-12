@@ -111,6 +111,15 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         defaultValue: '',
     });
 
+    const bodyGovernanceTypeFieldName = `${name}.${index}.bodyGovernanceType`;
+    const bodyGovernanceTypeField = useFormField<StageInputItemBaseForm, typeof bodyGovernanceTypeFieldName>(
+        bodyGovernanceTypeFieldName,
+        {
+            label: 'Governance type',
+            defaultValue: 'tokenVoting',
+        },
+    );
+
     const handleSaveTimingValues = (values: ICreateProcessFormTimingValues) => {
         setValue(votingPeriodFieldName, values.votingPeriod);
         setValue(earlyStageFieldName, values.earlyStage);
@@ -119,13 +128,9 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     };
 
     const handleSaveBodyValues = (values: ICreateProcessFormBodyValues) => {
-        setValue(bodyNameFieldName, values.name);
-
-        appendBody({ name: values.name });
+        appendBody({ name: values.name, governanceType: values.governanceType });
         setIsBodyDialogOpen(false);
     };
-
-    console.debug('FIELDS', fields);
 
     return (
         <>
@@ -189,6 +194,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                 <Accordion.Container
                                     isMulti={true}
                                     className="rounded-xl border border-neutral-100 md:gap-3"
+                                    key={field.id}
                                 >
                                     <Accordion.Item value={field.id}>
                                         <Accordion.ItemHeader>{field.name}</Accordion.ItemHeader>
@@ -235,6 +241,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     setIsBodyDialogOpen={setIsBodyDialogOpen}
                     handleSaveBodyValues={handleSaveBodyValues}
                     bodyNameField={bodyNameField}
+                    bodyGovernanceTypeField={bodyGovernanceTypeField}
                 />
                 <div className="flex self-end">
                     <Dropdown.Container
