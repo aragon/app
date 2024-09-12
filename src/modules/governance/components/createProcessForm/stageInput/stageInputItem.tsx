@@ -1,6 +1,17 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, Card, Dropdown, IconType, InputText } from '@aragon/ods';
+import {
+    Button,
+    Card,
+    DefinitionList,
+    IconType,
+    InputContainer,
+    InputText,
+    RadioCard,
+    RadioGroup,
+    Tag,
+} from '@aragon/ods';
+import { useFieldArray } from 'react-hook-form';
 
 export interface IStageInputItemProps {
     /**
@@ -17,45 +28,93 @@ export interface IStageInputItemProps {
     remove: (index: number) => void;
 }
 
-type StageInputItemBaseForm = Record<string, string>;
+type StageInputItemBaseForm = Record<string, any>;
 
 export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const { name, index, remove } = props;
+
+    const { fields, append, remove: removeBody } = useFieldArray<StageInputItemBaseForm>({ name });
 
     const { t } = useTranslations();
 
     const nameFieldName = `${name}.${index}.name`;
     const nameField = useFormField<StageInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
-        label: t('app.shared.resourcesInput.item.labelInput.title'),
+        label: t('app.shared.resourcesInput.labelInput.title'),
         rules: { required: true },
         defaultValue: '',
     });
 
-    const urlFieldName = `${name}.${index}.url`;
-    const urlField = useFormField<StageInputItemBaseForm, typeof urlFieldName>(urlFieldName, {
-        label: t('app.shared.resourcesInput.item.linkInput.title'),
-        defaultValue: '',
-        rules: { required: true, pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/ },
+    const typeFieldName = `${name}.${index}.type`;
+    const typeField = useFormField<StageInputItemBaseForm, typeof typeFieldName>(typeFieldName, {
+        label: t('app.shared.resourcesInput.labelInput.title'),
+        rules: { required: true },
+        defaultValue: 'normal',
+    });
+
+    const timingFieldName = `${name}.${index}.timing`;
+    const timingField = useFormField<StageInputItemBaseForm, typeof timingFieldName>(timingFieldName, {
+        label: t('app.shared.resourcesInput.labelInput.title'),
+        rules: { required: true },
+        defaultValue: 'normal',
     });
 
     return (
-        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <InputText
-                placeholder={t('app.shared.resourcesInput.item.labelInput.placeholder')}
-                maxLength={40}
-                {...nameField}
-            />
-            <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...urlField} />
-            <div className="mt-0 md:mt-9">
-                <Dropdown.Container
-                    constrainContentWidth={false}
-                    size="md"
-                    customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
+        <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
+            <InputText placeholder={t('app.shared.resourcesInput.labelInput.placeholder')} {...nameField} />
+            <RadioGroup
+                className="flex !flex-row gap-x-4"
+                onValueChange={typeField.onChange}
+                helpText="Specify what kind of stage"
+                {...typeField}
+            >
+                <RadioCard className="w-full" label="Normal" description="" value="normal" />
+                <RadioCard className="w-full" label="Optimistic" description="" value="optimistic" />
+            </RadioGroup>
+            <div className="flex flex-col items-start gap-y-3">
+                <InputContainer
+                    useCustomWrapper={true}
+                    className="w-full"
+                    id={timingFieldName}
+                    helpText="Define the timing"
+                    {...timingField}
                 >
-                    <Dropdown.Item onClick={() => remove(index)}>
-                        {t('app.shared.resourcesInput.item.removeResource')}
-                    </Dropdown.Item>
-                </Dropdown.Container>
+                    <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
+                        <DefinitionList.Item term="Voting period">7 days</DefinitionList.Item>
+                        <DefinitionList.Item term="Early stage advance">
+                            <Tag className="w-fit" label="Yes" variant="primary" />
+                        </DefinitionList.Item>
+                        <DefinitionList.Item term="Stage expiration">
+                            <Tag className="w-fit" label="No" variant="neutral" />
+                        </DefinitionList.Item>
+                    </DefinitionList.Container>
+                </InputContainer>
+                <Button variant="tertiary" size="md">
+                    Edit timing
+                </Button>
+            </div>
+            <div className="flex flex-col gap-2 md:gap-3">
+                <InputContainer
+                    id="resourcesInput"
+                    label={t('app.shared.title')}
+                    helpText="Add a body"
+                    useCustomWrapper={true}
+                />
+                {fields.length > 0 && (
+                    <div className="flex flex-col gap-3 md:gap-2">
+                        {fields.map((field, index) => (
+                            <p>TOUCH MY BODY</p>
+                        ))}
+                    </div>
+                )}
+                <Button
+                    size="md"
+                    variant="tertiary"
+                    className="w-fit"
+                    iconLeft={IconType.PLUS}
+                    onClick={() => append({ name: '', url: '' })}
+                >
+                    {t('app.shared.resourcesInput.addBody')}
+                </Button>
             </div>
         </Card>
     );

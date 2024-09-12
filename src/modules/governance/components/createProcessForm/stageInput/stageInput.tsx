@@ -7,7 +7,7 @@ import { StageInputItem } from './stageInputItem';
 export type StageInputBaseForm = Record<string, IStageInputResource[]>;
 
 export const StageInput: React.FC<IStageInputProps> = (props) => {
-    const { name, helpText } = props;
+    const { name } = props;
 
     const { t } = useTranslations();
     const { fields, append, remove } = useFieldArray<StageInputBaseForm>({ name });
