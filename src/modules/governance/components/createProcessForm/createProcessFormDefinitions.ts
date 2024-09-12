@@ -1,5 +1,43 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { IDateDuration, IDateFixed } from '@/shared/utils/dateUtils';
+import type { IDateDuration } from '@/shared/utils/dateUtils';
+
+export interface ICreateProcessFormBody {
+    /**
+     * Name of the body
+     */
+    name: string;
+}
+
+export interface ICreateProcessFormStage {
+    /**
+     * Name of the stage
+     */
+    name: string;
+    /**
+     * Type of the stage
+     */
+    type: 'normal' | 'optimistic';
+    /**
+     * Voting period of the stage
+     */
+    votingPeriod: IDateDuration;
+    /**
+     * Early stage advance
+     */
+    earlyStageAdvance: boolean;
+    /**
+     * Stage expiration?
+     */
+    stageExpiration: boolean;
+    /**
+     * Voting bodies
+     */
+    votingBodies: ICreateProcessFormBody[];
+    /**
+     * Number of bodies required to approve
+     */
+    requiredApprovals?: number;
+}
 
 export interface ICreateProcessFormData {
     /**
@@ -15,39 +53,11 @@ export interface ICreateProcessFormData {
      */
     summary: string;
     /**
-     * Long description of the proposal supporting HTML tags.
-     */
-    body?: string;
-    /**
-     * Defines if the user wants to add actions to the proposal or not.
-     */
-    addActions: boolean;
-    /**
      * Resources of the proposal.
      */
     resources: IResourcesInputResource[];
     /**
-     * Defines if the start time of the proposal is now or at a specific date.
+     * Process stages
      */
-    startTimeMode: 'now' | 'fixed';
-    /**
-     * Fixed start time only set when startTimeMode is set to fixed.
-     */
-    startTimeFixed?: IDateFixed;
-    /**
-     * Defines if the end time of the proposal is with duration or fixed format.
-     */
-    endTimeMode: 'duration' | 'fixed';
-    /**
-     * End time of the proposal in duration (minutes, hours, days) format only set when endTimeMode is set to duration.
-     */
-    endTimeDuration?: IDateDuration;
-    /**
-     * Fixed end time only set when endTimeMode is set to fixed.
-     */
-    endTimeFixed?: IDateFixed;
-    /**
-     * Minimum duration of the proposal in seconds.
-     */
-    minimumDuration?: IDateDuration;
+    stages: ICreateProcessFormStage[];
 }
