@@ -165,7 +165,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     </Button>
                 </div>
             </Card>
-            <Dialog.Root open={isTimingDialogOpen}>
+            <Dialog.Root containerClassName="!max-w-[640px]" open={isTimingDialogOpen}>
                 <Dialog.Header title="Timing" />
                 <Dialog.Content className="flex flex-col gap-6">
                     <InputContainer
