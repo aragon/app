@@ -9,6 +9,7 @@ import {
     Button,
     Card,
     DefinitionList,
+    Dropdown,
     IconType,
     InputContainer,
     InputText,
@@ -187,7 +188,24 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     votingPeriodField={votingPeriodField}
                     handleSaveTimingValues={handleSaveTimingValues}
                 />
-                <CreateProcessFormAddBodyDialog open={addBodyDialogOpen} setOpen={setAddBodyDialogOpen} />
+                <CreateProcessFormAddBodyDialog
+                    open={addBodyDialogOpen}
+                    setOpen={setAddBodyDialogOpen}
+                    append={append}
+                />
+                <div className="flex self-end">
+                    <Dropdown.Container
+                        constrainContentWidth={false}
+                        size="md"
+                        customTrigger={
+                            <Button className="w-fit" variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL}>
+                                More
+                            </Button>
+                        }
+                    >
+                        <Dropdown.Item onClick={() => remove(index)}>Remove stage</Dropdown.Item>
+                    </Dropdown.Container>
+                </div>
             </Card>
         </>
     );

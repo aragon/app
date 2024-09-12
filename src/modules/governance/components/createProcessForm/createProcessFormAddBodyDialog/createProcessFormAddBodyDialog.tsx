@@ -4,6 +4,7 @@ import { useState } from 'react';
 export interface ICreateProcessFormAddBodyDialogProps {
     open: boolean;
     setOpen: (value: boolean) => void;
+    append: (value: any) => void;
 }
 
 const StepOne = () => <Card className="p-6">STEP 1</Card>;
@@ -11,6 +12,7 @@ const StepTwo = () => <Card className="p-6">STEP 2</Card>;
 const StepThree = () => <Card className="p-6">STEP 3</Card>;
 
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
+    const { append } = props;
     const [step, setStep] = useState(0);
     const { open, setOpen } = props;
     const handleStepContent = (step: number) => {
@@ -37,7 +39,13 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                 }}
                 secondaryAction={{
                     label: step === 2 ? 'Save' : 'Next',
-                    onClick: step === 2 ? () => setOpen(false) : () => setStep(step + 1),
+                    onClick:
+                        step === 2
+                            ? () => {
+                                  append({ name: 'BODY' });
+                                  setOpen(false);
+                              }
+                            : () => setStep(step + 1),
                 }}
             />
         </Dialog.Root>
