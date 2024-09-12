@@ -42,7 +42,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
                 submitLabel={t('app.governance.createProcessPage.submitLabel')}
                 initialSteps={processedSteps}
                 onSubmit={() => null}
-                defaultValues={{ actions: [] }}
+                defaultValues={{ stages: [] }}
             >
                 <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
             </Wizard.Container>

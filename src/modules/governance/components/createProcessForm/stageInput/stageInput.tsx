@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType } from '@aragon/ods';
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import type { IStageInputProps, IStageInputResource } from './stageInput.api';
 import { StageInputItem } from './stageInputItem';
 
