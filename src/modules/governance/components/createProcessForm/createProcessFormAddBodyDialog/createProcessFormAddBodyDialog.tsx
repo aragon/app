@@ -46,18 +46,21 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                                 label="Multisig"
                                 description="Define which addresses are members"
                                 value="multisig"
+                                disabled={true}
                             />
                             <RadioCard
                                 className="w-full"
                                 label="Admin"
                                 description="Define a single address as member"
                                 value="admin"
+                                disabled={true}
                             />
                             <RadioCard
                                 className="w-full"
                                 label="External address"
                                 description="Define any kind of external EVM address"
                                 value="external"
+                                disabled={true}
                             />
                         </RadioGroup>
                     </>
@@ -110,7 +113,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
 
     return (
         <Dialog.Root
-            containerClassName="!max-w-[640px] !top-[20px]"
+            containerClassName="!max-w-[640px]"
             open={isBodyDialogOpen}
             onOpenChange={() => setIsBodyDialogOpen(false)}
         >

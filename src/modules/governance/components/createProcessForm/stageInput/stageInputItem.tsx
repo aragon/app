@@ -141,7 +141,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     {...nameField}
                 />
                 <RadioGroup
-                    className="flex !flex-row gap-x-4"
+                    className="flex flex-col gap-x-4 md:!flex-row"
                     onValueChange={typeField.onChange}
                     helpText="Specify what kind of stage"
                     {...typeField}
