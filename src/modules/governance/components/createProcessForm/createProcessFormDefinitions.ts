@@ -4,9 +4,13 @@ import type { IProcessAction } from '@aragon/ods';
 
 export interface ICreateProcessFormData {
     /**
-     * Title of the proposal.
+     * Name of the process
      */
-    title: string;
+    name: string;
+    /**
+     * ID of the process
+     */
+    id: string;
     /**
      * Short description of the proposal.
      */

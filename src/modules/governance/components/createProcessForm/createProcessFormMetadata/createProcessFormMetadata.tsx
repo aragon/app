@@ -1,7 +1,7 @@
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
+import { InputText, TextArea } from '@aragon/ods';
 import type { ICreateProcessFormData } from '../createProcessFormDefinitions';
 
 export interface ICreateProcessFormMetadataProps {}
@@ -9,8 +9,14 @@ export interface ICreateProcessFormMetadataProps {}
 export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps> = () => {
     const { t } = useTranslations();
 
-    const titleField = useFormField<ICreateProcessFormData, 'title'>('title', {
-        label: t('app.governance.createProcessForm.metadata.title.title'),
+    const nameField = useFormField<ICreateProcessFormData, 'name'>('name', {
+        label: 'Name',
+        rules: { required: true },
+        defaultValue: '',
+    });
+
+    const idField = useFormField<ICreateProcessFormData, 'id'>('id', {
+        label: 'ID',
         rules: { required: true },
         defaultValue: '',
     });
@@ -19,25 +25,19 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
         label: t('app.governance.createProcessForm.metadata.summary.title'),
     });
 
-    const { ref: bodyRef, ...bodyField } = useFormField<ICreateProcessFormData, 'body'>('body', {
-        label: t('app.governance.createProcessForm.metadata.body.title'),
-    });
-
-    const { ref: addActionsRef, ...addActionsField } = useFormField<ICreateProcessFormData, 'addActions'>(
-        'addActions',
-        {
-            label: t('app.governance.createProcessForm.metadata.actions.title'),
-            defaultValue: true,
-        },
-    );
-
     return (
         <div className="flex flex-col gap-10">
-            <InputText
+            {/* <InputText
                 helpText={t('app.governance.createProcessForm.metadata.title.helpText')}
-                placeholder={t('app.governance.createProcessForm.metadata.title.placeholder')}
+                placeholder="Give your governance process a name, so member can differenciate it."
                 maxLength={128}
-                {...titleField}
+                {...nameField}
+            />
+            <InputText
+                helpText="Define a prefix for this governance process to have an unique ID. Something like DPF, which leads to PDF-42 and counting up for each proposal."
+                placeholder="Type an ID"
+                maxLength={5}
+                {...idField}
             />
             <TextArea
                 helpText={t('app.governance.createProcessForm.metadata.summary.helpText')}
@@ -46,24 +46,10 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
                 maxLength={480}
                 {...summaryField}
             />
-            <TextAreaRichText
-                helpText={t('app.governance.createProcessForm.metadata.body.helpText')}
-                placeholder={t('app.governance.createProcessForm.metadata.body.placeholder')}
-                isOptional={true}
-                immediatelyRender={false}
-                {...bodyField}
-            />
             <ResourcesInput
                 name="resources"
                 helpText={t('app.governance.createProcessForm.metadata.resources.helpText')}
-            />
-            <Switch
-                helpText={t('app.governance.createProcessForm.metadata.actions.helpText')}
-                inlineLabel={t('app.governance.createProcessForm.metadata.actions.label')}
-                onCheckedChanged={addActionsField.onChange}
-                checked={addActionsField.value}
-                {...addActionsField}
-            />
+            /> */}
         </div>
     );
 };

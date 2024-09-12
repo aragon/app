@@ -2,8 +2,8 @@ import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvid
 
 export enum CreateProcessWizardStep {
     METADATA = 'METADATA',
-    ACTIONS = 'ACTIONS',
-    SETTINGS = 'SETTINGS',
+    PROCESSES = 'PROCESSES',
+    PERMISSIONS = 'PERMISSIONS',
 }
 
 export const createProcessWizardSteps: IWizardStepperStep[] = [
@@ -13,13 +13,13 @@ export const createProcessWizardSteps: IWizardStepperStep[] = [
         meta: { name: `app.governance.createProcessPage.steps.${CreateProcessWizardStep.METADATA}.name` },
     },
     {
-        id: CreateProcessWizardStep.ACTIONS,
+        id: CreateProcessWizardStep.PROCESSES,
         order: 1,
-        meta: { name: `app.governance.createProcessPage.steps.${CreateProcessWizardStep.ACTIONS}.name` },
+        meta: { name: `app.governance.createProcessPage.steps.${CreateProcessWizardStep.PROCESSES}.name` },
     },
     {
-        id: CreateProcessWizardStep.SETTINGS,
+        id: CreateProcessWizardStep.PERMISSIONS,
         order: 2,
-        meta: { name: `app.governance.createProcessPage.steps.${CreateProcessWizardStep.SETTINGS}.name` },
+        meta: { name: `app.governance.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.name` },
     },
 ];
