@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType } from '@aragon/ods';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 import type { IStageInputProps, IStageInputResource } from './stageInput.api';
 import { StageInputItem } from './stageInputItem';
 
@@ -28,7 +28,7 @@ export const StageInput: React.FC<IStageInputProps> = (props) => {
                 iconLeft={IconType.PLUS}
                 onClick={() => append({ name: '', url: '' })}
             >
-                {t('app.shared.stageInput.add')}
+                Add a stage
             </Button>
         </div>
     );

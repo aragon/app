@@ -100,7 +100,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                 </div>
                 <Switch
                     helpText="Should the proposal be able to advance this stage early, if it’s successful?"
-                    inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}
+                    inlineLabel={timingValues.earlyStage ? 'Yes' : 'No'}
                     onCheckedChanged={(e) =>
                         setTimingValues({
                             ...timingValues,
@@ -111,8 +111,8 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                     {...earlyStageField}
                 />
                 <Switch
-                    helpText={t('app.governance.createProposalForm.metadata.actions.helpText')}
-                    inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}
+                    helpText="The amount of time that the proposal will be eligible to be advanced to the next stage."
+                    inlineLabel={timingValues.stageExpiration ? 'Yes' : 'No'}
                     onCheckedChanged={(e) =>
                         setTimingValues({
                             ...timingValues,
