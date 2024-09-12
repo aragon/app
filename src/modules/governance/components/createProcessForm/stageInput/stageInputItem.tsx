@@ -130,76 +130,61 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     <RadioCard className="w-full" label="Normal" description="" value="normal" />
                     <RadioCard className="w-full" label="Optimistic" description="" value="optimistic" />
                 </RadioGroup>
-                <div className="flex flex-col items-start gap-y-3">
-                    <InputContainer
-                        useCustomWrapper={true}
-                        className="w-full"
-                        id={timingFieldName}
-                        helpText="Define the timing of the stage, so all bodies have enough time to execute and advance the proposals."
-                        {...timingField}
-                    >
-                        <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                            <DefinitionList.Item term="Voting period">
-                                {`${votingPeriodField.value.days} days, ${votingPeriodField.value.hours} hours, ${votingPeriodField.value.minutes} minutes`}
-                            </DefinitionList.Item>
-                            <DefinitionList.Item term="Early stage advance">
-                                <Tag
-                                    className="w-fit"
-                                    label={earlyStageField.value === true ? 'Yes' : 'No'}
-                                    variant={earlyStageField.value === true ? 'primary' : 'neutral'}
-                                />
-                            </DefinitionList.Item>
-                            <DefinitionList.Item term="Stage expiration">
-                                <Tag
-                                    className="w-fit"
-                                    label={stageExpirationField.value === true ? 'Yes' : 'No'}
-                                    variant={stageExpirationField.value === true ? 'primary' : 'neutral'}
-                                />
-                            </DefinitionList.Item>
-                        </DefinitionList.Container>
-                    </InputContainer>
-                    <Button onClick={() => setIsTimingDialogOpen(true)} variant="tertiary" size="md">
-                        Edit timing
-                    </Button>
-                </div>
-                <div className="flex flex-col gap-2 md:gap-3">
-                    <InputContainer
-                        id="resourcesInput"
-                        label="Voting bodies"
-                        helpText="Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage."
-                        useCustomWrapper={true}
-                    />
+
+                <InputContainer
+                    useCustomWrapper={true}
+                    className="flex w-full flex-col items-start gap-y-3"
+                    id={timingFieldName}
+                    helpText="Define the timing of the stage, so all bodies have enough time to execute and advance the proposals."
+                    {...timingField}
+                >
+                    <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
+                        <DefinitionList.Item term="Voting period">
+                            {`${votingPeriodField.value.days} days, ${votingPeriodField.value.hours} hours, ${votingPeriodField.value.minutes} minutes`}
+                        </DefinitionList.Item>
+                        <DefinitionList.Item term="Early stage advance">
+                            <Tag
+                                className="w-fit"
+                                label={earlyStageField.value === true ? 'Yes' : 'No'}
+                                variant={earlyStageField.value === true ? 'primary' : 'neutral'}
+                            />
+                        </DefinitionList.Item>
+                        <DefinitionList.Item term="Stage expiration">
+                            <Tag
+                                className="w-fit"
+                                label={stageExpirationField.value === true ? 'Yes' : 'No'}
+                                variant={stageExpirationField.value === true ? 'primary' : 'neutral'}
+                            />
+                        </DefinitionList.Item>
+                    </DefinitionList.Container>
+                </InputContainer>
+                <Button onClick={() => setIsTimingDialogOpen(true)} variant="tertiary" size="md" className="w-fit">
+                    Edit timing
+                </Button>
+
+                <InputContainer
+                    className="flex flex-col gap-2 md:gap-3"
+                    id="resourcesInput"
+                    label="Voting bodies"
+                    helpText="Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage."
+                    useCustomWrapper={true}
+                >
                     {fields.length > 0 && (
                         <div className="flex flex-col gap-3 md:gap-2">
                             {fields.map((field, index) => (
-                                <Accordion.Container isMulti={false}>
-                                    <Accordion.Item value={field.id} className="w-full">
+                                <Accordion.Container isMulti={true}>
+                                    <Accordion.Item value={field.id}>
                                         <Accordion.ItemHeader>BODY NAME</Accordion.ItemHeader>
-                                        <Accordion.ItemContent className="flex w-full grow">
+                                        <Accordion.ItemContent className="flex flex-col gap-y-3">
                                             <DefinitionList.Container className="w-full">
                                                 <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
                                                 <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
                                                 <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
                                             </DefinitionList.Container>
-                                            <div className="flex self-end">
-                                                <Dropdown.Container
-                                                    constrainContentWidth={false}
-                                                    size="md"
-                                                    customTrigger={
-                                                        <Button
-                                                            className="w-fit"
-                                                            variant="tertiary"
-                                                            size="lg"
-                                                            iconLeft={IconType.DOTS_VERTICAL}
-                                                        >
-                                                            More
-                                                        </Button>
-                                                    }
-                                                >
-                                                    <Dropdown.Item onClick={() => removeBody(index)}>
-                                                        Remove body
-                                                    </Dropdown.Item>
-                                                </Dropdown.Container>
+                                            <div className="flex w-full grow">
+                                                <Button className="justify-end" onClick={() => removeBody(index)}>
+                                                    Remove body
+                                                </Button>
                                             </div>
                                         </Accordion.ItemContent>
                                     </Accordion.Item>
@@ -210,7 +195,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     <Button size="md" variant="tertiary" className="w-fit" iconLeft={IconType.PLUS} onClick={addBody}>
                         Add a body
                     </Button>
-                </div>
+                </InputContainer>
                 <CreateProcessFormTimingDialog
                     isTimingDialogOpen={isTimingDialogOpen}
                     setIsTimingDialogOpen={setIsTimingDialogOpen}
@@ -229,7 +214,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         constrainContentWidth={false}
                         size="md"
                         customTrigger={
-                            <Button className="w-fit" variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL}>
+                            <Button className="w-fit" variant="tertiary" size="lg" iconRight={IconType.DOTS_VERTICAL}>
                                 More
                             </Button>
                         }
