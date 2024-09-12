@@ -1,16 +1,18 @@
-import { useFormField } from '@/shared/hooks/useFormField';
 import { Card, Dialog, InputText } from '@aragon/ods';
 import { useState } from 'react';
 
 export interface ICreateProcessFormAddBodyDialogProps {
-    open: boolean;
-    setOpen: (value: boolean) => void;
-    append: (value: any) => void;
+    isBodyDialogOpen: boolean;
+    setIsBodyDialogOpen: (value: boolean) => void;
+    handleSaveBodyValues: (value: any) => void;
+    bodyNameField: any;
+}
+
+export interface ICreateProcessFormBodyValues {
+    name: string;
 }
 
 const StepOne = (bodyNameField: any) => {
-    //const bodyNameField = useFormField<ICreateProcessFormData, "body">('bodyName')
-
     return (
         <InputText
             placeholder="Enter a name"
@@ -23,14 +25,9 @@ const StepTwo = () => <Card className="p-6">STEP 2</Card>;
 const StepThree = () => <Card className="p-6">STEP 3</Card>;
 
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
-    const { append } = props;
+    const { bodyNameField, handleSaveBodyValues } = props;
     const [step, setStep] = useState(0);
-    const { open, setOpen } = props;
-
-    const bodyNameField = useFormField('bodyName', {
-        label: 'Name',
-        defaultValue: '',
-    });
+    const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
 
     const handleStepContent = (step: number) => {
         switch (step) {
@@ -48,22 +45,25 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     console.log('BODYFIELD', bodyNameField);
 
     return (
-        <Dialog.Root containerClassName="!max-w-[640px]" open={open} onOpenChange={() => setOpen(false)}>
+        <Dialog.Root
+            containerClassName="!max-w-[640px]"
+            open={isBodyDialogOpen}
+            onOpenChange={() => setIsBodyDialogOpen(false)}
+        >
             <Dialog.Header title="Add voting body" />
             <Dialog.Content className="flex flex-col gap-6">{handleStepContent(step)}</Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
                     label: step === 0 ? 'Cancel' : 'Back',
-                    onClick: step === 0 ? () => setOpen(false) : () => setStep(step - 1),
+                    onClick: step === 0 ? () => setIsBodyDialogOpen(false) : () => setStep(step - 1),
                 }}
                 secondaryAction={{
                     label: step === 2 ? 'Save' : 'Next',
                     onClick:
                         step === 2
                             ? () => {
-                                  append({ name: bodyNameField.value });
+                                  handleSaveBodyValues({ name: bodyNameField.value });
                                   setStep(0);
-                                  setOpen(false);
                               }
                             : () => setStep(step + 1),
                 }}

@@ -20,7 +20,10 @@ import {
 } from '@aragon/ods';
 import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog/createProcessFormAddBodyDialog';
+import {
+    CreateProcessFormAddBodyDialog,
+    ICreateProcessFormBodyValues,
+} from '../createProcessFormAddBodyDialog/createProcessFormAddBodyDialog';
 
 export interface IStageInputItemProps {
     /**
@@ -38,17 +41,17 @@ export interface IStageInputItemProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type StageInputItemBaseForm = Record<string, any>;
+export type StageInputItemBaseForm = Record<string, any>;
 
 export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
-    const [addBodyDialogOpen, setAddBodyDialogOpen] = useState(false);
+    const [isBodyDialogOpen, setIsBodyDialogOpen] = useState(false);
     const { name, index, remove } = props;
 
     const { setValue } = useFormContext();
 
     const bodyFieldArrayName = `${name}.${index}.body`;
-    const { fields, append, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
+    const { fields, append: appendBody, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
 
     const { t } = useTranslations();
 
@@ -102,6 +105,12 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         },
     );
 
+    const bodyNameFieldName = `${name}.${index}.bodyName`;
+    const bodyNameField = useFormField<StageInputItemBaseForm, typeof bodyNameFieldName>(bodyNameFieldName, {
+        label: 'Name',
+        defaultValue: '',
+    });
+
     const handleSaveTimingValues = (values: ICreateProcessFormTimingValues) => {
         setValue(votingPeriodFieldName, values.votingPeriod);
         setValue(earlyStageFieldName, values.earlyStage);
@@ -109,8 +118,11 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         setIsTimingDialogOpen(false);
     };
 
-    const addBody = () => {
-        setAddBodyDialogOpen(true);
+    const handleSaveBodyValues = (values: ICreateProcessFormBodyValues) => {
+        setValue(bodyNameFieldName, values.name);
+
+        appendBody({ name: values.name });
+        setIsBodyDialogOpen(false);
     };
 
     console.debug('FIELDS', fields);
@@ -202,7 +214,13 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                             ))}
                         </div>
                     )}
-                    <Button size="md" variant="tertiary" className="w-fit" iconLeft={IconType.PLUS} onClick={addBody}>
+                    <Button
+                        size="md"
+                        variant="tertiary"
+                        className="w-fit"
+                        iconLeft={IconType.PLUS}
+                        onClick={() => setIsBodyDialogOpen(true)}
+                    >
                         Add a body
                     </Button>
                 </InputContainer>
@@ -215,9 +233,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     handleSaveTimingValues={handleSaveTimingValues}
                 />
                 <CreateProcessFormAddBodyDialog
-                    open={addBodyDialogOpen}
-                    setOpen={setAddBodyDialogOpen}
-                    append={append}
+                    isBodyDialogOpen={isBodyDialogOpen}
+                    setIsBodyDialogOpen={setIsBodyDialogOpen}
+                    handleSaveBodyValues={handleSaveBodyValues}
+                    bodyNameField={bodyNameField}
                 />
                 <div className="flex self-end">
                     <Dropdown.Container
