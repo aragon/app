@@ -22,14 +22,15 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
     });
 
     const summaryField = useFormField<ICreateProcessFormData, 'summary'>('summary', {
-        label: t('app.governance.createProcessForm.metadata.summary.title'),
+        label: 'Summary',
+        defaultValue: '',
     });
 
     return (
         <div className="flex flex-col gap-10">
             <InputText
-                helpText={t('app.governance.createProcessForm.metadata.title.helpText')}
-                placeholder="Give your governance process a name, so member can differenciate it."
+                helpText="Give your governance process a name, so member can differentiate it."
+                placeholder="Type a name"
                 maxLength={128}
                 {...nameField}
             />
@@ -42,7 +43,7 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
                 {...idField}
             />
             <TextArea
-                helpText={t('app.governance.createProcessForm.metadata.summary.helpText')}
+                helpText="Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand."
                 placeholder={t('app.governance.createProcessForm.metadata.summary.placeholder')}
                 isOptional={true}
                 maxLength={480}
