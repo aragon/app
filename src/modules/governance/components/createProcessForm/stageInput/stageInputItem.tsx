@@ -1,19 +1,19 @@
+import {
+    CreateProcessFormTimingDialog,
+    ICreateProcessFormTimingValues,
+} from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog/createProcessFormTimingDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { IDateDuration } from '@/shared/utils/dateUtils';
 import {
-    AlertInline,
     Button,
     Card,
     DefinitionList,
-    Dialog,
     IconType,
     InputContainer,
-    InputNumber,
     InputText,
     RadioCard,
     RadioGroup,
-    Switch,
     Tag,
 } from '@aragon/ods';
 import { useState } from 'react';
@@ -83,12 +83,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         },
     );
 
-    const handleDurationChange = (type: string) => (value: string) => {
-        const parsedValue = parseInt(value, 10);
-        const numericValue = isNaN(parsedValue) ? 0 : parsedValue;
-        const newValue = { ...votingPeriodField.value, [type]: numericValue };
-        setValue(votingPeriodFieldName, newValue, { shouldValidate: false });
-    };
+    console.log('VOTING PERIOD FIELD', votingPeriodField);
 
     const earlyStageFieldName = `${name}.${index}.earlyStage`;
     const earlyStageField = useFormField<StageInputItemBaseForm, typeof earlyStageFieldName>(earlyStageFieldName, {
@@ -104,6 +99,13 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
             defaultValue: false,
         },
     );
+
+    const handleSaveTimingValues = (values: ICreateProcessFormTimingValues) => {
+        setValue(votingPeriodFieldName, values.votingPeriod);
+        setValue(earlyStageFieldName, values.earlyStage);
+        setValue(stageExpirationFieldName, values.stageExpiration);
+        setIsTimingDialogOpen(false);
+    };
 
     return (
         <>
@@ -174,71 +176,15 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         {t('app.shared.resourcesInput.addBody')}
                     </Button>
                 </div>
-            </Card>
-            <Dialog.Root
-                containerClassName="!max-w-[640px]"
-                open={isTimingDialogOpen}
-                onOpenChange={() => setIsTimingDialogOpen(false)}
-            >
-                <Dialog.Header title="Timing" />
-                <Dialog.Content className="flex flex-col gap-6">
-                    <InputContainer
-                        id={votingPeriodFieldName}
-                        useCustomWrapper={true}
-                        helpText="The shortest period of time a proposal is open for voting. Proposals can be created with a longer duration, but not shorter."
-                        {...votingPeriodField}
-                    />
-                    <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
-                        <div className="flex flex-col justify-between gap-4 md:flex-row">
-                            <InputNumber
-                                label={t('app.shared.advancedDateInput.duration.minutes')}
-                                min={0}
-                                max={59}
-                                className="w-full md:w-1/3"
-                                placeholder="0 min"
-                                value={votingPeriodField.value.minutes}
-                                onChange={handleDurationChange('minutes')}
-                            />
-                            <InputNumber
-                                label={t('app.shared.advancedDateInput.duration.hours')}
-                                min={0}
-                                max={23}
-                                className="w-full md:w-1/3"
-                                placeholder="0 h"
-                                value={votingPeriodField.value.hours}
-                                onChange={handleDurationChange('hours')}
-                            />
-                            <InputNumber
-                                label={t('app.shared.advancedDateInput.duration.days')}
-                                min={0}
-                                className="w-full md:w-1/3"
-                                placeholder="7 d"
-                                value={votingPeriodField.value.days}
-                                onChange={handleDurationChange('days')}
-                            />
-                        </div>
-                        <AlertInline message="Recommended minimum expiration time is 7 days" />
-                    </div>
-                    <Switch
-                        helpText="Should the proposal be able to advance this stage early, if it’s successful?"
-                        inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}
-                        onCheckedChanged={earlyStageField.onChange}
-                        checked={earlyStageField.value}
-                        {...earlyStageField}
-                    />
-                    <Switch
-                        helpText={t('app.governance.createProposalForm.metadata.actions.helpText')}
-                        inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}
-                        onCheckedChanged={stageExpirationField.onChange}
-                        checked={stageExpirationField.value}
-                        {...stageExpirationField}
-                    />
-                </Dialog.Content>
-                <Dialog.Footer
-                    primaryAction={{ label: 'Save', onClick: () => setIsTimingDialogOpen(false) }}
-                    secondaryAction={{ label: 'Cancel', onClick: () => setIsTimingDialogOpen(false) }}
+                <CreateProcessFormTimingDialog
+                    isTimingDialogOpen={isTimingDialogOpen}
+                    setIsTimingDialogOpen={setIsTimingDialogOpen}
+                    earlyStageField={earlyStageField}
+                    stageExpirationField={stageExpirationField}
+                    votingPeriodField={votingPeriodField}
+                    handleSaveTimingValues={handleSaveTimingValues}
                 />
-            </Dialog.Root>
+            </Card>
         </>
     );
 };
