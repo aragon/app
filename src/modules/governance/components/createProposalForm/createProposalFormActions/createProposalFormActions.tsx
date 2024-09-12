@@ -1,6 +1,6 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, CardEmptyState, IconType, ProposalActions } from '@aragon/ods';
+import { Button, CardEmptyState, IconType, type IProposalAction, ProposalActions } from '@aragon/ods';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
@@ -34,13 +34,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
-    const handleItemSelected = (actionType: string) => {
-        addAction({ type: actionType, from: '', to: '', data: '', value: '0', inputData: null, index: actions.length });
-    };
-
-    // TODO:
-    // 1 - Accordion Item headers on action add as set as unverified
-    // 2 - Transaction building on fields change
+    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, index: actions.length });
 
     return (
         <div className="flex flex-col gap-y-10">
@@ -53,7 +47,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 />
             )}
             {actions.length > 0 && (
-                // @ts-expect-error TODO type issue on customActionComponents
+                // @ts-expect-error TODO update typings
                 <ProposalActions actions={actions} customActionComponents={customActionComponents} />
             )}
             <Button
@@ -67,7 +61,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             </Button>
             <ActionComposer
                 wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}
-                onChange={handleItemSelected}
+                onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
                 daoId={daoId}

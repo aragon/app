@@ -14,7 +14,8 @@ import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@arag
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import type { ICreateProposalFormData } from '../../components/createProposalForm';
+import { ProposalActionType } from '../../api/governanceService';
+import type { ICreateProposalFormData, PrepareProposalActionFunction } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 export enum PublishProposalStep {
@@ -30,6 +31,7 @@ export interface IPublishProposalDialogParams {
      * ID of the DAO to create the proposal for.
      */
     daoId: string;
+    prepareActions: Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
 }
 
 export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
@@ -45,7 +47,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
     invariant(supportedPlugin != null, 'PublishProposalDialog: DAO has no supported plugin.');
 
-    const { daoId, values } = location.params;
+    const { daoId, values, prepareActions } = location.params;
     const { title, summary } = values;
 
     const { t } = useTranslations();
@@ -67,6 +69,10 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const handlePrepareTransaction = () => {
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
         const metadataCid = pinJsonData.IpfsHash;
+
+        const processedActions = values.actions.map((action) => {
+            const prepareActionFunction = prepareActions?.[action.type];
+        });
 
         return publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin: supportedPlugin });
     };

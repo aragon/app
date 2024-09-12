@@ -1,13 +1,16 @@
 import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { addressUtils, IconType } from '@aragon/ods';
-import { forwardRef } from 'react';
+import { addressUtils, IconType, type IProposalAction } from '@aragon/ods';
+import { forwardRef, useMemo } from 'react';
 import { ProposalActionType } from '../../api/governanceService';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
 
-export interface IActionComposerProps extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel'> {
+export interface IActionComposerProps
+    extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
+    /**
+     * Callback called on action selected.
+     */
+    onActionSelected: (action: IProposalAction) => void;
     /**
      * ID of the DAO.
      */
@@ -15,18 +18,28 @@ export interface IActionComposerProps extends Omit<IAutocompleteInputProps, 'ite
 }
 
 export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {
-    const { daoId, ...otherProps } = props;
+    const { daoId, onActionSelected, ...otherProps } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
-    const pluginIds = useDaoPluginIds(daoId);
+    const handleActionSelected = (itemId: string) => {
+        const action = items.find((item) => item.id === itemId)!;
+        onActionSelected?.(action.defaultValue);
+    };
 
-    const test = useSlotFunction({
-        pluginIds,
-        slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_NATIVE_ACTIONS,
-        params: {},
-    });
+    const defaultMetadaAction = useMemo(() => {
+        const { avatar, name, description, links } = dao!;
+        // TODO: updates types to make logo optional
+        const existingMetadata = { logo: avatar!, name, description, links };
+
+        return {
+            to: dao!.address,
+            existingMetadata,
+            proposedMetadata: existingMetadata,
+            ...defaultMetadataAction,
+        };
+    }, [dao]);
 
     const groups = [
         {
@@ -42,12 +55,14 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
             id: ProposalActionType.TRANSFER,
             name: 'Transfer',
             icon: IconType.APP_TRANSACTIONS,
+            defaultValue: defaultTransferAction,
         },
         {
             id: ProposalActionType.METADATA_UPDATE,
             name: 'Set metadata',
             icon: IconType.SETTINGS,
             groupId: 'osx-actions',
+            defaultValue: defaultMetadaAction,
         },
     ];
 
@@ -58,6 +73,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
             selectItemLabel="Add action"
             placeholder="Filter by action, contract name or address"
             ref={ref}
+            onChange={handleActionSelected}
             {...otherProps}
         />
     );
