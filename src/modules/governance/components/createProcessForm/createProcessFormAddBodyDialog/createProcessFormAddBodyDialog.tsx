@@ -43,6 +43,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                         step === 2
                             ? () => {
                                   append({ name: 'BODY' });
+                                  setStep(0);
                                   setOpen(false);
                               }
                             : () => setStep(step + 1),
