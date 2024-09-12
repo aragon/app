@@ -5,9 +5,9 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
+import { ICreateProcessFormData } from '../../components/createProcessForm';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
-import { ICreateProcessFormData } from '../../components/createProcessForm';
 
 export interface ICreateProcessPageClientProps {
     /**
@@ -23,7 +23,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
     const { t } = useTranslations();
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
-        console.debug(values);
+        console.log(values);
     };
 
     const processedSteps = useMemo(

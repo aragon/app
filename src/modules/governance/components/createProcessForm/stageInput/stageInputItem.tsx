@@ -191,12 +191,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                     className="rounded-xl border border-neutral-100 md:gap-3"
                                 >
                                     <Accordion.Item value={field.id}>
-                                        <Accordion.ItemHeader>BODY NAME</Accordion.ItemHeader>
+                                        <Accordion.ItemHeader>{field.name}</Accordion.ItemHeader>
                                         <Accordion.ItemContent className="flex flex-col gap-y-3">
                                             <DefinitionList.Container className="w-full">
-                                                <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
-                                                <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
-                                                <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
+                                                <DefinitionList.Item term="Body ID">{field.id}</DefinitionList.Item>
                                             </DefinitionList.Container>
                                             <div className="flex w-full grow">
                                                 <Button

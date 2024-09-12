@@ -12,15 +12,11 @@ export interface ICreateProcessFormBodyValues {
     name: string;
 }
 
-const StepOne = (bodyNameField: any) => {
-    return (
-        <InputText
-            placeholder="Enter a name"
-            helpText="Give modules a name so members are able to recognise which body is participating."
-            {...bodyNameField}
-        />
-    );
-};
+// const StepOne = (bodyNameField: any) => {
+//     return (
+
+//     );
+// };
 const StepTwo = () => <Card className="p-6">STEP 2</Card>;
 const StepThree = () => <Card className="p-6">STEP 3</Card>;
 
@@ -32,13 +28,25 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     const handleStepContent = (step: number) => {
         switch (step) {
             case 0:
-                return <StepOne bodyNameField={bodyNameField} />;
+                return (
+                    <InputText
+                        placeholder="Enter a name"
+                        helpText="Give modules a name so members are able to recognise which body is participating."
+                        {...bodyNameField}
+                    />
+                );
             case 1:
                 return <StepTwo />;
             case 2:
                 return <StepThree />;
             default:
-                return <StepOne />;
+                return (
+                    <InputText
+                        placeholder="Enter a name"
+                        helpText="Give modules a name so members are able to recognise which body is participating."
+                        {...bodyNameField}
+                    />
+                );
         }
     };
 
