@@ -113,6 +113,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         setAddBodyDialogOpen(true);
     };
 
+    console.debug('FIELDS', fields);
+
     return (
         <>
             <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">

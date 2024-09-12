@@ -1,4 +1,5 @@
-import { Card, Dialog } from '@aragon/ods';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { Card, Dialog, InputText } from '@aragon/ods';
 import { useState } from 'react';
 
 export interface ICreateProcessFormAddBodyDialogProps {
@@ -7,7 +8,17 @@ export interface ICreateProcessFormAddBodyDialogProps {
     append: (value: any) => void;
 }
 
-const StepOne = () => <Card className="p-6">STEP 1</Card>;
+const StepOne = (bodyNameField: any) => {
+    //const bodyNameField = useFormField<ICreateProcessFormData, "body">('bodyName')
+
+    return (
+        <InputText
+            placeholder="Enter a name"
+            helpText="Give modules a name so members are able to recognise which body is participating."
+            {...bodyNameField}
+        />
+    );
+};
 const StepTwo = () => <Card className="p-6">STEP 2</Card>;
 const StepThree = () => <Card className="p-6">STEP 3</Card>;
 
@@ -15,10 +26,16 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     const { append } = props;
     const [step, setStep] = useState(0);
     const { open, setOpen } = props;
+
+    const bodyNameField = useFormField('bodyName', {
+        label: 'Name',
+        defaultValue: '',
+    });
+
     const handleStepContent = (step: number) => {
         switch (step) {
             case 0:
-                return <StepOne />;
+                return <StepOne bodyNameField={bodyNameField} />;
             case 1:
                 return <StepTwo />;
             case 2:
@@ -27,6 +44,8 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                 return <StepOne />;
         }
     };
+
+    console.log('BODYFIELD', bodyNameField);
 
     return (
         <Dialog.Root containerClassName="!max-w-[640px]" open={open} onOpenChange={() => setOpen(false)}>
@@ -42,7 +61,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                     onClick:
                         step === 2
                             ? () => {
-                                  append({ name: 'BODY' });
+                                  append({ name: bodyNameField.value });
                                   setStep(0);
                                   setOpen(false);
                               }
