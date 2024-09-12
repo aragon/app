@@ -74,7 +74,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         votingPeriodFieldName,
         {
             label: 'Voting Period',
-            shouldUnregister: true,
             defaultValue: {
                 minutes: 0,
                 hours: 0,
@@ -112,21 +111,21 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
             <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
                 <InputText placeholder={t('app.shared.resourcesInput.labelInput.placeholder')} {...nameField} />
                 <RadioGroup
+                    {...typeField}
                     className="flex !flex-row gap-x-4"
                     onValueChange={typeField.onChange}
                     helpText="Specify what kind of stage"
-                    {...typeField}
                 >
                     <RadioCard className="w-full" label="Normal" description="" value="normal" />
                     <RadioCard className="w-full" label="Optimistic" description="" value="optimistic" />
                 </RadioGroup>
                 <div className="flex flex-col items-start gap-y-3">
                     <InputContainer
+                        {...timingField}
                         useCustomWrapper={true}
                         className="w-full"
                         id={timingFieldName}
                         helpText="Define the timing"
-                        {...timingField}
                     >
                         <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
                             <DefinitionList.Item term="Voting period">

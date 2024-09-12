@@ -2,20 +2,46 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { IDateDuration } from '@/shared/utils/dateUtils';
 import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/ods';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormTimingDialogProps {
+    /**
+     * Whether the dialog is open or not.
+     */
     isTimingDialogOpen: boolean;
+    /**
+     * Callback to set the dialog open state.
+     */
     setIsTimingDialogOpen: (value: boolean) => void;
+    /**
+     * Callback to save the timing values.
+     */
     handleSaveTimingValues: (values: ICreateProcessFormTimingValues) => void;
+    /**
+     * The stage expiration field.
+     */
     stageExpirationField: any;
+    /**
+     * The early stage field.
+     */
     earlyStageField: any;
+    /**
+     * The voting period field.
+     */
     votingPeriodField: any;
 }
 
 export interface ICreateProcessFormTimingValues {
+    /**
+     * The voting period.
+     */
     votingPeriod: IDateDuration;
+    /**
+     * Whether the proposal should be able to advance this stage early, if it’s successful.
+     */
     earlyStage: boolean;
+    /**
+     * Whether the stage should expire.
+     */
     stageExpiration: boolean;
 }
 
@@ -101,24 +127,14 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                 <Switch
                     helpText="Should the proposal be able to advance this stage early, if it’s successful?"
                     inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}
-                    onCheckedChanged={(e) =>
-                        setTimingValues({
-                            ...timingValues,
-                            earlyStage: !earlyStageField.value,
-                        })
-                    }
+                    onCheckedChanged={(checked) => setTimingValues((prev) => ({ ...prev, earlyStage: checked }))}
                     checked={timingValues.earlyStage}
                     {...earlyStageField}
                 />
                 <Switch
                     helpText={t('app.governance.createProposalForm.metadata.actions.helpText')}
                     inlineLabel={t('app.governance.createProposalForm.metadata.actions.label')}
-                    onCheckedChanged={(e) =>
-                        setTimingValues({
-                            ...timingValues,
-                            stageExpiration: !stageExpirationField.value,
-                        })
-                    }
+                    onCheckedChanged={(checked) => setTimingValues((prev) => ({ ...prev, stageExpiration: checked }))}
                     checked={timingValues.stageExpiration}
                     {...stageExpirationField}
                 />
