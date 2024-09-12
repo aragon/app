@@ -8,7 +8,7 @@ export const CreateProcessForm = {
     Permissions: CreateProcessFormPermissions,
 };
 
-// export * from './createProcessFormDefinitions';
+export * from './createProcessFormDefinitions';
 export * from './createProcessFormMetadata';
 export * from './createProcessFormPermissions';
 export * from './createProcessFormStages';
