@@ -5,9 +5,6 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
-import { type ICreateProcessFormData } from '../../components/createProcessForm';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
-import { type IPublishProcessDialogParams } from '../../dialogs/publishProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
 
@@ -24,10 +21,10 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
     const { open } = useDialogContext();
     const { t } = useTranslations();
 
-    const handleFormSubmit = (values: ICreateProcessFormData) => {
-        const params: IPublishProcessDialogParams = { values, daoId };
-        open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
-    };
+    // const handleFormSubmit = (values: ICreateProcessFormData) => {
+    //     const params: IPublishProcessDialogParams = { values, daoId };
+    //     open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
+    // };
 
     const processedSteps = useMemo(
         () =>
@@ -44,7 +41,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
                 finalStep={t('app.governance.createProcessPage.finalStep')}
                 submitLabel={t('app.governance.createProcessPage.submitLabel')}
                 initialSteps={processedSteps}
-                onSubmit={handleFormSubmit}
+                onSubmit={() => null}
                 defaultValues={{ actions: [] }}
             >
                 <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
