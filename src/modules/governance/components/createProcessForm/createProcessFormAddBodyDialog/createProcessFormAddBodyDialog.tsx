@@ -1,4 +1,14 @@
-import { AddressInput, Card, Dialog, InputContainer, InputNumber, InputText, RadioCard, RadioGroup } from '@aragon/ods';
+import {
+    AddressInput,
+    Button,
+    Card,
+    Dialog,
+    InputContainer,
+    InputNumber,
+    InputText,
+    RadioCard,
+    RadioGroup,
+} from '@aragon/ods';
 import { useState } from 'react';
 
 export interface ICreateProcessFormAddBodyDialogProps {
@@ -118,26 +128,33 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             onOpenChange={() => setIsBodyDialogOpen(false)}
         >
             <Dialog.Header title="Add voting body" />
-            <Dialog.Content className="flex flex-col gap-6">{handleStepContent(step)}</Dialog.Content>
-            <Dialog.Footer
-                primaryAction={{
-                    label: step === 0 ? 'Cancel' : 'Back',
-                    onClick: step === 0 ? () => setIsBodyDialogOpen(false) : () => setStep(step - 1),
-                }}
-                secondaryAction={{
-                    label: step === 2 ? 'Save' : 'Next',
-                    onClick:
-                        step === 2
-                            ? () => {
-                                  handleSaveBodyValues({
-                                      name: bodyNameField.value,
-                                      governanceType: bodyGovernanceTypeField.value,
-                                  });
-                                  setStep(0);
-                              }
-                            : () => setStep(step + 1),
-                }}
-            />
+            <Dialog.Content className="flex flex-col gap-6">
+                {handleStepContent(step)}
+                <div className="flex w-full justify-between">
+                    <Button
+                        variant="tertiary"
+                        onClick={step === 0 ? () => setIsBodyDialogOpen(false) : () => setStep(step - 1)}
+                    >
+                        {step === 0 ? 'Cancel' : 'Back'}
+                    </Button>
+                    <Button
+                        onClick={
+                            step === 2
+                                ? () => {
+                                      handleSaveBodyValues({
+                                          name: bodyNameField.value,
+                                          governanceType: bodyGovernanceTypeField.value,
+                                      });
+                                      setStep(0);
+                                  }
+                                : () => setStep(step + 1)
+                        }
+                    >
+                        {step === 2 ? 'Save' : 'Next'}
+                    </Button>
+                </div>
+            </Dialog.Content>
+            <Dialog.Footer />
         </Dialog.Root>
     );
 };
