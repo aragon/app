@@ -18,6 +18,7 @@ import {
 } from '@aragon/ods';
 import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog/createProcessFormAddBodyDialog';
 
 export interface IStageInputItemProps {
     /**
@@ -39,6 +40,7 @@ type StageInputItemBaseForm = Record<string, any>;
 
 export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
+    const [addBodyDialogOpen, setAddBodyDialogOpen] = useState(false);
     const { name, index, remove } = props;
 
     const { setValue } = useFormContext();
@@ -106,6 +108,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         setIsTimingDialogOpen(false);
     };
 
+    const addBody = () => {
+        setAddBodyDialogOpen(true);
+    };
+
     return (
         <>
             <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
@@ -169,13 +175,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                             ))}
                         </div>
                     )}
-                    <Button
-                        size="md"
-                        variant="tertiary"
-                        className="w-fit"
-                        iconLeft={IconType.PLUS}
-                        onClick={() => append({ name: '', url: '' })}
-                    >
+                    <Button size="md" variant="tertiary" className="w-fit" iconLeft={IconType.PLUS} onClick={addBody}>
                         Add a body
                     </Button>
                 </div>
@@ -187,6 +187,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     votingPeriodField={votingPeriodField}
                     handleSaveTimingValues={handleSaveTimingValues}
                 />
+                <CreateProcessFormAddBodyDialog open={addBodyDialogOpen} setOpen={setAddBodyDialogOpen} />
             </Card>
         </>
     );

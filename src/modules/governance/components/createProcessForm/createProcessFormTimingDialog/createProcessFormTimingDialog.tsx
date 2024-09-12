@@ -2,7 +2,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { IDateDuration } from '@/shared/utils/dateUtils';
 import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/ods';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormTimingDialogProps {
     isTimingDialogOpen: boolean;
@@ -29,7 +28,6 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
         votingPeriodField,
     } = props;
 
-    console.log('PROPS', props);
     const [timingValues, setTimingValues] = useState<ICreateProcessFormTimingValues>({
         votingPeriod: votingPeriodField.value,
         earlyStage: earlyStageField.value,
