@@ -1,5 +1,4 @@
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, TextArea } from '@aragon/ods';
 import type { ICreateProcessFormData } from '../createProcessFormDefinitions';
@@ -7,8 +6,6 @@ import type { ICreateProcessFormData } from '../createProcessFormDefinitions';
 export interface ICreateProcessFormMetadataProps {}
 
 export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps> = () => {
-    const { t } = useTranslations();
-
     const nameField = useFormField<ICreateProcessFormData, 'name'>('name', {
         label: 'Name',
         rules: { required: true },
@@ -44,14 +41,14 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
             />
             <TextArea
                 helpText="Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand."
-                placeholder={t('app.governance.createProcessForm.metadata.summary.placeholder')}
+                placeholder="Type a summary"
                 isOptional={true}
                 maxLength={480}
                 {...summaryField}
             />
             <ResourcesInput
                 name="resources"
-                helpText={t('app.governance.createProcessForm.metadata.resources.helpText')}
+                helpText="Add any additional external resources that help members understand the governance process."
             />
         </div>
     );

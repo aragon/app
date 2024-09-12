@@ -2,7 +2,7 @@
 
 import { Wizard } from '@/shared/components/wizard';
 import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvider';
-import { CreateProcessForm } from '../../components/createProcessForm';
+import { CreateProcessForm, ICreateProcessFormData } from '../../components/createProcessForm';
 
 export interface ICreateProcessPageClientStepsProps {
     /**
