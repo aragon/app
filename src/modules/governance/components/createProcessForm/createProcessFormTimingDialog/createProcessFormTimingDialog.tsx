@@ -4,17 +4,44 @@ import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@arago
 import { useState } from 'react';
 
 export interface ICreateProcessFormTimingDialogProps {
+    /**
+     * Whether the dialog is open or not.
+     */
     isTimingDialogOpen: boolean;
+    /**
+     * Callback to set the dialog open state.
+     */
     setIsTimingDialogOpen: (value: boolean) => void;
+    /**
+     * Callback to save the timing values.
+     */
     handleSaveTimingValues: (values: ICreateProcessFormTimingValues) => void;
+    /**
+     * The stage expiration field.
+     */
     stageExpirationField: any;
+    /**
+     * The early stage field.
+     */
     earlyStageField: any;
+    /**
+     * The voting period field.
+     */
     votingPeriodField: any;
 }
 
 export interface ICreateProcessFormTimingValues {
+    /**
+     * The voting period.
+     */
     votingPeriod: IDateDuration;
+    /**
+     * Whether the proposal should be able to advance this stage early, if it’s successful.
+     */
     earlyStage: boolean;
+    /**
+     * Whether the stage should expire.
+     */
     stageExpiration: boolean;
 }
 
@@ -99,24 +126,14 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                 <Switch
                     helpText="Should the proposal be able to advance this stage early, if it’s successful?"
                     inlineLabel={timingValues.earlyStage ? 'Yes' : 'No'}
-                    onCheckedChanged={(e) =>
-                        setTimingValues({
-                            ...timingValues,
-                            earlyStage: !earlyStageField.value,
-                        })
-                    }
+                    onCheckedChanged={(checked) => setTimingValues((prev) => ({ ...prev, earlyStage: checked }))}
                     checked={timingValues.earlyStage}
                     {...earlyStageField}
                 />
                 <Switch
                     helpText="The amount of time that the proposal will be eligible to be advanced to the next stage."
                     inlineLabel={timingValues.stageExpiration ? 'Yes' : 'No'}
-                    onCheckedChanged={(e) =>
-                        setTimingValues({
-                            ...timingValues,
-                            stageExpiration: !stageExpirationField.value,
-                        })
-                    }
+                    onCheckedChanged={(checked) => setTimingValues((prev) => ({ ...prev, stageExpiration: checked }))}
                     checked={timingValues.stageExpiration}
                     {...stageExpirationField}
                 />

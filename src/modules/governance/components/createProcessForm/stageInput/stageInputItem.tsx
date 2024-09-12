@@ -78,7 +78,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         votingPeriodFieldName,
         {
             label: 'Voting Period',
-            shouldUnregister: true,
             defaultValue: {
                 minutes: 0,
                 hours: 0,
