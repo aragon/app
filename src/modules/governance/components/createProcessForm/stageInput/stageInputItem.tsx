@@ -163,7 +163,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                 </Button>
 
                 <InputContainer
-                    className="flex flex-col gap-2 md:gap-3"
+                    className="flex flex-col gap-2 rounded-xl"
                     id="resourcesInput"
                     label="Voting bodies"
                     helpText="Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage."
@@ -172,7 +172,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     {fields.length > 0 && (
                         <div className="flex flex-col gap-3 md:gap-2">
                             {fields.map((field, index) => (
-                                <Accordion.Container isMulti={true}>
+                                <Accordion.Container
+                                    isMulti={true}
+                                    className="rounded-xl border border-neutral-100 md:gap-3"
+                                >
                                     <Accordion.Item value={field.id}>
                                         <Accordion.ItemHeader>BODY NAME</Accordion.ItemHeader>
                                         <Accordion.ItemContent className="flex flex-col gap-y-3">
@@ -182,7 +185,12 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                                 <DefinitionList.Item term="Name">{field.id}</DefinitionList.Item>
                                             </DefinitionList.Container>
                                             <div className="flex w-full grow">
-                                                <Button className="justify-end" onClick={() => removeBody(index)}>
+                                                <Button
+                                                    className="justify-end"
+                                                    variant="tertiary"
+                                                    size="md"
+                                                    onClick={() => removeBody(index)}
+                                                >
                                                     Remove body
                                                 </Button>
                                             </div>
