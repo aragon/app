@@ -53,6 +53,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const bodyFieldArrayName = `${name}.${index}.body`;
     const { fields, append: appendBody, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
 
+    console.log('FIELDSSS', fields);
+
     const { t } = useTranslations();
 
     const nameFieldName = `${name}.${index}.name`;
@@ -184,10 +186,12 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                 >
                     {fields.length > 0 && (
                         <div className="flex flex-col gap-3 md:gap-2">
-                            {fields.map((field, index) => (
+                            {fields.map((field: any, index) => (
                                 <Accordion.Container isMulti={true} key={field.id}>
                                     <Accordion.Item value={field.id}>
-                                        <Accordion.ItemHeader>{field.name}</Accordion.ItemHeader>
+                                        <Accordion.ItemHeader className="capitalize">
+                                            {field.name} - {field.governanceType.split(/(?=[A-Z])/).join(' ')}
+                                        </Accordion.ItemHeader>
                                         <Accordion.ItemContent>
                                             <DefinitionList.Container className="w-full">
                                                 <DefinitionList.Item term="Body ID">{field.id}</DefinitionList.Item>
