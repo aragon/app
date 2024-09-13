@@ -31,11 +31,11 @@ export interface IStageInputItemProps {
      */
     name: string;
     /**
-     * The index of the resource item in the list.
+     * The index of the stage in the list.
      */
     index: number;
     /**
-     * Callback to remove the resource item.
+     * Callback to remove the proposed stage.
      */
     remove: (index: number) => void;
 }
@@ -77,16 +77,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     });
 
     const votingPeriodFieldName = `${name}.${index}.votingPeriod`;
-
     const votingPeriodField = useFormField<Record<string, IDateDuration>, typeof votingPeriodFieldName>(
         votingPeriodFieldName,
         {
             label: 'Voting Period',
-            defaultValue: {
-                minutes: 0,
-                hours: 0,
-                days: 7,
-            },
         },
     );
 
@@ -244,7 +238,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         constrainContentWidth={false}
                         size="md"
                         customTrigger={
-                            <Button className="w-fit" variant="tertiary" size="lg" iconRight={IconType.DOTS_VERTICAL}>
+                            <Button className="w-fit" variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL}>
                                 More
                             </Button>
                         }

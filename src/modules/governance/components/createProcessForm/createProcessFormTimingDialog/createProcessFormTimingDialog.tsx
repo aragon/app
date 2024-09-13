@@ -70,7 +70,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
             onOpenChange={() => setIsTimingDialogOpen(false)}
         >
             <Dialog.Header title="Timing" />
-            <Dialog.Content className="flex flex-col gap-6">
+            <Dialog.Content className="flex flex-col gap-6 pb-4">
                 <InputContainer
                     id={votingPeriodField.id}
                     useCustomWrapper={true}

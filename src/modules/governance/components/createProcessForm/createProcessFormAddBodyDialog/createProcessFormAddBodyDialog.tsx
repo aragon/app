@@ -9,25 +9,64 @@ import {
     RadioCard,
     RadioGroup,
 } from '@aragon/ods';
-import { useState } from 'react';
-
-export interface ICreateProcessFormAddBodyDialogProps {
-    isBodyDialogOpen: boolean;
-    setIsBodyDialogOpen: (value: boolean) => void;
-    handleSaveBodyValues: (value: any) => void;
-    bodyNameField: any;
-    bodyGovernanceTypeField: any;
-}
+import { useEffect, useState } from 'react';
 
 export interface ICreateProcessFormBodyValues {
+    /**
+     * The name of the body.
+     */
     name: string;
+    /**
+     * The governance type of the body.
+     */
     governanceType: string;
+}
+
+export interface ICreateProcessFormAddBodyDialogProps {
+    /**
+     * Whether the dialog is open or not.
+     */
+    isBodyDialogOpen: boolean;
+    /**
+     * Callback to set the dialog open state.
+     */
+    setIsBodyDialogOpen: (value: boolean) => void;
+    /**
+     * Callback to save the body values.
+     */
+    handleSaveBodyValues: (value: ICreateProcessFormBodyValues) => void;
+    /**
+     * The body name field.
+     */
+    bodyNameField: any;
+    /**
+     * The body governance type field.
+     */
+    bodyGovernanceTypeField: any;
 }
 
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
     const { bodyNameField, handleSaveBodyValues, bodyGovernanceTypeField } = props;
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
+    const [bodyName, setBodyName] = useState('');
+    const [bodyGovernanceType, setBodyGovernanceType] = useState('tokenVoting');
+
+    useEffect(() => {
+        if (isBodyDialogOpen) {
+            setBodyName('');
+            setBodyGovernanceType('tokenVoting');
+        }
+    }, [isBodyDialogOpen, bodyNameField.value, bodyGovernanceTypeField.value]);
+
+    const handleSave = () => {
+        handleSaveBodyValues({
+            name: bodyName,
+            governanceType: bodyGovernanceType,
+        });
+        setStep(0);
+        setIsBodyDialogOpen(false);
+    };
 
     const handleStepContent = (step: number) => {
         switch (step) {
@@ -37,13 +76,14 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                         <InputText
                             placeholder="Enter a name"
                             helpText="Give modules a name so members are able to recognise which body is participating."
-                            {...bodyNameField}
+                            value={bodyName}
+                            onChange={(e) => setBodyName(e.target.value)}
                         />
                         <RadioGroup
                             className="flex gap-4"
                             helpText="What kind of governance would you like to add?"
-                            onValueChange={bodyGovernanceTypeField.onChange}
-                            {...bodyGovernanceTypeField}
+                            value={bodyGovernanceType}
+                            onValueChange={setBodyGovernanceType}
                         >
                             <RadioCard
                                 className="w-full"
@@ -137,19 +177,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                     >
                         {step === 0 ? 'Cancel' : 'Back'}
                     </Button>
-                    <Button
-                        onClick={
-                            step === 2
-                                ? () => {
-                                      handleSaveBodyValues({
-                                          name: bodyNameField.value,
-                                          governanceType: bodyGovernanceTypeField.value,
-                                      });
-                                      setStep(0);
-                                  }
-                                : () => setStep(step + 1)
-                        }
-                    >
+                    <Button onClick={step === 2 ? handleSave : () => setStep(step + 1)}>
                         {step === 2 ? 'Save' : 'Next'}
                     </Button>
                 </div>
