@@ -29,6 +29,8 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
 
+    const [addressInput, setAddressInput] = useState<string | undefined>('');
+
     const handleStepContent = (step: number) => {
         switch (step) {
             case 0:
@@ -105,9 +107,10 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                         >
                             <div className="flex gap-4 rounded-xl border border-neutral-100 p-6">
                                 <AddressInput
+                                    value={addressInput}
+                                    onChange={setAddressInput}
                                     className="flex-grow"
                                     label="Address"
-                                    value="0x32c2FE388ABbB3e678D44DF6a0471086D705316a"
                                 />
                                 <InputNumber label="Tokens" value={5} />
                             </div>
