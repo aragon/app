@@ -86,7 +86,13 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                             helpText="Import or create a new ERC-20 token, which is used for this Token Voting Plugin"
                             value="createToken"
                         >
-                            <RadioCard className="w-full" label="Import token" description="" value="importToken" />
+                            <RadioCard
+                                disabled={true}
+                                className="w-full"
+                                label="Import token"
+                                description=""
+                                value="importToken"
+                            />
                             <RadioCard className="w-full" label="Create new token" description="" value="createToken" />
                         </RadioGroup>
                         <InputText
@@ -111,7 +117,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                                     onChange={setAddressInput}
                                     className="flex-grow"
                                     label="Address"
-                                    placeholder="Enter ENS or address"
+                                    placeholder="ENS or 0x…"
                                     chainId={1}
                                 />
                                 <InputNumber label="Tokens" value={5} />
