@@ -111,6 +111,8 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                                     onChange={setAddressInput}
                                     className="flex-grow"
                                     label="Address"
+                                    placeholder="Enter ENS or address"
+                                    chainId={1}
                                 />
                                 <InputNumber label="Tokens" value={5} />
                             </div>
