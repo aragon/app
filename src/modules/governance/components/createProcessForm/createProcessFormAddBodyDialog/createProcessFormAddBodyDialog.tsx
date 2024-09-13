@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     AddressInput,
     Button,
@@ -17,6 +18,8 @@ export interface ICreateProcessFormAddBodyDialogProps {
     handleSaveBodyValues: (value: any) => void;
     bodyNameField: any;
     bodyGovernanceTypeField: any;
+    tokenNameField: any;
+    tokenSymbolField: any;
 }
 
 export interface ICreateProcessFormBodyValues {
@@ -25,7 +28,7 @@ export interface ICreateProcessFormBodyValues {
 }
 
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
-    const { bodyNameField, handleSaveBodyValues, bodyGovernanceTypeField } = props;
+    const { bodyNameField, handleSaveBodyValues, bodyGovernanceTypeField, tokenNameField, tokenSymbolField } = props;
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
 
@@ -96,14 +99,14 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                             <RadioCard className="w-full" label="Create new token" description="" value="createToken" />
                         </RadioGroup>
                         <InputText
-                            label="Name"
                             placeholder="Enter a name"
                             helpText="The full name of the token. For example:Uniswap"
+                            {...tokenNameField}
                         />
                         <InputText
-                            label="Symbol"
                             placeholder="Enter a symbol"
                             helpText="The abbreviation of the token. For example: UNI"
+                            {...tokenSymbolField}
                         />
                         <InputContainer
                             id="distribute"
@@ -115,12 +118,12 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                                 <AddressInput
                                     value={addressInput}
                                     onChange={setAddressInput}
-                                    className="flex-grow"
+                                    className="grow"
                                     label="Address"
                                     placeholder="ENS or 0x…"
                                     chainId={1}
                                 />
-                                <InputNumber label="Tokens" value={5} />
+                                <InputNumber label="Tokens" defaultValue={0} />
                             </div>
                         </InputContainer>
                     </>
