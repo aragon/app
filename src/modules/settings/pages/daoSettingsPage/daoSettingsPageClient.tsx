@@ -6,9 +6,9 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Card, Dialog, IllustrationObject } from '@aragon/ods';
+import { useState } from 'react';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
-import { useState } from 'react';
 
 export interface IDaoSettingsPageClientProps {
     /**
