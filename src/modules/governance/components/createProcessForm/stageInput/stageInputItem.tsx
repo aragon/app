@@ -191,14 +191,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     {fields.length > 0 && (
                         <div className="flex flex-col gap-3 md:gap-2">
                             {fields.map((field, index) => (
-                                <Accordion.Container
-                                    isMulti={true}
-                                    className="rounded-xl border border-neutral-100 md:gap-3"
-                                    key={field.id}
-                                >
+                                <Accordion.Container isMulti={true} key={field.id}>
                                     <Accordion.Item value={field.id}>
                                         <Accordion.ItemHeader>{field.name}</Accordion.ItemHeader>
-                                        <Accordion.ItemContent className="flex flex-col gap-y-3">
+                                        <Accordion.ItemContent>
                                             <DefinitionList.Container className="w-full">
                                                 <DefinitionList.Item term="Body ID">{field.id}</DefinitionList.Item>
                                             </DefinitionList.Container>
