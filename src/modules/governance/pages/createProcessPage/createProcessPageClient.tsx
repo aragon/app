@@ -1,6 +1,5 @@
 'use client';
 
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
@@ -28,7 +27,6 @@ const defaultStage: ICreateProcessFormStage = {
 export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = (props) => {
     const { daoId } = props;
 
-    const { open } = useDialogContext();
     const { t } = useTranslations();
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {

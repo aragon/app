@@ -1,4 +1,3 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType } from '@aragon/ods';
 import { useFieldArray } from 'react-hook-form';
 import type { IStageInputProps, IStageInputResource } from './stageInput.api';
@@ -9,7 +8,6 @@ export type StageInputBaseForm = Record<string, IStageInputResource[]>;
 export const StageInput: React.FC<IStageInputProps> = (props) => {
     const { name } = props;
 
-    const { t } = useTranslations();
     const { fields, append, remove } = useFieldArray<StageInputBaseForm>({ name });
 
     return (
