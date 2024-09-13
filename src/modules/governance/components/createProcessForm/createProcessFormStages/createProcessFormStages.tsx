@@ -5,7 +5,7 @@ export interface ICreateProcessFormStagesProps {}
 export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = () => {
     return (
         <div className="flex flex-col gap-10">
-            <StageInput name="stage" />
+            <StageInput name="stages" />
         </div>
     );
 };
