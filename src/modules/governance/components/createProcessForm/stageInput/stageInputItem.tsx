@@ -51,6 +51,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
 
     const bodyFieldArrayName = `${name}.${index}.body`;
     const { fields, append: appendBody, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
+    console.log('FIELDSS', fields);
 
     const nameFieldName = `${name}.${index}.name`;
     const nameField = useFormField<StageInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
@@ -111,6 +112,18 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         },
     );
 
+    const tokenNameFieldName = `${name}.${index}.tokenName`;
+    const tokenNameField = useFormField<StageInputItemBaseForm, typeof tokenNameFieldName>(tokenNameFieldName, {
+        label: 'Name',
+        defaultValue: '',
+    });
+
+    const tokenSymbolFieldName = `${name}.${index}.tokenSymbol`;
+    const tokenSymbolField = useFormField<StageInputItemBaseForm, typeof tokenSymbolFieldName>(tokenSymbolFieldName, {
+        label: 'Symbol',
+        defaultValue: '',
+    });
+
     const handleSaveTimingValues = (values: ICreateProcessFormTimingValues) => {
         setValue(votingPeriodFieldName, values.votingPeriod);
         setValue(earlyStageFieldName, values.earlyStage);
@@ -119,7 +132,16 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     };
 
     const handleSaveBodyValues = (values: ICreateProcessFormBodyValues) => {
-        appendBody({ name: values.name, governanceType: values.governanceType });
+        appendBody({
+            name: values.name,
+            governanceType: values.governanceType,
+            tokenName: tokenNameField.value,
+            tokenSymbol: tokenSymbolField.value,
+        });
+        setValue(bodyNameFieldName, '');
+        setValue(bodyGovernanceTypeFieldName, 'tokenVoting');
+        setValue(tokenNameFieldName, '');
+        setValue(tokenSymbolFieldName, '');
         setIsBodyDialogOpen(false);
     };
 
@@ -189,7 +211,12 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                         </Accordion.ItemHeader>
                                         <Accordion.ItemContent>
                                             <DefinitionList.Container className="w-full">
-                                                <DefinitionList.Item term="Body ID">{field.id}</DefinitionList.Item>
+                                                <DefinitionList.Item term="Token name">
+                                                    {field.tokenName}
+                                                </DefinitionList.Item>
+                                                <DefinitionList.Item term="Token symbol">
+                                                    {field.tokenSymbol}
+                                                </DefinitionList.Item>
                                             </DefinitionList.Container>
                                             <div className="flex w-full grow">
                                                 <Button
@@ -231,6 +258,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     handleSaveBodyValues={handleSaveBodyValues}
                     bodyNameField={bodyNameField}
                     bodyGovernanceTypeField={bodyGovernanceTypeField}
+                    tokenSymbolField={tokenSymbolField}
+                    tokenNameField={tokenNameField}
                 />
                 <div className="flex self-end">
                     <Dropdown.Container

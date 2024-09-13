@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     AddressInput,
     Button,
@@ -9,7 +10,7 @@ import {
     RadioCard,
     RadioGroup,
 } from '@aragon/ods';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export interface ICreateProcessFormBodyValues {
     /**
@@ -20,6 +21,14 @@ export interface ICreateProcessFormBodyValues {
      * The governance type of the body.
      */
     governanceType: string;
+    /**
+     * The name of the token.
+     */
+    tokenName: string;
+    /**
+     * The symbol of the token.
+     */
+    tokenSymbol: string;
 }
 
 export interface ICreateProcessFormAddBodyDialogProps {
@@ -43,26 +52,27 @@ export interface ICreateProcessFormAddBodyDialogProps {
      * The body governance type field.
      */
     bodyGovernanceTypeField: any;
+    /**
+     * The token name field.
+     */
+    tokenNameField: any;
+    /**
+     * The token symbol field
+     */
+    tokenSymbolField: any;
 }
 
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
-    const { bodyNameField, handleSaveBodyValues, bodyGovernanceTypeField } = props;
+    const { bodyNameField, handleSaveBodyValues, bodyGovernanceTypeField, tokenNameField, tokenSymbolField } = props;
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
-    const [bodyName, setBodyName] = useState('');
-    const [bodyGovernanceType, setBodyGovernanceType] = useState('tokenVoting');
-
-    useEffect(() => {
-        if (isBodyDialogOpen) {
-            setBodyName('');
-            setBodyGovernanceType('tokenVoting');
-        }
-    }, [isBodyDialogOpen, bodyNameField.value, bodyGovernanceTypeField.value]);
 
     const handleSave = () => {
         handleSaveBodyValues({
-            name: bodyName,
-            governanceType: bodyGovernanceType,
+            name: bodyNameField.value,
+            governanceType: bodyGovernanceTypeField.value,
+            tokenName: tokenNameField.value,
+            tokenSymbol: tokenSymbolField.value,
         });
         setStep(0);
         setIsBodyDialogOpen(false);
@@ -78,14 +88,12 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                         <InputText
                             placeholder="Enter a name"
                             helpText="Give modules a name so members are able to recognise which body is participating."
-                            value={bodyName}
-                            onChange={(e) => setBodyName(e.target.value)}
+                            {...bodyNameField}
                         />
                         <RadioGroup
                             className="flex gap-4"
                             helpText="What kind of governance would you like to add?"
-                            value={bodyGovernanceType}
-                            onValueChange={setBodyGovernanceType}
+                            {...bodyGovernanceTypeField}
                         >
                             <RadioCard
                                 className="w-full"
@@ -136,14 +144,14 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                             <RadioCard className="w-full" label="Create new token" description="" value="createToken" />
                         </RadioGroup>
                         <InputText
-                            label="Name"
                             placeholder="Enter a name"
                             helpText="The full name of the token. For example:Uniswap"
+                            {...tokenNameField}
                         />
                         <InputText
-                            label="Symbol"
                             placeholder="Enter a symbol"
                             helpText="The abbreviation of the token. For example: UNI"
+                            {...tokenSymbolField}
                         />
                         <InputContainer
                             id="distribute"
@@ -155,12 +163,12 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                                 <AddressInput
                                     value={addressInput}
                                     onChange={setAddressInput}
-                                    className="flex-grow"
+                                    className="grow"
                                     label="Address"
                                     placeholder="ENS or 0x…"
                                     chainId={1}
                                 />
-                                <InputNumber label="Tokens" value={5} />
+                                <InputNumber label="Tokens" defaultValue={0} />
                             </div>
                         </InputContainer>
                     </>
