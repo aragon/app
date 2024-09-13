@@ -22,7 +22,7 @@ import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import {
     CreateProcessFormAddBodyDialog,
-    ICreateProcessFormBodyValues,
+    type ICreateProcessFormBodyValues,
 } from '../createProcessFormAddBodyDialog/createProcessFormAddBodyDialog';
 
 export interface IStageInputItemProps {

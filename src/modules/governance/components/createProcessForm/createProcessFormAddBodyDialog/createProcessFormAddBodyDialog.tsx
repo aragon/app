@@ -68,6 +68,8 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         setIsBodyDialogOpen(false);
     };
 
+    const [addressInput, setAddressInput] = useState<string | undefined>('');
+
     const handleStepContent = (step: number) => {
         switch (step) {
             case 0:
@@ -124,7 +126,13 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                             helpText="Import or create a new ERC-20 token, which is used for this Token Voting Plugin"
                             value="createToken"
                         >
-                            <RadioCard className="w-full" label="Import token" description="" value="importToken" />
+                            <RadioCard
+                                disabled={true}
+                                className="w-full"
+                                label="Import token"
+                                description=""
+                                value="importToken"
+                            />
                             <RadioCard className="w-full" label="Create new token" description="" value="createToken" />
                         </RadioGroup>
                         <InputText
@@ -145,9 +153,12 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                         >
                             <div className="flex gap-4 rounded-xl border border-neutral-100 p-6">
                                 <AddressInput
+                                    value={addressInput}
+                                    onChange={setAddressInput}
                                     className="flex-grow"
                                     label="Address"
-                                    value="0x32c2FE388ABbB3e678D44DF6a0471086D705316a"
+                                    placeholder="ENS or 0x…"
+                                    chainId={1}
                                 />
                                 <InputNumber label="Tokens" value={5} />
                             </div>

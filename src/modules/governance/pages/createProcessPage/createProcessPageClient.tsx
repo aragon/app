@@ -5,7 +5,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
-import { ICreateProcessFormData, ICreateProcessFormStage } from '../../components/createProcessForm';
+import type { ICreateProcessFormData, ICreateProcessFormStage } from '../../components/createProcessForm';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
 
@@ -19,7 +19,7 @@ export interface ICreateProcessPageClientProps {
 const defaultStage: ICreateProcessFormStage = {
     name: '',
     type: 'normal',
-    votingPeriod: { days: 0, minutes: 0, hours: 0 },
+    votingPeriod: { days: 7, minutes: 0, hours: 0 },
     earlyStageAdvance: false,
     stageExpiration: false,
     votingBodies: [],
