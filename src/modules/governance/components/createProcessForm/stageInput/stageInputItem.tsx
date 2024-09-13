@@ -2,7 +2,6 @@ import {
     CreateProcessFormTimingDialog,
     type ICreateProcessFormTimingValues,
 } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog/createProcessFormTimingDialog';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { type IDateDuration } from '@/shared/utils/dateUtils';
 import {
@@ -52,10 +51,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
 
     const bodyFieldArrayName = `${name}.${index}.body`;
     const { fields, append: appendBody, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
-
-    console.log('FIELDSSS', fields);
-
-    const { t } = useTranslations();
 
     const nameFieldName = `${name}.${index}.name`;
     const nameField = useFormField<StageInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
