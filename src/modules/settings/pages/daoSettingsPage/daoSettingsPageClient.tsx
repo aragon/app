@@ -68,23 +68,25 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                         and only allow to execute what it’s right for certain decisions 😉
                     </p>
                     <div className="flex flex-col gap-4">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
                             <IllustrationObject className="size-16" object="LABELS" />
-                            <p className="text-lg font-normal leading-normal text-neutral-800">
+                            <p className="grow text-lg font-normal leading-normal text-neutral-800">
                                 Describe governance process
                             </p>
                             <p className="text-base font-normal leading-normal text-neutral-500">Step 1</p>
                         </div>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
                             <IllustrationObject className="size-16" object="USERS" />
-                            <p className="text-lg font-normal leading-normal text-neutral-800">
+                            <p className="grow text-lg font-normal leading-normal text-neutral-800">
                                 Setup governance process
                             </p>
                             <p className="text-base font-normal leading-normal text-neutral-500">Step 2</p>
                         </div>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
                             <IllustrationObject className="size-16" object="SETTINGS" />
-                            <p className="text-lg font-normal leading-normal text-neutral-800">Manage permissions</p>
+                            <p className="grow text-lg font-normal leading-normal text-neutral-800">
+                                Manage permissions
+                            </p>
                             <p className="text-base font-normal leading-normal text-neutral-500">Step 3</p>
                         </div>
                     </div>
