@@ -78,6 +78,11 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         votingPeriodFieldName,
         {
             label: 'Voting Period',
+            defaultValue: {
+                days: 7,
+                hours: 0,
+                minutes: 0,
+            },
         },
     );
 
