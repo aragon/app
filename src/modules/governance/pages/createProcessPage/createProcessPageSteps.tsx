@@ -28,10 +28,10 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
             >
                 <CreateProcessForm.Metadata />
             </Wizard.Step>
-            <Wizard.Step title="Setup governance process" description="Bla bla bla" {...processesStep}>
+            <Wizard.Step title="Setup governance process" description="TBD" {...processesStep}>
                 <CreateProcessForm.Stages />
             </Wizard.Step>
-            <Wizard.Step title="Manage permissions" description="Bla bla bla" {...permissionsStep}>
+            <Wizard.Step title="Manage permissions" description="TBD" {...permissionsStep}>
                 <CreateProcessForm.Permissions />
             </Wizard.Step>
         </>
