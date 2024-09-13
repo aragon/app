@@ -51,7 +51,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
 
     const bodyFieldArrayName = `${name}.${index}.body`;
     const { fields, append: appendBody, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
-    console.log('FIELDSS', fields);
 
     const nameFieldName = `${name}.${index}.name`;
     const nameField = useFormField<StageInputItemBaseForm, typeof nameFieldName>(nameFieldName, {

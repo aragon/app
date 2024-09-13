@@ -187,7 +187,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             onOpenChange={() => setIsBodyDialogOpen(false)}
         >
             <Dialog.Header title="Add voting body" />
-            <Dialog.Content className="flex flex-col gap-6">
+            <Dialog.Content className="flex flex-col gap-6 pb-1.5">
                 {handleStepContent(step)}
                 <div className="flex w-full justify-between">
                     <Button

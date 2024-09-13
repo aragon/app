@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { IDateDuration } from '@/shared/utils/dateUtils';
+import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/ods';
 import { useState } from 'react';
 
