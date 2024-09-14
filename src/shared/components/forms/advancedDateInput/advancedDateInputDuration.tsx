@@ -12,12 +12,11 @@ export interface IAdvancedDateInputDurationProps
         ComponentProps<'div'> {}
 
 export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
-    const { minDuration, field, label, infoText, validateMinDuration, className, ...otherProps } = props;
+    const { minDuration, field, label, infoText, className, ...otherProps } = props;
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
-    const validateDuration = (value: IDateDuration) =>
-        validateMinDuration ? dateUtils.validateDuration({ value, minDuration }) : true;
+    const validateDuration = (value: IDateDuration) => dateUtils.validateDuration({ value, minDuration });
 
     const durationField = useFormField<Record<string, IDateDuration>, typeof field>(field, {
         rules: { validate: validateDuration },
@@ -39,7 +38,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     const alertVariant = durationField.alert != null ? 'critical' : 'info';
 
     return (
-        <Card className={classNames('flex flex-col gap-4 p-6', className)} {...otherProps}>
+        <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputNumber
                     label={t('app.shared.advancedDateInput.duration.minutes')}
@@ -50,6 +49,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     value={durationField.value.minutes}
                     onChange={handleDurationChange('minutes')}
                     onBlur={handleInputBlur}
+                    suffix="min"
                 />
                 <InputNumber
                     label={t('app.shared.advancedDateInput.duration.hours')}
@@ -60,6 +60,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     value={durationField.value.hours}
                     onChange={handleDurationChange('hours')}
                     onBlur={handleInputBlur}
+                    suffix="h"
                 />
                 <InputNumber
                     label={t('app.shared.advancedDateInput.duration.days')}
@@ -69,6 +70,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     value={durationField.value.days}
                     onChange={handleDurationChange('days')}
                     onBlur={handleInputBlur}
+                    suffix="d"
                 />
             </div>
             {alertDescription && <AlertCard message={label} description={alertDescription} variant={alertVariant} />}

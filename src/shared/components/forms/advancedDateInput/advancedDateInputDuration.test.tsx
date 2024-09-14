@@ -9,7 +9,6 @@ describe('<AdvancedDateInputDuration /> component', () => {
             field: 'startTime',
             label: 'Test Label',
             minDuration: { days: 0, hours: 1, minutes: 0 },
-            validateMinDuration: true,
             ...props,
         };
 
@@ -23,8 +22,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
     it('validates duration input with minimum 1 hour', async () => {
         const label = 'Duration';
         const infoText = 'Minimum duration is 1 hour';
-        const validateMinDuration = true;
-        render(createTestComponent({ label, infoText, validateMinDuration }));
+        render(createTestComponent({ label, infoText }));
 
         const minutesInput = screen.getByLabelText(/shared.advancedDateInput.duration.minutes/);
         const hoursInput = screen.getByLabelText(/shared.advancedDateInput.duration.hours/);
@@ -60,12 +58,12 @@ describe('<AdvancedDateInputDuration /> component', () => {
         await userEvent.clear(minutesInput);
         await userEvent.type(minutesInput, '60');
 
-        expect(minutesInput).toHaveValue('6');
+        expect(minutesInput).toHaveValue('6 min');
 
         // Try to set hours to 24. Only 2 should be accepted
         await userEvent.clear(hoursInput);
         await userEvent.type(hoursInput, '24');
 
-        expect(hoursInput).toHaveValue('2');
+        expect(hoursInput).toHaveValue('2 h');
     });
 });

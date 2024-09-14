@@ -6,7 +6,7 @@ import { AdvancedDateInputDuration } from './advancedDateInputDuration';
 import { AdvancedDateInputFixed } from './advancedDateInputFixed';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
-    const { useDuration = false, label, helpText, minDuration, field, infoText, minTime, validateMinDuration } = props;
+    const { useDuration = false, label, helpText, minDuration, field, infoText, minTime } = props;
     const { t } = useTranslations();
 
     const dateModeFieldName = `${field}Mode`;
@@ -23,7 +23,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
         : t('app.shared.advancedDateInput.now');
 
     return (
-        <>
+        <div className="flex flex-col gap-2">
             <RadioGroup
                 className="flex gap-4 md:!flex-row"
                 helpText={helpText}
@@ -50,7 +50,6 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     infoText={infoText}
                     minDuration={minDuration}
                     minTime={minTime}
-                    validateMinDuration={validateMinDuration}
                 />
             )}
             {inputModeField.value === 'duration' && (
@@ -59,9 +58,8 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     label={label}
                     infoText={infoText}
                     minDuration={minDuration}
-                    validateMinDuration={validateMinDuration}
                 />
             )}
-        </>
+        </div>
     );
 };
