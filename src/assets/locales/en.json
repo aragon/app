@@ -372,10 +372,20 @@
           "description": "There was an error loading the votes. Please try again later.",
           "title": "Error loading votes"
         }
+      },
+      "voteOnProposalDialog": {
+        "button": {
+          "submit": "Submit vote"
+        },
+        "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
+        "title": "Submit vote"
       }
     },
     "plugins": {
       "multisig": {
+        "multisigApprovalProposal": {
+          "button": "Approve"
+        },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
@@ -467,6 +477,19 @@
         },
         "tokenVoteList": {
           "entity": "Votes"
+        },
+        "tokenVoteOptions": {
+          "button": "Vote on proposal",
+          "options": {
+            "abstain": "Abstain",
+            "buttons": {
+              "cancel": "Cancel",
+              "submit": "Submit vote"
+            },
+            "label": "Choose your option",
+            "no": "No",
+            "yes": "Yes"
+          }
         }
       }
     },

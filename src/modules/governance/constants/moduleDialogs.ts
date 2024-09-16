@@ -1,6 +1,6 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
-import { SubmitVoteDialog } from '../dialogs/submitVoteDialog';
+import { VoteOnProposalDialog } from '../dialogs/voteOnProposalDialog';
 
 export enum GovernanceDialogs {
     PUBLISH_PROPOSAL = 'PUBLISH_PROPOSAL',
@@ -14,8 +14,8 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
         description: 'app.governance.publishProposalDialog.description',
     },
     [GovernanceDialogs.VOTE_ON_PROPOSAL]: {
-        Component: SubmitVoteDialog,
-        title: 'Submit vote',
-        description: 'To submit your vote you have to confirm the onchain transaction with your wallet.',
+        Component: VoteOnProposalDialog,
+        title: 'app.governance.VoteOnProposalDialog.title',
+        description: 'app.governance.VoteOnProposalDialog.description',
     },
 };

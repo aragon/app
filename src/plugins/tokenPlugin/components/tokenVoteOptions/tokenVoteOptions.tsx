@@ -1,6 +1,7 @@
 import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
-import { type ISubmitVoteParams } from '@/modules/governance/dialogs/submitVoteDialog';
+import type { IVoteOnProposalDialogParams } from '@/modules/governance/dialogs/voteOnProposalDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Card, RadioCard, RadioGroup } from '@aragon/ods';
 import { useState } from 'react';
 
@@ -12,6 +13,7 @@ export interface ITokenVoteOptionsProps {
 }
 
 export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
+    const { t } = useTranslations();
     const { daoId } = props;
     const [showOptions, setShowOptions] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
@@ -24,7 +26,7 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
     };
 
     const handleOpenDialog = () => {
-        const params: ISubmitVoteParams = { daoId };
+        const params: IVoteOnProposalDialogParams = { daoId };
         open(GovernanceDialogs.VOTE_ON_PROPOSAL, { params });
     };
 
@@ -32,26 +34,42 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
         <div className="flex flex-col gap-4 pt-4">
             {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
-                    <RadioGroup label="Choose your option" value={selectedOption} onValueChange={setSelectedOption}>
-                        <RadioCard label="Yes" description="" value="yes" />
-                        <RadioCard label="Abstain" description="" value="abstain" />
-                        <RadioCard label="No" description="" value="no" />
+                    <RadioGroup
+                        label={t('app.plugins.token.tokenVoteOptions.options.label')}
+                        value={selectedOption}
+                        onValueChange={setSelectedOption}
+                    >
+                        <RadioCard
+                            label={t('app.plugins.token.tokenVoteOptions.options.yes')}
+                            description=""
+                            value="yes"
+                        />
+                        <RadioCard
+                            label={t('app.plugins.token.tokenVoteOptions.options.abstain')}
+                            description=""
+                            value="abstain"
+                        />
+                        <RadioCard
+                            label={t('app.plugins.token.tokenVoteOptions.options.no')}
+                            description=""
+                            value="no"
+                        />
                     </RadioGroup>
                 </Card>
             )}
             {!showOptions && (
                 <Button className="w-fit" onClick={() => setShowOptions(true)}>
-                    Vote on proposal
+                    {t('app.plugins.token.tokenVoteOptions.button')}
                 </Button>
             )}
 
             {showOptions && (
                 <div className="flex gap-4">
                     <Button onClick={handleOpenDialog} disabled={!selectedOption} size="md" variant="primary">
-                        Submit vote
+                        {t('app.plugins.token.tokenVoteOptions.options.buttons.submit')}
                     </Button>
                     <Button size="md" variant="tertiary" onClick={onCancel}>
-                        Cancel
+                        {t('app.plugins.token.tokenVoteOptions.options.buttons.cancel')}
                     </Button>
                 </div>
             )}

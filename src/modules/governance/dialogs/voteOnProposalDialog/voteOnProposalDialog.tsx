@@ -4,21 +4,24 @@ import {
     TransactionDialog,
     TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { invariant } from '@aragon/ods';
 import { useAccount } from 'wagmi';
 
-export interface ISubmitVoteParams {
+export interface IVoteOnProposalDialogParams {
     /**
      * ID of the DAO to create the proposal for.
      */
     daoId: string;
 }
 
-export interface ISubmitVoteDialogProps extends IDialogComponentProps<ISubmitVoteParams> {}
+export interface IVoteOnProposalDialogProps extends IDialogComponentProps<IVoteOnProposalDialogParams> {}
 
-export const SubmitVoteDialog: React.FC<ISubmitVoteDialogProps> = (props) => {
+export const VoteOnProposalDialog: React.FC<IVoteOnProposalDialogProps> = (props) => {
+    const { t } = useTranslations();
+
     const { location } = props;
 
     invariant(location.params != null, 'SubmitVoteDialog: required parameters must be set.');
@@ -37,9 +40,9 @@ export const SubmitVoteDialog: React.FC<ISubmitVoteDialogProps> = (props) => {
 
     return (
         <TransactionDialog
-            title="Submit vote"
-            description="To submit your vote you have to confirm the onchain transaction with your wallet."
-            submitLabel="Submit vote"
+            title={t('app.governance.voteOnProposalDialog.title')}
+            description={t('app.governance.voteOnProposalDialog.description')}
+            submitLabel={t('app.governance.voteOnProposalDialog.button.submit')}
             successLink={{ label: 'View vote', href: '/governance/proposal/1' }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction as any}
