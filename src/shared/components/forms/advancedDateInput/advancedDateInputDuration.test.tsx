@@ -9,6 +9,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
             field: 'startTime',
             label: 'Test Label',
             minDuration: { days: 0, hours: 1, minutes: 0 },
+            validateMinDuration: true,
             ...props,
         };
 
@@ -22,7 +23,9 @@ describe('<AdvancedDateInputDuration /> component', () => {
     it('validates duration input with minimum 1 hour', async () => {
         const label = 'Duration';
         const infoText = 'Minimum duration is 1 hour';
-        render(createTestComponent({ label, infoText }));
+        const validateMinDuration = true;
+
+        render(createTestComponent({ label, infoText, validateMinDuration }));
 
         const minutesInput = screen.getByLabelText(/shared.advancedDateInput.duration.minutes/);
         const hoursInput = screen.getByLabelText(/shared.advancedDateInput.duration.hours/);

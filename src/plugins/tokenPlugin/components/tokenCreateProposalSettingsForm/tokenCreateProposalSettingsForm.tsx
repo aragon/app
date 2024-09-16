@@ -52,6 +52,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
                 useDuration={true}
                 minDuration={parsedMinDuration}
                 minTime={minEndTime}
+                validateMinDuration={true}
             />
         </>
     );

@@ -6,7 +6,7 @@ import { AdvancedDateInputDuration } from './advancedDateInputDuration';
 import { AdvancedDateInputFixed } from './advancedDateInputFixed';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
-    const { useDuration = false, label, helpText, minDuration, field, infoText, minTime } = props;
+    const { useDuration = false, label, helpText, minDuration, field, infoText, minTime, validateMinDuration } = props;
     const { t } = useTranslations();
 
     const dateModeFieldName = `${field}Mode`;
@@ -50,6 +50,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     infoText={infoText}
                     minDuration={minDuration}
                     minTime={minTime}
+                    validateMinDuration={validateMinDuration}
                 />
             )}
             {inputModeField.value === 'duration' && (
@@ -58,6 +59,7 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
                     label={label}
                     infoText={infoText}
                     minDuration={minDuration}
+                    validateMinDuration={validateMinDuration}
                 />
             )}
         </div>

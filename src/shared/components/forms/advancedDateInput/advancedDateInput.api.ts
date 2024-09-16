@@ -23,6 +23,10 @@ export interface IAdvancedDateInputBaseProps {
      * Minimum time for fixed input.
      */
     minTime: DateTime;
+    /**
+     * Validates that the selected date is valid usign the minDuration property when set to true.
+     */
+    validateMinDuration?: boolean;
 }
 
 export interface IAdvancedDateInputProps extends IAdvancedDateInputBaseProps, Pick<IInputContainerProps, 'helpText'> {

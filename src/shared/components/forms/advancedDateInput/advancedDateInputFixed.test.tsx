@@ -33,7 +33,9 @@ describe('<AdvancedDateInputFixed /> component', () => {
         const infoText = 'End time must be after start time';
         const minDuration = { days: 0, hours: 1, minutes: 0 };
         const label = 'End Time';
-        render(createTestComponent({ label, infoText, minDuration, minTime }));
+        const validateMinDuration = true;
+
+        render(createTestComponent({ label, infoText, minDuration, minTime, validateMinDuration }));
 
         const dateInput = screen.getByLabelText(/advancedDateInput.fixed.date/);
         const timeInput = screen.getByLabelText(/advancedDateInput.fixed.time/);

@@ -12,7 +12,7 @@ import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 export interface IAdvancedDateInputFixedProps extends IAdvancedDateInputBaseProps, ComponentProps<'div'> {}
 
 export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (props) => {
-    const { field, label, infoText, minDuration, minTime, className, ...otherProps } = props;
+    const { field, label, infoText, minDuration, minTime, className, validateMinDuration, ...otherProps } = props;
     const { t } = useTranslations();
 
     const { setValue, trigger } = useFormContext();
@@ -20,7 +20,8 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const { days = 0, hours = 0, minutes = 0 } = minDuration ?? {};
     const defaultValue = (minTime ?? DateTime.now()).plus({ days, hours, minutes });
 
-    const validateFixedTime = (value: IDateFixed) => dateUtils.validateFixedTime({ value, minTime, minDuration });
+    const validateFixedTime = (value: IDateFixed) =>
+        dateUtils.validateFixedTime({ value, minTime, minDuration: validateMinDuration ? minDuration : undefined });
 
     const fixedDateField = useFormField<Record<string, IDateFixed>, typeof field>(field, {
         rules: { validate: validateFixedTime },
