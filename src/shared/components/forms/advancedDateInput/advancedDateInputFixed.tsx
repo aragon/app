@@ -21,7 +21,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const defaultValue = (minTime ?? DateTime.now()).plus({ days, hours, minutes });
 
     const validateFixedTime = (value: IDateFixed) =>
-        validateMinDuration ? dateUtils.validateFixedTime({ value, minTime, minDuration }) : true;
+        dateUtils.validateFixedTime({ value, minTime, minDuration: validateMinDuration ? minDuration : undefined });
 
     const fixedDateField = useFormField<Record<string, IDateFixed>, typeof field>(field, {
         rules: { validate: validateFixedTime },
@@ -41,7 +41,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const alertVariant = fixedDateField.alert != null ? 'critical' : 'info';
 
     return (
-        <Card className={classNames('flex flex-col gap-4 p-6', classNames)} {...otherProps}>
+        <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputDate
                     label={t('app.shared.advancedDateInput.fixed.date')}
@@ -60,7 +60,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
                 />
                 <InputText
                     className="w-full md:w-1/3"
-                    label={t('app.shared.advancedDateInput.now')}
+                    label={t('app.shared.advancedDateInput.timezone')}
                     placeholder="UTC +2"
                     disabled={true}
                 />
