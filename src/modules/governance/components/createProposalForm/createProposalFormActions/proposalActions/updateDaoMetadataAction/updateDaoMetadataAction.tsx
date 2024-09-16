@@ -2,24 +2,15 @@ import { CreateDaoForm } from '@/modules/createDao/components/createDaoForm';
 import { ProposalActionType, type IProposalActionUpdateMetadata } from '@/modules/governance/api/governanceService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
 import type { IProposalActionComponentProps } from '@aragon/ods';
 import { useCallback, useEffect } from 'react';
-import { encodeFunctionData, toHex } from 'viem';
+import { encodeFunctionData } from 'viem';
 import type { IProposalActionIndexed } from '../../../createProposalFormDefinitions';
-import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
+import { useCreateProposalFormContext, type PrepareProposalActionFunction } from '../../../createProposalFormProvider';
 
 export interface IUpdateDaoMetadaActionProps
     extends IProposalActionComponentProps<IProposalActionUpdateMetadata & { index: number }> {}
-
-const setMetadataAbi = [
-    {
-        type: 'function',
-        inputs: [{ name: '_metadata', internalType: 'bytes', type: 'bytes' }],
-        name: 'setMetadata',
-        outputs: [],
-        stateMutability: 'nonpayable',
-    },
-];
 
 export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (props) => {
     const { action } = props;
@@ -35,23 +26,17 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
             const { proposedMetadata } = action;
 
             const ipfsResult = await pinJsonAsync({ body: proposedMetadata });
-            // TODO: share toHex function on publishProposalUtils
-            const hexResult = toHex(`ipfs://${ipfsResult.IpfsHash}`);
+            const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
 
-            const data = encodeFunctionData({
-                abi: setMetadataAbi,
-                functionName: 'setMetadata',
-                args: [hexResult],
-            });
+            const data = encodeFunctionData({ abi: ['function setMetadata(bytes _metadata)'], args: [hexResult] });
 
-            return { data };
+            return data;
         },
         [pinJsonAsync],
     );
 
     useEffect(() => {
-        // @ts-expect-error TODO
-        addPrepareAction(ProposalActionType.METADATA_UPDATE, prepareAction);
+        addPrepareAction(ProposalActionType.METADATA_UPDATE, prepareAction as PrepareProposalActionFunction);
     }, [addPrepareAction, prepareAction]);
 
     return <CreateDaoForm.Metadata fieldPrefix={`${fieldName}.proposedMetadata`} />;

@@ -1,6 +1,6 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IDateDuration, IDateFixed } from '@/shared/utils/dateUtils';
-import type { IProposalAction } from '@aragon/ods';
+import type { IProposalAction } from '../../api/governanceService';
 
 export interface IProposalActionIndexed extends IProposalAction {
     /**

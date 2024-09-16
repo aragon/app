@@ -1,5 +1,6 @@
+import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
 import { timeUtils } from '@/test/utils';
-import { ProposalStatus, type IProposalAction } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { generateMultisigProposal } from '../../testUtils';
 import type { IDaoMultisigSettings } from '../../types';
@@ -35,7 +36,7 @@ describe('multisigProposal utils', () => {
             const startDate = DateTime.fromISO('2024-10-15T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-25T09:49:56.868Z').toMillis() / 1000;
             const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: '', inputData: null },
+                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.TRANSFER, inputData: null },
             ];
             const proposal = generateMultisigProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
@@ -68,7 +69,7 @@ describe('multisigProposal utils', () => {
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
             const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: '', inputData: null },
+                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.TRANSFER, inputData: null },
             ];
             const proposal = generateMultisigProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);

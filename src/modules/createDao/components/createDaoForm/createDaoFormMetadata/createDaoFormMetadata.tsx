@@ -1,25 +1,31 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, TextArea } from '@aragon/ods';
+import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormMetadataProps {
     /**
-     * Prefiex to prepend to all the metadata form fields.
+     * Prefix to prepend to all the metadata form fields.
      */
     fieldPrefix?: string;
 }
 
+const nameMaxLength = 128;
+
 export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
     const { fieldPrefix } = props;
 
-    const nameField = useFormField('name', {
-        label: 'Name',
+    const { t } = useTranslations();
+
+    const nameField = useFormField<ICreateDaoFormData, 'name'>('name', {
+        label: t('app.createDao.createDaoForm.metadata.name.label'),
         fieldPrefix,
         rules: { required: true },
         defaultValue: '',
     });
 
-    const descriptionField = useFormField('description', {
-        label: 'Description',
+    const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
+        label: t('app.createDao.createDaoForm.metadata.description.description'),
         fieldPrefix,
         rules: { required: true },
         defaultValue: '',
@@ -28,14 +34,14 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
     return (
         <div className="flex flex-col gap-10">
             <InputText
-                helpText="Maximum of 128 characters"
-                placeholder="Name of the DAO"
-                maxLength={128}
+                helpText={t('app.createDao.createDaoForm.metadata.name.helpNext', { max: nameMaxLength })}
+                placeholder={t('app.createDao.createDaoForm.metadata.name.placeholder')}
+                maxLength={nameMaxLength}
                 {...nameField}
             />
             <TextArea
-                helpText="Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you."
-                placeholder="Description of the DAO"
+                helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}
+                placeholder={t('app.createDao.createDaoForm.metadata.description.placeholder')}
                 {...descriptionField}
             />
         </div>

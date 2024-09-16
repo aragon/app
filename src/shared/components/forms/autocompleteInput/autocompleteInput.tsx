@@ -83,8 +83,10 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
         onInputKeyDown!(event);
         onKeyDown?.(event);
 
-        if (event.key === 'Enter' && activeIndex != null && items[activeIndex] != null) {
-            handleItemSelected(items[activeIndex]);
+        const selectedItem = activeIndex != null ? processedItems[activeIndex] : undefined;
+
+        if (event.key === 'Enter' && selectedItem != null) {
+            handleItemSelected(selectedItem);
             event.preventDefault(); // Prevent default submit behaviour on enter press
         }
     };

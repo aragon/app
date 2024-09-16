@@ -1,5 +1,8 @@
-import { type IProposalAction } from '@aragon/ods';
-import { type IProposalActionUpdateMetadata, ProposalActionType } from '../../api/governanceService';
+import {
+    type IProposalAction,
+    type IProposalActionUpdateMetadata,
+    ProposalActionType,
+} from '../../api/governanceService';
 
 export const defaultTransferAction: IProposalAction = {
     type: ProposalActionType.TRANSFER,

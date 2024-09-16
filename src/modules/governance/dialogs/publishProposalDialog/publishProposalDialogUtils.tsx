@@ -2,10 +2,16 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { invariant, type IProposalAction } from '@aragon/ods';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { invariant } from '@aragon/ods';
 import { DateTime, Duration } from 'luxon';
-import { decodeAbiParameters, type Hex, toHex, type TransactionReceipt } from 'viem';
-import type { ICreateProposalFormData } from '../../components/createProposalForm';
+import { decodeAbiParameters, type Hex, type TransactionReceipt } from 'viem';
+import type { IProposalAction, ProposalActionType } from '../../api/governanceService';
+import type {
+    ICreateProposalFormData,
+    IProposalActionIndexed,
+    PrepareProposalActionFunction,
+} from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
 
@@ -24,6 +30,17 @@ export interface IBuildTransactionParams {
     plugin: IDaoPlugin;
 }
 
+export interface IPrepareActionsParams {
+    /**
+     * List of actions of the proposal.
+     */
+    actions: IProposalActionIndexed[];
+    /**
+     * Partial map of action-type and prepare-action function.
+     */
+    prepareActions?: Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
+}
+
 class PublishProposalDialogUtils {
     prepareMetadata = (formValues: ICreateProposalFormData) => {
         const { title, summary, body: description, resources } = formValues;
@@ -35,7 +52,7 @@ class PublishProposalDialogUtils {
         const { values, metadataCid, plugin } = params;
 
         const actions = this.formToProposalActions(values.actions);
-        const metadata = this.metadataToHex(metadataCid);
+        const metadata = transactionUtils.cidToHex(metadataCid);
         const startDate = this.parseStartDate(values);
         const endDate = this.parseEndDate(values);
 
@@ -65,6 +82,26 @@ class PublishProposalDialogUtils {
         const decodedProposalId = decodedParams[0].toString();
 
         return decodedProposalId;
+    };
+
+    prepareActions = async (params: IPrepareActionsParams) => {
+        const { actions, prepareActions } = params;
+
+        const prepareActionDataPromises = actions.map(async (action) => {
+            const prepareFunction = prepareActions?.[action.type];
+            const actionData = await (prepareFunction != null ? prepareFunction(action) : action.data);
+
+            return actionData;
+        });
+
+        const resolvedActionDataPromises = await Promise.all(prepareActionDataPromises);
+
+        const processedActions = actions.map((action, index) => ({
+            ...action,
+            data: resolvedActionDataPromises[index],
+        }));
+
+        return processedActions;
     };
 
     private parseStartDate = (formValues: ICreateProposalFormData): number => {
@@ -115,8 +152,6 @@ class PublishProposalDialogUtils {
     };
 
     private dateToSeconds = (date: DateTime): number => Math.round(date.toMillis() / 1000);
-
-    private metadataToHex = (metadataUri: string): Hex => toHex(`ipfs://${metadataUri}`);
 
     private formToProposalActions = (actions: IProposalAction[]) =>
         actions.map(({ to, value, data }) => ({ to, value, data }));

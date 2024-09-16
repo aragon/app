@@ -1,6 +1,7 @@
 import { generateToken } from '@/modules/finance/testUtils';
+import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
 import { timeUtils } from '@/test/utils';
-import { ProposalStatus, type IProposalAction } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { generateTokenProposal } from '../../testUtils';
 import { DaoTokenVotingMode, VoteOption, type IDaoTokenSettings, type ITokenProposalOptionVotes } from '../../types';
@@ -36,7 +37,7 @@ describe('tokenProposal utils', () => {
             const startDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toMillis() / 1000;
             const settings = { votingMode: DaoTokenVotingMode.EARLY_EXECUTION } as IDaoTokenSettings['settings'];
             const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: '', inputData: null },
+                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.MINT, inputData: null },
             ];
             const proposal = generateTokenProposal({ startDate, settings, actions });
             timeUtils.setTime(now);
@@ -49,7 +50,7 @@ describe('tokenProposal utils', () => {
             const startDate = DateTime.fromISO('2022-02-05T08:00:00.000Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2022-02-08T08:00:00.000Z').toMillis() / 1000;
             const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: '', inputData: null },
+                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.MINT, inputData: null },
             ];
             const proposal = generateTokenProposal({ startDate, endDate, actions });
             timeUtils.setTime(now);

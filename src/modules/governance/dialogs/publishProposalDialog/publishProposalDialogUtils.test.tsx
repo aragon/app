@@ -44,7 +44,7 @@ describe('publishProposalDialog utils', () => {
 
             const actionBaseValues = { data: '0x123456', to: '0x000', value: '0' };
             const values = generateCreateProposalFormData({
-                actions: [generateProposalActionUpdateMetadata(actionBaseValues)],
+                actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues), index: 0 }],
                 startTimeMode: 'now',
                 endTimeMode: 'fixed',
                 endTimeFixed: { date: '2020-10-10', time: '10:10' },
@@ -177,15 +177,6 @@ describe('publishProposalDialog utils', () => {
         it('parses the given DateTime object to an integer number representing its seconds', () => {
             const date = DateTime.fromISO('2016-05-25T09:08:34.123');
             expect(publishProposalDialogUtils['dateToSeconds'](date)).toEqual(1464167314);
-        });
-    });
-
-    describe('metadataToHex', () => {
-        it('parses the metadata cid to hex format', () => {
-            const metadataCid = 'QmT8PDLFQDWaAUoKw4BYziWQNVKChJY3CGi5eNpECi7ufD';
-            const expectedValue =
-                '0x697066733a2f2f516d543850444c465144576141556f4b773442597a6957514e564b43684a593343476935654e7045436937756644';
-            expect(publishProposalDialogUtils['metadataToHex'](metadataCid)).toEqual(expectedValue);
         });
     });
 

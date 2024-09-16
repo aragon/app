@@ -14,7 +14,7 @@ import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@arag
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import { ProposalActionType } from '../../api/governanceService';
+import type { ProposalActionType } from '../../api/governanceService';
 import type { ICreateProposalFormData, PrepareProposalActionFunction } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -31,6 +31,9 @@ export interface IPublishProposalDialogParams {
      * ID of the DAO to create the proposal for.
      */
     daoId: string;
+    /**
+     * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
+     */
     prepareActions: Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
 }
 
@@ -66,15 +69,21 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         [pinJson, values],
     );
 
-    const handlePrepareTransaction = () => {
+    const handlePrepareTransaction = async () => {
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
         const metadataCid = pinJsonData.IpfsHash;
 
-        const processedActions = values.actions.map((action) => {
-            const prepareActionFunction = prepareActions?.[action.type];
+        const processedActions = await publishProposalDialogUtils.prepareActions({
+            actions: values.actions,
+            prepareActions,
         });
+        const processedValues = { ...values, actions: processedActions };
 
-        return publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin: supportedPlugin });
+        return publishProposalDialogUtils.buildTransaction({
+            values: processedValues,
+            metadataCid,
+            plugin: supportedPlugin,
+        });
     };
 
     const getProposalLink = (txReceipt: TransactionReceipt) => {

@@ -1,6 +1,6 @@
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, CardEmptyState, IconType, type IProposalAction, ProposalActions } from '@aragon/ods';
+import { Button, CardEmptyState, IconType, type ProposalActionComponent, ProposalActions } from '@aragon/ods';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
@@ -15,6 +15,11 @@ export interface ICreateProposalFormActionsProps {
     daoId: string;
 }
 
+const customActionComponents = {
+    [ProposalActionType.TRANSFER]: () => <div>Transfer Assets</div>,
+    [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction as ProposalActionComponent,
+};
+
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
     const { daoId } = props;
 
@@ -26,11 +31,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const { fields: actions, append: addAction } = useFieldArray<ICreateProposalFormData, 'actions'>({
         name: 'actions',
     });
-
-    const customActionComponents = {
-        [ProposalActionType.TRANSFER]: () => <div>Transfer Assets</div>,
-        [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
-    };
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
@@ -47,7 +47,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 />
             )}
             {actions.length > 0 && (
-                // @ts-expect-error TODO update typings
                 <ProposalActions actions={actions} customActionComponents={customActionComponents} />
             )}
             <Button

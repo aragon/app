@@ -1,8 +1,8 @@
 import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
-import { addressUtils, IconType, type IProposalAction } from '@aragon/ods';
+import { addressUtils, IconType } from '@aragon/ods';
 import { forwardRef, useMemo } from 'react';
-import { ProposalActionType } from '../../api/governanceService';
+import { type IProposalAction, ProposalActionType } from '../../api/governanceService';
 import { defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
 
 export interface IActionComposerProps

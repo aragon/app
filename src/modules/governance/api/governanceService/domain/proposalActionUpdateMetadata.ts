@@ -1,6 +1,6 @@
 import { type ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum';
 import { type IDaoLink } from '@/shared/api/daoService';
-import { type IProposalActionUpdateMetadata as OdsIProposalActionUpdateMetadata } from '@aragon/ods';
+import { type IProposalActionUpdateMetadata as IOdsProposalActionUpdateMetadata } from '@aragon/ods';
 
 export interface IProposalActionUpdateMetadataObject {
     /**
@@ -22,7 +22,7 @@ export interface IProposalActionUpdateMetadataObject {
 }
 
 export interface IProposalActionUpdateMetadata
-    extends Omit<OdsIProposalActionUpdateMetadata, 'type' | 'proposedMetadata' | 'existingMetadata'> {
+    extends Omit<IOdsProposalActionUpdateMetadata, 'type' | 'proposedMetadata' | 'existingMetadata'> {
     /**
      * The type of the proposal action.
      */
