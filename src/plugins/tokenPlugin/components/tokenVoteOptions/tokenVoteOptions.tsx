@@ -1,15 +1,31 @@
+import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
+import { type ISubmitVoteParams } from '@/modules/governance/dialogs/submitVoteDialog';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Button, Card, RadioCard, RadioGroup } from '@aragon/ods';
 import { useState } from 'react';
 
-export interface ITokenVoteOptionsProps {}
+export interface ITokenVoteOptionsProps {
+    /**
+     * ID of the DAO to create the proposal for.
+     */
+    daoId: string;
+}
 
-export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = () => {
+export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
+    const { daoId } = props;
     const [showOptions, setShowOptions] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
+
+    const { open } = useDialogContext();
 
     const onCancel = () => {
         setSelectedOption('');
         setShowOptions(false);
+    };
+
+    const handleOpenDialog = () => {
+        const params: ISubmitVoteParams = { daoId };
+        open(GovernanceDialogs.VOTE_ON_PROPOSAL, { params });
     };
 
     return (
@@ -31,7 +47,7 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = () => {
 
             {showOptions && (
                 <div className="flex gap-4">
-                    <Button disabled={!selectedOption} size="md" variant="primary">
+                    <Button onClick={handleOpenDialog} disabled={!selectedOption} size="md" variant="primary">
                         Submit vote
                     </Button>
                     <Button size="md" variant="tertiary" onClick={onCancel}>
