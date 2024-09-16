@@ -12,7 +12,7 @@ import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 export interface IAdvancedDateInputFixedProps extends IAdvancedDateInputBaseProps, ComponentProps<'div'> {}
 
 export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (props) => {
-    const { field, label, infoText, minDuration, minTime, className, validateMinDuration, ...otherProps } = props;
+    const { field, label, infoText, minDuration, minTime, validateMinDuration, className, ...otherProps } = props;
     const { t } = useTranslations();
 
     const { setValue, trigger } = useFormContext();

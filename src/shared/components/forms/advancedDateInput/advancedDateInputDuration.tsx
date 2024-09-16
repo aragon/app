@@ -12,7 +12,7 @@ export interface IAdvancedDateInputDurationProps
         ComponentProps<'div'> {}
 
 export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
-    const { minDuration, field, label, infoText, className, validateMinDuration, ...otherProps } = props;
+    const { minDuration, field, label, infoText, validateMinDuration, className, ...otherProps } = props;
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
