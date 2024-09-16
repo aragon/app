@@ -1,4 +1,5 @@
 import * as usePinJson from '@/shared/api/ipfsService/mutations';
+import { type IDialogLocation } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStep,
     TransactionDialog,
@@ -17,6 +18,7 @@ import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
 import { generateCreateProposalFormData } from '../../testUtils';
 import {
+    type IPublishProposalDialogParams,
     type IPublishProposalDialogProps,
     PublishProposalDialog,
     type PublishProposalStep,
@@ -53,6 +55,18 @@ describe('<PublishProposalDialog /> component', () => {
         (TransactionDialog as jest.Mock).mockClear();
     });
 
+    const generateDialogLocation = (
+        params?: Partial<IPublishProposalDialogParams>,
+    ): IDialogLocation<IPublishProposalDialogParams> => ({
+        id: 'test',
+        params: {
+            values: generateCreateProposalFormData(),
+            daoId: 'test',
+            prepareActions: {},
+            ...params,
+        },
+    });
+
     const createTestComponent = (props?: Partial<IPublishProposalDialogProps>) => {
         const completeProps: IPublishProposalDialogProps = {
             location: { id: 'test' },
@@ -74,23 +88,20 @@ describe('<PublishProposalDialog /> component', () => {
 
     it('throws error when user is not connected', () => {
         testLogger.suppressErrors();
-        const params = { values: generateCreateProposalFormData(), daoId: 'test' };
-        const location = { id: '', params };
+        const location = generateDialogLocation();
         useAccountSpy.mockReturnValue({ address: undefined } as Wagmi.UseAccountReturnType);
         expect(() => render(createTestComponent({ location }))).toThrow();
     });
 
     it('throws error when DAO has no supported plugin', () => {
         testLogger.suppressErrors();
-        const params = { values: generateCreateProposalFormData(), daoId: 'test' };
-        const location = { id: '', params };
+        const location = generateDialogLocation();
         useSupportedDaoPluginSpy.mockReturnValue(undefined);
         expect(() => render(createTestComponent({ location }))).toThrow();
     });
 
     it('renders the dialog title and description', () => {
-        const params = { values: generateCreateProposalFormData(), daoId: 'test' };
-        const location = { id: '', params };
+        const location = generateDialogLocation();
         render(createTestComponent({ location }));
         expect(TransactionDialog).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -103,7 +114,7 @@ describe('<PublishProposalDialog /> component', () => {
 
     it('renders a draft version of the proposal being created', () => {
         const values = generateCreateProposalFormData({ title: 'Proposal title', summary: 'Proposal summary' });
-        const location = { id: '', params: { values, daoId: 'test' } };
+        const location = generateDialogLocation({ values });
         useAccountSpy.mockReturnValue({
             address: '0xD740fd724D616795120BC363316580dAFf41129A',
         } as unknown as Wagmi.UseAccountReturnType);
@@ -133,7 +144,7 @@ describe('<PublishProposalDialog /> component', () => {
             resources: [{ name: 'twitter', url: 'https://x.com/test' }],
             body: '<p>Body</p>',
         });
-        const location = { id: '', params: { values, daoId: 'test' } };
+        const location = generateDialogLocation({ values });
         render(createTestComponent({ location }));
 
         const { customSteps } = (TransactionDialog as jest.Mock).mock.calls[0][0];
@@ -147,17 +158,17 @@ describe('<PublishProposalDialog /> component', () => {
         expect(pinJson).toHaveBeenCalledWith({ body: parsedMetadata }, { onError: errorHandler });
     });
 
-    it('prepares the transaction using the buildTransaction functionality and the hash of the pinned data', () => {
+    it('prepares the transaction using the buildTransaction functionality and the hash of the pinned data', async () => {
         const daoPlugin = generateDaoPlugin();
         const ipfsResult = { IpfsHash: 'test' };
         const values = generateCreateProposalFormData();
         useSupportedDaoPluginSpy.mockReturnValue(daoPlugin);
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultSuccess({ data: ipfsResult }));
-        const location = { id: '', params: { values, daoId: 'test' } };
+        const location = generateDialogLocation({ values });
         render(createTestComponent({ location }));
 
         const { prepareTransaction } = (TransactionDialog as jest.Mock).mock.calls[0][0];
-        act(() => prepareTransaction());
+        await act(() => prepareTransaction());
 
         expect(buildTransactionSpy).toHaveBeenCalledWith({
             values,
@@ -174,7 +185,7 @@ describe('<PublishProposalDialog /> component', () => {
         useSupportedDaoPluginSpy.mockReturnValue(plugin);
         getProposalIdSpy.mockReturnValue(proposalId);
 
-        const location = { id: '', params: { values: generateCreateProposalFormData(), daoId } };
+        const location = generateDialogLocation({ daoId });
         render(createTestComponent({ location }));
 
         const { successLink } = (TransactionDialog as jest.Mock).mock.calls[0][0];

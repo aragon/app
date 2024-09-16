@@ -8,7 +8,6 @@ import { useCallback, useMemo, useState } from 'react';
 import type { ProposalActionType } from '../../api/governanceService';
 import {
     CreateProposalForm,
-    type ICreateProposalFormContext,
     type ICreateProposalFormData,
     type PrepareProposalActionFunction,
 } from '../../components/createProposalForm';
@@ -30,7 +29,9 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
     const { t } = useTranslations();
 
-    const [prepareActions, setPrepareActions] = useState<ICreateProposalFormContext['prepareActions']>({});
+    const [prepareActions, setPrepareActions] = useState<
+        Partial<Record<ProposalActionType, PrepareProposalActionFunction>>
+    >({});
 
     const addPrepareAction = useCallback(
         (type: ProposalActionType, prepareAction: PrepareProposalActionFunction) =>

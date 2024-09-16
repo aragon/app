@@ -6,7 +6,7 @@ export interface IProposalActionUpdateMetadataObject {
     /**
      * The logo of the DAO.
      */
-    logo: string;
+    logo?: string;
     /**
      * The name of the DAO.
      */

@@ -30,8 +30,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
 
     const defaultMetadaAction = useMemo(() => {
         const { avatar, name, description, links } = dao!;
-        // TODO: updates types to make logo optional
-        const existingMetadata = { logo: avatar!, name, description, links };
+        const existingMetadata = { logo: avatar, name, description, links };
 
         return {
             to: dao!.address,

@@ -150,10 +150,12 @@ class ProposalActionUtils {
             type: this.actionTypeMapping[type],
             proposedMetadata: {
                 ...proposedMetadata,
+                logo: proposedMetadata.logo ?? '',
                 links: normalizeLinks(proposedMetadata.links),
             },
             existingMetadata: {
                 ...existingMetadata,
+                logo: existingMetadata.logo ?? '',
                 links: normalizeLinks(existingMetadata.links),
             },
         };

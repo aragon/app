@@ -42,7 +42,6 @@ describe('<CreateProposalPageClientSteps /> component', () => {
         const completeProps: ICreateProposalPageClientStepsProps = {
             daoId: 'test',
             steps: createProposalWizardSteps,
-            daoId: 'test',
             ...props,
         };
 

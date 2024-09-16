@@ -5,10 +5,10 @@ export type PrepareProposalActionFunction = (action: IProposalAction) => Promise
 
 export interface ICreateProposalFormContext {
     /**
-     * Map of proposal-type and prepare action functions to be used for async action preparations
+     * Map of proposal-type and prepare action functions to be used for async action preparations.
      * (e.g. actions requiring IPFS pinning or requests to third party APIs)
      */
-    prepareActions: Record<ProposalActionType, PrepareProposalActionFunction>;
+    prepareActions: Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
     /**
      * Callback to update the prepare-action maps for the given proposal action type.
      */
