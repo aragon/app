@@ -25,7 +25,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
     });
 
     const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
-        label: t('app.createDao.createDaoForm.metadata.description.description'),
+        label: t('app.createDao.createDaoForm.metadata.description.label'),
         fieldPrefix,
         rules: { required: true },
         defaultValue: '',
@@ -34,7 +34,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
     return (
         <div className="flex flex-col gap-10">
             <InputText
-                helpText={t('app.createDao.createDaoForm.metadata.name.helpNext', { max: nameMaxLength })}
+                helpText={t('app.createDao.createDaoForm.metadata.name.helpText', { max: nameMaxLength })}
                 placeholder={t('app.createDao.createDaoForm.metadata.name.placeholder')}
                 maxLength={nameMaxLength}
                 {...nameField}

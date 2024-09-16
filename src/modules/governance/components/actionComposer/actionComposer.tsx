@@ -1,9 +1,10 @@
 import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/ods';
 import { forwardRef, useMemo } from 'react';
 import { type IProposalAction, ProposalActionType } from '../../api/governanceService';
-import { defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
+import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
 
 export interface IActionComposerProps
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
@@ -22,6 +23,8 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const { t } = useTranslations();
 
     const handleActionSelected = (itemId: string) => {
         const action = items.find((item) => item.id === itemId)!;
@@ -42,8 +45,8 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
 
     const groups = [
         {
-            id: 'osx-actions',
-            name: 'DAO',
+            id: ActionGroupId.OSX,
+            name: t(`app.governance.actionComposer.group.${ActionGroupId.OSX}`),
             info: addressUtils.truncateAddress(dao?.address),
             indexData: [dao!.address],
         },
@@ -52,15 +55,15 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
     const items = [
         {
             id: ProposalActionType.TRANSFER,
-            name: 'Transfer',
+            name: t(`app.governance.actionComposer.action.${ProposalActionType.TRANSFER}`),
             icon: IconType.APP_TRANSACTIONS,
             defaultValue: defaultTransferAction,
         },
         {
             id: ProposalActionType.METADATA_UPDATE,
-            name: 'Set metadata',
+            name: t(`app.governance.actionComposer.action.${ProposalActionType.METADATA_UPDATE}`),
             icon: IconType.SETTINGS,
-            groupId: 'osx-actions',
+            groupId: ActionGroupId.OSX,
             defaultValue: defaultMetadaAction,
         },
     ];
@@ -69,8 +72,8 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
         <AutocompleteInput
             items={items}
             groups={groups}
-            selectItemLabel="Add action"
-            placeholder="Filter by action, contract name or address"
+            selectItemLabel={t('app.governance.actionComposer.selectItem')}
+            placeholder={t('app.governance.actionComposer.placeholder')}
             ref={ref}
             onChange={handleActionSelected}
             {...otherProps}

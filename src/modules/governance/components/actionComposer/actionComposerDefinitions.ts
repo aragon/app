@@ -4,6 +4,10 @@ import {
     ProposalActionType,
 } from '../../api/governanceService';
 
+export enum ActionGroupId {
+    OSX = 'OSX',
+}
+
 export const defaultTransferAction: IProposalAction = {
     type: ProposalActionType.TRANSFER,
     from: '',

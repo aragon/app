@@ -12,6 +12,14 @@ import { useCreateProposalFormContext, type PrepareProposalActionFunction } from
 export interface IUpdateDaoMetadaActionProps
     extends IProposalActionComponentProps<IProposalActionUpdateMetadata & { index: number }> {}
 
+const setMetadataAbi = {
+    type: 'function',
+    inputs: [{ name: '_metadata', internalType: 'bytes', type: 'bytes' }],
+    name: 'setMetadata',
+    outputs: [],
+    stateMutability: 'nonpayable',
+};
+
 export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (props) => {
     const { action } = props;
 
@@ -28,7 +36,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
             const ipfsResult = await pinJsonAsync({ body: proposedMetadata });
             const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
 
-            const data = encodeFunctionData({ abi: ['function setMetadata(bytes _metadata)'], args: [hexResult] });
+            const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
 
             return data;
         },
