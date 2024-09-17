@@ -16,7 +16,7 @@ export interface IBuildTransactionParams {
     plugin: IDaoPlugin;
 }
 
-class VoteOnProposalDialogUtils {
+class VoteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
         const { values, plugin } = params;
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
@@ -37,4 +37,4 @@ class VoteOnProposalDialogUtils {
     };
 }
 
-export const voteOnProposalDialogUtils = new VoteOnProposalDialogUtils();
+export const voteDialogUtils = new VoteDialogUtils();

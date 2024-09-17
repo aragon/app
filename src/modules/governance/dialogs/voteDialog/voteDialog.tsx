@@ -8,11 +8,11 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, VoteProposalDataListItemStructure } from '@aragon/ods';
-import { useAccount } from 'wagmi';
-import { voteOnProposalDialogUtils } from './voteOnProposalDialogUtils';
 import { useCallback, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { voteDialogUtils } from './voteDialogUtils';
 
-export interface IVoteOnProposalDialogParams {
+export interface IVoteDialogParams {
     /**
      * ID of the DAO to create the proposal for.
      */
@@ -23,20 +23,20 @@ export interface IVoteOnProposalDialogParams {
     values: { voteOption: string; title: string; summary: string; proposalId: string };
 }
 
-export interface IVoteOnProposalDialogProps extends IDialogComponentProps<IVoteOnProposalDialogParams> {}
+export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
 
-export const VoteOnProposalDialog: React.FC<IVoteOnProposalDialogProps> = (props) => {
+export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { t } = useTranslations();
 
     const { location } = props;
 
-    invariant(location.params != null, 'VoteOnProposalDialog: required parameters must be set.');
+    invariant(location.params != null, 'VoteDialog: required parameters must be set.');
 
     const { address } = useAccount();
-    invariant(address != null, 'VoteOnProposalDialog: user must be connected.');
+    invariant(address != null, 'VoteDialog: user must be connected.');
 
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
-    invariant(supportedPlugin != null, 'VoteOnProposalDialog: DAO has no supported plugin.');
+    invariant(supportedPlugin != null, 'VoteDialog: DAO has no supported plugin.');
 
     const { values } = location.params;
     const { proposalId, title, voteOption } = values;
@@ -45,11 +45,11 @@ export const VoteOnProposalDialog: React.FC<IVoteOnProposalDialogProps> = (props
     });
 
     // const handlePrepareTransaction = () => {
-    //     return voteOnProposalDialogUtils.buildTransaction({ values, plugin: supportedPlugin });
+    //     return voteDialogUtils.buildTransaction({ values, plugin: supportedPlugin });
     // };
 
     const handlePrepareTransaction = useCallback(() => {
-        return voteOnProposalDialogUtils.buildTransaction({ values, plugin: supportedPlugin });
+        return voteDialogUtils.buildTransaction({ values, plugin: supportedPlugin });
     }, [values, supportedPlugin]);
 
     useEffect(() => {
@@ -58,9 +58,9 @@ export const VoteOnProposalDialog: React.FC<IVoteOnProposalDialogProps> = (props
 
     return (
         <TransactionDialog
-            title={t('app.governance.voteOnProposalDialog.title')}
-            description={t('app.governance.voteOnProposalDialog.description')}
-            submitLabel={t('app.governance.voteOnProposalDialog.button.submit')}
+            title={t('app.governance.voteDialog.title')}
+            description={t('app.governance.voteDialog.description')}
+            submitLabel={t('app.governance.voteDialog.button.submit')}
             successLink={{ label: 'View vote', href: '/governance/proposal/1' }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}

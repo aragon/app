@@ -1,5 +1,5 @@
 import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
-import type { IVoteOnProposalDialogParams } from '@/modules/governance/dialogs/voteOnProposalDialog';
+import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Card, RadioCard, RadioGroup } from '@aragon/ods';
@@ -39,7 +39,7 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
     };
 
     const handleVoteTransaction = () => {
-        const params: IVoteOnProposalDialogParams = {
+        const params: IVoteDialogParams = {
             daoId,
             values: { voteOption: selectedOption, title, summary, proposalId },
         };

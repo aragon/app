@@ -363,6 +363,13 @@
         },
         "title": "Publish proposal"
       },
+      "voteDialog": {
+        "button": {
+          "submit": "Submit vote"
+        },
+        "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
+        "title": "Submit vote"
+      },
       "voteList": {
         "empty": {
           "description": "No votes have been found.",
@@ -372,13 +379,6 @@
           "description": "There was an error loading the votes. Please try again later.",
           "title": "Error loading votes"
         }
-      },
-      "voteOnProposalDialog": {
-        "button": {
-          "submit": "Submit vote"
-        },
-        "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
-        "title": "Submit vote"
       }
     },
     "plugins": {

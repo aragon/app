@@ -1,6 +1,6 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
-import { VoteOnProposalDialog } from '../dialogs/voteOnProposalDialog';
+import { VoteDialog } from '../dialogs/voteDialog';
 
 export enum GovernanceDialogs {
     PUBLISH_PROPOSAL = 'PUBLISH_PROPOSAL',
@@ -14,8 +14,8 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
         description: 'app.governance.publishProposalDialog.description',
     },
     [GovernanceDialogs.VOTE_ON_PROPOSAL]: {
-        Component: VoteOnProposalDialog,
-        title: 'app.governance.voteOnProposalDialog.title',
-        description: 'app.governance.voteOnProposalDialog.description',
+        Component: VoteDialog,
+        title: 'app.governance.voteDialog.title',
+        description: 'app.governance.voteDialog.description',
     },
 };

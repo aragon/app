@@ -1,5 +1,5 @@
 import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
-import { IVoteOnProposalDialogParams } from '@/modules/governance/dialogs/voteOnProposalDialog';
+import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button } from '@aragon/ods';
@@ -30,7 +30,7 @@ export const MultisigApproveProposal: React.FC<IMultisigApproveProposalProps> = 
     const { open } = useDialogContext();
 
     const handleVoteTransaction = () => {
-        const params: IVoteOnProposalDialogParams = {
+        const params: IVoteDialogParams = {
             daoId,
             values: { voteOption: 'APPROVE', title, summary, proposalId },
         };
