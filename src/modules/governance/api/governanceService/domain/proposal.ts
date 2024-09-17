@@ -1,4 +1,4 @@
-import type { IDaoSettings, Network } from '@/shared/api/daoService';
+import type { IAddressInfo, IDaoSettings, Network } from '@/shared/api/daoService';
 import type { IProposalAction } from './proposalAction';
 import type { IProposalExecution } from './proposalExecution';
 import type { IProposalResource } from './proposalResource';
@@ -42,9 +42,9 @@ export interface IProposal<TSettings extends IDaoSettings['settings'] = IDaoSett
      */
     endDate: number;
     /**
-     * Address of the creator of the proposal.
+     * Creator of the proposal.
      */
-    creatorAddress: string;
+    creator: IAddressInfo;
     /**
      * Address of the DAO related to the proposal.
      */

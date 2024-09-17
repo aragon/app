@@ -1,4 +1,5 @@
 import { Network } from '@/shared/api/daoService';
+import { generateAddressInfo } from '@/shared/testUtils';
 import type { IProposal } from '../../api/governanceService';
 
 export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
@@ -8,7 +9,7 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     startDate: 0,
     endDate: 1234567890,
     summary: 'summary',
-    creatorAddress: '0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5',
+    creator: generateAddressInfo(),
     blockTimestamp: 0,
     description: 'description',
     daoAddress: '0x123',
