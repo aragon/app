@@ -28,6 +28,10 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      * Unregisters the field from the form when the component unmounts if set to true.
      */
     shouldUnregister?: boolean;
+    /*
+     * Prefix to prepend to the field name.
+     */
+    fieldPrefix?: string;
 }
 
 export type IUseFormFieldReturn<

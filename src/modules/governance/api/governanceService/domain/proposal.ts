@@ -1,5 +1,5 @@
 import type { IDaoSettings, Network } from '@/shared/api/daoService';
-import type { IProposalAction } from '@aragon/ods';
+import type { IProposalAction } from './proposalAction';
 import type { IProposalExecution } from './proposalExecution';
 import type { IProposalResource } from './proposalResource';
 

@@ -37,6 +37,7 @@
     "wagmi": "^2.12.11"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.3.1",
     "@next/bundle-analyzer": "^14.2.11",
     "@tailwindcss/typography": "^0.5.15",
     "@testing-library/dom": "^10.4.0",

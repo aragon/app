@@ -74,6 +74,22 @@
         }
       }
     },
+    "createDao": {
+      "createDaoForm": {
+        "metadata": {
+          "description": {
+            "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+            "label": "Description",
+            "placeholder": "Description of the DAO"
+          },
+          "name": {
+            "helpText": "Maximum of {{max}} characters",
+            "label": "Name",
+            "placeholder": "Name of the DAO"
+          }
+        }
+      }
+    },
     "dashboard": {
       "daoDashboardPage": {
         "aside": {
@@ -173,6 +189,17 @@
       }
     },
     "governance": {
+      "actionComposer": {
+        "action": {
+          "MetadataUpdate": "Set metadata",
+          "Transfer": "Transfer"
+        },
+        "group": {
+          "OSX": "DAO"
+        },
+        "placeholder": "Filter by action, contract name or address",
+        "selectItem": "Add action"
+      },
       "createProposalForm": {
         "actions": {
           "action": "Action",

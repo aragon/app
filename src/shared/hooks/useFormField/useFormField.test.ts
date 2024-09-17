@@ -68,12 +68,20 @@ describe('useFormField hook', () => {
     });
 
     it('forwards the shouldUnregister option correctly to useController', () => {
-        const name = 'testField';
         const options = { shouldUnregister: true };
         const fieldValues = { field: {}, fieldState: {} };
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        renderHook(() => useFormField<ReactHookForm.FieldValues, string>('test', options));
+        expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ shouldUnregister: true }));
+    });
 
-        renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name, options));
-        expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ name, shouldUnregister: true }));
+    it('appends the fieldPrefix to the field name when specified', () => {
+        const name = 'test';
+        const fieldPrefix = 'proposalContext';
+        const expectedName = `${fieldPrefix}.${name}`;
+        const fieldValues = { field: {}, fieldState: {} };
+        useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name, { fieldPrefix }));
+        expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ name: expectedName }));
     });
 });

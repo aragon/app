@@ -3,11 +3,13 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { DateTime } from 'luxon';
 import type { TransactionReceipt } from 'viem';
+import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
     generateCreateProposalFormData,
     generateProposalActionChangeMembers,
     generateProposalActionUpdateMetadata,
+    generateProposalActionWithdrawToken,
 } from '../../testUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -37,14 +39,14 @@ describe('publishProposalDialog utils', () => {
     });
 
     describe('buildTransaction', () => {
-        it('calls the plugin-specific function to prepare the transaction data and resolves with a transaction object', async () => {
+        it('calls the plugin-specific function to prepare the transaction data and resolves with a transaction object', () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
 
             const actionBaseValues = { data: '0x123456', to: '0x000', value: '0' };
             const values = generateCreateProposalFormData({
-                actions: [generateProposalActionUpdateMetadata(actionBaseValues)],
+                actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues), index: 0 }],
                 startTimeMode: 'now',
                 endTimeMode: 'fixed',
                 endTimeFixed: { date: '2020-10-10', time: '10:10' },
@@ -55,7 +57,7 @@ describe('publishProposalDialog utils', () => {
                 subdomain: 'multisig',
             });
 
-            const transaction = await publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin });
+            const transaction = publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin });
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 pluginId: plugin.subdomain,
@@ -82,6 +84,42 @@ describe('publishProposalDialog utils', () => {
             ];
             const transactionReceipt = { logs: [{ topics: logTopics }] } as TransactionReceipt;
             expect(publishProposalDialogUtils.getProposalId(transactionReceipt)).toEqual('2');
+        });
+    });
+
+    describe('prepareActions', () => {
+        it('calls the prepareAction function related to the action when set', async () => {
+            const updateMetadataAction = generateProposalActionUpdateMetadata({ data: 'default-data' });
+            const updateMetadataActionData = 'data-with-ipfs-cid';
+            const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
+            const transferActionData = 'transfer-async-data';
+            const actions = [
+                { ...updateMetadataAction, index: 0 },
+                { ...transferAction, index: 1 },
+            ];
+            const prepareActions = {
+                [ProposalActionType.METADATA_UPDATE]: () => Promise.resolve(updateMetadataActionData),
+                [ProposalActionType.TRANSFER]: () => Promise.resolve(transferActionData),
+            };
+
+            const result = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
+
+            expect(result).toEqual([
+                { ...updateMetadataAction, data: updateMetadataActionData, index: 0 },
+                { ...transferAction, data: transferActionData, index: 1 },
+            ]);
+        });
+
+        it('defaults to the action data when no prepare function is found for the aciton', async () => {
+            const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
+            const updateAction = generateProposalActionUpdateMetadata({ data: '0x456' });
+            const actions = [
+                { ...transferAction, index: 0 },
+                { ...updateAction, index: 1 },
+            ];
+
+            const result = await publishProposalDialogUtils.prepareActions({ actions });
+            expect(result).toEqual(actions);
         });
     });
 
@@ -177,15 +215,6 @@ describe('publishProposalDialog utils', () => {
         it('parses the given DateTime object to an integer number representing its seconds', () => {
             const date = DateTime.fromISO('2016-05-25T09:08:34.123');
             expect(publishProposalDialogUtils['dateToSeconds'](date)).toEqual(1464167314);
-        });
-    });
-
-    describe('metadataToHex', () => {
-        it('parses the metadata cid to hex format', () => {
-            const metadataCid = 'QmT8PDLFQDWaAUoKw4BYziWQNVKChJY3CGi5eNpECi7ufD';
-            const expectedValue =
-                '0x697066733a2f2f516d543850444c465144576141556f4b773442597a6957514e564b43684a593343476935654e7045436937756644';
-            expect(publishProposalDialogUtils['metadataToHex'](metadataCid)).toEqual(expectedValue);
         });
     });
 
