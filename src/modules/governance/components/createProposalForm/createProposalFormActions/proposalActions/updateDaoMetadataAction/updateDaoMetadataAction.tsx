@@ -10,7 +10,7 @@ import type { IProposalActionIndexed } from '../../../createProposalFormDefiniti
 import { useCreateProposalFormContext, type PrepareProposalActionFunction } from '../../../createProposalFormProvider';
 
 export interface IUpdateDaoMetadaActionProps
-    extends IProposalActionComponentProps<IProposalActionUpdateMetadata & { index: number }> {}
+    extends IProposalActionComponentProps<IProposalActionIndexed<IProposalActionUpdateMetadata>> {}
 
 const setMetadataAbi = {
     type: 'function',

@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { ActionComposer } from '../../actionComposer';
 import { type ICreateProposalFormData } from '../createProposalFormDefinitions';
+import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 
 export interface ICreateProposalFormActionsProps {
@@ -16,7 +17,7 @@ export interface ICreateProposalFormActionsProps {
 }
 
 const customActionComponents = {
-    [ProposalActionType.TRANSFER]: () => <div>Transfer Assets</div>,
+    [ProposalActionType.TRANSFER]: TransferAssetAction as ProposalActionComponent,
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction as ProposalActionComponent,
 };
 
@@ -34,7 +35,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
-    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, index: actions.length });
+    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, index: actions.length, daoId });
 
     return (
         <div className="flex flex-col gap-y-10">

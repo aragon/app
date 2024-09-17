@@ -2,12 +2,16 @@ import type { IResourcesInputResource } from '@/shared/components/forms/resource
 import type { IDateDuration, IDateFixed } from '@/shared/utils/dateUtils';
 import type { IProposalAction } from '../../api/governanceService';
 
-export interface IProposalActionIndexed extends IProposalAction {
+export type IProposalActionIndexed<TAction extends IProposalAction = IProposalAction> = TAction & {
     /**
      * Index of the action inside the form.
      */
     index: number;
-}
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
+};
 
 export interface ICreateProposalFormData {
     /**

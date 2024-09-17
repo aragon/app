@@ -186,6 +186,17 @@
           "description": "There was an error loading the transactions. Please try again later.",
           "heading": "Error loading transactions"
         }
+      },
+      "transferAssetForm": {
+        "amount": {
+          "label": "Amount",
+          "placeholder": "0"
+        },
+        "recipient": {
+          "helpText": "The wallet that receives the tokens",
+          "label": "Recipient",
+          "placeholder": "ENS or 0x …"
+        }
       }
     },
     "governance": {
