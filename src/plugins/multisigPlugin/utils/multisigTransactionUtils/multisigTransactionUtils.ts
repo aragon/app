@@ -1,4 +1,4 @@
-import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
+import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { encodeFunctionData, type Hex } from 'viem';
 import { multisigPluginAbi } from './abi/multisigPlugin';
 
@@ -10,6 +10,19 @@ class MultisigTransactionUtils {
         const data = encodeFunctionData({
             abi: multisigPluginAbi,
             functionName: 'createProposal',
+            args: functionArgs,
+        });
+
+        return data;
+    };
+    buildVoteData = (params: IBuildVoteDataParams): Hex => {
+        const { proposalId } = params;
+
+        const functionArgs = [proposalId, false];
+
+        const data = encodeFunctionData({
+            abi: multisigPluginAbi,
+            functionName: 'approve',
             args: functionArgs,
         });
 

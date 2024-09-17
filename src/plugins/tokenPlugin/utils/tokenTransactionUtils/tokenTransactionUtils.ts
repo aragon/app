@@ -20,6 +20,7 @@ class TokenTransactionUtils {
         const { proposalId, vote } = params;
 
         const functionArgs = [proposalId, vote, false];
+
         const data = encodeFunctionData({
             abi: tokenPluginAbi,
             functionName: 'vote',

@@ -365,7 +365,8 @@
       },
       "voteDialog": {
         "button": {
-          "submit": "Submit vote"
+          "submit": "Submit vote",
+          "success": "View proposals"
         },
         "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
         "title": "Submit vote"

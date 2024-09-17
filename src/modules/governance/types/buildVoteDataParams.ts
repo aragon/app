@@ -1,6 +1,6 @@
-import { VoteOption } from '@/plugins/tokenPlugin/types';
+import type { VoteOption } from '@/plugins/tokenPlugin/types';
 
 export interface IBuildVoteDataParams {
     proposalId: string;
-    vote: VoteOption;
+    vote?: VoteOption;
 }

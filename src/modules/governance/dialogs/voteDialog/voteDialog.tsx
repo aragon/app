@@ -53,7 +53,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             title={t('app.governance.voteDialog.title')}
             description={t('app.governance.voteDialog.description')}
             submitLabel={t('app.governance.voteDialog.button.submit')}
-            successLink={{ label: 'View vote', href: `/dao/${daoId}/proposals` }}
+            successLink={{ label: t('app.governance.voteDialog.button.success'), href: `/dao/${daoId}/proposals` }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
         >

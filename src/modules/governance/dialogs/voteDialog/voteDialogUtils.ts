@@ -19,13 +19,16 @@ export interface IBuildTransactionParams {
 class VoteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
         const { values, plugin } = params;
+
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
             pluginId: plugin.subdomain,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
         })!;
+
         const { voteOption, proposalId } = values;
 
         const buildDataParams: IBuildVoteDataParams = { proposalId, vote: Number(voteOption) };
+
         const transactionData = buildDataFunction(buildDataParams);
 
         const transaction: TransactionDialogPrepareReturn = {
