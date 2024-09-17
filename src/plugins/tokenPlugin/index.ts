@@ -65,6 +65,11 @@ export const initialiseTokenPlugin = () => {
             pluginId: plugin.id,
             component: TokenVoteOptions,
         })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
+            pluginId: plugin.id,
+            function: tokenTransactionUtils.buildVoteData,
+        })
 
         // Settings module slots
         .registerSlotFunction({

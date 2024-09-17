@@ -15,7 +15,7 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
     },
     [GovernanceDialogs.VOTE_ON_PROPOSAL]: {
         Component: VoteOnProposalDialog,
-        title: 'app.governance.VoteOnProposalDialog.title',
-        description: 'app.governance.VoteOnProposalDialog.description',
+        title: 'app.governance.voteOnProposalDialog.title',
+        description: 'app.governance.voteOnProposalDialog.description',
     },
 };

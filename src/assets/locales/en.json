@@ -383,7 +383,7 @@
     },
     "plugins": {
       "multisig": {
-        "multisigApprovalProposal": {
+        "multisigApproveProposal": {
           "button": "Approve"
         },
         "multisigCreateProposalSettingsForm": {

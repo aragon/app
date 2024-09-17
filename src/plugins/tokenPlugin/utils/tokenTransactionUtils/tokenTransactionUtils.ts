@@ -15,6 +15,19 @@ class TokenTransactionUtils {
 
         return data;
     };
+
+    buildVoteData = (params: { proposalId: string; vote: string }): Hex => {
+        const { proposalId, vote } = params;
+
+        const functionArgs = [proposalId, vote, false];
+        const data = encodeFunctionData({
+            abi: tokenPluginAbi,
+            functionName: 'vote',
+            args: functionArgs,
+        });
+
+        return data;
+    };
 }
 
 export const tokenTransactionUtils = new TokenTransactionUtils();

@@ -4,17 +4,30 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Card, RadioCard, RadioGroup } from '@aragon/ods';
 import { useState } from 'react';
+import { VoteOption } from '../../types';
 
 export interface ITokenVoteOptionsProps {
     /**
      * ID of the DAO to create the proposal for.
      */
     daoId: string;
+    /**
+     * ID of proposal
+     */
+    proposalId: string;
+    /**
+     * The title of the proposal
+     */
+    title: string;
+    /**
+     * Summary of the proposal
+     */
+    summary: string;
 }
 
 export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
     const { t } = useTranslations();
-    const { daoId } = props;
+    const { daoId, title, summary, proposalId } = props;
     const [showOptions, setShowOptions] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
 
@@ -25,8 +38,11 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
         setShowOptions(false);
     };
 
-    const handleOpenDialog = () => {
-        const params: IVoteOnProposalDialogParams = { daoId };
+    const handleVoteTransaction = () => {
+        const params: IVoteOnProposalDialogParams = {
+            daoId,
+            values: { voteOption: selectedOption, title, summary, proposalId },
+        };
         open(GovernanceDialogs.VOTE_ON_PROPOSAL, { params });
     };
 
@@ -42,17 +58,17 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
                         <RadioCard
                             label={t('app.plugins.token.tokenVoteOptions.options.yes')}
                             description=""
-                            value="yes"
+                            value={VoteOption.YES.toString()}
                         />
                         <RadioCard
                             label={t('app.plugins.token.tokenVoteOptions.options.abstain')}
                             description=""
-                            value="abstain"
+                            value={VoteOption.ABSTAIN.toString()}
                         />
                         <RadioCard
                             label={t('app.plugins.token.tokenVoteOptions.options.no')}
                             description=""
-                            value="no"
+                            value={VoteOption.NO.toString()}
                         />
                     </RadioGroup>
                 </Card>
@@ -65,7 +81,7 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
 
             {showOptions && (
                 <div className="flex gap-4">
-                    <Button onClick={handleOpenDialog} disabled={!selectedOption} size="md" variant="primary">
+                    <Button onClick={handleVoteTransaction} disabled={!selectedOption} size="md" variant="primary">
                         {t('app.plugins.token.tokenVoteOptions.options.buttons.submit')}
                     </Button>
                     <Button size="md" variant="tertiary" onClick={onCancel}>
