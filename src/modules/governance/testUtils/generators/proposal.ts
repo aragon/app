@@ -4,7 +4,7 @@ import type { IProposal } from '../../api/governanceService';
 
 export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     id: '1',
-    proposalId: '0',
+    proposalIndex: '0',
     title: 'title',
     startDate: 0,
     endDate: 1234567890,

@@ -10,9 +10,9 @@ export interface IProposal<TSettings extends IDaoSettings['settings'] = IDaoSett
      */
     id: string;
     /**
-     * Incremental ID of the proposal.
+     * Incremental index of the proposal.
      */
-    proposalId: string;
+    proposalIndex: string;
     /**
      * Title of the proposal.
      */

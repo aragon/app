@@ -87,7 +87,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             href: `/dao/${daoId}/proposals`,
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
-        { label: proposal.proposalId },
+        { label: proposal.proposalIndex },
     ];
 
     return (
@@ -133,7 +133,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
-                                <p className="text-neutral-500">{proposal.proposalId}</p>
+                                <p className="text-neutral-500">{proposal.proposalIndex}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}
