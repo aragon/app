@@ -1,10 +1,6 @@
 import * as usePinJson from '@/shared/api/ipfsService/mutations';
 import { type IDialogLocation } from '@/shared/components/dialogProvider';
-import {
-    type ITransactionDialogStep,
-    TransactionDialog,
-    type TransactionDialogPrepareReturn,
-} from '@/shared/components/transactionDialog';
+import { type ITransactionDialogStep, TransactionDialog } from '@/shared/components/transactionDialog';
 import * as useSupportedDaoPlugin from '@/shared/hooks/useSupportedDaoPlugin';
 import {
     generateDaoPlugin,
@@ -43,7 +39,7 @@ describe('<PublishProposalDialog /> component', () => {
         useAccountSpy.mockReturnValue({ address: '0x123' } as unknown as Wagmi.UseAccountReturnType);
         useSupportedDaoPluginSpy.mockReturnValue(generateDaoPlugin());
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle());
-        buildTransactionSpy.mockReturnValue({} as Promise<TransactionDialogPrepareReturn>);
+        buildTransactionSpy.mockReturnValue({});
     });
 
     afterEach(() => {
