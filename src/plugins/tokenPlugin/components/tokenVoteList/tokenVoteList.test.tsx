@@ -1,5 +1,6 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
+import { generateProposal } from '@/modules/governance/testUtils';
 import { addressUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateTokenVote } from '../../testUtils';
@@ -78,22 +79,14 @@ describe('<TokenVoteList /> component', () => {
             generateTokenVote({
                 transactionHash: '0x123',
                 voteOption: VoteOption.YES,
-                proposalInfo: {
-                    id: 'network-0x123-1',
-                    proposalId: 1,
-                    title: 'Test Proposal 1',
-                },
+                proposal: generateProposal({ id: 'network-0x123-1', title: 'Test Proposal 1' }),
                 blockTimestamp: 1234567890,
                 token,
             }),
             generateTokenVote({
                 transactionHash: '0x456',
                 voteOption: VoteOption.NO,
-                proposalInfo: {
-                    id: 'network-0x456-2',
-                    proposalId: 2,
-                    title: 'Test Proposal 2',
-                },
+                proposal: generateProposal({ id: 'network-0x456-2', title: 'Test Proposal 2' }),
                 blockTimestamp: 1234567890,
                 token,
             }),
@@ -113,11 +106,11 @@ describe('<TokenVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[0].proposalInfo?.id}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[1].proposalInfo?.id}`);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[0].proposal?.id}`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[1].proposal?.id}`);
 
-        expect(screen.getByText('Test Proposal 1')).toBeInTheDocument();
-        expect(screen.getByText('Test Proposal 2')).toBeInTheDocument();
+        expect(screen.getByText(votes[0].proposal!.title)).toBeInTheDocument();
+        expect(screen.getByText(votes[1].proposal!.title)).toBeInTheDocument();
         expect(screen.getAllByText('yes')).toHaveLength(1);
         expect(screen.getAllByText('no')).toHaveLength(1);
     });

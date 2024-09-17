@@ -50,10 +50,10 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                     initialParams.queryParams.includeInfo === true ? (
                         <VoteProposalDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/proposals/${vote.proposalInfo!.id}`}
+                            href={`/dao/${daoId}/proposals/${vote.proposal!.id}`}
                             voteIndicator={voteOptionToIndicator[vote.voteOption]}
-                            proposalId={vote.proposalInfo!.proposalId.toString()}
-                            proposalTitle={vote.proposalInfo!.title}
+                            proposalId={vote.proposal!.proposalIndex.toString()}
+                            proposalTitle={vote.proposal!.title}
                             date={vote.blockTimestamp * 1000}
                         />
                     ) : (
