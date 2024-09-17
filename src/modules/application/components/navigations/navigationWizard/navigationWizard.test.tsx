@@ -6,6 +6,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { type Route } from 'next';
 import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
@@ -29,6 +30,11 @@ describe('<NavigationWizard /> component', () => {
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const confirmSpy = jest.spyOn(window, 'confirm');
+
+    afterEach(() => {
+        confirmSpy.mockReset();
+    });
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
@@ -47,10 +53,16 @@ describe('<NavigationWizard /> component', () => {
         useRouterSpy.mockReset();
         useAccountSpy.mockReset();
         useDialogContextSpy.mockReset();
+        confirmSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INavigationWizardProps>) => {
-        const completeProps: INavigationWizardProps = { name: '', ...props };
+        const completeProps: INavigationWizardProps = {
+            name: '',
+            exitAlertDescription: 'You sure?',
+            exitPath: '/',
+            ...props,
+        };
         return (
             <OdsModulesProvider>
                 <NavigationWizard {...completeProps} />
@@ -112,15 +124,16 @@ describe('<NavigationWizard /> component', () => {
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         const id = 'test-dao-id';
-        window.confirm = jest.fn().mockReturnValue(true);
+        const exitPath = `/dao/${id}/proposals/` as Route;
+        confirmSpy.mockReturnValue(true);
 
-        render(createTestComponent({ id }));
+        render(createTestComponent({ id, exitPath }));
 
         const closeButton = screen.getByTestId('CLOSE');
         await userEvent.click(closeButton);
 
         expect(window.confirm).toHaveBeenCalledWith(expect.any(String));
-        expect(mockPush).toHaveBeenCalledWith(`/dao/${id}/proposals/`);
+        expect(mockPush).toHaveBeenCalledWith(exitPath);
     });
 
     it('does not navigate to the proposals page if the confirmation is cancelled', async () => {
@@ -130,7 +143,7 @@ describe('<NavigationWizard /> component', () => {
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         const id = 'test-dao-id';
-        window.confirm = jest.fn().mockReturnValue(false);
+        confirmSpy.mockReturnValue(false);
 
         render(createTestComponent({ id }));
 

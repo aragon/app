@@ -1,6 +1,7 @@
+import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
-import { useEffect, useMemo, type ComponentProps } from 'react';
+import { useMemo, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
@@ -27,15 +28,29 @@ export interface IWizardContainerProps<TFormData extends FieldValues = FieldValu
      * Default values for the form.
      */
     defaultValues?: UseFormProps<TFormData>['defaultValues'];
+    /**
+     * Exit description to explain the alert dialog when exiting the wizard.
+     */
+    exitAlertDescription: string;
 }
 
 export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardContainerProps<TFormData>,
 ) => {
-    const { initialSteps = [], finalStep, children, onSubmit, submitLabel, defaultValues, ...otherProps } = props;
+    const {
+        initialSteps = [],
+        finalStep,
+        children,
+        onSubmit,
+        submitLabel,
+        defaultValues,
+        exitAlertDescription,
+        ...otherProps
+    } = props;
 
     const { t } = useTranslations();
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
+    const isDirty = formMethods.formState.isDirty;
 
     const wizardStepper = useStepper({ initialSteps });
     const { hasNext, activeStepIndex, steps } = wizardStepper;
@@ -53,41 +68,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
 
-    useEffect(() => {
-        const pushState = () => window.history.pushState(null, '', window.location.href);
-
-        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            if (formMethods.formState.isDirty) {
-                e.preventDefault();
-            }
-        };
-
-        const handlePopState = (e: PopStateEvent) => {
-            if (formMethods.formState.isDirty) {
-                const confirmLeave = window.confirm(t('app.governance.publishProposalExitDialog.description'));
-                if (!confirmLeave) {
-                    e.preventDefault();
-                    pushState();
-                } else {
-                    window.removeEventListener('popstate', handlePopState);
-                    window.history.back();
-                }
-            } else {
-                window.removeEventListener('popstate', handlePopState);
-                window.history.back();
-            }
-        };
-
-        pushState();
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        window.addEventListener('popstate', handlePopState);
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-            window.removeEventListener('popstate', handlePopState);
-        };
-    }, [formMethods.formState.isDirty, t]);
+    useConfirmWizardExit(isDirty, exitAlertDescription);
 
     return (
         <FormProvider {...formMethods}>
