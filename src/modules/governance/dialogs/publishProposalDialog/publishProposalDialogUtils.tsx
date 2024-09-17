@@ -69,7 +69,7 @@ class PublishProposalDialogUtils {
             data: transactionData,
         };
 
-        return Promise.resolve(transaction);
+        return transaction;
     };
 
     getProposalId = (receipt: TransactionReceipt) => {
