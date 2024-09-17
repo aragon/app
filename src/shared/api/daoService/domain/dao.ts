@@ -33,10 +33,6 @@ export interface IDao {
      */
     avatar: string | null;
     /**
-     * Total value locked of the DAO.
-     */
-    tvlUSD: string;
-    /**
      * Defines if the DAO is setup with plugins supported by the App or not.
      */
     isSupported: boolean;

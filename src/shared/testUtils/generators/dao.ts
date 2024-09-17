@@ -11,7 +11,6 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     avatar: null,
     plugins: [],
     isSupported: true,
-    tvlUSD: '0',
     metrics: generateDaoMetrics(),
     links: [],
     blockTimestamp: 0,
