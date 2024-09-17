@@ -10,6 +10,7 @@ import {
     CreateProposalForm,
     type ICreateProposalFormData,
     type PrepareProposalActionFunction,
+    type PrepareProposalActionMap,
 } from '../../components/createProposalForm';
 import { GovernanceDialogs } from '../../constants/moduleDialogs';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
@@ -29,9 +30,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
     const { t } = useTranslations();
 
-    const [prepareActions, setPrepareActions] = useState<
-        Partial<Record<ProposalActionType, PrepareProposalActionFunction>>
-    >({});
+    const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
 
     const addPrepareAction = useCallback(
         (type: ProposalActionType, prepareAction: PrepareProposalActionFunction) =>

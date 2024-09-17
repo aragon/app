@@ -6,11 +6,11 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { invariant } from '@aragon/ods';
 import { DateTime, Duration } from 'luxon';
 import { decodeAbiParameters, type Hex, type TransactionReceipt } from 'viem';
-import type { IProposalAction, ProposalActionType } from '../../api/governanceService';
+import type { IProposalAction } from '../../api/governanceService';
 import type {
     ICreateProposalFormData,
     IProposalActionIndexed,
-    PrepareProposalActionFunction,
+    PrepareProposalActionMap,
 } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
@@ -38,7 +38,7 @@ export interface IPrepareActionsParams {
     /**
      * Partial map of action-type and prepare-action function.
      */
-    prepareActions?: Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
+    prepareActions?: PrepareProposalActionMap;
 }
 
 class PublishProposalDialogUtils {

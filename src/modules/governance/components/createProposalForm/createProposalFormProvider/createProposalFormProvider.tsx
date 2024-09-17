@@ -2,13 +2,14 @@ import { createContext, useContext } from 'react';
 import type { IProposalAction, ProposalActionType } from '../../../api/governanceService';
 
 export type PrepareProposalActionFunction = (action: IProposalAction) => Promise<string>;
+export type PrepareProposalActionMap = Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
 
 export interface ICreateProposalFormContext {
     /**
      * Map of proposal-type and prepare action functions to be used for async action preparations.
      * (e.g. actions requiring IPFS pinning or requests to third party APIs)
      */
-    prepareActions: Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
+    prepareActions: PrepareProposalActionMap;
     /**
      * Callback to update the prepare-action maps for the given proposal action type.
      */

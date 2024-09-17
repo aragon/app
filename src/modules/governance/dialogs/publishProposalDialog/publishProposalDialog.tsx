@@ -14,8 +14,7 @@ import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@arag
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import type { ProposalActionType } from '../../api/governanceService';
-import type { ICreateProposalFormData, PrepareProposalActionFunction } from '../../components/createProposalForm';
+import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 export enum PublishProposalStep {
@@ -34,7 +33,7 @@ export interface IPublishProposalDialogParams {
     /**
      * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
      */
-    prepareActions: Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
+    prepareActions: PrepareProposalActionMap;
 }
 
 export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
