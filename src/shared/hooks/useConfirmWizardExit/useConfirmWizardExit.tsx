@@ -32,5 +32,5 @@ export const useConfirmWizardExit = (isDirty: boolean, dialogDesc: string) => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('popstate', handlePopState);
         };
-    }, [isDirty, t]);
+    }, [isDirty, t, dialogDesc]);
 };
