@@ -32,14 +32,15 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     invariant(location.params != null, 'VoteDialog: required parameters must be set.');
 
-    const { address } = useAccount();
-    invariant(address != null, 'VoteDialog: user must be connected.');
+    // const { address } = useAccount();
+    // invariant(address != null, 'VoteDialog: user must be connected.');
 
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
     invariant(supportedPlugin != null, 'VoteDialog: DAO has no supported plugin.');
 
-    const { values } = location.params;
-    const { proposalId, title, voteOption } = values;
+    const { values, daoId } = location.params;
+    const { title, voteOption, summary } = values;
+
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
@@ -61,15 +62,16 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             title={t('app.governance.voteDialog.title')}
             description={t('app.governance.voteDialog.description')}
             submitLabel={t('app.governance.voteDialog.button.submit')}
-            successLink={{ label: 'View vote', href: '/governance/proposal/1' }}
+            successLink={{ label: 'View vote', href: `/dao/${daoId}/proposals` }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
+            customSteps={[]}
         >
             <DataList.Root entityLabel="">
                 <DataList.Container>
                     <VoteProposalDataListItemStructure
-                        proposalId={proposalId}
-                        proposalTitle={title}
+                        proposalId={title}
+                        proposalTitle={summary}
                         voteIndicator={voteOption === '2' ? 'yes' : voteOption === '1' ? 'abstain' : 'no'}
                         date={0}
                     />
