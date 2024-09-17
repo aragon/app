@@ -8,6 +8,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/ods';
 import classNames from 'classnames';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
@@ -45,6 +46,20 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 
+    useEffect(() => {
+        router.prefetch(`/dao/${id}/proposals/`);
+    }, [router, id]);
+
+    const handleExitProposalCreation = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        if (!window.confirm(t('app.governance.publishProposalExitDialog.description'))) {
+            return;
+        }
+
+        router.push(`/dao/${id}/proposals/`);
+    };
+
     const buttonClassName = classNames(
         'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
         'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
@@ -54,7 +69,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     return (
         <Navigation.Container containerClasses="flex flex-row items-center gap-x-6 justify-between py-5">
             <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
-                <button onClick={router.back} className={buttonClassName}>
+                <button onClick={(e) => handleExitProposalCreation(e)} className={buttonClassName}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
                 <div className="flex min-w-0 flex-col gap-y-0.5">

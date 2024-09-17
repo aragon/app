@@ -363,6 +363,9 @@
         },
         "title": "Publish proposal"
       },
+      "publishProposalExitDialog": {
+        "description": "If you leave this process, you'll lose all the information you've entered so far."
+      },
       "voteList": {
         "empty": {
           "description": "No votes have been found.",
