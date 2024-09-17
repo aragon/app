@@ -8,7 +8,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, VoteProposalDataListItemStructure } from '@aragon/ods';
-import { useCallback, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { voteDialogUtils } from './voteDialogUtils';
 
@@ -32,8 +31,8 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     invariant(location.params != null, 'VoteDialog: required parameters must be set.');
 
-    // const { address } = useAccount();
-    // invariant(address != null, 'VoteDialog: user must be connected.');
+    const { address } = useAccount();
+    invariant(address != null, 'VoteDialog: user must be connected.');
 
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
     invariant(supportedPlugin != null, 'VoteDialog: DAO has no supported plugin.');
@@ -45,17 +44,9 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
-    // const handlePrepareTransaction = () => {
-    //     return voteDialogUtils.buildTransaction({ values, plugin: supportedPlugin });
-    // };
-
-    const handlePrepareTransaction = useCallback(() => {
+    const handlePrepareTransaction = () => {
         return voteDialogUtils.buildTransaction({ values, plugin: supportedPlugin });
-    }, [values, supportedPlugin]);
-
-    useEffect(() => {
-        console.log(values);
-    }, [values]);
+    };
 
     return (
         <TransactionDialog
@@ -65,7 +56,6 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             successLink={{ label: 'View vote', href: `/dao/${daoId}/proposals` }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
-            customSteps={[]}
         >
             <DataList.Root entityLabel="">
                 <DataList.Container>
