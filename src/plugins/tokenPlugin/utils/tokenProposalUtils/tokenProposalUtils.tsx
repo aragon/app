@@ -68,7 +68,7 @@ class TokenProposalUtils {
         const { minParticipation } = proposal.settings;
         const { totalSupply } = proposal.token;
 
-        const parsedTotalSupply = BigInt(totalSupply);
+        const parsedTotalSupply = totalSupply != null ? BigInt(totalSupply) : BigInt(0);
         const parsedMinParticipation = BigInt(tokenSettingsUtils.parsePercentageSetting(minParticipation));
 
         if (parsedTotalSupply === BigInt(0)) {
@@ -92,7 +92,7 @@ class TokenProposalUtils {
         const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
 
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
-        const noVotesWorstCase = BigInt(totalSupply) - yesVotes - abstainVotes;
+        const noVotesWorstCase = totalSupply != null ? BigInt(totalSupply) - yesVotes - abstainVotes : BigInt(0);
 
         // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
         const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;

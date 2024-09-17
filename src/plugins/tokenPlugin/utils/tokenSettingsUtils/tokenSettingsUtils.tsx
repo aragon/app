@@ -42,10 +42,10 @@ class TokenSettingsUtils {
             format: NumberFormat.PERCENTAGE_SHORT,
         });
 
-        const minParticipationToken = (Number(totalSupply) * parsedMinParticipation) / 100;
+        const minParticipationToken = Math.round((Number(totalSupply) * parsedMinParticipation) / 100);
         const parsedMinParticipationToken = formatUnits(BigInt(minParticipationToken), decimals);
         const formattedMinParticipationToken = formatterUtils.formatNumber(parsedMinParticipationToken, {
-            format: NumberFormat.TOKEN_AMOUNT_LONG,
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });
 
         const duration = Duration.fromObject({ seconds: minDuration }).shiftTo('days', 'hours', 'minutes');

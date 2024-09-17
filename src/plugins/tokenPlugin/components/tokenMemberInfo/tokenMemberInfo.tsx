@@ -40,7 +40,10 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
         return null;
     }
 
-    const parsedTotalSupply = formatUnits(BigInt(daoSettings?.token.totalSupply), daoSettings?.token.decimals);
+    const parsedTotalSupply =
+        daoSettings.token.totalSupply != null
+            ? formatUnits(BigInt(daoSettings.token.totalSupply), daoSettings?.token.decimals)
+            : '0';
     const formattedTotalSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
     });
