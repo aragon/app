@@ -1,4 +1,4 @@
-import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
+import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { encodeFunctionData, type Hex } from 'viem';
 import { tokenPluginAbi } from './abi/tokenPlugin';
 
@@ -16,7 +16,7 @@ class TokenTransactionUtils {
         return data;
     };
 
-    buildVoteData = (params: { proposalId: string; vote: string }): Hex => {
+    buildVoteData = (params: IBuildVoteDataParams): Hex => {
         const { proposalId, vote } = params;
 
         const functionArgs = [proposalId, vote, false];
