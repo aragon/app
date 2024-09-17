@@ -34,7 +34,8 @@ describe('<NavigationWizard /> component', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         cidToSrcSpy.mockReturnValue('ipfs://avatar-cid');
         useRouterSpy.mockReturnValue({
-            back: jest.fn(),
+            push: jest.fn(),
+            prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({ address: '0x123', isConnected: true } as unknown as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
@@ -75,19 +76,6 @@ describe('<NavigationWizard /> component', () => {
         expect(screen.getByText(name)).toBeInTheDocument();
     });
 
-    it('calls router back on back button click', async () => {
-        const mockBack = jest.fn();
-        useRouterSpy.mockReturnValue({
-            back: mockBack,
-        } as unknown as AppRouterInstance);
-
-        render(createTestComponent());
-
-        const backButton = screen.getByTestId('CLOSE');
-        await userEvent.click(backButton);
-        expect(mockBack).toHaveBeenCalledTimes(1);
-    });
-
     it('renders the user wallet address and opens the user dialog when clicked', async () => {
         const address = '0xUser123';
         const open = jest.fn();
@@ -115,5 +103,41 @@ describe('<NavigationWizard /> component', () => {
 
         await userEvent.click(walletButton);
         expect(open).toHaveBeenCalledWith(ApplicationDialog.CONNECT_WALLET);
+    });
+
+    it('opens a confirmation dialog and navigates to the proposals page on confirming the exit', async () => {
+        const mockPush = jest.fn();
+        useRouterSpy.mockReturnValue({
+            push: mockPush,
+            prefetch: jest.fn(),
+        } as unknown as AppRouterInstance);
+        const id = 'test-dao-id';
+        window.confirm = jest.fn().mockReturnValue(true);
+
+        render(createTestComponent({ id }));
+
+        const closeButton = screen.getByTestId('CLOSE');
+        await userEvent.click(closeButton);
+
+        expect(window.confirm).toHaveBeenCalledWith(expect.any(String));
+        expect(mockPush).toHaveBeenCalledWith(`/dao/${id}/proposals/`);
+    });
+
+    it('does not navigate to the proposals page if the confirmation is cancelled', async () => {
+        const mockPush = jest.fn();
+        useRouterSpy.mockReturnValue({
+            push: mockPush,
+            prefetch: jest.fn(),
+        } as unknown as AppRouterInstance);
+        const id = 'test-dao-id';
+        window.confirm = jest.fn().mockReturnValue(false);
+
+        render(createTestComponent({ id }));
+
+        const closeButton = screen.getByTestId('CLOSE');
+        await userEvent.click(closeButton);
+
+        expect(window.confirm).toHaveBeenCalledWith(expect.any(String));
+        expect(mockPush).not.toHaveBeenCalled();
     });
 });

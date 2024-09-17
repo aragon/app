@@ -1,6 +1,6 @@
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
-import { useMemo, type ComponentProps } from 'react';
+import { useEffect, useMemo, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
@@ -52,6 +52,42 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
 
     const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
+
+    useEffect(() => {
+        const pushState = () => window.history.pushState(null, '', window.location.href);
+
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (formMethods.formState.isDirty) {
+                e.preventDefault();
+            }
+        };
+
+        const handlePopState = (e: PopStateEvent) => {
+            if (formMethods.formState.isDirty) {
+                const confirmLeave = window.confirm(t('app.governance.publishProposalExitDialog.description'));
+                if (!confirmLeave) {
+                    e.preventDefault();
+                    pushState();
+                } else {
+                    window.removeEventListener('popstate', handlePopState);
+                    window.history.back();
+                }
+            } else {
+                window.removeEventListener('popstate', handlePopState);
+                window.history.back();
+            }
+        };
+
+        pushState();
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [formMethods.formState.isDirty, t]);
 
     return (
         <FormProvider {...formMethods}>
