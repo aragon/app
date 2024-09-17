@@ -3,11 +3,13 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { DateTime } from 'luxon';
 import type { TransactionReceipt } from 'viem';
+import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
     generateCreateProposalFormData,
     generateProposalActionChangeMembers,
     generateProposalActionUpdateMetadata,
+    generateProposalActionWithdrawToken,
 } from '../../testUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -82,6 +84,42 @@ describe('publishProposalDialog utils', () => {
             ];
             const transactionReceipt = { logs: [{ topics: logTopics }] } as TransactionReceipt;
             expect(publishProposalDialogUtils.getProposalId(transactionReceipt)).toEqual('2');
+        });
+    });
+
+    describe('prepareActions', () => {
+        it('calls the prepareAction function related to the action when set', async () => {
+            const updateMetadataAction = generateProposalActionUpdateMetadata({ data: 'default-data' });
+            const updateMetadataActionData = 'data-with-ipfs-cid';
+            const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
+            const transferActionData = 'transfer-async-data';
+            const actions = [
+                { ...updateMetadataAction, index: 0 },
+                { ...transferAction, index: 1 },
+            ];
+            const prepareActions = {
+                [ProposalActionType.METADATA_UPDATE]: () => Promise.resolve(updateMetadataActionData),
+                [ProposalActionType.TRANSFER]: () => Promise.resolve(transferActionData),
+            };
+
+            const result = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
+
+            expect(result).toEqual([
+                { ...updateMetadataAction, data: updateMetadataActionData, index: 0 },
+                { ...transferAction, data: transferActionData, index: 1 },
+            ]);
+        });
+
+        it('defaults to the action data when no prepare function is found for the aciton', async () => {
+            const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
+            const updateAction = generateProposalActionUpdateMetadata({ data: '0x456' });
+            const actions = [
+                { ...transferAction, index: 0 },
+                { ...updateAction, index: 1 },
+            ];
+
+            const result = await publishProposalDialogUtils.prepareActions({ actions });
+            expect(result).toEqual(actions);
         });
     });
 

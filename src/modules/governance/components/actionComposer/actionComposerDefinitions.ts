@@ -32,7 +32,8 @@ export const defaultMetadataAction: Omit<
             {
                 name: '_metadata',
                 type: 'bytes',
-                value: 'The IPFS hash of the new metadata object',
+                value: '',
+                notice: 'The IPFS hash of the new metadata object',
             },
         ],
     },

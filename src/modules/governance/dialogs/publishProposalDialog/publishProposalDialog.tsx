@@ -71,12 +71,10 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     const handlePrepareTransaction = async () => {
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
-        const metadataCid = pinJsonData.IpfsHash;
+        const { IpfsHash: metadataCid } = pinJsonData;
+        const { actions } = values;
 
-        const processedActions = await publishProposalDialogUtils.prepareActions({
-            actions: values.actions,
-            prepareActions,
-        });
+        const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
         const processedValues = { ...values, actions: processedActions };
 
         return publishProposalDialogUtils.buildTransaction({
