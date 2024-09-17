@@ -25,5 +25,15 @@ export const defaultMetadataAction: Omit<
     from: '',
     data: '0x',
     value: '0',
-    inputData: { function: 'setMetadata', contract: 'DAO', parameters: [] },
+    inputData: {
+        function: 'setMetadata',
+        contract: 'DAO',
+        parameters: [
+            {
+                name: '_metadata',
+                type: 'bytes',
+                value: 'The IPFS hash of the new metadata object',
+            },
+        ],
+    },
 };

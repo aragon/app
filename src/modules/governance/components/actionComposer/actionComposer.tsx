@@ -32,11 +32,11 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
     };
 
     const defaultMetadaAction = useMemo(() => {
-        const { avatar, name, description, links } = dao!;
+        const { avatar, address, name, description, links } = dao!;
         const existingMetadata = { logo: avatar, name, description, links };
 
         return {
-            to: dao!.address,
+            to: address,
             existingMetadata,
             proposedMetadata: existingMetadata,
             ...defaultMetadataAction,
