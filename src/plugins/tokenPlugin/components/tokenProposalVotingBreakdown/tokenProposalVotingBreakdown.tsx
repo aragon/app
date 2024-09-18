@@ -49,7 +49,7 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
             minParticipation={tokenSettingsUtils.parsePercentageSetting(minParticipation)}
             supportThreshold={tokenSettingsUtils.parsePercentageSetting(supportThreshold)}
             tokenSymbol={symbol}
-            tokenTotalSupply={totalSupply != null ? formatUnits(BigInt(totalSupply), proposal.token.decimals) : '0'}
+            tokenTotalSupply={formatUnits(BigInt(totalSupply), proposal.token.decimals)}
         />
     );
 };
