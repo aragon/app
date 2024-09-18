@@ -208,6 +208,7 @@
         }
       },
       "createProposalPage": {
+        "exitAlertDescription": "If you leave this process, you'll lose all the information you've entered so far.",
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -226,8 +227,7 @@
             "title": "Initiate the vote"
           }
         },
-        "submitLabel": "Publish proposal",
-        "exitAlertDescription": "If you leave this process, you'll lose all the information you've entered so far."
+        "submitLabel": "Publish proposal"
       },
       "daoMemberDetailsPage": {
         "aside": {
