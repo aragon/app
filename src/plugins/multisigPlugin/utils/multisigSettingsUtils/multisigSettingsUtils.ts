@@ -20,18 +20,21 @@ export interface IMultisigSettingsParseParams {
 class MultisigSettingsUtils {
     parseSettings = (params: IMultisigSettingsParseParams): IDaoSettingTermAndDefinition[] => {
         const { settings, membersCount, t } = params;
+        const { minApprovals, onlyListed, historicalMembersCount } = settings;
+
+        const processedMembersCount = historicalMembersCount ?? membersCount;
 
         return [
             {
                 term: t('app.plugins.multisig.multisigGovernanceSettings.minimumApproval'),
                 definition: t('app.plugins.multisig.multisigGovernanceSettings.approvals', {
-                    min: settings.settings.minApprovals,
-                    max: membersCount,
+                    min: minApprovals,
+                    max: processedMembersCount,
                 }),
             },
             {
                 term: t('app.plugins.multisig.multisigGovernanceSettings.proposalCreation'),
-                definition: settings.settings.onlyListed
+                definition: onlyListed
                     ? t('app.plugins.multisig.multisigGovernanceSettings.members')
                     : t('app.plugins.multisig.multisigGovernanceSettings.anyWallet'),
             },

@@ -5,8 +5,8 @@ import {
     DataListContainer,
     DataListPagination,
     DataListRoot,
-    type IVoteDataListItemStructureProps,
     VoteDataListItem,
+    type VoteIndicator,
     VoteProposalDataListItem,
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
@@ -14,8 +14,7 @@ import { type ITokenVote, VoteOption } from '../../types';
 
 export interface ITokenVoteListProps extends IVoteListProps {}
 
-// TODO: use VoteIndicator type when exported from ODS
-const voteOptionToIndicator: Record<VoteOption, IVoteDataListItemStructureProps['voteIndicator']> = {
+const voteOptionToIndicator: Record<VoteOption, VoteIndicator> = {
     [VoteOption.ABSTAIN]: 'abstain',
     [VoteOption.NO]: 'no',
     [VoteOption.YES]: 'yes',

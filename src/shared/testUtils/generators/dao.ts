@@ -7,6 +7,7 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     network: Network.ETHEREUM_MAINNET,
     name: 'name',
     description: 'description',
+    version: '1.3.0',
     subdomain: null,
     avatar: null,
     plugins: [],

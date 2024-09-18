@@ -14,11 +14,7 @@ export interface ITokenProposalVotingBreakdownProps {
 
 const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
     const votes = proposal.metrics.votesByOption.find((vote) => vote.type === option);
-
-    const parsedVotingPower = formatUnits(
-        BigInt(tokenSettingsUtils.fromScientificNotation(votes?.totalVotingPower)),
-        proposal.token.decimals,
-    );
+    const parsedVotingPower = formatUnits(BigInt(votes?.totalVotingPower ?? 0), proposal.settings.token.decimals);
 
     return parsedVotingPower;
 };
@@ -34,7 +30,7 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
         return null;
     }
 
-    const { symbol, totalSupply } = proposal.token;
+    const { symbol, totalSupply, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold } = proposal.settings;
 
     const yesVotes = getOptionVotingPower(proposal, VoteOption.YES);
@@ -49,7 +45,7 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
             minParticipation={tokenSettingsUtils.parsePercentageSetting(minParticipation)}
             supportThreshold={tokenSettingsUtils.parsePercentageSetting(supportThreshold)}
             tokenSymbol={symbol}
-            tokenTotalSupply={formatUnits(BigInt(totalSupply), proposal.token.decimals)}
+            tokenTotalSupply={formatUnits(BigInt(totalSupply), decimals)}
         />
     );
 };

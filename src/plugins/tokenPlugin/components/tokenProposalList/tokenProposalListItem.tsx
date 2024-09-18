@@ -23,7 +23,7 @@ const voteOptionToLabel: Record<VoteOption, string> = {
 
 const getWinningOption = (proposal: ITokenProposal) => {
     const { votesByOption } = proposal.metrics;
-    const { decimals, symbol } = proposal.token;
+    const { decimals, symbol } = proposal.settings.token;
 
     const winningOption = tokenProposalUtils.getWinningOption(proposal);
 

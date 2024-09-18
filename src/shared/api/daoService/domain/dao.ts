@@ -33,6 +33,10 @@ export interface IDao {
      */
     avatar: string | null;
     /**
+     * OSx version of the DAO.
+     */
+    version: string;
+    /**
      * Defines if the DAO is setup with plugins supported by the App or not.
      */
     isSupported: boolean;

@@ -3,8 +3,7 @@ import type { IProposalAction } from './proposalAction';
 import type { IProposalExecution } from './proposalExecution';
 import type { IProposalResource } from './proposalResource';
 
-// TODO: TSettings generic type should extends IDaoSettings interface after sync with backend (APP-3483)
-export interface IProposal<TSettings extends IDaoSettings['settings'] = IDaoSettings['settings']> {
+export interface IProposal<TSettings extends IDaoSettings = IDaoSettings> {
     /**
      * Id of the proposal in DaoAddress-PluginAddress-ProposalId format.
      */
