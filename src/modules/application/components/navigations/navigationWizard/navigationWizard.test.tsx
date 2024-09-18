@@ -120,7 +120,7 @@ describe('<NavigationWizard /> component', () => {
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         const id = 'test-dao-id';
-        const exitPath = `/dao/${id}/proposals/` as Route<string>;
+        const exitPath = `/dao/${id}/proposals/` as Route;
         confirmSpy.mockReturnValue(true);
 
         render(createTestComponent({ id, exitPath }));

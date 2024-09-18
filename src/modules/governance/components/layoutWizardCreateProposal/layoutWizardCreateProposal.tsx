@@ -11,7 +11,7 @@ export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalPro
     return (
         <LayoutWizard
             name="app.governance.layoutWizardCreateProposal.name"
-            exitPath={`/dao/${id}/proposals/` as Route<string>}
+            exitPath={`/dao/${id}/proposals/` as Route}
             exitAlertDescription="app.governance.createProposalPage.exitAlertDescription"
             {...otherProps}
         />

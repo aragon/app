@@ -14,7 +14,7 @@ import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 
-export interface INavigationWizardProps<TRouteType extends string = string> extends INavigationContainerProps {
+export interface INavigationWizardProps extends INavigationContainerProps {
     /**
      * Name of the wizard to display.
      */
@@ -30,13 +30,10 @@ export interface INavigationWizardProps<TRouteType extends string = string> exte
     /**
      * Exit path to redirect to when exiting the wizard.
      */
-    exitPath: Route<TRouteType>;
+    exitPath: Route;
 }
 
-
-export const NavigationWizard = <TRouteType extends string = string>(
-    props: INavigationWizardProps<TRouteType>
-) => {
+export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { name, id, exitAlertDescription, exitPath } = props;
 
     const { address, isConnected } = useAccount();
