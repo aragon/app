@@ -55,7 +55,7 @@ export const initialiseMultisigPlugin = () => {
             function: multisigTransactionUtils.buildCreateProposalData,
         })
         .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_VOTE_OPTIONS,
+            slotId: GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE,
             pluginId: plugin.id,
             component: MultisigApproveProposal,
         })
