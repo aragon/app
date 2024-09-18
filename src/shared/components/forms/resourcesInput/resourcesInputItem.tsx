@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { formUtils } from '@/shared/utils/formUtils/formUtils';
+import { formUtils } from '@/shared/utils/formUtils';
 import { Button, Card, Dropdown, IconType, InputText } from '@aragon/ods';
 
 export interface IResourcesInputItemProps {
