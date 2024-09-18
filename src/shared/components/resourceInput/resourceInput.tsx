@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/ods';
-import { type FieldPath, type FieldValues, type UseControllerReturn, useFieldArray } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 import { ResourceInputItem } from './resourceInputItem';
 
 export interface IResourcesInputProps {
@@ -12,17 +12,10 @@ export interface IResourcesInputProps {
      * The name of the field in the form.
      */
     helpText: string;
-    /**
-     * Callback to be fired when the ResourceInputItem is blurred.
-     */
-    trim?: <TFieldValues extends FieldValues>(
-        e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-        field: UseControllerReturn<TFieldValues, FieldPath<TFieldValues>>['field'],
-    ) => void;
 }
 
 export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
-    const { name, helpText, trim } = props;
+    const { name, helpText } = props;
     const { t } = useTranslations();
 
     const { fields, append, remove } = useFieldArray({
@@ -41,7 +34,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
             {fields.length > 0 && (
                 <div className="flex flex-col gap-3 md:gap-2">
                     {fields.map((field, index) => (
-                        <ResourceInputItem key={field.id} index={index} remove={remove} trim={trim} />
+                        <ResourceInputItem key={field.id} index={index} remove={remove} />
                     ))}
                 </div>
             )}
