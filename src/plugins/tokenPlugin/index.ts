@@ -7,12 +7,12 @@ import { TokenMemberList } from './components/tokenMemberList';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
 import { TokenVoteList } from './components/tokenVoteList';
+import { TokenVoteOptions } from './components/tokenVoteOptions';
 import { plugin } from './constants/plugin';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
-import { TokenVoteOptions } from './components/tokenVoteOptions';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils

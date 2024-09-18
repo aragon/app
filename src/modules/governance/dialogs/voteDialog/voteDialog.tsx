@@ -9,10 +9,8 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, VoteProposalDataListItemStructure } from '@aragon/ods';
 import { useAccount } from 'wagmi';
-import { voteDialogUtils } from './voteDialogUtils';
 import type { IVoteDialogParams } from './voteDialog.api';
-
-
+import { voteDialogUtils } from './voteDialogUtils';
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
 
