@@ -11,6 +11,7 @@ import { DataList, invariant, VoteProposalDataListItemStructure } from '@aragon/
 import { useAccount } from 'wagmi';
 import type { IVoteDialogParams } from './voteDialog.api';
 import { voteDialogUtils } from './voteDialogUtils';
+import { VoteOption } from '@/plugins/tokenPlugin/types';
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
 
@@ -52,9 +53,13 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                     <VoteProposalDataListItemStructure
                         proposalId={title}
                         proposalTitle={summary}
-                        voteIndicator={voteOption === '2' ? 'yes' : voteOption === '1' ? 'abstain' : 'no'}
-                        // TODO: Make date field optional
-                        date={0}
+                        voteIndicator={
+                            voteOption === VoteOption.YES.toString()
+                                ? 'yes'
+                                : voteOption === VoteOption.ABSTAIN.toString()
+                                  ? 'abstain'
+                                  : 'no'
+                        }
                     />
                 </DataList.Container>
             </DataList.Root>

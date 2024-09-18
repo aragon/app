@@ -81,10 +81,10 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
             {showOptions && (
                 <div className="flex gap-4">
                     <Button onClick={openTransactionDialog} disabled={!selectedOption} size="md" variant="primary">
-                        {t('app.plugins.token.tokenVoteOptions.options.buttons.submit')}
+                        {t('app.plugins.token.tokenVoteOptions.buttons.submit')}
                     </Button>
                     <Button size="md" variant="tertiary" onClick={onCancel}>
-                        {t('app.plugins.token.tokenVoteOptions.options.buttons.cancel')}
+                        {t('app.plugins.token.tokenVoteOptions.buttons.cancel')}
                     </Button>
                 </div>
             )}
