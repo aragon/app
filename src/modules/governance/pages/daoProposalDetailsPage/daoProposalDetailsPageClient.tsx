@@ -20,7 +20,7 @@ import {
     IconType,
     Link,
     ProposalActions,
-    type ProposalStatus,
+    ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
     useBlockExplorer,
@@ -29,6 +29,7 @@ import {
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { PluginComponent } from '@/shared/components/pluginComponent';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -58,9 +59,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginIds,
     })!;
-
-    console.log('PROPOSAL', proposalStatus, proposal);
-
 
     if (proposal == null) {
         return null;
@@ -98,6 +96,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         { label: proposal.proposalId },
     ];
 
+    const showExecuteComponent =
+        proposalStatus === ProposalStatus.EXECUTED || proposalStatus === ProposalStatus.EXECUTABLE;
+
     return (
         <>
             <Page.Header breadcrumbs={pageBreadcrumbs} breadcrumbsTag={statusTag} title={title} description={summary}>
@@ -134,17 +135,12 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                         >
                             <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
-                            {proposal.executed.status && (
-                                <div className="flex gap-2">
-                                    <Button
-                                        href={executedBlockLink}
-                                        iconRight={IconType.LINK_EXTERNAL}
-                                        variant="success"
-                                        target="_blank"
-                                    >
-                                        Executed
-                                    </Button>
-                                </div>
+                            {showExecuteComponent && (
+                                <PluginComponent
+                                    pluginId={pluginIds}
+                                    slotId={GovernanceSlotId.GOVERNANCE_PROCESS_EXECUTE}
+                                    params={{ proposal }}
+                                />
                             )}
                         </Page.Section>
                     )}
