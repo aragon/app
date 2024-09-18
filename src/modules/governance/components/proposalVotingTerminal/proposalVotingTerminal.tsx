@@ -65,6 +65,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                     <VoteList initialParams={voteListParams} daoId={daoId} />
                 </ProposalVoting.Votes>
                 <ProposalVoting.Details settings={proposalSettings} />
+                {/* TODO: Update logic to show only when proposal is active */}
                 <PluginComponent
                     slotId={GovernanceSlotId.GOVERNANCE_VOTE_OPTIONS}
                     pluginIds={pluginIds}

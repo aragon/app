@@ -4,12 +4,13 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type Hex } from 'viem';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IBuildVoteDataParams } from '../../types';
+import type { IVoteValues } from './voteDialog.api';
 
 export interface IBuildTransactionParams {
     /**
      * Values
      */
-    values: { voteOption: string; proposalId: string };
+    values: Pick<IVoteValues, 'voteOption' | 'proposalId'>;
     /**
      * Plugin of the DAO to interact with.
      */

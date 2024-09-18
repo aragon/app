@@ -10,17 +10,9 @@ import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, VoteProposalDataListItemStructure } from '@aragon/ods';
 import { useAccount } from 'wagmi';
 import { voteDialogUtils } from './voteDialogUtils';
+import type { IVoteDialogParams } from './voteDialog.api';
 
-export interface IVoteDialogParams {
-    /**
-     * ID of the DAO to create the proposal for.
-     */
-    daoId: string;
-    /**
-     * Values
-     */
-    values: { voteOption: string; title: string; summary: string; proposalId: string };
-}
+
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
 

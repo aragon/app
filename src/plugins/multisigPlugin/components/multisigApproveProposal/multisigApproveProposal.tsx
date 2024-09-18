@@ -34,7 +34,7 @@ export const MultisigApproveProposal: React.FC<IMultisigApproveProposalProps> = 
             daoId,
             values: { voteOption: 'APPROVE', title, summary, proposalId },
         };
-        open(GovernanceDialogs.VOTE_ON_PROPOSAL, { params });
+        open(GovernanceDialogs.VOTE, { params });
     };
 
     return (

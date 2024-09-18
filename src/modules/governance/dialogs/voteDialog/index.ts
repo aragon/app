@@ -2,4 +2,6 @@ import dynamic from 'next/dynamic';
 
 export const VoteDialog = dynamic(() => import('./voteDialog').then((mod) => mod.VoteDialog));
 
-export type { IVoteDialogParams, IVoteDialogProps } from './voteDialog';
+export type { IVoteDialogProps } from './voteDialog';
+
+export * from './voteDialog.api';

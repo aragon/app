@@ -4,7 +4,7 @@ import { VoteDialog } from '../dialogs/voteDialog';
 
 export enum GovernanceDialogs {
     PUBLISH_PROPOSAL = 'PUBLISH_PROPOSAL',
-    VOTE_ON_PROPOSAL = 'VOTE_ON_PROPOSAL',
+    VOTE = 'VOTE',
 }
 
 export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefinitions> = {
@@ -13,7 +13,7 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
         title: 'app.governance.publishProposalDialog.title',
         description: 'app.governance.publishProposalDialog.description',
     },
-    [GovernanceDialogs.VOTE_ON_PROPOSAL]: {
+    [GovernanceDialogs.VOTE]: {
         Component: VoteDialog,
         title: 'app.governance.voteDialog.title',
         description: 'app.governance.voteDialog.description',

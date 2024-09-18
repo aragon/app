@@ -43,7 +43,7 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
             daoId,
             values: { voteOption: selectedOption, title, summary, proposalId },
         };
-        open(GovernanceDialogs.VOTE_ON_PROPOSAL, { params });
+        open(GovernanceDialogs.VOTE, { params });
     };
 
     return (
