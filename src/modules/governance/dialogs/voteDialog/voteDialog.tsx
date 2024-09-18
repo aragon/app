@@ -53,6 +53,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                         proposalId={title}
                         proposalTitle={summary}
                         voteIndicator={voteOption === '2' ? 'yes' : voteOption === '1' ? 'abstain' : 'no'}
+                        // TODO: Make date field optional
                         date={0}
                     />
                 </DataList.Container>
