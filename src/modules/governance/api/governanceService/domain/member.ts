@@ -1,3 +1,5 @@
+import type { IMemberMetrics } from './memberMetrics';
+
 export interface IMember {
     /**
      * Address of the member.
@@ -12,11 +14,7 @@ export interface IMember {
      */
     type: string;
     /**
-     * Block timestamp of the first activity.
+     * Metrics of the member.
      */
-    firstActivity: number | null;
-    /**
-     * Block timestamp of the latest activity.
-     */
-    lastActivity: number | null;
+    metrics: IMemberMetrics;
 }

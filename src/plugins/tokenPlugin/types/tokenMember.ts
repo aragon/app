@@ -1,6 +1,7 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
+import type { ITokenMemberMetrics } from './tokenMemberMetrics';
 
-export interface ITokenMember extends IMember {
+export interface ITokenMember extends Omit<IMember, 'metrics'> {
     /**
      * Type of the member.
      */
@@ -16,10 +17,5 @@ export interface ITokenMember extends IMember {
     /**
      * Metrics for the token member.
      */
-    metrics: {
-        /**
-         * Number of delegations received by the member.
-         */
-        delegateReceivedCount: number;
-    };
+    metrics: ITokenMemberMetrics;
 }

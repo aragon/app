@@ -3,7 +3,7 @@ import * as daoService from '@/shared/api/daoService';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { DataList, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateDaoTokenSettings, generateTokenMember } from '../../testUtils';
+import { generateDaoTokenSettings, generateTokenMember, generateTokenMemberMetrics } from '../../testUtils';
 import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
 
 describe('<TokenMemberListItem /> component', () => {
@@ -43,7 +43,7 @@ describe('<TokenMemberListItem /> component', () => {
         const member = generateTokenMember({
             ens: 'tttt.eth',
             address: '0x123',
-            metrics: { delegateReceivedCount: 5 },
+            metrics: generateTokenMemberMetrics({ delegateReceivedCount: 5 }),
         });
         render(createTestComponent({ member }));
         expect(screen.getByText(member.ens!)).toBeInTheDocument();
