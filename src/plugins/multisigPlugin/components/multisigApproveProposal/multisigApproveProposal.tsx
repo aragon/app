@@ -29,7 +29,7 @@ export const MultisigApproveProposal: React.FC<IMultisigApproveProposalProps> = 
 
     const { open } = useDialogContext();
 
-    const handleVoteTransaction = () => {
+    const openTransactionDialog = () => {
         const params: IVoteDialogParams = {
             daoId,
             values: { voteOption: 'APPROVE', title, summary, proposalId },
@@ -39,7 +39,7 @@ export const MultisigApproveProposal: React.FC<IMultisigApproveProposalProps> = 
 
     return (
         <div className="pt-4">
-            <Button onClick={handleVoteTransaction} size="md" variant="primary">
+            <Button onClick={openTransactionDialog} size="md" variant="primary">
                 {t('app.plugins.multisig.multisigApproveProposal.button')}
             </Button>
         </div>

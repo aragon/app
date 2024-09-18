@@ -38,7 +38,7 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
         setShowOptions(false);
     };
 
-    const handleVoteTransaction = () => {
+    const openTransactionDialog = () => {
         const params: IVoteDialogParams = {
             daoId,
             values: { voteOption: selectedOption, title, summary, proposalId },
@@ -48,6 +48,11 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-4 pt-4">
+            {!showOptions && (
+                <Button className="w-fit" onClick={() => setShowOptions(true)}>
+                    {t('app.plugins.token.tokenVoteOptions.buttons.default')}
+                </Button>
+            )}
             {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <RadioGroup
@@ -73,15 +78,9 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
                     </RadioGroup>
                 </Card>
             )}
-            {!showOptions && (
-                <Button className="w-fit" onClick={() => setShowOptions(true)}>
-                    {t('app.plugins.token.tokenVoteOptions.button')}
-                </Button>
-            )}
-
             {showOptions && (
                 <div className="flex gap-4">
-                    <Button onClick={handleVoteTransaction} disabled={!selectedOption} size="md" variant="primary">
+                    <Button onClick={openTransactionDialog} disabled={!selectedOption} size="md" variant="primary">
                         {t('app.plugins.token.tokenVoteOptions.options.buttons.submit')}
                     </Button>
                     <Button size="md" variant="tertiary" onClick={onCancel}>

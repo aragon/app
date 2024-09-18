@@ -480,13 +480,13 @@
           "entity": "Votes"
         },
         "tokenVoteOptions": {
-          "button": "Vote on proposal",
+          "buttons": {
+            "cancel": "Cancel",
+            "default": "Vote on proposal",
+            "submit": "Submit vote"
+          },
           "options": {
             "abstain": "Abstain",
-            "buttons": {
-              "cancel": "Cancel",
-              "submit": "Submit vote"
-            },
             "label": "Choose your option",
             "no": "No",
             "yes": "Yes"
