@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, CardEmptyState, IconType, type ProposalActionComponent, ProposalActions } from '@aragon/ods';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useWatch } from 'react-hook-form';
 import { ActionComposer } from '../../actionComposer';
 import { type ICreateProposalFormData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
@@ -29,9 +29,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
 
-    const { fields: actions, append: addAction } = useFieldArray<ICreateProposalFormData, 'actions'>({
-        name: 'actions',
-    });
+    const { append: addAction } = useFieldArray<ICreateProposalFormData, 'actions'>({ name: 'actions' });
+    const actions = useWatch<ICreateProposalFormData, 'actions'>({ name: 'actions' });
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 

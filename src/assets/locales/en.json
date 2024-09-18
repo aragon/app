@@ -192,7 +192,7 @@
           "label": "Amount",
           "placeholder": "0"
         },
-        "recipient": {
+        "receiver": {
           "helpText": "The wallet that receives the tokens",
           "label": "Recipient",
           "placeholder": "ENS or 0x …"
