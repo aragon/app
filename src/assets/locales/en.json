@@ -384,9 +384,6 @@
     },
     "plugins": {
       "multisig": {
-        "multisigApproveProposal": {
-          "button": "Approve"
-        },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
@@ -417,6 +414,9 @@
         },
         "multisigProposalList": {
           "entity": "Proposals"
+        },
+        "multisigSubmitVote": {
+          "button": "Approve"
         },
         "multisigVoteList": {
           "entity": "Votes"
@@ -476,10 +476,7 @@
           "no": "No",
           "yes": "Yes"
         },
-        "tokenVoteList": {
-          "entity": "Votes"
-        },
-        "tokenVoteOptions": {
+        "tokenSubmitVote": {
           "buttons": {
             "cancel": "Cancel",
             "default": "Vote on proposal",
@@ -491,6 +488,9 @@
             "no": "No",
             "yes": "Yes"
           }
+        },
+        "tokenVoteList": {
+          "entity": "Votes"
         }
       }
     },

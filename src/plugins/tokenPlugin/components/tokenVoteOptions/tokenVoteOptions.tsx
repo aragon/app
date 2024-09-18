@@ -50,28 +50,28 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
         <div className="flex flex-col gap-4 pt-4">
             {!showOptions && (
                 <Button className="w-fit" onClick={() => setShowOptions(true)}>
-                    {t('app.plugins.token.tokenVoteOptions.buttons.default')}
+                    {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
             {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <RadioGroup
-                        label={t('app.plugins.token.tokenVoteOptions.options.label')}
+                        label={t('app.plugins.token.tokenSubmitVote.options.label')}
                         value={selectedOption}
                         onValueChange={setSelectedOption}
                     >
                         <RadioCard
-                            label={t('app.plugins.token.tokenVoteOptions.options.yes')}
+                            label={t('app.plugins.token.tokenSubmitVote.options.yes')}
                             description=""
                             value={VoteOption.YES.toString()}
                         />
                         <RadioCard
-                            label={t('app.plugins.token.tokenVoteOptions.options.abstain')}
+                            label={t('app.plugins.token.tokenSubmitVote.options.abstain')}
                             description=""
                             value={VoteOption.ABSTAIN.toString()}
                         />
                         <RadioCard
-                            label={t('app.plugins.token.tokenVoteOptions.options.no')}
+                            label={t('app.plugins.token.tokenSubmitVote.options.no')}
                             description=""
                             value={VoteOption.NO.toString()}
                         />
@@ -81,10 +81,10 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
             {showOptions && (
                 <div className="flex gap-4">
                     <Button onClick={openTransactionDialog} disabled={!selectedOption} size="md" variant="primary">
-                        {t('app.plugins.token.tokenVoteOptions.buttons.submit')}
+                        {t('app.plugins.token.tokenSubmitVote.buttons.submit')}
                     </Button>
                     <Button size="md" variant="tertiary" onClick={onCancel}>
-                        {t('app.plugins.token.tokenVoteOptions.buttons.cancel')}
+                        {t('app.plugins.token.tokenSubmitVote.buttons.cancel')}
                     </Button>
                 </div>
             )}

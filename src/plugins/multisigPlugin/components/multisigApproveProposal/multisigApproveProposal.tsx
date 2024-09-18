@@ -40,7 +40,7 @@ export const MultisigApproveProposal: React.FC<IMultisigApproveProposalProps> = 
     return (
         <div className="pt-4">
             <Button onClick={openTransactionDialog} size="md" variant="primary">
-                {t('app.plugins.multisig.multisigApproveProposal.button')}
+                {t('app.plugins.multisig.multisigSubmitVote.button')}
             </Button>
         </div>
     );
