@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export const useConfirmWizardExit = (isFormDirty: boolean, alertDescription: string) => {
+export const useConfirmWizardExit = (isFormDirty: boolean, exitAlertDescription: string) => {
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             if (isFormDirty) {
@@ -10,7 +10,7 @@ export const useConfirmWizardExit = (isFormDirty: boolean, alertDescription: str
 
         const handlePopState = (e: PopStateEvent) => {
             if (isFormDirty) {
-                const confirmLeave = window.confirm(alertDescription);
+                const confirmLeave = window.confirm(exitAlertDescription);
                 if (!confirmLeave) {
                     e.preventDefault();
                     window.history.pushState(null, '', window.location.href);
@@ -27,5 +27,5 @@ export const useConfirmWizardExit = (isFormDirty: boolean, alertDescription: str
             window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('popstate', handlePopState);
         };
-    }, [isFormDirty, alertDescription]);
+    }, [isFormDirty, exitAlertDescription]);
 };
