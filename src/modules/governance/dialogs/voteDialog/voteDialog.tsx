@@ -1,4 +1,3 @@
-import { VoteOption } from '@/plugins/tokenPlugin/types';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -8,10 +7,32 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
-import { DataList, invariant, VoteProposalDataListItemStructure } from '@aragon/ods';
+import { DataList, invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/ods';
 import { useAccount } from 'wagmi';
-import type { IVoteDialogParams } from './voteDialog.api';
 import { voteDialogUtils } from './voteDialogUtils';
+
+export interface IVoteDialogParams {
+    /**
+     * ID of the DAO to create the proposal for.
+     */
+    daoId: string;
+    /**
+     * vote option
+     */
+    vote: { value?: number; label: string };
+    /**
+     * Title of the proposal
+     */
+    title: string;
+    /**
+     * Summary of the proposal
+     */
+    summary: string;
+    /**
+     * Incremental ID of proposal
+     */
+    proposalId: string;
+}
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
 
@@ -28,15 +49,14 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
     invariant(supportedPlugin != null, 'VoteDialog: DAO has no supported plugin.');
 
-    const { values, daoId } = location.params;
-    const { title, voteOption, summary } = values;
+    const { title, vote, summary, proposalId, daoId } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
     const handlePrepareTransaction = () => {
-        return voteDialogUtils.buildTransaction({ values, plugin: supportedPlugin });
+        return voteDialogUtils.buildTransaction({ proposalId, vote, plugin: supportedPlugin });
     };
 
     return (
@@ -52,13 +72,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                 <VoteProposalDataListItemStructure
                     proposalId={title}
                     proposalTitle={summary}
-                    voteIndicator={
-                        voteOption === VoteOption.YES.toString()
-                            ? 'yes'
-                            : voteOption === VoteOption.ABSTAIN.toString()
-                              ? 'abstain'
-                              : 'no'
-                    }
+                    voteIndicator={vote.label as VoteIndicator}
                 />
             </DataList.Root>
         </TransactionDialog>

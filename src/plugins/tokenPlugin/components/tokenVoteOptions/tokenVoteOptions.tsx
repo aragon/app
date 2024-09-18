@@ -33,17 +33,31 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
 
     const { open } = useDialogContext();
 
-    const onCancel = () => {
-        setSelectedOption('');
-        setShowOptions(false);
+    const abstainLabel = t('app.plugins.token.tokenSubmitVote.options.abstain');
+    const yesLabel = t('app.plugins.token.tokenSubmitVote.options.yes');
+    const noLabel = t('app.plugins.token.tokenSubmitVote.options.no');
+
+    const labelFromSelectedOption = {
+        [VoteOption.YES.toString()]: yesLabel,
+        [VoteOption.ABSTAIN.toString()]: abstainLabel,
+        [VoteOption.NO.toString()]: noLabel,
     };
 
     const openTransactionDialog = () => {
+        const vote = { value: Number(selectedOption), label: labelFromSelectedOption[selectedOption] };
         const params: IVoteDialogParams = {
             daoId,
-            values: { voteOption: selectedOption, title, summary, proposalId },
+            title,
+            summary,
+            proposalId,
+            vote,
         };
         open(GovernanceDialogs.VOTE, { params });
+    };
+
+    const onCancel = () => {
+        setSelectedOption('');
+        setShowOptions(false);
     };
 
     return (
@@ -60,21 +74,9 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
                         value={selectedOption}
                         onValueChange={setSelectedOption}
                     >
-                        <RadioCard
-                            label={t('app.plugins.token.tokenSubmitVote.options.yes')}
-                            description=""
-                            value={VoteOption.YES.toString()}
-                        />
-                        <RadioCard
-                            label={t('app.plugins.token.tokenSubmitVote.options.abstain')}
-                            description=""
-                            value={VoteOption.ABSTAIN.toString()}
-                        />
-                        <RadioCard
-                            label={t('app.plugins.token.tokenSubmitVote.options.no')}
-                            description=""
-                            value={VoteOption.NO.toString()}
-                        />
+                        <RadioCard label={yesLabel} description="" value={VoteOption.YES.toString()} />
+                        <RadioCard label={abstainLabel} description="" value={VoteOption.ABSTAIN.toString()} />
+                        <RadioCard label={noLabel} description="" value={VoteOption.NO.toString()} />
                     </RadioGroup>
                 </Card>
             )}

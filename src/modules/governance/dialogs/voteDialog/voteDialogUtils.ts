@@ -4,13 +4,16 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type Hex } from 'viem';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IBuildVoteDataParams } from '../../types';
-import type { IVoteValues } from './voteDialog.api';
 
 export interface IBuildTransactionParams {
     /**
-     * Values
+     * Incremental ID for the proposal.
      */
-    values: Pick<IVoteValues, 'voteOption' | 'proposalId'>;
+    proposalId: string;
+    /**
+     * Vote option selected by the user.
+     */
+    vote: { value?: number; label: string };
     /**
      * Plugin of the DAO to interact with.
      */
@@ -19,16 +22,14 @@ export interface IBuildTransactionParams {
 
 class VoteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { values, plugin } = params;
+        const { proposalId, vote, plugin } = params;
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
             pluginId: plugin.subdomain,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
         })!;
 
-        const { voteOption, proposalId } = values;
-
-        const buildDataParams: IBuildVoteDataParams = { proposalId, vote: Number(voteOption) };
+        const buildDataParams: IBuildVoteDataParams = { proposalId, vote: vote.value };
 
         const transactionData = buildDataFunction(buildDataParams);
 

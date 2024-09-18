@@ -32,7 +32,10 @@ export const MultisigApproveProposal: React.FC<IMultisigApproveProposalProps> = 
     const openTransactionDialog = () => {
         const params: IVoteDialogParams = {
             daoId,
-            values: { voteOption: 'APPROVE', title, summary, proposalId },
+            title,
+            summary,
+            proposalId,
+            vote: { label: t('app.plugins.multisig.multisigSubmitVote.voteLabel') },
         };
         open(GovernanceDialogs.VOTE, { params });
     };

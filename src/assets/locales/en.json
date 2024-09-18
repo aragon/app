@@ -416,7 +416,8 @@
           "entity": "Proposals"
         },
         "multisigSubmitVote": {
-          "button": "Approve"
+          "button": "Approve",
+          "voteLabel": "Approve"
         },
         "multisigVoteList": {
           "entity": "Votes"
