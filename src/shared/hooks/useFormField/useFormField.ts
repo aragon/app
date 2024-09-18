@@ -2,19 +2,18 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useController, type FieldPath, type FieldValues } from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
 
-export const useFormField = <
-    TFieldValues extends FieldValues = FieldValues,
-    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(
+export const useFormField = <TFieldValues extends FieldValues = never, TName extends FieldPath<TFieldValues> = never>(
     name: TName,
-    options?: IUseFormFieldOptions,
-): IUseFormFieldReturn => {
+    options?: IUseFormFieldOptions<TFieldValues, TName>,
+): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
-    const { label, ...otherOptions } = options ?? {};
+    const { label, fieldPrefix, ...otherOptions } = options ?? {};
 
-    const { field, fieldState } = useController({
-        name,
+    const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
+
+    const { field, fieldState } = useController<TFieldValues, TName>({
+        name: processedFieldName as TName,
         ...otherOptions,
     });
 

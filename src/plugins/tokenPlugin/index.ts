@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposalSettingsForm';
 import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenProposalList } from './components/tokenProposalList';
@@ -47,6 +48,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
             pluginId: plugin.id,
             function: tokenProposalUtils.getProposalStatus,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM,
+            pluginId: plugin.id,
+            component: TokenCreateProposalSettingsForm,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,

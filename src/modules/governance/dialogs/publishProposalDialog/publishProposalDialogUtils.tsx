@@ -1,13 +1,16 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { invariant, type IProposalAction } from '@aragon/ods';
-import { DateTime } from 'luxon';
-import { decodeAbiParameters, type Hex, toHex, type TransactionReceipt } from 'viem';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { invariant } from '@aragon/ods';
+import { DateTime, Duration } from 'luxon';
+import { decodeAbiParameters, type Hex, type TransactionReceipt } from 'viem';
+import type { IProposalAction } from '../../api/governanceService';
 import type {
     ICreateProposalFormData,
-    ICreateProposalFormDuration,
-    ICreateProposalFormFixedDateTime,
+    IProposalActionIndexed,
+    PrepareProposalActionMap,
 } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
@@ -27,6 +30,17 @@ export interface IBuildTransactionParams {
     plugin: IDaoPlugin;
 }
 
+export interface IPrepareActionsParams {
+    /**
+     * List of actions of the proposal.
+     */
+    actions: IProposalActionIndexed[];
+    /**
+     * Partial map of action-type and prepare-action function.
+     */
+    prepareActions?: PrepareProposalActionMap;
+}
+
 class PublishProposalDialogUtils {
     prepareMetadata = (formValues: ICreateProposalFormData) => {
         const { title, summary, body: description, resources } = formValues;
@@ -38,7 +52,7 @@ class PublishProposalDialogUtils {
         const { values, metadataCid, plugin } = params;
 
         const actions = this.formToProposalActions(values.actions);
-        const metadata = this.metadataToHex(metadataCid);
+        const metadata = transactionUtils.cidToHex(metadataCid);
         const startDate = this.parseStartDate(values);
         const endDate = this.parseEndDate(values);
 
@@ -55,7 +69,7 @@ class PublishProposalDialogUtils {
             data: transactionData,
         };
 
-        return Promise.resolve(transaction);
+        return transaction;
     };
 
     getProposalId = (receipt: TransactionReceipt) => {
@@ -68,6 +82,26 @@ class PublishProposalDialogUtils {
         const decodedProposalId = decodedParams[0].toString();
 
         return decodedProposalId;
+    };
+
+    prepareActions = async (params: IPrepareActionsParams) => {
+        const { actions, prepareActions } = params;
+
+        const prepareActionDataPromises = actions.map(async (action) => {
+            const prepareFunction = prepareActions?.[action.type];
+            const actionData = await (prepareFunction != null ? prepareFunction(action) : action.data);
+
+            return actionData;
+        });
+
+        const resolvedActionDataPromises = await Promise.all(prepareActionDataPromises);
+
+        const processedActions = actions.map((action, index) => ({
+            ...action,
+            data: resolvedActionDataPromises[index],
+        }));
+
+        return processedActions;
     };
 
     private parseStartDate = (formValues: ICreateProposalFormData): number => {
@@ -83,7 +117,7 @@ class PublishProposalDialogUtils {
             return 0;
         }
 
-        const parsedStartDate = this.parseFixedDate(startTimeFixed!);
+        const parsedStartDate = dateUtils.parseFixedDate(startTimeFixed!);
 
         return this.dateToSeconds(parsedStartDate);
     };
@@ -98,45 +132,32 @@ class PublishProposalDialogUtils {
             'PublishProposalDialogUtils.parseEndDate: endTimeDuration/endTimeFixed must be properly set.',
         );
 
-        // Return 0 when startTime is now and endTime equals minimumDuration to let smart contract set the correct end
+        // Return 0 when endTime is set as duration and equals to minimumDuration to let smart contract set the correct end
         // time when the transaction is executed, otherwise the end time will be set as a few seconds before the minimum
         // duration and the transaction would fail.
-        if (
-            endTimeMode === 'duration' &&
-            startTimeMode === 'now' &&
-            this.compareTimeDuration(minimumDuration, endTimeDuration)
-        ) {
+        if (endTimeMode === 'duration' && this.compareTimeDuration(minimumDuration, endTimeDuration)) {
             return 0;
         }
 
         if (endTimeMode === 'duration') {
-            const startDate = startTimeMode === 'now' ? DateTime.now() : this.parseFixedDate(startTimeFixed!);
+            const startDate = startTimeMode === 'now' ? DateTime.now() : dateUtils.parseFixedDate(startTimeFixed!);
             const endDate = startDate.plus({ hours, minutes, days });
 
             return this.dateToSeconds(endDate);
         }
 
-        const parsedEndDate = this.parseFixedDate(endTimeFixed!);
+        const parsedEndDate = dateUtils.parseFixedDate(endTimeFixed!);
 
         return this.dateToSeconds(parsedEndDate);
     };
 
-    private parseFixedDate = ({ date, time }: ICreateProposalFormFixedDateTime): DateTime => {
-        const { hour, minute } = DateTime.fromISO(time);
-        const parsedDate = DateTime.fromISO(date).set({ hour, minute });
-
-        return parsedDate;
-    };
-
     private dateToSeconds = (date: DateTime): number => Math.round(date.toMillis() / 1000);
-
-    private metadataToHex = (metadataUri: string): Hex => toHex(`ipfs://${metadataUri}`);
 
     private formToProposalActions = (actions: IProposalAction[]) =>
         actions.map(({ to, value, data }) => ({ to, value, data }));
 
-    private compareTimeDuration = (first?: ICreateProposalFormDuration, second?: ICreateProposalFormDuration) =>
-        first?.days === second?.days && first?.hours === second?.hours && first?.minutes === second?.minutes;
+    private compareTimeDuration = (first?: IDateDuration, second?: IDateDuration) =>
+        Duration.fromObject(first ?? {}).equals(Duration.fromObject(second ?? {}));
 }
 
 export const publishProposalDialogUtils = new PublishProposalDialogUtils();

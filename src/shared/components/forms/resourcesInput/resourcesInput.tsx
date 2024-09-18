@@ -1,26 +1,16 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/ods';
 import { useFieldArray } from 'react-hook-form';
-import { ResourceInputItem } from './resourceInputItem';
+import type { IResourcesInputProps, IResourcesInputResource } from './resourcesInput.api';
+import { ResourcesInputItem } from './resourcesInputItem';
 
-export interface IResourcesInputProps {
-    /**
-     * The name of the field in the form.
-     */
-    name: string;
-    /**
-     * The name of the field in the form.
-     */
-    helpText: string;
-}
+export type ResourcesInputBaseForm = Record<string, IResourcesInputResource[]>;
 
 export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
     const { name, helpText } = props;
-    const { t } = useTranslations();
 
-    const { fields, append, remove } = useFieldArray({
-        name: name,
-    });
+    const { t } = useTranslations();
+    const { fields, append, remove } = useFieldArray<ResourcesInputBaseForm>({ name });
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
@@ -34,7 +24,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
             {fields.length > 0 && (
                 <div className="flex flex-col gap-3 md:gap-2">
                     {fields.map((field, index) => (
-                        <ResourceInputItem key={field.id} index={index} remove={remove} />
+                        <ResourcesInputItem key={field.id} name={name} index={index} remove={remove} />
                     ))}
                 </div>
             )}
@@ -43,7 +33,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
                 variant="tertiary"
                 className="w-fit"
                 iconLeft={IconType.PLUS}
-                onClick={() => append({ label: '', link: '' })}
+                onClick={() => append({ name: '', url: '' })}
             >
                 {t('app.shared.resourcesInput.add')}
             </Button>

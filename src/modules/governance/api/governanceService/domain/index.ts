@@ -1,6 +1,7 @@
 export * from './enum';
 export type { IMember } from './member';
 export type { IProposal } from './proposal';
+export type { IProposalAction } from './proposalAction';
 export type { IProposalActionChangeMembers } from './proposalActionChangeMembers';
 export type { IProposalActionChangeSettings } from './proposalActionChangeSettings';
 export type { IProposalActionTokenMint } from './proposalActionTokenMint';

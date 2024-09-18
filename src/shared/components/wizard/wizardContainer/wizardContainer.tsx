@@ -1,7 +1,8 @@
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
+import { DevTool } from '@hookform/devtools';
 import { useMemo, type ComponentProps } from 'react';
-import { FormProvider, useForm, type FieldValues } from 'react-hook-form';
+import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
 
@@ -23,15 +24,19 @@ export interface IWizardContainerProps<TFormData extends FieldValues = FieldValu
      * Callback called at the end of the wizard with the form data when the form is valid.
      */
     onSubmit?: (data: TFormData) => void;
+    /**
+     * Default values for the form.
+     */
+    defaultValues?: UseFormProps<TFormData>['defaultValues'];
 }
 
 export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardContainerProps<TFormData>,
 ) => {
-    const { initialSteps = [], finalStep, children, onSubmit, submitLabel, ...otherProps } = props;
+    const { initialSteps = [], finalStep, children, onSubmit, submitLabel, defaultValues, ...otherProps } = props;
 
     const { t } = useTranslations();
-    const formMethods = useForm<TFormData>({ mode: 'onTouched' });
+    const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
 
     const wizardStepper = useStepper({ initialSteps });
     const { hasNext, activeStepIndex, steps } = wizardStepper;
@@ -79,6 +84,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
                     {children}
                 </form>
             </WizardProvider>
+            <DevTool control={formMethods.control} />
         </FormProvider>
     );
 };

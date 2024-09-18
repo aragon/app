@@ -7,10 +7,7 @@ import {
     type UseControllerReturn,
 } from 'react-hook-form';
 
-export interface IUseFormFieldOptions<
-    TFieldValues extends FieldValues = FieldValues,
-    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> {
+export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>> {
     /**
      * Disables the field when set to true.
      */
@@ -18,7 +15,7 @@ export interface IUseFormFieldOptions<
     /**
      * Validation rules for the field.
      */
-    rules?: UseControllerProps['rules'];
+    rules?: UseControllerProps<TFieldValues, TName>['rules'];
     /**
      * Label of the field to be displayed on validation errors. Defaults to field name.
      */
@@ -27,9 +24,20 @@ export interface IUseFormFieldOptions<
      * Default value of the field.
      */
     defaultValue?: FieldPathValue<TFieldValues, TName>;
+    /**
+     * Unregisters the field from the form when the component unmounts if set to true.
+     */
+    shouldUnregister?: boolean;
+    /*
+     * Prefix to prepend to the field name.
+     */
+    fieldPrefix?: string;
 }
 
-export type IUseFormFieldReturn = UseControllerReturn['field'] & {
+export type IUseFormFieldReturn<
+    TFieldValues extends FieldValues,
+    TName extends FieldPath<TFieldValues>,
+> = UseControllerReturn<TFieldValues, TName>['field'] & {
     /**
      * Variant of the input field.
      */

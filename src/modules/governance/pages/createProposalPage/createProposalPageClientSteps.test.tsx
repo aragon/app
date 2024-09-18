@@ -40,6 +40,7 @@ describe('<CreateProposalPageClientSteps /> component', () => {
 
     const createTestComponent = (props?: Partial<ICreateProposalPageClientStepsProps>) => {
         const completeProps: ICreateProposalPageClientStepsProps = {
+            daoId: 'test',
             steps: createProposalWizardSteps,
             ...props,
         };
