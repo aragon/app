@@ -226,7 +226,8 @@
             "title": "Initiate the vote"
           }
         },
-        "submitLabel": "Publish proposal"
+        "submitLabel": "Publish proposal",
+        "exitAlertDescription": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "daoMemberDetailsPage": {
         "aside": {
@@ -362,9 +363,6 @@
           }
         },
         "title": "Publish proposal"
-      },
-      "publishProposalExitDialog": {
-        "description": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "voteList": {
         "empty": {

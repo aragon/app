@@ -32,10 +32,6 @@ describe('<NavigationWizard /> component', () => {
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
     const confirmSpy = jest.spyOn(window, 'confirm');
 
-    afterEach(() => {
-        confirmSpy.mockReset();
-    });
-
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         cidToSrcSpy.mockReturnValue('ipfs://avatar-cid');
@@ -124,7 +120,7 @@ describe('<NavigationWizard /> component', () => {
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         const id = 'test-dao-id';
-        const exitPath = `/dao/${id}/proposals/` as Route;
+        const exitPath = `/dao/${id}/proposals/` as Route<string>;
         confirmSpy.mockReturnValue(true);
 
         render(createTestComponent({ id, exitPath }));

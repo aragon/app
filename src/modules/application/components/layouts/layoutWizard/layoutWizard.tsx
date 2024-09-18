@@ -8,7 +8,7 @@ import { type Route } from 'next';
 
 import type { ReactNode } from 'react';
 
-export interface ILayoutWizardProps {
+export interface ILayoutWizardProps<TRouteType extends string = string> {
     /**
      * Children of the layout.
      */
@@ -28,10 +28,10 @@ export interface ILayoutWizardProps {
     /**
      * Exit path to redirect to when exiting the wizard.
      */
-    exitPath: Route;
+    exitPath: Route<TRouteType>;
 }
 
-export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
+export const LayoutWizard: React.FC<ILayoutWizardProps<string>> = async (props) => {
     const { params, name, exitAlertDescription, exitPath, children } = props;
 
     const queryClient = new QueryClient();

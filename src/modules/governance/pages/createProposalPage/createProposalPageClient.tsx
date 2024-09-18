@@ -41,12 +41,12 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     return (
         <Page.Main fullWidth={true}>
             <Wizard.Container
-                finalStep="app.governance.createProposalPage.finalStep"
-                submitLabel="app.governance.createProposalPage.submitLabel"
+                finalStep={t('app.governance.createProposalPage.finalStep')}
+                submitLabel={t('app.governance.createProposalPage.submitLabel')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
                 defaultValues={{ actions: [] }}
-                exitAlertDescription="app.governance.publishProposalExitDialog.description"
+                exitAlertDescription={t('app.governance.createProposalPage.exitAlertDescription')}
             >
                 <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} />
             </Wizard.Container>

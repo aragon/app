@@ -7,11 +7,12 @@ export interface ILayoutWizardCreateProposalProps
 export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalProps> = (props) => {
     const { params, ...otherProps } = props;
     const { id } = params ?? {};
+
     return (
         <LayoutWizard
             name="app.governance.layoutWizardCreateProposal.name"
-            exitPath={`/dao/${id}/proposals/` as Route}
-            exitAlertDescription="app.governance.publishProposalExitDialog.description"
+            exitPath={`/dao/${id}/proposals/` as Route<string>}
+            exitAlertDescription="app.governance.createProposalPage.exitAlertDescription"
             {...otherProps}
         />
     );

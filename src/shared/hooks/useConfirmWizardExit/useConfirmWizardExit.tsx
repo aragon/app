@@ -1,24 +1,19 @@
 import { useEffect } from 'react';
-import { useTranslations } from '../../components/translationsProvider';
 
-export const useConfirmWizardExit = (isDirty: boolean, dialogDesc: string) => {
-    const { t } = useTranslations();
-
+export const useConfirmWizardExit = (isFormDirty: boolean, alertDescription: string) => {
     useEffect(() => {
-        const pushState = () => window.history.pushState(null, '', window.location.href);
-
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            if (isDirty) {
+            if (isFormDirty) {
                 e.preventDefault();
             }
         };
 
         const handlePopState = (e: PopStateEvent) => {
-            if (isDirty) {
-                const confirmLeave = window.confirm(t(dialogDesc));
+            if (isFormDirty) {
+                const confirmLeave = window.confirm(alertDescription);
                 if (!confirmLeave) {
                     e.preventDefault();
-                    pushState();
+                    window.history.pushState(null, '', window.location.href);
                 } else {
                     window.history.back();
                 }
@@ -32,5 +27,5 @@ export const useConfirmWizardExit = (isDirty: boolean, dialogDesc: string) => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('popstate', handlePopState);
         };
-    }, [isDirty, t, dialogDesc]);
+    }, [isFormDirty, alertDescription]);
 };
