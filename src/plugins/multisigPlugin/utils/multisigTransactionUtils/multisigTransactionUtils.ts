@@ -15,6 +15,7 @@ class MultisigTransactionUtils {
 
         return data;
     };
+
     buildVoteData = (params: IBuildVoteDataParams): Hex => {
         const { proposalId } = params;
 

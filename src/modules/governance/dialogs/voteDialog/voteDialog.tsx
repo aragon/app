@@ -49,19 +49,17 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
         >
             <DataList.Root entityLabel="">
-                <DataList.Container>
-                    <VoteProposalDataListItemStructure
-                        proposalId={title}
-                        proposalTitle={summary}
-                        voteIndicator={
-                            voteOption === VoteOption.YES.toString()
-                                ? 'yes'
-                                : voteOption === VoteOption.ABSTAIN.toString()
-                                  ? 'abstain'
-                                  : 'no'
-                        }
-                    />
-                </DataList.Container>
+                <VoteProposalDataListItemStructure
+                    proposalId={title}
+                    proposalTitle={summary}
+                    voteIndicator={
+                        voteOption === VoteOption.YES.toString()
+                            ? 'yes'
+                            : voteOption === VoteOption.ABSTAIN.toString()
+                              ? 'abstain'
+                              : 'no'
+                    }
+                />
             </DataList.Root>
         </TransactionDialog>
     );
