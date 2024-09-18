@@ -1,4 +1,4 @@
-import { IMemberMetrics } from '../../api/governanceService';
+import type { IMemberMetrics } from '../../api/governanceService';
 
 export const generateMemberMetrics = (metrics?: Partial<IMemberMetrics>): IMemberMetrics => ({
     firstActivity: null,

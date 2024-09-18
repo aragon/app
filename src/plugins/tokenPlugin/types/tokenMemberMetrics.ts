@@ -1,4 +1,4 @@
-import { IMemberMetrics } from '@/modules/governance/api/governanceService';
+import type { IMemberMetrics } from '@/modules/governance/api/governanceService';
 
 export interface ITokenMemberMetrics extends IMemberMetrics {
     /**
