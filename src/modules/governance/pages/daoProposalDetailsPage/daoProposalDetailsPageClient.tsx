@@ -137,9 +137,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
                             {showExecuteComponent && (
                                 <PluginComponent
-                                    pluginId={pluginIds}
+                                    pluginIds={pluginIds}
                                     slotId={GovernanceSlotId.GOVERNANCE_PROCESS_EXECUTE}
-                                    params={{ proposal }}
+                                    status={proposalStatus}
                                 />
                             )}
                         </Page.Section>
