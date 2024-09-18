@@ -1,3 +1,4 @@
+import { VoteOption } from '@/plugins/tokenPlugin/types';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -11,7 +12,6 @@ import { DataList, invariant, VoteProposalDataListItemStructure } from '@aragon/
 import { useAccount } from 'wagmi';
 import type { IVoteDialogParams } from './voteDialog.api';
 import { voteDialogUtils } from './voteDialogUtils';
-import { VoteOption } from '@/plugins/tokenPlugin/types';
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
 
