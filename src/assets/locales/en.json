@@ -235,6 +235,7 @@
         }
       },
       "createProposalPage": {
+        "exitAlertDescription": "If you leave this process, you'll lose all the information you've entered so far.",
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
