@@ -53,12 +53,14 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
-
     const proposalStatus = useSlotFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginIds,
     })!;
+
+    console.log('PROPOSAL', proposalStatus, proposal);
+
 
     if (proposal == null) {
         return null;
@@ -78,6 +80,11 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { chainId } = networkDefinitions[proposal.network];
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
+    const executedBlockLink = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: proposal.executed.transactionHash,
+        chainId,
+    });
 
     const statusTag = {
         label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],
@@ -127,6 +134,18 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                         >
                             <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
+                            {proposal.executed.status && (
+                                <div className="flex gap-2">
+                                    <Button
+                                        href={executedBlockLink}
+                                        iconRight={IconType.LINK_EXTERNAL}
+                                        variant="success"
+                                        target="_blank"
+                                    >
+                                        Executed
+                                    </Button>
+                                </div>
+                            )}
                         </Page.Section>
                     )}
                 </Page.Main>
