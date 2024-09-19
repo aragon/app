@@ -1,7 +1,7 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { DataList, OdsModulesProvider } from '@aragon/ods';
+import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateDaoTokenSettings, generateTokenMember, generateTokenMemberMetrics } from '../../testUtils';
 import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
@@ -26,9 +26,7 @@ describe('<TokenMemberListItem /> component', () => {
 
         return (
             <OdsModulesProvider>
-                <DataList.Root entityLabel="">
-                    <TokenMemberListItem {...completeProps} />
-                </DataList.Root>
+                <TokenMemberListItem {...completeProps} />
             </OdsModulesProvider>
         );
     };
