@@ -4,7 +4,7 @@ import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { type ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/ods';
+import { ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList } from '../voteList';
@@ -65,6 +65,16 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                     <VoteList initialParams={voteListParams} daoId={daoId} />
                 </ProposalVoting.Votes>
                 <ProposalVoting.Details settings={proposalSettings} />
+                {status === ProposalStatus.ACTIVE && (
+                    <PluginComponent
+                        slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                        pluginIds={pluginIds}
+                        proposalId={proposal.proposalId}
+                        daoId={daoId}
+                        title={proposal.title}
+                        summary={proposal.summary}
+                    />
+                )}
             </ProposalVoting.Stage>
         </ProposalVoting.Container>
     );

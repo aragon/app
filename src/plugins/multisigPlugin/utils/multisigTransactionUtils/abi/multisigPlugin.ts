@@ -23,4 +23,14 @@ export const multisigPluginAbi = [
         outputs: [{ name: 'proposalId', internalType: 'uint256', type: 'uint256' }],
         stateMutability: 'nonpayable',
     },
+    {
+        type: 'function',
+        inputs: [
+            { name: '_proposalId', internalType: 'uint256', type: 'uint256' },
+            { name: '_tryExecution', internalType: 'bool', type: 'bool' },
+        ],
+        name: 'approve',
+        outputs: [],
+        stateMutability: 'nonpayable',
+    },
 ];

@@ -391,6 +391,14 @@
         },
         "title": "Publish proposal"
       },
+      "voteDialog": {
+        "button": {
+          "submit": "Submit vote",
+          "success": "View proposals"
+        },
+        "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
+        "title": "Submit vote"
+      },
       "voteList": {
         "empty": {
           "description": "No votes have been found.",
@@ -434,6 +442,10 @@
         },
         "multisigProposalList": {
           "entity": "Proposals"
+        },
+        "multisigSubmitVote": {
+          "button": "Approve",
+          "voteLabel": "Approve"
         },
         "multisigVoteList": {
           "entity": "Votes"
@@ -492,6 +504,19 @@
           "abstain": "Abstain",
           "no": "No",
           "yes": "Yes"
+        },
+        "tokenSubmitVote": {
+          "buttons": {
+            "cancel": "Cancel",
+            "default": "Vote on proposal",
+            "submit": "Submit vote"
+          },
+          "options": {
+            "abstain": "Abstain",
+            "label": "Choose your option",
+            "no": "No",
+            "yes": "Yes"
+          }
         },
         "tokenVoteList": {
           "entity": "Votes"
