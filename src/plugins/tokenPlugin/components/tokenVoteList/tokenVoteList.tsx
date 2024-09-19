@@ -58,9 +58,13 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/members/${vote.memberAddress}`}
+                            href={`/dao/${daoId}/members/${vote.member.address}`}
                             voteIndicator={voteOptionToIndicator[vote.voteOption]}
-                            voter={{ address: vote.memberAddress }}
+                            voter={{
+                                address: vote.member.address,
+                                avatarSrc: vote.member.avatar ?? undefined,
+                                name: vote.member.ens ?? undefined,
+                            }}
                             votingPower={formatUnits(BigInt(vote.votingPower), vote.token.decimals)}
                             tokenSymbol={vote.token.symbol}
                         />

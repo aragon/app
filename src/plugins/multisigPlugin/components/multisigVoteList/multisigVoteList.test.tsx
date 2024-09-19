@@ -1,5 +1,6 @@
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
+import { generateAddressInfo } from '@/shared/testUtils';
 import { addressUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigVote } from '../../testUtils';
@@ -30,11 +31,11 @@ describe('<MultisigVoteList /> component', () => {
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
-                memberAddress: '0x00C51Fad10462780e488B54D413aD92B28b88204',
+                member: generateAddressInfo({ address: '0x00C51Fad10462780e488B54D413aD92B28b88204' }),
             }),
             generateMultisigVote({
                 transactionHash: '0x456',
-                memberAddress: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+                member: generateAddressInfo({ address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05' }),
             }),
         ];
 
@@ -52,11 +53,11 @@ describe('<MultisigVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].memberAddress}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].memberAddress}`);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].member.address}`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].member.address}`);
 
-        expect(screen.getByText(addressUtils.truncateAddress(votes[0].memberAddress))).toBeInTheDocument();
-        expect(screen.getByText(addressUtils.truncateAddress(votes[1].memberAddress))).toBeInTheDocument();
+        expect(screen.getByText(addressUtils.truncateAddress(votes[0].member.address))).toBeInTheDocument();
+        expect(screen.getByText(addressUtils.truncateAddress(votes[1].member.address))).toBeInTheDocument();
         expect(screen.getAllByText('approve')).toHaveLength(2);
     });
 

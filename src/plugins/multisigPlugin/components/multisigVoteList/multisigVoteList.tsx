@@ -50,9 +50,13 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/members/${vote.memberAddress}`}
+                            href={`/dao/${daoId}/members/${vote.member.address}`}
                             voteIndicator="approve"
-                            voter={{ address: vote.memberAddress }}
+                            voter={{
+                                address: vote.member.address,
+                                avatarSrc: vote.member.avatar ?? undefined,
+                                name: vote.member.ens ?? undefined,
+                            }}
                         />
                     ),
                 )}

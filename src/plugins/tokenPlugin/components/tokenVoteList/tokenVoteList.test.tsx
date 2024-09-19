@@ -1,6 +1,7 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
+import { generateAddressInfo } from '@/shared/testUtils';
 import { addressUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateTokenVote } from '../../testUtils';
@@ -34,14 +35,14 @@ describe('<TokenVoteList /> component', () => {
             generateTokenVote({
                 transactionHash: '0x123',
                 voteOption: VoteOption.ABSTAIN,
-                memberAddress: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+                member: generateAddressInfo({ address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05' }),
                 votingPower: '997846578645312000000000',
                 token,
             }),
             generateTokenVote({
                 transactionHash: '0x456',
                 voteOption: VoteOption.YES,
-                memberAddress: '0x00C51Fad10462780e488B54D413aD92B28b88204',
+                member: generateAddressInfo({ address: '0x00C51Fad10462780e488B54D413aD92B28b88204' }),
                 votingPower: '465319846528946000000',
                 token,
             }),
@@ -61,14 +62,14 @@ describe('<TokenVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].memberAddress}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].memberAddress}`);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].member.address}`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].member.address}`);
 
-        expect(screen.getByText(addressUtils.truncateAddress(votes[0].memberAddress))).toBeInTheDocument();
+        expect(screen.getByText(addressUtils.truncateAddress(votes[0].member.address))).toBeInTheDocument();
         expect(screen.getByText('997.85K ABC')).toBeInTheDocument();
         expect(screen.getByText('abstain')).toBeInTheDocument();
 
-        expect(screen.getByText(addressUtils.truncateAddress(votes[1].memberAddress))).toBeInTheDocument();
+        expect(screen.getByText(addressUtils.truncateAddress(votes[1].member.address))).toBeInTheDocument();
         expect(screen.getByText('465.32 ABC')).toBeInTheDocument();
         expect(screen.getByText('yes')).toBeInTheDocument();
     });
