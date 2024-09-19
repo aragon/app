@@ -2,11 +2,11 @@ import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs'
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, Card, RadioCard, RadioGroup } from '@aragon/ods';
+import { Button, Card, RadioCard, RadioGroup, type VoteIndicator } from '@aragon/ods';
 import { useState } from 'react';
 import { VoteOption } from '../../types';
 
-export interface ITokenVoteOptionsProps {
+export interface ITokenSubmitVoteProps {
     /**
      * ID of the DAO to create the proposal for.
      */
@@ -25,7 +25,7 @@ export interface ITokenVoteOptionsProps {
     summary: string;
 }
 
-export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
+export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const { t } = useTranslations();
     const { daoId, title, summary, proposalId } = props;
     const [showOptions, setShowOptions] = useState(false);
@@ -37,14 +37,14 @@ export const TokenVoteOptions: React.FC<ITokenVoteOptionsProps> = (props) => {
     const yesLabel = t('app.plugins.token.tokenSubmitVote.options.yes');
     const noLabel = t('app.plugins.token.tokenSubmitVote.options.no');
 
-    const labelFromSelectedOption = {
-        [VoteOption.YES.toString()]: yesLabel,
-        [VoteOption.ABSTAIN.toString()]: abstainLabel,
-        [VoteOption.NO.toString()]: noLabel,
+    const voteOptionToIndicator: Record<string, VoteIndicator> = {
+        [VoteOption.YES.toString()]: 'yes',
+        [VoteOption.ABSTAIN.toString()]: 'abstain',
+        [VoteOption.NO.toString()]: 'no',
     };
 
     const openTransactionDialog = () => {
-        const vote = { value: Number(selectedOption), label: labelFromSelectedOption[selectedOption] };
+        const vote = { value: Number(selectedOption), label: voteOptionToIndicator[selectedOption] };
         const params: IVoteDialogParams = {
             daoId,
             title,

@@ -19,7 +19,7 @@ export interface IVoteDialogParams {
     /**
      * vote option
      */
-    vote: { value?: number; label: string };
+    vote: { value?: number; label: VoteIndicator };
     /**
      * Title of the proposal
      */
@@ -56,7 +56,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     });
 
     const handlePrepareTransaction = () => {
-        return voteDialogUtils.buildTransaction({ proposalId, vote, plugin: supportedPlugin });
+        return voteDialogUtils.buildTransaction({ proposalId, voteValue: vote.value, plugin: supportedPlugin });
     };
 
     return (
@@ -72,7 +72,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                 <VoteProposalDataListItemStructure
                     proposalId={title}
                     proposalTitle={summary}
-                    voteIndicator={vote.label as VoteIndicator}
+                    voteIndicator={vote.label}
                 />
             </DataList.Root>
         </TransactionDialog>

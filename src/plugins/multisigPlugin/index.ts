@@ -1,12 +1,12 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { MultisigApproveProposal } from './components/multisigApproveProposal';
 import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 import { MultisigMemberInfo } from './components/multisigMemberInfo';
 import { MultisigMemberList } from './components/multisigMemberList';
 import { MultisigProposalList } from './components/multisigProposalList';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
+import { MultisigSubmitVote } from './components/multisigSubmitVote';
 import { MultisigVoteList } from './components/multisigVoteList';
 import { plugin } from './constants/plugin';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
@@ -57,7 +57,7 @@ export const initialiseMultisigPlugin = () => {
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE,
             pluginId: plugin.id,
-            component: MultisigApproveProposal,
+            component: MultisigSubmitVote,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,

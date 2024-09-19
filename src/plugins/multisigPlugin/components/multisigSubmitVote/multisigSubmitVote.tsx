@@ -4,7 +4,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button } from '@aragon/ods';
 
-export interface IMultisigApproveProposalProps {
+export interface IMultisigSubmitVoteProps {
     /**
      * ID of the DAO to create the proposal for.
      */
@@ -23,7 +23,7 @@ export interface IMultisigApproveProposalProps {
     summary: string;
 }
 
-export const MultisigApproveProposal: React.FC<IMultisigApproveProposalProps> = (props) => {
+export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) => {
     const { daoId, proposalId, title, summary } = props;
     const { t } = useTranslations();
 
@@ -35,7 +35,7 @@ export const MultisigApproveProposal: React.FC<IMultisigApproveProposalProps> = 
             title,
             summary,
             proposalId,
-            vote: { label: t('app.plugins.multisig.multisigSubmitVote.voteLabel') },
+            vote: { label: 'approve' },
         };
         open(GovernanceDialogs.VOTE, { params });
     };

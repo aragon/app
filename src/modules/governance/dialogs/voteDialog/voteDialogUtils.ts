@@ -13,7 +13,7 @@ export interface IBuildTransactionParams {
     /**
      * Vote option selected by the user.
      */
-    vote: { value?: number; label: string };
+    voteValue?: number;
     /**
      * Plugin of the DAO to interact with.
      */
@@ -22,14 +22,14 @@ export interface IBuildTransactionParams {
 
 class VoteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { proposalId, vote, plugin } = params;
+        const { proposalId, voteValue, plugin } = params;
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
             pluginId: plugin.subdomain,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
         })!;
 
-        const buildDataParams: IBuildVoteDataParams = { proposalId, vote: vote.value };
+        const buildDataParams: IBuildVoteDataParams = { proposalId, vote: voteValue };
 
         const transactionData = buildDataFunction(buildDataParams);
 

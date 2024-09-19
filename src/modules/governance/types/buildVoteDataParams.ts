@@ -1,5 +1,3 @@
-import type { VoteOption } from '@/plugins/tokenPlugin/types';
-
 export interface IBuildVoteDataParams {
     /**
      *  The incremental ID of the proposal.
@@ -8,5 +6,5 @@ export interface IBuildVoteDataParams {
     /**
      *  The vote option selected by the user for token based DAOs.
      */
-    vote?: VoteOption;
+    vote?: number;
 }
