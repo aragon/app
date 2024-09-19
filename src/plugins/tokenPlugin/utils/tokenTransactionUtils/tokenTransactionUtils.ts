@@ -17,9 +17,9 @@ class TokenTransactionUtils {
     };
 
     buildVoteData = (params: IBuildVoteDataParams): Hex => {
-        const { proposalId, vote } = params;
+        const { proposalIndex, vote } = params;
 
-        const functionArgs = [proposalId, vote, false];
+        const functionArgs = [proposalIndex, vote, false];
 
         const data = encodeFunctionData({
             abi: tokenPluginAbi,

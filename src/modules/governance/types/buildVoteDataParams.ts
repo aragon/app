@@ -1,8 +1,8 @@
 export interface IBuildVoteDataParams {
     /**
-     *  The incremental ID of the proposal.
+     * The incremental ID of the proposal.
      */
-    proposalId: string;
+    proposalIndex: string;
     /**
      *  The vote option selected by the user for token based DAOs.
      */
