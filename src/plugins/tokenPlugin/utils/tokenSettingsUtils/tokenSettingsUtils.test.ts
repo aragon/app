@@ -1,10 +1,11 @@
+import { generateToken } from '@/modules/finance/testUtils';
 import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { mockTranslations } from '@/test/utils';
 import { tokenSettingsUtils } from './tokenSettingsUtils';
 
 describe('tokenSettings utils', () => {
-    describe('parsePercentageSetting method', () => {
+    describe('parsePercentageSetting', () => {
         it('correctly parses the percentage setting', () => {
             expect(tokenSettingsUtils.parsePercentageSetting(500000)).toEqual(50);
             expect(tokenSettingsUtils.parsePercentageSetting(123456)).toEqual(12.3456);
@@ -13,128 +14,72 @@ describe('tokenSettings utils', () => {
         });
     });
 
-    describe('parseSettings method', () => {
+    describe('parseSettings', () => {
         it('correctly formats and displays the approval threshold', () => {
-            const baseSettings = generateDaoTokenSettings();
-            const mockSettings = {
-                ...baseSettings,
-                settings: { ...baseSettings.settings, supportThreshold: 300000 },
-            };
-
-            const result = tokenSettingsUtils.parseSettings({
-                settings: mockSettings,
-                t: mockTranslations.tMock,
-            });
+            const settings = generateDaoTokenSettings({ supportThreshold: 300000 });
+            const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [approvalThresholdTerm] = result;
 
-            expect(approvalThresholdTerm.term).toBe('app.plugins.token.tokenGovernanceSettings.approvalThreshold');
-            expect(approvalThresholdTerm.definition).toBe(
-                'app.plugins.token.tokenGovernanceSettings.approval (approvalThreshold=30%)',
+            expect(approvalThresholdTerm.term).toMatch(/tokenGovernanceSettings.approvalThreshold/);
+            expect(approvalThresholdTerm.definition).toMatch(
+                /tokenGovernanceSettings.approval \(approvalThreshold=30%\)/,
             );
         });
 
         it('correctly formats and displays the minimum participation', () => {
-            const baseSettings = generateDaoTokenSettings();
-            const mockSettings = {
-                ...baseSettings,
-                settings: { ...baseSettings.settings, minParticipation: 200000 },
-            };
-
-            const result = tokenSettingsUtils.parseSettings({
-                settings: mockSettings,
-                t: mockTranslations.tMock,
-            });
+            const settings = generateDaoTokenSettings({ minParticipation: 200000 });
+            const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [, minimumParticipationTerm] = result;
 
-            expect(minimumParticipationTerm.term).toBe(
-                'app.plugins.token.tokenGovernanceSettings.minimumParticipation',
-            );
-            expect(minimumParticipationTerm.definition).toBe(
-                'app.plugins.token.tokenGovernanceSettings.participation (participation=20%,tokenValue=0,tokenSymbol=ETH)',
+            expect(minimumParticipationTerm.term).toMatch(/tokenGovernanceSettings.minimumParticipation/);
+            expect(minimumParticipationTerm.definition).toMatch(
+                /tokenGovernanceSettings.participation \(participation=20%,tokenValue=0,tokenSymbol=ETH\)/,
             );
         });
 
         it('correctly formats and displays the minimum participation token value', () => {
-            const baseSettings = generateDaoTokenSettings();
-            const mockSettings = {
-                ...baseSettings,
-                token: {
-                    ...baseSettings.token,
-                    totalSupply: '200000',
-                    decimals: 2,
-                },
-                settings: {
-                    ...baseSettings.settings,
-                    minParticipation: 200000,
-                },
-            };
-
-            const result = tokenSettingsUtils.parseSettings({
-                settings: mockSettings,
-                t: mockTranslations.tMock,
+            const settings = generateDaoTokenSettings({
+                token: generateToken({ totalSupply: '200000', decimals: 2 }),
+                minParticipation: 200000,
             });
+            const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [, minimumParticipationTerm] = result;
 
-            expect(minimumParticipationTerm.term).toBe(
-                'app.plugins.token.tokenGovernanceSettings.minimumParticipation',
-            );
-            expect(minimumParticipationTerm.definition).toBe(
-                'app.plugins.token.tokenGovernanceSettings.participation (participation=20%,tokenValue=400,tokenSymbol=ETH)',
+            expect(minimumParticipationTerm.term).toMatch(/tokenGovernanceSettings.minimumParticipation/);
+            expect(minimumParticipationTerm.definition).toMatch(
+                /tokenGovernanceSettings.participation \(participation=20%,tokenValue=400,tokenSymbol=ETH\)/,
             );
         });
 
         it('correctly formats and displays the duration from settings', () => {
-            const baseSettings = generateDaoTokenSettings();
-            const mockSettings = {
-                ...baseSettings,
-                settings: {
-                    ...baseSettings.settings,
-                    minDuration: 60 * 60 * 24 * 7,
-                },
-            };
-
-            const result = tokenSettingsUtils.parseSettings({ settings: mockSettings, t: mockTranslations.tMock });
+            const settings = generateDaoTokenSettings({ minDuration: 60 * 60 * 24 * 7 });
+            const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [, , durationTerm] = result;
 
-            expect(durationTerm.term).toBe('app.plugins.token.tokenGovernanceSettings.minimumDuration');
-            expect(durationTerm.definition).toBe(
-                'app.plugins.token.tokenGovernanceSettings.duration (days=7,hours=0,minutes=0)',
-            );
+            expect(durationTerm.term).toMatch(/tokenGovernanceSettings.minimumDuration/);
+            expect(durationTerm.definition).toMatch(/tokenGovernanceSettings.duration \(days=7,hours=0,minutes=0\)/);
         });
 
         it('correctly formats and displays the voting power necessary to be a proposer', () => {
-            const baseSettings = generateDaoTokenSettings();
-            const mockSettings = {
-                ...baseSettings,
-                token: {
-                    ...baseSettings.token,
-                    symbol: 'TKN',
-                    totalSupply: '100000000000000000000',
-                    decimals: 18,
-                },
-                settings: {
-                    ...baseSettings.settings,
-                    minProposerVotingPower: '100000000000000000000',
-                },
-            };
-
-            const result = tokenSettingsUtils.parseSettings({ settings: mockSettings, t: mockTranslations.tMock });
+            const settings = generateDaoTokenSettings({
+                token: generateToken({ symbol: 'TKN', decimals: 18 }),
+                minProposerVotingPower: '100000000000000000000',
+            });
+            const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [, , , , , proposerVotingTerm] = result;
 
-            expect(proposerVotingTerm.term).toBe('app.plugins.token.tokenGovernanceSettings.proposalThreshold');
-            expect(proposerVotingTerm.definition).toBe(
-                'app.plugins.token.tokenGovernanceSettings.proposalAccess (balance=100,symbol=TKN)',
+            expect(proposerVotingTerm.term).toMatch(/tokenGovernanceSettings.proposalThreshold/);
+            expect(proposerVotingTerm.definition).toMatch(
+                /tokenGovernanceSettings.proposalAccess \(balance=100,symbol=TKN\)/,
             );
         });
 
         it('correctly formats and displays for different voting modes', () => {
-            const baseSettings = generateDaoTokenSettings();
-
             const votingModes = [
                 {
                     mode: DaoTokenVotingMode.VOTE_REPLACEMENT,
@@ -154,20 +99,13 @@ describe('tokenSettings utils', () => {
             ];
 
             votingModes.forEach(({ mode, expectedVoteChange, expectedEarlyExecution }) => {
-                const mockSettings = {
-                    ...baseSettings,
-                    settings: { ...baseSettings.settings, votingMode: mode },
-                };
-
-                const result = tokenSettingsUtils.parseSettings({
-                    settings: mockSettings,
-                    t: mockTranslations.tMock,
-                });
+                const settings = generateDaoTokenSettings({ votingMode: mode });
+                const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
                 const [, , , earlyExecutionTerm, voteChangeTerm] = result;
 
-                expect(voteChangeTerm.definition).toBe(expectedVoteChange);
-                expect(earlyExecutionTerm.definition).toBe(expectedEarlyExecution);
+                expect(voteChangeTerm.definition).toEqual(expectedVoteChange);
+                expect(earlyExecutionTerm.definition).toEqual(expectedEarlyExecution);
             });
         });
     });

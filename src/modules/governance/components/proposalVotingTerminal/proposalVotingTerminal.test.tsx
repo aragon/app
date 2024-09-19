@@ -51,10 +51,10 @@ describe('<ProposalVotingTerminal /> component', () => {
         const pluginIds = ['multisig'];
         useDaoPluginIdsSpy.mockReturnValue(pluginIds);
         render(createTestComponent());
-        const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent).toBeInTheDocument();
-        expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN);
-        expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
+        const pluginComponent = screen.getAllByTestId('plugin-component-mock');
+        expect(pluginComponent[0]).toBeInTheDocument();
+        expect(pluginComponent[0].dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN);
+        expect(pluginComponent[0].dataset.pluginids).toEqual(pluginIds.toString());
     });
 
     it('renders the list of votes', async () => {
@@ -75,7 +75,7 @@ describe('<ProposalVotingTerminal /> component', () => {
 
         render(createTestComponent({ daoId, proposal }));
         expect(useSlotFunctionSpy).toHaveBeenCalledWith({
-            params: { daoId, settings: { settings: proposal.settings, token: undefined } },
+            params: { daoId, settings: proposal.settings },
             pluginIds,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         });

@@ -34,13 +34,17 @@ describe('<TokenProposalVotingBreakdown /> component', () => {
     });
 
     it('correctly displays the breakdown of the token proposal', () => {
-        const token = generateToken({ totalSupply: '1000000', decimals: 1, symbol: 'TTT' });
-        const settings = { ...generateDaoTokenSettings().settings, minParticipation: 200000, supportThreshold: 500000 };
+        const settings = generateDaoTokenSettings({
+            minParticipation: 200000,
+            supportThreshold: 500000,
+            historicalTotalSupply: '1000000',
+            token: generateToken({ decimals: 1, symbol: 'TTT' }),
+        });
         const votesByOption = [
             { type: VoteOption.YES, totalVotingPower: '7500' },
             { type: VoteOption.NO, totalVotingPower: '2500' },
         ];
-        const proposal = generateTokenProposal({ token, settings, metrics: { votesByOption } });
+        const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
         expect(screen.getByRole('tabpanel')).toBeInTheDocument();

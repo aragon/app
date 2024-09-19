@@ -1,5 +1,5 @@
-import { type IVoteProposalInfo } from '@/modules/governance/api/governanceService/domain/voteProposalInfo';
-import type { Network } from '@/shared/api/daoService';
+import type { IAddressInfo, Network } from '@/shared/api/daoService';
+import type { IProposal } from './proposal';
 
 export interface IVote {
     /**
@@ -13,7 +13,7 @@ export interface IVote {
     /**
      * Address of the member casting the vote.
      */
-    memberAddress: string;
+    member: IAddressInfo;
     /**
      * Network where the vote has been casted.
      */
@@ -21,5 +21,5 @@ export interface IVote {
     /**
      * Extra information about the proposal if includeInfo is true on the query.
      */
-    proposalInfo?: IVoteProposalInfo;
+    proposal?: IProposal;
 }

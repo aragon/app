@@ -1,7 +1,7 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateTokenProposal } from '../../testUtils';
+import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
 import { TokenProposalList, type ITokenProposalListProps } from './tokenProposalList';
 
 describe('<TokenProposalList /> component', () => {
@@ -37,9 +37,10 @@ describe('<TokenProposalList /> component', () => {
     };
 
     it('fetches and renders the token proposal list', () => {
+        const settings = generateDaoTokenSettings({ historicalTotalSupply: '0' });
         const proposals = [
-            generateTokenProposal({ title: 'First', id: '1' }),
-            generateTokenProposal({ title: 'Second', id: '2' }),
+            generateTokenProposal({ title: 'First', id: '1', settings }),
+            generateTokenProposal({ title: 'Second', id: '2', settings }),
         ];
         useProposalListDataSpy.mockReturnValue({
             proposalList: proposals,
@@ -58,8 +59,9 @@ describe('<TokenProposalList /> component', () => {
 
     it('does not render the data-list pagination when hidePagination is set to true', () => {
         const hidePagination = true;
+        const settings = generateDaoTokenSettings({ historicalTotalSupply: '0' });
         useProposalListDataSpy.mockReturnValue({
-            proposalList: [generateTokenProposal()],
+            proposalList: [generateTokenProposal({ settings })],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,

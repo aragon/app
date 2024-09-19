@@ -29,8 +29,9 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             // TODO: provide the corrct voted status (APP-3394)
             voted={true}
             publisher={{
-                address: proposal.creatorAddress,
-                link: `members/${proposal.creatorAddress}`,
+                address: proposal.creator.address,
+                name: proposal.creator.ens ?? undefined,
+                link: `members/${proposal.creator.address}`,
             }}
             result={{
                 approvalAmount: proposal.metrics.totalVotes,

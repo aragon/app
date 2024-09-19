@@ -42,7 +42,7 @@ describe('<DaoVersionInfo /> component', () => {
 
     it('renders the correct values', () => {
         const plugin = generateDaoPlugin({ release: '1', build: '3', subdomain: 'multisig' });
-        const dao = generateDao({ plugins: [plugin] });
+        const dao = generateDao({ plugins: [plugin], version: '1.3.0' });
         const appVersion = '1.0.0';
 
         useSupportedDaoPluginSpy.mockReturnValue(plugin);
@@ -51,7 +51,7 @@ describe('<DaoVersionInfo /> component', () => {
         render(createTestComponent({ dao: dao }));
 
         expect(screen.getByText(appVersion)).toBeInTheDocument();
-        expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
+        expect(screen.getByText(/daoVersionInfo.osValue \(version=1.3.0\)/)).toBeInTheDocument();
         expect(
             screen.getByText(/daoVersionInfo.governanceValue \(name=Multisig,release=1,build=3\)/),
         ).toBeInTheDocument();

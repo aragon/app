@@ -7,7 +7,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/ods';
 import classNames from 'classnames';
+import { type Route } from 'next';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
@@ -21,10 +23,18 @@ export interface INavigationWizardProps extends INavigationContainerProps {
      * ID of the DAO to display the data for.
      */
     id?: string;
+    /**
+     * Exit description to explain the alert dialog when exiting the wizard.
+     */
+    exitAlertDescription: string;
+    /**
+     * Exit path to redirect to when exiting the wizard.
+     */
+    exitPath: Route;
 }
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    const { name, id } = props;
+    const { name, id, exitAlertDescription, exitPath } = props;
 
     const { address, isConnected } = useAccount();
 
@@ -45,6 +55,16 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
 
+    useEffect(() => {
+        router.prefetch(exitPath);
+    }, [router, exitPath]);
+
+    const handleExitWizard = () => {
+        if (window.confirm(t(exitAlertDescription))) {
+            router.push(exitPath);
+        }
+    };
+
     const buttonClassName = classNames(
         'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
         'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
@@ -54,7 +74,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     return (
         <Navigation.Container containerClasses="flex flex-row items-center gap-x-6 justify-between py-5">
             <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
-                <button onClick={router.back} className={buttonClassName}>
+                <button onClick={handleExitWizard} className={buttonClassName}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </button>
                 <div className="flex min-w-0 flex-col gap-y-0.5">

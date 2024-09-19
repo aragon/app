@@ -38,7 +38,7 @@ describe('<ExploreDaosPage /> component', () => {
     it('prefetches the list of DAOs', async () => {
         render(await createTestComponent());
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoListOptions({ queryParams: { pageSize: 20, page: 1, sort: 'tvlUSD' } }).queryKey,
+            daoListOptions({ queryParams: { pageSize: 20, page: 1, sort: 'metrics.tvlUSD' } }).queryKey,
         );
     });
 

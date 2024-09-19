@@ -235,6 +235,7 @@
         }
       },
       "createProposalPage": {
+        "exitAlertDescription": "If you leave this process, you'll lose all the information you've entered so far.",
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -404,6 +405,14 @@
         },
         "title": "Publish proposal"
       },
+      "voteDialog": {
+        "button": {
+          "submit": "Submit vote",
+          "success": "View proposals"
+        },
+        "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
+        "title": "Submit vote"
+      },
       "voteList": {
         "empty": {
           "description": "No votes have been found.",
@@ -447,6 +456,10 @@
         },
         "multisigProposalList": {
           "entity": "Proposals"
+        },
+        "multisigSubmitVote": {
+          "button": "Approve",
+          "voteLabel": "Approve"
         },
         "multisigVoteList": {
           "entity": "Votes"
@@ -506,6 +519,19 @@
           "no": "No",
           "yes": "Yes"
         },
+        "tokenSubmitVote": {
+          "buttons": {
+            "cancel": "Cancel",
+            "default": "Vote on proposal",
+            "submit": "Submit vote"
+          },
+          "options": {
+            "abstain": "Abstain",
+            "label": "Choose your option",
+            "no": "No",
+            "yes": "Yes"
+          }
+        },
         "tokenVoteList": {
           "entity": "Votes"
         }
@@ -538,7 +564,7 @@
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}",
         "osLabel": "Operating system",
-        "osValue": "Aragon OSx"
+        "osValue": "Aragon OSx v{{version}}"
       }
     },
     "shared": {

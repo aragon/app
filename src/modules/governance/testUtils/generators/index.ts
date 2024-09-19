@@ -1,5 +1,6 @@
 export * from './createProposalFormData';
 export * from './member';
+export * from './memberMetrics';
 export * from './proposal';
 export * from './proposalActionChangeMembers';
 export * from './proposalActionChangeSettings';

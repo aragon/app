@@ -18,16 +18,7 @@ const queryToStepState = (
 ): TransactionStatusState => (status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status);
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
-    const {
-        title,
-        description,
-        customSteps = [],
-        stepper,
-        submitLabel,
-        successLink,
-        children,
-        prepareTransaction,
-    } = props;
+    const { title, description, customSteps, stepper, submitLabel, successLink, children, prepareTransaction } = props;
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
@@ -114,7 +105,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
         return stepKeys.map((stepId, index) => ({
             id: stepId,
-            order: customSteps.length + index,
+            order: (customSteps?.length ?? 0) + index,
             meta: {
                 label: t(`app.shared.transactionDialog.step.${stepId}.label`),
                 errorLabel: t(`app.shared.transactionDialog.step.${stepId}.errorLabel`),
@@ -139,7 +130,10 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         return () => clearTimeout(timeout);
     }, [activeStepInfo, handleTransactionError]);
 
-    useEffect(() => updateSteps([...customSteps, ...transactionSteps]), [customSteps, transactionSteps, updateSteps]);
+    useEffect(
+        () => updateSteps([...(customSteps ?? []), ...transactionSteps]),
+        [customSteps, transactionSteps, updateSteps],
+    );
 
     return (
         <>

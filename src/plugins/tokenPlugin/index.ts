@@ -6,6 +6,7 @@ import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
+import { TokenSubmitVote } from './components/tokenSubmitVote';
 import { TokenVoteList } from './components/tokenVoteList';
 import { plugin } from './constants/plugin';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
@@ -58,6 +59,16 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             pluginId: plugin.id,
             function: tokenTransactionUtils.buildCreateProposalData,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE,
+            pluginId: plugin.id,
+            component: TokenSubmitVote,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
+            pluginId: plugin.id,
+            function: tokenTransactionUtils.buildVoteData,
         })
 
         // Settings module slots
