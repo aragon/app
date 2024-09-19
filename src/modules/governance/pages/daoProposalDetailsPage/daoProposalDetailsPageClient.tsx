@@ -20,7 +20,7 @@ import {
     IconType,
     Link,
     ProposalActions,
-    ProposalStatus,
+    type ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
     useBlockExplorer,
@@ -29,7 +29,7 @@ import {
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { PluginComponent } from '@/shared/components/pluginComponent';
+import { ExecuteProposal } from '@/modules/governance/components/executeProposal';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -78,11 +78,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { chainId } = networkDefinitions[proposal.network];
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
-    const executedBlockLink = buildEntityUrl({
-        type: ChainEntityType.TRANSACTION,
-        id: proposal.executed.transactionHash,
-        chainId,
-    });
 
     const statusTag = {
         label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],
@@ -95,9 +90,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         },
         { label: proposal.proposalId },
     ];
-
-    const showExecuteComponent =
-        proposalStatus === ProposalStatus.EXECUTED || proposalStatus === ProposalStatus.EXECUTABLE;
 
     return (
         <>
@@ -135,13 +127,16 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                         >
                             <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
-                            {showExecuteComponent && (
-                                <PluginComponent
-                                    pluginIds={pluginIds}
-                                    slotId={GovernanceSlotId.GOVERNANCE_PROCESS_EXECUTE}
-                                    status={proposalStatus}
-                                />
-                            )}
+                            <ExecuteProposal
+                                chainId={chainId}
+                                transactionHash={transactionHash}
+                                status={proposalStatus}
+                                daoId={daoId}
+                                proposalId={proposal.proposalId}
+                                title={proposal.title}
+                                summary={proposal.summary}
+                                publisher={proposal.creatorAddress}
+                            />
                         </Page.Section>
                     )}
                 </Page.Main>
