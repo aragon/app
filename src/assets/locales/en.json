@@ -550,7 +550,7 @@
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}",
         "osLabel": "Operating system",
-        "osValue": "Aragon OSx"
+        "osValue": "Aragon OSx v{{version}}"
       }
     },
     "shared": {

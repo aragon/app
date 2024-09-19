@@ -4,9 +4,7 @@ import { generateDaoMultisigSettings } from './daoMultisigSettings';
 
 export const generateMultisigProposal = (proposal?: Partial<IMultisigProposal>): IMultisigProposal => ({
     ...generateProposal(),
-    settings: generateDaoMultisigSettings().settings,
-    metrics: {
-        totalVotes: 0,
-    },
+    settings: generateDaoMultisigSettings(),
+    metrics: { totalVotes: 0 },
     ...proposal,
 });

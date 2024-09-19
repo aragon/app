@@ -34,14 +34,8 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
 
     const voteListParams = { queryParams: { proposalId: proposal.id, pageSize: votesPerPage } };
 
-    // TODO: remove custom settings object and plugin-specific logic when settings interface is cleaned up (APP-3483)
-    const settingsObject = {
-        settings: proposal.settings,
-        token: (proposal as unknown as Record<string, unknown>).token,
-    };
-
     const proposalSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
-        params: { daoId, settings: settingsObject },
+        params: { daoId, settings: proposal.settings },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginIds,
     });
@@ -69,7 +63,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                     <PluginComponent
                         slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
                         pluginIds={pluginIds}
-                        proposalId={proposal.proposalId}
+                        proposalIndex={proposal.proposalIndex}
                         daoId={daoId}
                         title={proposal.title}
                         summary={proposal.summary}

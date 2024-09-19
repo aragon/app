@@ -2,8 +2,7 @@ import { ProposalActionType, type IProposalAction } from '@/modules/governance/a
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { generateMultisigProposal } from '../../testUtils';
-import type { IDaoMultisigSettings } from '../../types';
+import { generateDaoMultisigSettings, generateMultisigProposal } from '../../testUtils';
 import { multisigProposalUtils } from './multisigProposalUtils';
 
 describe('multisigProposal utils', () => {
@@ -90,21 +89,21 @@ describe('multisigProposal utils', () => {
 
     describe('isApprovalReached', () => {
         it('returns true when number of voters is greater than min approvals', () => {
-            const settings = { minApprovals: 3 } as IDaoMultisigSettings['settings'];
+            const settings = generateDaoMultisigSettings({ minApprovals: 3 });
             const metrics = { totalVotes: 5 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeTruthy();
         });
 
         it('returns true when number of voters is equal to min approvals', () => {
-            const settings = { minApprovals: 1 } as IDaoMultisigSettings['settings'];
+            const settings = generateDaoMultisigSettings({ minApprovals: 1 });
             const metrics = { totalVotes: 1 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeTruthy();
         });
 
         it('returns false when number of voters is less than min approvals', () => {
-            const settings = { minApprovals: 4 } as IDaoMultisigSettings['settings'];
+            const settings = generateDaoMultisigSettings({ minApprovals: 4 });
             const metrics = { totalVotes: 2 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeFalsy();

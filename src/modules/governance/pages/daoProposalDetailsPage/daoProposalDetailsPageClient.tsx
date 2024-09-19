@@ -64,8 +64,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         return null;
     }
 
-    const { blockTimestamp, creatorAddress, transactionHash, summary, title, description, actions, resources } =
-        proposal;
+    const { blockTimestamp, creator, transactionHash, summary, title, description, actions, resources } = proposal;
 
     const normalizedProposalActions = proposalActionUtils.normalizeActions({ pluginIds, actions, proposal, daoId });
 
@@ -73,10 +72,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         format: DateFormat.YEAR_MONTH_DAY,
     });
 
-    const creatorName = addressUtils.truncateAddress(creatorAddress);
+    const creatorName = creator.ens ?? addressUtils.truncateAddress(creator.address);
 
     const { chainId } = networkDefinitions[proposal.network];
-    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creatorAddress, chainId });
+    const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creator.address, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
     const statusTag = {
@@ -88,7 +87,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             href: `/dao/${daoId}/proposals`,
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
-        { label: proposal.proposalId },
+        { label: proposal.proposalIndex },
     ];
 
     return (
@@ -134,7 +133,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
-                                <p className="text-neutral-500">{proposal.proposalId}</p>
+                                <p className="text-neutral-500">{proposal.proposalIndex}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}

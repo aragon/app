@@ -1,10 +1,9 @@
-import { generateToken } from '@/modules/finance/testUtils';
 import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { generateTokenProposal } from '../../testUtils';
-import { DaoTokenVotingMode, VoteOption, type IDaoTokenSettings, type ITokenProposalOptionVotes } from '../../types';
+import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
+import { DaoTokenVotingMode, VoteOption, type ITokenProposalOptionVotes } from '../../types';
 import { tokenProposalUtils } from './tokenProposalUtils';
 
 describe('tokenProposal utils', () => {
@@ -20,7 +19,10 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns executed status when proposal has been executed', () => {
-            const proposal = generateTokenProposal({ executed: { status: true } });
+            const proposal = generateTokenProposal({
+                executed: { status: true },
+                settings: generateDaoTokenSettings({ historicalTotalSupply: '0' }),
+            });
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTED);
         });
 
@@ -35,7 +37,7 @@ describe('tokenProposal utils', () => {
         it('returns executable status when approval is reached early, proposal is started, can be executed early and has actions', () => {
             const now = '2022-02-01T07:55:55.868Z';
             const startDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toMillis() / 1000;
-            const settings = { votingMode: DaoTokenVotingMode.EARLY_EXECUTION } as IDaoTokenSettings['settings'];
+            const settings = generateDaoTokenSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
             const actions: IProposalAction[] = [
                 { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.MINT, inputData: null },
             ];
@@ -186,42 +188,39 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns true when total votes is greater than min participation required', () => {
-            const settings = { minParticipation: 150000 } as IDaoTokenSettings['settings']; // 15%
-            const token = generateToken({ totalSupply: '1000' });
+            const settings = generateDaoTokenSettings({ minParticipation: 150000, historicalTotalSupply: '1000' }); // 15%
             const totalVotes = BigInt('200'); // 20% of total-supply
-            const proposal = generateTokenProposal({ settings, token });
+            const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeTruthy();
         });
 
         it('returns true when total votes is equal to min participation required', () => {
-            const settings = { minParticipation: 500000 } as IDaoTokenSettings['settings']; // 50%
-            const token = generateToken({ totalSupply: '1000' });
+            const settings = generateDaoTokenSettings({ minParticipation: 500000, historicalTotalSupply: '1000' }); // 50%
             const totalVotes = BigInt('500'); // 50% of total-supply
-            const proposal = generateTokenProposal({ settings, token });
+            const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeTruthy();
         });
 
         it('returns false when total votes is less than min participation required', () => {
-            const settings = { minParticipation: 300000 } as IDaoTokenSettings['settings']; // 30%
-            const token = generateToken({ totalSupply: '1000' });
+            const settings = generateDaoTokenSettings({ minParticipation: 300000, historicalTotalSupply: '1000' }); // 30%
             const totalVotes = BigInt('290'); // 29% of total-supply
-            const proposal = generateTokenProposal({ settings, token });
+            const proposal = generateTokenProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeFalsy();
         });
 
         it('returns false when total supply is set to zero', () => {
-            const token = generateToken({ totalSupply: '0' });
-            const proposal = generateTokenProposal({ token });
+            const settings = generateDaoTokenSettings({ historicalTotalSupply: '0' });
+            const proposal = generateTokenProposal({ settings });
             expect(tokenProposalUtils.isMinParticipationReached(proposal)).toBeFalsy();
         });
     });
 
     describe('isSupportReached', () => {
         it('returns true when the amount of yes votes is greater than the support required', () => {
-            const settings = { supportThreshold: 500000 } as IDaoTokenSettings['settings']; // 50%
+            const settings = generateDaoTokenSettings({ supportThreshold: 500000, historicalTotalSupply: '0' }); // 50%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '510' }, // 51%
                 { type: VoteOption.NO, totalVotingPower: '490' }, // 49%
@@ -232,7 +231,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when the amount of yes votes is equal to the support required', () => {
-            const settings = { supportThreshold: 600000 } as IDaoTokenSettings['settings']; // 60%
+            const settings = generateDaoTokenSettings({ supportThreshold: 600000, historicalTotalSupply: '0' }); // 60%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '600' }, // 60%
                 { type: VoteOption.NO, totalVotingPower: '400' }, // 40%
@@ -242,7 +241,7 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when the amount of yes votes is less than the support required', () => {
-            const settings = { supportThreshold: 400000 } as IDaoTokenSettings['settings']; // 40%
+            const settings = generateDaoTokenSettings({ supportThreshold: 400000, historicalTotalSupply: '0' }); // 40%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '380' }, // 38%
                 { type: VoteOption.NO, totalVotingPower: '620' }, // 62%
@@ -252,29 +251,28 @@ describe('tokenProposal utils', () => {
         });
 
         it('returns false when no one voted yet', () => {
-            expect(tokenProposalUtils.isSupportReached(generateTokenProposal())).toBeFalsy();
+            const settings = generateDaoTokenSettings({ historicalTotalSupply: '0' });
+            expect(tokenProposalUtils.isSupportReached(generateTokenProposal({ settings }))).toBeFalsy();
         });
 
         it('returns true when early param is true and yes votes match the support needed in worst voting scenario', () => {
-            const settings = { supportThreshold: 510000 } as IDaoTokenSettings['settings']; // 51%
+            const settings = generateDaoTokenSettings({ supportThreshold: 510000, historicalTotalSupply: '1000' }); // 51%
             const votesByOption = [
-                { type: VoteOption.YES, totalVotingPower: '520' }, // 52%;
+                { type: VoteOption.YES, totalVotingPower: '520' }, // 52% and 38% worst case
                 { type: VoteOption.ABSTAIN, totalVotingPower: '100' },
             ];
-            const token = generateToken({ totalSupply: '1000' }); // 38% worst case
-            const proposal = generateTokenProposal({ settings, token, metrics: { votesByOption } });
+            const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
             expect(tokenProposalUtils.isSupportReached(proposal, true)).toBeTruthy();
         });
 
         it('returns false when early param is true and yes votes do not match the support needed in worst voting scenario', () => {
-            const settings = { supportThreshold: 550000 } as IDaoTokenSettings['settings']; // 55%
+            const settings = generateDaoTokenSettings({ supportThreshold: 550000, historicalTotalSupply: '1000' }); // 55%
             const votesByOption = [
-                { type: VoteOption.YES, totalVotingPower: '400' }, // 40%;
+                { type: VoteOption.YES, totalVotingPower: '400' }, // 40% and 45% worst case
                 { type: VoteOption.NO, totalVotingPower: '100' },
                 { type: VoteOption.ABSTAIN, totalVotingPower: '50' },
             ];
-            const token = generateToken({ totalSupply: '1000' }); // 45% worst case
-            const proposal = generateTokenProposal({ settings, token, metrics: { votesByOption } });
+            const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
             expect(tokenProposalUtils.isSupportReached(proposal, true)).toBeFalsy();
         });
     });

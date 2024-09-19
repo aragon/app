@@ -82,8 +82,8 @@ describe('<DaoDashboardPageClient /> component', () => {
     });
 
     it('renders the formatted DAO stats', () => {
-        const metrics = generateDaoMetrics({ proposalsCreated: 2342, members: 123 });
-        const dao = generateDao({ metrics, tvlUSD: '4729384792837.4928374' });
+        const metrics = generateDaoMetrics({ proposalsCreated: 2342, members: 123, tvlUSD: '4729384792837.4928374' });
+        const dao = generateDao({ metrics });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
 

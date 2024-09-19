@@ -6,7 +6,7 @@ import { addressUtils, clipboardUtils, DateFormat, formatterUtils, OdsModulesPro
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
-import { generateMember } from '../../testUtils';
+import { generateMember, generateMemberMetrics } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
 
 jest.mock('@aragon/ods', () => ({
@@ -186,25 +186,19 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders fallback of `-` when lastActivity is null', () => {
-        const address = '0x1234567890123456789012345678901234567890';
-        const member = generateMember({ ens: 'member.eth', address, lastActivity: null, firstActivity: 1723472877 });
+        const metrics = generateMemberMetrics({ lastActivity: null, firstActivity: 1723472877 });
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-
-        render(createTestComponent({ address }));
-
+        render(createTestComponent());
         expect(screen.getByText('-')).toBeInTheDocument();
     });
 
     it('renders the correct last activity date', () => {
-        const address = '0x1234567890123456789012345678901234567890';
-        const member = generateMember({ ens: 'member.eth', address, lastActivity: 1723472877 });
+        const metrics = generateMemberMetrics({ lastActivity: 1723472877 });
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-
-        render(createTestComponent({ address }));
-
-        const duration = formatterUtils.formatDate(member.lastActivity! * 1000, { format: DateFormat.DURATION });
+        render(createTestComponent());
+        const duration = formatterUtils.formatDate(metrics.lastActivity! * 1000, { format: DateFormat.DURATION });
         const [value] = duration?.split(' ') ?? [];
 
         expect(screen.getByText(value)).toBeInTheDocument();
@@ -212,30 +206,22 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders fallback of `-` when firstActivity is null', () => {
-        const address = '0x1234567890123456789012345678901234567890';
-        const lastActivity = 1723472877;
-        const member = generateMember({ ens: 'member.eth', address, firstActivity: null, lastActivity });
+        const metrics = generateMemberMetrics({ firstActivity: null, lastActivity: 1723472877 });
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-
-        render(createTestComponent({ address }));
-
+        render(createTestComponent());
         expect(screen.getByText('-')).toBeInTheDocument();
     });
 
     it('renders the correct first activity date', () => {
-        const address = '0x1234567890123456789012345678901234567890';
-        const firstActivity = 1723472877;
-        const member = generateMember({ ens: 'member.eth', address, firstActivity });
+        const metrics = generateMemberMetrics({ firstActivity: 1723472877 });
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
 
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+        render(createTestComponent());
 
-        render(createTestComponent({ address }));
-
-        const firstActivityDate = formatterUtils.formatDate(firstActivity * 1000, {
+        const firstActivityDate = formatterUtils.formatDate(metrics.firstActivity! * 1000, {
             format: DateFormat.YEAR_MONTH_DAY,
         });
-
         expect(screen.getByText(firstActivityDate!)).toBeInTheDocument();
     });
 });

@@ -17,9 +17,9 @@ class MultisigTransactionUtils {
     };
 
     buildVoteData = (params: IBuildVoteDataParams): Hex => {
-        const { proposalId } = params;
+        const { proposalIndex } = params;
 
-        const functionArgs = [proposalId, false];
+        const functionArgs = [proposalIndex, false];
 
         const data = encodeFunctionData({
             abi: multisigPluginAbi,

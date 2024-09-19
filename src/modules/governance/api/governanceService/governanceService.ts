@@ -10,8 +10,8 @@ import type {
 
 class GovernanceService extends AragonBackendService {
     private urls = {
-        members: '/members/active',
-        member: '/members/active/:address',
+        members: '/members',
+        member: '/members/:address',
         proposals: '/proposals',
         proposal: '/proposals/:id',
         votes: '/votes',

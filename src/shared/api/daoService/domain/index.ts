@@ -1,3 +1,4 @@
+export type { IAddressInfo } from './addressInfo';
 export type { IDao } from './dao';
 export type { IDaoLink } from './daoLink';
 export type { IDaoMetrics } from './daoMetrics';

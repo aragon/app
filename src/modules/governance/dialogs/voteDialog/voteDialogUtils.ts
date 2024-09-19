@@ -9,7 +9,7 @@ export interface IBuildTransactionParams {
     /**
      * Incremental ID for the proposal.
      */
-    proposalId: string;
+    proposalIndex: string;
     /**
      * Vote option selected by the user.
      */
@@ -22,14 +22,14 @@ export interface IBuildTransactionParams {
 
 class VoteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { proposalId, voteValue, plugin } = params;
+        const { proposalIndex, voteValue, plugin } = params;
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
             pluginId: plugin.subdomain,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
         })!;
 
-        const buildDataParams: IBuildVoteDataParams = { proposalId, vote: voteValue };
+        const buildDataParams: IBuildVoteDataParams = { proposalIndex, vote: voteValue };
 
         const transactionData = buildDataFunction(buildDataParams);
 

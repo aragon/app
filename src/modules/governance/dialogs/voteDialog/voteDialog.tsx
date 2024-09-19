@@ -31,7 +31,7 @@ export interface IVoteDialogParams {
     /**
      * Incremental ID of proposal
      */
-    proposalId: string;
+    proposalIndex: string;
 }
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
@@ -49,14 +49,14 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
     invariant(supportedPlugin != null, 'VoteDialog: DAO has no supported plugin.');
 
-    const { title, vote, summary, proposalId, daoId } = location.params;
+    const { title, vote, summary, proposalIndex, daoId } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
     const handlePrepareTransaction = () => {
-        return voteDialogUtils.buildTransaction({ proposalId, voteValue: vote.value, plugin: supportedPlugin });
+        return voteDialogUtils.buildTransaction({ proposalIndex, voteValue: vote.value, plugin: supportedPlugin });
     };
 
     return (
