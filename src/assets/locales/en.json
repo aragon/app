@@ -558,7 +558,6 @@
       },
       "formField": {
         "error": {
-          "noEmptyStrings": "{{name}} cannot be an empty string",
           "pattern": "Invalid {{name}} format",
           "required": "{{name}} is mandatory",
           "validate": "{{name}} is invalid"

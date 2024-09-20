@@ -1,7 +1,6 @@
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { formUtils } from '@/shared/utils/formUtils';
 import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/ods';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 
@@ -15,15 +14,18 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
         rules: {
             required: true,
         },
+        trimOnBlur: true,
         defaultValue: '',
     });
 
     const summaryField = useFormField<ICreateProposalFormData, 'summary'>('summary', {
         label: t('app.governance.createProposalForm.metadata.summary.title'),
+        trimOnBlur: true,
     });
 
     const { ref: bodyRef, ...bodyField } = useFormField<ICreateProposalFormData, 'body'>('body', {
         label: t('app.governance.createProposalForm.metadata.body.title'),
+        trimOnBlur: true,        
     });
 
     const { ref: addActionsRef, ...addActionsField } = useFormField<ICreateProposalFormData, 'addActions'>(
@@ -31,6 +33,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
         {
             label: t('app.governance.createProposalForm.metadata.actions.title'),
             defaultValue: true,
+            trimOnBlur: true,
         },
     );
 
@@ -41,7 +44,6 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 placeholder={t('app.governance.createProposalForm.metadata.title.placeholder')}
                 maxLength={128}
                 {...titleField}
-                onBlur={(e) => formUtils.trimOnBlur({ event: e, field: titleField })}
             />
             <TextArea
                 helpText={t('app.governance.createProposalForm.metadata.summary.helpText')}
@@ -49,7 +51,6 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 isOptional={true}
                 maxLength={480}
                 {...summaryField}
-                onBlur={(e) => formUtils.trimOnBlur({ event: e, field: summaryField })}
             />
             <TextAreaRichText
                 helpText={t('app.governance.createProposalForm.metadata.body.helpText')}

@@ -1,6 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { formUtils } from '@/shared/utils/formUtils';
 import { Button, Card, Dropdown, IconType, InputText } from '@aragon/ods';
 
 export interface IResourcesInputItemProps {
@@ -30,6 +29,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
         label: t('app.shared.resourcesInput.item.labelInput.title'),
         rules: { required: true },
         defaultValue: '',
+        trimOnBlur: true,
     });
 
     const urlFieldName = `${name}.${index}.url`;
@@ -37,6 +37,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
         label: t('app.shared.resourcesInput.item.linkInput.title'),
         defaultValue: '',
         rules: { required: true, pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/ },
+        trimOnBlur: true,
     });
 
     return (
@@ -45,14 +46,9 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
                 placeholder={t('app.shared.resourcesInput.item.labelInput.placeholder')}
                 maxLength={40}
                 {...nameField}
-                onBlur={(e) => formUtils.trimOnBlur({ event: e, field: nameField })}
             />
 
-            <InputText
-                placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')}
-                {...urlField}
-                onBlur={(e) => formUtils.trimOnBlur({ event: e, field: urlField })}
-            />
+            <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...urlField} />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container
                     constrainContentWidth={false}
