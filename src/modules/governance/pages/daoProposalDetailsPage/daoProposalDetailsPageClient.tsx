@@ -135,7 +135,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 title={proposal.title}
                                 summary={proposal.summary}
                                 publisher={proposal.creator.address}
-                                executionFailed={!!(!proposal.executed.status && proposal.executed.transactionHash)}
+                                executionFailed={Boolean(
+                                    proposal.executed.transactionHash && !proposal.executed.status,
+                                )}
                             />
                         </Page.Section>
                     )}
