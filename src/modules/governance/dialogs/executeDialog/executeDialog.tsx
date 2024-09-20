@@ -9,8 +9,8 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/ods';
 import { useAccount } from 'wagmi';
-import { executeDialogUtils } from './executeDialogUtils';
 import type { IProposal } from '../../api/governanceService';
+import { executeDialogUtils } from './executeDialogUtils';
 
 export interface IExecuteDialogParams {
     /**

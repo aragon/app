@@ -20,7 +20,9 @@ export interface IExecuteProposalProps {
     proposal: IProposal;
 }
 
-export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = ({ daoId, proposal }) => {
+export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) => {
+    const { daoId, proposal } = props;
+
     const { t } = useTranslations();
 
     const { buildEntityUrl } = useBlockExplorer();
