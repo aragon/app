@@ -5,9 +5,19 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { Button, ChainEntityType, IconType, ProposalStatus, useBlockExplorer } from '@aragon/ods';
+import { Button, type ButtonVariant, ChainEntityType, IconType, ProposalStatus, useBlockExplorer } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+
+type ButtonConfig = {
+    text: string;
+    variant?: ButtonVariant;
+    iconRight?: IconType;
+    disabled?: boolean;
+    onClick?: () => void;
+    href?: string;
+    target?: string;
+};
 
 export interface IExecuteProposalProps {
     /**
@@ -15,22 +25,17 @@ export interface IExecuteProposalProps {
      */
     daoId: string;
     /**
-     * TThe proposal to be executed.
+     * The proposal to be executed.
      */
     proposal: IProposal;
 }
 
 export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) => {
     const { daoId, proposal } = props;
-
     const { t } = useTranslations();
-
     const { buildEntityUrl } = useBlockExplorer();
-
     const { open } = useDialogContext();
-
     const { chainId } = networkDefinitions[proposal.network];
-
     const pluginIds = useDaoPluginIds(daoId);
 
     const proposalStatus = useSlotFunction<ProposalStatus>({
@@ -56,7 +61,24 @@ export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) 
         open(GovernanceDialogs.EXECUTE, { params });
     };
 
-    if (proposalStatus !== ProposalStatus.EXECUTED && proposalStatus !== ProposalStatus.EXECUTABLE) {
+    const buttonConfigs: Partial<Record<ProposalStatus, ButtonConfig>> = {
+        [ProposalStatus.EXECUTED]: {
+            text: t('app.governance.proposalExecutionStatus.buttons.executed'),
+            variant: 'success',
+            iconRight: IconType.LINK_EXTERNAL,
+            href: executedBlockLink,
+            target: '_blank',
+        },
+        [ProposalStatus.EXECUTABLE]: {
+            text: t('app.governance.proposalExecutionStatus.buttons.execute'),
+            variant: 'primary',
+            onClick: openTransactionDialog,
+        },
+    };
+
+    const config = buttonConfigs[proposalStatus];
+
+    if (!config) {
         return (
             <p className="text-sm leading-normal text-neutral-500">
                 {t('app.governance.proposalExecutionStatus.notExecutable')}
@@ -64,35 +86,9 @@ export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) 
         );
     }
 
-    const executionFailed = Boolean(proposal.executed.transactionHash && !proposal.executed.status);
-
     return (
-        <div className="flex items-center gap-4">
-            {executionFailed && (
-                <>
-                    <Button onClick={openTransactionDialog}>
-                        {t('app.governance.proposalExecutionStatus.buttons.tryAgain')}
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        iconRight={IconType.LINK_EXTERNAL}
-                        href={executedBlockLink}
-                        target="_blank"
-                    >
-                        {t('app.governance.proposalExecutionStatus.buttons.failed')}
-                    </Button>
-                </>
-            )}
-            {proposalStatus === ProposalStatus.EXECUTED && (
-                <Button variant="success" iconRight={IconType.LINK_EXTERNAL} href={executedBlockLink} target="_blank">
-                    {t('app.governance.proposalExecutionStatus.buttons.executed')}
-                </Button>
-            )}
-            {proposalStatus === ProposalStatus.EXECUTABLE && !executionFailed && (
-                <Button onClick={openTransactionDialog}>
-                    {t('app.governance.proposalExecutionStatus.buttons.execute')}
-                </Button>
-            )}
-        </div>
+        <Button className="w-full md:w-fit" {...config}>
+            {config.text}
+        </Button>
     );
 };
