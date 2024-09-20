@@ -1,15 +1,15 @@
 import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
-import type { IProposalActionWithdrawToken } from '@/modules/governance/api/governanceService';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { addressUtils, type IProposalActionComponentProps } from '@aragon/ods';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, formatUnits, parseUnits, zeroAddress } from 'viem';
-import type { IProposalActionIndexed } from '../../../createProposalFormDefinitions';
+import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 export interface ITransferAssetActionProps
-    extends IProposalActionComponentProps<IProposalActionIndexed<IProposalActionWithdrawToken>> {}
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
 const erc20TransferAbi = {
     type: 'function',
@@ -23,12 +23,12 @@ const erc20TransferAbi = {
 };
 
 export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) => {
-    const { action } = props;
+    const { action, index } = props;
 
     const { setValue } = useFormContext();
 
-    const fieldName = `actions.[${action.index}]`;
-    useFormField<Record<string, IProposalActionIndexed<IProposalActionWithdrawToken>>, typeof fieldName>(fieldName);
+    const fieldName = `actions.[${index}]`;
+    useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     const receiver = useWatch<Record<string, ITransferAssetFormData['receiver']>>({ name: `${fieldName}.receiver` });
     const token = useWatch<Record<string, ITransferAssetFormData['token']>>({ name: `${fieldName}.token` });
