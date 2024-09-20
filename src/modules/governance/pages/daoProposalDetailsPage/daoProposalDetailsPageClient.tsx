@@ -1,5 +1,6 @@
 'use client';
 
+import { ExecuteProposal } from '@/modules/governance/components/executeProposal';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -29,7 +30,6 @@ import {
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { ExecuteProposal } from '@/modules/governance/components/executeProposal';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -54,6 +54,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
+
     const proposalStatus = useSlotFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
