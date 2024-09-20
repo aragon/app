@@ -381,8 +381,11 @@
       "executeProposal": {
         "buttons": {
           "execute": "Execute",
-          "executed": "Executed"
-        }
+          "executed": "Executed",
+          "failed": "Execution failed",
+          "tryAgain": "Try again"
+        },
+        "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
       },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal"

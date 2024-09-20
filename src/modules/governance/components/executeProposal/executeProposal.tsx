@@ -37,24 +37,25 @@ export interface IExecuteProposalProps {
      * The publisher.
      */
     publisher: string;
+    /**
+     * Whether the execution failed.
+     */
+    executionFailed: boolean;
 }
 
-type ButtonConfig = {
-    text: string;
-    variant?: 'primary' | 'secondary' | 'success';
-    iconRight?: IconType;
-    disabled?: boolean;
-    onClick?: () => void;
-    href?: string;
-};
-
-export const ExecuteProposal: React.FC<IExecuteProposalProps> = (props) => {
-    const { chainId, transactionHash, status, daoId, proposalId, title, summary, publisher } = props;
-
+export const ExecuteProposal: React.FC<IExecuteProposalProps> = ({
+    chainId,
+    transactionHash,
+    status,
+    daoId,
+    proposalId,
+    title,
+    summary,
+    publisher,
+    executionFailed,
+}) => {
     const { t } = useTranslations();
-
     const { buildEntityUrl } = useBlockExplorer();
-
     const { open } = useDialogContext();
 
     const executedBlockLink = buildEntityUrl({
@@ -75,32 +76,39 @@ export const ExecuteProposal: React.FC<IExecuteProposalProps> = (props) => {
         open(GovernanceDialogs.EXECUTE, { params });
     };
 
-    const buttonConfigs: Partial<Record<ProposalStatus, ButtonConfig>> = {
-        [ProposalStatus.EXECUTED]: {
-            text: t('app.governance.executeProposal.buttons.executed'),
-            variant: 'success',
-            iconRight: IconType.LINK_EXTERNAL,
-            href: executedBlockLink,
-        },
-        [ProposalStatus.EXECUTABLE]: {
-            text: t('app.governance.executeProposal.buttons.execute'),
-            onClick: openTransactionDialog,
-        },
-    };
-
-    const config = buttonConfigs[status];
-
-    if (!config) {
+    if (status !== ProposalStatus.EXECUTED && status !== ProposalStatus.EXECUTABLE) {
         return (
-            <Button target="_blank" className="w-fit" size="md" variant="secondary" disabled={true}>
-                {t('app.governance.executeProposal.buttons.execute')}
-            </Button>
+            <p className="text-sm leading-normal text-neutral-500">
+                {t('app.governance.executeProposal.notExecutable')}
+            </p>
         );
     }
 
     return (
-        <Button target="_blank" className="w-fit" size="md" {...config}>
-            {config.text}
-        </Button>
+        <div className="flex items-center gap-4">
+            {executionFailed && (
+                <>
+                    <Button onClick={openTransactionDialog}>
+                        {t('app.governance.executeProposal.buttons.tryAgain')}
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        iconRight={IconType.LINK_EXTERNAL}
+                        href={executedBlockLink}
+                        target="_blank"
+                    >
+                        {t('app.governance.executeProposal.buttons.failed')}
+                    </Button>
+                </>
+            )}
+            {status === ProposalStatus.EXECUTED && (
+                <Button variant="success" iconRight={IconType.LINK_EXTERNAL} href={executedBlockLink} target="_blank">
+                    {t('app.governance.executeProposal.buttons.executed')}
+                </Button>
+            )}
+            {status === ProposalStatus.EXECUTABLE && !executionFailed && (
+                <Button onClick={openTransactionDialog}>{t('app.governance.executeProposal.buttons.execute')}</Button>
+            )}
+        </div>
     );
 };
