@@ -17,8 +17,8 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
     },
     [GovernanceDialogs.EXECUTE]: {
         Component: ExecuteDialog,
-        title: 'Execute Proposal',
-        description: 'To execute the proposal you have to confirm the onchain transaction with your wallet.',
+        title: 'app.governance.executeDialog.title',
+        description: 'app.governance.executeDialog.description',
     },
     [GovernanceDialogs.VOTE]: {
         Component: VoteDialog,

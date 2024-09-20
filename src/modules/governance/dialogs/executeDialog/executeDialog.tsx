@@ -68,7 +68,10 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             title={t('app.governance.executeDialog.title')}
             description={t('app.governance.executeDialog.description')}
             submitLabel={t('app.governance.executeDialog.buttons.submit')}
-            successLink={{ label: t('app.governance.executeDialog.buttons.success'), href: `/dao/${daoId}/proposals` }}
+            successLink={{
+                label: t('app.governance.executeDialog.buttons.success'),
+                href: `/dao/${daoId}/proposals`,
+            }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
         >

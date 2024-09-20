@@ -12,7 +12,7 @@ export interface IExecuteProposalProps {
     /**
      * The transaction hash of the proposal.
      */
-    transactionHash: string;
+    transactionHash?: string;
     /**
      * The status of the proposal.
      */

@@ -128,13 +128,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             <ProposalActions actions={normalizedProposalActions} chainId={chainId} />
                             <ExecuteProposal
                                 chainId={chainId}
-                                transactionHash={transactionHash}
+                                transactionHash={proposal.executed.transactionHash}
                                 status={proposalStatus}
                                 daoId={daoId}
-                                proposalId={proposal.proposalId}
+                                proposalId={proposal.proposalIndex}
                                 title={proposal.title}
                                 summary={proposal.summary}
-                                publisher={proposal.creatorAddress}
+                                publisher={proposal.creator.address}
                             />
                         </Page.Section>
                     )}
