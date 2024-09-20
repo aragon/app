@@ -1,1 +1,1 @@
-export { ExecuteProposal, type IExecuteProposalProps } from './executeProposal';
+export { ProposalExecutionStatus, type IExecuteProposalProps } from './proposalExecutionStatus';

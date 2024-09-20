@@ -10,28 +10,17 @@ import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/ods';
 import { useAccount } from 'wagmi';
 import { executeDialogUtils } from './executeDialogUtils';
+import type { IProposal } from '../../api/governanceService';
 
 export interface IExecuteDialogParams {
     /**
-     * ID of the DAO.
+     * The ID of the DAO.
      */
     daoId: string;
     /**
-     * The ID of the proposal.
+     * The proposal to be executed.
      */
-    proposalId: string;
-    /**
-     * The title of the proposal.
-     */
-    title: string;
-    /**
-     * The summary of the proposal.
-     */
-    summary: string;
-    /**
-     * The publisher.
-     */
-    publisher: string;
+    proposal: IProposal;
     /**
      * The status of the proposal.
      */
@@ -53,14 +42,15 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const { daoId, proposalId, title, summary, publisher, status } = location.params;
+    const { daoId, proposal, status } = location.params;
+    const { title, summary, creator, proposalIndex } = proposal;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
     const handlePrepareTransaction = async () => {
-        return executeDialogUtils.buildTransaction({ plugin: supportedPlugin, proposalId });
+        return executeDialogUtils.buildTransaction({ plugin: supportedPlugin, proposalIndex });
     };
 
     return (
@@ -80,7 +70,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
                 <ProposalDataListItem.Structure
                     title={title}
                     summary={summary}
-                    publisher={{ address: publisher }}
+                    publisher={{ address: creator.address }}
                     status={status}
                 />
             </DataList.Root>

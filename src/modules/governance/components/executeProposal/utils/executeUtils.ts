@@ -2,14 +2,14 @@ import { encodeFunctionData, type Hex } from 'viem';
 import { executeAbi } from './abi/execute';
 
 export interface IBuildExecuteData {
-    proposalId: string;
+    proposalIndex: string;
 }
 
 class ExecuteUtils {
     buildExecuteData = (params: IBuildExecuteData): Hex => {
-        const { proposalId } = params;
+        const { proposalIndex } = params;
 
-        const functionArgs = [proposalId];
+        const functionArgs = [proposalIndex];
         const data = encodeFunctionData({
             abi: executeAbi,
             functionName: 'execute',

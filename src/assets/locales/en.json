@@ -378,7 +378,10 @@
         "description": "To execute the proposal you have to confirm the onchain transaction with your wallet.",
         "title": "Execute proposal"
       },
-      "executeProposal": {
+      "layoutWizardCreateProposal": {
+        "name": "Create Proposal"
+      },
+      "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",
           "executed": "Executed",
@@ -386,9 +389,6 @@
           "tryAgain": "Try again"
         },
         "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
-      },
-      "layoutWizardCreateProposal": {
-        "name": "Create Proposal"
       },
       "proposalVotingTerminal": {
         "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
