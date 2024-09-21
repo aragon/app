@@ -1,3 +1,4 @@
+import { zeroAddress } from 'viem';
 import {
     type IProposalAction,
     type IProposalActionUpdateMetadata,
@@ -11,10 +12,10 @@ export enum ActionGroupId {
 export const defaultTransferAction: IProposalAction = {
     type: ProposalActionType.TRANSFER,
     from: '',
-    to: '',
+    to: zeroAddress,
     data: '0x',
     value: '0',
-    inputData: { function: 'transfer', contract: '', parameters: [] },
+    inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
 };
 
 export const defaultMetadataAction: Omit<

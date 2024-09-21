@@ -1,20 +1,11 @@
 'use client';
 
-import { type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
+import type { IAsset, IGetAssetListParams } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import {
-    AssetDataListItem,
-    AssetDataListItemStructure,
-    ChainEntityType,
-    DataListContainer,
-    DataListFilter,
-    DataListPagination,
-    DataListRoot,
-    useBlockExplorer,
-} from '@aragon/ods';
-import { useEffect, useState, type ComponentProps } from 'react';
+import { AssetDataListItem, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
+import type { ComponentProps } from 'react';
+import { AssetListItem } from './assetListItem';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
     /**
@@ -26,54 +17,18 @@ export interface IAssetListProps extends ComponentProps<'div'> {
      */
     hidePagination?: boolean;
     /**
-     * If true, items will be rendered as links.
-     * If false, items will have an onClick handler instead.
-     * @default true
+     * Callback called on token click. Replaces the default link to the token block-explorer page when set.
      */
-    isLinking?: boolean;
-    /**
-     * Callback function when an asset is selected.
-     * Required if isLinking is false.
-     */
-    onAssetSelect?: (asset: { token: IToken; amount: number | string }) => void;
-    /**
-     * Shows the search input when set to true.
-     * @default false
-     */
-    hasSearch?: boolean;
+    onAssetClick?: (asset: IAsset) => void;
 }
 
 export const AssetList: React.FC<IAssetListProps> = (props) => {
-    const {
-        initialParams,
-        hidePagination,
-        isLinking = true,
-        hasSearch = false,
-        onAssetSelect,
-        children,
-        ...otherProps
-    } = props;
-    const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
-    const [filteredAssets, setFilteredAssets] = useState<Array<{ token: IToken; amount: number }>>([]);
+    const { initialParams, hidePagination, children, onAssetClick, ...otherProps } = props;
+
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
-
-    useEffect(() => {
-        if (assetList) {
-            let filtered = assetList;
-
-            if (searchValue) {
-                filtered = assetList.filter(({ token }) =>
-                    token.name.toLowerCase().includes(searchValue.toLowerCase()),
-                );
-            }
-
-            setFilteredAssets(filtered.map((asset) => ({ ...asset, amount: Number(asset.amount) })));
-        }
-    }, [assetList, searchValue]);
 
     return (
         <DataListRoot
@@ -89,37 +44,11 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                 emptyState={emptyState}
                 errorState={errorState}
             >
-                {hasSearch && (
-                    <DataListFilter
-                        onSearchValueChange={setSearchValue}
-                        searchValue={searchValue}
-                        placeholder="Search assets..."
-                    />
-                )}
-                {filteredAssets?.map(({ amount, token }) => (
-                    <AssetDataListItemStructure
-                        key={token.address}
-                        name={token.name}
-                        symbol={token.symbol}
-                        amount={amount}
-                        fiatPrice={token.priceUsd}
-                        logoSrc={token.logo}
-                        priceChange={Number(token.priceChangeOnDayUsd)}
-                        target={isLinking ? '_blank' : undefined}
-                        href={
-                            isLinking
-                                ? buildEntityUrl({
-                                      type: ChainEntityType.TOKEN,
-                                      id: token.address,
-                                      chainId: networkDefinitions[token.network].chainId,
-                                  })
-                                : undefined
-                        }
-                        onClick={isLinking ? undefined : () => onAssetSelect?.({ token, amount })}
-                    />
+                {assetList?.map((asset) => (
+                    <AssetListItem key={asset.token.address} asset={asset} onAssetClick={onAssetClick} />
                 ))}
             </DataListContainer>
-            {!hidePagination && !searchValue && <DataListPagination />}
+            {!hidePagination && <DataListPagination />}
             {children}
         </DataListRoot>
     );

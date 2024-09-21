@@ -25,7 +25,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
         daoFilter === 'member' ? { urlParams: { address: address! }, queryParams: {} } : undefined;
 
     return (
-        <div className="flex flex-col gap-5">
+        <div className="flex grow flex-col gap-5">
             <ToggleGroup isMultiSelect={false} onChange={setDaoFilter} value={daoFilter}>
                 <Toggle value="all" label="All DAOs" />
                 <Toggle value="member" label="Member" disabled={address == null} />

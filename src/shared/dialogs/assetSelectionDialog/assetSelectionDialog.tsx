@@ -1,5 +1,5 @@
 import { type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
-import { AssetList } from '@/modules/finance/components/assetList';
+import { AssetSelectionList } from '@/modules/finance/components/assetSelectionList';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { Dialog, invariant } from '@aragon/ods';
 
@@ -32,12 +32,7 @@ export const AssetSelectionDialog: React.FC<IAssetSelectionDialogProps> = (props
         <>
             <Dialog.Header title="Select an asset" onCloseClick={handleDialogClose} />
             <Dialog.Content className="flex flex-col gap-6 py-7">
-                <AssetList
-                    initialParams={initialParams}
-                    isLinking={false}
-                    onAssetSelect={handleSelectAsset}
-                    hasSearch={true}
-                />
+                <AssetSelectionList initialParams={initialParams} onAssetSelect={handleSelectAsset} />
             </Dialog.Content>
         </>
     );

@@ -9,7 +9,7 @@ import { decodeAbiParameters, type Hex, type TransactionReceipt } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
 import type {
     ICreateProposalFormData,
-    IProposalActionIndexed,
+    IProposalActionData,
     PrepareProposalActionMap,
 } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -34,7 +34,7 @@ export interface IPrepareActionsParams {
     /**
      * List of actions of the proposal.
      */
-    actions: IProposalActionIndexed[];
+    actions: IProposalActionData[];
     /**
      * Partial map of action-type and prepare-action function.
      */

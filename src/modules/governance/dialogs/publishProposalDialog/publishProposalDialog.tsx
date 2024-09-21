@@ -10,7 +10,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
-import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
+import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
@@ -120,15 +120,13 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
         >
-            <DataList.Root entityLabel="">
-                {/* @ts-expect-error TODO: update ODS component to remove type requirement (APP-3590) */}
-                <ProposalDataListItem.Structure
-                    title={title}
-                    summary={summary}
-                    publisher={{ address }}
-                    status={ProposalStatus.DRAFT}
-                />
-            </DataList.Root>
+            {/* @ts-expect-error TODO: update ODS component to remove type requirement (APP-3590) */}
+            <ProposalDataListItem.Structure
+                title={title}
+                summary={summary}
+                publisher={{ address }}
+                status={ProposalStatus.DRAFT}
+            />
         </TransactionDialog>
     );
 };
