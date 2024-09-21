@@ -349,7 +349,7 @@
         "main": {
           "actions": {
             "description": "The following actions will execute if all voting stages are approved.",
-            "emptyActions": "Proposal has not actions.",
+            "empty": "Proposal has not actions.",
             "header": "Actions"
           },
           "governance": "Governance",

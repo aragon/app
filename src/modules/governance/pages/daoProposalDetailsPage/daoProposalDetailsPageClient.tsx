@@ -126,7 +126,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         <ProposalActions
                             actions={normalizedProposalActions}
                             chainId={chainId}
-                            emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.emptyActions')}
+                            emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.actions.empty')}
                         />
                     </Page.Section>
                 </Page.Main>
