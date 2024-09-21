@@ -1,6 +1,6 @@
 'use client';
 
-import { type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
+import { IAsset, type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
 import { AssetListItem } from '@/modules/finance/components/assetList/assetListItem';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -29,9 +29,9 @@ export interface IAssetListProps extends ComponentProps<'div'> {
 export const AssetSelectionList: React.FC<IAssetListProps> = (props) => {
     const { initialParams, onAssetSelect, children, ...otherProps } = props;
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
-    const [filteredAssets, setFilteredAssets] = useState<Array<{ token: IToken; amount: number }>>([]);
+    const [filteredAssets, setFilteredAssets] = useState<Array<IAsset>>([]);
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
+
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
@@ -46,7 +46,7 @@ export const AssetSelectionList: React.FC<IAssetListProps> = (props) => {
                 );
             }
 
-            setFilteredAssets(filtered.map((asset) => ({ ...asset, amount: Number(asset.amount) })));
+            setFilteredAssets(filtered);
         }
     }, [assetList, searchValue]);
 
@@ -69,7 +69,7 @@ export const AssetSelectionList: React.FC<IAssetListProps> = (props) => {
                     searchValue={searchValue}
                     placeholder="Search assets..."
                 />
-                {assetList?.map((asset) => (
+                {filteredAssets?.map((asset) => (
                     <AssetListItem key={asset.token.address} asset={asset} onAssetClick={onAssetSelect} />
                 ))}
             </DataListContainer>

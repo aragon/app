@@ -65,8 +65,8 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     );
 
     return (
-        <div className="flex flex-col">
-            <InputContainer id={daoId} wrapperClassName="px-1.5 items-center" alert={alert ?? undefined}>
+        <div className="flex flex-col gap-y-3">
+            <InputContainer id={daoId} wrapperClassName="pl-1.5 pr-4 items-center" alert={alert ?? undefined}>
                 <Button
                     variant="tertiary"
                     size="sm"
@@ -92,13 +92,11 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                         ? formatterUtils.formatNumber(Number(inputValue) * Number(selectedAsset.token.priceUsd), {
                               format: NumberFormat.FIAT_TOTAL_SHORT,
                           })
-                        : formatterUtils.formatNumber(inputValue, {
-                              format: NumberFormat.FIAT_TOTAL_SHORT,
-                          })}
+                        : `$0.00`}
                 </p>
             </InputContainer>
             {selectedAsset?.amount && (
-                <div className="flex items-center gap-x-1 self-end px-4">
+                <div className="flex items-center gap-x-1 self-end pr-4">
                     <button
                         className="text-primary-400 hover:text-primary-600"
                         onClick={() => setInputValue(selectedAsset.amount)}
