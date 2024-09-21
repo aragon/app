@@ -15,7 +15,14 @@ import classNames from 'classnames';
 import { useState } from 'react';
 
 export interface IAssetInputProps {
+    /**
+     * The DAO id.
+     */
     daoId: string;
+    /**
+     * Callback function when an asset is selected.
+     */
+    onAssetSelect?: (asset: IAsset) => void;
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
