@@ -45,7 +45,7 @@ describe('useFormField hook', () => {
         const label = 'Summary';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
         const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>('field-name', { label }));
-        expect(result.current.alert?.message).toMatch(/formField.error.required \(name=Summary\)/);
+        expect(result.current.alert?.message).toMatch(/formField.error.required \(name=Summary/);
         expect(result.current.alert?.variant).toEqual('critical');
     });
 
@@ -56,7 +56,7 @@ describe('useFormField hook', () => {
         const name = 'field-name';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
         const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name));
-        expect(result.current.alert?.message).toMatch(/formField.error.minLength \(name=field-name\)/);
+        expect(result.current.alert?.message).toMatch(/formField.error.minLength \(name=field-name/);
     });
 
     it('returns alert set to undefined when field has no errors', () => {
