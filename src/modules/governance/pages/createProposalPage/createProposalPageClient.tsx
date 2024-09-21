@@ -15,8 +15,9 @@ import {
     type PrepareProposalActionMap,
 } from '../../components/createProposalForm';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
-import { useCanCreateProposalGuard } from '../../hooks/useCanCreateProposalGuard';
+import { usePermissionCheckGuard } from '../../hooks/usePermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
@@ -43,12 +44,13 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const proposalsUrl: __next_route_internal_types__.DynamicRoutes<string> = `/dao/${dao!.id}/proposals`;
 
-    const test = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
+    const onPermissionCheckError = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
 
-    const { check: networkGuard, result: isCorrectNetwork } = useCanCreateProposalGuard({
-        onError: test,
+    const { check: networkGuard, result: isCorrectNetwork } = usePermissionCheckGuard({
+        slotId: GovernanceSlotId.GOVERNANCE_CAN_CREATE_PROPOSAL,
+        params: { daoId },
+        onError: onPermissionCheckError,
         network: dao!.network,
-        daoId,
     });
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
