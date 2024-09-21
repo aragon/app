@@ -40,12 +40,12 @@ describe('<AssetList /> component', () => {
     it('renders the asset list with multiple items when data is available', () => {
         const assets = [
             generateAsset({
-                token: generateToken({ address: '0x123', symbol: 'ABC', decimals: 8 }),
-                amount: '123456789',
+                token: generateToken({ address: '0x123', symbol: 'ABC' }),
+                amount: '1.23',
             }),
             generateAsset({
-                token: generateToken({ address: '0x456', symbol: 'DEF', decimals: 18 }),
-                amount: '987654321987654321987654321',
+                token: generateToken({ address: '0x456', symbol: 'DEF' }),
+                amount: '987654321.987654',
             }),
         ];
         useAssetListDataSpy.mockReturnValue({
