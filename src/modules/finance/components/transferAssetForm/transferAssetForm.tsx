@@ -51,6 +51,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
                 placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
                 {...receiverField}
             />
+            {/* TODO: use AssetInput component [APP-3611] */}
             <InputNumber placeholder={t('app.finance.transferAssetForm.amount.placeholder')} {...amountField} />
             {tokenField.value != null && <p>Selected token: {tokenField.value.symbol}</p>}
             <AssetList initialParams={assetListParams} onAssetClick={handleAssetClick} />
