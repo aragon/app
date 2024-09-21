@@ -84,4 +84,26 @@ describe('useFormField hook', () => {
         renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name, { fieldPrefix }));
         expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ name: expectedName }));
     });
+
+    it('uses the min value set on the rule to generate the alert message', () => {
+        const error = { type: 'min' };
+        const fieldState = { error };
+        const fieldValues = { field: {}, fieldState };
+        const fieldName = 'amount';
+        useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        const rules = { min: 10 };
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(fieldName, { rules }));
+        expect(result.current.alert?.message).toMatch(/formField.error.min \(name=amount,value=10\)/);
+    });
+
+    it('uses the max value set on the rule to generate the alert message', () => {
+        const error = { type: 'max' };
+        const fieldState = { error };
+        const fieldValues = { field: {}, fieldState };
+        const fieldName = 'tokens';
+        useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        const rules = { max: 123 };
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(fieldName, { rules }));
+        expect(result.current.alert?.message).toMatch(/formField.error.max \(name=tokens,value=123\)/);
+    });
 });
