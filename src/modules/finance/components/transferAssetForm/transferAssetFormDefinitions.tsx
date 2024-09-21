@@ -1,5 +1,5 @@
 import type { ICompositeAddress } from '@aragon/ods';
-import type { IToken } from '../../api/financeService';
+import type { IAsset } from '../../api/financeService';
 
 export interface ITransferAssetFormData {
     /**
@@ -13,5 +13,5 @@ export interface ITransferAssetFormData {
     /**
      * The token to be transfered.
      */
-    token?: IToken;
+    asset?: IAsset;
 }

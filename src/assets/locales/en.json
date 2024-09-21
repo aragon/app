@@ -598,6 +598,8 @@
       },
       "formField": {
         "error": {
+          "max": "{{name}} must be lower than {{value}}",
+          "min": "{{name}} must be greater than {{value}}",
           "pattern": "Invalid {{name}} format",
           "required": "{{name}} is mandatory",
           "validate": "{{name}} is invalid"

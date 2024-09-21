@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, ProposalActions } from '@aragon/ods';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useWatch } from 'react-hook-form';
 import { ActionComposer } from '../../actionComposer';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
@@ -27,6 +27,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const { t } = useTranslations();
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
+
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
 
     const {
@@ -37,6 +38,10 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     } = useFieldArray<ICreateProposalFormData, 'actions'>({
         name: 'actions',
     });
+
+    // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
+    const watchFieldArray = useWatch({ name: 'actions' });
+    const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
@@ -51,7 +56,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions
-                actions={actions}
+                actions={controlledActions}
                 actionKey="id"
                 customActionComponents={customActionComponents}
                 emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}

@@ -1,8 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, InputNumber } from '@aragon/ods';
-import type { IAsset } from '../../api/financeService';
+import { AddressInput, addressUtils, InputNumberMax } from '@aragon/ods';
 import { AssetList } from '../assetList';
 import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
 
@@ -28,19 +27,20 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const receiverField = useFormField<ITransferAssetFormData, 'receiver.address'>('receiver.address', {
         label: t('app.finance.transferAssetForm.receiver.label'),
+        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        fieldPrefix,
+    });
+
+    const assetField = useFormField<ITransferAssetFormData, 'asset'>('asset', {
         rules: { required: true },
         fieldPrefix,
     });
 
     const amountField = useFormField<ITransferAssetFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true },
+        rules: { required: true, min: 0, max: assetField.value?.amount },
         fieldPrefix,
     });
-
-    const tokenField = useFormField<ITransferAssetFormData, 'token'>('token', { fieldPrefix });
-
-    const handleAssetClick = (asset: IAsset) => tokenField.onChange(asset.token);
 
     const assetListParams = { queryParams: { address: sender, network } };
 
@@ -52,9 +52,13 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
                 {...receiverField}
             />
             {/* TODO: use AssetInput component (APP-3611) */}
-            <InputNumber placeholder={t('app.finance.transferAssetForm.amount.placeholder')} {...amountField} />
-            {tokenField.value != null && <p>Selected token: {tokenField.value.symbol}</p>}
-            <AssetList initialParams={assetListParams} onAssetClick={handleAssetClick} />
+            <InputNumberMax
+                placeholder={t('app.finance.transferAssetForm.amount.placeholder')}
+                max={Number(assetField.value?.amount ?? 0)}
+                {...amountField}
+            />
+            {assetField.value != null && <p>Selected token: {assetField.value.token.symbol}</p>}
+            <AssetList initialParams={assetListParams} onAssetClick={assetField.onChange} />
         </div>
     );
 };

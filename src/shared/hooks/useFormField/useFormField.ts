@@ -18,11 +18,16 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
     });
 
     const variant = fieldState.error != null ? 'critical' : 'default';
+    const alertValue =
+        fieldState.error?.type === 'min' ? otherOptions.rules?.min?.toString() : otherOptions.rules?.max?.toString();
 
     const alert =
-        fieldState.error != null
+        fieldState.error?.type != null
             ? {
-                  message: t(`app.shared.formField.error.${fieldState.error.type}`, { name: label ?? name }),
+                  message: t(`app.shared.formField.error.${fieldState.error.type}`, {
+                      name: label ?? name,
+                      value: alertValue,
+                  }),
                   variant: 'critical' as const,
               }
             : undefined;

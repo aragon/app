@@ -31,12 +31,12 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     const receiver = useWatch<Record<string, ITransferAssetFormData['receiver']>>({ name: `${fieldName}.receiver` });
-    const token = useWatch<Record<string, ITransferAssetFormData['token']>>({ name: `${fieldName}.token` });
+    const asset = useWatch<Record<string, ITransferAssetFormData['asset']>>({ name: `${fieldName}.asset` });
     const amount = useWatch<Record<string, ITransferAssetFormData['amount']>>({ name: `${fieldName}.amount` });
 
-    const tokenDecimals = token?.decimals ?? 18;
-    const tokenAddress = token?.address ?? zeroAddress;
-    const tokenName = token?.name ?? 'Ether';
+    const tokenDecimals = asset?.token.decimals ?? 18;
+    const tokenAddress = asset?.token.address ?? zeroAddress;
+    const tokenName = asset?.token?.name ?? 'Ether';
     const isNativeToken = tokenAddress === zeroAddress;
 
     const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
