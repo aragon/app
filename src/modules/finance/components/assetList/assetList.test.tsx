@@ -1,7 +1,6 @@
 import { AssetList, type IAssetListProps } from '@/modules/finance/components/assetList';
 import * as useAssetListData from '@/modules/finance/hooks/useAssetListData/useAssetListData';
 import { generateAsset, generateToken } from '@/modules/finance/testUtils';
-import { Network } from '@/shared/api/daoService';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 
@@ -65,25 +64,6 @@ describe('<AssetList /> component', () => {
 
         expect(screen.getByText('987.65M')).toBeInTheDocument();
         expect(screen.getByText(assets[1].token.symbol)).toBeInTheDocument();
-    });
-
-    it('correctly set the link of the assets', () => {
-        const initialParams = { queryParams: { network: Network.POLYGON_MAINNET } };
-        const assets = [
-            generateAsset({ token: generateToken({ network: initialParams.queryParams.network, address: '0x123' }) }),
-        ];
-        useAssetListDataSpy.mockReturnValue({
-            onLoadMore: jest.fn(),
-            assetList: assets,
-            state: 'idle' as const,
-            pageSize: 10,
-            itemsCount: 2,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        render(createTestComponent({ initialParams }));
-        expect(screen.getByRole('link').getAttribute('href')).toEqual('https://polygonscan.com/token/0x123');
     });
 
     it('does not render the data-list pagination when hidePagination is set to true', () => {

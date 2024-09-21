@@ -1,5 +1,5 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import { DataList, OdsModulesProvider, ProposalStatus } from '@aragon/ods';
+import { OdsModulesProvider, ProposalStatus } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
 import { VoteOption } from '../../types';
@@ -26,9 +26,7 @@ describe('<TokenProposalListItem /> component', () => {
 
         return (
             <OdsModulesProvider>
-                <DataList.Root entityLabel="">
-                    <TokenProposalListItem {...completeProps} />
-                </DataList.Root>
+                <TokenProposalListItem {...completeProps} />
             </OdsModulesProvider>
         );
     };

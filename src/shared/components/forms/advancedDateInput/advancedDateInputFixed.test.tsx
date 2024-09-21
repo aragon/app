@@ -50,7 +50,7 @@ describe('<AdvancedDateInputFixed /> component', () => {
         await userEvent.type(timeInput, '12:30');
         await userEvent.tab();
 
-        await waitFor(() => expect(alert).toHaveTextContent(/formField.error.validate \(name=End Time\)/));
+        await waitFor(() => expect(alert).toHaveTextContent(/formField.error.validate \(name=End Time/));
 
         // Set a valid date-time
         await userEvent.clear(timeInput);

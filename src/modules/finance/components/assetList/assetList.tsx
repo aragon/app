@@ -1,19 +1,11 @@
 'use client';
 
-import { type IGetAssetListParams } from '@/modules/finance/api/financeService';
+import type { IAsset, IGetAssetListParams } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import {
-    AssetDataListItem,
-    AssetDataListItemStructure,
-    ChainEntityType,
-    DataListContainer,
-    DataListPagination,
-    DataListRoot,
-    useBlockExplorer,
-} from '@aragon/ods';
+import { AssetDataListItem, DataListContainer, DataListPagination, DataListRoot } from '@aragon/ods';
 import type { ComponentProps } from 'react';
+import { AssetListItem } from './assetListItem';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
     /**
@@ -24,13 +16,16 @@ export interface IAssetListProps extends ComponentProps<'div'> {
      * Hides the pagination component when set to true.
      */
     hidePagination?: boolean;
+    /**
+     * Callback called on token click. Replaces the default link to the token block-explorer page when set.
+     */
+    onAssetClick?: (asset: IAsset) => void;
 }
 
 export const AssetList: React.FC<IAssetListProps> = (props) => {
-    const { initialParams, hidePagination, children, ...otherProps } = props;
+    const { initialParams, hidePagination, children, onAssetClick, ...otherProps } = props;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
@@ -49,22 +44,8 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                 emptyState={emptyState}
                 errorState={errorState}
             >
-                {assetList?.map(({ amount, token }) => (
-                    <AssetDataListItemStructure
-                        key={token.address}
-                        name={token.name}
-                        symbol={token.symbol}
-                        amount={amount}
-                        fiatPrice={token.priceUsd}
-                        logoSrc={token.logo}
-                        priceChange={Number(token.priceChangeOnDayUsd)}
-                        target="_blank"
-                        href={buildEntityUrl({
-                            type: ChainEntityType.TOKEN,
-                            id: token.address,
-                            chainId: networkDefinitions[token.network].chainId,
-                        })}
-                    />
+                {assetList?.map((asset) => (
+                    <AssetListItem key={asset.token.address} asset={asset} onAssetClick={onAssetClick} />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}

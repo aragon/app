@@ -1,11 +1,12 @@
 import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, CardEmptyState, IconType, type ProposalActionComponent, ProposalActions } from '@aragon/ods';
+import { Button, IconType, ProposalActions } from '@aragon/ods';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useWatch } from 'react-hook-form';
 import { ActionComposer } from '../../actionComposer';
-import { type ICreateProposalFormData } from '../createProposalFormDefinitions';
+import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
+import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 
 export interface ICreateProposalFormActionsProps {
@@ -16,8 +17,8 @@ export interface ICreateProposalFormActionsProps {
 }
 
 const customActionComponents = {
-    [ProposalActionType.TRANSFER]: () => <div>Transfer Assets</div>,
-    [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction as ProposalActionComponent,
+    [ProposalActionType.TRANSFER]: TransferAssetAction,
+    [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
 };
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
@@ -26,29 +27,57 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const { t } = useTranslations();
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
+
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
 
-    const { fields: actions, append: addAction } = useFieldArray<ICreateProposalFormData, 'actions'>({
+    const {
+        append: addAction,
+        remove: removeAction,
+        move: moveAction,
+        fields: actions,
+    } = useFieldArray<ICreateProposalFormData, 'actions'>({
         name: 'actions',
     });
 
+    // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
+    const watchFieldArray = useWatch({ name: 'actions' });
+    const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
+
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
-    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, index: actions.length });
+    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, daoId });
+
+    const handleMoveAction = (index: number, newIndex: number) => {
+        if (newIndex >= 0 && newIndex < actions.length) {
+            moveAction(index, newIndex);
+        }
+    };
 
     return (
         <div className="flex flex-col gap-y-10">
-            {actions.length === 0 && (
-                <CardEmptyState
-                    heading={t('app.governance.createProposalForm.actions.empty.heading')}
-                    description={t('app.governance.createProposalForm.actions.empty.description')}
-                    objectIllustration={{ object: 'SMART_CONTRACT' }}
-                    isStacked={false}
-                />
-            )}
-            {actions.length > 0 && (
-                <ProposalActions actions={actions} customActionComponents={customActionComponents} />
-            )}
+            <ProposalActions
+                actions={controlledActions}
+                actionKey="id"
+                customActionComponents={customActionComponents}
+                emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
+                dropdownItems={[
+                    {
+                        label: t('app.governance.createProposalForm.actions.editAction.up'),
+                        icon: IconType.CHEVRON_UP,
+                        onClick: (_, index) => handleMoveAction(index, index - 1),
+                    },
+                    {
+                        label: t('app.governance.createProposalForm.actions.editAction.down'),
+                        icon: IconType.CHEVRON_DOWN,
+                        onClick: (_, index) => handleMoveAction(index, index + 1),
+                    },
+                    {
+                        label: t('app.governance.createProposalForm.actions.editAction.remove'),
+                        icon: IconType.CLOSE,
+                        onClick: (_, index) => removeAction(index),
+                    },
+                ]}
+            />
             <Button
                 variant="primary"
                 size="md"
