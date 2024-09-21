@@ -9,11 +9,11 @@ export interface ITokenMember extends Omit<IMember, 'metrics'> {
     /**
      * Voting power of the member.
      */
-    votingPower: string;
+    votingPower: string | null;
     /**
      * Token balance of the member.
      */
-    tokenBalance: string;
+    tokenBalance: string | null;
     /**
      * Metrics for the token member.
      */

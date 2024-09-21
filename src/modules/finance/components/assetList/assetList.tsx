@@ -14,7 +14,6 @@ import {
     useBlockExplorer,
 } from '@aragon/ods';
 import type { ComponentProps } from 'react';
-import { formatUnits } from 'viem';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
     /**
@@ -55,7 +54,7 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                         key={token.address}
                         name={token.name}
                         symbol={token.symbol}
-                        amount={formatUnits(BigInt(amount), token.decimals)}
+                        amount={amount}
                         fiatPrice={token.priceUsd}
                         logoSrc={token.logo}
                         priceChange={Number(token.priceChangeOnDayUsd)}
