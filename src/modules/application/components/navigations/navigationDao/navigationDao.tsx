@@ -80,7 +80,6 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                                 responsiveSize={{ sm: 'md' }}
                                 iconLeft={IconType.APP_EXPLORE}
                                 href="/"
-                                onClick={() => setIsDialogOpen(false)}
                             />
                         </div>
                     </div>
