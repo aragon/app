@@ -4,6 +4,9 @@ import type { TransactionDialogPrepareReturn } from '@/shared/components/transac
 import type { Hex } from 'viem';
 
 export interface IBuildTransactionParams {
+    /**
+     * The incremental id of the proposal
+     */
     proposalIndex: string;
     /**
      * Plugin of the DAO to interact with.
