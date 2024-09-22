@@ -34,10 +34,10 @@ export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHe
 
     const { token } = daoSettings;
 
-    const parsedVotingPower = formatUnits(BigInt(member.votingPower), token.decimals);
+    const parsedVotingPower = formatUnits(BigInt(member.votingPower ?? '0'), token.decimals);
     const formattedVotingPower = formatterUtils.formatNumber(parsedVotingPower, { format: NumberFormat.GENERIC_SHORT });
 
-    const parsedTokenBalance = formatUnits(BigInt(member.tokenBalance), token.decimals);
+    const parsedTokenBalance = formatUnits(BigInt(member.tokenBalance ?? '0'), token.decimals);
     const formattedTokenBalance = formatterUtils.formatNumber(parsedTokenBalance, {
         format: NumberFormat.GENERIC_SHORT,
     });

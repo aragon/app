@@ -186,6 +186,17 @@
           "description": "There was an error loading the transactions. Please try again later.",
           "heading": "Error loading transactions"
         }
+      },
+      "transferAssetForm": {
+        "amount": {
+          "label": "Amount",
+          "placeholder": "0"
+        },
+        "receiver": {
+          "helpText": "The wallet that receives the tokens",
+          "label": "Recipient",
+          "placeholder": "ENS or 0x …"
+        }
       }
     },
     "governance": {
@@ -203,10 +214,12 @@
       "createProposalForm": {
         "actions": {
           "action": "Action",
-          "empty": {
-            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp.",
-            "heading": "No actions added"
-          }
+          "editAction": {
+            "down": "Move down",
+            "remove": "Remove",
+            "up": "Move up"
+          },
+          "empty": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
         },
         "metadata": {
           "actions": {
@@ -336,6 +349,7 @@
         "main": {
           "actions": {
             "description": "The following actions will execute if all voting stages are approved.",
+            "empty": "Proposal has not actions.",
             "header": "Actions"
           },
           "governance": "Governance",
@@ -601,6 +615,8 @@
       },
       "formField": {
         "error": {
+          "max": "{{name}} must be lower than {{value}}",
+          "min": "{{name}} must be greater than {{value}}",
           "pattern": "Invalid {{name}} format",
           "required": "{{name}} is mandatory",
           "validate": "{{name}} is invalid"

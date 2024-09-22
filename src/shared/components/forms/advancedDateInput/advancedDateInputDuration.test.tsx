@@ -41,7 +41,7 @@ describe('<AdvancedDateInputDuration /> component', () => {
         await userEvent.type(minutesInput, '30');
         await userEvent.tab();
 
-        await waitFor(() => expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=Duration\)/));
+        await waitFor(() => expect(alert).toHaveTextContent(/shared.formField.error.validate \(name=Duration/));
 
         // Set a valid duration
         await userEvent.clear(hoursInput);
