@@ -73,6 +73,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                     proposalId={title}
                     proposalTitle={summary}
                     voteIndicator={vote.label}
+                    confirmationLabel={t('app.governance.voteDialog.confirmationLabel')}
                 />
             </DataList.Root>
         </TransactionDialog>
