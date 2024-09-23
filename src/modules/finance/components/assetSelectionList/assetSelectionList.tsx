@@ -58,7 +58,7 @@ export const AssetSelectionList: React.FC<IAssetListProps> = (props) => {
                 <DataListFilter
                     onSearchValueChange={setSearchValue}
                     searchValue={searchValue}
-                    placeholder="Search assets..."
+                    placeholder={t('app.finance.assetSelectionList.searchPlaceholder')}
                 />
                 {filteredAssets?.map((asset) => (
                     <AssetListItem key={asset.token.address} asset={asset} onAssetClick={onAssetSelect} />

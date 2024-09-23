@@ -137,6 +137,11 @@
       }
     },
     "finance": {
+      "assetInput": {
+        "maxAmountError": "Amount cannot exceed {{amount}}",
+        "maxButtonLabel": "Max",
+        "triggerLabelDefault": "Select"
+      },
       "assetList": {
         "emptyState": {
           "description": "This will show the DAO's onchain assets when available.",
@@ -147,6 +152,12 @@
           "description": "There was an error loading the assets. Please try again later.",
           "heading": "Error loading assets"
         }
+      },
+      "assetSelectionDialog": {
+        "heading": "Select an asset"
+      },
+      "assetSelectionList": {
+        "searchPlaceholder": "Search assets..."
       },
       "daoAssetsPage": {
         "aside": {

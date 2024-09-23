@@ -1,6 +1,7 @@
 import { type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
 import { AssetSelectionList } from '@/modules/finance/components/assetSelectionList';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/ods';
 
 export interface IAssetSelectionDialogParams {
@@ -13,6 +14,8 @@ export interface IAssetSelectionDialogProps extends IDialogComponentProps<IAsset
 
 export const AssetSelectionDialog: React.FC<IAssetSelectionDialogProps> = (props) => {
     const { location } = props;
+
+    const { t } = useTranslations();
 
     invariant(location.params != null, 'AssetSelectionDialog: required parameters must be set.');
 
@@ -30,7 +33,7 @@ export const AssetSelectionDialog: React.FC<IAssetSelectionDialogProps> = (props
 
     return (
         <>
-            <Dialog.Header title="Select an asset" onCloseClick={handleDialogClose} />
+            <Dialog.Header title={t('app.finance.assetSelectionDialog.heading')} onCloseClick={handleDialogClose} />
             <Dialog.Content className="flex flex-col gap-6 py-7">
                 <AssetSelectionList initialParams={initialParams} onAssetSelect={handleSelectAsset} />
             </Dialog.Content>

@@ -1,6 +1,7 @@
 import { type IAsset } from '@/modules/finance/api/financeService';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { SharedDialogs } from '@/shared/constants/moduleDialogs';
 import {
     Avatar,
@@ -32,6 +33,8 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const [inputValue, setInputValue] = useState<string | number | undefined | null>('0');
     const [alert, setAlert] = useState<IInputContainerAlert | null>(null);
 
+    const { t } = useTranslations();
+
     const { open, close } = useDialogContext();
 
     const useDaoParams = { id: daoId };
@@ -55,9 +58,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
         if (selectedAsset?.amount && newValue > Number(selectedAsset.amount)) {
             setAlert({
-                message: `Amount cannot exceed ${formatterUtils.formatNumber(selectedAsset.amount, {
-                    format: NumberFormat.TOKEN_AMOUNT_LONG,
-                })}`,
+                message: t('app.finance.assetInput.maxAmountError'),
                 variant: 'warning',
             });
         } else {
@@ -83,7 +84,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 >
                     <div className="flex items-center gap-x-1.5">
                         {selectedAsset?.token && <Avatar src={selectedAsset.token.logo} size="sm" />}
-                        {selectedAsset?.token ? selectedAsset.token.symbol : 'Select'}
+                        {selectedAsset?.token
+                            ? selectedAsset.token.symbol
+                            : t('app.finance.assetInput.triggerLabelDefault')}
                     </div>
                 </Button>
                 <input
@@ -108,7 +111,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                         className="text-primary-400 hover:text-primary-600"
                         onClick={() => setInputValue(selectedAsset.amount)}
                     >
-                        Max
+                        {t('app.finance.assetInput.maxButtonLabel')}
                     </button>
                     {formatterUtils.formatNumber(selectedAsset.amount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}
                 </div>
