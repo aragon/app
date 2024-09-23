@@ -24,7 +24,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
     });
 
     const { ref: bodyRef, ...bodyField } = useFormField<ICreateProposalFormData, 'body'>('body', {
-        label: t('app.governance.createProposalForm.metadata.body.title'),      
+        label: t('app.governance.createProposalForm.metadata.body.title'),
     });
 
     const { ref: addActionsRef, ...addActionsField } = useFormField<ICreateProposalFormData, 'addActions'>(

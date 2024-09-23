@@ -16,21 +16,12 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         ...otherOptions,
     });
 
-    const handleTrimOnBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (trimOnBlur) {
             const trimmedValue = event.target.value.trim();
             field.onChange(trimmedValue);
         }
-
         field.onBlur();
-    };
-
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (trimOnBlur) {
-            handleTrimOnBlur(event);
-        } else {
-            field.onBlur();
-        }
     };
 
     const variant = fieldState.error != null ? 'critical' : 'default';
