@@ -1,4 +1,4 @@
-import { IAsset, type IGetAssetListParams } from '@/modules/finance/api/financeService';
+import { type IAsset, type IGetAssetListParams } from '@/modules/finance/api/financeService';
 import { AssetList } from '@/modules/finance/components/assetList';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -14,7 +14,7 @@ export interface IAssetSelectionDialogProps extends IDialogComponentProps<IAsset
 
 export const AssetSelectionDialog: React.FC<IAssetSelectionDialogProps> = (props) => {
     const { location } = props;
-    console.log('location: ', location);
+
     const { t } = useTranslations();
 
     invariant(location.params != null, 'AssetSelectionDialog: required parameters must be set.');

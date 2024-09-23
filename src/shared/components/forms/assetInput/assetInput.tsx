@@ -1,10 +1,10 @@
-import { ITransferAssetFormData } from '@/modules/finance/components/transferAssetForm';
-import { Network } from '@/shared/api/daoService';
+import { type ITransferAssetFormData } from '@/modules/finance/components/transferAssetForm';
+import { type Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { SharedDialogs } from '@/shared/constants/moduleDialogs';
-import { IAssetSelectionDialogParams } from '@/shared/dialogs/assetSelectionDialog/assetSelectionDialog';
-import { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
+import { type IAssetSelectionDialogParams } from '@/shared/dialogs/assetSelectionDialog/assetSelectionDialog';
+import { type IUseFormFieldReturn } from '@/shared/hooks/useFormField';
 import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/ods';
 import classNames from 'classnames';
 
