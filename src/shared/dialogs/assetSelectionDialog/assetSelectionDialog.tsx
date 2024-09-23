@@ -5,8 +5,17 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/ods';
 
 export interface IAssetSelectionDialogParams {
+    /**
+     * Initial params to fetch the asset list.
+     */
     initialParams: IGetAssetListParams;
+    /**
+     * Callback called on token click.
+     */
     onAssetClick: (asset: IAsset) => void;
+    /**
+     * Callback called on dialog close.
+     */
     close: () => void;
 }
 
