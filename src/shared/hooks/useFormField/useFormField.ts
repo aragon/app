@@ -1,16 +1,10 @@
-// useFormField.ts
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { FieldPath, FieldValues, Noop, useController } from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
 
-interface IUseFormFieldOptionsExtended<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>>
-    extends IUseFormFieldOptions<TFieldValues, TName> {
-    trimOnBlur?: boolean; // Flag to control trimming behavior
-}
-
 export const useFormField = <TFieldValues extends FieldValues = never, TName extends FieldPath<TFieldValues> = never>(
     name: TName,
-    options?: IUseFormFieldOptionsExtended<TFieldValues, TName>,
+    options?: IUseFormFieldOptions<TFieldValues, TName>,
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
@@ -22,15 +16,16 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         ...otherOptions,
     });
 
-    const handleTrimOnBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLDivElement>) => {
-        if ('value' in event.target) {
+    const handleTrimOnBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (trimOnBlur) {
             const trimmedValue = event.target.value.trim();
             field.onChange(trimmedValue);
         }
+
         field.onBlur();
     };
 
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLDivElement>) => {
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (trimOnBlur) {
             handleTrimOnBlur(event);
         } else {
