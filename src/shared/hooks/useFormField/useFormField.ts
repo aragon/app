@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useController, type FieldPath, type FieldValues } from 'react-hook-form';
+import { type FieldPath, type FieldValues, type Noop, useController } from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
 
 export const useFormField = <TFieldValues extends FieldValues = never, TName extends FieldPath<TFieldValues> = never>(
@@ -8,7 +8,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
-    const { label, fieldPrefix, rules, ...otherOptions } = options ?? {};
+    const { label, fieldPrefix, rules, trimOnBlur, ...otherOptions } = options ?? {};
 
     const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
@@ -17,6 +17,14 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         rules: rules,
         ...otherOptions,
     });
+
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (trimOnBlur) {
+            const trimmedValue = event.target.value.trim();
+            field.onChange(trimmedValue);
+        }
+        field.onBlur();
+    };
 
     const { error } = fieldState;
 
@@ -31,5 +39,11 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
             ? { message: t(alertMessageKey, alertMessageParams), variant: 'critical' as const }
             : undefined;
 
-    return { ...field, variant: inputVariant, alert, label: options?.label };
+    return {
+        ...field,
+        onBlur: handleBlur as Noop,
+        variant: inputVariant,
+        alert,
+        label: options?.label,
+    };
 };

@@ -21,6 +21,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         label: t('app.createDao.createDaoForm.metadata.name.label'),
         fieldPrefix,
         rules: { required: true },
+        trimOnBlur: true,
         defaultValue: '',
     });
 
@@ -28,6 +29,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         label: t('app.createDao.createDaoForm.metadata.description.label'),
         fieldPrefix,
         rules: { required: true },
+        trimOnBlur: true,
         defaultValue: '',
     });
 
