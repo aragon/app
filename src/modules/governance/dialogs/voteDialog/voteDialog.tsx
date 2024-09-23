@@ -7,7 +7,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
-import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/ods';
+import { DataList, invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/ods';
 import { useAccount } from 'wagmi';
 import { voteDialogUtils } from './voteDialogUtils';
 
@@ -68,7 +68,14 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
         >
-            <VoteProposalDataListItemStructure proposalId={title} proposalTitle={summary} voteIndicator={vote.label} />
+            <DataList.Root entityLabel="">
+                <VoteProposalDataListItemStructure
+                    proposalId={title}
+                    proposalTitle={summary}
+                    voteIndicator={vote.label}
+                    confirmationLabel={t('app.governance.voteDialog.confirmationLabel')}
+                />
+            </DataList.Root>
         </TransactionDialog>
     );
 };
