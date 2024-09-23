@@ -1,6 +1,6 @@
 'use client';
 
-import { AssetInput } from '@/shared/components/assetInput/assetInput';
+import { AssetInput } from '@/shared/components/forms/assetInput/assetInput';
 
 const page = () => {
     return (

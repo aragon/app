@@ -16,7 +16,7 @@ export interface IAssetListProps extends ComponentProps<'div'> {
      * Hides the pagination component when set to true.
      */
     hidePagination?: boolean;
-    /*
+    /**
      * hasSearch is a boolean that is used to determine if the search bar should be displayed or not.
      */
     hasSearch?: boolean;

@@ -17,7 +17,13 @@ export interface IAssetInputProps {
      * Network of the DAO.
      */
     network: Network;
+    /**
+     * Form field for the asset.
+     */
     assetField: IUseFormFieldReturn<ITransferAssetFormData, 'asset'>;
+    /**
+     * Form field for the amount.
+     */
     amountField: IUseFormFieldReturn<ITransferAssetFormData, 'amount'>;
 }
 
