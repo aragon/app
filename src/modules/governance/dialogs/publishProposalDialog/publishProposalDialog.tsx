@@ -10,11 +10,11 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
-import { DataList, invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
+import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import type { ICreateProposalFormData } from '../../components/createProposalForm';
+import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 export enum PublishProposalStep {
@@ -30,6 +30,10 @@ export interface IPublishProposalDialogParams {
      * ID of the DAO to create the proposal for.
      */
     daoId: string;
+    /**
+     * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
+     */
+    prepareActions: PrepareProposalActionMap;
 }
 
 export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
@@ -45,7 +49,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
     invariant(supportedPlugin != null, 'PublishProposalDialog: DAO has no supported plugin.');
 
-    const { daoId, values } = location.params;
+    const { daoId, values, prepareActions } = location.params;
     const { title, summary } = values;
 
     const { t } = useTranslations();
@@ -64,11 +68,19 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         [pinJson, values],
     );
 
-    const handlePrepareTransaction = () => {
+    const handlePrepareTransaction = async () => {
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
-        const metadataCid = pinJsonData.IpfsHash;
+        const { IpfsHash: metadataCid } = pinJsonData;
+        const { actions } = values;
 
-        return publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin: supportedPlugin });
+        const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
+        const processedValues = { ...values, actions: processedActions };
+
+        return publishProposalDialogUtils.buildTransaction({
+            values: processedValues,
+            metadataCid,
+            plugin: supportedPlugin,
+        });
     };
 
     const getProposalLink = (txReceipt: TransactionReceipt) => {
@@ -108,15 +120,13 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
         >
-            <DataList.Root entityLabel="">
-                {/* @ts-expect-error TODO: update ODS component to remove type requirement (APP-3590) */}
-                <ProposalDataListItem.Structure
-                    title={title}
-                    summary={summary}
-                    publisher={{ address }}
-                    status={ProposalStatus.DRAFT}
-                />
-            </DataList.Root>
+            {/* @ts-expect-error TODO: update ODS component to remove type requirement (APP-3590) */}
+            <ProposalDataListItem.Structure
+                title={title}
+                summary={summary}
+                publisher={{ address }}
+                status={ProposalStatus.DRAFT}
+            />
         </TransactionDialog>
     );
 };

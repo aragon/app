@@ -1,4 +1,4 @@
-import { DataList, OdsModulesProvider } from '@aragon/ods';
+import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigProposal } from '../../testUtils';
 import { type IMultisigProposalListItemProps, MultisigProposalListItem } from './multisigProposalListItem';
@@ -13,9 +13,7 @@ describe('<MultisigProposalListItem /> component', () => {
 
         return (
             <OdsModulesProvider>
-                <DataList.Root entityLabel="">
-                    <MultisigProposalListItem {...completeProps} />
-                </DataList.Root>
+                <MultisigProposalListItem {...completeProps} />
             </OdsModulesProvider>
         );
     };

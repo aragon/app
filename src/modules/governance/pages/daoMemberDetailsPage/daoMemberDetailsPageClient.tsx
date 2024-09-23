@@ -61,28 +61,26 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         pluginIds,
     });
 
-    const parsedLatestActivity = member?.lastActivity ? member.lastActivity * 1000 : undefined;
+    const { lastActivity, firstActivity } = member?.metrics ?? {};
+
+    const parsedLatestActivity = lastActivity != null ? lastActivity * 1000 : undefined;
     const formattedLatestActivity = formatterUtils.formatDate(parsedLatestActivity, { format: DateFormat.DURATION });
 
-    // TODO: For both first & latest: use fallback functionality instead of nullish from the formatterUtils when available (APP-3592)
-    const parsedFirstActivity = member?.firstActivity ? member.firstActivity * 1000 : undefined;
-    const formattedFirstActivity =
-        formatterUtils.formatDate(parsedFirstActivity, {
-            format: DateFormat.YEAR_MONTH_DAY,
-        }) ?? '-';
+    const parsedFirstActivity = firstActivity != null ? firstActivity * 1000 : undefined;
+    const formattedFirstActivity = formatterUtils.formatDate(parsedFirstActivity, {
+        format: DateFormat.YEAR_MONTH_DAY,
+    });
 
     const [value, unit] = formattedLatestActivity?.split(' ') ?? [];
+
+    const suffixLabel = t('app.governance.daoMemberDetailsPage.header.stat.latestActivityUnit', { unit: unit });
 
     const stats = [
         ...(pluginStats ?? []),
         {
             label: t('app.governance.daoMemberDetailsPage.header.stat.latestActivity'),
             value: value ?? '-',
-            suffix: unit
-                ? t('app.governance.daoMemberDetailsPage.header.stat.latestActivityUnit', {
-                      unit: unit,
-                  })
-                : undefined,
+            suffix: unit ? suffixLabel : undefined,
         },
     ];
 
@@ -175,7 +173,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             <DefinitionList.Item
                                 term={t('app.governance.daoMemberDetailsPage.aside.details.firstActivity')}
                             >
-                                {formattedFirstActivity}
+                                {formattedFirstActivity ?? '-'}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.Section>

@@ -1,3 +1,4 @@
+export * from './addressInfo';
 export * from './dao';
 export * from './daoMetrics';
 export * from './daoPlugin';

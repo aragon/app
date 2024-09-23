@@ -8,18 +8,28 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
-    const { label, ...otherOptions } = options ?? {};
-    const { field, fieldState } = useController<TFieldValues, TName>({ name, ...otherOptions });
+    const { label, fieldPrefix, rules, ...otherOptions } = options ?? {};
 
-    const variant = fieldState.error != null ? 'critical' : 'default';
+    const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
+
+    const { field, fieldState } = useController<TFieldValues, TName>({
+        name: processedFieldName as TName,
+        rules: rules,
+        ...otherOptions,
+    });
+
+    const { error } = fieldState;
+
+    const inputVariant = error != null ? 'critical' : 'default';
+
+    const alertMessageKey = `app.shared.formField.error.${error?.type}`;
+    const alertValue = error?.type === 'min' ? rules?.min?.toString() : rules?.max?.toString();
+    const alertMessageParams = { name: label ?? name, value: alertValue };
 
     const alert =
-        fieldState.error != null
-            ? {
-                  message: t(`app.shared.formField.error.${fieldState.error.type}`, { name: label ?? name }),
-                  variant: 'critical' as const,
-              }
+        error?.type != null
+            ? { message: t(alertMessageKey, alertMessageParams), variant: 'critical' as const }
             : undefined;
 
-    return { ...field, variant, alert, label: options?.label };
+    return { ...field, variant: inputVariant, alert, label: options?.label };
 };

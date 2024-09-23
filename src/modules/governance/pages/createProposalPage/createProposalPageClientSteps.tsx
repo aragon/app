@@ -13,7 +13,7 @@ export interface ICreateProposalPageClientStepsProps {
      */
     steps: IWizardStepperStep[];
     /**
-     * The DAO ID.
+     * ID of the DAO.
      */
     daoId: string;
 }
@@ -45,7 +45,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 hidden={addActions === false}
                 {...actionsStep}
             >
-                <CreateProposalForm.Actions />
+                <CreateProposalForm.Actions daoId={daoId} />
             </Wizard.Step>
             <Wizard.Step
                 title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.title`)}

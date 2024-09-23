@@ -75,7 +75,7 @@ describe('<ProposalVotingTerminal /> component', () => {
 
         render(createTestComponent({ daoId, proposal }));
         expect(useSlotFunctionSpy).toHaveBeenCalledWith({
-            params: { daoId, settings: { settings: proposal.settings, token: undefined } },
+            params: { daoId, settings: proposal.settings },
             pluginIds,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         });

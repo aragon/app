@@ -145,9 +145,6 @@ describe('<NavigationDao /> component', () => {
             .find((link) => within(link).queryByTestId(IconType.APP_EXPLORE))!;
         expect(exploreButton).toBeInTheDocument();
         expect(exploreButton.href).toEqual('http://localhost/');
-
-        await userEvent.click(exploreButton);
-        expect(screen.getByRole('dialog').dataset.state).toEqual('closed');
     });
 
     it('does not crash when dao cannot be fetched', () => {

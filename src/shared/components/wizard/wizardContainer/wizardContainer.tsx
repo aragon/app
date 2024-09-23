@@ -1,5 +1,7 @@
+import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
+import { DevTool } from '@hookform/devtools';
 import { useMemo, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
@@ -27,15 +29,29 @@ export interface IWizardContainerProps<TFormData extends FieldValues = FieldValu
      * Default values for the form.
      */
     defaultValues?: UseFormProps<TFormData>['defaultValues'];
+    /**
+     * Exit description to explain the alert dialog when exiting the wizard.
+     */
+    exitAlertDescription: string;
 }
 
 export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardContainerProps<TFormData>,
 ) => {
-    const { initialSteps = [], finalStep, children, onSubmit, submitLabel, defaultValues, ...otherProps } = props;
+    const {
+        initialSteps = [],
+        finalStep,
+        children,
+        onSubmit,
+        submitLabel,
+        defaultValues,
+        exitAlertDescription,
+        ...otherProps
+    } = props;
 
     const { t } = useTranslations();
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
+    const isFormDirty = formMethods.formState.isDirty;
 
     const wizardStepper = useStepper({ initialSteps });
     const { hasNext, activeStepIndex, steps } = wizardStepper;
@@ -52,6 +68,8 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
 
     const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
+
+    useConfirmWizardExit(isFormDirty, exitAlertDescription);
 
     return (
         <FormProvider {...formMethods}>
@@ -83,6 +101,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
                     {children}
                 </form>
             </WizardProvider>
+            <DevTool control={formMethods.control} />
         </FormProvider>
     );
 };

@@ -14,7 +14,7 @@ export interface ITokenSubmitVoteProps {
     /**
      * ID of proposal
      */
-    proposalId: string;
+    proposalIndex: string;
     /**
      * The title of the proposal
      */
@@ -27,7 +27,7 @@ export interface ITokenSubmitVoteProps {
 
 export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const { t } = useTranslations();
-    const { daoId, title, summary, proposalId } = props;
+    const { daoId, title, summary, proposalIndex } = props;
     const [showOptions, setShowOptions] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
 
@@ -49,7 +49,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             daoId,
             title,
             summary,
-            proposalId,
+            proposalIndex,
             vote,
         };
         open(GovernanceDialogs.VOTE, { params });

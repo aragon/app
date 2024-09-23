@@ -1,8 +1,8 @@
+import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
 import { timeUtils } from '@/test/utils';
-import { ProposalStatus, type IProposalAction } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { generateMultisigProposal } from '../../testUtils';
-import type { IDaoMultisigSettings } from '../../types';
+import { generateDaoMultisigSettings, generateMultisigProposal } from '../../testUtils';
 import { multisigProposalUtils } from './multisigProposalUtils';
 
 describe('multisigProposal utils', () => {
@@ -35,7 +35,7 @@ describe('multisigProposal utils', () => {
             const startDate = DateTime.fromISO('2024-10-15T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-25T09:49:56.868Z').toMillis() / 1000;
             const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: '', inputData: null },
+                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.TRANSFER, inputData: null },
             ];
             const proposal = generateMultisigProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
@@ -68,7 +68,7 @@ describe('multisigProposal utils', () => {
             const startDate = DateTime.fromISO('2024-10-08T09:49:56.868Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2024-10-12T09:49:56.868Z').toMillis() / 1000;
             const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: '', inputData: null },
+                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.TRANSFER, inputData: null },
             ];
             const proposal = generateMultisigProposal({ startDate, endDate, actions });
             isApprovalReachedSpy.mockReturnValue(true);
@@ -89,21 +89,21 @@ describe('multisigProposal utils', () => {
 
     describe('isApprovalReached', () => {
         it('returns true when number of voters is greater than min approvals', () => {
-            const settings = { minApprovals: 3 } as IDaoMultisigSettings['settings'];
+            const settings = generateDaoMultisigSettings({ minApprovals: 3 });
             const metrics = { totalVotes: 5 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeTruthy();
         });
 
         it('returns true when number of voters is equal to min approvals', () => {
-            const settings = { minApprovals: 1 } as IDaoMultisigSettings['settings'];
+            const settings = generateDaoMultisigSettings({ minApprovals: 1 });
             const metrics = { totalVotes: 1 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeTruthy();
         });
 
         it('returns false when number of voters is less than min approvals', () => {
-            const settings = { minApprovals: 4 } as IDaoMultisigSettings['settings'];
+            const settings = generateDaoMultisigSettings({ minApprovals: 4 });
             const metrics = { totalVotes: 2 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeFalsy();

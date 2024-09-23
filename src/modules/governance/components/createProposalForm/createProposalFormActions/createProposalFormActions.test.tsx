@@ -1,16 +1,30 @@
+import { FormWrapper } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
+import { forwardRef } from 'react';
 import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
+
+jest.mock('../../actionComposer', () => ({
+    // eslint-disable-next-line react/display-name
+    ActionComposer: forwardRef(() => <div data-testid="action-composer-mock" />),
+}));
 
 describe('<CreateProposalFormActions /> component', () => {
     const createTestComponent = (props?: Partial<ICreateProposalFormActionsProps>) => {
-        const completeProps: ICreateProposalFormActionsProps = { ...props };
+        const completeProps: ICreateProposalFormActionsProps = {
+            daoId: 'test',
+            ...props,
+        };
 
-        return <CreateProposalFormActions {...completeProps} />;
+        return (
+            <FormWrapper>
+                <CreateProposalFormActions {...completeProps} />
+            </FormWrapper>
+        );
     };
 
     it('renders an empty state', () => {
         render(createTestComponent());
-        const emptyState = screen.getByText(/createProposalForm.actions.empty.heading/);
+        const emptyState = screen.getByText(/createProposalForm.actions.empty/);
         expect(emptyState).toBeInTheDocument();
     });
 

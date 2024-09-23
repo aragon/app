@@ -5,7 +5,7 @@ export interface IMultisigProposal extends IProposal {
     /**
      * Settings that were active when the proposal was created.
      */
-    settings: IDaoMultisigSettings['settings'];
+    settings: IDaoMultisigSettings;
     /**
      * Plugin-specific metrics of the proposal.
      */

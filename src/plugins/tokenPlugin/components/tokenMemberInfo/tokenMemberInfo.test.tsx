@@ -47,10 +47,7 @@ describe('<TokenMemberInfo /> component', () => {
 
     it('renders the component with the correct eligible voters and members info', async () => {
         const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300' });
-        const mockSettings = generateDaoTokenSettings({
-            settings: { ...generateDaoTokenSettings().settings, votingMode: 2 },
-            token,
-        });
+        const mockSettings = generateDaoTokenSettings({ votingMode: 2, token });
 
         const members = [
             generateMember({ address: '0x123' }),
@@ -116,10 +113,7 @@ describe('<TokenMemberInfo /> component', () => {
 
     it('contains a link to the members page', () => {
         const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300', address: '0xBtcAddress' });
-        const mockSettings = generateDaoTokenSettings({
-            settings: { ...generateDaoTokenSettings().settings, votingMode: 2 },
-            token,
-        });
+        const mockSettings = generateDaoTokenSettings({ votingMode: 2, token });
 
         const members = [
             generateMember({ address: '0x123' }),

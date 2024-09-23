@@ -2,7 +2,7 @@ import { type IToken } from '@/modules/finance/api/financeService';
 import type { IDaoSettings } from '@/shared/api/daoService';
 import { type DaoTokenVotingMode } from './enum';
 
-interface IDaoTokenSettingsObject {
+export interface IDaoTokenSettings extends IDaoSettings {
     /**
      * Amount of tokens that need to vote "Yes" for a proposal to pass.
      */
@@ -23,11 +23,12 @@ interface IDaoTokenSettingsObject {
      * Voting mode of the DAO.
      */
     votingMode: DaoTokenVotingMode;
-}
-
-export interface IDaoTokenSettings extends IDaoSettings<IDaoTokenSettingsObject> {
     /**
      * Governance token of the DAO.
      */
     token: IToken;
+    /**
+     * Total supply of the token only set when settings are fetched for a specific block number (e.g. settings when a proposal was created)
+     */
+    historicalTotalSupply?: string;
 }

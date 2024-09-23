@@ -6,6 +6,7 @@ import {
     generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
 import { formatUnits } from 'viem';
+import { type ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
 jest.mock('viem', () => ({
@@ -74,32 +75,21 @@ describe('proposalActionUtils', () => {
     });
 
     it('normalizes a change members action', () => {
-        const baseAction = generateProposalActionChangeMembers();
-        const action = {
-            ...baseAction,
-            currentMembers: [{ address: '0xMemberAddress' }],
-        };
-
+        const action = { ...generateProposalActionChangeMembers(), currentMembers: [{ address: '0xMemberAddress' }] };
         const result = proposalActionUtils.normalizeChangeMembersAction(action);
-
-        expect(result).toEqual({
-            ...action,
-            type: 'ADD_MEMBERS',
-            currentMembers: 1,
-        });
+        expect(result).toEqual({ ...action, type: 'ADD_MEMBERS', currentMembers: 1 });
     });
 
     it('normalizes an update metadata action', () => {
         const baseAction = generateProposalActionUpdateMetadata();
+        const { proposedMetadata, existingMetadata } = baseAction;
 
         const action = {
             ...baseAction,
-            proposedMetadata: {
-                ...baseAction.proposedMetadata,
-                links: [{ name: 'Link1', url: 'https://link1.com' }],
-            },
+            proposedMetadata: { ...proposedMetadata, links: [{ name: 'Link1', url: 'https://link1.com' }] },
             existingMetadata: {
-                ...baseAction.existingMetadata,
+                ...existingMetadata,
+                logo: 'test.png',
                 links: [{ name: 'Link2', url: 'https://link2.com' }],
             },
         };
@@ -111,22 +101,15 @@ describe('proposalActionUtils', () => {
             type: 'UPDATE_METADATA',
             proposedMetadata: {
                 ...action.proposedMetadata,
+                logo: '',
                 links: [{ label: 'Link1', href: 'https://link1.com' }],
             },
-            existingMetadata: {
-                ...action.existingMetadata,
-                links: [{ label: 'Link2', href: 'https://link2.com' }],
-            },
+            existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
         });
     });
 
     it('returns unmodified action if type does not match any known action', () => {
-        const baseAction = generateProposalActionWithdrawToken();
-
-        const action = {
-            ...baseAction,
-            type: 'UNKNOWN_TYPE',
-        };
+        const action = { ...generateProposalActionWithdrawToken(), type: 'UNKNOWN_TYPE' as ProposalActionType };
 
         const result = proposalActionUtils.normalizeActions({
             actions: [action],

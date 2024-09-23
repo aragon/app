@@ -21,7 +21,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) 
     const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
 
     const tokenDecimals = settings?.token.decimals ?? 0;
-    const parsedVotingPower = formatUnits(BigInt(member.votingPower), tokenDecimals);
+    const parsedVotingPower = formatUnits(BigInt(member.votingPower ?? '0'), tokenDecimals);
 
     return (
         <MemberDataListItem.Structure

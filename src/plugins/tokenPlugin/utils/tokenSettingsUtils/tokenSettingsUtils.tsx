@@ -26,11 +26,19 @@ class TokenSettingsUtils {
 
     parseSettings = (params: IParseTokenSettingsParams): IDaoSettingTermAndDefinition[] => {
         const { settings, t } = params;
-        const { settings: tokenSettings, token } = settings;
-
-        const { supportThreshold, minParticipation, minDuration, minProposerVotingPower, votingMode } = tokenSettings;
+        const {
+            supportThreshold,
+            minParticipation,
+            minDuration,
+            minProposerVotingPower,
+            votingMode,
+            token,
+            historicalTotalSupply,
+        } = settings;
 
         const { symbol: tokenSymbol, totalSupply, decimals } = token;
+
+        const processedTotalSupply = historicalTotalSupply ?? totalSupply;
 
         const parsedSupportThreshold = this.parsePercentageSetting(supportThreshold);
         const formattedApproveThreshold = formatterUtils.formatNumber(parsedSupportThreshold / 100, {
@@ -42,10 +50,10 @@ class TokenSettingsUtils {
             format: NumberFormat.PERCENTAGE_SHORT,
         });
 
-        const minParticipationToken = (Number(totalSupply) * parsedMinParticipation) / 100;
+        const minParticipationToken = Math.round((Number(processedTotalSupply) * parsedMinParticipation) / 100);
         const parsedMinParticipationToken = formatUnits(BigInt(minParticipationToken), decimals);
         const formattedMinParticipationToken = formatterUtils.formatNumber(parsedMinParticipationToken, {
-            format: NumberFormat.TOKEN_AMOUNT_LONG,
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });
 
         const duration = Duration.fromObject({ seconds: minDuration }).shiftTo('days', 'hours', 'minutes');
@@ -55,10 +63,7 @@ class TokenSettingsUtils {
             minutes: duration.minutes,
         });
 
-        const minProposerVotingPowerFullNumber = Number(minProposerVotingPower).toLocaleString('fullwide', {
-            useGrouping: false,
-        });
-        const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPowerFullNumber), decimals);
+        const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPower), decimals);
         const formattedProposerVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, {
             format: NumberFormat.TOKEN_AMOUNT_LONG,
         });
@@ -102,13 +107,6 @@ class TokenSettingsUtils {
             },
         ];
     };
-
-    /**
-     * The function formats a number from scientific notation to full-number.
-     * TODO: to be removed when backend returns numbers without scientific notation (APP-3480)
-     */
-    fromScientificNotation = (value?: string) =>
-        Number(value ?? '0').toLocaleString('fullwide', { useGrouping: false });
 }
 
 export const tokenSettingsUtils = new TokenSettingsUtils();
