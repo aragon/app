@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { FieldPath, FieldValues, Noop, useController } from 'react-hook-form';
+import { type FieldPath, type FieldValues, type Noop, useController } from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
 
 export const useFormField = <TFieldValues extends FieldValues = never, TName extends FieldPath<TFieldValues> = never>(
