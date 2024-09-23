@@ -55,7 +55,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         format: NumberFormat.GENERIC_SHORT,
     });
 
-    const daoTvl = formatterUtils.formatNumber(dao?.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
+    const daoTvl = formatterUtils.formatNumber(dao?.metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const stats = [
         { value: proposalsCreated, label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },

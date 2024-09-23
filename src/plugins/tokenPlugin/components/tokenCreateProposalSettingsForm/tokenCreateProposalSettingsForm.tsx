@@ -17,13 +17,13 @@ export interface ITokenCreateProposalSettingsFormProps {
 
 export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSettingsFormProps> = ({ daoId }) => {
     const daoSettingsParams = { daoId };
-    const { data: dao } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
+    const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
 
     const { t } = useTranslations();
 
     const startTimeFixed = useWatch<ICreateProposalFormData, 'startTimeFixed'>({ name: 'startTimeFixed' });
 
-    const minDuration = dao?.settings.minDuration ?? 0;
+    const minDuration = settings?.minDuration ?? 0;
     const parsedMinDuration = dateUtils.secondsToDaysHoursMinutes(minDuration);
     const { days, hours, minutes } = parsedMinDuration;
 

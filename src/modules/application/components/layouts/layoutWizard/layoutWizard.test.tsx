@@ -32,6 +32,8 @@ describe('<LayoutWizard /> component', () => {
     const createTestComponent = async (props?: Partial<ILayoutWizardProps>) => {
         const completeProps: ILayoutWizardProps = {
             name: 'test-wiz',
+            exitAlertDescription: 'You sure?',
+            exitPath: '/',
             ...props,
         };
 

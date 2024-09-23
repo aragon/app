@@ -24,7 +24,7 @@ describe('<CreateProposalFormActions /> component', () => {
 
     it('renders an empty state', () => {
         render(createTestComponent());
-        const emptyState = screen.getByText(/createProposalForm.actions.empty.heading/);
+        const emptyState = screen.getByText(/createProposalForm.actions.empty/);
         expect(emptyState).toBeInTheDocument();
     });
 

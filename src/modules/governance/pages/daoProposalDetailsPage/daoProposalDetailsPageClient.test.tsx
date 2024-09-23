@@ -7,7 +7,11 @@ import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
-import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import {
+    generateAddressInfo,
+    generateReactQueryResultError,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { clipboardUtils, OdsModulesProvider, ProposalStatus } from '@aragon/ods';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -72,7 +76,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     });
 
     it('renders the proposal page breadcrumbs', () => {
-        const proposal = generateProposal({ proposalId: 'incremental-id' });
+        const proposal = generateProposal({ proposalIndex: 'incremental-index' });
         const daoId = 'test-id';
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent({ daoId }));
@@ -83,7 +87,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const proposalsLink = screen.getByRole('link', { name: /daoProposalDetailsPage.header.breadcrumb.proposals/ });
         expect(proposalsLink).toBeInTheDocument();
         expect(proposalsLink.getAttribute('href')).toEqual(`/dao/${daoId}/proposals`);
-        expect(within(breadcrumbsContainer).getByText(proposal.proposalId)).toBeInTheDocument();
+        expect(within(breadcrumbsContainer).getByText(proposal.proposalIndex)).toBeInTheDocument();
     });
 
     it('uses the plugin-specific function to process and render the proposal status', () => {
@@ -122,9 +126,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     it('renders the proposal info', () => {
         const proposal = generateProposal({
-            proposalId: '123',
+            proposalIndex: '123',
             blockTimestamp: 1690367967,
-            creatorAddress: '0x123',
+            creator: generateAddressInfo({ address: '0x123' }),
             network: Network.ETHEREUM_SEPOLIA,
             transactionHash: '0x4654',
         });
@@ -137,7 +141,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
         expect(detailsTitle).toBeInTheDocument();
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.id/)).toBeInTheDocument();
-        expect(within(detailsContainer).getByText(proposal.proposalId)).toBeInTheDocument();
+        expect(within(detailsContainer).getByText(proposal.proposalIndex)).toBeInTheDocument();
 
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.published/)).toBeInTheDocument();
         const creationBlockLink = screen.getByRole('link', { name: 'July 26, 2023' });
@@ -145,7 +149,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         expect(creationBlockLink.getAttribute('href')).toEqual('https://sepolia.etherscan.io/tx/0x4654');
 
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.creator/)).toBeInTheDocument();
-        const creatorLink = screen.getByRole('link', { name: proposal.creatorAddress });
+        const creatorLink = screen.getByRole('link', { name: proposal.creator.address });
         expect(creatorLink).toBeInTheDocument();
         expect(creatorLink.getAttribute('href')).toEqual('https://sepolia.etherscan.io/address/0x123');
     });

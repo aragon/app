@@ -46,7 +46,7 @@ describe('publishProposalDialog utils', () => {
 
             const actionBaseValues = { data: '0x123456', to: '0x000', value: '0' };
             const values = generateCreateProposalFormData({
-                actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues), index: 0 }],
+                actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues), daoId: 'test' }],
                 startTimeMode: 'now',
                 endTimeMode: 'fixed',
                 endTimeFixed: { date: '2020-10-10', time: '10:10' },
@@ -94,8 +94,8 @@ describe('publishProposalDialog utils', () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const transferActionData = 'transfer-async-data';
             const actions = [
-                { ...updateMetadataAction, index: 0 },
-                { ...transferAction, index: 1 },
+                { ...updateMetadataAction, daoId: 'test' },
+                { ...transferAction, daoId: 'test' },
             ];
             const prepareActions = {
                 [ProposalActionType.METADATA_UPDATE]: () => Promise.resolve(updateMetadataActionData),
@@ -105,8 +105,8 @@ describe('publishProposalDialog utils', () => {
             const result = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
 
             expect(result).toEqual([
-                { ...updateMetadataAction, data: updateMetadataActionData, index: 0 },
-                { ...transferAction, data: transferActionData, index: 1 },
+                { ...actions[0], data: updateMetadataActionData },
+                { ...actions[1], data: transferActionData },
             ]);
         });
 
@@ -114,8 +114,8 @@ describe('publishProposalDialog utils', () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const updateAction = generateProposalActionUpdateMetadata({ data: '0x456' });
             const actions = [
-                { ...transferAction, index: 0 },
-                { ...updateAction, index: 1 },
+                { ...transferAction, daoId: 'test' },
+                { ...updateAction, daoId: 'test' },
             ];
 
             const result = await publishProposalDialogUtils.prepareActions({ actions });

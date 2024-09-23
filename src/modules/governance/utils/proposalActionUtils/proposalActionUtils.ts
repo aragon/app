@@ -108,18 +108,8 @@ class ProposalActionUtils {
 
         const completeProposedSettings = { ...existingSettings, ...proposedSettings };
 
-        // TODO: remove custom settings object and plugin-specific logic when settings interface is cleaned up (APP-3483)
-        const settingsObjectExisting = {
-            settings: existingSettings,
-            token: (proposal as unknown as Record<string, unknown>).token,
-        };
-        const settingsObjectProposed = {
-            settings: completeProposedSettings,
-            token: (proposal as unknown as Record<string, unknown>).token,
-        };
-
-        const parsedExistingSettings = parsingFunction({ settings: settingsObjectExisting, daoId });
-        const parsedProposedSettings = parsingFunction({ settings: settingsObjectProposed, daoId });
+        const parsedExistingSettings = parsingFunction({ settings: existingSettings, daoId });
+        const parsedProposedSettings = parsingFunction({ settings: completeProposedSettings, daoId });
 
         return {
             ...otherValues,

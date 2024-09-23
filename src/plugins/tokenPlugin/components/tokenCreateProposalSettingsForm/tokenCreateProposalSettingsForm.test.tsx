@@ -93,11 +93,7 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
     });
 
     it('fetches the correct min duration from the dao settings', () => {
-        const baseSettings = generateDaoTokenSettings();
-        const daoSettings = generateDaoTokenSettings({
-            ...baseSettings,
-            settings: { ...baseSettings.settings, minDuration: 3600 },
-        });
+        const daoSettings = generateDaoTokenSettings({ minDuration: 3600 });
         useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoSettings }));
         render(createTestComponent());
         expect(secondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(3600);

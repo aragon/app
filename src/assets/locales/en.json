@@ -186,6 +186,17 @@
           "description": "There was an error loading the transactions. Please try again later.",
           "heading": "Error loading transactions"
         }
+      },
+      "transferAssetForm": {
+        "amount": {
+          "label": "Amount",
+          "placeholder": "0"
+        },
+        "receiver": {
+          "helpText": "The wallet that receives the tokens",
+          "label": "Recipient",
+          "placeholder": "ENS or 0x …"
+        }
       }
     },
     "governance": {
@@ -203,10 +214,12 @@
       "createProposalForm": {
         "actions": {
           "action": "Action",
-          "empty": {
-            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp.",
-            "heading": "No actions added"
-          }
+          "editAction": {
+            "down": "Move down",
+            "remove": "Remove",
+            "up": "Move up"
+          },
+          "empty": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
         },
         "metadata": {
           "actions": {
@@ -235,6 +248,7 @@
         }
       },
       "createProposalPage": {
+        "exitAlertDescription": "If you leave this process, you'll lose all the information you've entered so far.",
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -335,6 +349,7 @@
         "main": {
           "actions": {
             "description": "The following actions will execute if all voting stages are approved.",
+            "empty": "Proposal has not actions.",
             "header": "Actions"
           },
           "governance": "Governance",
@@ -390,6 +405,15 @@
         },
         "title": "Publish proposal"
       },
+      "voteDialog": {
+        "button": {
+          "submit": "Submit vote",
+          "success": "View proposals"
+        },
+        "confirmationLabel": "Voting",
+        "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
+        "title": "Submit vote"
+      },
       "voteList": {
         "empty": {
           "description": "No votes have been found.",
@@ -433,6 +457,10 @@
         },
         "multisigProposalList": {
           "entity": "Proposals"
+        },
+        "multisigSubmitVote": {
+          "button": "Approve",
+          "voteLabel": "Approve"
         },
         "multisigVoteList": {
           "entity": "Votes"
@@ -492,6 +520,19 @@
           "no": "No",
           "yes": "Yes"
         },
+        "tokenSubmitVote": {
+          "buttons": {
+            "cancel": "Cancel",
+            "default": "Vote on proposal",
+            "submit": "Submit vote"
+          },
+          "options": {
+            "abstain": "Abstain",
+            "label": "Choose your option",
+            "no": "No",
+            "yes": "Yes"
+          }
+        },
         "tokenVoteList": {
           "entity": "Votes"
         }
@@ -524,7 +565,7 @@
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}",
         "osLabel": "Operating system",
-        "osValue": "Aragon OSx"
+        "osValue": "Aragon OSx v{{version}}"
       }
     },
     "shared": {
@@ -558,6 +599,8 @@
       },
       "formField": {
         "error": {
+          "max": "{{name}} must be lower than {{value}}",
+          "min": "{{name}} must be greater than {{value}}",
           "pattern": "Invalid {{name}} format",
           "required": "{{name}} is mandatory",
           "validate": "{{name}} is invalid"

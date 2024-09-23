@@ -62,6 +62,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
                 defaultValues={{ actions: [] }}
+                exitAlertDescription={t('app.governance.createProposalPage.exitAlertDescription')}
             >
                 <CreateProposalForm.Provider value={contextValues}>
                     <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} />

@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/ods": "npm:^1.0.45"
+    "@aragon/ods": "npm:^1.0.47"
     "@floating-ui/react": "npm:^0.26.24"
     "@hookform/devtools": "npm:^4.3.1"
     "@next/bundle-analyzer": "npm:^14.2.11"
@@ -102,9 +102,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/ods@npm:^1.0.45":
-  version: 1.0.45
-  resolution: "@aragon/ods@npm:1.0.45"
+"@aragon/ods@npm:^1.0.47":
+  version: 1.0.47
+  resolution: "@aragon/ods@npm:1.0.47"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -129,7 +129,7 @@ __metadata:
     "@tiptap/starter-kit": "npm:^2.6.0"
     blockies-ts: "npm:^1.0.0"
     classnames: "npm:^2.0.0"
-    framer-motion: "npm:^11.3.0"
+    framer-motion: "npm:^11.5.0"
     luxon: "npm:^3.5.0"
     react-dropzone: "npm:^14.2.0"
     react-imask: "npm:7.5.0"
@@ -137,13 +137,13 @@ __metadata:
     tiptap-markdown: "npm:^0.8.10"
   peerDependencies:
     "@tailwindcss/typography": ^0.5.0
-    "@tanstack/react-query": ^5.51.0
+    "@tanstack/react-query": ^5.55.0
     react: ^18.2.0
     react-dom: ^18.2.0
     tailwindcss: ^3.4.0
-    viem: ^2.19.0
+    viem: ^2.21.0
     wagmi: ^2.12.0
-  checksum: 10c0/4313d02c2cb56157afc25cd5634f9e024c3553e7f68c1aacc3856e4ad4b35e64c1f3be3724399c75e7618c448b39dcd93df70775abf20ec0914872f82109406d
+  checksum: 10c0/b8fb438192e0161a4297dcfa8d811c035c3d56b1fb12b00c47a0601ee5aa30f9e7920386b2f1656fb68a2edbe57c8a0c62d73749065d83ee8809f9128778309d
   languageName: node
   linkType: hard
 
@@ -8361,9 +8361,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.3.0":
-  version: 11.3.4
-  resolution: "framer-motion@npm:11.3.4"
+"framer-motion@npm:^11.5.0":
+  version: 11.5.6
+  resolution: "framer-motion@npm:11.5.6"
   dependencies:
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8377,7 +8377,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/d615f5c2569bcd1933b109476287f0d4eca9dda4041d02612f3d706270801a159e9c0f26dc70e8841f8c89302c274cf1f4acec647e305fc7a9d0e8ecbc51d9b4
+  checksum: 10c0/f642224005505163fb409fa30d8a7ecf3bdead7722eddafe805062127c464a7c60b8beaff773b0d0c14ca580f492865a195e0a5832d0d6f7ddca95f97e8171b6
   languageName: node
   linkType: hard
 

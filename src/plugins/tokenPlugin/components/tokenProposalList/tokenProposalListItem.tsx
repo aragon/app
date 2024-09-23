@@ -23,7 +23,7 @@ const voteOptionToLabel: Record<VoteOption, string> = {
 
 const getWinningOption = (proposal: ITokenProposal) => {
     const { votesByOption } = proposal.metrics;
-    const { decimals, symbol } = proposal.token;
+    const { decimals, symbol } = proposal.settings.token;
 
     const winningOption = tokenProposalUtils.getWinningOption(proposal);
 
@@ -67,7 +67,11 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             type="majorityVoting"
             // TODO: provide the correct voted status (APP-3394)
             voted={false}
-            publisher={{ address: proposal.creatorAddress, link: `members/${proposal.creatorAddress}` }}
+            publisher={{
+                address: proposal.creator.address,
+                link: `members/${proposal.creator.address}`,
+                name: proposal.creator.ens ?? undefined,
+            }}
             result={proposalResult}
         />
     );

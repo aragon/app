@@ -65,10 +65,9 @@ class TokenProposalUtils {
     };
 
     isMinParticipationReached = (proposal: ITokenProposal): boolean => {
-        const { minParticipation } = proposal.settings;
-        const { totalSupply } = proposal.token;
+        const { minParticipation, historicalTotalSupply } = proposal.settings;
 
-        const parsedTotalSupply = BigInt(totalSupply);
+        const parsedTotalSupply = BigInt(historicalTotalSupply!);
         const parsedMinParticipation = BigInt(tokenSettingsUtils.parsePercentageSetting(minParticipation));
 
         if (parsedTotalSupply === BigInt(0)) {
@@ -82,9 +81,8 @@ class TokenProposalUtils {
     };
 
     isSupportReached = (proposal: ITokenProposal, early?: boolean): boolean => {
-        const { supportThreshold } = proposal.settings;
+        const { supportThreshold, historicalTotalSupply } = proposal.settings;
         const { votesByOption } = proposal.metrics;
-        const { totalSupply } = proposal.token;
 
         const parsedSupport = BigInt(tokenSettingsUtils.parsePercentageSetting(supportThreshold));
 
@@ -92,7 +90,7 @@ class TokenProposalUtils {
         const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
 
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
-        const noVotesWorstCase = BigInt(totalSupply) - yesVotes - abstainVotes;
+        const noVotesWorstCase = BigInt(historicalTotalSupply!) - yesVotes - abstainVotes;
 
         // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
         const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
@@ -108,7 +106,7 @@ class TokenProposalUtils {
                 return accumulator;
             }
 
-            return accumulator + BigInt(tokenSettingsUtils.fromScientificNotation(current.totalVotingPower));
+            return accumulator + BigInt(current.totalVotingPower);
         }, BigInt(0));
 
         return totalVotes;
@@ -117,7 +115,7 @@ class TokenProposalUtils {
     getVoteByType = (votes: ITokenProposalOptionVotes[], type: VoteOption): bigint => {
         const optionVotes = votes.find((option) => option.type === type);
 
-        return BigInt(tokenSettingsUtils.fromScientificNotation(optionVotes?.totalVotingPower));
+        return BigInt(optionVotes?.totalVotingPower ?? 0);
     };
 }
 

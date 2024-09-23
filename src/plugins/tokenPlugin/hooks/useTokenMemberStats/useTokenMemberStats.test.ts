@@ -3,7 +3,7 @@ import * as governanceService from '@/modules/governance/api/governanceService';
 import * as daoService from '@/shared/api/daoService';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
-import { generateDaoTokenSettings, generateTokenMember } from '../../testUtils';
+import { generateDaoTokenSettings, generateTokenMember, generateTokenMemberMetrics } from '../../testUtils';
 import { useTokenMemberStats } from './useTokenMemberStats';
 
 describe('useTokenMemberStats hook', () => {
@@ -33,9 +33,7 @@ describe('useTokenMemberStats hook', () => {
         const member = generateTokenMember({
             votingPower: '47928374987234',
             tokenBalance: '123456123456',
-            metrics: {
-                delegateReceivedCount: 47928374,
-            },
+            metrics: generateTokenMemberMetrics({ delegateReceivedCount: 47928374 }),
         });
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
 

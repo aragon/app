@@ -8,11 +8,13 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
-    const { label, fieldPrefix, trimOnBlur, ...otherOptions } = options ?? {};
+    const { label, fieldPrefix, rules, trimOnBlur, ...otherOptions } = options ?? {};
+
     const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
     const { field, fieldState } = useController<TFieldValues, TName>({
         name: processedFieldName as TName,
+        rules: rules,
         ...otherOptions,
     });
 
@@ -24,20 +26,23 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         field.onBlur();
     };
 
-    const variant = fieldState.error != null ? 'critical' : 'default';
+    const { error } = fieldState;
+
+    const inputVariant = error != null ? 'critical' : 'default';
+
+    const alertMessageKey = `app.shared.formField.error.${error?.type}`;
+    const alertValue = error?.type === 'min' ? rules?.min?.toString() : rules?.max?.toString();
+    const alertMessageParams = { name: label ?? name, value: alertValue };
 
     const alert =
-        fieldState.error != null
-            ? {
-                  message: t(`app.shared.formField.error.${fieldState.error.type}`, { name: label ?? name }),
-                  variant: 'critical' as const,
-              }
+        error?.type != null
+            ? { message: t(alertMessageKey, alertMessageParams), variant: 'critical' as const }
             : undefined;
 
     return {
         ...field,
         onBlur: handleBlur as Noop,
-        variant,
+        variant: inputVariant,
         alert,
         label: options?.label,
     };

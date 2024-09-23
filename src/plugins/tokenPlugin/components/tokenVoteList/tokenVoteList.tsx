@@ -5,8 +5,8 @@ import {
     DataListContainer,
     DataListPagination,
     DataListRoot,
-    type IVoteDataListItemStructureProps,
     VoteDataListItem,
+    type VoteIndicator,
     VoteProposalDataListItem,
 } from '@aragon/ods';
 import { formatUnits } from 'viem';
@@ -14,8 +14,7 @@ import { type ITokenVote, VoteOption } from '../../types';
 
 export interface ITokenVoteListProps extends IVoteListProps {}
 
-// TODO: use VoteIndicator type when exported from ODS
-const voteOptionToIndicator: Record<VoteOption, IVoteDataListItemStructureProps['voteIndicator']> = {
+const voteOptionToIndicator: Record<VoteOption, VoteIndicator> = {
     [VoteOption.ABSTAIN]: 'abstain',
     [VoteOption.NO]: 'no',
     [VoteOption.YES]: 'yes',
@@ -50,18 +49,22 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                     initialParams.queryParams.includeInfo === true ? (
                         <VoteProposalDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/proposals/${vote.proposalInfo!.id}`}
+                            href={`/dao/${daoId}/proposals/${vote.proposal!.id}`}
                             voteIndicator={voteOptionToIndicator[vote.voteOption]}
-                            proposalId={vote.proposalInfo!.proposalId.toString()}
-                            proposalTitle={vote.proposalInfo!.title}
+                            proposalId={vote.proposal!.proposalIndex.toString()}
+                            proposalTitle={vote.proposal!.title}
                             date={vote.blockTimestamp * 1000}
                         />
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
-                            href={`/dao/${daoId}/members/${vote.memberAddress}`}
+                            href={`/dao/${daoId}/members/${vote.member.address}`}
                             voteIndicator={voteOptionToIndicator[vote.voteOption]}
-                            voter={{ address: vote.memberAddress }}
+                            voter={{
+                                address: vote.member.address,
+                                avatarSrc: vote.member.avatar ?? undefined,
+                                name: vote.member.ens ?? undefined,
+                            }}
                             votingPower={formatUnits(BigInt(vote.votingPower), vote.token.decimals)}
                             tokenSymbol={vote.token.symbol}
                         />
