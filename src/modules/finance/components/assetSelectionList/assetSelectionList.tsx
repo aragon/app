@@ -1,17 +1,10 @@
 'use client';
 
-import { IAsset, type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
+import { type IAsset, type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
 import { AssetListItem } from '@/modules/finance/components/assetList/assetListItem';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    AssetDataListItem,
-    DataListContainer,
-    DataListFilter,
-    DataListPagination,
-    DataListRoot,
-    useBlockExplorer,
-} from '@aragon/ods';
+import { AssetDataListItem, DataListContainer, DataListFilter, DataListPagination, DataListRoot } from '@aragon/ods';
 import { useEffect, useState, type ComponentProps } from 'react';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
@@ -20,8 +13,7 @@ export interface IAssetListProps extends ComponentProps<'div'> {
      */
     initialParams: IGetAssetListParams;
     /**
-     * Callback function when an asset is selected.
-     * Required if isLinking is false.
+     * Callback function when an asset is selected. Required if isLinking is false.
      */
     onAssetSelect: (asset: { token: IToken; amount: number | string }) => void;
 }
@@ -29,9 +21,8 @@ export interface IAssetListProps extends ComponentProps<'div'> {
 export const AssetSelectionList: React.FC<IAssetListProps> = (props) => {
     const { initialParams, onAssetSelect, children, ...otherProps } = props;
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
-    const [filteredAssets, setFilteredAssets] = useState<Array<IAsset>>([]);
+    const [filteredAssets, setFilteredAssets] = useState<IAsset[]>([]);
     const { t } = useTranslations();
-
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
