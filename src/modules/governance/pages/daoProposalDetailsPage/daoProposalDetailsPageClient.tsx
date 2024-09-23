@@ -129,7 +129,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             chainId={chainId}
                             emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.actions.empty')}
                         />
-                        <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
+                        {normalizedProposalActions.length > 0 && (
+                            <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
+                        )}
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>
