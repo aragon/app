@@ -1,11 +1,11 @@
 'use client';
 
-import { type IAsset, type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
+import { type IGetAssetListParams, type IToken } from '@/modules/finance/api/financeService';
 import { AssetListItem } from '@/modules/finance/components/assetList/assetListItem';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AssetDataListItem, DataListContainer, DataListFilter, DataListPagination, DataListRoot } from '@aragon/ods';
-import { useEffect, useState, type ComponentProps } from 'react';
+import { useMemo, useState, type ComponentProps } from 'react';
 
 export interface IAssetListProps extends ComponentProps<'div'> {
     /**
@@ -21,24 +21,19 @@ export interface IAssetListProps extends ComponentProps<'div'> {
 export const AssetSelectionList: React.FC<IAssetListProps> = (props) => {
     const { initialParams, onAssetSelect, children, ...otherProps } = props;
     const [searchValue, setSearchValue] = useState<string | undefined>(undefined);
-    const [filteredAssets, setFilteredAssets] = useState<IAsset[]>([]);
+
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } =
         useAssetListData(initialParams);
 
-    useEffect(() => {
-        if (assetList) {
-            let filtered = assetList;
+    const filteredAssets = useMemo(() => {
+        if (!assetList) return [];
+        if (!searchValue) return assetList;
 
-            if (searchValue) {
-                filtered = assetList.filter(({ token }) =>
-                    token.name.toLowerCase().includes(searchValue.toLowerCase()),
-                );
-            }
+        const lowercasedSearchValue = searchValue.toLowerCase();
 
-            setFilteredAssets(filtered);
-        }
+        return assetList.filter(({ token }) => token.name?.toLowerCase().includes(lowercasedSearchValue));
     }, [assetList, searchValue]);
 
     return (
@@ -47,7 +42,7 @@ export const AssetSelectionList: React.FC<IAssetListProps> = (props) => {
             onLoadMore={onLoadMore}
             state={state}
             pageSize={pageSize}
-            itemsCount={itemsCount}
+            itemsCount={0}
             {...otherProps}
         >
             <DataListContainer
@@ -60,8 +55,8 @@ export const AssetSelectionList: React.FC<IAssetListProps> = (props) => {
                     searchValue={searchValue}
                     placeholder={t('app.finance.assetSelectionList.searchPlaceholder')}
                 />
-                {filteredAssets?.map((asset) => (
-                    <AssetListItem key={asset.token.address} asset={asset} onAssetClick={onAssetSelect} />
+                {filteredAssets?.map((asset, index) => (
+                    <AssetListItem key={asset.token.address + index} asset={asset} onAssetClick={onAssetSelect} />
                 ))}
             </DataListContainer>
             {!searchValue && <DataListPagination />}
