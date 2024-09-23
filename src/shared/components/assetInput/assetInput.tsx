@@ -1,71 +1,46 @@
-import { type IAsset } from '@/modules/finance/api/financeService';
-import { useDao } from '@/shared/api/daoService';
+import { ITransferAssetFormData } from '@/modules/finance/components/transferAssetForm';
+import { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { SharedDialogs } from '@/shared/constants/moduleDialogs';
-import {
-    Avatar,
-    Button,
-    formatterUtils,
-    IconType,
-    type IInputContainerAlert,
-    InputContainer,
-    NumberFormat,
-} from '@aragon/ods';
+import { IAssetSelectionDialogParams } from '@/shared/dialogs/assetSelectionDialog/assetSelectionDialog';
+import { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
+import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/ods';
 import classNames from 'classnames';
-import { useState } from 'react';
 
 export interface IAssetInputProps {
     /**
-     * The DAO id.
+     * Sender address of the DAO.
      */
-    daoId: string;
+    sender: string;
     /**
-     * Callback function when an asset is selected.
+     * Network of the DAO.
      */
-    onAssetSelect?: (asset: IAsset) => void;
+    network: Network;
+    assetField: IUseFormFieldReturn<ITransferAssetFormData, 'asset'>;
+    amountField: IUseFormFieldReturn<ITransferAssetFormData, 'amount'>;
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const { daoId } = props;
-
-    const [selectedAsset, setSelectedAsset] = useState<IAsset>();
-    const [inputValue, setInputValue] = useState<string | number | undefined | null>('0');
-    const [alert, setAlert] = useState<IInputContainerAlert | null>(null);
+    const { assetField, amountField, sender, network } = props;
 
     const { t } = useTranslations();
 
     const { open, close } = useDialogContext();
 
-    const useDaoParams = { id: daoId };
-
-    const { data: dao } = useDao({ urlParams: useDaoParams });
-
     const initialParams = {
-        queryParams: { address: dao?.address, network: dao?.network },
+        queryParams: { address: sender, network },
     };
 
-    const params = { initialParams, setSelectedAsset, close };
+    const params: IAssetSelectionDialogParams = { initialParams, onAssetClick: assetField.onChange, close };
 
     const handleOpenDialog = () => {
         open(SharedDialogs.ASSET_SELECTION, { params });
-        setInputValue(null);
-        setSelectedAsset(undefined);
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(e.target.value);
-
-        if (selectedAsset?.amount && newValue > Number(selectedAsset.amount)) {
-            setAlert({
-                message: t('app.finance.assetInput.maxAmountError'),
-                variant: 'warning',
-            });
-        } else {
-            setAlert(null);
-        }
-
-        setInputValue(newValue);
+    const handleMaxAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        amountField.onChange(assetField.value?.amount);
     };
 
     const inputClassName = classNames(
@@ -74,7 +49,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-y-3">
-            <InputContainer id={daoId} wrapperClassName="pl-1.5 pr-4 items-center" alert={alert ?? undefined}>
+            <InputContainer id={sender} wrapperClassName="pl-1.5 pr-4 items-center">
                 <Button
                     variant="tertiary"
                     size="sm"
@@ -83,9 +58,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     className="shrink-0"
                 >
                     <div className="flex items-center gap-x-1.5">
-                        {selectedAsset?.token && <Avatar src={selectedAsset.token.logo} size="sm" />}
-                        {selectedAsset?.token
-                            ? selectedAsset.token.symbol
+                        {assetField.value?.token && <Avatar src={assetField.value?.token.logo} size="sm" />}
+                        {assetField.value?.token
+                            ? assetField.value.token.symbol
                             : t('app.finance.assetInput.triggerLabelDefault')}
                     </div>
                 </Button>
@@ -93,27 +68,27 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     type="number"
                     placeholder="0"
                     className={inputClassName}
-                    value={inputValue ?? ''}
-                    onChange={handleInputChange}
-                    disabled={selectedAsset?.token === undefined}
+                    value={amountField.value}
+                    onChange={amountField.onChange}
+                    disabled={!assetField.value}
                 />
                 <p>
-                    {selectedAsset?.token
-                        ? formatterUtils.formatNumber(Number(inputValue) * Number(selectedAsset.token.priceUsd), {
-                              format: NumberFormat.FIAT_TOTAL_SHORT,
-                          })
+                    {assetField.value?.token
+                        ? formatterUtils.formatNumber(
+                              Number(amountField.value) * Number(assetField.value.token.priceUsd),
+                              {
+                                  format: NumberFormat.FIAT_TOTAL_SHORT,
+                              },
+                          )
                         : `$0.00`}
                 </p>
             </InputContainer>
-            {selectedAsset?.amount && (
+            {assetField.value?.amount && (
                 <div className="flex items-center gap-x-1 self-end pr-4">
-                    <button
-                        className="text-primary-400 hover:text-primary-600"
-                        onClick={() => setInputValue(selectedAsset.amount)}
-                    >
+                    <button className="text-primary-400 hover:text-primary-600" onClick={(e) => handleMaxAmount(e)}>
                         {t('app.finance.assetInput.maxButtonLabel')}
                     </button>
-                    {formatterUtils.formatNumber(selectedAsset.amount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}
+                    {formatterUtils.formatNumber(assetField.value.amount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}
                 </div>
             )}
         </div>
