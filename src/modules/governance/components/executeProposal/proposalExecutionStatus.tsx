@@ -5,19 +5,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { Button, type ButtonVariant, ChainEntityType, IconType, ProposalStatus, useBlockExplorer } from '@aragon/ods';
+import { Button, ChainEntityType, type IButtonProps, IconType, ProposalStatus, useBlockExplorer } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-
-type ButtonConfig = {
-    text: string;
-    variant?: ButtonVariant;
-    iconRight?: IconType;
-    disabled?: boolean;
-    onClick?: () => void;
-    href?: string;
-    target?: string;
-};
 
 export interface IExecuteProposalProps {
     /**
@@ -61,24 +51,24 @@ export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) 
         open(GovernanceDialogs.EXECUTE, { params });
     };
 
-    const buttonConfigs: Partial<Record<ProposalStatus, ButtonConfig>> = {
+    const buttonConfigs: Partial<Record<ProposalStatus, IButtonProps>> = {
         [ProposalStatus.EXECUTED]: {
-            text: t('app.governance.proposalExecutionStatus.buttons.executed'),
+            children: t('app.governance.proposalExecutionStatus.buttons.executed'),
             variant: 'success',
             iconRight: IconType.LINK_EXTERNAL,
             href: executedBlockLink,
             target: '_blank',
         },
         [ProposalStatus.EXECUTABLE]: {
-            text: t('app.governance.proposalExecutionStatus.buttons.execute'),
+            children: t('app.governance.proposalExecutionStatus.buttons.execute'),
             variant: 'primary',
             onClick: openTransactionDialog,
         },
     };
 
-    const config = buttonConfigs[proposalStatus];
+    const buttonConfig = buttonConfigs[proposalStatus];
 
-    if (!config) {
+    if (!buttonConfig) {
         return (
             <p className="text-sm leading-normal text-neutral-500">
                 {t('app.governance.proposalExecutionStatus.notExecutable')}
@@ -87,8 +77,8 @@ export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) 
     }
 
     return (
-        <Button className="w-full md:w-fit" {...config}>
-            {config.text}
+        <Button className="w-full md:w-fit" {...buttonConfig}>
+            {buttonConfig.children}
         </Button>
     );
 };
