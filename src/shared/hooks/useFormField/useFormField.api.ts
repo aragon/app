@@ -32,6 +32,10 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      * Prefix to prepend to the field name.
      */
     fieldPrefix?: string;
+    /**
+     * Flag to control trimming behavior.
+     */
+    trimOnBlur?: boolean;
 }
 
 export type IUseFormFieldReturn<
