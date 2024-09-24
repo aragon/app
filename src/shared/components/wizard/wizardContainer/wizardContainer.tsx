@@ -48,7 +48,6 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
         exitAlertDescription,
         ...otherProps
     } = props;
-
     const { t } = useTranslations();
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
     const isFormDirty = formMethods.formState.isDirty;

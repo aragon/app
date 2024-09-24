@@ -55,7 +55,6 @@ describe('<NavigationWizard /> component', () => {
     const createTestComponent = (props?: Partial<INavigationWizardProps>) => {
         const completeProps: INavigationWizardProps = {
             name: '',
-            exitAlertDescription: 'You sure?',
             exitPath: '/',
             ...props,
         };

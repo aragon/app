@@ -12,7 +12,6 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
     const titleField = useFormField<ICreateProposalFormData, 'title'>('title', {
         label: t('app.governance.createProposalForm.metadata.title.title'),
         rules: { required: true },
-        defaultValue: '',
     });
 
     const summaryField = useFormField<ICreateProposalFormData, 'summary'>('summary', {
@@ -27,7 +26,6 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
         'addActions',
         {
             label: t('app.governance.createProposalForm.metadata.actions.title'),
-            defaultValue: true,
         },
     );
 

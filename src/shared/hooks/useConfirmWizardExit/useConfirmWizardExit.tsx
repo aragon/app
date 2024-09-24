@@ -1,7 +1,13 @@
+import { useIsBlocked, useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
 import { useEffect } from 'react';
 
 export const useConfirmWizardExit = (isFormDirty: boolean, exitAlertDescription: string) => {
+    const setIsBlocked = useSetIsBlocked();
+    const isBlocked = useIsBlocked();
+
     useEffect(() => {
+        setIsBlocked(isFormDirty);
+
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             if (isFormDirty) {
                 e.preventDefault();
@@ -27,5 +33,5 @@ export const useConfirmWizardExit = (isFormDirty: boolean, exitAlertDescription:
             window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('popstate', handlePopState);
         };
-    }, [isFormDirty, exitAlertDescription]);
+    }, [isBlocked, isFormDirty, exitAlertDescription, setIsBlocked]);
 };

@@ -61,7 +61,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 submitLabel={t('app.governance.createProposalPage.submitLabel')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                defaultValues={{ actions: [] }}
+                defaultValues={{ actions: [], addActions: true, title: '', resources: [], summary: '', body: '' }}
                 exitAlertDescription={t('app.governance.createProposalPage.exitAlertDescription')}
             >
                 <CreateProposalForm.Provider value={contextValues}>
