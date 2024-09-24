@@ -22,6 +22,10 @@ jest.mock('../../components/proposalVotingTerminal', () => ({
     ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
 }));
 
+jest.mock('../../components/executeProposal', () => ({
+    ProposalExecutionStatus: () => <div data-testid="proposal-execution-status-mock" />,
+}));
+
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
