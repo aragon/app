@@ -36,11 +36,11 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
         useAssetListData(initialParams);
 
     const filteredAssets = useMemo(() => {
-        if (!hasSearch || !searchValue) {
-            return assetList;
-        }
         if (!assetList) {
             return [];
+        }
+        if (!hasSearch || !searchValue) {
+            return assetList;
         }
 
         const lowercasedSearchValue = searchValue.toLowerCase();

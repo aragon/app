@@ -138,7 +138,6 @@
     },
     "finance": {
       "assetInput": {
-        "maxAmountError": "Amount cannot exceed {{amount}}",
         "maxButtonLabel": "Max",
         "triggerLabelDefault": "Select"
       },

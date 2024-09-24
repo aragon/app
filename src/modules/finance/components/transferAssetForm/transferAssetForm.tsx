@@ -38,9 +38,16 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const amountField = useFormField<ITransferAssetFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true, min: 0, max: assetField.value?.amount },
+        rules: { 
+            required: true,
+            min: 0,
+            max: assetField.value?.amount,
+            validate: (value) => {
+                const regex = /^(-?)([0-9]*)\.?([0-9]*)$/;
+                return regex.test(value ?? '') || t('app.finance.transferAssetForm.amount.invalid');
+            }
+        },
         fieldPrefix,
-        defaultValue: '',
     });
 
     return (
