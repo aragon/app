@@ -8,9 +8,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/ods';
+import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { voteDialogUtils } from './voteDialogUtils';
-import { useRouter } from 'next/navigation';
 
 export interface IVoteDialogParams {
     /**

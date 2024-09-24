@@ -8,10 +8,10 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/ods';
+import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { executeDialogUtils } from './executeDialogUtils';
-import { useRouter } from 'next/navigation';
 
 export interface IExecuteDialogParams {
     /**
