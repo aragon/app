@@ -11,6 +11,7 @@ import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { executeDialogUtils } from './executeDialogUtils';
+import { useRouter } from 'next/navigation';
 
 export interface IExecuteDialogParams {
     /**
@@ -32,6 +33,8 @@ export interface IExecuteDialogProps extends IDialogComponentProps<IExecuteDialo
 export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { location } = props;
 
+    const router = useRouter();
+
     invariant(location.params != null, 'ExecuteDialog: required parameters must be set.');
 
     const { address } = useAccount();
@@ -42,7 +45,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const { daoId, proposal, status } = location.params;
+    const { proposal, status } = location.params;
     const { title, summary, creator, proposalIndex } = proposal;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
@@ -60,7 +63,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             submitLabel={t('app.governance.executeDialog.buttons.submit')}
             successLink={{
                 label: t('app.governance.executeDialog.buttons.success'),
-                href: `/dao/${daoId}/proposals`,
+                action: () => router.refresh(),
             }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}

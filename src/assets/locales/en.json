@@ -387,7 +387,7 @@
       "executeDialog": {
         "buttons": {
           "submit": "Execute proposal",
-          "success": "View proposals"
+          "success": "View proposal"
         },
         "description": "To execute the proposal you have to confirm the onchain transaction with your wallet.",
         "title": "Execute proposal"
@@ -425,7 +425,7 @@
       "voteDialog": {
         "button": {
           "submit": "Submit vote",
-          "success": "View proposals"
+          "success": "View proposal"
         },
         "confirmationLabel": "Voting",
         "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
