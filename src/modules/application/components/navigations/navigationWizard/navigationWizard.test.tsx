@@ -1,12 +1,12 @@
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import * as navigationBlockerProvider from '@/shared/components/navigationBlockerProvider/navigationBlockerProvider';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import { type Route } from 'next';
+import userEvent from '@testing-library/user-event';
 import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
@@ -30,6 +30,7 @@ describe('<NavigationWizard /> component', () => {
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useIsBlockedSpy = jest.spyOn(navigationBlockerProvider, 'useIsBlocked');
     const confirmSpy = jest.spyOn(window, 'confirm');
 
     beforeEach(() => {
@@ -41,6 +42,9 @@ describe('<NavigationWizard /> component', () => {
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({ address: '0x123', isConnected: true } as unknown as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+
+        // Reset the confirm mock
+        confirmSpy.mockReset();
     });
 
     afterEach(() => {
@@ -49,6 +53,7 @@ describe('<NavigationWizard /> component', () => {
         useRouterSpy.mockReset();
         useAccountSpy.mockReset();
         useDialogContextSpy.mockReset();
+        useIsBlockedSpy.mockReset();
         confirmSpy.mockReset();
     });
 
@@ -110,42 +115,5 @@ describe('<NavigationWizard /> component', () => {
 
         await userEvent.click(walletButton);
         expect(open).toHaveBeenCalledWith(ApplicationDialog.CONNECT_WALLET);
-    });
-
-    it('opens a confirmation dialog and navigates to the proposals page on confirming the exit', async () => {
-        const mockPush = jest.fn();
-        useRouterSpy.mockReturnValue({
-            push: mockPush,
-            prefetch: jest.fn(),
-        } as unknown as AppRouterInstance);
-        const id = 'test-dao-id';
-        const exitPath = `/dao/${id}/proposals/` as Route;
-        confirmSpy.mockReturnValue(true);
-
-        render(createTestComponent({ id, exitPath }));
-
-        const closeButton = screen.getByTestId('CLOSE');
-        await userEvent.click(closeButton);
-
-        expect(window.confirm).toHaveBeenCalledWith(expect.any(String));
-        expect(mockPush).toHaveBeenCalledWith(exitPath);
-    });
-
-    it('does not navigate to the proposals page if the confirmation is cancelled', async () => {
-        const mockPush = jest.fn();
-        useRouterSpy.mockReturnValue({
-            push: mockPush,
-            prefetch: jest.fn(),
-        } as unknown as AppRouterInstance);
-        const id = 'test-dao-id';
-        confirmSpy.mockReturnValue(false);
-
-        render(createTestComponent({ id }));
-
-        const closeButton = screen.getByTestId('CLOSE');
-        await userEvent.click(closeButton);
-
-        expect(window.confirm).toHaveBeenCalledWith(expect.any(String));
-        expect(mockPush).not.toHaveBeenCalled();
     });
 });

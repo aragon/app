@@ -22,6 +22,7 @@ describe('<CreateProposalPageClient /> component', () => {
     const createTestComponent = (props?: Partial<ICreateProposalPageClientProps>) => {
         const completeProps: ICreateProposalPageClientProps = {
             daoId: 'test',
+
             ...props,
         };
 
@@ -44,7 +45,18 @@ describe('<CreateProposalPageClient /> component', () => {
         await userEvent.click(screen.getByTestId('steps-mock'));
         await userEvent.click(screen.getByTestId('steps-mock'));
         await userEvent.click(screen.getByTestId('steps-mock'));
-        const expectedParams = { daoId, prepareActions: {}, values: { actions: [] } };
+        const expectedParams = {
+            daoId,
+            prepareActions: {},
+            values: {
+                actions: [],
+                addActions: true,
+                title: '',
+                resources: [],
+                summary: '',
+                body: '',
+            },
+        };
         expect(open).toHaveBeenCalledWith(GovernanceDialogs.PUBLISH_PROPOSAL, { params: expectedParams });
     });
 });

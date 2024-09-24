@@ -31,6 +31,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
         'addActions',
         {
             label: t('app.governance.createProposalForm.metadata.actions.title'),
+            defaultValue: true,
         },
     );
 
