@@ -50,12 +50,13 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     };
 
     const inputClassName = classNames(
+        '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none', // removes incrementer from number input
         'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 outline-none placeholder:text-base placeholder:font-normal placeholder:leading-tight placeholder:text-neutral-300',
     );
 
     return (
         <div className="flex flex-col gap-y-3">
-            <InputContainer id={sender} wrapperClassName="pl-1.5 pr-4 items-center">
+            <InputContainer id={sender} wrapperClassName="pl-1.5 pr-4 items-center" {...amountField}>
                 <Button
                     variant="tertiary"
                     size="sm"
