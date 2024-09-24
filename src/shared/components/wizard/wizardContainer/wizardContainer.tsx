@@ -29,25 +29,12 @@ export interface IWizardContainerProps<TFormData extends FieldValues = FieldValu
      * Default values for the form.
      */
     defaultValues?: UseFormProps<TFormData>['defaultValues'];
-    /**
-     * Exit description to explain the alert dialog when exiting the wizard.
-     */
-    exitAlertDescription: string;
 }
 
 export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardContainerProps<TFormData>,
 ) => {
-    const {
-        initialSteps = [],
-        finalStep,
-        children,
-        onSubmit,
-        submitLabel,
-        defaultValues,
-        exitAlertDescription,
-        ...otherProps
-    } = props;
+    const { initialSteps = [], finalStep, children, onSubmit, submitLabel, defaultValues, ...otherProps } = props;
     const { t } = useTranslations();
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
     const isFormDirty = formMethods.formState.isDirty;
@@ -68,7 +55,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
 
-    useConfirmWizardExit(isFormDirty, exitAlertDescription);
+    useConfirmWizardExit(isFormDirty);
 
     return (
         <FormProvider {...formMethods}>

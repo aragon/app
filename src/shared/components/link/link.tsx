@@ -20,8 +20,12 @@ export const Link: React.FC<ILinkProps> = (props) => {
             onClick={(e) => {
                 e.preventDefault();
 
-                if (isBlocked && !window.confirm('You have unsaved changes. Do you really want to leave?')) {
-                    return; 
+                if (
+                    isBlocked &&
+                    !target &&
+                    !window.confirm(t('app.governance.createProposalPage.exitAlertDescription'))
+                ) {
+                    return;
                 }
 
                 startTransition(() => {
