@@ -15,7 +15,6 @@ describe('<WizardContainer /> component', () => {
     const createTestComponent = (props?: Partial<IWizardContainerProps>) => {
         const completeProps: IWizardContainerProps = {
             submitLabel: 'submit',
-            exitAlertDescription: 'Are you sure you want to exit?',
             ...props,
         };
 
