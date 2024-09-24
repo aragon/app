@@ -20,14 +20,18 @@ export const Link: React.FC<ILinkProps> = (props) => {
             onClick={(e) => {
                 e.preventDefault();
 
-                if (isBlocked && !window.confirm(t('app.governance.createProposalPage.exitAlertDescription'))) {
-                    return;
+                if (isBlocked && !window.confirm('You have unsaved changes. Do you really want to leave?')) {
+                    return; 
                 }
 
                 startTransition(() => {
                     const url = href.toString();
 
-                    router.push(url as Route);
+                    if (target === '_blank') {
+                        window.open(url, '_blank');
+                    } else {
+                        router.push(url as Route);
+                    }
                 });
             }}
             href={href}
