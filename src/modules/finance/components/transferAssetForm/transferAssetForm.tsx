@@ -1,12 +1,12 @@
+import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { Network } from '@/shared/api/daoService';
 import { AssetInput } from '@/shared/components/forms/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput } from '@aragon/ods';
-import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
-import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
 
 export interface ITransferAssetFormProps {
     /**
