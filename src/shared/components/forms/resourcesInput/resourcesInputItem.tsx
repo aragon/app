@@ -29,6 +29,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
         label: t('app.shared.resourcesInput.item.labelInput.title'),
         rules: { required: true },
         defaultValue: '',
+        trimOnBlur: true,
     });
 
     const urlFieldName = `${name}.${index}.url`;
@@ -36,6 +37,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
         label: t('app.shared.resourcesInput.item.linkInput.title'),
         defaultValue: '',
         rules: { required: true, pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/ },
+        trimOnBlur: true,
     });
 
     return (
@@ -45,6 +47,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
                 maxLength={40}
                 {...nameField}
             />
+
             <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...urlField} />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container
