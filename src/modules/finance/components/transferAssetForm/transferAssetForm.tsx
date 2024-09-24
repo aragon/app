@@ -1,8 +1,8 @@
 import type { Network } from '@/shared/api/daoService';
+import { AssetInput } from '@/shared/components/forms/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils, InputNumberMax } from '@aragon/ods';
-import { AssetList } from '../assetList';
+import { AddressInput, addressUtils } from '@aragon/ods';
 import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
 
 export interface ITransferAssetFormProps {
@@ -38,11 +38,15 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const amountField = useFormField<ITransferAssetFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true, min: 0, max: assetField.value?.amount },
+        rules: {
+            required: true,
+            max: assetField.value?.amount,
+            validate: (value) => {
+                return parseFloat(value ?? '') > 0;
+            },
+        },
         fieldPrefix,
     });
-
-    const assetListParams = { queryParams: { address: sender, network } };
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -51,14 +55,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
                 placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
                 {...receiverField}
             />
-            {/* TODO: use AssetInput component (APP-3611) */}
-            <InputNumberMax
-                placeholder={t('app.finance.transferAssetForm.amount.placeholder')}
-                max={Number(assetField.value?.amount ?? 0)}
-                {...amountField}
-            />
-            {assetField.value != null && <p>Selected token: {assetField.value.token.symbol}</p>}
-            <AssetList initialParams={assetListParams} onAssetClick={assetField.onChange} />
+            <AssetInput sender={sender} network={network} amountField={amountField} assetField={assetField} />
         </div>
     );
 };
