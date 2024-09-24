@@ -384,8 +384,25 @@
           "title": "Proposals"
         }
       },
+      "executeDialog": {
+        "buttons": {
+          "submit": "Execute proposal",
+          "success": "View proposal"
+        },
+        "description": "To execute the proposal you have to confirm the onchain transaction with your wallet.",
+        "title": "Execute proposal"
+      },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal"
+      },
+      "proposalExecutionStatus": {
+        "buttons": {
+          "execute": "Execute",
+          "executed": "Executed",
+          "failed": "Execution failed",
+          "tryAgain": "Try again"
+        },
+        "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
       },
       "proposalVotingTerminal": {
         "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
@@ -408,7 +425,7 @@
       "voteDialog": {
         "button": {
           "submit": "Submit vote",
-          "success": "View proposals"
+          "success": "View proposal"
         },
         "confirmationLabel": "Voting",
         "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",

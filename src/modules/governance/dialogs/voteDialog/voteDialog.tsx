@@ -8,6 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/ods';
+import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { voteDialogUtils } from './voteDialogUtils';
 
@@ -39,6 +40,8 @@ export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParam
 export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { t } = useTranslations();
 
+    const router = useRouter();
+
     const { location } = props;
 
     invariant(location.params != null, 'VoteDialog: required parameters must be set.');
@@ -49,7 +52,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
     invariant(supportedPlugin != null, 'VoteDialog: DAO has no supported plugin.');
 
-    const { title, vote, summary, proposalIndex, daoId } = location.params;
+    const { title, vote, summary, proposalIndex } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
@@ -64,7 +67,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             title={t('app.governance.voteDialog.title')}
             description={t('app.governance.voteDialog.description')}
             submitLabel={t('app.governance.voteDialog.button.submit')}
-            successLink={{ label: t('app.governance.voteDialog.button.success'), href: `/dao/${daoId}/proposals` }}
+            successLink={{ label: t('app.governance.voteDialog.button.success'), action: () => router.refresh() }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
         >

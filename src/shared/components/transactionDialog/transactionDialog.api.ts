@@ -47,7 +47,11 @@ export interface ITransactionDialogSuccessLink {
     /**
      * URL of the success link.
      */
-    href: TransactionDialogSuccessLinkHref;
+    href?: TransactionDialogSuccessLinkHref;
+    /**
+     *   Action to be triggered when the success link is clicked.
+     */
+    action?: () => void;
 }
 
 export interface ITransactionDialogProps<TCustomStepId extends string = string> {
