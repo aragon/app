@@ -1,8 +1,11 @@
+import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { Network } from '@/shared/api/daoService';
 import { AssetInput } from '@/shared/components/forms/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils } from '@aragon/ods';
+import { AddressInput } from '@aragon/ods';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
 
 export interface ITransferAssetFormProps {
@@ -11,7 +14,7 @@ export interface ITransferAssetFormProps {
      */
     sender: string;
     /**
-     * Network of the asset to be transfered.
+     * Network of the asset to be transferred.
      */
     network: Network;
     /**
@@ -20,14 +23,33 @@ export interface ITransferAssetFormProps {
     fieldPrefix?: string;
 }
 
+//TODO: Correctly export from ODS (APP-3672)
+interface IAddressInputResolvedValue {
+    /**
+     * Address value.
+     */
+    address?: string;
+    /**
+     * ENS name linked to the given address.
+     */
+    name?: string;
+}
+
 export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
     const { sender, network, fieldPrefix } = props;
-
+    const [resolved, setResolved] = useState<IAddressInputResolvedValue>();
     const { t } = useTranslations();
+    const { trigger } = useFormContext();
 
     const receiverField = useFormField<ITransferAssetFormData, 'receiver.address'>('receiver.address', {
         label: t('app.finance.transferAssetForm.receiver.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        rules: {
+            required: true,
+            validate: () => {
+                const hasAddressOrName = !!(resolved?.address ?? resolved?.name);
+                return hasAddressOrName;
+            },
+        },
         fieldPrefix,
     });
 
@@ -48,11 +70,21 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
         fieldPrefix,
     });
 
+    useEffect(() => {
+        // Trigger validation when 'resolved' changes to ensure valid receiver address.
+        if (receiverField.value) {
+            trigger(`${fieldPrefix}.receiver.address`);
+        }
+    }, [resolved, fieldPrefix, trigger, receiverField.value]);
+
     return (
         <div className="flex w-full flex-col gap-6">
             <AddressInput
                 helpText={t('app.finance.transferAssetForm.receiver.helpText')}
                 placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
+                chainId={1}
+                wagmiConfig={wagmiConfig}
+                onAccept={setResolved}
                 {...receiverField}
             />
             <AssetInput sender={sender} network={network} amountField={amountField} assetField={assetField} />
