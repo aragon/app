@@ -96,7 +96,11 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     <button className="text-primary-400 hover:text-primary-600" onClick={(e) => handleMaxAmount(e)}>
                         {t('app.finance.assetInput.maxButtonLabel')}
                     </button>
-                    {formatterUtils.formatNumber(assetField.value.amount, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}
+                    <span className="text-neutral-500">
+                        {formatterUtils.formatNumber(assetField.value.amount, {
+                            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+                        })}
+                    </span>
                 </div>
             )}
         </div>
