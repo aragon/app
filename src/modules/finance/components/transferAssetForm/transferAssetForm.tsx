@@ -23,7 +23,7 @@ export interface ITransferAssetFormProps {
     fieldPrefix?: string;
 }
 
-//TODO: Correctly export from ODS before next release
+//TODO: Correctly export from ODS (APP-3672)
 interface IAddressInputResolvedValue {
     /**
      * Address value.
