@@ -1,5 +1,6 @@
 'use client';
 
+import { ProposalExecutionStatus } from '@/modules/governance/components/executeProposal';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -128,6 +129,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             chainId={chainId}
                             emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.actions.empty')}
                         />
+                        {normalizedProposalActions.length > 0 && (
+                            <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
+                        )}
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>
