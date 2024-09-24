@@ -3,10 +3,6 @@ import { render, screen } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
 import { NavigationLinksItem, type INavigationLinksItemProps } from './navigationLinksItem';
 
-// jest.mock('next/navigation', () => ({
-//     useRouter: jest.fn(),
-// }));
-
 describe('<NavigationLinksItem /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
 
