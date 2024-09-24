@@ -22,7 +22,6 @@ describe('<CreateProposalPageClient /> component', () => {
     const createTestComponent = (props?: Partial<ICreateProposalPageClientProps>) => {
         const completeProps: ICreateProposalPageClientProps = {
             daoId: 'test',
-
             ...props,
         };
 

@@ -42,8 +42,6 @@ describe('<NavigationWizard /> component', () => {
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({ address: '0x123', isConnected: true } as unknown as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
-
-        // Reset the confirm mock
         confirmSpy.mockReset();
     });
 
