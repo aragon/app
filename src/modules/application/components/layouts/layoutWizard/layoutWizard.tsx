@@ -22,17 +22,13 @@ export interface ILayoutWizardProps {
      */
     name: string;
     /**
-     * Exit description to explain the alert dialog when exiting the wizard.
-     */
-    exitAlertDescription: string;
-    /**
      * Exit path to redirect to when exiting the wizard.
      */
     exitPath: Route;
 }
 
 export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
-    const { params, name, exitAlertDescription, exitPath, children } = props;
+    const { params, name, exitPath, children } = props;
 
     const queryClient = new QueryClient();
 
@@ -56,12 +52,7 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWizard
-                id={params?.id}
-                name={name}
-                exitAlertDescription={exitAlertDescription}
-                exitPath={exitPath}
-            />
+            <NavigationWizard id={params?.id} name={name} exitPath={exitPath} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

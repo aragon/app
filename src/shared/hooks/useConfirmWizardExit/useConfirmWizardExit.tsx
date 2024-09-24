@@ -1,31 +1,39 @@
+import { useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useEffect } from 'react';
 
-export const useConfirmWizardExit = (isFormDirty: boolean, exitAlertDescription: string) => {
+export const useConfirmWizardExit = (isFormDirty: boolean) => {
+    const setIsBlocked = useSetIsBlocked();
+    const { t } = useTranslations();
+
     useEffect(() => {
+        setIsBlocked(isFormDirty);
+
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            if (isFormDirty) {
-                e.preventDefault();
+            e.preventDefault();
+        };
+
+        const handlePopState = () => {
+            const confirmLeave = window.confirm(t('app.governance.createProposalPage.exitAlertDescription'));
+            if (confirmLeave) {
+                window.removeEventListener('popstate', handlePopState);
+                setIsBlocked(false);
+                window.history.back();
+            } else {
+                window.history.pushState(null, '', window.location.href);
             }
         };
 
-        const handlePopState = (e: PopStateEvent) => {
-            if (isFormDirty) {
-                const confirmLeave = window.confirm(exitAlertDescription);
-                if (!confirmLeave) {
-                    e.preventDefault();
-                    window.history.pushState(null, '', window.location.href);
-                } else {
-                    window.history.back();
-                }
-            }
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        window.addEventListener('popstate', handlePopState);
+        if (isFormDirty) {
+            window.history.pushState(null, '', window.location.href);
+            window.addEventListener('popstate', handlePopState);
+            window.addEventListener('beforeunload', handleBeforeUnload);
+        }
 
         return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('popstate', handlePopState);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            setIsBlocked(false);
         };
-    }, [isFormDirty, exitAlertDescription]);
+    }, [isFormDirty, t, setIsBlocked]);
 };
