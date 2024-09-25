@@ -4,6 +4,7 @@ import { DialogProvider } from '@/shared/components/dialogProvider';
 import { DialogRoot } from '@/shared/components/dialogRoot';
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
+import { NavigationBlockerProvider } from '@/shared/components/navigationBlockerProvider';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
@@ -39,17 +40,19 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
 
     return (
         <TranslationsProvider translations={translations}>
-            <OdsModulesProvider
-                wagmiConfig={wagmiConfig}
-                wagmiInitialState={wagmiInitialState}
-                queryClient={queryClient}
-                coreProviderValues={coreProviderValues}
-            >
-                <DialogProvider>
-                    {children}
-                    <DialogRoot dialogs={providersDialogs} />
-                </DialogProvider>
-            </OdsModulesProvider>
+            <NavigationBlockerProvider>
+                <OdsModulesProvider
+                    wagmiConfig={wagmiConfig}
+                    wagmiInitialState={wagmiInitialState}
+                    queryClient={queryClient}
+                    coreProviderValues={coreProviderValues}
+                >
+                    <DialogProvider>
+                        {children}
+                        <DialogRoot dialogs={providersDialogs} />
+                    </DialogProvider>
+                </OdsModulesProvider>
+            </NavigationBlockerProvider>
         </TranslationsProvider>
     );
 };

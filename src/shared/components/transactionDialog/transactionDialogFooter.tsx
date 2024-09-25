@@ -55,7 +55,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 ) => {
     const { submitLabel, successLink, txReceipt, activeStep, onError } = props;
 
-    const { label: successLabel, href: successHref } = successLink;
+    const { label: successLabel, href: successHref, action: successAction } = successLink;
     const { id: stepId, meta } = activeStep ?? {};
     const { state, action } = meta ?? {};
 
@@ -78,8 +78,17 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const processedSubmitLabel = customSubmitLabel != null ? t(customSubmitLabel) : defaultSubmitLabel;
 
-    const processedAction = displaySuccessLink ? close : () => action?.({ onError });
-    const processedSuccessLink = displaySuccessLink ? buildSuccessLink(successHref, txReceipt) : undefined;
+    const processedAction =
+        displaySuccessLink && successHref
+            ? close
+            : displaySuccessLink && successAction
+              ? () => {
+                    successAction();
+                    close();
+                }
+              : () => action?.({ onError });
+    const processedSuccessLink =
+        displaySuccessLink && successHref ? buildSuccessLink(successHref, txReceipt) : undefined;
 
     return (
         <DialogFooter

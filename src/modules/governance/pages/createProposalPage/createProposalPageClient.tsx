@@ -61,8 +61,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 submitLabel={t('app.governance.createProposalPage.submitLabel')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                defaultValues={{ actions: [] }}
-                exitAlertDescription={t('app.governance.createProposalPage.exitAlertDescription')}
+                defaultValues={{ actions: [], addActions: true, title: '', resources: [], summary: '', body: '' }}
             >
                 <CreateProposalForm.Provider value={contextValues}>
                     <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} />

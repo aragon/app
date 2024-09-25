@@ -1,8 +1,11 @@
+import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { Network } from '@/shared/api/daoService';
+import { AssetInput } from '@/shared/components/forms/assetInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils, InputNumberMax } from '@aragon/ods';
-import { AssetList } from '../assetList';
+import { AddressInput } from '@aragon/ods';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
 
 export interface ITransferAssetFormProps {
@@ -11,7 +14,7 @@ export interface ITransferAssetFormProps {
      */
     sender: string;
     /**
-     * Network of the asset to be transfered.
+     * Network of the asset to be transferred.
      */
     network: Network;
     /**
@@ -20,14 +23,33 @@ export interface ITransferAssetFormProps {
     fieldPrefix?: string;
 }
 
+//TODO: Correctly export from ODS (APP-3672)
+interface IAddressInputResolvedValue {
+    /**
+     * Address value.
+     */
+    address?: string;
+    /**
+     * ENS name linked to the given address.
+     */
+    name?: string;
+}
+
 export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
     const { sender, network, fieldPrefix } = props;
-
+    const [resolved, setResolved] = useState<IAddressInputResolvedValue>();
     const { t } = useTranslations();
+    const { trigger } = useFormContext();
 
     const receiverField = useFormField<ITransferAssetFormData, 'receiver.address'>('receiver.address', {
         label: t('app.finance.transferAssetForm.receiver.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+        rules: {
+            required: true,
+            validate: () => {
+                const hasAddressOrName = !!(resolved?.address ?? resolved?.name);
+                return hasAddressOrName;
+            },
+        },
         fieldPrefix,
     });
 
@@ -38,27 +60,34 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const amountField = useFormField<ITransferAssetFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true, min: 0, max: assetField.value?.amount },
+        rules: {
+            required: true,
+            max: assetField.value?.amount,
+            validate: (value) => {
+                return parseFloat(value ?? '') > 0;
+            },
+        },
         fieldPrefix,
     });
 
-    const assetListParams = { queryParams: { address: sender, network } };
+    useEffect(() => {
+        // Trigger validation when 'resolved' changes to ensure valid receiver address.
+        if (receiverField.value) {
+            trigger(`${fieldPrefix}.receiver.address`);
+        }
+    }, [resolved, fieldPrefix, trigger, receiverField.value]);
 
     return (
         <div className="flex w-full flex-col gap-6">
             <AddressInput
                 helpText={t('app.finance.transferAssetForm.receiver.helpText')}
                 placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
+                chainId={1}
+                wagmiConfig={wagmiConfig}
+                onAccept={setResolved}
                 {...receiverField}
             />
-            {/* TODO: use AssetInput component (APP-3611) */}
-            <InputNumberMax
-                placeholder={t('app.finance.transferAssetForm.amount.placeholder')}
-                max={Number(assetField.value?.amount ?? 0)}
-                {...amountField}
-            />
-            {assetField.value != null && <p>Selected token: {assetField.value.token.symbol}</p>}
-            <AssetList initialParams={assetListParams} onAssetClick={assetField.onChange} />
+            <AssetInput sender={sender} network={network} amountField={amountField} assetField={assetField} />
         </div>
     );
 };
