@@ -34,11 +34,11 @@ export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) 
         pluginIds,
     })!;
 
-    const { transactionHash } = proposal;
+    const { executed } = proposal;
 
     const executedBlockLink = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
-        id: transactionHash,
+        id: executed.transactionHash,
         chainId,
     });
 
