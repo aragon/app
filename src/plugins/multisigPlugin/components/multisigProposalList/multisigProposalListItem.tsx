@@ -1,4 +1,6 @@
+import { useVoteStatus } from '@/modules/governance/hooks/useVoteStatus';
 import { ProposalDataListItem } from '@aragon/ods';
+import { useAccount } from 'wagmi';
 import { type IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 
@@ -16,6 +18,10 @@ export interface IMultisigProposalListItemProps {
 export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
+    const { address } = useAccount();
+
+    const { voted } = useVoteStatus({ proposalId: proposal.id, address });
+
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
@@ -26,8 +32,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={multisigProposalUtils.getProposalStatus(proposal)}
             type="approvalThreshold"
-            // TODO: provide the corrct voted status (APP-3394)
-            voted={true}
+            voted={voted}
             publisher={{
                 address: proposal.creator.address,
                 name: proposal.creator.ens ?? undefined,
