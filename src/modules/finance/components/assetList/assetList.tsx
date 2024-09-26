@@ -45,7 +45,11 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
 
         const lowercasedSearchValue = searchValue.toLowerCase();
 
-        return assetList.filter(({ token }) => token.name?.toLowerCase().includes(lowercasedSearchValue));
+        return assetList.filter(({ token }) => {
+            const tokenName = token.name?.toLowerCase() || '';
+            const tokenSymbol = token.symbol?.toLowerCase() || '';
+            return tokenName.includes(lowercasedSearchValue) || tokenSymbol.includes(lowercasedSearchValue);
+        });
     }, [assetList, searchValue, hasSearch]);
 
     return (
