@@ -22,13 +22,14 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
 
     const { voted } = useVotedStatus({ proposalId: proposal.id, address });
 
+    console.log('MultisigProposalListItem', proposal);
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
             key={proposal.id}
             title={proposal.title}
             summary={proposal.summary}
-            date={proposal.endDate * 1000}
+            date={proposal.executed.blockTimestamp ? proposal.executed.blockTimestamp * 1000 : proposal.endDate * 1000}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={multisigProposalUtils.getProposalStatus(proposal)}
             type="approvalThreshold"

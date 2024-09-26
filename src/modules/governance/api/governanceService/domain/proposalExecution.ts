@@ -7,4 +7,12 @@ export interface IProposalExecution {
      * Transaction hash set when the proposal has been executed.
      */
     transactionHash?: string;
+    /**
+     * Timestamp of the execution date of the proposal.
+     */
+    blockTimestamp?: number;
+    /**
+     * Block number of the execution date of the proposal.
+     */
+    blockNumber?: number;
 }
