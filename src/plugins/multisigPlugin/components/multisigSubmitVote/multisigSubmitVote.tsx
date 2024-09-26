@@ -17,14 +17,10 @@ export interface IMultisigSubmitVoteProps {
      * The title of the proposal
      */
     title: string;
-    /**
-     * Summary of the proposal
-     */
-    summary: string;
 }
 
 export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) => {
-    const { daoId, proposalIndex, title, summary } = props;
+    const { daoId, proposalIndex, title } = props;
     const { t } = useTranslations();
 
     const { open } = useDialogContext();
@@ -33,7 +29,6 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
         const params: IVoteDialogParams = {
             daoId,
             title,
-            summary,
             proposalIndex,
             vote: { label: 'approve' },
         };

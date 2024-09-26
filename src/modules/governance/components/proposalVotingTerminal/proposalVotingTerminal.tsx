@@ -66,7 +66,6 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                         proposalIndex={proposal.proposalIndex}
                         daoId={daoId}
                         title={proposal.title}
-                        summary={proposal.summary}
                     />
                 )}
             </ProposalVoting.Stage>

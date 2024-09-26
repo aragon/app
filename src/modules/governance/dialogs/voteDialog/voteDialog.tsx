@@ -7,7 +7,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
-import { DataList, invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/ods';
+import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/ods';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { voteDialogUtils } from './voteDialogUtils';
@@ -25,10 +25,6 @@ export interface IVoteDialogParams {
      * Title of the proposal
      */
     title: string;
-    /**
-     * Summary of the proposal
-     */
-    summary: string;
     /**
      * Incremental ID of proposal
      */
@@ -52,7 +48,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
     invariant(supportedPlugin != null, 'VoteDialog: DAO has no supported plugin.');
 
-    const { title, vote, summary, proposalIndex } = location.params;
+    const { title, vote, proposalIndex } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
@@ -71,14 +67,12 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
         >
-            <DataList.Root entityLabel="">
-                <VoteProposalDataListItemStructure
-                    proposalId={title}
-                    proposalTitle={summary}
-                    voteIndicator={vote.label}
-                    confirmationLabel={t('app.governance.voteDialog.confirmationLabel')}
-                />
-            </DataList.Root>
+            <VoteProposalDataListItemStructure
+                proposalId={proposalIndex}
+                proposalTitle={title}
+                voteIndicator={vote.label}
+                confirmationLabel={t('app.governance.voteDialog.confirmationLabel')}
+            />
         </TransactionDialog>
     );
 };
