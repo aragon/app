@@ -1,5 +1,16 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
 
+export enum ISppProposalStageStatus {
+    VETOED = 'VETOED',
+    PENDING = 'PENDING',
+    INACTIVE = 'INACTIVE',
+    ACTIVE = 'ACTIVE',
+    REJECTED = 'REJECTED',
+    ACCEPTED = 'ACCEPTED',
+    ADVANCED = 'ADVANCED',
+    EXPIRED = 'EXPIRED',
+}
+
 export interface ISppSubProposal extends IProposal {
     /**
      * ID of the stage the sub proposal is created on.
