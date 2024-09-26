@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useChainId, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import type { UseQueryReturnType } from 'wagmi/query';
+import { useSetIsBlocked } from '../navigationBlockerProvider';
 import {
     TransactionStatus,
     type ITransactionStatusStepMetaAddon,
@@ -11,7 +12,6 @@ import {
 import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
-import { useSetIsBlocked } from '../navigationBlockerProvider';
 
 const queryToStepState = (
     status: UseQueryReturnType['status'],
