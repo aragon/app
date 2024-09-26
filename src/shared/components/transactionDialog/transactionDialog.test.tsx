@@ -147,6 +147,15 @@ describe('<TransactionDialog /> component', () => {
                     auto: false,
                 }),
             },
+            {
+                id: TransactionDialogStep.INDEXING,
+                order: 5,
+                meta: expect.objectContaining({
+                    label: expect.stringMatching(/INDEXING.label/),
+                    errorLabel: expect.stringMatching(/INDEXING.errorLabel/),
+                    auto: false,
+                }),
+            },
         ];
         const updateSteps = jest.fn();
         const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });

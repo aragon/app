@@ -119,7 +119,7 @@ describe('<TransactionDialogFooter /> component', () => {
     it('renders the success link label on transaction success', () => {
         const successLink = { label: 'View proposal', href: '/proposal/my-proposal' };
         const activeStep = {
-            id: TransactionDialogStep.CONFIRM,
+            id: TransactionDialogStep.INDEXING,
             meta: { state: 'success' },
         } as unknown as ITransactionDialogStep;
         render(createTestComponent({ successLink, activeStep }));
@@ -133,7 +133,7 @@ describe('<TransactionDialogFooter /> component', () => {
         const href = (txReceipt: TransactionReceipt) => `/custom-href-${txReceipt.from}`;
         const successLink = { label: 'View proposal', href };
         const activeStep = {
-            id: TransactionDialogStep.CONFIRM,
+            id: TransactionDialogStep.INDEXING,
             meta: { state: 'success' },
         } as unknown as ITransactionDialogStep;
         render(createTestComponent({ txReceipt, successLink, activeStep }));
@@ -146,7 +146,7 @@ describe('<TransactionDialogFooter /> component', () => {
         const close = jest.fn();
         useDialogContextSpy.mockReturnValue({ open: jest.fn(), close });
         const activeStep = {
-            id: TransactionDialogStep.CONFIRM,
+            id: TransactionDialogStep.INDEXING,
             meta: { state: 'success' },
         } as unknown as ITransactionDialogStep;
         render(createTestComponent({ successLink, activeStep }));
