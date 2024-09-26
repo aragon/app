@@ -21,7 +21,7 @@ const queryToStepState = (
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const { title, description, customSteps, stepper, submitLabel, successLink, children, prepareTransaction } = props;
     const setIsBlocked = useSetIsBlocked();
-        const [indexingStatus, setIndexingStatus] = useState<TransactionStatusState>('idle');
+    const [indexingStatus, setIndexingStatus] = useState<TransactionStatusState>('idle');
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
@@ -77,7 +77,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     }, [updateActiveStep, handleSendTransaction]);
 
     // Simulate 5s indexing time for now, when we get under this time regularly we
-    // can think about a better way to handle this
+    // can think about a better way to handle this TODO: (APP-3678)
     const handleIndexingTransaction = useCallback(() => {
         setIndexingStatus('pending');
         setTimeout(() => {
