@@ -1,4 +1,4 @@
-import { useVoteStatus } from '@/modules/governance/hooks/useVoteStatus';
+import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
 import { ProposalDataListItem } from '@aragon/ods';
 import { useAccount } from 'wagmi';
 import { type IMultisigProposal } from '../../types';
@@ -20,7 +20,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
 
     const { address } = useAccount();
 
-    const { voted } = useVoteStatus({ proposalId: proposal.id, address });
+    const { voted } = useVotedStatus({ proposalId: proposal.id, address });
 
     return (
         <ProposalDataListItem.Structure

@@ -1,6 +1,6 @@
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 
-export interface IVoteStatusParams {
+export interface IVotedStatusParams {
     /**
      * ID of the proposal to check the vote status for.
      */
@@ -11,7 +11,7 @@ export interface IVoteStatusParams {
     address?: string;
 }
 
-export const useVoteStatus = (params: IVoteStatusParams) => {
+export const useVotedStatus = (params: IVotedStatusParams) => {
     const { proposalId, address } = params;
 
     const initialParamsVoteList = { queryParams: { proposalId } };
