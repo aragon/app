@@ -662,6 +662,14 @@
             "pending": "Awaiting approval"
           },
           "cancel": "Cancel",
+          "confirm": {
+            "idle": "Confirm transaction",
+            "pending": "Awaiting confirmation"
+          },
+          "indexing": {
+            "idle": "Index proposal",
+            "pending": "Indexing proposal"
+          },
           "retry": "Retry"
         },
         "step": {
@@ -674,6 +682,10 @@
             "addon": "Details",
             "errorLabel": "Confirmation failed",
             "label": "Onchain confirmation"
+          },
+          "INDEXING": {
+            "errorLabel": "Indexing failed",
+            "label": "Index proposal"
           },
           "PREPARE": {
             "errorLabel": "Unable to prepare transaction",

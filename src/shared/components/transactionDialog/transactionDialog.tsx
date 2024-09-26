@@ -1,6 +1,6 @@
 import { ChainEntityType, DialogContent, Heading, IconType, useBlockExplorer } from '@aragon/ods';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useChainId, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import type { UseQueryReturnType } from 'wagmi/query';
 import {
@@ -11,6 +11,7 @@ import {
 import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
+import { useSetIsBlocked } from '../navigationBlockerProvider';
 
 const queryToStepState = (
     status: UseQueryReturnType['status'],
@@ -19,6 +20,8 @@ const queryToStepState = (
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const { title, description, customSteps, stepper, submitLabel, successLink, children, prepareTransaction } = props;
+    const setIsBlocked = useSetIsBlocked();
+        const [indexingStatus, setIndexingStatus] = useState<TransactionStatusState>('idle');
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
@@ -51,6 +54,15 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         hash: transactionHash,
     });
 
+    // Detect when the transaction is confirmed and handle moving to indexing step
+    const hasConfirmed = useRef(false);
+    useEffect(() => {
+        if (waitTxStatus === 'success' && !hasConfirmed.current) {
+            hasConfirmed.current = true;
+            nextStep();
+        }
+    }, [waitTxStatus, nextStep]);
+
     const handleSendTransaction = useCallback(() => {
         if (transaction == null) {
             handleTransactionError();
@@ -64,13 +76,25 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         handleSendTransaction();
     }, [updateActiveStep, handleSendTransaction]);
 
+    // Simulate 5s indexing time for now, when we get under this time regularly we
+    // can think about a better way to handle this
+    const handleIndexingTransaction = useCallback(() => {
+        setIndexingStatus('pending');
+        setTimeout(() => {
+            setIsBlocked(false);
+            setIndexingStatus('success');
+            nextStep();
+        }, 5000);
+    }, [nextStep, setIsBlocked]);
+
     const transactionStepActions: Record<TransactionDialogStep, () => void> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
             [TransactionDialogStep.APPROVE]: handleSendTransaction,
             [TransactionDialogStep.CONFIRM]: handleRetryTransaction,
+            [TransactionDialogStep.INDEXING]: handleIndexingTransaction,
         }),
-        [prepareTransactionMutate, handleSendTransaction, handleRetryTransaction],
+        [prepareTransactionMutate, handleSendTransaction, handleRetryTransaction, handleIndexingTransaction],
     );
 
     const transactionStepStates: Record<TransactionDialogStep, TransactionStatusState> = useMemo(
@@ -78,8 +102,9 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
             [TransactionDialogStep.APPROVE]: approveTransactionStatus,
             [TransactionDialogStep.CONFIRM]: queryToStepState(waitTxStatus, waitTxFetchStatus),
+            [TransactionDialogStep.INDEXING]: indexingStatus,
         }),
-        [prepareTransactionStatus, approveTransactionStatus, waitTxStatus, waitTxFetchStatus],
+        [prepareTransactionStatus, approveTransactionStatus, waitTxStatus, waitTxFetchStatus, indexingStatus],
     );
 
     const transactionStepAddon: Record<TransactionDialogStep, ITransactionStatusStepMetaAddon | undefined> = useMemo(
@@ -96,6 +121,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                           href: buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash }),
                       }
                     : undefined,
+            [TransactionDialogStep.INDEXING]: undefined,
         }),
         [t, buildEntityUrl, transactionHash],
     );

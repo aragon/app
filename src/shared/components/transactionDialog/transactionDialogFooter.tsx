@@ -40,6 +40,14 @@ const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record
         pending: 'app.shared.transactionDialog.footer.approve.pending',
         error: 'app.shared.transactionDialog.footer.approve.error',
     },
+    [TransactionDialogStep.CONFIRM]: {
+        idle: 'app.shared.transactionDialog.footer.confirm.idle',
+        pending: 'app.shared.transactionDialog.footer.confirm.pending',
+    },
+    [TransactionDialogStep.INDEXING]: {
+        idle: 'app.shared.transactionDialog.footer.indexing.idle',
+        pending: 'app.shared.transactionDialog.footer.indexing.pending',
+    },
 };
 
 const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, txReceipt?: TransactionReceipt) => {
@@ -66,8 +74,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const isSuccessState = state === 'success';
     const isPendingState = state === 'pending';
 
-    const displaySuccessLink = stepId === TransactionDialogStep.CONFIRM && isSuccessState;
-    const isCancelDisabled = stepId === TransactionDialogStep.CONFIRM && (isSuccessState || isPendingState);
+    const displaySuccessLink = stepId === TransactionDialogStep.INDEXING && isSuccessState;
+    const isCancelDisabled =
+        (stepId === TransactionDialogStep.CONFIRM && (isPendingState || isSuccessState)) ||
+        (stepId === TransactionDialogStep.INDEXING && (isPendingState || isSuccessState));
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState

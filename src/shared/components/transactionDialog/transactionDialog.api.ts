@@ -23,6 +23,7 @@ export enum TransactionDialogStep {
     PREPARE = 'PREPARE',
     APPROVE = 'APPROVE',
     CONFIRM = 'CONFIRM',
+    INDEXING = 'INDEXING',
 }
 
 export interface ITransactionDialogStepMeta extends ITransactionStatusStepMeta {

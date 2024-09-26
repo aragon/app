@@ -1,6 +1,5 @@
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
 import {
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
@@ -55,8 +54,6 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     const { t } = useTranslations();
 
-    const setIsBlocked = useSetIsBlocked();
-
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
     });
@@ -88,8 +85,6 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     const getProposalLink = (txReceipt: TransactionReceipt) => {
         const { transactionHash } = txReceipt;
-
-        setIsBlocked(false);
 
         const proposalId = publishProposalDialogUtils.getProposalId(txReceipt);
         const extendedProposalId = `${transactionHash}-${supportedPlugin.address}-${proposalId}`;
