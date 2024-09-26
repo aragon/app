@@ -54,14 +54,26 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         hash: transactionHash,
     });
 
+    // Simulate 5s indexing time for now, when we get under this time regularly we
+    // can think about a better way to handle this TODO: (APP-3678)
+    const handleIndexingTransaction = useCallback(() => {
+        setIndexingStatus('pending');
+        setTimeout(() => {
+            setIsBlocked(false);
+            setIndexingStatus('success');
+            nextStep();
+        }, 5000);
+    }, [nextStep, setIsBlocked]);
+
     // Detect when the transaction is confirmed and handle moving to indexing step
     const hasConfirmed = useRef(false);
     useEffect(() => {
         if (waitTxStatus === 'success' && !hasConfirmed.current) {
             hasConfirmed.current = true;
             nextStep();
+            handleIndexingTransaction();
         }
-    }, [waitTxStatus, nextStep]);
+    }, [waitTxStatus, nextStep, handleIndexingTransaction]);
 
     const handleSendTransaction = useCallback(() => {
         if (transaction == null) {
@@ -75,17 +87,6 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         updateActiveStep(TransactionDialogStep.APPROVE);
         handleSendTransaction();
     }, [updateActiveStep, handleSendTransaction]);
-
-    // Simulate 5s indexing time for now, when we get under this time regularly we
-    // can think about a better way to handle this TODO: (APP-3678)
-    const handleIndexingTransaction = useCallback(() => {
-        setIndexingStatus('pending');
-        setTimeout(() => {
-            setIsBlocked(false);
-            setIndexingStatus('success');
-            nextStep();
-        }, 5000);
-    }, [nextStep, setIsBlocked]);
 
     const transactionStepActions: Record<TransactionDialogStep, () => void> = useMemo(
         () => ({
