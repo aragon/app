@@ -22,7 +22,6 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
 
     const { voted } = useVotedStatus({ proposalId: proposal.id, address });
 
-    console.log('MultisigProposalListItem', proposal);
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
