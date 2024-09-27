@@ -1,6 +1,6 @@
 import { ChainEntityType, DialogContent, Heading, IconType, useBlockExplorer } from '@aragon/ods';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useChainId, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import type { UseQueryReturnType } from 'wagmi/query';
 import { useSetIsBlocked } from '../navigationBlockerProvider';
@@ -66,10 +66,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     }, [nextStep, setIsBlocked]);
 
     // Detect when the transaction is confirmed and handle moving to indexing step
-    const hasConfirmed = useRef(false);
     useEffect(() => {
-        if (waitTxStatus === 'success' && !hasConfirmed.current) {
-            hasConfirmed.current = true;
+        if (waitTxStatus === 'success') {
             nextStep();
             handleIndexingTransaction();
         }
