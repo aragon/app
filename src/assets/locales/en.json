@@ -402,6 +402,9 @@
         "description": "To execute the proposal you have to confirm the onchain transaction with your wallet.",
         "title": "Execute proposal"
       },
+      "layoutWizardCreateDao": {
+        "name": "Create DAO"
+      },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal"
       },

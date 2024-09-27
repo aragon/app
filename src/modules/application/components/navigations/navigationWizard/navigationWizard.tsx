@@ -65,7 +65,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     return (
         <Navigation.Container containerClasses="flex flex-row items-center gap-x-6 justify-between py-5">
             <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
-                <Link href={`/dao/${id}/proposals`} className={linkClassName}>
+                <Link href={exitPath as Route} className={linkClassName}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
                 <div className="flex min-w-0 flex-col gap-y-0.5">
