@@ -28,7 +28,7 @@ export interface ISppProposal extends Omit<IProposal, 'endDate'> {
      */
     currentStageIndex: string;
     /**
-     * Mapping from stageId to array of sub-proposals for that stage.
+     * Stage sub proposals.
      */
-    subProposals: Record<string, ISppSubProposal[]>;
+    subProposals: ISppSubProposal[];
 }

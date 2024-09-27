@@ -10,6 +10,11 @@ export interface ISppStagePlugin extends IDaoPlugin {
      * ID of the stage.
      */
     proposalType: SppProposalType;
+    // NOTICED THE BELOW IN THE SMART CONTRACT CODE NOT SURE IF WE NEED THEM HERE OR NOT
+    /**
+     * The address of the allowed body.
+     */
+    allowedBody: string;
 }
 
 export interface ISppStage {
