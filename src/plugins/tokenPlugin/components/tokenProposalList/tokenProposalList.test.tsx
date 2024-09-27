@@ -1,4 +1,5 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
+import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
@@ -6,6 +7,7 @@ import { TokenProposalList, type ITokenProposalListProps } from './tokenProposal
 
 describe('<TokenProposalList /> component', () => {
     const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');
+    const useVotedStatusSpy = jest.spyOn(useVotedStatus, 'useVotedStatus');
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
@@ -17,6 +19,7 @@ describe('<TokenProposalList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
+        useVotedStatusSpy.mockReturnValue({ voted: false });
     });
 
     afterEach(() => {

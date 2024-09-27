@@ -1,7 +1,7 @@
 import { generateToken } from '@/modules/finance/testUtils';
+import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
 import { OdsModulesProvider, ProposalStatus } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import * as useVotedStatus from '../../../../modules/governance/hooks/useVotedStatus';
 import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
 import { VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
