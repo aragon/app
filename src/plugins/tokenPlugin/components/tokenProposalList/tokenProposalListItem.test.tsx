@@ -1,7 +1,8 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import { DataList, OdsModulesProvider, ProposalStatus } from '@aragon/ods';
+import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
+import { OdsModulesProvider, ProposalStatus } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateTokenProposal } from '../../testUtils';
+import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
 import { VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
@@ -10,11 +11,17 @@ describe('<TokenProposalListItem /> component', () => {
     const getWinningOptionSpy = jest.spyOn(tokenProposalUtils, 'getWinningOption');
     const getTotalVotesSpy = jest.spyOn(tokenProposalUtils, 'getTotalVotes');
     const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');
+    const useVotedStatusSpy = jest.spyOn(useVotedStatus, 'useVotedStatus');
+
+    beforeEach(() => {
+        useVotedStatusSpy.mockReturnValue({ voted: false });
+    });
 
     afterEach(() => {
         getWinningOptionSpy.mockReset();
         getTotalVotesSpy.mockReset();
         getProposalStatusSpy.mockReset();
+        useVotedStatusSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenProposalListItemProps>) => {
@@ -26,15 +33,13 @@ describe('<TokenProposalListItem /> component', () => {
 
         return (
             <OdsModulesProvider>
-                <DataList.Root entityLabel="">
-                    <TokenProposalListItem {...completeProps} />
-                </DataList.Root>
+                <TokenProposalListItem {...completeProps} />
             </OdsModulesProvider>
         );
     };
 
     it('renders the token proposal', () => {
-        const proposal = generateTokenProposal();
+        const proposal = generateTokenProposal({ settings: generateDaoTokenSettings({ historicalTotalSupply: '0' }) });
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
@@ -48,8 +53,8 @@ describe('<TokenProposalListItem /> component', () => {
 
     it('renders the parsed amount and percentage of winning option', () => {
         const votes = [{ type: VoteOption.YES, totalVotingPower: '80000' }];
-        const token = generateToken({ decimals: 2, symbol: 'TEST' });
-        const proposal = generateTokenProposal({ metrics: { votesByOption: votes }, token });
+        const settings = generateDaoTokenSettings({ token: generateToken({ decimals: 2, symbol: 'TEST' }) });
+        const proposal = generateTokenProposal({ metrics: { votesByOption: votes }, settings });
         getWinningOptionSpy.mockReturnValue(VoteOption.YES);
         getTotalVotesSpy.mockReturnValue(BigInt(100000));
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
@@ -70,8 +75,8 @@ describe('<TokenProposalListItem /> component', () => {
 
     it('renders abstain as winning option with 100% when the are only abstain votes', () => {
         const votes = [{ type: VoteOption.ABSTAIN, totalVotingPower: '145' }];
-        const token = generateToken({ decimals: 3, symbol: 'ABS' });
-        const proposal = generateTokenProposal({ metrics: { votesByOption: votes }, token });
+        const settings = generateDaoTokenSettings({ token: generateToken({ decimals: 3, symbol: 'ABS' }) });
+        const proposal = generateTokenProposal({ metrics: { votesByOption: votes }, settings });
         getWinningOptionSpy.mockReturnValue(VoteOption.ABSTAIN);
         getTotalVotesSpy.mockReturnValue(BigInt(0));
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);

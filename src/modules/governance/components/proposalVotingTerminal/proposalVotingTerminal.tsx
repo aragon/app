@@ -4,7 +4,7 @@ import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { type ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/ods';
+import { ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList } from '../voteList';
@@ -34,14 +34,8 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
 
     const voteListParams = { queryParams: { proposalId: proposal.id, pageSize: votesPerPage } };
 
-    // TODO: remove custom settings object and plugin-specific logic when settings interface is cleaned up (APP-3483)
-    const settingsObject = {
-        settings: proposal.settings,
-        token: (proposal as unknown as Record<string, unknown>).token,
-    };
-
     const proposalSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
-        params: { daoId, settings: settingsObject },
+        params: { daoId, settings: proposal.settings },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginIds,
     });
@@ -65,6 +59,15 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                     <VoteList initialParams={voteListParams} daoId={daoId} />
                 </ProposalVoting.Votes>
                 <ProposalVoting.Details settings={proposalSettings} />
+                {status === ProposalStatus.ACTIVE && (
+                    <PluginComponent
+                        slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                        pluginIds={pluginIds}
+                        proposalIndex={proposal.proposalIndex}
+                        daoId={daoId}
+                        title={proposal.title}
+                    />
+                )}
             </ProposalVoting.Stage>
         </ProposalVoting.Container>
     );

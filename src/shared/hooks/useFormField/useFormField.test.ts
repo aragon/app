@@ -45,7 +45,7 @@ describe('useFormField hook', () => {
         const label = 'Summary';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
         const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>('field-name', { label }));
-        expect(result.current.alert?.message).toMatch(/formField.error.required \(name=Summary\)/);
+        expect(result.current.alert?.message).toMatch(/formField.error.required \(name=Summary/);
         expect(result.current.alert?.variant).toEqual('critical');
     });
 
@@ -56,7 +56,7 @@ describe('useFormField hook', () => {
         const name = 'field-name';
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
         const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name));
-        expect(result.current.alert?.message).toMatch(/formField.error.minLength \(name=field-name\)/);
+        expect(result.current.alert?.message).toMatch(/formField.error.minLength \(name=field-name/);
     });
 
     it('returns alert set to undefined when field has no errors', () => {
@@ -68,12 +68,42 @@ describe('useFormField hook', () => {
     });
 
     it('forwards the shouldUnregister option correctly to useController', () => {
-        const name = 'testField';
         const options = { shouldUnregister: true };
         const fieldValues = { field: {}, fieldState: {} };
         useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        renderHook(() => useFormField<ReactHookForm.FieldValues, string>('test', options));
+        expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ shouldUnregister: true }));
+    });
 
-        renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name, options));
-        expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ name, shouldUnregister: true }));
+    it('appends the fieldPrefix to the field name when specified', () => {
+        const name = 'test';
+        const fieldPrefix = 'proposalContext';
+        const expectedName = `${fieldPrefix}.${name}`;
+        const fieldValues = { field: {}, fieldState: {} };
+        useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        renderHook(() => useFormField<ReactHookForm.FieldValues, string>(name, { fieldPrefix }));
+        expect(useControllerSpy).toHaveBeenCalledWith(expect.objectContaining({ name: expectedName }));
+    });
+
+    it('uses the min value set on the rule to generate the alert message', () => {
+        const error = { type: 'min' };
+        const fieldState = { error };
+        const fieldValues = { field: {}, fieldState };
+        const fieldName = 'amount';
+        useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        const rules = { min: 10 };
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(fieldName, { rules }));
+        expect(result.current.alert?.message).toMatch(/formField.error.min \(name=amount,value=10\)/);
+    });
+
+    it('uses the max value set on the rule to generate the alert message', () => {
+        const error = { type: 'max' };
+        const fieldState = { error };
+        const fieldValues = { field: {}, fieldState };
+        const fieldName = 'tokens';
+        useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        const rules = { max: 123 };
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>(fieldName, { rules }));
+        expect(result.current.alert?.message).toMatch(/formField.error.max \(name=tokens,value=123\)/);
     });
 });

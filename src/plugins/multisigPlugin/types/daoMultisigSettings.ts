@@ -1,6 +1,6 @@
 import type { IDaoSettings } from '@/shared/api/daoService';
 
-interface IDaoMultisigSettingsObject {
+export interface IDaoMultisigSettings extends IDaoSettings {
     /**
      * The minimum number of approvals required for a proposal to be approved.
      */
@@ -9,6 +9,8 @@ interface IDaoMultisigSettingsObject {
      * Boolean indicating whether only multisig members can vote on proposals.
      */
     onlyListed: boolean;
+    /**
+     * DAO members count only set when settings are fetched for a specific block number (e.g. settings when a proposal was created)
+     */
+    historicalMembersCount?: string;
 }
-
-export interface IDaoMultisigSettings extends IDaoSettings<IDaoMultisigSettingsObject> {}

@@ -1,5 +1,5 @@
-import type { IProposalAction } from '@aragon/ods';
 import type { Hex } from 'viem';
+import type { IProposalAction } from '../api/governanceService';
 
 export interface IBuildCreateProposalDataParams {
     /**

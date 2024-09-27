@@ -182,4 +182,21 @@ describe('<AutocompleteInput /> component', () => {
         await userEvent.keyboard('{Enter}');
         expect(onChange).toHaveBeenCalledWith(items[1].id);
     });
+
+    it('correctly select items on enter press when filtered', async () => {
+        const onChange = jest.fn();
+        const items = [
+            { id: '0', name: 'aaa', icon: IconType.APP_ASSETS },
+            { id: '1', name: 'bbb', icon: IconType.APP_ASSETS },
+            { id: '2', name: 'ccc', icon: IconType.APP_ASSETS },
+        ];
+        render(createTestComponent({ items, onChange }));
+
+        const inputElement = screen.getByRole('combobox');
+        await userEvent.click(inputElement);
+        await userEvent.type(inputElement, 'bbb');
+
+        await userEvent.keyboard('{Enter}');
+        expect(onChange).toHaveBeenCalledWith(items[1].id);
+    });
 });

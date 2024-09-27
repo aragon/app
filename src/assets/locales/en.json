@@ -74,6 +74,22 @@
         }
       }
     },
+    "createDao": {
+      "createDaoForm": {
+        "metadata": {
+          "description": {
+            "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+            "label": "Description",
+            "placeholder": "Description of the DAO"
+          },
+          "name": {
+            "helpText": "Maximum of {{max}} characters",
+            "label": "Name",
+            "placeholder": "Name of the DAO"
+          }
+        }
+      }
+    },
     "dashboard": {
       "daoDashboardPage": {
         "aside": {
@@ -121,6 +137,10 @@
       }
     },
     "finance": {
+      "assetInput": {
+        "maxButtonLabel": "Max",
+        "triggerLabelDefault": "Select"
+      },
       "assetList": {
         "emptyState": {
           "description": "This will show the DAO's onchain assets when available.",
@@ -131,6 +151,12 @@
           "description": "There was an error loading the assets. Please try again later.",
           "heading": "Error loading assets"
         }
+      },
+      "assetSelectionDialog": {
+        "heading": "Select an asset"
+      },
+      "assetSelectionList": {
+        "searchPlaceholder": "Search assets..."
       },
       "daoAssetsPage": {
         "aside": {
@@ -170,16 +196,40 @@
           "description": "There was an error loading the transactions. Please try again later.",
           "heading": "Error loading transactions"
         }
+      },
+      "transferAssetForm": {
+        "amount": {
+          "label": "Amount",
+          "placeholder": "0"
+        },
+        "receiver": {
+          "helpText": "The wallet that receives the tokens",
+          "label": "Recipient",
+          "placeholder": "ENS or 0x …"
+        }
       }
     },
     "governance": {
+      "actionComposer": {
+        "action": {
+          "MetadataUpdate": "Set metadata",
+          "Transfer": "Transfer"
+        },
+        "group": {
+          "OSX": "DAO"
+        },
+        "placeholder": "Filter by action, contract name or address",
+        "selectItem": "Add action"
+      },
       "createProposalForm": {
         "actions": {
           "action": "Action",
-          "empty": {
-            "description": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp.",
-            "heading": "No actions added"
-          }
+          "editAction": {
+            "down": "Move down",
+            "remove": "Remove",
+            "up": "Move up"
+          },
+          "empty": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
         },
         "metadata": {
           "actions": {
@@ -208,6 +258,7 @@
         }
       },
       "createProposalPage": {
+        "exitAlertDescription": "If you leave this process, you'll lose all the information you've entered so far.",
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -308,6 +359,7 @@
         "main": {
           "actions": {
             "description": "The following actions will execute if all voting stages are approved.",
+            "empty": "Proposal has not actions.",
             "header": "Actions"
           },
           "governance": "Governance",
@@ -342,8 +394,28 @@
           "title": "Proposals"
         }
       },
+      "executeDialog": {
+        "buttons": {
+          "submit": "Execute proposal",
+          "success": "View proposal"
+        },
+        "description": "To execute the proposal you have to confirm the onchain transaction with your wallet.",
+        "title": "Execute proposal"
+      },
+      "layoutWizardCreateDao": {
+        "name": "Create DAO"
+      },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal"
+      },
+      "proposalExecutionStatus": {
+        "buttons": {
+          "execute": "Execute",
+          "executed": "Executed",
+          "failed": "Execution failed",
+          "tryAgain": "Try again"
+        },
+        "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
       },
       "proposalVotingTerminal": {
         "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
@@ -362,6 +434,15 @@
           }
         },
         "title": "Publish proposal"
+      },
+      "voteDialog": {
+        "button": {
+          "submit": "Submit vote",
+          "success": "View proposal"
+        },
+        "confirmationLabel": "Voting",
+        "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
+        "title": "Submit vote"
       },
       "voteList": {
         "empty": {
@@ -406,6 +487,10 @@
         },
         "multisigProposalList": {
           "entity": "Proposals"
+        },
+        "multisigSubmitVote": {
+          "button": "Approve",
+          "voteLabel": "Approve"
         },
         "multisigVoteList": {
           "entity": "Votes"
@@ -465,6 +550,19 @@
           "no": "No",
           "yes": "Yes"
         },
+        "tokenSubmitVote": {
+          "buttons": {
+            "cancel": "Cancel",
+            "default": "Vote on proposal",
+            "submit": "Submit vote"
+          },
+          "options": {
+            "abstain": "Abstain",
+            "label": "Choose your option",
+            "no": "No",
+            "yes": "Yes"
+          }
+        },
         "tokenVoteList": {
           "entity": "Votes"
         }
@@ -497,7 +595,7 @@
         "governanceLabel": "Governance",
         "governanceValue": "{{name}} v{{release}}.{{build}}",
         "osLabel": "Operating system",
-        "osValue": "Aragon OSx"
+        "osValue": "Aragon OSx v{{version}}"
       }
     },
     "shared": {
@@ -531,6 +629,8 @@
       },
       "formField": {
         "error": {
+          "max": "{{name}} must be lower than {{value}}",
+          "min": "{{name}} must be greater than {{value}}",
           "pattern": "Invalid {{name}} format",
           "required": "{{name}} is mandatory",
           "validate": "{{name}} is invalid"

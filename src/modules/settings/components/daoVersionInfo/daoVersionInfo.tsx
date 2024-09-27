@@ -33,14 +33,13 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                 </Link>
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.settings.daoVersionInfo.osLabel')}>
-                {/* TODO: Fetch this operating system value from backend when available (APP-3484) */}
                 <Link
                     description={addressUtils.truncateAddress(dao.address)}
                     iconRight={IconType.LINK_EXTERNAL}
                     href=""
                     target="_blank"
                 >
-                    {t('app.settings.daoVersionInfo.osValue')}
+                    {t('app.settings.daoVersionInfo.osValue', { version: dao.version })}
                 </Link>
             </DefinitionList.Item>
             {supportedPlugin && (

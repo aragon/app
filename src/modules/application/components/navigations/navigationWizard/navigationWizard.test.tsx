@@ -1,6 +1,7 @@
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import * as navigationBlockerProvider from '@/shared/components/navigationBlockerProvider/navigationBlockerProvider';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { OdsModulesProvider } from '@aragon/ods';
@@ -29,15 +30,19 @@ describe('<NavigationWizard /> component', () => {
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useIsBlockedSpy = jest.spyOn(navigationBlockerProvider, 'useIsBlocked');
+    const confirmSpy = jest.spyOn(window, 'confirm');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         cidToSrcSpy.mockReturnValue('ipfs://avatar-cid');
         useRouterSpy.mockReturnValue({
-            back: jest.fn(),
+            push: jest.fn(),
+            prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({ address: '0x123', isConnected: true } as unknown as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        confirmSpy.mockReset();
     });
 
     afterEach(() => {
@@ -46,10 +51,16 @@ describe('<NavigationWizard /> component', () => {
         useRouterSpy.mockReset();
         useAccountSpy.mockReset();
         useDialogContextSpy.mockReset();
+        useIsBlockedSpy.mockReset();
+        confirmSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INavigationWizardProps>) => {
-        const completeProps: INavigationWizardProps = { name: '', ...props };
+        const completeProps: INavigationWizardProps = {
+            name: '',
+            exitPath: '/',
+            ...props,
+        };
         return (
             <OdsModulesProvider>
                 <NavigationWizard {...completeProps} />
@@ -73,19 +84,6 @@ describe('<NavigationWizard /> component', () => {
         const name = 'Create A New Test Proposal';
         render(createTestComponent({ name }));
         expect(screen.getByText(name)).toBeInTheDocument();
-    });
-
-    it('calls router back on back button click', async () => {
-        const mockBack = jest.fn();
-        useRouterSpy.mockReturnValue({
-            back: mockBack,
-        } as unknown as AppRouterInstance);
-
-        render(createTestComponent());
-
-        const backButton = screen.getByTestId('CLOSE');
-        await userEvent.click(backButton);
-        expect(mockBack).toHaveBeenCalledTimes(1);
     });
 
     it('renders the user wallet address and opens the user dialog when clicked', async () => {

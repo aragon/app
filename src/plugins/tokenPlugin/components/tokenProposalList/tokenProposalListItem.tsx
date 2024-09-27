@@ -1,6 +1,8 @@
+import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat, ProposalDataListItem } from '@aragon/ods';
 import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { VoteOption, type ITokenProposal } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 
@@ -10,7 +12,7 @@ export interface ITokenProposalListItemProps {
      */
     proposal: ITokenProposal;
     /**
-     * ID of the DAO for this proposa.
+     * ID of the DAO for this proposal.
      */
     daoId: string;
 }
@@ -23,7 +25,7 @@ const voteOptionToLabel: Record<VoteOption, string> = {
 
 const getWinningOption = (proposal: ITokenProposal) => {
     const { votesByOption } = proposal.metrics;
-    const { decimals, symbol } = proposal.token;
+    const { decimals, symbol } = proposal.settings.token;
 
     const winningOption = tokenProposalUtils.getWinningOption(proposal);
 
@@ -50,10 +52,14 @@ const getWinningOption = (proposal: ITokenProposal) => {
 export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
+    const { address } = useAccount();
+
     const { t } = useTranslations();
 
     const winningOption = getWinningOption(proposal);
     const proposalResult = winningOption != null ? { ...winningOption, option: t(winningOption.option) } : undefined;
+
+    const { voted } = useVotedStatus({ proposalId: proposal.id, address });
 
     return (
         <ProposalDataListItem.Structure
@@ -61,13 +67,16 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             key={proposal.id}
             title={proposal.title}
             summary={proposal.summary}
-            date={proposal.endDate * 1000}
+            date={proposal.executed.blockTimestamp ? proposal.executed.blockTimestamp * 1000 : proposal.endDate * 1000}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={tokenProposalUtils.getProposalStatus(proposal)}
             type="majorityVoting"
-            // TODO: provide the correct voted status (APP-3394)
-            voted={false}
-            publisher={{ address: proposal.creatorAddress, link: `members/${proposal.creatorAddress}` }}
+            voted={voted}
+            publisher={{
+                address: proposal.creator.address,
+                link: `members/${proposal.creator.address}`,
+                name: proposal.creator.ens ?? undefined,
+            }}
             result={proposalResult}
         />
     );

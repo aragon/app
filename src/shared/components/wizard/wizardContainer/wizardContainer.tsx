@@ -1,3 +1,4 @@
+import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
 import { DevTool } from '@hookform/devtools';
@@ -34,9 +35,9 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardContainerProps<TFormData>,
 ) => {
     const { initialSteps = [], finalStep, children, onSubmit, submitLabel, defaultValues, ...otherProps } = props;
-
     const { t } = useTranslations();
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
+    const isFormDirty = formMethods.formState.isDirty;
 
     const wizardStepper = useStepper({ initialSteps });
     const { hasNext, activeStepIndex, steps } = wizardStepper;
@@ -53,6 +54,8 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
 
     const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
+
+    useConfirmWizardExit(isFormDirty);
 
     return (
         <FormProvider {...formMethods}>
@@ -85,6 +88,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
                 </form>
                 <DevTool control={formMethods.control} />
             </WizardProvider>
+            <DevTool control={formMethods.control} />
         </FormProvider>
     );
 };

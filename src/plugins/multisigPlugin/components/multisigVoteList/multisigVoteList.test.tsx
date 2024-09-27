@@ -1,4 +1,6 @@
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
+import { generateProposal } from '@/modules/governance/testUtils';
+import { generateAddressInfo } from '@/shared/testUtils';
 import { addressUtils, OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigVote } from '../../testUtils';
@@ -29,11 +31,11 @@ describe('<MultisigVoteList /> component', () => {
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
-                memberAddress: '0x00C51Fad10462780e488B54D413aD92B28b88204',
+                member: generateAddressInfo({ address: '0x00C51Fad10462780e488B54D413aD92B28b88204' }),
             }),
             generateMultisigVote({
                 transactionHash: '0x456',
-                memberAddress: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+                member: generateAddressInfo({ address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05' }),
             }),
         ];
 
@@ -51,11 +53,11 @@ describe('<MultisigVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].memberAddress}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].memberAddress}`);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/members/${votes[0].member.address}`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/members/${votes[1].member.address}`);
 
-        expect(screen.getByText(addressUtils.truncateAddress(votes[0].memberAddress))).toBeInTheDocument();
-        expect(screen.getByText(addressUtils.truncateAddress(votes[1].memberAddress))).toBeInTheDocument();
+        expect(screen.getByText(addressUtils.truncateAddress(votes[0].member.address))).toBeInTheDocument();
+        expect(screen.getByText(addressUtils.truncateAddress(votes[1].member.address))).toBeInTheDocument();
         expect(screen.getAllByText('approve')).toHaveLength(2);
     });
 
@@ -63,20 +65,12 @@ describe('<MultisigVoteList /> component', () => {
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
-                proposalInfo: {
-                    id: 'network-0x123-1',
-                    proposalId: 1,
-                    title: 'Test Proposal 1',
-                },
+                proposal: generateProposal({ id: 'network-0x123-1', title: 'Test Proposal 1' }),
                 blockTimestamp: 1234567890,
             }),
             generateMultisigVote({
                 transactionHash: '0x456',
-                proposalInfo: {
-                    id: 'network-0x456-2',
-                    proposalId: 2,
-                    title: 'Test Proposal 2',
-                },
+                proposal: generateProposal({ id: 'network-0x456-2', title: 'Test Proposal 2' }),
                 blockTimestamp: 1234567890,
             }),
         ];
@@ -95,11 +89,11 @@ describe('<MultisigVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[0].proposalInfo?.id}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[1].proposalInfo?.id}`);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[0].proposal?.id}`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[1].proposal?.id}`);
 
-        expect(screen.getByText('Test Proposal 1')).toBeInTheDocument();
-        expect(screen.getByText('Test Proposal 2')).toBeInTheDocument();
+        expect(screen.getByText(votes[0].proposal!.title)).toBeInTheDocument();
+        expect(screen.getByText(votes[1].proposal!.title)).toBeInTheDocument();
         expect(screen.getAllByText('approve')).toHaveLength(2);
     });
 

@@ -27,4 +27,19 @@ export const tokenPluginAbi = [
         outputs: [{ name: 'proposalId', internalType: 'uint256', type: 'uint256' }],
         stateMutability: 'nonpayable',
     },
+    {
+        type: 'function',
+        inputs: [
+            { name: '_proposalId', internalType: 'uint256', type: 'uint256' },
+            {
+                name: '_voteOption',
+                internalType: 'enum IMajorityVoting.VoteOption',
+                type: 'uint8',
+            },
+            { name: '_tryEarlyExecution', internalType: 'bool', type: 'bool' },
+        ],
+        name: 'vote',
+        outputs: [],
+        stateMutability: 'nonpayable',
+    },
 ];
