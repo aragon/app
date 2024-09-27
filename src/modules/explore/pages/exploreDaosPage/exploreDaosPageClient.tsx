@@ -1,6 +1,6 @@
 'use client';
 
-import { Toggle, ToggleGroup } from '@aragon/ods';
+import { Button, IconType, Toggle, ToggleGroup } from '@aragon/ods';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
@@ -26,10 +26,19 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
 
     return (
         <div className="flex grow flex-col gap-5">
-            <ToggleGroup isMultiSelect={false} onChange={setDaoFilter} value={daoFilter}>
-                <Toggle value="all" label="All DAOs" />
-                <Toggle value="member" label="Member" disabled={address == null} />
-            </ToggleGroup>
+            <div className="flex items-center gap-x-2 md:gap-x-3">
+                <ToggleGroup isMultiSelect={false} onChange={setDaoFilter} value={daoFilter}>
+                    <Toggle value="all" label="All DAOs" />
+                    <Toggle value="member" label="Member" disabled={address == null} />
+                </ToggleGroup>
+                <Button
+                    iconLeft={IconType.PLUS}
+                    href="/create/dao"
+                    className="!rounded-full"
+                    variant="tertiary"
+                    size="md"
+                />
+            </div>
             <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />
         </div>
     );
