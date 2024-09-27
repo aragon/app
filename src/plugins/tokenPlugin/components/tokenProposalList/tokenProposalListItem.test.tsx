@@ -1,4 +1,5 @@
 import { generateToken } from '@/modules/finance/testUtils';
+import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
 import { OdsModulesProvider, ProposalStatus } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
@@ -10,11 +11,17 @@ describe('<TokenProposalListItem /> component', () => {
     const getWinningOptionSpy = jest.spyOn(tokenProposalUtils, 'getWinningOption');
     const getTotalVotesSpy = jest.spyOn(tokenProposalUtils, 'getTotalVotes');
     const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');
+    const useVotedStatusSpy = jest.spyOn(useVotedStatus, 'useVotedStatus');
+
+    beforeEach(() => {
+        useVotedStatusSpy.mockReturnValue({ voted: false });
+    });
 
     afterEach(() => {
         getWinningOptionSpy.mockReset();
         getTotalVotesSpy.mockReset();
         getProposalStatusSpy.mockReset();
+        useVotedStatusSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenProposalListItemProps>) => {
