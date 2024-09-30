@@ -47,14 +47,7 @@ describe('<CreateProposalPageClient /> component', () => {
         const expectedParams = {
             daoId,
             prepareActions: {},
-            values: {
-                actions: [],
-                addActions: true,
-                title: '',
-                resources: [],
-                summary: '',
-                body: '',
-            },
+            values: { actions: [] },
         };
         expect(open).toHaveBeenCalledWith(GovernanceDialogs.PUBLISH_PROPOSAL, { params: expectedParams });
     });

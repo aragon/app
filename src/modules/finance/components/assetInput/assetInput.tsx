@@ -2,11 +2,11 @@ import { type ITransferAssetFormData } from '@/modules/finance/components/transf
 import { type Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { SharedDialogs } from '@/shared/constants/moduleDialogs';
-import { type IAssetSelectionDialogParams } from '@/shared/dialogs/assetSelectionDialog/assetSelectionDialog';
 import { type IUseFormFieldReturn } from '@/shared/hooks/useFormField';
 import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/ods';
 import classNames from 'classnames';
+import { FinanceDialogs } from '../../constants/moduleDialogs';
+import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
 
 export interface IAssetInputProps {
     /**
@@ -41,7 +41,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const params: IAssetSelectionDialogParams = { initialParams, onAssetClick: assetField.onChange, close };
 
     const handleOpenDialog = () => {
-        open(SharedDialogs.ASSET_SELECTION, { params });
+        open(FinanceDialogs.ASSET_SELECTION, { params });
     };
 
     const handleMaxAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -54,6 +54,11 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         ' placeholder:text-base placeholder:font-normal placeholder:leading-tight placeholder:text-neutral-300', // placeholder styles
         '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none', // remove incr/decr buttons for number type
     );
+
+    const amountValue = Number(amountField.value) * Number(assetField.value?.token.priceUsd);
+    const formattedAmountValue = assetField.value?.token
+        ? formatterUtils.formatNumber(amountValue, { format: NumberFormat.FIAT_TOTAL_SHORT })
+        : `$0.00`;
 
     return (
         <div className="flex flex-col gap-y-3">
@@ -80,16 +85,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     onChange={amountField.onChange}
                     disabled={!assetField.value}
                 />
-                <p>
-                    {assetField.value?.token
-                        ? formatterUtils.formatNumber(
-                              Number(amountField.value) * Number(assetField.value.token.priceUsd),
-                              {
-                                  format: NumberFormat.FIAT_TOTAL_SHORT,
-                              },
-                          )
-                        : `$0.00`}
-                </p>
+                <p>{formattedAmountValue}</p>
             </InputContainer>
             {assetField.value?.amount && (
                 <div className="flex items-center gap-x-1 self-end pr-4">

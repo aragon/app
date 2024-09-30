@@ -150,13 +150,12 @@
         "errorState": {
           "description": "There was an error loading the assets. Please try again later.",
           "heading": "Error loading assets"
-        }
+        },
+        "searchPlaceholder": "Search assets..."
       },
       "assetSelectionDialog": {
+        "description": "Select the asset from the list below",
         "heading": "Select an asset"
-      },
-      "assetSelectionList": {
-        "searchPlaceholder": "Search assets..."
       },
       "daoAssetsPage": {
         "aside": {
@@ -258,7 +257,6 @@
         }
       },
       "createProposalPage": {
-        "exitAlertDescription": "If you leave this process, you'll lose all the information you've entered so far.",
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -618,6 +616,9 @@
         "menu": {
           "select": "Select"
         }
+      },
+      "confirmWizardExit": {
+        "message": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "errorFeedback": {
         "description": "If you'd like to help, please report the issue to our team.",
