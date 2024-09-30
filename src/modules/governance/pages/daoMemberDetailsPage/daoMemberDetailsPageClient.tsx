@@ -1,8 +1,6 @@
 'use client';
 
 import { DaoList } from '@/modules/explore/components/daoList';
-import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
-import { VoteList } from '@/modules/governance/components/voteList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
@@ -100,10 +98,6 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { href: `/dao/${daoId}/members`, label: t('app.governance.daoMemberDetailsPage.header.breadcrumb.members') },
         { label: memberName },
     ];
-
-    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: 3 } };
-
-    const votesByMemberAddressQueryParams = { queryParams: { daoId, address, includeInfo: true, pageSize: 5 } };
 
     const daoListByMemberParams = { urlParams: { address }, queryParams: { pageSize: 3, excludeDaoId: daoId } };
 
