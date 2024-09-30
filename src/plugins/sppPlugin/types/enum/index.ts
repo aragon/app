@@ -1,0 +1,1 @@
+export { SppProposalType } from './sppProposalType';

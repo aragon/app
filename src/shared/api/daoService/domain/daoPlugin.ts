@@ -19,4 +19,12 @@ export interface IDaoPlugin {
      * Build number of the plugin.
      */
     build: string;
+    /**
+     * Is the plugin of type process.
+     */
+    isProcess: boolean;
+    /**
+     * Is the plugin of type body.
+     */
+    isBody: boolean;
 }
