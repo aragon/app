@@ -7,14 +7,17 @@ export enum SppProposalType {
 
 export interface ISppStagePlugin extends IDaoPlugin {
     /**
-     * ID of the stage.
+     * is the type of proposal Approval or Veto.
      */
     proposalType: SppProposalType;
-    // NOTICED THE BELOW IN THE SMART CONTRACT CODE NOT SURE IF WE NEED THEM HERE OR NOT
     /**
-     * The address of the allowed body.
+     * Is the plugin of type process.
      */
-    allowedBody: string;
+    isProcess: boolean;
+    /**
+     * Is the plugin of type body.
+     */
+    isBody: boolean;
 }
 
 export interface ISppStage {
