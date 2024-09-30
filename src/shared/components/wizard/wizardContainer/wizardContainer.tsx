@@ -51,6 +51,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
         }
     };
 
+    // Reset submitted form state to only display validation alerts when user clicks again on "next" button
     useEffect(() => {
         if (formState.isSubmitSuccessful && wizardStepper.hasNext) {
             reset(undefined, { keepDirty: true, keepValues: true });
