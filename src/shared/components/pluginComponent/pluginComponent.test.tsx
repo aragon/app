@@ -30,10 +30,23 @@ describe('<PluginComponent />', () => {
         expect(screen.getByTestId('slot-component-test')).toBeInTheDocument();
     });
 
-    it('returns null when no slot component is found', () => {
+    it('returns null when no slot component is found and no children are provided', () => {
         getSlotComponentSpy.mockReturnValue(undefined);
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
+    });
+
+    it('renders the fallback component when no plugin component is found and children is a valid React element', () => {
+        getSlotComponentSpy.mockReturnValue(undefined);
+        const fallbackTestId = 'fallback-component-test';
+
+        render(
+            createTestComponent({
+                children: <div data-testid={fallbackTestId} />,
+            }),
+        );
+
+        expect(screen.getByTestId(fallbackTestId)).toBeInTheDocument();
     });
 
     it('only renders the first non-null slot component found', () => {
