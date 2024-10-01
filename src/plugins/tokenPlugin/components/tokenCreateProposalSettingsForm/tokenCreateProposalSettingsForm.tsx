@@ -1,12 +1,12 @@
 import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
-import { useDaoSettings } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { usePluginSettings } from '@/shared/hooks/usePluginSettings';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
 import { DateTime } from 'luxon';
 import { useWatch } from 'react-hook-form';
-import { type IDaoTokenSettings } from '../../types';
+import type { ITokenPluginSettings } from '../../types';
 
 export interface ITokenCreateProposalSettingsFormProps {
     /**
@@ -15,11 +15,11 @@ export interface ITokenCreateProposalSettingsFormProps {
     daoId: string;
 }
 
-export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSettingsFormProps> = ({ daoId }) => {
-    const daoSettingsParams = { daoId };
-    const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
+export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSettingsFormProps> = (props) => {
+    const { daoId } = props;
 
     const { t } = useTranslations();
+    const settings = usePluginSettings<ITokenPluginSettings>({ daoId });
 
     const startTimeFixed = useWatch<ICreateProposalFormData, 'startTimeFixed'>({ name: 'startTimeFixed' });
 

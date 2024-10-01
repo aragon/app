@@ -1,23 +1,23 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import * as governanceService from '@/modules/governance/api/governanceService';
-import * as daoService from '@/shared/api/daoService';
+import * as usePluginSettings from '@/shared/hooks/usePluginSettings';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
-import { generateDaoTokenSettings, generateTokenMember, generateTokenMemberMetrics } from '../../testUtils';
+import { generateTokenMember, generateTokenMemberMetrics, generateTokenPluginSettings } from '../../testUtils';
 import { useTokenMemberStats } from './useTokenMemberStats';
 
 describe('useTokenMemberStats hook', () => {
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
-    const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
+    const usePluginSettingsSpy = jest.spyOn(usePluginSettings, 'usePluginSettings');
 
     beforeEach(() => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
+        usePluginSettingsSpy.mockReturnValue(generateTokenPluginSettings);
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateTokenMember() }));
     });
 
     afterEach(() => {
         useMemberSpy.mockReset();
-        useDaoSettingsSpy.mockReset();
+        usePluginSettingsSpy.mockReset();
     });
 
     it('returns token member stats', () => {
@@ -27,8 +27,8 @@ describe('useTokenMemberStats hook', () => {
         };
 
         const token = generateToken({ decimals: 6 });
-        const daoTokenSettings = generateDaoTokenSettings({ token });
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoTokenSettings }));
+        const daoTokenSettings = generateTokenPluginSettings({ token });
+        usePluginSettingsSpy.mockReturnValue(daoTokenSettings);
 
         const member = generateTokenMember({
             votingPower: '47928374987234',
@@ -56,8 +56,8 @@ describe('useTokenMemberStats hook', () => {
         expect(result.current).toEqual([]);
     });
 
-    it('returns empty list when daoSettings is null', () => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+    it('returns empty list when pluginSettings is null', () => {
+        usePluginSettingsSpy.mockReturnValue(undefined);
         const { result } = renderHook(() => useTokenMemberStats({ address: '0x123', daoId: '2' }));
         expect(result.current).toEqual([]);
     });

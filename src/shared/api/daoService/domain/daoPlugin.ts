@@ -1,4 +1,6 @@
-export interface IDaoPlugin {
+import type { IPluginSettings } from './pluginSettings';
+
+export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings> {
     /**
      * Address of the plugin.
      */
@@ -31,4 +33,8 @@ export interface IDaoPlugin {
      * Defines if the plugin is installed on the DAO as a sub / child plugin.
      */
     isSubPlugin: boolean;
+    /*
+     * Settings of the DAO plugin.
+     */
+    settings: TSettings;
 }

@@ -1,20 +1,19 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import * as daoService from '@/shared/api/daoService';
-import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import * as usePluginSettings from '@/shared/hooks/usePluginSettings';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateDaoTokenSettings, generateTokenMember, generateTokenMemberMetrics } from '../../testUtils';
+import { generateTokenMember, generateTokenMemberMetrics, generateTokenPluginSettings } from '../../testUtils';
 import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
 
 describe('<TokenMemberListItem /> component', () => {
-    const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
+    const usePluginSettingsSpy = jest.spyOn(usePluginSettings, 'usePluginSettings');
 
     beforeEach(() => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
+        usePluginSettingsSpy.mockReturnValue(generateTokenPluginSettings());
     });
 
     afterEach(() => {
-        useDaoSettingsSpy.mockReset();
+        usePluginSettingsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenMemberListItemProps>) => {
@@ -49,20 +48,20 @@ describe('<TokenMemberListItem /> component', () => {
         expect(screen.getByText('Delegations')).toBeInTheDocument();
     });
 
-    it('fetches the DAO settings to parse the member voting power using the decimals of the governance token', () => {
+    it('retrieves the plugin settings to parse the member voting power using the decimals of the governance token', () => {
         const daoId = 'test-dao-id';
         const token = generateToken({ decimals: 6 });
-        const daoTokenSettings = generateDaoTokenSettings({ token });
+        const pluginSettings = generateTokenPluginSettings({ token });
         const member = generateTokenMember({ votingPower: '47928374987234' });
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoTokenSettings }));
+        usePluginSettingsSpy.mockReturnValue(pluginSettings);
         render(createTestComponent({ daoId, member }));
 
-        expect(useDaoSettingsSpy).toHaveBeenCalledWith({ urlParams: { daoId } });
+        expect(usePluginSettingsSpy).toHaveBeenCalledWith({ daoId });
         expect(screen.getByRole('heading', { name: /47.93M Voting Power/ })).toBeInTheDocument();
     });
 
-    it('falls back to 0 decimals when DAO settings cannot be fetched', () => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+    it('falls back to 0 decimals when plugin settings cannot be fetched', () => {
+        usePluginSettingsSpy.mockReturnValue(undefined);
         const member = generateTokenMember({ votingPower: '123456' });
         render(createTestComponent({ member }));
         expect(screen.getByRole('heading', { name: /123.46K Voting Power/ })).toBeInTheDocument();

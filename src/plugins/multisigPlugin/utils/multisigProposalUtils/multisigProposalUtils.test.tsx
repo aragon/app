@@ -2,7 +2,7 @@ import { ProposalActionType, type IProposalAction } from '@/modules/governance/a
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { generateDaoMultisigSettings, generateMultisigProposal } from '../../testUtils';
+import { generateMultisigPluginSettings, generateMultisigProposal } from '../../testUtils';
 import { multisigProposalUtils } from './multisigProposalUtils';
 
 describe('multisigProposal utils', () => {
@@ -89,21 +89,21 @@ describe('multisigProposal utils', () => {
 
     describe('isApprovalReached', () => {
         it('returns true when number of voters is greater than min approvals', () => {
-            const settings = generateDaoMultisigSettings({ minApprovals: 3 });
+            const settings = generateMultisigPluginSettings({ minApprovals: 3 });
             const metrics = { totalVotes: 5 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeTruthy();
         });
 
         it('returns true when number of voters is equal to min approvals', () => {
-            const settings = generateDaoMultisigSettings({ minApprovals: 1 });
+            const settings = generateMultisigPluginSettings({ minApprovals: 1 });
             const metrics = { totalVotes: 1 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeTruthy();
         });
 
         it('returns false when number of voters is less than min approvals', () => {
-            const settings = generateDaoMultisigSettings({ minApprovals: 4 });
+            const settings = generateMultisigPluginSettings({ minApprovals: 4 });
             const metrics = { totalVotes: 2 };
             const proposal = generateMultisigProposal({ settings, metrics });
             expect(multisigProposalUtils.isApprovalReached(proposal)).toBeFalsy();

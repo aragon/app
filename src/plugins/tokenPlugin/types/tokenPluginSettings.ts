@@ -1,8 +1,8 @@
 import { type IToken } from '@/modules/finance/api/financeService';
-import type { IDaoSettings } from '@/shared/api/daoService';
+import type { IPluginSettings } from '@/shared/api/daoService';
 import { type DaoTokenVotingMode } from './enum';
 
-export interface IDaoTokenSettings extends IDaoSettings {
+export interface ITokenPluginSettings extends IPluginSettings {
     /**
      * Amount of tokens that need to vote "Yes" for a proposal to pass.
      */

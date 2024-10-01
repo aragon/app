@@ -1,5 +1,5 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
+import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { mockTranslations } from '@/test/utils';
 import { tokenSettingsUtils } from './tokenSettingsUtils';
@@ -16,7 +16,7 @@ describe('tokenSettings utils', () => {
 
     describe('parseSettings', () => {
         it('correctly formats and displays the approval threshold', () => {
-            const settings = generateDaoTokenSettings({ supportThreshold: 300000 });
+            const settings = generateTokenPluginSettings({ supportThreshold: 300000 });
             const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [approvalThresholdTerm] = result;
@@ -28,7 +28,7 @@ describe('tokenSettings utils', () => {
         });
 
         it('correctly formats and displays the minimum participation', () => {
-            const settings = generateDaoTokenSettings({ minParticipation: 200000 });
+            const settings = generateTokenPluginSettings({ minParticipation: 200000 });
             const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [, minimumParticipationTerm] = result;
@@ -40,7 +40,7 @@ describe('tokenSettings utils', () => {
         });
 
         it('correctly formats and displays the minimum participation token value', () => {
-            const settings = generateDaoTokenSettings({
+            const settings = generateTokenPluginSettings({
                 token: generateToken({ totalSupply: '200000', decimals: 2 }),
                 minParticipation: 200000,
             });
@@ -55,7 +55,7 @@ describe('tokenSettings utils', () => {
         });
 
         it('correctly formats and displays the duration from settings', () => {
-            const settings = generateDaoTokenSettings({ minDuration: 60 * 60 * 24 * 7 });
+            const settings = generateTokenPluginSettings({ minDuration: 60 * 60 * 24 * 7 });
             const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
             const [, , durationTerm] = result;
@@ -65,7 +65,7 @@ describe('tokenSettings utils', () => {
         });
 
         it('correctly formats and displays the voting power necessary to be a proposer', () => {
-            const settings = generateDaoTokenSettings({
+            const settings = generateTokenPluginSettings({
                 token: generateToken({ symbol: 'TKN', decimals: 18 }),
                 minProposerVotingPower: '100000000000000000000',
             });
@@ -99,7 +99,7 @@ describe('tokenSettings utils', () => {
             ];
 
             votingModes.forEach(({ mode, expectedVoteChange, expectedEarlyExecution }) => {
-                const settings = generateDaoTokenSettings({ votingMode: mode });
+                const settings = generateTokenPluginSettings({ votingMode: mode });
                 const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
 
                 const [, , , earlyExecutionTerm, voteChangeTerm] = result;

@@ -1,26 +1,26 @@
-import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
-import * as daoService from '@/shared/api/daoService';
-import { generateReactQueryResultError, generateReactQueryResultSuccess, ReactQueryWrapper } from '@/shared/testUtils';
+import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
+import * as usePluginSettings from '@/shared/hooks/usePluginSettings';
+import { ReactQueryWrapper } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
 import { renderHook } from '@testing-library/react';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 import { useTokenGovernanceSettings } from './useTokenGovernanceSettings';
 
 describe('useTokenGovernanceSettings', () => {
-    const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
+    const usePluginSettingsSpy = jest.spyOn(usePluginSettings, 'usePluginSettings');
     const parseSettingsSpy = jest.spyOn(tokenSettingsUtils, 'parseSettings');
 
     beforeEach(() => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
+        usePluginSettingsSpy.mockReturnValue(generateTokenPluginSettings());
     });
 
     afterEach(() => {
-        useDaoSettingsSpy.mockReset();
+        usePluginSettingsSpy.mockReset();
         parseSettingsSpy.mockReset();
     });
 
     it('returns empty array when settings are not passed and data is not returned', () => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        usePluginSettingsSpy.mockReturnValue(undefined);
 
         const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }));
 
@@ -29,17 +29,14 @@ describe('useTokenGovernanceSettings', () => {
     });
 
     it('fetches settings and calls parseSettings with correct arguments', async () => {
-        const mockSettings = generateDaoTokenSettings();
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
+        const mockSettings = generateTokenPluginSettings();
+        usePluginSettingsSpy.mockReturnValue(mockSettings);
 
         const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }), {
             wrapper: ReactQueryWrapper,
         });
 
-        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
-            { urlParams: { daoId: 'token-test-id' } },
-            expect.objectContaining({ enabled: true }),
-        );
+        expect(usePluginSettingsSpy).toHaveBeenCalledWith({ daoId: 'token-test-id' });
         expect(parseSettingsSpy).toHaveBeenCalledWith({
             settings: mockSettings,
             t: mockTranslations.tMock,
@@ -48,7 +45,7 @@ describe('useTokenGovernanceSettings', () => {
     });
 
     it('handles settings object passed directly to the hook', () => {
-        const mockSettings = generateDaoTokenSettings();
+        const mockSettings = generateTokenPluginSettings();
         const mockParsedSettings = [{ term: 'mockTerm', definition: 'mockDefinition' }];
         parseSettingsSpy.mockReturnValue(mockParsedSettings);
 
@@ -56,10 +53,7 @@ describe('useTokenGovernanceSettings', () => {
             useTokenGovernanceSettings({ daoId: 'token-test-id', settings: mockSettings }),
         );
 
-        expect(useDaoSettingsSpy).toHaveBeenCalledWith(
-            { urlParams: { daoId: 'token-test-id' } },
-            expect.objectContaining({ enabled: false }),
-        );
+        expect(usePluginSettingsSpy).toHaveBeenCalledWith({ daoId: 'token-test-id' });
         expect(parseSettingsSpy).toHaveBeenCalledWith({
             settings: mockSettings,
             t: mockTranslations.tMock,

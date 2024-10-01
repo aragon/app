@@ -1,7 +1,7 @@
-import { useDaoSettings } from '@/shared/api/daoService';
+import { usePluginSettings } from '@/shared/hooks/usePluginSettings';
 import { MemberDataListItem } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import type { IDaoTokenSettings, ITokenMember } from '../../types';
+import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
 export interface ITokenMemberListItemProps {
     /**
@@ -17,8 +17,7 @@ export interface ITokenMemberListItemProps {
 export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) => {
     const { member, daoId } = props;
 
-    const daoSettingsParams = { daoId };
-    const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
+    const settings = usePluginSettings<ITokenPluginSettings>({ daoId });
 
     const tokenDecimals = settings?.token.decimals ?? 0;
     const parsedVotingPower = formatUnits(BigInt(member.votingPower ?? '0'), tokenDecimals);
