@@ -1,22 +1,49 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 
+export interface ITokenVotingMember {
+    /**
+     * Address of the member.
+     */
+    address: string;
+    /**
+     * Token amount to be distributed.
+     */
+    tokenAmount: string | number;
+}
+
 export interface ICreateProcessFormBody {
     /**
      * Name of the body
      */
-    name: string;
+    bodyName: string;
+    /**
+     * Governance type of the body
+     */
+    governanceType: 'tokenVoting';
+    /**
+     * Token name
+     */
+    tokenName: string;
+    /**
+     * Token symbol
+     */
+    tokenSymbol: string;
+    /**
+     * Members of the body
+     */
+    members?: ITokenVotingMember[];
 }
 
 export interface ICreateProcessFormStage {
     /**
      * Name of the stage
      */
-    name: string;
+    stageName: string;
     /**
      * Type of the stage
      */
-    type: 'normal' | 'optimistic';
+    stageType: 'normal' | 'optimistic';
     /**
      * Voting period of the stage
      */
@@ -43,11 +70,11 @@ export interface ICreateProcessFormData {
     /**
      * Name of the process
      */
-    name: string;
+    processName: string;
     /**
      * ID of the process
      */
-    id: string;
+    processId: string;
     /**
      * Short description of the proposal.
      */

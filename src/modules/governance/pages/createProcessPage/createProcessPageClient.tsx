@@ -4,7 +4,11 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
-import type { ICreateProcessFormData, ICreateProcessFormStage } from '../../components/createProcessForm';
+import type {
+    ICreateProcessFormBody,
+    ICreateProcessFormData,
+    ICreateProcessFormStage,
+} from '../../components/createProcessForm';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
 
@@ -15,13 +19,29 @@ export interface ICreateProcessPageClientProps {
     daoId: string;
 }
 
+const defaultBody: ICreateProcessFormBody = {
+    bodyName: '',
+    governanceType: 'tokenVoting',
+    tokenName: '',
+    tokenSymbol: '',
+};
+
 const defaultStage: ICreateProcessFormStage = {
-    name: '',
-    type: 'normal',
+    stageName: '',
+    stageType: 'normal',
     votingPeriod: { days: 7, minutes: 0, hours: 0 },
     earlyStageAdvance: false,
     stageExpiration: false,
-    votingBodies: [],
+    votingBodies: [defaultBody],
+    requiredApprovals: undefined,
+};
+
+const defaultValues: ICreateProcessFormData = {
+    processName: '',
+    processId: '',
+    summary: '',
+    resources: [],
+    stages: [defaultStage],
 };
 
 export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = (props) => {
@@ -48,7 +68,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
                 submitLabel="Publish Process"
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                defaultValues={{ stages: [defaultStage] }}
+                defaultValues={defaultValues}
             >
                 <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
             </Wizard.Container>

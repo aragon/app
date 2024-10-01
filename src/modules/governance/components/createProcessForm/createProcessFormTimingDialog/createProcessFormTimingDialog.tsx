@@ -1,7 +1,9 @@
+import { type StageInputItemBaseForm } from '@/modules/governance/components/createProcessForm/stageInput/stageInputItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { type IUseFormFieldReturn } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/ods';
-import { useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 export interface ICreateProcessFormTimingDialogProps {
     /**
@@ -19,15 +21,27 @@ export interface ICreateProcessFormTimingDialogProps {
     /**
      * The stage expiration field.
      */
-    stageExpirationField: any;
+    stageExpirationField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
+    /**
+     * Whether the stage should expire.
+     */
+    stageExpirationPeriodField: IUseFormFieldReturn<Record<string, IDateDuration>, string>;
     /**
      * The early stage field.
      */
-    earlyStageField: any;
+    earlyStageField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
     /**
      * The voting period field.
      */
-    votingPeriodField: any;
+    votingPeriodField: IUseFormFieldReturn<Record<string, IDateDuration>, string>;
+    /**
+     * The type of process.
+     */
+    typeValue: string;
+    /**
+     * The body governance type field.
+     */
+    bodyGovernanceTypeField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
 }
 
 export interface ICreateProcessFormTimingValues {
@@ -51,17 +65,19 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
         setIsTimingDialogOpen,
         handleSaveTimingValues,
         stageExpirationField,
+        stageExpirationPeriodField,
         earlyStageField,
         votingPeriodField,
+        typeValue,
     } = props;
 
-    const [timingValues, setTimingValues] = useState<ICreateProcessFormTimingValues>({
-        votingPeriod: votingPeriodField.value,
-        earlyStage: earlyStageField.value,
-        stageExpiration: stageExpirationField.value,
-    });
-
     const { t } = useTranslations();
+    const { setValue } = useFormContext();
+
+    const votingPeriod = useWatch({ name: votingPeriodField.name });
+    const earlyStage = useWatch({ name: earlyStageField.name });
+    const stageExpiration = useWatch({ name: stageExpirationField.name });
+    const expirationPeriod = useWatch({ name: stageExpirationPeriodField.name });
 
     return (
         <Dialog.Root
@@ -72,7 +88,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
             <Dialog.Header title="Timing" />
             <Dialog.Content className="flex flex-col gap-6 pb-4">
                 <InputContainer
-                    id={votingPeriodField.id}
+                    id={votingPeriodField.name}
                     useCustomWrapper={true}
                     helpText="The shortest period of time a proposal is open for voting. Proposals can be created with a longer duration, but not shorter."
                     {...votingPeriodField}
@@ -85,11 +101,11 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                             max={59}
                             className="w-full md:w-1/3"
                             placeholder="0 min"
-                            value={timingValues.votingPeriod.minutes}
+                            value={votingPeriod.minutes}
                             onChange={(e) =>
-                                setTimingValues({
-                                    ...timingValues,
-                                    votingPeriod: { ...timingValues.votingPeriod, minutes: Number(e) },
+                                setValue(votingPeriodField.name, {
+                                    ...votingPeriod,
+                                    minutes: Number(e),
                                 })
                             }
                         />
@@ -99,11 +115,11 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                             max={23}
                             className="w-full md:w-1/3"
                             placeholder="0 h"
-                            value={timingValues.votingPeriod.hours}
+                            value={votingPeriod.hours} // Directly use the form value
                             onChange={(e) =>
-                                setTimingValues({
-                                    ...timingValues,
-                                    votingPeriod: { ...timingValues.votingPeriod, hours: Number(e) },
+                                setValue(votingPeriodField.name, {
+                                    ...votingPeriod,
+                                    hours: Number(e),
                                 })
                             }
                         />
@@ -112,34 +128,90 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                             min={0}
                             className="w-full md:w-1/3"
                             placeholder="7 d"
-                            value={timingValues.votingPeriod.days}
+                            value={votingPeriod.days} // Directly use the form value
                             onChange={(e) =>
-                                setTimingValues({
-                                    ...timingValues,
-                                    votingPeriod: { ...timingValues.votingPeriod, days: Number(e) },
+                                setValue(votingPeriodField.name, {
+                                    ...votingPeriod,
+                                    days: Number(e),
                                 })
                             }
                         />
                     </div>
                     <AlertInline message="Recommended minimum expiration time is 7 days" />
                 </div>
-                <Switch
-                    helpText="Should the proposal be able to advance this stage early, if it’s successful?"
-                    inlineLabel={timingValues.earlyStage ? 'Yes' : 'No'}
-                    onCheckedChanged={(checked) => setTimingValues((prev) => ({ ...prev, earlyStage: checked }))}
-                    checked={timingValues.earlyStage}
-                    {...earlyStageField}
-                />
+                {typeValue === 'normal' && (
+                    <Switch
+                        helpText="Should the proposal be able to advance this stage early, if it’s successful?"
+                        inlineLabel={earlyStage ? 'Yes' : 'No'}
+                        onCheckedChanged={(checked) => setValue(earlyStageField.name, checked)} // Directly update form state
+                        checked={earlyStage}
+                        {...earlyStageField}
+                    />
+                )}
                 <Switch
                     helpText="The amount of time that the proposal will be eligible to be advanced to the next stage."
-                    inlineLabel={timingValues.stageExpiration ? 'Yes' : 'No'}
-                    onCheckedChanged={(checked) => setTimingValues((prev) => ({ ...prev, stageExpiration: checked }))}
-                    checked={timingValues.stageExpiration}
+                    inlineLabel={stageExpiration ? 'Yes' : 'No'}
+                    onCheckedChanged={(checked) => setValue(stageExpirationField.name, checked)} // Directly update form state
+                    checked={stageExpiration} // Use form value
                     {...stageExpirationField}
                 />
+
+                {stageExpiration === true && (
+                    <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
+                        <div className="flex flex-col justify-between gap-4 md:flex-row">
+                            <InputNumber
+                                label="Expiration Minutes"
+                                min={0}
+                                max={59}
+                                className="w-full md:w-1/3"
+                                value={expirationPeriod.minutes}
+                                onChange={(e) =>
+                                    setValue(stageExpirationPeriodField.name, {
+                                        ...expirationPeriod,
+                                        minutes: Number(e),
+                                    })
+                                }
+                            />
+                            <InputNumber
+                                label="Expiration Hours"
+                                min={0}
+                                max={23}
+                                className="w-full md:w-1/3"
+                                value={expirationPeriod.hours}
+                                onChange={(e) =>
+                                    setValue(stageExpirationPeriodField.name, {
+                                        ...expirationPeriod,
+                                        hours: Number(e),
+                                    })
+                                }
+                            />
+                            <InputNumber
+                                label="Expiration Days"
+                                min={0}
+                                className="w-full md:w-1/3"
+                                value={expirationPeriod.days}
+                                onChange={(e) =>
+                                    setValue(stageExpirationPeriodField.name, {
+                                        ...expirationPeriod,
+                                        days: Number(e),
+                                    })
+                                }
+                            />
+                        </div>
+                        <AlertInline message="Recommended minimum expiration time is 7 days" />
+                    </div>
+                )}
             </Dialog.Content>
             <Dialog.Footer
-                primaryAction={{ label: 'Save', onClick: () => handleSaveTimingValues(timingValues) }}
+                primaryAction={{
+                    label: 'Save',
+                    onClick: () =>
+                        handleSaveTimingValues({
+                            votingPeriod,
+                            earlyStage,
+                            stageExpiration,
+                        }),
+                }}
                 secondaryAction={{ label: 'Cancel', onClick: () => setIsTimingDialogOpen(false) }}
             />
         </Dialog.Root>

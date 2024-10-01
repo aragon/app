@@ -37,6 +37,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     const { initialSteps = [], finalStep, children, onSubmit, submitLabel, defaultValues, ...otherProps } = props;
     const { t } = useTranslations();
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
+
     const isFormDirty = formMethods.formState.isDirty;
 
     const wizardStepper = useStepper({ initialSteps });

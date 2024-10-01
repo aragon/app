@@ -1,4 +1,8 @@
 import {
+    ITokenVotingMember,
+    type ICreateProcessFormBody,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import {
     CreateProcessFormTimingDialog,
     type ICreateProcessFormTimingValues,
 } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog/createProcessFormTimingDialog';
@@ -10,19 +14,20 @@ import {
     Card,
     DefinitionList,
     Dropdown,
+    formatterUtils,
+    Heading,
     IconType,
     InputContainer,
     InputText,
+    NumberFormat,
     RadioCard,
     RadioGroup,
     Tag,
 } from '@aragon/ods';
+import type React from 'react';
 import { useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import {
-    CreateProcessFormAddBodyDialog,
-    type ICreateProcessFormBodyValues,
-} from '../createProcessFormAddBodyDialog/createProcessFormAddBodyDialog';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog/createProcessFormAddBodyDialog';
 
 export interface IStageInputItemProps {
     /**
@@ -45,12 +50,15 @@ export type StageInputItemBaseForm = Record<string, any>;
 export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
     const [isBodyDialogOpen, setIsBodyDialogOpen] = useState(false);
+    const [selectedBodyIndex, setSelectedBodyIndex] = useState<number>(0);
     const { name, index, remove } = props;
 
     const { setValue } = useFormContext();
 
-    const bodyFieldArrayName = `${name}.${index}.body`;
-    const { fields, append: appendBody, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
+    const bodyFieldArrayName = `${name}.${index}.bodies`;
+    const { fields: bodyFields, append: appendBody, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
+
+    console.log('bodyFields', bodyFields);
 
     const nameFieldName = `${name}.${index}.name`;
     const nameField = useFormField<StageInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
@@ -65,6 +73,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         rules: { required: true },
         defaultValue: 'normal',
     });
+
+    const typeValue = useWatch({ name: typeFieldName });
 
     const timingFieldName = `${name}.${index}.timing`;
     const timingField = useFormField<StageInputItemBaseForm, typeof timingFieldName>(timingFieldName, {
@@ -101,6 +111,19 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         },
     );
 
+    const stageExpirationPeriodFieldName = `${name}.${index}.expirationPeriod`;
+    const stageExpirationPeriodField = useFormField<
+        Record<string, IDateDuration>,
+        typeof stageExpirationPeriodFieldName
+    >(stageExpirationPeriodFieldName, {
+        label: 'Expiration Period',
+        defaultValue: {
+            days: 7,
+            hours: 0,
+            minutes: 0,
+        },
+    });
+
     const bodyNameFieldName = `${name}.${index}.bodyName`;
     const bodyNameField = useFormField<StageInputItemBaseForm, typeof bodyNameFieldName>(bodyNameFieldName, {
         label: 'Name',
@@ -126,6 +149,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const tokenSymbolField = useFormField<StageInputItemBaseForm, typeof tokenSymbolFieldName>(tokenSymbolFieldName, {
         label: 'Symbol',
         defaultValue: '',
+        rules: { maxLength: 10, validate: (value) => /^[A-Za-z]+$/.test(value) ?? 'Only letters are allowed' },
     });
 
     const handleSaveTimingValues = (values: ICreateProcessFormTimingValues) => {
@@ -135,17 +159,15 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         setIsTimingDialogOpen(false);
     };
 
-    const handleSaveBodyValues = (values: ICreateProcessFormBodyValues) => {
+    const handleSaveBodyValues = (values: ICreateProcessFormBody) => {
         appendBody({
-            name: values.name,
+            name: values.bodyName,
             governanceType: values.governanceType,
             tokenName: tokenNameField.value,
             tokenSymbol: tokenSymbolField.value,
+            members: values.members,
         });
-        setValue(bodyNameFieldName, '');
-        setValue(bodyGovernanceTypeFieldName, 'tokenVoting');
-        setValue(tokenNameFieldName, '');
-        setValue(tokenSymbolFieldName, '');
+
         setIsBodyDialogOpen(false);
     };
 
@@ -178,13 +200,15 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         <DefinitionList.Item term="Voting period">
                             {`${votingPeriodField.value.days} days, ${votingPeriodField.value.hours} hours, ${votingPeriodField.value.minutes} minutes`}
                         </DefinitionList.Item>
-                        <DefinitionList.Item term="Early stage advance">
-                            <Tag
-                                className="w-fit"
-                                label={earlyStageField.value === true ? 'Yes' : 'No'}
-                                variant={earlyStageField.value === true ? 'primary' : 'neutral'}
-                            />
-                        </DefinitionList.Item>
+                        {typeValue === 'normal' && (
+                            <DefinitionList.Item term="Early stage advance">
+                                <Tag
+                                    className="w-fit"
+                                    label={earlyStageField.value === true ? 'Yes' : 'No'}
+                                    variant={earlyStageField.value === true ? 'primary' : 'neutral'}
+                                />
+                            </DefinitionList.Item>
+                        )}
                         <DefinitionList.Item term="Stage expiration">
                             <Tag
                                 className="w-fit"
@@ -192,6 +216,11 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                 variant={stageExpirationField.value === true ? 'primary' : 'neutral'}
                             />
                         </DefinitionList.Item>
+                        {stageExpirationField.value && (
+                            <DefinitionList.Item term="Expiration period">
+                                {`${stageExpirationPeriodField.value.days} days, ${stageExpirationPeriodField.value.hours} hours, ${stageExpirationPeriodField.value.minutes} minutes`}
+                            </DefinitionList.Item>
+                        )}
                     </DefinitionList.Container>
                 </InputContainer>
                 <Button onClick={() => setIsTimingDialogOpen(true)} variant="tertiary" size="md" className="w-fit">
@@ -205,36 +234,77 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     helpText="Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage."
                     useCustomWrapper={true}
                 >
-                    {fields.length > 0 && (
+                    {bodyFields.length > 0 && (
                         <div className="flex flex-col gap-3 md:gap-2">
-                            {fields.map((field: any, index) => (
-                                <Accordion.Container isMulti={true} key={field.id}>
-                                    <Accordion.Item value={field.id}>
-                                        <Accordion.ItemHeader className="capitalize">
-                                            {field.name} - {field.governanceType.split(/(?=[A-Z])/).join(' ')}
-                                        </Accordion.ItemHeader>
-                                        <Accordion.ItemContent>
-                                            <DefinitionList.Container className="w-full">
-                                                <DefinitionList.Item term="Token name">
-                                                    {field.tokenName}
-                                                </DefinitionList.Item>
-                                                <DefinitionList.Item term="Token symbol">
-                                                    {field.tokenSymbol}
-                                                </DefinitionList.Item>
-                                            </DefinitionList.Container>
-                                            <div className="flex w-full grow">
-                                                <Button
-                                                    className="justify-end"
-                                                    variant="tertiary"
-                                                    size="md"
-                                                    onClick={() => removeBody(index)}
-                                                >
-                                                    Remove body
-                                                </Button>
-                                            </div>
-                                        </Accordion.ItemContent>
-                                    </Accordion.Item>
-                                </Accordion.Container>
+                            {bodyFields.map((field: any, index) => (
+                                <Card key={field.id} className="overflow-hidden border border-neutral-100">
+                                    <Accordion.Container isMulti={true}>
+                                        <Accordion.Item value={field.id}>
+                                            <Accordion.ItemHeader className="capitalize">
+                                                <Heading size="h4">{field.name}</Heading>
+                                            </Accordion.ItemHeader>
+                                            <Accordion.ItemContent>
+                                                <DefinitionList.Container className="w-full">
+                                                    <DefinitionList.Item term="Token">
+                                                        {field.tokenName} (${field.tokenSymbol})
+                                                    </DefinitionList.Item>
+                                                    <DefinitionList.Item term="Distribution">
+                                                        {field.members?.length} token holders
+                                                    </DefinitionList.Item>
+                                                    <DefinitionList.Item term="Supply">
+                                                        {field.members
+                                                            ? `${formatterUtils.formatNumber(
+                                                                  field.members.reduce(
+                                                                      (sum: number, member: ITokenVotingMember) =>
+                                                                          sum + Number(member.tokenAmount),
+                                                                      0,
+                                                                  ),
+                                                                  { format: NumberFormat.TOKEN_AMOUNT_LONG },
+                                                              )} $${field.tokenSymbol}`
+                                                            : 0}
+                                                    </DefinitionList.Item>
+                                                    <DefinitionList.Item term="Approval threshold">
+                                                        TK
+                                                    </DefinitionList.Item>
+                                                    <DefinitionList.Item term="Minimum participation">
+                                                        TK
+                                                    </DefinitionList.Item>
+                                                    <DefinitionList.Item term="Voting change">
+                                                        <Tag label="No" variant="neutral" className="max-w-fit" />
+                                                    </DefinitionList.Item>
+                                                </DefinitionList.Container>
+                                                <div className="flex w-full grow justify-between">
+                                                    <Button
+                                                        className="justify-end"
+                                                        variant="secondary"
+                                                        size="md"
+                                                        onClick={() => removeBody(index)}
+                                                    >
+                                                        Edit body
+                                                    </Button>
+                                                    <Dropdown.Container
+                                                        constrainContentWidth={false}
+                                                        size="md"
+                                                        customTrigger={
+                                                            <Button
+                                                                className="w-fit"
+                                                                variant="tertiary"
+                                                                size="md"
+                                                                iconRight={IconType.DOTS_VERTICAL}
+                                                            >
+                                                                More
+                                                            </Button>
+                                                        }
+                                                    >
+                                                        <Dropdown.Item onClick={() => removeBody(index)}>
+                                                            Remove body
+                                                        </Dropdown.Item>
+                                                    </Dropdown.Container>
+                                                </div>
+                                            </Accordion.ItemContent>
+                                        </Accordion.Item>
+                                    </Accordion.Container>
+                                </Card>
                             ))}
                         </div>
                     )}
@@ -243,9 +313,12 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         variant="tertiary"
                         className="w-fit"
                         iconLeft={IconType.PLUS}
-                        onClick={() => setIsBodyDialogOpen(true)}
+                        onClick={() => {
+                            setSelectedBodyIndex(bodyFields.length);
+                            setIsBodyDialogOpen(true);
+                        }}
                     >
-                        Add a body
+                        Add
                     </Button>
                 </InputContainer>
                 <CreateProcessFormTimingDialog
@@ -253,14 +326,19 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     setIsTimingDialogOpen={setIsTimingDialogOpen}
                     earlyStageField={earlyStageField}
                     stageExpirationField={stageExpirationField}
+                    stageExpirationPeriodField={stageExpirationPeriodField}
                     votingPeriodField={votingPeriodField}
                     handleSaveTimingValues={handleSaveTimingValues}
+                    typeValue={typeValue}
+                    bodyGovernanceTypeField={bodyGovernanceTypeField}
                 />
                 <CreateProcessFormAddBodyDialog
                     isBodyDialogOpen={isBodyDialogOpen}
                     setIsBodyDialogOpen={setIsBodyDialogOpen}
                     handleSaveBodyValues={handleSaveBodyValues}
                     bodyNameField={bodyNameField}
+                    bodyIndex={selectedBodyIndex}
+                    stageIndex={index}
                     bodyGovernanceTypeField={bodyGovernanceTypeField}
                     tokenSymbolField={tokenSymbolField}
                     tokenNameField={tokenNameField}

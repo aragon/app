@@ -1,84 +1,84 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type {
+    ICreateProcessFormBody,
+    ITokenVotingMember,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import {
     AddressInput,
     Button,
     Card,
     Dialog,
+    Dropdown,
+    IconType,
     InputContainer,
     InputNumber,
     InputText,
     RadioCard,
     RadioGroup,
 } from '@aragon/ods';
+import type React from 'react';
 import { useState } from 'react';
-
-export interface ICreateProcessFormBodyValues {
-    /**
-     * The name of the body.
-     */
-    name: string;
-    /**
-     * The governance type of the body.
-     */
-    governanceType: string;
-    /**
-     * The name of the token.
-     */
-    tokenName: string;
-    /**
-     * The symbol of the token.
-     */
-    tokenSymbol: string;
-}
+import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormAddBodyDialogProps {
-    /**
-     * Whether the dialog is open or not.
-     */
     isBodyDialogOpen: boolean;
-    /**
-     * Callback to set the dialog open state.
-     */
     setIsBodyDialogOpen: (value: boolean) => void;
-    /**
-     * Callback to save the body values.
-     */
-    handleSaveBodyValues: (value: ICreateProcessFormBodyValues) => void;
-    /**
-     * The body name field.
-     */
+    handleSaveBodyValues: (value: ICreateProcessFormBody) => void;
     bodyNameField: any;
-    /**
-     * The body governance type field.
-     */
     bodyGovernanceTypeField: any;
-    /**
-     * The token name field.
-     */
+    stageIndex: number;
+    bodyIndex: number;
     tokenNameField: any;
-    /**
-     * The token symbol field
-     */
     tokenSymbolField: any;
 }
 
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
-    const { bodyNameField, handleSaveBodyValues, bodyGovernanceTypeField, tokenNameField, tokenSymbolField } = props;
+    const {
+        bodyNameField,
+        bodyIndex,
+        handleSaveBodyValues,
+        bodyGovernanceTypeField,
+        tokenNameField,
+        tokenSymbolField,
+    } = props;
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
+    const { resetField } = useFormContext();
+    const [members, setMembers] = useState<ITokenVotingMember[]>([{ address: '', tokenAmount: 1 }]);
 
     const handleSave = () => {
         handleSaveBodyValues({
-            name: bodyNameField.value,
+            bodyName: bodyNameField.value,
             governanceType: bodyGovernanceTypeField.value,
             tokenName: tokenNameField.value,
             tokenSymbol: tokenSymbolField.value,
+            members,
         });
+
+        resetField(`bodies.${bodyIndex}.members`);
+        resetField(bodyNameField.name);
+        resetField(bodyGovernanceTypeField.name);
+        resetField(tokenNameField.name);
+        resetField(tokenSymbolField.name);
+
+        setMembers([{ address: '', tokenAmount: 1 }]);
+
         setStep(0);
         setIsBodyDialogOpen(false);
     };
 
-    const [addressInput, setAddressInput] = useState<string | undefined>('');
+    const handleCancel = () => {
+        resetField(`bodies.${bodyIndex}.addresses`);
+        resetField(bodyNameField.name);
+        resetField(bodyGovernanceTypeField.name);
+        resetField(tokenNameField.name);
+        resetField(tokenSymbolField.name);
+
+        setMembers([{ address: '', tokenAmount: 1 }]);
+
+        setStep(0);
+        setIsBodyDialogOpen(false);
+    };
 
     const handleStepContent = (step: number) => {
         switch (step) {
@@ -145,10 +145,11 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                         </RadioGroup>
                         <InputText
                             placeholder="Enter a name"
-                            helpText="The full name of the token. For example:Uniswap"
+                            helpText="The full name of the token. For example: Uniswap"
                             {...tokenNameField}
                         />
                         <InputText
+                            maxLength={10}
                             placeholder="Enter a symbol"
                             helpText="The abbreviation of the token. For example: UNI"
                             {...tokenSymbolField}
@@ -159,18 +160,65 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                             helpText="Add the wallets you’d like to distribute tokens to, If you need help distributing tokens, read our guide."
                             useCustomWrapper={true}
                         >
-                            <div className="flex gap-4 rounded-xl border border-neutral-100 p-6">
-                                <AddressInput
-                                    value={addressInput}
-                                    onChange={setAddressInput}
-                                    className="grow"
-                                    label="Address"
-                                    placeholder="ENS or 0x…"
-                                    chainId={1}
-                                />
-                                <InputNumber label="Tokens" defaultValue={0} />
-                            </div>
+                            {members.map((member, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6"
+                                >
+                                    <AddressInput
+                                        className="grow"
+                                        label="Address"
+                                        placeholder="ENS or 0x…"
+                                        chainId={1}
+                                        value={member.address}
+                                        onChange={(value) => {
+                                            const newMembers = [...members];
+                                            newMembers[index].address = value ?? '';
+                                            setMembers(newMembers);
+                                        }}
+                                    />
+                                    <InputNumber
+                                        label="Tokens"
+                                        suffix={tokenSymbolField.value}
+                                        min={1}
+                                        value={member.tokenAmount}
+                                        onChange={(value) => {
+                                            const newMembers = [...members];
+                                            newMembers[index].tokenAmount = value;
+                                            setMembers(newMembers);
+                                        }}
+                                    />
+                                    <Dropdown.Container
+                                        customTrigger={
+                                            <Button
+                                                variant="tertiary"
+                                                iconLeft={IconType.DOTS_VERTICAL}
+                                                className="self-end"
+                                            />
+                                        }
+                                    >
+                                        <Dropdown.Item
+                                            onClick={() => {
+                                                const newMembers = members.filter((_, i) => i !== index);
+                                                setMembers(newMembers);
+                                            }}
+                                        >
+                                            Remove
+                                        </Dropdown.Item>
+                                    </Dropdown.Container>
+                                </div>
+                            ))}
                         </InputContainer>
+                        <div className="flex w-full justify-between">
+                            <Button
+                                size="md"
+                                variant="tertiary"
+                                iconLeft={IconType.PLUS}
+                                onClick={() => setMembers([...members, { address: '', tokenAmount: 1 }])}
+                            >
+                                Add
+                            </Button>
+                        </div>
                     </>
                 );
             case 2:
@@ -190,10 +238,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             <Dialog.Content className="flex flex-col gap-6 pb-1.5">
                 {handleStepContent(step)}
                 <div className="flex w-full justify-between">
-                    <Button
-                        variant="tertiary"
-                        onClick={step === 0 ? () => setIsBodyDialogOpen(false) : () => setStep(step - 1)}
-                    >
+                    <Button variant="tertiary" onClick={step === 0 ? handleCancel : () => setStep(step - 1)}>
                         {step === 0 ? 'Cancel' : 'Back'}
                     </Button>
                     <Button onClick={step === 2 ? handleSave : () => setStep(step + 1)}>
