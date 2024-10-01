@@ -3,7 +3,7 @@ import type { SppProposalType } from './enum/sppProposalType';
 
 export interface ISppStagePlugin extends IDaoPlugin {
     /**
-     * is the type of proposal Approval or Veto.
+     * Type of the SPP stage plugin.
      */
     proposalType: SppProposalType;
 }

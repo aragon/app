@@ -8,5 +8,6 @@ export const generateDaoPlugin = (daoPlugin?: Partial<IDaoPlugin>): IDaoPlugin =
     build: '0',
     isProcess: false,
     isBody: false,
+    isSubPlugin: false,
     ...daoPlugin,
 });
