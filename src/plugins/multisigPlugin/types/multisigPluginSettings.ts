@@ -1,6 +1,6 @@
-import type { IDaoSettings } from '@/shared/api/daoService';
+import type { IPluginSettings } from '@/shared/api/daoService';
 
-export interface IDaoMultisigSettings extends IDaoSettings {
+export interface IMultisigPluginSettings extends IPluginSettings {
     /**
      * The minimum number of approvals required for a proposal to be approved.
      */

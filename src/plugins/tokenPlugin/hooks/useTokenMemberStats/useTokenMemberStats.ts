@@ -1,10 +1,10 @@
 import { useMember } from '@/modules/governance/api/governanceService';
-import { useDaoSettings } from '@/shared/api/daoService';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { usePluginSettings } from '@/shared/hooks/usePluginSettings';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { type IDaoTokenSettings, type ITokenMember } from '../../types';
+import { type ITokenMember, type ITokenPluginSettings } from '../../types';
 
 interface IUseTokenMemberStatsParams {
     /**
@@ -25,14 +25,13 @@ export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHe
     const memberQueryParams = { daoId };
     const { data: member } = useMember<ITokenMember>({ urlParams: memberUrlParams, queryParams: memberQueryParams });
 
-    const daoSettingsParams = { daoId };
-    const { data: daoSettings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
+    const pluginSettings = usePluginSettings<ITokenPluginSettings>({ daoId });
 
-    if (member == null || daoSettings == null) {
+    if (member == null || pluginSettings == null) {
         return [];
     }
 
-    const { token } = daoSettings;
+    const { token } = pluginSettings;
 
     const parsedVotingPower = formatUnits(BigInt(member.votingPower ?? '0'), token.decimals);
     const formattedVotingPower = formatterUtils.formatNumber(parsedVotingPower, { format: NumberFormat.GENERIC_SHORT });

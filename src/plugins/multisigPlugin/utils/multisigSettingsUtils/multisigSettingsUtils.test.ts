@@ -1,11 +1,11 @@
-import { generateDaoMultisigSettings } from '@/plugins/multisigPlugin/testUtils';
+import { generateMultisigPluginSettings } from '@/plugins/multisigPlugin/testUtils';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
 import { mockTranslations } from '@/test/utils';
 
 describe('multisigSettings utils', () => {
     describe('parseSettings method', () => {
         it('correctly formats minimum approvals and proposal creation when any wallet can create proposals', () => {
-            const settings = generateDaoMultisigSettings({ minApprovals: 2, onlyListed: false });
+            const settings = generateMultisigPluginSettings({ minApprovals: 2, onlyListed: false });
             const membersCount = 5;
 
             const result = multisigSettingsUtils.parseSettings({
@@ -26,7 +26,7 @@ describe('multisigSettings utils', () => {
         });
 
         it('correctly formats minimum approvals and proposal creation when only members can create proposals', () => {
-            const settings = generateDaoMultisigSettings({ minApprovals: 3, onlyListed: true });
+            const settings = generateMultisigPluginSettings({ minApprovals: 3, onlyListed: true });
             const membersCount = 10;
 
             const result = multisigSettingsUtils.parseSettings({
@@ -47,7 +47,7 @@ describe('multisigSettings utils', () => {
         });
 
         it('handles zero members and minimum approvals when any wallet can create proposals', () => {
-            const settings = generateDaoMultisigSettings({ minApprovals: 0, onlyListed: false });
+            const settings = generateMultisigPluginSettings({ minApprovals: 0, onlyListed: false });
             const membersCount = 0;
 
             const result = multisigSettingsUtils.parseSettings({
@@ -68,7 +68,7 @@ describe('multisigSettings utils', () => {
         });
 
         it('handles zero members when only members can create proposals', () => {
-            const settings = generateDaoMultisigSettings({ minApprovals: 1, onlyListed: true });
+            const settings = generateMultisigPluginSettings({ minApprovals: 1, onlyListed: true });
             const membersCount = 0;
 
             const result = multisigSettingsUtils.parseSettings({

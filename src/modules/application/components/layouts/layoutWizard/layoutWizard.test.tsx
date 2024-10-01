@@ -1,4 +1,4 @@
-import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
+import { daoOptions } from '@/shared/api/daoService';
 import { testLogger } from '@/test/utils';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -49,12 +49,8 @@ describe('<LayoutWizard /> component', () => {
 
     it('prefetches the DAO and its settings from the given slug', async () => {
         const params = { id: 'my-dao' };
-        const daoSettingsParams = { daoId: params.id };
         render(await createTestComponent({ params }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
-        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
-            daoSettingsOptions({ urlParams: daoSettingsParams }).queryKey,
-        );
     });
 
     it('does not prefetch the DAO data when the DAO id is not provided by params', async () => {

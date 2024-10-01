@@ -1,3 +1,3 @@
-export * from './daoMultisigSettings';
+export * from './multisigPluginSettings';
 export * from './multisigProposal';
 export * from './multisigVote';
