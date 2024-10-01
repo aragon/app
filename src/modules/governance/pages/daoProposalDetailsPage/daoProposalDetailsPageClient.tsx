@@ -3,6 +3,7 @@
 import { ProposalExecutionStatus } from '@/modules/governance/components/executeProposal';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
+import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
@@ -118,7 +119,15 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         </Page.Section>
                     )}
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
-                        <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
+                        <PluginComponent
+                            slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
+                            pluginIds={pluginIds}
+                            proposal={proposal}
+                            status={proposalStatus}
+                            daoId={daoId}
+                        >
+                            <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
+                        </PluginComponent>
                     </Page.Section>
                     <Page.Section
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}

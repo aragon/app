@@ -30,7 +30,7 @@ describe('<PluginComponent />', () => {
         expect(screen.getByTestId('slot-component-test')).toBeInTheDocument();
     });
 
-    it('returns null when no slot component is found', () => {
+    it('returns null when no slot component is found and no children are provided', () => {
         getSlotComponentSpy.mockReturnValue(undefined);
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
@@ -47,5 +47,37 @@ describe('<PluginComponent />', () => {
 
         expect(screen.getByTestId('multisig-slot-component')).toBeInTheDocument();
         expect(screen.queryByTestId('tokenvoting-slot-component')).not.toBeInTheDocument();
+    });
+
+    it('renders the fallback component when no plugin component is found and children is a valid React element', () => {
+        getSlotComponentSpy.mockReturnValue(undefined);
+        const FallbackComponent = () => <div data-testid="fallback-component-test" />;
+        render(
+            createTestComponent({
+                children: <FallbackComponent />,
+            }),
+        );
+
+        expect(screen.getByTestId('fallback-component-test')).toBeInTheDocument();
+    });
+
+    it('does not render the fallback component when a plugin component is found', () => {
+        const pluginId = 'plugin-id';
+        const slotId = 'slot-id';
+        const slotComponent = () => <div data-testid="slot-component-test" />;
+        getSlotComponentSpy.mockReturnValue(slotComponent);
+
+        const FallbackComponent = () => <div data-testid="fallback-component-test" />;
+
+        render(
+            createTestComponent({
+                pluginIds: [pluginId],
+                slotId,
+                children: <FallbackComponent />,
+            }),
+        );
+
+        expect(screen.getByTestId('slot-component-test')).toBeInTheDocument();
+        expect(screen.queryByTestId('fallback-component-test')).not.toBeInTheDocument();
     });
 });
