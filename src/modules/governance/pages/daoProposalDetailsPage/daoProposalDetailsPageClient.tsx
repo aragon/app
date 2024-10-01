@@ -3,6 +3,7 @@
 import { ProposalExecutionStatus } from '@/modules/governance/components/executeProposal';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
+import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
@@ -30,7 +31,6 @@ import {
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { PluginComponent } from '@/shared/components/pluginComponent';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
