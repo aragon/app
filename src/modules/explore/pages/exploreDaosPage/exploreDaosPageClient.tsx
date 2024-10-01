@@ -44,7 +44,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                         <Toggle value="all" label="All DAOs" />
                         <Toggle value="member" label="Member" disabled={address == null} />
                     </ToggleGroup>
-                    {/* TODO: TESTING ONLY, TO BE REMOVED */}
                     <Button
                         iconLeft={IconType.PLUS}
                         href="/create/dao"
@@ -53,7 +52,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                         size="md"
                     />
                 </div>
-                {/* TODO: TESTING ONLY, TO BE REMOVED */}
                 <Wallet className="self-end" user={walletUser} onClick={handleWalletClick} chainId={mainnet.id} />
             </div>
             <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />

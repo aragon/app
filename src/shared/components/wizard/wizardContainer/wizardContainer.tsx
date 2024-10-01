@@ -2,7 +2,7 @@ import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
 import { DevTool } from '@hookform/devtools';
-import { useMemo, type ComponentProps } from 'react';
+import { useEffect, useMemo, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
@@ -36,13 +36,14 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
 ) => {
     const { initialSteps = [], finalStep, children, onSubmit, submitLabel, defaultValues, ...otherProps } = props;
     const { t } = useTranslations();
+
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
-    const isFormDirty = formMethods.formState.isDirty;
+    const { formState, reset, handleSubmit, control } = formMethods;
 
     const wizardStepper = useStepper({ initialSteps });
     const { hasNext, activeStepIndex, steps } = wizardStepper;
 
-    const handleSubmit = (values: TFormData) => {
+    const handleFormSubmit = (values: TFormData) => {
         if (wizardStepper.hasNext) {
             wizardStepper.nextStep();
         } else {
@@ -50,19 +51,26 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
         }
     };
 
+    // Reset submitted form state to only display validation alerts when user clicks again on "next" button
+    useEffect(() => {
+        if (formState.isSubmitSuccessful && wizardStepper.hasNext) {
+            reset(undefined, { keepDirty: true, keepValues: true });
+        }
+    }, [formState, reset, wizardStepper.hasNext]);
+
     const wizardContextValues = useMemo(() => ({ ...wizardStepper, submitLabel }), [wizardStepper, submitLabel]);
 
     const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
 
-    useConfirmWizardExit(isFormDirty);
+    useConfirmWizardExit(formState.isDirty);
 
     return (
         <FormProvider {...formMethods}>
             <WizardProvider value={wizardContextValues}>
                 <form
                     className="flex h-full flex-col gap-4 md:gap-6"
-                    onSubmit={formMethods.handleSubmit(handleSubmit)}
+                    onSubmit={handleSubmit(handleFormSubmit)}
                     {...otherProps}
                 >
                     <div className="flex flex-col gap-1.5 md:gap-3">
@@ -87,7 +95,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
                     {children}
                 </form>
             </WizardProvider>
-            <DevTool control={formMethods.control} />
+            <DevTool control={control} />
         </FormProvider>
     );
 };

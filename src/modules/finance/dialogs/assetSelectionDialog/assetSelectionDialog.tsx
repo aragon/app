@@ -32,7 +32,6 @@ export const AssetSelectionDialog: React.FC<IAssetSelectionDialogProps> = (props
 
     const handleSelectAsset = (asset: IAsset) => {
         onAssetClick(asset);
-
         close();
     };
 

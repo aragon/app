@@ -12,7 +12,7 @@ export interface IProposalExecution {
      */
     blockTimestamp?: number;
     /**
-     * Block number of the execution date of the proposal.
+     * Transaction block number of the proposal execution.
      */
     blockNumber?: number;
 }
