@@ -30,6 +30,7 @@ import {
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { PluginComponent } from '@/shared/components/pluginComponent';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -118,7 +119,15 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         </Page.Section>
                     )}
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
-                        <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
+                        <PluginComponent
+                            slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
+                            pluginIds={pluginIds}
+                            proposal={proposal}
+                            status={proposalStatus}
+                            daoId={daoId}
+                        >
+                            <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
+                        </PluginComponent>
                     </Page.Section>
                     <Page.Section
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}

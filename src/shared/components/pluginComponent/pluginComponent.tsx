@@ -1,4 +1,5 @@
 import { pluginRegistryUtils, type PluginId, type SlotId } from '@/shared/utils/pluginRegistryUtils';
+import { cloneElement, isValidElement, type ReactNode } from 'react';
 
 export interface IPluginComponentProps {
     /**
@@ -13,17 +14,23 @@ export interface IPluginComponentProps {
      * Other properties passed to the loaded component.
      */
     [key: string]: unknown;
+    /**
+     * Fallback component to be rendered if no components are registered for the specified slot.
+     */
+    children?: ReactNode;
 }
 
 export const PluginComponent: React.FC<IPluginComponentProps> = (props) => {
-    const { slotId, pluginIds, ...otherProps } = props;
+    const { slotId, pluginIds, children, ...otherProps } = props;
 
     const LoadedComponent = pluginIds
         .map((pluginId) => pluginRegistryUtils.getSlotComponent({ slotId, pluginId }))
         .find((component) => component != null);
 
     if (LoadedComponent == null) {
-        return null;
+        const renderFallback = children != null && isValidElement(children);
+
+        return renderFallback ? cloneElement(children, { ...otherProps }) : null;
     }
 
     return <LoadedComponent {...otherProps} />;
