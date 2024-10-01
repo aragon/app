@@ -1,7 +1,7 @@
-import type { IDaoSettings } from '@/shared/api/daoService';
+import type { IPluginSettings } from '@/shared/api/daoService';
 import type { ISppStage } from './sppStage';
 
-export interface ISppSettings extends IDaoSettings {
+export interface ISppPluginSettings extends IPluginSettings {
     /**
      * List of stages of the SPP plugin.
      */
