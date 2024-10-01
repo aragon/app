@@ -1,4 +1,5 @@
-import { type IPluginSettings, useDao } from '@/shared/api/daoService';
+import { type IPluginSettings } from '@/shared/api/daoService';
+import { useSupportedDaoPlugin } from '../useSupportedDaoPlugin';
 
 export interface IUsePluginSettingsParams {
     /**
@@ -11,9 +12,7 @@ export const usePluginSettings = <TSettings extends IPluginSettings = IPluginSet
     params: IUsePluginSettingsParams,
 ): TSettings | undefined => {
     const { daoId } = params;
+    const supportedPlugin = useSupportedDaoPlugin(daoId);
 
-    const daoParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoParams });
-
-    return dao?.plugins[0].settings as TSettings | undefined;
+    return supportedPlugin?.settings as TSettings | undefined;
 };
