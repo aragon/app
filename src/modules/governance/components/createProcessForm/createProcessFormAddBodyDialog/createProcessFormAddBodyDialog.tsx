@@ -5,6 +5,7 @@ import type {
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import {
     AddressInput,
+    AlertInline,
     Button,
     Card,
     Dialog,
@@ -13,11 +14,14 @@ import {
     InputContainer,
     InputNumber,
     InputText,
+    Progress,
     RadioCard,
     RadioGroup,
+    Switch,
+    Tag,
 } from '@aragon/ods';
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormAddBodyDialogProps {
@@ -30,6 +34,7 @@ export interface ICreateProcessFormAddBodyDialogProps {
     bodyIndex: number;
     tokenNameField: any;
     tokenSymbolField: any;
+    initialValues?: ICreateProcessFormBody | null;
 }
 
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
@@ -40,11 +45,31 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         bodyGovernanceTypeField,
         tokenNameField,
         tokenSymbolField,
+        initialValues,
     } = props;
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
-    const { resetField } = useFormContext();
+    const { resetField, setValue } = useFormContext();
     const [members, setMembers] = useState<ITokenVotingMember[]>([{ address: '', tokenAmount: 1 }]);
+
+    useEffect(() => {
+        if (isBodyDialogOpen && initialValues) {
+            setStep(0);
+            setValue(bodyNameField.name, initialValues.bodyName);
+            setValue(bodyGovernanceTypeField.name, initialValues.governanceType);
+            setValue(tokenNameField.name, initialValues.tokenName);
+            setValue(tokenSymbolField.name, initialValues.tokenSymbol);
+            if (initialValues.members) {
+                setMembers(initialValues.members);
+            }
+        } else if (isBodyDialogOpen) {
+            resetField(bodyNameField.name);
+            resetField(bodyGovernanceTypeField.name);
+            resetField(tokenNameField.name);
+            resetField(tokenSymbolField.name);
+            setMembers([{ address: '', tokenAmount: 1 }]);
+        }
+    }, [isBodyDialogOpen]);
 
     const handleSave = () => {
         handleSaveBodyValues({
@@ -222,7 +247,74 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                     </>
                 );
             case 2:
-                return <Card className="p-6">STEP 3</Card>;
+                return (
+                    <div className="flex flex-col gap-y-6">
+                        <InputContainer
+                            id="threshold"
+                            label="Support threshold"
+                            helpText={`The percentage of tokens that vote "Yes" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.`}
+                            useCustomWrapper={true}
+                        >
+                            <Card className="flex flex-col gap-y-6 border border-neutral-100 p-6">
+                                <div className="flex items-center justify-between gap-x-6">
+                                    <InputNumber prefix=">" suffix="%" min={1} max={100} placeholder=">1%" />{' '}
+                                    <div className="flex w-5/6 grow items-center gap-x-1">
+                                        <Tag label="Yes" variant="primary" />
+                                        <Progress value={50} thresholdIndicator={50} />
+                                        <Tag label="No" variant="neutral" />
+                                    </div>
+                                </div>
+                                <AlertInline variant="success" message="Proposal will be approved by majority" />
+                            </Card>
+                        </InputContainer>
+                        <InputContainer
+                            id="participation"
+                            label="Minimum participation"
+                            helpText={`The percentage of tokens that participate in a proposal, out of the total test supply, must be greater than or equal to this value for the proposal to pass.`}
+                            useCustomWrapper={true}
+                        >
+                            <Card className="flex flex-col border border-neutral-100 p-6">
+                                <div className="flex items-center justify-between gap-x-6">
+                                    <InputNumber
+                                        prefix=">"
+                                        suffix="%"
+                                        min={1}
+                                        max={100}
+                                        placeholder=">1%"
+                                        className="max-w-fit shrink"
+                                    />
+                                    <div className="h-full w-5/6 grow flex-col gap-y-3">
+                                        <p className="text-primary-400">TOKEN</p>
+                                        <Progress value={50} />
+                                        <p className="text-right">of TOTAL</p>
+                                    </div>
+                                </div>
+                            </Card>
+                        </InputContainer>
+                        <InputContainer
+                            id="duration"
+                            label="Minimum duration"
+                            useCustomWrapper={true}
+                            helpText="The shortest period of time a proposal is open for voting. Proposals can be created with a longer duration, but not shorter."
+                        >
+                            <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
+                                <div className="flex flex-col justify-between gap-4 md:flex-row">
+                                    <InputNumber min={0} max={59} className="w-full md:w-1/3" placeholder="0 min" />
+                                    <InputNumber min={0} max={23} className="w-full md:w-1/3" placeholder="0 h" />
+                                    <InputNumber min={0} className="w-full md:w-1/3" placeholder="7 d" />
+                                </div>
+                            </div>
+                        </InputContainer>
+                        <InputContainer
+                            id="votechange"
+                            label="Vote change"
+                            useCustomWrapper={true}
+                            helpText={`Allows voters to change their vote during the voting period. This setting can’t be enabled if early execution is enabled.`}
+                        >
+                            <Switch inlineLabel={true == true ? 'Yes' : 'No'} />
+                        </InputContainer>
+                    </div>
+                );
             default:
                 return <></>;
         }

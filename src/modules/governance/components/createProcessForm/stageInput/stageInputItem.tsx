@@ -56,7 +56,12 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const { setValue } = useFormContext();
 
     const bodyFieldArrayName = `${name}.${index}.bodies`;
-    const { fields: bodyFields, append: appendBody, remove: removeBody } = useFieldArray({ name: bodyFieldArrayName });
+    const {
+        fields: bodyFields,
+        append: appendBody,
+        remove: removeBody,
+        update: updateBody,
+    } = useFieldArray({ name: bodyFieldArrayName });
 
     console.log('bodyFields', bodyFields);
 
@@ -160,16 +165,24 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     };
 
     const handleSaveBodyValues = (values: ICreateProcessFormBody) => {
-        appendBody({
-            name: values.bodyName,
+        const newBody = {
+            bodyName: values.bodyName,
             governanceType: values.governanceType,
             tokenName: tokenNameField.value,
             tokenSymbol: tokenSymbolField.value,
             members: values.members,
-        });
+        };
+
+        if (selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length) {
+            updateBody(selectedBodyIndex, newBody);
+        } else {
+            appendBody(newBody);
+        }
 
         setIsBodyDialogOpen(false);
     };
+
+    console.log('hello', bodyFields[selectedBodyIndex]);
 
     return (
         <>
@@ -240,8 +253,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                 <Card key={field.id} className="overflow-hidden border border-neutral-100">
                                     <Accordion.Container isMulti={true}>
                                         <Accordion.Item value={field.id}>
-                                            <Accordion.ItemHeader className="capitalize">
-                                                <Heading size="h4">{field.name}</Heading>
+                                            <Accordion.ItemHeader>
+                                                <Heading size="h4">{field.bodyName}</Heading>
                                             </Accordion.ItemHeader>
                                             <Accordion.ItemContent>
                                                 <DefinitionList.Container className="w-full">
@@ -278,7 +291,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                                         className="justify-end"
                                                         variant="secondary"
                                                         size="md"
-                                                        onClick={() => removeBody(index)}
+                                                        onClick={() => {
+                                                            setSelectedBodyIndex(index);
+                                                            setIsBodyDialogOpen(true);
+                                                        }}
                                                     >
                                                         Edit body
                                                     </Button>
@@ -314,7 +330,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         className="w-fit"
                         iconLeft={IconType.PLUS}
                         onClick={() => {
-                            setSelectedBodyIndex(bodyFields.length);
+                            setSelectedBodyIndex(-1);
                             setIsBodyDialogOpen(true);
                         }}
                     >
@@ -337,11 +353,27 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     setIsBodyDialogOpen={setIsBodyDialogOpen}
                     handleSaveBodyValues={handleSaveBodyValues}
                     bodyNameField={bodyNameField}
-                    bodyIndex={selectedBodyIndex}
+                    bodyIndex={selectedBodyIndex} // Passing selectedBodyIndex here
                     stageIndex={index}
                     bodyGovernanceTypeField={bodyGovernanceTypeField}
                     tokenSymbolField={tokenSymbolField}
                     tokenNameField={tokenNameField}
+                    initialValues={
+                        selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length
+                            ? {
+                                  /** @ts-ignore */
+                                  bodyName: bodyFields[selectedBodyIndex].bodyName,
+                                  /** @ts-ignore */
+                                  governanceType: bodyFields[selectedBodyIndex].governanceType,
+                                  /** @ts-ignore */
+                                  tokenName: bodyFields[selectedBodyIndex].tokenName,
+                                  /** @ts-ignore */
+                                  tokenSymbol: bodyFields[selectedBodyIndex].tokenSymbol,
+                                  /** @ts-ignore */
+                                  members: bodyFields[selectedBodyIndex].members,
+                              }
+                            : null
+                    }
                 />
                 <div className="flex self-end">
                     <Dropdown.Container
