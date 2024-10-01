@@ -36,19 +36,6 @@ describe('<PluginComponent />', () => {
         expect(container).toBeEmptyDOMElement();
     });
 
-    it('renders the fallback component when no plugin component is found and children is a valid React element', () => {
-        getSlotComponentSpy.mockReturnValue(undefined);
-        const fallbackTestId = 'fallback-component-test';
-
-        render(
-            createTestComponent({
-                children: <div data-testid={fallbackTestId} />,
-            }),
-        );
-
-        expect(screen.getByTestId(fallbackTestId)).toBeInTheDocument();
-    });
-
     it('only renders the first non-null slot component found', () => {
         const pluginIds = ['unknown', 'multisig', 'tokenVoting'];
         const slotId = 'member-list';
@@ -60,5 +47,37 @@ describe('<PluginComponent />', () => {
 
         expect(screen.getByTestId('multisig-slot-component')).toBeInTheDocument();
         expect(screen.queryByTestId('tokenvoting-slot-component')).not.toBeInTheDocument();
+    });
+
+    it('renders the fallback component when no plugin component is found and children is a valid React element', () => {
+        getSlotComponentSpy.mockReturnValue(undefined);
+        const FallbackComponent = () => <div data-testid="fallback-component-test" />;
+        render(
+            createTestComponent({
+                children: <FallbackComponent />,
+            }),
+        );
+
+        expect(screen.getByTestId('fallback-component-test')).toBeInTheDocument();
+    });
+
+    it('does not render the fallback component when a plugin component is found', () => {
+        const pluginId = 'plugin-id';
+        const slotId = 'slot-id';
+        const slotComponent = () => <div data-testid="slot-component-test" />;
+        getSlotComponentSpy.mockReturnValue(slotComponent);
+
+        const FallbackComponent = () => <div data-testid="fallback-component-test" />;
+
+        render(
+            createTestComponent({
+                pluginIds: [pluginId],
+                slotId,
+                children: <FallbackComponent />,
+            }),
+        );
+
+        expect(screen.getByTestId('slot-component-test')).toBeInTheDocument();
+        expect(screen.queryByTestId('fallback-component-test')).not.toBeInTheDocument();
     });
 });
