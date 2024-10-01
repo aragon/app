@@ -19,4 +19,16 @@ export interface IDaoPlugin {
      * Build number of the plugin.
      */
     build: string;
+    /**
+     * Defines if the plugin supports the "Proposal" interface and therefore is a governance process.
+     */
+    isProcess: boolean;
+    /**
+     * Defines if the plugin supports the "Membership" interface and therefore is a governance body.
+     */
+    isBody: boolean;
+    /**
+     * Defines if the plugin is installed on the DAO as a sub / child plugin.
+     */
+    isSubPlugin: boolean;
 }
