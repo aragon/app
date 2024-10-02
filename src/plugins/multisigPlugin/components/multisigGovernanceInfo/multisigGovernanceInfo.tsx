@@ -1,7 +1,7 @@
-import { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { DefinitionList } from '@aragon/ods';
 import { useMultisigGovernanceSettings } from '../../hooks/useMultisigGovernanceSettings';
-import { IMultisigPluginSettings } from '../../types';
+import type { IMultisigPluginSettings } from '../../types';
 
 export interface IMultisigGovernanceInfoProps {
     /**

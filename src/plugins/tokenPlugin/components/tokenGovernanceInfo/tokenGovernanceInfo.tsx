@@ -1,7 +1,7 @@
-import { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { DefinitionList } from '@aragon/ods';
 import { useTokenGovernanceSettings } from '../../hooks/useTokenGovernanceSettings';
-import { ITokenPluginSettings } from '../../types';
+import type { ITokenPluginSettings } from '../../types';
 
 export interface ITokenGovernanceInfoProps {
     /**

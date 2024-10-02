@@ -1,4 +1,4 @@
-import { PluginId, type SlotId, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { type PluginId, type SlotId, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 
 export interface IUseSlotSingleFunctionParams<TParams> {
     /**
