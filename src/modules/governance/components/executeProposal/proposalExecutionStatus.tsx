@@ -3,8 +3,7 @@ import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeD
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { Button, ChainEntityType, type IButtonProps, IconType, ProposalStatus, useBlockExplorer } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -26,12 +25,11 @@ export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) 
     const { buildEntityUrl } = useBlockExplorer();
     const { open } = useDialogContext();
     const { chainId } = networkDefinitions[proposal.network];
-    const pluginIds = useDaoPluginIds(daoId);
 
-    const proposalStatus = useSlotFunction<ProposalStatus>({
+    const proposalStatus = useSlotSingleFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-        pluginIds,
+        pluginId: proposal.pluginSubdomain,
     })!;
 
     const { executed } = proposal;

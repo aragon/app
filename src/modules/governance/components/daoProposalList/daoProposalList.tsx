@@ -1,12 +1,14 @@
 'use client';
 
-import { PluginComponent } from '@/shared/components/pluginComponent';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
 import type { ReactNode } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
-export interface IDaoProposalListProps {
+export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Parameters to use for fetching the proposal list.
      */
@@ -22,16 +24,19 @@ export interface IDaoProposalListProps {
 }
 
 export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
-    const { initialParams, ...otherProps } = props;
-    const { daoId } = initialParams.queryParams;
+    const { initialParams, value, ...otherProps } = props;
 
-    const pluginIds = useDaoPluginIds(daoId);
+    const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS });
+
+    const pluginQueryParams = { ...initialParams.queryParams, pluginAddress: value?.meta.address };
+    const processedParams = { ...initialParams, queryParams: pluginQueryParams };
 
     return (
-        <PluginComponent
+        <PluginTabComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
-            pluginIds={pluginIds}
-            initialParams={initialParams}
+            plugins={processPlugins}
+            value={value}
+            initialParams={processedParams}
             {...otherProps}
         />
     );

@@ -1,25 +1,29 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { DefinitionList } from '@aragon/ods';
 
 export interface IDaoGovernanceInfoProps {
     /**
-     * ID of the Dao
+     * ID of the DAO.
      */
     daoId: string;
+    /**
+     * DAO plugin to display the governance info for.
+     */
+    plugin: IDaoPlugin;
 }
 
 export const DaoGovernanceInfo: React.FC<IDaoGovernanceInfoProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, plugin } = props;
 
-    const pluginIds = useDaoPluginIds(daoId);
-    const governanceParams = { daoId: daoId };
-    const governanceSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
+    const governanceParams = { daoId: daoId, pluginAddress: plugin.address, settings: plugin.settings };
+
+    const governanceSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[]>({
         params: governanceParams,
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginIds,
+        pluginId: plugin.subdomain,
     });
 
     if (!governanceSettings) {

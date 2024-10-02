@@ -1,18 +1,27 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { PluginComponent } from '@/shared/components/pluginComponent';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { IDaoPlugin } from '@/shared/api/daoService';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 
 export interface IDaoMembersInfoProps {
     /**
-     * ID of the Dao
+     * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Plugin to display the info for.
+     */
+    plugin: IDaoPlugin;
 }
 
 export const DaoMembersInfo: React.FC<IDaoMembersInfoProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, plugin } = props;
 
-    const pluginIds = useDaoPluginIds(daoId);
-
-    return <PluginComponent slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO} pluginIds={pluginIds} daoId={daoId} />;
+    return (
+        <PluginSingleComponent
+            slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO}
+            pluginId={plugin.subdomain}
+            daoId={daoId}
+            pluginAddress={plugin.address}
+        />
+    );
 };

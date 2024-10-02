@@ -28,7 +28,7 @@ describe('<TokenProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenProposalListProps>) => {
         const completeProps: ITokenProposalListProps = {
-            initialParams: { queryParams: { daoId: 'dao-id' } },
+            initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
             ...props,
         };
 
@@ -83,7 +83,7 @@ describe('<TokenProposalList /> component', () => {
     });
 
     it('uses initialParams correctly', () => {
-        const initialParams = { queryParams: { daoId: 'dao-test' } };
+        const initialParams = { queryParams: { daoId: 'dao-test', pluginAddress: '0x123' } };
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
             state: 'idle',

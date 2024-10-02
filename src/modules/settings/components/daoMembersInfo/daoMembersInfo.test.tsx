@@ -1,28 +1,19 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoMembersInfo, type IDaoMembersInfoProps } from './daoMembersInfo';
 
-jest.mock('@/shared/components/pluginComponent', () => ({
-    PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
-        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginids={props.pluginIds} />
+jest.mock('@/shared/components/pluginSingleComponent', () => ({
+    PluginComponent: (props: { slotId: string; pluginId: string }) => (
+        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginid={props.pluginId} />
     ),
 }));
 
 describe('<DaoMemberInfo /> component', () => {
-    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
-
-    beforeEach(() => {
-        useDaoPluginIdsSpy.mockReturnValue([]);
-    });
-
-    afterEach(() => {
-        useDaoPluginIdsSpy.mockReset();
-    });
-
     const createTestComponent = (props?: Partial<IDaoMembersInfoProps>) => {
-        const completeProps = {
+        const completeProps: IDaoMembersInfoProps = {
             daoId: 'test-id',
+            plugin: generateDaoPlugin(),
             ...props,
         };
 
@@ -30,12 +21,11 @@ describe('<DaoMemberInfo /> component', () => {
     };
 
     it('renders the plugin-specific dao members info component', () => {
-        const pluginIds = ['multisig'];
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
-        render(createTestComponent());
+        const plugin = generateDaoPlugin({ subdomain: 'token' });
+        render(createTestComponent({ plugin }));
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent).toBeInTheDocument();
         expect(pluginComponent.dataset.slotid).toEqual(SettingsSlotId.SETTINGS_MEMBERS_INFO);
-        expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
+        expect(pluginComponent.dataset.pluginid).toEqual(plugin.subdomain);
     });
 });

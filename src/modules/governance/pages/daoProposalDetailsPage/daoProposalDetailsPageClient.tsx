@@ -3,12 +3,11 @@
 import { ProposalExecutionStatus } from '@/modules/governance/components/executeProposal';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { Page } from '@/shared/components/page';
-import { PluginComponent } from '@/shared/components/pluginComponent';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import {
     addressUtils,
     Button,
@@ -49,26 +48,25 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useOdsModulesContext();
-    const pluginIds = useDaoPluginIds(daoId);
     const pageUrl = useCurrentUrl();
 
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
 
-    const proposalStatus = useSlotFunction<ProposalStatus>({
+    const proposalStatus = useSlotSingleFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-        pluginIds,
+        pluginId: proposal!.pluginSubdomain,
     })!;
 
     if (proposal == null) {
         return null;
     }
 
-    const { blockTimestamp, creator, transactionHash, summary, title, description, actions, resources } = proposal;
+    const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 
-    const normalizedProposalActions = proposalActionUtils.normalizeActions({ pluginIds, actions, proposal, daoId });
+    const normalizedProposalActions = proposalActionUtils.normalizeActions({ proposal, daoId });
 
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
@@ -119,15 +117,15 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         </Page.Section>
                     )}
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
-                        <PluginComponent
+                        <PluginSingleComponent
                             slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
-                            pluginIds={pluginIds}
+                            pluginId={proposal.pluginSubdomain}
                             proposal={proposal}
                             status={proposalStatus}
                             daoId={daoId}
                         >
                             <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
-                        </PluginComponent>
+                        </PluginSingleComponent>
                     </Page.Section>
                     <Page.Section
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}

@@ -24,7 +24,7 @@ describe('<DaoProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<IDaoProposalListProps>) => {
         const completeProps: IDaoProposalListProps = {
-            initialParams: { queryParams: { daoId: 'dao-id' } },
+            initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
             ...props,
         };
 
@@ -42,9 +42,12 @@ describe('<DaoProposalList /> component', () => {
     });
 
     it('passes the initial initialParams with creator address query to the plugin component', () => {
-        const initialParams = {
-            queryParams: { daoId: 'test-id', creatorAddress: '0x1234567890123456789012345678901234567890' },
+        const queryParams = {
+            daoId: 'test-id',
+            creatorAddress: '0x1234567890123456789012345678901234567890',
+            pluginAddress: '0x123',
         };
+        const initialParams = { queryParams };
         render(createTestComponent({ initialParams }));
 
         const pluginComponent = screen.getByTestId('plugin-component-mock');

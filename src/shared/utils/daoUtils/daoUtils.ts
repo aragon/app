@@ -1,5 +1,5 @@
 import { daoService, type IDao } from '@/shared/api/daoService';
-import type { IDaoPageParams } from '@/shared/types';
+import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { type Metadata } from 'next';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
@@ -9,6 +9,13 @@ export interface IGenerateDaoMetadataParams {
      * Path parameters of DAO pages.
      */
     params: IDaoPageParams;
+}
+
+export interface IGetDaoPluginsParams {
+    /**
+     * Only returns the plugins with the specified type when set.
+     */
+    type?: PluginType;
 }
 
 class DaoUtils {
@@ -40,6 +47,17 @@ class DaoUtils {
         const parts = pluginSubdomain.split('-');
 
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+    };
+
+    getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
+        const { type } = params ?? {};
+
+        return dao?.plugins.filter(
+            (plugin) =>
+                type == null ||
+                (type === PluginType.BODY && plugin.isBody && !plugin.isSubPlugin) ||
+                (type === PluginType.PROCESS && plugin.isProcess && !plugin.isSubPlugin),
+        );
     };
 }
 

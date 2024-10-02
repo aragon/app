@@ -12,7 +12,7 @@ jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
 describe('<DaoProposalsPageClient /> component', () => {
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
         const completeProps: IDaoProposalsPageClientProps = {
-            initialParams: { queryParams: { daoId: 'test-id' } },
+            initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },
             ...props,
         };
 
@@ -29,7 +29,7 @@ describe('<DaoProposalsPageClient /> component', () => {
 
     it('renders the create proposal button with the correct link and label', () => {
         const daoId = 'test-id';
-        const initialParams = { queryParams: { daoId } };
+        const initialParams = { queryParams: { daoId, pluginAddress: '0x123' } };
         render(createTestComponent({ initialParams }));
         const createProposalButton = screen.getByRole<HTMLAnchorElement>('link', {
             name: /daoProposalsPage.main.action/,

@@ -10,11 +10,11 @@ export interface IUseMultisigGovernanceSettingsParams extends IUseGovernanceSett
 export const useMultisigGovernanceSettings = (
     params: IUseMultisigGovernanceSettingsParams,
 ): IDaoSettingTermAndDefinition[] => {
-    const { daoId, settings } = params;
+    const { daoId, pluginAddress, settings } = params;
 
     const { t } = useTranslations();
 
-    const daoMembersParams = { daoId };
+    const daoMembersParams = { daoId, pluginAddress };
     const { data: memberList } = useMemberList({ queryParams: daoMembersParams });
 
     const currentSettings = usePluginSettings<IMultisigPluginSettings>({ daoId });

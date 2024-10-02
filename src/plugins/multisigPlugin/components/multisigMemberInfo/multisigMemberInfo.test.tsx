@@ -25,6 +25,7 @@ describe('<MultisigMemberInfo /> component', () => {
     const createTestComponent = (props?: Partial<IMultisigMemberInfoProps>) => {
         const completeProps: IMultisigMemberInfoProps = {
             daoId: 'test-id',
+            pluginAddress: '0x123',
             ...props,
         };
 

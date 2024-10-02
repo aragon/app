@@ -1,4 +1,3 @@
-import { generateMember } from '@/modules/governance/testUtils';
 import { generateMultisigPluginSettings } from '@/plugins/multisigPlugin/testUtils';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
 import * as usePluginSettings from '@/shared/hooks/usePluginSettings';
@@ -28,7 +27,7 @@ describe('useMultisigGovernanceSettings', () => {
         usePluginSettingsSpy.mockReturnValue(generateMultisigPluginSettings());
         useMemberListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({
-                data: { pages: [generatePaginatedResponse({ data: [generateMember()] })], pageParams: [] },
+                data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] },
             }),
         );
     });
@@ -43,9 +42,8 @@ describe('useMultisigGovernanceSettings', () => {
         usePluginSettingsSpy.mockReturnValue(undefined);
         useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error() }));
 
-        const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const params = { daoId: 'multisig-test-id', pluginAddress: '0x123' };
+        const { result } = renderHook(() => useMultisigGovernanceSettings(params), { wrapper: ReactQueryWrapper });
 
         expect(result.current).toEqual([]);
         expect(parseSettingsSpy).not.toHaveBeenCalled();
@@ -55,9 +53,8 @@ describe('useMultisigGovernanceSettings', () => {
         const mockSettings = generateMultisigPluginSettings();
         usePluginSettingsSpy.mockReturnValue(mockSettings);
 
-        const { result } = renderHook(() => useMultisigGovernanceSettings({ daoId: 'multisig-test-id' }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const params = { daoId: 'multisig-test-id', pluginAddress: '0x123' };
+        const { result } = renderHook(() => useMultisigGovernanceSettings(params), { wrapper: ReactQueryWrapper });
 
         expect(usePluginSettingsSpy).toHaveBeenCalledWith({ daoId: 'multisig-test-id' });
         expect(parseSettingsSpy).toHaveBeenCalledWith({

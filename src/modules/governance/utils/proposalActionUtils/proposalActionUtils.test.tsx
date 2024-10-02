@@ -9,26 +9,16 @@ import { formatUnits } from 'viem';
 import { type ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
-jest.mock('viem', () => ({
-    formatUnits: jest.fn(),
-}));
+jest.mock('viem', () => ({ formatUnits: jest.fn() }));
 
 describe('proposalActionUtils', () => {
-    afterEach(() => {
-        jest.resetAllMocks();
-    });
-
     it('normalizes a transfer action', () => {
         const baseAction = generateProposalActionWithdrawToken();
 
         const action = {
             ...baseAction,
             amount: '1000000000000000000',
-            token: {
-                ...baseAction.token,
-                decimals: 18,
-                symbol: 'DAI',
-            },
+            token: { ...baseAction.token, decimals: 18, symbol: 'DAI' },
             sender: { address: '0x9939393939234234234233' },
             receiver: { address: '0x9939393939334242342332' },
         };
@@ -37,11 +27,7 @@ describe('proposalActionUtils', () => {
 
         const result = proposalActionUtils.normalizeTransferAction(action);
 
-        expect(result).toEqual({
-            ...action,
-            type: 'WITHDRAW_TOKEN',
-            amount: '1.0',
-        });
+        expect(result).toEqual({ ...action, type: 'WITHDRAW_TOKEN', amount: '1.0' });
         expect(formatUnits).toHaveBeenCalledWith(BigInt(action.amount), action.token.decimals);
     });
 
@@ -62,11 +48,7 @@ describe('proposalActionUtils', () => {
         expect(result).toEqual({
             ...otherValues,
             type: 'TOKEN_MINT',
-            receiver: {
-                address: receivers.address,
-                currentBalance: '1.0',
-                newBalance: '2.0',
-            },
+            receiver: { address: receivers.address, currentBalance: '1.0', newBalance: '2.0' },
             tokenSymbol: token.symbol,
         });
 
@@ -110,13 +92,9 @@ describe('proposalActionUtils', () => {
 
     it('returns unmodified action if type does not match any known action', () => {
         const action = { ...generateProposalActionWithdrawToken(), type: 'UNKNOWN_TYPE' as ProposalActionType };
+        const proposal = generateProposal({ actions: [action] });
 
-        const result = proposalActionUtils.normalizeActions({
-            actions: [action],
-            pluginIds: [],
-            proposal: generateProposal(),
-            daoId: 'daoId',
-        });
+        const result = proposalActionUtils.normalizeActions({ proposal, daoId: 'daoId' });
 
         expect(result).toEqual([action]);
     });

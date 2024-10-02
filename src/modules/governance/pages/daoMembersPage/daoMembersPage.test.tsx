@@ -40,7 +40,7 @@ describe('<DaoMembersPage /> component', () => {
 
     it('prefetches the DAO member list from the given dao ID', async () => {
         const params = { id: 'my-dao' };
-        const memberListParams = { daoId: params.id, pageSize: daoMembersCount };
+        const memberListParams = { daoId: params.id, pageSize: daoMembersCount, pluginAddress: '0x123' };
         render(await createTestComponent({ params }));
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             memberListOptions({ queryParams: memberListParams }).queryKey,

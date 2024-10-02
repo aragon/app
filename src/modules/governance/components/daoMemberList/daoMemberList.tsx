@@ -1,12 +1,14 @@
 'use client';
 
-import { PluginComponent } from '@/shared/components/pluginComponent';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { IDaoPlugin } from '@/shared/api/daoService';
+import { IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
 import type { ReactNode } from 'react';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
-export interface IDaoMemberListProps {
+export interface IDaoMemberListProps extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Initial parameters to use for fetching the member list.
      */
@@ -22,14 +24,19 @@ export interface IDaoMemberListProps {
 }
 
 export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
-    const { initialParams, ...otherProps } = props;
-    const pluginIds = useDaoPluginIds(initialParams.queryParams.daoId);
+    const { initialParams, value, ...otherProps } = props;
+
+    const bodyPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.BODY });
+
+    const pluginQueryParams = { ...initialParams.queryParams, pluginAddress: value?.meta.address };
+    const processedParams = { ...initialParams, queryParams: pluginQueryParams };
 
     return (
-        <PluginComponent
+        <PluginTabComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
-            pluginIds={pluginIds}
-            initialParams={initialParams}
+            plugins={bodyPlugins}
+            value={value}
+            initialParams={processedParams}
             {...otherProps}
         />
     );

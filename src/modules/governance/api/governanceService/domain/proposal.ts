@@ -68,4 +68,12 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
      * Actions to be executed on this proposal.
      */
     actions: IProposalAction[];
+    /**
+     * Address of the plugin where the proposal has been created.
+     */
+    pluginAddress: string;
+    /**
+     * Subdomain of the plugin where the proposal has been created.
+     */
+    pluginSubdomain: string;
 }

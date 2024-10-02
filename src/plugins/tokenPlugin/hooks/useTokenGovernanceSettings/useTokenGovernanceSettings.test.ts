@@ -22,7 +22,8 @@ describe('useTokenGovernanceSettings', () => {
     it('returns empty array when settings are not passed and data is not returned', () => {
         usePluginSettingsSpy.mockReturnValue(undefined);
 
-        const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }));
+        const params = { daoId: 'token-test-id', pluginAddress: '0x123' };
+        const { result } = renderHook(() => useTokenGovernanceSettings(params));
 
         expect(result.current).toEqual([]);
         expect(parseSettingsSpy).not.toHaveBeenCalled();
@@ -32,15 +33,11 @@ describe('useTokenGovernanceSettings', () => {
         const mockSettings = generateTokenPluginSettings();
         usePluginSettingsSpy.mockReturnValue(mockSettings);
 
-        const { result } = renderHook(() => useTokenGovernanceSettings({ daoId: 'token-test-id' }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const params = { daoId: 'token-test-id', pluginAddress: '0x123' };
+        const { result } = renderHook(() => useTokenGovernanceSettings(params), { wrapper: ReactQueryWrapper });
 
         expect(usePluginSettingsSpy).toHaveBeenCalledWith({ daoId: 'token-test-id' });
-        expect(parseSettingsSpy).toHaveBeenCalledWith({
-            settings: mockSettings,
-            t: mockTranslations.tMock,
-        });
+        expect(parseSettingsSpy).toHaveBeenCalledWith({ settings: mockSettings, t: mockTranslations.tMock });
         expect(result.current).toEqual(parseSettingsSpy.mock.results[0].value);
     });
 
@@ -49,15 +46,11 @@ describe('useTokenGovernanceSettings', () => {
         const mockParsedSettings = [{ term: 'mockTerm', definition: 'mockDefinition' }];
         parseSettingsSpy.mockReturnValue(mockParsedSettings);
 
-        const { result } = renderHook(() =>
-            useTokenGovernanceSettings({ daoId: 'token-test-id', settings: mockSettings }),
-        );
+        const params = { daoId: 'token-test-id', pluginAddress: '0x123', settings: mockSettings };
+        const { result } = renderHook(() => useTokenGovernanceSettings(params));
 
         expect(usePluginSettingsSpy).toHaveBeenCalledWith({ daoId: 'token-test-id' });
-        expect(parseSettingsSpy).toHaveBeenCalledWith({
-            settings: mockSettings,
-            t: mockTranslations.tMock,
-        });
+        expect(parseSettingsSpy).toHaveBeenCalledWith({ settings: mockSettings, t: mockTranslations.tMock });
         expect(result.current).toEqual(mockParsedSettings);
     });
 });

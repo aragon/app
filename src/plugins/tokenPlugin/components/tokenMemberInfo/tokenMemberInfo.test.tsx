@@ -34,6 +34,7 @@ describe('<TokenMemberInfo /> component', () => {
     const createTestComponent = (props?: Partial<ITokenMemberInfoProps>) => {
         const completeProps: ITokenMemberInfoProps = {
             daoId: 'test-id',
+            pluginAddress: '0x123',
             ...props,
         };
 

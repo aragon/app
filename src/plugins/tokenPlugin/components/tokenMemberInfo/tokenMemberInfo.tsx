@@ -22,13 +22,18 @@ export interface ITokenMemberInfoProps {
      * ID of the Dao.
      */
     daoId: string;
+    /**
+     * Address of the plugin to display the members for.
+     */
+    pluginAddress: string;
 }
 
 export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, pluginAddress } = props;
+
     const { t } = useTranslations();
 
-    const daoMemberParams = { daoId };
+    const daoMemberParams = { daoId, pluginAddress };
     const { data: memberList } = useMemberList({ queryParams: daoMemberParams });
 
     const pluginSettings = usePluginSettings<ITokenPluginSettings>({ daoId });

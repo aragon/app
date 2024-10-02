@@ -12,7 +12,7 @@ jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
 describe('<DaoMembersPageClient /> component', () => {
     const createTestComponent = (props?: Partial<IDaoMembersPageClientProps>) => {
         const completeProps: IDaoMembersPageClientProps = {
-            initialParams: { queryParams: { daoId: 'test-id' } },
+            initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },
             ...props,
         };
 

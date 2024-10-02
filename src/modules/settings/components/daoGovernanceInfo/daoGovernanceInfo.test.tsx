@@ -1,5 +1,6 @@
 import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
 import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoGovernanceInfo, type IDaoGovernanceInfoProps } from './daoGovernanceInfo';
@@ -16,6 +17,7 @@ describe('<DaGovernanceInfo /> component', () => {
     const createTestComponent = (props?: Partial<IDaoGovernanceInfoProps>) => {
         const completeProps = {
             daoId: 'test-id',
+            plugin: generateDaoPlugin(),
             ...props,
         };
         return (
