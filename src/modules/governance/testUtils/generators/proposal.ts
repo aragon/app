@@ -1,4 +1,4 @@
-import { Network } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService/domain';
 import { generateAddressInfo } from '@/shared/testUtils';
 import type { IProposal } from '../../api/governanceService';
 

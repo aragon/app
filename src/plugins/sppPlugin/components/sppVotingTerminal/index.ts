@@ -1,0 +1,1 @@
+export { SppVotingTerminal } from './sppVotingTerminal';

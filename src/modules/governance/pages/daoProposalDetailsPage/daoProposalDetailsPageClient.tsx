@@ -65,7 +65,6 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     if (proposal == null) {
         return null;
     }
-
     const { blockTimestamp, creator, transactionHash, summary, title, description, actions, resources } = proposal;
 
     const normalizedProposalActions = proposalActionUtils.normalizeActions({ pluginIds, actions, proposal, daoId });

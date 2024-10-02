@@ -10,6 +10,10 @@ export interface ITokenProposalVotingBreakdownProps {
      * Proposal ID to display the proposal breakdown for.
      */
     proposalId: string;
+    /**
+     * Proposal to be used to display the breakdown.
+     */
+    proposal?: ITokenProposal;
 }
 
 const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
@@ -20,12 +24,12 @@ const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
 };
 
 export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdownProps> = (props) => {
-    const { proposalId } = props;
-
+    const { proposal: proposalProp, proposalId } = props;
     const proposalUrlParams = { id: proposalId };
     const proposalParams = { urlParams: proposalUrlParams };
-    const { data: proposal } = useProposal<ITokenProposal>(proposalParams);
+    const { data: fetchedProposal } = useProposal<ITokenProposal>(proposalParams, { enabled: proposalProp == null });
 
+    const proposal = proposalProp ?? fetchedProposal;
     if (proposal == null) {
         return null;
     }

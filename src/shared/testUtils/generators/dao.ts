@@ -1,4 +1,4 @@
-import { Network, type IDao } from '@/shared/api/daoService';
+import { Network, type IDao } from '@/shared/api/daoService/domain';
 import { generateDaoMetrics } from './daoMetrics';
 
 export const generateDao = (dao?: Partial<IDao>): IDao => ({

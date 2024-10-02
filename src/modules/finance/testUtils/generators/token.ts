@@ -1,4 +1,4 @@
-import { Network } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService/domain';
 import type { IToken } from '../../api/financeService';
 
 export const generateToken = (token?: Partial<IToken>): IToken => ({
