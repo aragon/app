@@ -89,7 +89,7 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
                 ))}
             </Tabs.List>
             {pluginComponents.map(({ tabId, Component, props }) => (
-                <Tabs.Content key={tabId} value={tabId} className="pt-5">
+                <Tabs.Content key={tabId} value={tabId} className="pt-6">
                     <Component {...props} {...otherProps} />
                 </Tabs.Content>
             ))}
