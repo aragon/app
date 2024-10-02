@@ -49,6 +49,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedStartDate = (startDate ?? 0) * 1000;
     const processedEndDate = ((proposal?.blockTimestamp ?? 0) + stage.votingPeriod) * 1000;
 
+    //TODO: Need to make adjustment in ODS to disable tabs for inactive proposals
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
