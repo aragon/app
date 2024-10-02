@@ -23,7 +23,7 @@ export interface IProposalVotingTerminalStageProps {
     /**
      * Sub-proposal.
      */
-    proposal?: ISppSubProposal;
+    proposals?: ISppSubProposal[];
     /**
      * Index of the sub proposal.
      */
@@ -33,7 +33,10 @@ export interface IProposalVotingTerminalStageProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
-    const { stage, daoId, startDate, proposal, index } = props;
+    const { stage, daoId, startDate, proposals, index } = props;
+
+    // TODO: Support multiple proposals within a stage (APP-3659)
+    const proposal = proposals?.[0];
 
     const pluginIds = [stage.plugins[0].subdomain];
 

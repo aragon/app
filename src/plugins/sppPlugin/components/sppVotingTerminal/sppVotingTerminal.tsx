@@ -50,7 +50,7 @@ export const SppVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props)
     const settings = usePluginSettings<ISppPluginSettings>({ daoId });
     const processedStages = settings?.stages.map((stage) => ({
         stage,
-        proposal: proposal.subProposals.find((proposal) => proposal.stageId === stage.id),
+        proposals: proposal.subProposals.filter((proposal) => proposal.stageId === stage.id),
     }));
 
     return (
@@ -59,12 +59,12 @@ export const SppVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props)
             description={t('app.governance.proposalVotingTerminal.description')}
             activeStage={proposal.currentStageIndex}
         >
-            {processedStages?.map(({ stage, proposal }) => (
+            {processedStages?.map(({ stage, proposals }) => (
                 <SppVotingTerminalStage
                     key={stage.id}
                     daoId={daoId}
-                    startDate={proposal?.startDate}
-                    proposal={proposal}
+                    startDate={proposal.startDate}
+                    proposals={proposals}
                     stage={stage}
                 />
             ))}
