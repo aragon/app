@@ -155,7 +155,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                     helpText="The amount of time that the proposal will be eligible to be advanced to the next stage."
                     inlineLabel={stageExpiration ? 'Yes' : 'No'}
                     onCheckedChanged={(checked) => setValue(stageExpirationField.name, checked)}
-                    checked={stageExpiration} // Use form value
+                    checked={stageExpiration}
                     {...stageExpirationField}
                 />
 

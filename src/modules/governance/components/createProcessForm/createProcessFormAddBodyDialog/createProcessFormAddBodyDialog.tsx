@@ -3,13 +3,12 @@ import type {
     ICreateProcessFormBody,
     ITokenVotingMember,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { MemberInputRow } from '@/modules/governance/components/createProcessForm/memberInputRow/memberInputRow';
 import {
-    AddressInput,
     AlertInline,
     Button,
     Card,
     Dialog,
-    Dropdown,
     formatterUtils,
     IconType,
     InputContainer,
@@ -36,7 +35,6 @@ export interface ICreateProcessFormAddBodyDialogProps {
     bodyIndex: number;
     tokenNameField: any;
     tokenSymbolField: any;
-    minimumDurationPeriodField: any;
     supportThresholdPercentageField: any;
     minimumParticipationPercentageField: any;
     voteChangeField: any;
@@ -46,12 +44,10 @@ export interface ICreateProcessFormAddBodyDialogProps {
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
     const {
         bodyNameField,
-        bodyIndex,
         handleSaveBodyValues,
         bodyGovernanceTypeField,
         tokenNameField,
         tokenSymbolField,
-        minimumDurationPeriodField,
         supportThresholdPercentageField,
         minimumParticipationPercentageField,
         voteChangeField,
@@ -59,10 +55,11 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     } = props;
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
-    const { resetField, setValue } = useFormContext();
+    const { resetField, setValue, formState, trigger } = useFormContext();
     const [members, setMembers] = useState<ITokenVotingMember[]>([{ address: '', tokenAmount: 1 }]);
-
-    console.log('step', step);
+    const [memberAddressInputValues, setMemberAddressInputValues] = useState<string[]>(members.map(() => ''));
+    const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
+    const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
 
     useEffect(() => {
         if (isBodyDialogOpen && initialValues) {
@@ -70,19 +67,15 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             setValue(bodyGovernanceTypeField.name, initialValues.governanceType);
             setValue(tokenNameField.name, initialValues.tokenName);
             setValue(tokenSymbolField.name, initialValues.tokenSymbol);
+            setValue(supportThresholdPercentageField.name, initialValues.supportThresholdPercentage);
+            setValue(minimumParticipationPercentageField.name, initialValues.minimumParticipationPercentage);
+            setValue(voteChangeField.name, initialValues.voteChange);
             if (initialValues.members) {
                 setMembers(initialValues.members);
+                setMemberAddressInputValues(initialValues.members.map((member) => member.address));
             }
         }
-    }, [
-        bodyGovernanceTypeField.name,
-        bodyNameField.name,
-        initialValues,
-        isBodyDialogOpen,
-        setValue,
-        tokenNameField.name,
-        tokenSymbolField.name,
-    ]);
+    }, [isBodyDialogOpen, initialValues]);
 
     const handleSave = () => {
         handleSaveBodyValues({
@@ -90,6 +83,9 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             governanceType: bodyGovernanceTypeField.value,
             tokenName: tokenNameField.value,
             tokenSymbol: tokenSymbolField.value,
+            supportThresholdPercentage: supportThresholdPercentageField.value,
+            minimumParticipationPercentage: minimumParticipationPercentageField.value,
+            voteChange: voteChangeField.value,
             members,
         });
 
@@ -97,7 +93,6 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         resetField(bodyGovernanceTypeField.name);
         resetField(tokenNameField.name);
         resetField(tokenSymbolField.name);
-        resetField(minimumDurationPeriodField.name);
         resetField(supportThresholdPercentageField.name);
         resetField(minimumParticipationPercentageField.name);
         resetField(voteChangeField.name);
@@ -109,12 +104,10 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     };
 
     const handleCancel = () => {
-        resetField(`bodies.${bodyIndex}.members`);
         resetField(bodyNameField.name);
         resetField(bodyGovernanceTypeField.name);
         resetField(tokenNameField.name);
         resetField(tokenSymbolField.name);
-        resetField(minimumDurationPeriodField.name);
         resetField(supportThresholdPercentageField.name);
         resetField(minimumParticipationPercentageField.name);
         resetField(voteChangeField.name);
@@ -125,13 +118,62 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         setIsBodyDialogOpen(false);
     };
 
+    const handleAdvanceStep = async () => {
+        if (step === 0) {
+            const complete = await trigger([bodyNameField.name, bodyGovernanceTypeField.name]);
+            if (complete) {
+                setStep(step + 1);
+            }
+            return undefined;
+        }
+        {
+            if (step === 1) {
+                const complete = await trigger([tokenNameField.name, tokenSymbolField.name]);
+                const membersComplete = members.every((member) => member.address && member.tokenAmount);
+                if (complete && membersComplete) {
+                    setStep(step + 1);
+                }
+                return undefined;
+            }
+        }
+        if (step === 2) {
+            const complete = await trigger([
+                supportThresholdPercentageField.name,
+                minimumParticipationPercentageField.name,
+                voteChangeField.name,
+            ]);
+            if (complete) {
+                return handleSave();
+            }
+            return undefined;
+        } else {
+            return undefined;
+        }
+    };
+
+    const handleAddMember = () => {
+        setMembers([...members, { address: '', tokenAmount: 1 }]);
+        setMemberAddressInputValues([...memberAddressInputValues, '']);
+    };
+
+    const handleRemoveMember = (indexToRemove: number) => {
+        const newMembers = members.filter((_, i) => i !== indexToRemove);
+        setMembers(newMembers);
+
+        const newInputValues = memberAddressInputValues.filter((_, i) => i !== indexToRemove);
+        setMemberAddressInputValues(newInputValues);
+    };
+
     const currentSupportThresholdPercentage = useWatch({ name: supportThresholdPercentageField.name });
 
-    const currentTotalTokenAmount = members.reduce((acc, member) => acc + Number(member.tokenAmount), 0);
-
-    const formattedTotalTokenAmount = formatterUtils.formatNumber(currentTotalTokenAmount, {
-        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
+    useEffect(() => {
+        const currentTotalTokenAmount = members.reduce((acc, member) => acc + Number(member.tokenAmount), 0);
+        const formattedTotalTokenAmount = formatterUtils.formatNumber(currentTotalTokenAmount, {
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+        });
+        setCurrentTotalTokenAmount(currentTotalTokenAmount);
+        setFormattedTotalTokenAmount(formattedTotalTokenAmount);
+    }, [members]);
 
     const formattedPercentageParticipation = formatterUtils.formatNumber(
         currentTotalTokenAmount * minimumParticipationPercentageField.value * 0.01,
@@ -139,8 +181,6 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         },
     );
-
-    const minimumDurationPeriod = useWatch({ name: minimumDurationPeriodField.name });
 
     const handleStepContent = (step: number) => {
         switch (step) {
@@ -168,7 +208,6 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                                 label="Multisig"
                                 description="Define which addresses are members"
                                 value="multisig"
-                                disabled={true}
                             />
                             <RadioCard
                                 className="w-full"
@@ -221,63 +260,29 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                             label="Distribute Tokens"
                             helpText="Add the wallets you’d like to distribute tokens to, If you need help distributing tokens, read our guide."
                             useCustomWrapper={true}
+                            alert={
+                                members.length === 0 ||
+                                (members.length >= 1 &&
+                                    !members.every((member) => member.address && member.tokenAmount))
+                                    ? { message: 'Please add a valid address or ENS', variant: 'critical' }
+                                    : undefined
+                            }
                         >
                             {members.map((member, index) => (
-                                <div
+                                <MemberInputRow
                                     key={index}
-                                    className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6"
-                                >
-                                    <AddressInput
-                                        className="grow"
-                                        label="Address"
-                                        placeholder="ENS or 0x…"
-                                        chainId={1}
-                                        value={member.address}
-                                        onChange={(value) => {
-                                            const newMembers = [...members];
-                                            newMembers[index].address = value ?? '';
-                                            setMembers(newMembers);
-                                        }}
-                                    />
-                                    <InputNumber
-                                        label="Tokens"
-                                        suffix={tokenSymbolField.value}
-                                        min={1}
-                                        value={member.tokenAmount}
-                                        onChange={(value) => {
-                                            const newMembers = [...members];
-                                            newMembers[index].tokenAmount = value;
-                                            setMembers(newMembers);
-                                        }}
-                                    />
-                                    <Dropdown.Container
-                                        customTrigger={
-                                            <Button
-                                                variant="tertiary"
-                                                iconLeft={IconType.DOTS_VERTICAL}
-                                                className="self-end"
-                                            />
-                                        }
-                                    >
-                                        <Dropdown.Item
-                                            onClick={() => {
-                                                const newMembers = members.filter((_, i) => i !== index);
-                                                setMembers(newMembers);
-                                            }}
-                                        >
-                                            Remove
-                                        </Dropdown.Item>
-                                    </Dropdown.Container>
-                                </div>
+                                    index={index}
+                                    member={member}
+                                    memberAddressInputValues={memberAddressInputValues}
+                                    setMemberAddressInputValues={setMemberAddressInputValues}
+                                    setMembers={setMembers}
+                                    tokenSymbol={tokenSymbolField.value}
+                                    handleRemoveMember={handleRemoveMember}
+                                />
                             ))}
                         </InputContainer>
                         <div className="flex w-full justify-between">
-                            <Button
-                                size="md"
-                                variant="tertiary"
-                                iconLeft={IconType.PLUS}
-                                onClick={() => setMembers([...members, { address: '', tokenAmount: 1 }])}
-                            >
+                            <Button size="md" variant="tertiary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
                                 Add
                             </Button>
                         </div>
@@ -348,63 +353,11 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                                 </div>
                             </Card>
                         </InputContainer>
-                        <InputContainer
-                            id="duration"
-                            label="Minimum duration"
-                            useCustomWrapper={true}
-                            helpText="The shortest period of time a proposal is open for voting. Proposals can be created with a longer duration, but not shorter."
-                            {...minimumDurationPeriodField}
-                        >
-                            <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
-                                <div className="flex flex-col justify-between gap-4 md:flex-row">
-                                    <InputNumber
-                                        min={0}
-                                        max={59}
-                                        className="w-full md:w-1/3"
-                                        placeholder="0 min"
-                                        suffix="m"
-                                        value={minimumDurationPeriodField.minutes}
-                                        onChange={(e) =>
-                                            setValue(minimumDurationPeriodField.name, {
-                                                ...minimumDurationPeriod,
-                                                minutes: Number(e),
-                                            })
-                                        }
-                                    />
-                                    <InputNumber
-                                        min={0}
-                                        max={23}
-                                        className="w-full md:w-1/3"
-                                        placeholder="0 h"
-                                        suffix="h"
-                                        value={minimumDurationPeriodField.hours}
-                                        onChange={(e) =>
-                                            setValue(minimumDurationPeriodField.name, {
-                                                ...minimumDurationPeriod,
-                                                hours: Number(e),
-                                            })
-                                        }
-                                    />
-                                    <InputNumber
-                                        min={0}
-                                        className="w-full md:w-1/3"
-                                        placeholder="7 d"
-                                        suffix="d"
-                                        value={minimumDurationPeriodField.days}
-                                        onChange={(e) =>
-                                            setValue(minimumDurationPeriodField.name, {
-                                                ...minimumDurationPeriod,
-                                                days: Number(e),
-                                            })
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        </InputContainer>
                         <Switch
                             helpText="Allows voters to change their vote during the voting period. This setting can’t be enabled if early execution is enabled."
                             inlineLabel={voteChangeField.value ? 'Yes' : 'No'}
                             onCheckedChanged={(checked) => setValue(voteChangeField.name, checked)}
+                            checked={voteChangeField.value}
                             {...voteChangeField}
                         />
                     </div>
@@ -428,7 +381,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                     <Button variant="tertiary" onClick={step === 0 ? handleCancel : () => setStep(step - 1)}>
                         {step === 0 ? 'Cancel' : 'Back'}
                     </Button>
-                    <Button onClick={step === 2 ? handleSave : () => setStep(step + 1)}>
+                    <Button type="submit" onClick={handleAdvanceStep}>
                         {step === 2 ? 'Save' : 'Next'}
                     </Button>
                 </div>

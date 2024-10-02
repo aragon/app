@@ -5,13 +5,16 @@ import {
 import {
     CreateProcessFormTimingDialog,
     type ICreateProcessFormTimingValues,
-} from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog/createProcessFormTimingDialog';
+} from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
+
 import { useFormField } from '@/shared/hooks/useFormField';
 import { type IDateDuration } from '@/shared/utils/dateUtils';
 import {
     Accordion,
+    addressUtils,
     Button,
     Card,
+    ChainEntityType,
     DefinitionList,
     Dropdown,
     formatterUtils,
@@ -19,15 +22,18 @@ import {
     IconType,
     InputContainer,
     InputText,
+    Link,
     NumberFormat,
     RadioCard,
     RadioGroup,
     Tag,
+    useBlockExplorer,
 } from '@aragon/ods';
 import type React from 'react';
 import { useState } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog/createProcessFormAddBodyDialog';
+import { useChainId } from 'wagmi';
+import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog';
 
 export interface IStageInputItemProps {
     /**
@@ -52,8 +58,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const [isBodyDialogOpen, setIsBodyDialogOpen] = useState(false);
     const [selectedBodyIndex, setSelectedBodyIndex] = useState<number>(0);
     const { name, index, remove } = props;
+    const chainId = useChainId();
 
     const { setValue } = useFormContext();
+    const { buildEntityUrl } = useBlockExplorer();
 
     const bodyFieldArrayName = `${name}.${index}.bodies`;
     const {
@@ -63,8 +71,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         update: updateBody,
     } = useFieldArray({ name: bodyFieldArrayName });
 
-    const nameFieldName = `${name}.${index}.name`;
-    const nameField = useFormField<StageInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
+    console.log('bodyFields', bodyFields);
+
+    const stageNameFieldName = `${name}.${index}.stageName`;
+    const stageNameField = useFormField<StageInputItemBaseForm, typeof stageNameFieldName>(stageNameFieldName, {
         label: 'Name',
         rules: { required: true },
         defaultValue: '',
@@ -73,7 +83,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const typeFieldName = `${name}.${index}.type`;
     const typeField = useFormField<StageInputItemBaseForm, typeof typeFieldName>(typeFieldName, {
         label: 'Type',
-        rules: { required: true },
         defaultValue: 'normal',
     });
 
@@ -131,6 +140,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const bodyNameField = useFormField<StageInputItemBaseForm, typeof bodyNameFieldName>(bodyNameFieldName, {
         label: 'Name',
         defaultValue: '',
+        trimOnBlur: true,
+        rules: { required: true },
     });
 
     const bodyGovernanceTypeFieldName = `${name}.${index}.bodyGovernanceType`;
@@ -146,13 +157,18 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const tokenNameField = useFormField<StageInputItemBaseForm, typeof tokenNameFieldName>(tokenNameFieldName, {
         label: 'Name',
         defaultValue: '',
+        rules: { required: true },
     });
 
     const tokenSymbolFieldName = `${name}.${index}.tokenSymbol`;
     const tokenSymbolField = useFormField<StageInputItemBaseForm, typeof tokenSymbolFieldName>(tokenSymbolFieldName, {
         label: 'Symbol',
         defaultValue: '',
-        rules: { maxLength: 10, validate: (value) => /^[A-Za-z]+$/.test(value) ?? 'Only letters are allowed' },
+        rules: {
+            maxLength: 10,
+            required: true,
+            validate: (value) => /^[A-Za-z]+$/.test(value) ?? 'Only letters are allowed',
+        },
     });
 
     const supportThresholdPercentageFieldName = `${name}.${index}.thresholdPercentage`;
@@ -171,19 +187,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     >(minimumParticipationPercentageFieldName, {
         label: 'Minimum participation',
         defaultValue: 50,
-    });
-
-    const minimumDurationPeriodFieldName = `${name}.${index}.durationPeriod`;
-    const minimumDurationPeriodField = useFormField<
-        Record<string, IDateDuration>,
-        typeof minimumDurationPeriodFieldName
-    >(minimumDurationPeriodFieldName, {
-        label: 'Minimum duration',
-        defaultValue: {
-            days: 7,
-            hours: 0,
-            minutes: 0,
-        },
     });
 
     const voteChangeFieldName = `${name}.${index}.voteChange`;
@@ -208,6 +211,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
             members: values.members,
             supportThresholdPercentage: supportThresholdPercentageField.value,
             minimumParticipationPercentage: minimumParticipationPercentageField.value,
+            voteChange: voteChangeField.value,
         };
 
         if (selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length) {
@@ -219,13 +223,21 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         setIsBodyDialogOpen(false);
     };
 
+    const formattedAddressWithBlockExplorer = (address: string) => {
+        const url = buildEntityUrl({ id: address, chainId, type: ChainEntityType.ADDRESS });
+        return (
+            <Link href={url} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                <li>{addressUtils.truncateAddress(address)}</li>
+            </Link>
+        );
+    };
     return (
         <>
             <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
                 <InputText
                     helpText="Name the stage, so members are able to recognize it"
                     placeholder="Type a name"
-                    {...nameField}
+                    {...stageNameField}
                 />
                 <RadioGroup
                     className="flex flex-col gap-x-4 md:!flex-row"
@@ -298,6 +310,17 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item term="Distribution">
                                                         {field.members?.length} token holders
+                                                        <ul className="flex flex-col gap-y-2 px-4 py-2">
+                                                            {field.members.map(
+                                                                (member: ITokenVotingMember, index: number) => (
+                                                                    <li key={index}>
+                                                                        {formattedAddressWithBlockExplorer(
+                                                                            member.address,
+                                                                        )}
+                                                                    </li>
+                                                                ),
+                                                            )}
+                                                        </ul>
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item term="Supply">
                                                         {field.members
@@ -318,7 +341,11 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                                         {field.minimumParticipationPercentage}%
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item term="Voting change">
-                                                        <Tag label="No" variant="neutral" className="max-w-fit" />
+                                                        <Tag
+                                                            label={field.voteChange === false ? 'No' : 'Yes'}
+                                                            variant={field.voteChange === false ? 'neutral' : 'primary'}
+                                                            className="max-w-fit"
+                                                        />
                                                     </DefinitionList.Item>
                                                 </DefinitionList.Container>
                                                 <div className="flex w-full grow justify-between">
@@ -393,7 +420,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     bodyGovernanceTypeField={bodyGovernanceTypeField}
                     tokenSymbolField={tokenSymbolField}
                     tokenNameField={tokenNameField}
-                    minimumDurationPeriodField={minimumDurationPeriodField}
                     supportThresholdPercentageField={supportThresholdPercentageField}
                     minimumParticipationPercentageField={minimumParticipationPercentageField}
                     voteChangeField={voteChangeField}
@@ -410,6 +436,13 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                   tokenSymbol: bodyFields[selectedBodyIndex].tokenSymbol,
                                   /** @ts-expect-error will replace */
                                   members: bodyFields[selectedBodyIndex].members,
+                                  /** @ts-expect-error will replace */
+                                  supportThresholdPercentage: bodyFields[selectedBodyIndex].supportThresholdPercentage,
+                                  minimumParticipationPercentage:
+                                      /** @ts-expect-error will replace */
+                                      bodyFields[selectedBodyIndex].minimumParticipationPercentage,
+                                  /** @ts-expect-error will replace */
+                                  voteChange: bodyFields[selectedBodyIndex].voteChange,
                               }
                             : null
                     }

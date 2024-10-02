@@ -6,13 +6,13 @@ import type { ICreateProcessFormData } from '../createProcessFormDefinitions';
 export interface ICreateProcessFormMetadataProps {}
 
 export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps> = () => {
-    const nameField = useFormField<ICreateProcessFormData, 'name'>('name', {
+    const nameField = useFormField<ICreateProcessFormData, 'processName'>('processName', {
         label: 'Name',
         rules: { required: true },
         defaultValue: '',
     });
 
-    const idField = useFormField<ICreateProcessFormData, 'id'>('id', {
+    const idField = useFormField<ICreateProcessFormData, 'processId'>('processId', {
         label: 'ID',
         rules: { required: true },
         defaultValue: '',
