@@ -4,7 +4,7 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { PluginComponent } from '@/shared/components/pluginComponent';
 import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
+import { ProposalVoting, ProposalVotingStatus, ProposalVotingTab } from '@aragon/ods';
 import type { ISppStage, ISppSubProposal } from '../../types';
 
 export interface IProposalVotingTerminalStageProps {
@@ -17,26 +17,24 @@ export interface IProposalVotingTerminalStageProps {
      */
     stage: ISppStage;
     /**
-     * Optional start date of the main proposal.
-     */
-    startDate?: number;
-    /**
      * Sub-proposal.
      */
     proposals?: ISppSubProposal[];
     /**
      * Index of the sub proposal.
      */
-    index?: number;
+    index: number;
 }
 
 const votesPerPage = 6;
 
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
-    const { stage, daoId, startDate, proposals, index } = props;
+    const { stage, daoId, proposals, index } = props;
 
     // TODO: Support multiple proposals within a stage (APP-3659)
     const proposal = proposals?.[0];
+
+    const startDate = proposal?.startDate;
 
     const pluginIds = [stage.plugins[0].subdomain];
 
@@ -59,6 +57,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             endDate={processedEndDate}
             index={index}
             isMultiStage={true}
+            defaultTab={ProposalVotingTab.BREAKDOWN}
         >
             {proposal && (
                 <>
