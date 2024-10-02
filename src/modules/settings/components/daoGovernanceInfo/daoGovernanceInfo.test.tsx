@@ -1,45 +1,32 @@
-import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { IDaoPlugin } from '@/shared/api/daoService';
 import { generateDaoPlugin } from '@/shared/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoGovernanceInfo, type IDaoGovernanceInfoProps } from './daoGovernanceInfo';
 
-describe('<DaGovernanceInfo /> component', () => {
-    const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
+jest.mock('@/shared/components/pluginSingleComponent', () => ({
+    PluginSingleComponent: (props: { slotId: string; plugin: IDaoPlugin }) => (
+        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginid={props.plugin.subdomain} />
+    ),
+}));
 
-    afterEach(() => {
-        useSlotSingleFunctionSpy.mockReset();
-    });
-
+describe('<DaoGovernanceInfo /> component', () => {
     const createTestComponent = (props?: Partial<IDaoGovernanceInfoProps>) => {
-        const completeProps = {
+        const completeProps: IDaoGovernanceInfoProps = {
             daoId: 'test-id',
             plugin: generateDaoPlugin(),
             ...props,
         };
 
-        return (
-            <OdsModulesProvider>
-                <DaoGovernanceInfo {...completeProps} />
-            </OdsModulesProvider>
-        );
+        return <DaoGovernanceInfo {...completeProps} />;
     };
-    it('renders the DAO governance settings', () => {
-        useSlotSingleFunctionSpy.mockReturnValue([
-            { term: 'Governance Term 1', definition: 'Definition 1' },
-            { term: 'Governance Term 2', definition: 'Definition 2' },
-        ]);
-        render(createTestComponent());
 
-        expect(screen.getByText('Governance Term 1')).toBeInTheDocument();
-        expect(screen.getByText('Definition 1')).toBeInTheDocument();
-        expect(screen.getByText('Governance Term 2')).toBeInTheDocument();
-        expect(screen.getByText('Definition 2')).toBeInTheDocument();
-    });
-
-    it('returns empty container on dao fetch error', () => {
-        useSlotSingleFunctionSpy.mockReturnValue(null);
-        const { container } = render(createTestComponent());
-        expect(container).toBeEmptyDOMElement();
+    it('renders the plugin-specific dao governance info component', () => {
+        const plugin = generateDaoPlugin({ subdomain: 'multisig' });
+        render(createTestComponent({ plugin }));
+        const pluginComponent = screen.getByTestId('plugin-component-mock');
+        expect(pluginComponent).toBeInTheDocument();
+        expect(pluginComponent.dataset.slotid).toEqual(SettingsSlotId.SETTINGS_GOVERNANCE_INFO);
+        expect(pluginComponent.dataset.pluginid).toEqual(plugin.subdomain);
     });
 });

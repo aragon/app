@@ -1,9 +1,7 @@
 import { generateMultisigPluginSettings } from '@/plugins/multisigPlugin/testUtils';
 import { multisigSettingsUtils } from '@/plugins/multisigPlugin/utils/multisigSettingsUtils';
-import * as usePluginSettings from '@/shared/hooks/usePluginSettings';
 import {
     generatePaginatedResponse,
-    generateReactQueryInfiniteResultError,
     generateReactQueryInfiniteResultSuccess,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
@@ -19,49 +17,39 @@ jest.mock('../../../../modules/governance/api/governanceService', () => ({
 }));
 
 describe('useMultisigGovernanceSettings', () => {
-    const usePluginSettingsSpy = jest.spyOn(usePluginSettings, 'usePluginSettings');
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
     const parseSettingsSpy = jest.spyOn(multisigSettingsUtils, 'parseSettings');
 
     beforeEach(() => {
-        usePluginSettingsSpy.mockReturnValue(generateMultisigPluginSettings());
-        useMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({
-                data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] },
-            }),
-        );
+        const defaultMemberResult = { data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] } };
+        useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess(defaultMemberResult));
     });
 
     afterEach(() => {
-        usePluginSettingsSpy.mockReset();
         useMemberListSpy.mockReset();
         parseSettingsSpy.mockReset();
     });
 
-    it('returns empty array when settings are not passed and data is not returned', () => {
-        usePluginSettingsSpy.mockReturnValue(undefined);
-        useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error() }));
-
-        const params = { daoId: 'multisig-test-id', pluginAddress: '0x123' };
-        const { result } = renderHook(() => useMultisigGovernanceSettings(params), { wrapper: ReactQueryWrapper });
-
-        expect(result.current).toEqual([]);
-        expect(parseSettingsSpy).not.toHaveBeenCalled();
-    });
-
-    it('retrieves plugin settings correctly', () => {
+    it('returns the parsed multisig governance settings', () => {
+        const membersCount = 5;
         const mockSettings = generateMultisigPluginSettings();
-        usePluginSettingsSpy.mockReturnValue(mockSettings);
+        const mockParsedSettings = [{ term: 'mockTerm', definition: 'mockDefinition' }];
+        parseSettingsSpy.mockReturnValue(mockParsedSettings);
 
-        const params = { daoId: 'multisig-test-id', pluginAddress: '0x123' };
+        const membersMetadata = { totalRecords: membersCount, page: 0, pageSize: 20, totalPages: 2 };
+        const membersResult = {
+            data: { pages: [generatePaginatedResponse({ data: [], metadata: membersMetadata })], pageParams: [] },
+        };
+        useMemberListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess(membersResult));
+
+        const params = { daoId: 'multisig-test-id', pluginAddress: '0x123', settings: mockSettings };
         const { result } = renderHook(() => useMultisigGovernanceSettings(params), { wrapper: ReactQueryWrapper });
 
-        expect(usePluginSettingsSpy).toHaveBeenCalledWith({ daoId: 'multisig-test-id' });
         expect(parseSettingsSpy).toHaveBeenCalledWith({
             settings: mockSettings,
-            membersCount: expect.any(Number),
+            membersCount,
             t: mockTranslations.tMock,
         });
-        expect(result.current).toEqual(parseSettingsSpy.mock.results[0].value);
+        expect(result.current).toEqual(mockParsedSettings);
     });
 });
