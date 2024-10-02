@@ -101,6 +101,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                             max={59}
                             className="w-full md:w-1/3"
                             placeholder="0 min"
+                            suffix="m"
                             value={votingPeriod.minutes}
                             onChange={(e) =>
                                 setValue(votingPeriodField.name, {
@@ -115,7 +116,8 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                             max={23}
                             className="w-full md:w-1/3"
                             placeholder="0 h"
-                            value={votingPeriod.hours} // Directly use the form value
+                            suffix="h"
+                            value={votingPeriod.hours}
                             onChange={(e) =>
                                 setValue(votingPeriodField.name, {
                                     ...votingPeriod,
@@ -128,7 +130,8 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                             min={0}
                             className="w-full md:w-1/3"
                             placeholder="7 d"
-                            value={votingPeriod.days} // Directly use the form value
+                            suffix="d"
+                            value={votingPeriod.days}
                             onChange={(e) =>
                                 setValue(votingPeriodField.name, {
                                     ...votingPeriod,
@@ -143,7 +146,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                     <Switch
                         helpText="Should the proposal be able to advance this stage early, if it’s successful?"
                         inlineLabel={earlyStage ? 'Yes' : 'No'}
-                        onCheckedChanged={(checked) => setValue(earlyStageField.name, checked)} // Directly update form state
+                        onCheckedChanged={(checked) => setValue(earlyStageField.name, checked)}
                         checked={earlyStage}
                         {...earlyStageField}
                     />
@@ -151,7 +154,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                 <Switch
                     helpText="The amount of time that the proposal will be eligible to be advanced to the next stage."
                     inlineLabel={stageExpiration ? 'Yes' : 'No'}
-                    onCheckedChanged={(checked) => setValue(stageExpirationField.name, checked)} // Directly update form state
+                    onCheckedChanged={(checked) => setValue(stageExpirationField.name, checked)}
                     checked={stageExpiration} // Use form value
                     {...stageExpirationField}
                 />
@@ -165,6 +168,8 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 max={59}
                                 className="w-full md:w-1/3"
                                 value={expirationPeriod.minutes}
+                                placeholder="0 m"
+                                suffix="m"
                                 onChange={(e) =>
                                     setValue(stageExpirationPeriodField.name, {
                                         ...expirationPeriod,
@@ -178,6 +183,8 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 max={23}
                                 className="w-full md:w-1/3"
                                 value={expirationPeriod.hours}
+                                placeholder="0 h"
+                                suffix="h"
                                 onChange={(e) =>
                                     setValue(stageExpirationPeriodField.name, {
                                         ...expirationPeriod,
@@ -190,6 +197,8 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 min={0}
                                 className="w-full md:w-1/3"
                                 value={expirationPeriod.days}
+                                placeholder="0 d"
+                                suffix="d"
                                 onChange={(e) =>
                                     setValue(stageExpirationPeriodField.name, {
                                         ...expirationPeriod,

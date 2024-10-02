@@ -1,6 +1,6 @@
 import {
-    ITokenVotingMember,
     type ICreateProcessFormBody,
+    type ITokenVotingMember,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import {
     CreateProcessFormTimingDialog,
@@ -62,8 +62,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         remove: removeBody,
         update: updateBody,
     } = useFieldArray({ name: bodyFieldArrayName });
-
-    console.log('bodyFields', bodyFields);
 
     const nameFieldName = `${name}.${index}.name`;
     const nameField = useFormField<StageInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
@@ -157,6 +155,43 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         rules: { maxLength: 10, validate: (value) => /^[A-Za-z]+$/.test(value) ?? 'Only letters are allowed' },
     });
 
+    const supportThresholdPercentageFieldName = `${name}.${index}.thresholdPercentage`;
+    const supportThresholdPercentageField = useFormField<
+        StageInputItemBaseForm,
+        typeof supportThresholdPercentageFieldName
+    >(supportThresholdPercentageFieldName, {
+        label: 'Support threshold',
+        defaultValue: 50,
+    });
+
+    const minimumParticipationPercentageFieldName = `${name}.${index}.participationPercentage`;
+    const minimumParticipationPercentageField = useFormField<
+        StageInputItemBaseForm,
+        typeof minimumParticipationPercentageFieldName
+    >(minimumParticipationPercentageFieldName, {
+        label: 'Minimum participation',
+        defaultValue: 50,
+    });
+
+    const minimumDurationPeriodFieldName = `${name}.${index}.durationPeriod`;
+    const minimumDurationPeriodField = useFormField<
+        Record<string, IDateDuration>,
+        typeof minimumDurationPeriodFieldName
+    >(minimumDurationPeriodFieldName, {
+        label: 'Minimum duration',
+        defaultValue: {
+            days: 7,
+            hours: 0,
+            minutes: 0,
+        },
+    });
+
+    const voteChangeFieldName = `${name}.${index}.voteChange`;
+    const voteChangeField = useFormField<StageInputItemBaseForm, typeof voteChangeFieldName>(voteChangeFieldName, {
+        label: 'Vote change',
+        defaultValue: false,
+    });
+
     const handleSaveTimingValues = (values: ICreateProcessFormTimingValues) => {
         setValue(votingPeriodFieldName, values.votingPeriod);
         setValue(earlyStageFieldName, values.earlyStage);
@@ -171,6 +206,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
             tokenName: tokenNameField.value,
             tokenSymbol: tokenSymbolField.value,
             members: values.members,
+            supportThresholdPercentage: supportThresholdPercentageField.value,
+            minimumParticipationPercentage: minimumParticipationPercentageField.value,
         };
 
         if (selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length) {
@@ -181,8 +218,6 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
 
         setIsBodyDialogOpen(false);
     };
-
-    console.log('hello', bodyFields[selectedBodyIndex]);
 
     return (
         <>
@@ -277,10 +312,10 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                                             : 0}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item term="Approval threshold">
-                                                        TK
+                                                        {field.supportThresholdPercentage}%
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item term="Minimum participation">
-                                                        TK
+                                                        {field.minimumParticipationPercentage}%
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item term="Voting change">
                                                         <Tag label="No" variant="neutral" className="max-w-fit" />
@@ -358,18 +393,22 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     bodyGovernanceTypeField={bodyGovernanceTypeField}
                     tokenSymbolField={tokenSymbolField}
                     tokenNameField={tokenNameField}
+                    minimumDurationPeriodField={minimumDurationPeriodField}
+                    supportThresholdPercentageField={supportThresholdPercentageField}
+                    minimumParticipationPercentageField={minimumParticipationPercentageField}
+                    voteChangeField={voteChangeField}
                     initialValues={
                         selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length
                             ? {
-                                  /** @ts-ignore */
+                                  /** @ts-expect-error will replace */
                                   bodyName: bodyFields[selectedBodyIndex].bodyName,
-                                  /** @ts-ignore */
+                                  /** @ts-expect-error will replace */
                                   governanceType: bodyFields[selectedBodyIndex].governanceType,
-                                  /** @ts-ignore */
+                                  /** @ts-expect-error will replace */
                                   tokenName: bodyFields[selectedBodyIndex].tokenName,
-                                  /** @ts-ignore */
+                                  /** @ts-expect-error will replace */
                                   tokenSymbol: bodyFields[selectedBodyIndex].tokenSymbol,
-                                  /** @ts-ignore */
+                                  /** @ts-expect-error will replace */
                                   members: bodyFields[selectedBodyIndex].members,
                               }
                             : null

@@ -10,10 +10,12 @@ import {
     Card,
     Dialog,
     Dropdown,
+    formatterUtils,
     IconType,
     InputContainer,
     InputNumber,
     InputText,
+    NumberFormat,
     Progress,
     RadioCard,
     RadioGroup,
@@ -22,7 +24,7 @@ import {
 } from '@aragon/ods';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 export interface ICreateProcessFormAddBodyDialogProps {
     isBodyDialogOpen: boolean;
@@ -34,6 +36,10 @@ export interface ICreateProcessFormAddBodyDialogProps {
     bodyIndex: number;
     tokenNameField: any;
     tokenSymbolField: any;
+    minimumDurationPeriodField: any;
+    supportThresholdPercentageField: any;
+    minimumParticipationPercentageField: any;
+    voteChangeField: any;
     initialValues?: ICreateProcessFormBody | null;
 }
 
@@ -45,6 +51,10 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         bodyGovernanceTypeField,
         tokenNameField,
         tokenSymbolField,
+        minimumDurationPeriodField,
+        supportThresholdPercentageField,
+        minimumParticipationPercentageField,
+        voteChangeField,
         initialValues,
     } = props;
     const [step, setStep] = useState(0);
@@ -52,9 +62,10 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     const { resetField, setValue } = useFormContext();
     const [members, setMembers] = useState<ITokenVotingMember[]>([{ address: '', tokenAmount: 1 }]);
 
+    console.log('step', step);
+
     useEffect(() => {
         if (isBodyDialogOpen && initialValues) {
-            setStep(0);
             setValue(bodyNameField.name, initialValues.bodyName);
             setValue(bodyGovernanceTypeField.name, initialValues.governanceType);
             setValue(tokenNameField.name, initialValues.tokenName);
@@ -62,14 +73,16 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             if (initialValues.members) {
                 setMembers(initialValues.members);
             }
-        } else if (isBodyDialogOpen) {
-            resetField(bodyNameField.name);
-            resetField(bodyGovernanceTypeField.name);
-            resetField(tokenNameField.name);
-            resetField(tokenSymbolField.name);
-            setMembers([{ address: '', tokenAmount: 1 }]);
         }
-    }, [isBodyDialogOpen]);
+    }, [
+        bodyGovernanceTypeField.name,
+        bodyNameField.name,
+        initialValues,
+        isBodyDialogOpen,
+        setValue,
+        tokenNameField.name,
+        tokenSymbolField.name,
+    ]);
 
     const handleSave = () => {
         handleSaveBodyValues({
@@ -80,11 +93,14 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             members,
         });
 
-        resetField(`bodies.${bodyIndex}.members`);
         resetField(bodyNameField.name);
         resetField(bodyGovernanceTypeField.name);
         resetField(tokenNameField.name);
         resetField(tokenSymbolField.name);
+        resetField(minimumDurationPeriodField.name);
+        resetField(supportThresholdPercentageField.name);
+        resetField(minimumParticipationPercentageField.name);
+        resetField(voteChangeField.name);
 
         setMembers([{ address: '', tokenAmount: 1 }]);
 
@@ -93,17 +109,38 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     };
 
     const handleCancel = () => {
-        resetField(`bodies.${bodyIndex}.addresses`);
+        resetField(`bodies.${bodyIndex}.members`);
         resetField(bodyNameField.name);
         resetField(bodyGovernanceTypeField.name);
         resetField(tokenNameField.name);
         resetField(tokenSymbolField.name);
+        resetField(minimumDurationPeriodField.name);
+        resetField(supportThresholdPercentageField.name);
+        resetField(minimumParticipationPercentageField.name);
+        resetField(voteChangeField.name);
 
         setMembers([{ address: '', tokenAmount: 1 }]);
 
         setStep(0);
         setIsBodyDialogOpen(false);
     };
+
+    const currentSupportThresholdPercentage = useWatch({ name: supportThresholdPercentageField.name });
+
+    const currentTotalTokenAmount = members.reduce((acc, member) => acc + Number(member.tokenAmount), 0);
+
+    const formattedTotalTokenAmount = formatterUtils.formatNumber(currentTotalTokenAmount, {
+        format: NumberFormat.TOKEN_AMOUNT_SHORT,
+    });
+
+    const formattedPercentageParticipation = formatterUtils.formatNumber(
+        currentTotalTokenAmount * minimumParticipationPercentageField.value * 0.01,
+        {
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+        },
+    );
+
+    const minimumDurationPeriod = useWatch({ name: minimumDurationPeriodField.name });
 
     const handleStepContent = (step: number) => {
         switch (step) {
@@ -251,20 +288,33 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                     <div className="flex flex-col gap-y-6">
                         <InputContainer
                             id="threshold"
-                            label="Support threshold"
                             helpText={`The percentage of tokens that vote "Yes" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.`}
                             useCustomWrapper={true}
+                            {...supportThresholdPercentageField}
                         >
                             <Card className="flex flex-col gap-y-6 border border-neutral-100 p-6">
                                 <div className="flex items-center justify-between gap-x-6">
-                                    <InputNumber prefix=">" suffix="%" min={1} max={100} placeholder=">1%" />{' '}
+                                    <InputNumber
+                                        prefix={supportThresholdPercentageField.value == 100 ? undefined : '>'}
+                                        suffix="%"
+                                        min={1}
+                                        max={100}
+                                        placeholder=">1%"
+                                        {...supportThresholdPercentageField}
+                                        label={undefined}
+                                    />
                                     <div className="flex w-5/6 grow items-center gap-x-1">
                                         <Tag label="Yes" variant="primary" />
-                                        <Progress value={50} thresholdIndicator={50} />
+                                        <Progress
+                                            value={currentSupportThresholdPercentage}
+                                            thresholdIndicator={currentSupportThresholdPercentage}
+                                        />
                                         <Tag label="No" variant="neutral" />
                                     </div>
                                 </div>
-                                <AlertInline variant="success" message="Proposal will be approved by majority" />
+                                {supportThresholdPercentageField.value >= 50 && (
+                                    <AlertInline variant="success" message="Proposal will be approved by majority" />
+                                )}
                             </Card>
                         </InputContainer>
                         <InputContainer
@@ -272,21 +322,28 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                             label="Minimum participation"
                             helpText={`The percentage of tokens that participate in a proposal, out of the total test supply, must be greater than or equal to this value for the proposal to pass.`}
                             useCustomWrapper={true}
+                            {...minimumParticipationPercentageField}
                         >
                             <Card className="flex flex-col border border-neutral-100 p-6">
                                 <div className="flex items-center justify-between gap-x-6">
                                     <InputNumber
-                                        prefix=">"
+                                        prefix={minimumParticipationPercentageField.value == 100 ? undefined : '>'}
                                         suffix="%"
                                         min={1}
                                         max={100}
                                         placeholder=">1%"
                                         className="max-w-fit shrink"
+                                        {...minimumParticipationPercentageField}
+                                        label={undefined}
                                     />
                                     <div className="h-full w-5/6 grow flex-col gap-y-3">
-                                        <p className="text-primary-400">TOKEN</p>
-                                        <Progress value={50} />
-                                        <p className="text-right">of TOTAL</p>
+                                        <p className="text-primary-400">
+                                            {formattedPercentageParticipation} {tokenSymbolField.value}
+                                        </p>
+                                        <Progress value={minimumParticipationPercentageField.value} />
+                                        <p className="text-right">
+                                            of {formattedTotalTokenAmount} {tokenSymbolField.value}
+                                        </p>
                                     </div>
                                 </div>
                             </Card>
@@ -296,23 +353,60 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                             label="Minimum duration"
                             useCustomWrapper={true}
                             helpText="The shortest period of time a proposal is open for voting. Proposals can be created with a longer duration, but not shorter."
+                            {...minimumDurationPeriodField}
                         >
                             <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
                                 <div className="flex flex-col justify-between gap-4 md:flex-row">
-                                    <InputNumber min={0} max={59} className="w-full md:w-1/3" placeholder="0 min" />
-                                    <InputNumber min={0} max={23} className="w-full md:w-1/3" placeholder="0 h" />
-                                    <InputNumber min={0} className="w-full md:w-1/3" placeholder="7 d" />
+                                    <InputNumber
+                                        min={0}
+                                        max={59}
+                                        className="w-full md:w-1/3"
+                                        placeholder="0 min"
+                                        suffix="m"
+                                        value={minimumDurationPeriodField.minutes}
+                                        onChange={(e) =>
+                                            setValue(minimumDurationPeriodField.name, {
+                                                ...minimumDurationPeriod,
+                                                minutes: Number(e),
+                                            })
+                                        }
+                                    />
+                                    <InputNumber
+                                        min={0}
+                                        max={23}
+                                        className="w-full md:w-1/3"
+                                        placeholder="0 h"
+                                        suffix="h"
+                                        value={minimumDurationPeriodField.hours}
+                                        onChange={(e) =>
+                                            setValue(minimumDurationPeriodField.name, {
+                                                ...minimumDurationPeriod,
+                                                hours: Number(e),
+                                            })
+                                        }
+                                    />
+                                    <InputNumber
+                                        min={0}
+                                        className="w-full md:w-1/3"
+                                        placeholder="7 d"
+                                        suffix="d"
+                                        value={minimumDurationPeriodField.days}
+                                        onChange={(e) =>
+                                            setValue(minimumDurationPeriodField.name, {
+                                                ...minimumDurationPeriod,
+                                                days: Number(e),
+                                            })
+                                        }
+                                    />
                                 </div>
                             </div>
                         </InputContainer>
-                        <InputContainer
-                            id="votechange"
-                            label="Vote change"
-                            useCustomWrapper={true}
-                            helpText={`Allows voters to change their vote during the voting period. This setting can’t be enabled if early execution is enabled.`}
-                        >
-                            <Switch inlineLabel={true == true ? 'Yes' : 'No'} />
-                        </InputContainer>
+                        <Switch
+                            helpText="Allows voters to change their vote during the voting period. This setting can’t be enabled if early execution is enabled."
+                            inlineLabel={voteChangeField.value ? 'Yes' : 'No'}
+                            onCheckedChanged={(checked) => setValue(voteChangeField.name, checked)}
+                            {...voteChangeField}
+                        />
                     </div>
                 );
             default:
@@ -325,8 +419,9 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             containerClassName="!max-w-[640px]"
             open={isBodyDialogOpen}
             onOpenChange={() => setIsBodyDialogOpen(false)}
+            onPointerDownOutside={handleCancel}
         >
-            <Dialog.Header title="Add voting body" />
+            <Dialog.Header title="Add voting body" onCloseClick={handleCancel} />
             <Dialog.Content className="flex flex-col gap-6 pb-1.5">
                 {handleStepContent(step)}
                 <div className="flex w-full justify-between">
