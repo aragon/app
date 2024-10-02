@@ -1,20 +1,20 @@
 import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
-import * as useSupportedDaoPlugin from '@/shared/hooks/useSupportedDaoPlugin';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';
 
 describe('<DaoVersionInfo /> component', () => {
-    const useSupportedDaoPluginSpy = jest.spyOn(useSupportedDaoPlugin, 'useSupportedDaoPlugin');
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
     beforeEach(() => {
-        useSupportedDaoPluginSpy.mockReturnValue(undefined);
+        useDaoPluginsSpy.mockReturnValue([]);
     });
 
     afterEach(() => {
-        useSupportedDaoPluginSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
         useApplicationVersionSpy.mockReset();
     });
 
@@ -45,7 +45,7 @@ describe('<DaoVersionInfo /> component', () => {
         const dao = generateDao({ plugins: [plugin], version: '1.3.0' });
         const appVersion = '1.0.0';
 
-        useSupportedDaoPluginSpy.mockReturnValue(plugin);
+        useDaoPluginsSpy.mockReturnValue([{ id: '', label: '', tabId: '', meta: plugin, props: {} }]);
         useApplicationVersionSpy.mockReturnValue(appVersion);
 
         render(createTestComponent({ dao: dao }));
@@ -61,7 +61,7 @@ describe('<DaoVersionInfo /> component', () => {
         const plugin = generateDaoPlugin({ address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c' });
         const dao = generateDao({ plugins: [plugin] });
 
-        useSupportedDaoPluginSpy.mockReturnValue(plugin);
+        useDaoPluginsSpy.mockReturnValue([{ id: '', label: '', tabId: '', meta: plugin, props: {} }]);
         render(createTestComponent({ dao: dao }));
 
         const linkElement = screen.getByRole('link', { name: /daoVersionInfo.governanceValue .* 0x89…437c/ });

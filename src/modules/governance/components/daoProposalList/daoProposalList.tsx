@@ -24,7 +24,7 @@ export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDa
 }
 
 export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
-    const { initialParams, value, ...otherProps } = props;
+    const { initialParams, ...otherProps } = props;
 
     const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS });
     const processedPlugins = processPlugins?.map((plugin) => {
@@ -38,7 +38,6 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
         <PluginTabComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
             plugins={processedPlugins}
-            value={value}
             {...otherProps}
         />
     );

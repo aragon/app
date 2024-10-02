@@ -13,7 +13,7 @@ describe('<DaoMembersPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([{ id: '', tabId: '', label: '', meta: generateDaoPlugin() }]);
+        useDaoPluginsSpy.mockReturnValue([{ id: '', tabId: '', label: '', meta: generateDaoPlugin(), props: {} }]);
     });
 
     afterEach(() => {
