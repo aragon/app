@@ -1,15 +1,25 @@
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoMembersPageClient, type IDaoMembersPageClientProps } from './daoMembersPageClient';
 
-jest.mock('../../components/daoMemberList', () => ({
-    DaoMemberList: () => <div data-testid="member-list-mock" />,
-}));
+jest.mock('../../components/daoMemberList', () => ({ DaoMemberList: () => <div data-testid="member-list-mock" /> }));
 
 jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
     DaoMembersInfo: () => <div data-testid="members-info-mock" />,
 }));
 
 describe('<DaoMembersPageClient /> component', () => {
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+
+    beforeEach(() => {
+        useDaoPluginsSpy.mockReturnValue([{ id: '', tabId: '', label: '', meta: generateDaoPlugin() }]);
+    });
+
+    afterEach(() => {
+        useDaoPluginsSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<IDaoMembersPageClientProps>) => {
         const completeProps: IDaoMembersPageClientProps = {
             initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },

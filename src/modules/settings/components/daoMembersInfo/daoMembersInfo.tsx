@@ -1,5 +1,5 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 
 export interface IDaoMembersInfoProps {

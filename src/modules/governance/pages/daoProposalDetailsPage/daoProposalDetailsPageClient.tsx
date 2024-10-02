@@ -57,7 +57,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalStatus = useSlotSingleFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-        pluginId: proposal!.pluginSubdomain,
+        pluginId: proposal?.pluginSubdomain ?? '',
     })!;
 
     if (proposal == null) {

@@ -55,7 +55,7 @@ class DaoUtils {
         return dao?.plugins.filter(
             (plugin) =>
                 type == null ||
-                (type === PluginType.BODY && plugin.isBody && !plugin.isSubPlugin) ||
+                (type === PluginType.BODY && plugin.isBody) ||
                 (type === PluginType.PROCESS && plugin.isProcess && !plugin.isSubPlugin),
         );
     };

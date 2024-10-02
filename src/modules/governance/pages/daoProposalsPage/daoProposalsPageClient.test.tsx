@@ -1,3 +1,5 @@
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
 
@@ -10,6 +12,16 @@ jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
 }));
 
 describe('<DaoProposalsPageClient /> component', () => {
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+
+    beforeEach(() => {
+        useDaoPluginsSpy.mockReturnValue([{ id: '', tabId: '', label: '', meta: generateDaoPlugin() }]);
+    });
+
+    afterEach(() => {
+        useDaoPluginsSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
         const completeProps: IDaoProposalsPageClientProps = {
             initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },

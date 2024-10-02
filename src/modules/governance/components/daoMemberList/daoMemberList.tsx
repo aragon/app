@@ -1,7 +1,7 @@
 'use client';
 
-import { IDaoPlugin } from '@/shared/api/daoService';
-import { IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { ReactNode } from 'react';

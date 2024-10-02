@@ -1,17 +1,14 @@
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
-import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
+import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoGovernanceInfo, type IDaoGovernanceInfoProps } from './daoGovernanceInfo';
 
 describe('<DaGovernanceInfo /> component', () => {
-    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
-    const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
+    const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
 
     afterEach(() => {
-        useDaoPluginIdsSpy.mockReset();
-        useSlotFunctionSpy.mockReset();
+        useSlotSingleFunctionSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoGovernanceInfoProps>) => {
@@ -20,6 +17,7 @@ describe('<DaGovernanceInfo /> component', () => {
             plugin: generateDaoPlugin(),
             ...props,
         };
+
         return (
             <OdsModulesProvider>
                 <DaoGovernanceInfo {...completeProps} />
@@ -27,9 +25,7 @@ describe('<DaGovernanceInfo /> component', () => {
         );
     };
     it('renders the DAO governance settings', () => {
-        const pluginIds = ['multisig'];
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
-        useSlotFunctionSpy.mockReturnValue([
+        useSlotSingleFunctionSpy.mockReturnValue([
             { term: 'Governance Term 1', definition: 'Definition 1' },
             { term: 'Governance Term 2', definition: 'Definition 2' },
         ]);
@@ -42,7 +38,7 @@ describe('<DaGovernanceInfo /> component', () => {
     });
 
     it('returns empty container on dao fetch error', () => {
-        useSlotFunctionSpy.mockReturnValue(null);
+        useSlotSingleFunctionSpy.mockReturnValue(null);
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
     });

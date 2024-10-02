@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { DaoMembersInfo, type IDaoMembersInfoProps } from './daoMembersInfo';
 
 jest.mock('@/shared/components/pluginSingleComponent', () => ({
-    PluginComponent: (props: { slotId: string; pluginId: string }) => (
+    PluginSingleComponent: (props: { slotId: string; pluginId: string }) => (
         <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginid={props.pluginId} />
     ),
 }));

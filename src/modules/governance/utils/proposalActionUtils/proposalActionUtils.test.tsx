@@ -5,13 +5,21 @@ import {
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
+import * as viem from 'viem';
 import { formatUnits } from 'viem';
 import { type ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
-jest.mock('viem', () => ({ formatUnits: jest.fn() }));
+// Needed to spy formatUnits usage
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual('viem') }));
 
 describe('proposalActionUtils', () => {
+    const formatUnitsSpy = jest.spyOn(viem, 'formatUnits');
+
+    afterEach(() => {
+        formatUnitsSpy.mockReset();
+    });
+
     it('normalizes a transfer action', () => {
         const baseAction = generateProposalActionWithdrawToken();
 
@@ -23,7 +31,7 @@ describe('proposalActionUtils', () => {
             receiver: { address: '0x9939393939334242342332' },
         };
 
-        (formatUnits as jest.Mock).mockReturnValue('1.0');
+        formatUnitsSpy.mockReturnValue('1.0');
 
         const result = proposalActionUtils.normalizeTransferAction(action);
 
@@ -39,7 +47,7 @@ describe('proposalActionUtils', () => {
             receivers: { ...baseAction.receivers, currentBalance: '1000000', newBalance: '20000000' },
         };
 
-        (formatUnits as jest.Mock).mockReturnValueOnce('1.0').mockReturnValueOnce('2.0');
+        formatUnitsSpy.mockReturnValueOnce('1.0').mockReturnValueOnce('2.0');
 
         const result = proposalActionUtils.normalizeTokenMintAction(action);
 

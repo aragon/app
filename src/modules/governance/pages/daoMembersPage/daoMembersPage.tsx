@@ -21,14 +21,13 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     const queryClient = new QueryClient();
 
     const daoUrlParams = { id: params.id };
-    const daoParams = { urlParams: daoUrlParams };
-    const dao = await queryClient.fetchQuery(daoOptions(daoParams));
+    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
 
     const { address: bodyPluginAddress } = daoUtils.getDaoPlugins(dao, { type: PluginType.BODY })![0];
 
     const memberListQueryParams = { daoId: params.id, pluginAddress: bodyPluginAddress, pageSize: daoMembersCount };
     const memberListParams = { queryParams: memberListQueryParams };
-    await queryClient.prefetchInfiniteQuery(memberListOptions(memberListParams));
+    await queryClient.prefetchInfiniteQuery(memberListOptions({ queryParams: memberListQueryParams }));
 
     return (
         <Page.Container queryClient={queryClient}>

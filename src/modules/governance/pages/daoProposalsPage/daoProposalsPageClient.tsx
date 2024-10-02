@@ -1,8 +1,8 @@
 'use client';
 
-import { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
