@@ -1,7 +1,7 @@
 import { type IPluginSettings } from '@/shared/api/daoService';
-import { useSupportedDaoPlugin } from '../useSupportedDaoPlugin';
-import { generatePluginSettings } from '@/shared/testUtils';
 import { daoMock } from '@/shared/api/daoService/daoService';
+import { generatePluginSettings } from '@/shared/testUtils';
+import { useSupportedDaoPlugin } from '../useSupportedDaoPlugin';
 
 export interface IUsePluginSettingsParams {
     /**
