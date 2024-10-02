@@ -21,7 +21,7 @@ export const DaoMembersInfo: React.FC<IDaoMembersInfoProps> = (props) => {
             slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO}
             pluginId={plugin.subdomain}
             daoId={daoId}
-            pluginAddress={plugin.address}
+            plugin={plugin}
         />
     );
 };

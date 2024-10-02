@@ -9,7 +9,7 @@ jest.mock('@/shared/components/pluginSingleComponent', () => ({
     ),
 }));
 
-describe('<DaoMemberInfo /> component', () => {
+describe('<DaoMembersInfo /> component', () => {
     const createTestComponent = (props?: Partial<IDaoMembersInfoProps>) => {
         const completeProps: IDaoMembersInfoProps = {
             daoId: 'test-id',

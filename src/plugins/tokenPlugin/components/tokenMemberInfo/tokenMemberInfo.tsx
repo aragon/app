@@ -1,9 +1,9 @@
 'use client';
 
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { usePluginSettings } from '@/shared/hooks/usePluginSettings';
 import {
     addressUtils,
     ChainEntityType,
@@ -23,31 +23,25 @@ export interface ITokenMemberInfoProps {
      */
     daoId: string;
     /**
-     * Address of the plugin to display the members for.
+     * DAO plugin to display the members info for.
      */
-    pluginAddress: string;
+    plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
 export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
-    const { daoId, pluginAddress } = props;
+    const { daoId, plugin } = props;
 
     const { t } = useTranslations();
 
-    const daoMemberParams = { daoId, pluginAddress };
+    const daoMemberParams = { daoId, pluginAddress: plugin.address };
     const { data: memberList } = useMemberList({ queryParams: daoMemberParams });
-
-    const pluginSettings = usePluginSettings<ITokenPluginSettings>({ daoId });
 
     const distribution = memberList?.pages[0].metadata.totalRecords;
 
-    const chainId = pluginSettings ? networkDefinitions[pluginSettings.token.network].chainId : undefined;
+    const chainId = networkDefinitions[plugin.settings.token.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
-    if (pluginSettings == null) {
-        return null;
-    }
-
-    const { token } = pluginSettings;
+    const { token } = plugin.settings;
     const parsedTotalSupply = formatUnits(BigInt(token.totalSupply), token.decimals);
 
     const formattedTotalSupply = formatterUtils.formatNumber(parsedTotalSupply, {

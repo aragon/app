@@ -1,4 +1,5 @@
 import {
+    generateDaoPlugin,
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
@@ -7,6 +8,7 @@ import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { generateMember } from '../../../../modules/governance/testUtils';
+import { generateMultisigPluginSettings } from '../../testUtils';
 import { type IMultisigMemberInfoProps, MultisigMemberInfo } from './multisigMemberInfo';
 
 // Needed to spy usage of useMemberList hook
@@ -25,7 +27,7 @@ describe('<MultisigMemberInfo /> component', () => {
     const createTestComponent = (props?: Partial<IMultisigMemberInfoProps>) => {
         const completeProps: IMultisigMemberInfoProps = {
             daoId: 'test-id',
-            pluginAddress: '0x123',
+            plugin: generateDaoPlugin({ settings: generateMultisigPluginSettings() }),
             ...props,
         };
 

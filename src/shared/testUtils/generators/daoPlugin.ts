@@ -1,7 +1,9 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { generatePluginSettings } from './pluginSettings';
 
-export const generateDaoPlugin = (daoPlugin?: Partial<IDaoPlugin>): IDaoPlugin => ({
+export const generateDaoPlugin = <TSettings extends IPluginSettings = IPluginSettings>(
+    daoPlugin?: Partial<IDaoPlugin<TSettings>>,
+): IDaoPlugin<TSettings> => ({
     address: '0x123',
     subdomain: 'unknown',
     release: '0',
@@ -9,6 +11,6 @@ export const generateDaoPlugin = (daoPlugin?: Partial<IDaoPlugin>): IDaoPlugin =
     isProcess: false,
     isBody: false,
     isSubPlugin: false,
-    settings: generatePluginSettings(),
+    settings: generatePluginSettings() as TSettings,
     ...daoPlugin,
 });

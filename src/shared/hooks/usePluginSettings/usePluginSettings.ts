@@ -8,6 +8,9 @@ export interface IUsePluginSettingsParams {
     daoId: string;
 }
 
+/**
+ * @deprecated Use the settings from the plugin object instead to support multi-plugin DAOs
+ */
 export const usePluginSettings = <TSettings extends IPluginSettings = IPluginSettings>(
     params: IUsePluginSettingsParams,
 ): TSettings | undefined => {
