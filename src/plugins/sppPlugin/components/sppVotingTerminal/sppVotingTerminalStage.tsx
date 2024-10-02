@@ -34,8 +34,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     // TODO: Support multiple proposals within a stage (APP-3659)
     const proposal = proposals?.[0];
 
-    const startDate = proposal?.startDate;
-
     const pluginIds = [stage.plugins[0].subdomain];
 
     const voteListParams = { queryParams: { proposalId: proposal?.id, pageSize: votesPerPage } };
@@ -46,7 +44,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         pluginIds,
     });
 
-    const processedStartDate = (startDate ?? 0) * 1000;
+    const processedStartDate = (proposal?.startDate ?? 0) * 1000;
     const processedEndDate = ((proposal?.blockTimestamp ?? 0) + stage.votingPeriod) * 1000;
 
     //TODO: Need to make adjustment in ODS to disable tabs for inactive proposals

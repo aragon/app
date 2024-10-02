@@ -48,6 +48,7 @@ export const SppVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props)
     const { t } = useTranslations();
 
     const settings = usePluginSettings<ISppPluginSettings>({ daoId });
+
     const processedStages = settings?.stages.map((stage, index) => ({
         stage,
         proposals: proposal.subProposals.filter((proposal) => proposal.stageId === stage.id),
