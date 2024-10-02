@@ -1,24 +1,22 @@
 import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { AddressInput, Button, Dropdown, IconType, InputNumber } from '@aragon/ods';
-import React, { useCallback } from 'react';
+import { AddressInput, Button, Dropdown, IconType } from '@aragon/ods';
+import { useCallback } from 'react';
 
-interface IMemberInputRowProps {
+interface IMultisigMemberInputRowProps {
     index: number;
     member: ITokenVotingMember;
     memberAddressInputValues: string[];
     setMemberAddressInputValues: React.Dispatch<React.SetStateAction<string[]>>;
     setMembers: React.Dispatch<React.SetStateAction<ITokenVotingMember[]>>;
-    tokenSymbol: string;
     handleRemoveMember: (index: number) => void;
 }
 
-export const MemberInputRow: React.FC<IMemberInputRowProps> = ({
+export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
     index,
     member,
     memberAddressInputValues,
     setMemberAddressInputValues,
     setMembers,
-    tokenSymbol,
     handleRemoveMember,
 }) => {
     const onChange = useCallback(
@@ -43,17 +41,6 @@ export const MemberInputRow: React.FC<IMemberInputRowProps> = ({
         [index, setMembers],
     );
 
-    const onTokenAmountChange = useCallback(
-        (value: string) => {
-            setMembers((prev) => {
-                const newMembers = [...prev];
-                newMembers[index].tokenAmount = value;
-                return newMembers;
-            });
-        },
-        [index, setMembers],
-    );
-
     return (
         <div className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6">
             <AddressInput
@@ -64,13 +51,6 @@ export const MemberInputRow: React.FC<IMemberInputRowProps> = ({
                 value={memberAddressInputValues[index] ?? ''}
                 onChange={onChange}
                 onAccept={onAccept}
-            />
-            <InputNumber
-                label="Tokens"
-                suffix={tokenSymbol}
-                min={1}
-                value={member.tokenAmount}
-                onChange={onTokenAmountChange}
             />
             <Dropdown.Container
                 customTrigger={<Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="self-end" />}

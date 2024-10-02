@@ -3,7 +3,6 @@ import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvid
 export enum CreateProcessWizardStep {
     METADATA = 'METADATA',
     STAGES = 'STAGES',
-    PERMISSIONS = 'PERMISSIONS',
 }
 
 export const createProcessWizardSteps: IWizardStepperStep[] = [
@@ -16,10 +15,5 @@ export const createProcessWizardSteps: IWizardStepperStep[] = [
         id: CreateProcessWizardStep.STAGES,
         order: 1,
         meta: { name: 'Setup Process' },
-    },
-    {
-        id: CreateProcessWizardStep.PERMISSIONS,
-        order: 2,
-        meta: { name: 'Setup Permissions' },
     },
 ];

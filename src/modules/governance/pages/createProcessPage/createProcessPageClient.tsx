@@ -1,5 +1,7 @@
 'use client';
 
+import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
@@ -24,6 +26,10 @@ const defaultBody: ICreateProcessFormBody = {
     governanceType: 'tokenVoting',
     tokenName: '',
     tokenSymbol: '',
+    supportThresholdPercentage: 50,
+    minimumParticipationPercentage: 50,
+    multisigThreshold: 1,
+    voteChange: false,
 };
 
 const defaultStage: ICreateProcessFormStage = {
@@ -49,8 +55,10 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
 
     const { t } = useTranslations();
 
+    const { open } = useDialogContext();
+
     const handleFormSubmit = (values: ICreateProcessFormData) => {
-        console.log(values);
+        open(GovernanceDialogs.PUBLISH_PROCESS, { params: { daoId, values, processValues: values } });
     };
 
     const processedSteps = useMemo(

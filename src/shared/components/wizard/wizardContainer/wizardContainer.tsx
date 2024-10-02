@@ -89,7 +89,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
                 </form>
                 <DevTool control={formMethods.control} />
             </WizardProvider>
-            <DevTool control={formMethods.control} />
+            {/* <DevTool control={formMethods.control} /> */}
         </FormProvider>
     );
 };

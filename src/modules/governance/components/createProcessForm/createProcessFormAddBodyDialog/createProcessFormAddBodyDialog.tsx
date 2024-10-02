@@ -3,24 +3,11 @@ import type {
     ICreateProcessFormBody,
     ITokenVotingMember,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { MemberInputRow } from '@/modules/governance/components/createProcessForm/memberInputRow/memberInputRow';
-import {
-    AlertInline,
-    Button,
-    Card,
-    Dialog,
-    formatterUtils,
-    IconType,
-    InputContainer,
-    InputNumber,
-    InputText,
-    NumberFormat,
-    Progress,
-    RadioCard,
-    RadioGroup,
-    Switch,
-    Tag,
-} from '@aragon/ods';
+import { CreateProcessFormMultisigDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultisigDetails/createProcessFormMultisigDetails';
+import { CreateProcessFormMultisigParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultsigParams/createProcessFormMultisigParams';
+import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
+import { CreateProcessFormTokenVotingParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingParams/createProcessFormTokenVotingParams';
+import { Button, Dialog, formatterUtils, InputText, NumberFormat, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -38,6 +25,7 @@ export interface ICreateProcessFormAddBodyDialogProps {
     supportThresholdPercentageField: any;
     minimumParticipationPercentageField: any;
     voteChangeField: any;
+    multisigThresholdField: any;
     initialValues?: ICreateProcessFormBody | null;
 }
 
@@ -51,6 +39,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         supportThresholdPercentageField,
         minimumParticipationPercentageField,
         voteChangeField,
+        multisigThresholdField,
         initialValues,
     } = props;
     const [step, setStep] = useState(0);
@@ -86,6 +75,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             supportThresholdPercentage: supportThresholdPercentageField.value,
             minimumParticipationPercentage: minimumParticipationPercentageField.value,
             voteChange: voteChangeField.value,
+            multisigThreshold: multisigThresholdField.value,
             members,
         });
 
@@ -117,37 +107,48 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         setStep(0);
         setIsBodyDialogOpen(false);
     };
-
     const handleAdvanceStep = async () => {
         if (step === 0) {
             const complete = await trigger([bodyNameField.name, bodyGovernanceTypeField.name]);
             if (complete) {
                 setStep(step + 1);
             }
-            return undefined;
+            return;
         }
-        {
-            if (step === 1) {
+
+        if (step === 1) {
+            if (bodyGovernanceTypeField.value === 'tokenVoting') {
                 const complete = await trigger([tokenNameField.name, tokenSymbolField.name]);
                 const membersComplete = members.every((member) => member.address && member.tokenAmount);
                 if (complete && membersComplete) {
                     setStep(step + 1);
                 }
-                return undefined;
+            } else if (bodyGovernanceTypeField.value === 'multisig') {
+                const membersComplete = members.every((member) => member.address);
+                if (membersComplete) {
+                    setStep(step + 1);
+                }
             }
+            return;
         }
+
         if (step === 2) {
-            const complete = await trigger([
-                supportThresholdPercentageField.name,
-                minimumParticipationPercentageField.name,
-                voteChangeField.name,
-            ]);
-            if (complete) {
-                return handleSave();
+            if (bodyGovernanceTypeField.value === 'tokenVoting') {
+                const complete = await trigger([
+                    supportThresholdPercentageField.name,
+                    minimumParticipationPercentageField.name,
+                    voteChangeField.name,
+                ]);
+                if (complete) {
+                    handleSave();
+                }
+            } else if (bodyGovernanceTypeField.value === 'multisig') {
+                const complete = await trigger([multisigThresholdField.name]);
+                if (complete) {
+                    handleSave();
+                }
             }
-            return undefined;
-        } else {
-            return undefined;
+            return;
         }
     };
 
@@ -195,6 +196,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                         <RadioGroup
                             className="flex gap-4"
                             helpText="What kind of governance would you like to add?"
+                            onValueChange={(value) => setValue(bodyGovernanceTypeField.name, value)}
                             {...bodyGovernanceTypeField}
                         >
                             <RadioCard
@@ -209,159 +211,58 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
                                 description="Define which addresses are members"
                                 value="multisig"
                             />
-                            <RadioCard
-                                className="w-full"
-                                label="Admin"
-                                description="Define a single address as member"
-                                value="admin"
-                                disabled={true}
-                            />
-                            <RadioCard
-                                className="w-full"
-                                label="External address"
-                                description="Define any kind of external EVM address"
-                                value="external"
-                                disabled={true}
-                            />
                         </RadioGroup>
                     </>
                 );
             case 1:
-                return (
-                    <>
-                        <RadioGroup
-                            className="flex gap-4 md:!flex-row"
-                            label="ERC20 token"
-                            helpText="Import or create a new ERC-20 token, which is used for this Token Voting Plugin"
-                            value="createToken"
-                        >
-                            <RadioCard
-                                disabled={true}
-                                className="w-full"
-                                label="Import token"
-                                description=""
-                                value="importToken"
-                            />
-                            <RadioCard className="w-full" label="Create new token" description="" value="createToken" />
-                        </RadioGroup>
-                        <InputText
-                            placeholder="Enter a name"
-                            helpText="The full name of the token. For example: Uniswap"
-                            {...tokenNameField}
+                if (bodyGovernanceTypeField.value === 'tokenVoting') {
+                    return (
+                        <CreateProcessFormTokenVotingDetails
+                            tokenNameField={tokenNameField}
+                            tokenSymbolField={tokenSymbolField}
+                            members={members}
+                            setMembers={setMembers}
+                            memberAddressInputValues={memberAddressInputValues}
+                            setMemberAddressInputValues={setMemberAddressInputValues}
+                            handleAddMember={handleAddMember}
+                            handleRemoveMember={handleRemoveMember}
                         />
-                        <InputText
-                            maxLength={10}
-                            placeholder="Enter a symbol"
-                            helpText="The abbreviation of the token. For example: UNI"
-                            {...tokenSymbolField}
+                    );
+                } else if (bodyGovernanceTypeField.value === 'multisig') {
+                    return (
+                        <CreateProcessFormMultisigDetails
+                            members={members}
+                            setMembers={setMembers}
+                            memberAddressInputValues={memberAddressInputValues}
+                            setMemberAddressInputValues={setMemberAddressInputValues}
+                            handleAddMember={handleAddMember}
+                            handleRemoveMember={handleRemoveMember}
                         />
-                        <InputContainer
-                            id="distribute"
-                            label="Distribute Tokens"
-                            helpText="Add the wallets you’d like to distribute tokens to, If you need help distributing tokens, read our guide."
-                            useCustomWrapper={true}
-                            alert={
-                                members.length === 0 ||
-                                (members.length >= 1 &&
-                                    !members.every((member) => member.address && member.tokenAmount))
-                                    ? { message: 'Please add a valid address or ENS', variant: 'critical' }
-                                    : undefined
-                            }
-                        >
-                            {members.map((member, index) => (
-                                <MemberInputRow
-                                    key={index}
-                                    index={index}
-                                    member={member}
-                                    memberAddressInputValues={memberAddressInputValues}
-                                    setMemberAddressInputValues={setMemberAddressInputValues}
-                                    setMembers={setMembers}
-                                    tokenSymbol={tokenSymbolField.value}
-                                    handleRemoveMember={handleRemoveMember}
-                                />
-                            ))}
-                        </InputContainer>
-                        <div className="flex w-full justify-between">
-                            <Button size="md" variant="tertiary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
-                                Add
-                            </Button>
-                        </div>
-                    </>
-                );
+                    );
+                }
+                break;
             case 2:
-                return (
-                    <div className="flex flex-col gap-y-6">
-                        <InputContainer
-                            id="threshold"
-                            helpText={`The percentage of tokens that vote "Yes" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.`}
-                            useCustomWrapper={true}
-                            {...supportThresholdPercentageField}
-                        >
-                            <Card className="flex flex-col gap-y-6 border border-neutral-100 p-6">
-                                <div className="flex items-center justify-between gap-x-6">
-                                    <InputNumber
-                                        prefix={supportThresholdPercentageField.value == 100 ? undefined : '>'}
-                                        suffix="%"
-                                        min={1}
-                                        max={100}
-                                        placeholder=">1%"
-                                        {...supportThresholdPercentageField}
-                                        label={undefined}
-                                    />
-                                    <div className="flex w-5/6 grow items-center gap-x-1">
-                                        <Tag label="Yes" variant="primary" />
-                                        <Progress
-                                            value={currentSupportThresholdPercentage}
-                                            thresholdIndicator={currentSupportThresholdPercentage}
-                                        />
-                                        <Tag label="No" variant="neutral" />
-                                    </div>
-                                </div>
-                                {supportThresholdPercentageField.value >= 50 && (
-                                    <AlertInline variant="success" message="Proposal will be approved by majority" />
-                                )}
-                            </Card>
-                        </InputContainer>
-                        <InputContainer
-                            id="participation"
-                            label="Minimum participation"
-                            helpText={`The percentage of tokens that participate in a proposal, out of the total test supply, must be greater than or equal to this value for the proposal to pass.`}
-                            useCustomWrapper={true}
-                            {...minimumParticipationPercentageField}
-                        >
-                            <Card className="flex flex-col border border-neutral-100 p-6">
-                                <div className="flex items-center justify-between gap-x-6">
-                                    <InputNumber
-                                        prefix={minimumParticipationPercentageField.value == 100 ? undefined : '>'}
-                                        suffix="%"
-                                        min={1}
-                                        max={100}
-                                        placeholder=">1%"
-                                        className="max-w-fit shrink"
-                                        {...minimumParticipationPercentageField}
-                                        label={undefined}
-                                    />
-                                    <div className="h-full w-5/6 grow flex-col gap-y-3">
-                                        <p className="text-primary-400">
-                                            {formattedPercentageParticipation} {tokenSymbolField.value}
-                                        </p>
-                                        <Progress value={minimumParticipationPercentageField.value} />
-                                        <p className="text-right">
-                                            of {formattedTotalTokenAmount} {tokenSymbolField.value}
-                                        </p>
-                                    </div>
-                                </div>
-                            </Card>
-                        </InputContainer>
-                        <Switch
-                            helpText="Allows voters to change their vote during the voting period. This setting can’t be enabled if early execution is enabled."
-                            inlineLabel={voteChangeField.value ? 'Yes' : 'No'}
-                            onCheckedChanged={(checked) => setValue(voteChangeField.name, checked)}
-                            checked={voteChangeField.value}
-                            {...voteChangeField}
+                if (bodyGovernanceTypeField.value === 'tokenVoting') {
+                    return (
+                        <CreateProcessFormTokenVotingParams
+                            supportThresholdPercentageField={supportThresholdPercentageField}
+                            minimumParticipationPercentageField={minimumParticipationPercentageField}
+                            voteChangeField={voteChangeField}
+                            members={members}
+                            tokenSymbolField={tokenSymbolField}
+                            setValue={setValue}
                         />
-                    </div>
-                );
+                    );
+                } else if (bodyGovernanceTypeField.value === 'multisig') {
+                    return (
+                        <CreateProcessFormMultisigParams
+                            multisigThresholdField={multisigThresholdField}
+                            members={members}
+                            setValue={setValue}
+                        />
+                    );
+                }
+                break;
             default:
                 return <></>;
         }

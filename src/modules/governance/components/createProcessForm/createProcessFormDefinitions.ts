@@ -20,7 +20,7 @@ export interface ICreateProcessFormBody {
     /**
      * Governance type of the body
      */
-    governanceType: 'tokenVoting';
+    governanceType: 'tokenVoting' | 'multisig';
     /**
      * Token name
      */
@@ -32,11 +32,12 @@ export interface ICreateProcessFormBody {
     /**
      * Members of the body
      */
-    members?: ITokenVotingMember[];
+    members: ITokenVotingMember[];
 
     supportThresholdPercentage: number;
     minimumParticipationPercentage: number;
     voteChange: boolean;
+    multisigThreshold: number;
 }
 
 export interface ICreateProcessFormStage {
@@ -63,7 +64,7 @@ export interface ICreateProcessFormStage {
     /**
      * Voting bodies
      */
-    votingBodies: ICreateProcessFormBody[];
+    bodies: ICreateProcessFormBody[];
     /**
      * Number of bodies required to approve
      */

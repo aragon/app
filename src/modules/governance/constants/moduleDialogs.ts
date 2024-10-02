@@ -2,9 +2,11 @@ import { type IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
 import { VoteDialog } from '../dialogs/voteDialog';
+import { PublishProcessDialog } from './../dialogs/publishProcessDialog/publishProcessDialog';
 
 export enum GovernanceDialogs {
     PUBLISH_PROPOSAL = 'PUBLISH_PROPOSAL',
+    PUBLISH_PROCESS = 'PUBLISH_PROCESS',
     VOTE = 'VOTE',
     EXECUTE = 'EXECUTE',
 }
@@ -14,6 +16,11 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
         Component: PublishProposalDialog,
         title: 'app.governance.publishProposalDialog.title',
         description: 'app.governance.publishProposalDialog.description',
+    },
+    [GovernanceDialogs.PUBLISH_PROCESS]: {
+        Component: PublishProcessDialog,
+        title: 'app.governance.publishProcessDialog.title',
+        description: 'app.governance.publishProcessDialog.description',
     },
     [GovernanceDialogs.EXECUTE]: {
         Component: ExecuteDialog,

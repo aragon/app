@@ -25,7 +25,6 @@ import {
     formatterUtils,
     useBlockExplorer,
 } from '@aragon/ods';
-import React from 'react';
 
 export interface IDaoDashboardPageClientProps {
     /**
