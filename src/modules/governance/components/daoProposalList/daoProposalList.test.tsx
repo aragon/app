@@ -6,12 +6,8 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 
 jest.mock('@/shared/components/pluginTabComponent', () => ({
-    PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin }) => (
-        <div
-            data-testid="plugin-component-mock"
-            data-slotid={props.slotId}
-            data-plugins={JSON.stringify(props.plugins)}
-        />
+    PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
+        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-plugins={props.plugins[0].id} />
     ),
 }));
 
@@ -32,12 +28,12 @@ describe('<DaoProposalList /> component', () => {
     };
 
     it('renders a plugin tab component with the process plugins and the correct slot it', () => {
-        const plugins = [{ id: 'token', tabId: '0x123-token', label: 'Token', meta: generateDaoPlugin() }];
+        const plugins = [{ id: 'token', tabId: '0x123-token', label: 'Token', meta: generateDaoPlugin(), props: {} }];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent).toBeInTheDocument();
         expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST);
-        expect(pluginComponent.dataset.plugins).toEqual(JSON.stringify(plugins));
+        expect(pluginComponent.dataset.plugins).toEqual(plugins[0].id);
     });
 });

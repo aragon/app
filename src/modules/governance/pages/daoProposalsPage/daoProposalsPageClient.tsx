@@ -1,8 +1,6 @@
 'use client';
 
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
@@ -24,7 +22,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const { t } = useTranslations();
 
     const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS })!;
-    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(processPlugins[0]);
+    const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
 
     return (
         <>

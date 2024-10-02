@@ -27,16 +27,18 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
     const { initialParams, value, ...otherProps } = props;
 
     const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS });
+    const processedPlugins = processPlugins?.map((plugin) => {
+        const pluginInitialParams = { ...initialParams };
+        pluginInitialParams.queryParams = { ...initialParams.queryParams, pluginAddress: plugin.meta.address };
 
-    const pluginQueryParams = { ...initialParams.queryParams, pluginAddress: value?.meta.address };
-    const processedParams = { ...initialParams, queryParams: pluginQueryParams };
+        return { ...plugin, props: { initialParams: pluginInitialParams } };
+    });
 
     return (
         <PluginTabComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
-            plugins={processPlugins}
+            plugins={processedPlugins}
             value={value}
-            initialParams={processedParams}
             {...otherProps}
         />
     );

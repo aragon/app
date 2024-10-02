@@ -16,6 +16,10 @@ export interface IGetDaoPluginsParams {
      * Only returns the plugins with the specified type when set.
      */
     type?: PluginType;
+    /**
+     * Only returns the plugin with the specified address when set.
+     */
+    pluginAddress?: string;
 }
 
 class DaoUtils {
@@ -50,13 +54,14 @@ class DaoUtils {
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
-        const { type } = params ?? {};
+        const { type, pluginAddress } = params ?? {};
 
         return dao?.plugins.filter(
             (plugin) =>
-                type == null ||
-                (type === PluginType.BODY && plugin.isBody) ||
-                (type === PluginType.PROCESS && plugin.isProcess && !plugin.isSubPlugin),
+                (pluginAddress == null || plugin.address === pluginAddress) &&
+                (type == null ||
+                    (type === PluginType.BODY && plugin.isBody) ||
+                    (type === PluginType.PROCESS && plugin.isProcess && !plugin.isSubPlugin)),
         );
     };
 }

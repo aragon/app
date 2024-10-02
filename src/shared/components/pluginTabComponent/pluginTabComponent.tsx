@@ -2,7 +2,7 @@ import { pluginRegistryUtils, type SlotId } from '@/shared/utils/pluginRegistryU
 import { Tabs } from '@aragon/ods';
 import { useState } from 'react';
 
-export interface ITabComponentPlugin<TMeta extends object = object> {
+export interface ITabComponentPlugin<TMeta extends object = object, TProps extends object = object> {
     /**
      * ID of the plugin.
      */
@@ -16,12 +16,16 @@ export interface ITabComponentPlugin<TMeta extends object = object> {
      */
     label?: string;
     /**
-     * Additional metadata to be forwarded to the plugin component.
+     * Metadata of the tab component plugin.
      */
     meta: TMeta;
+    /**
+     * Additional properties to be forwarded to the plugin component.
+     */
+    props: TProps;
 }
 
-export interface IPluginTabComponentProps<TMeta extends object = object> {
+export interface IPluginTabComponentProps<TMeta extends object = object, TProps extends object = object> {
     /**
      * Id of the slot component to load.
      */
@@ -29,22 +33,24 @@ export interface IPluginTabComponentProps<TMeta extends object = object> {
     /**
      * Plugin definitions to load the component from.
      */
-    plugins?: Array<ITabComponentPlugin<TMeta>>;
+    plugins?: Array<ITabComponentPlugin<TMeta, TProps>>;
     /**
      * Current active plugin to be displayed, defaults to the first plugin.
      */
-    value?: ITabComponentPlugin<TMeta>;
+    value?: ITabComponentPlugin<TMeta, TProps>;
     /**
      * Callback triggered on active plugin change.
      */
-    onValueChange?: (value: ITabComponentPlugin<TMeta>) => void;
+    onValueChange?: (value: ITabComponentPlugin<TMeta, TProps>) => void;
     /**
      * Other properties passed to the loaded component.
      */
     [key: string]: unknown;
 }
 
-export const PluginTabComponent = <TMeta extends object>(props: IPluginTabComponentProps<TMeta>) => {
+export const PluginTabComponent = <TMeta extends object, TProps extends object>(
+    props: IPluginTabComponentProps<TMeta, TProps>,
+) => {
     const { slotId, plugins = [], value, onValueChange, ...otherProps } = props;
 
     const pluginComponents = plugins
@@ -55,7 +61,9 @@ export const PluginTabComponent = <TMeta extends object>(props: IPluginTabCompon
         .filter(({ Component }) => Component != null);
 
     const defaultActivePlugin = value ?? pluginComponents[0];
-    const [activePlugin, setActivePlugin] = useState<ITabComponentPlugin<TMeta> | undefined>(defaultActivePlugin);
+    const [activePlugin, setActivePlugin] = useState<ITabComponentPlugin<TMeta, TProps> | undefined>(
+        defaultActivePlugin,
+    );
 
     const updateActivePlugin = (tabId: string) => {
         const plugin = plugins.find((plugin) => plugin.tabId === tabId)!;
@@ -68,9 +76,9 @@ export const PluginTabComponent = <TMeta extends object>(props: IPluginTabCompon
     }
 
     if (pluginComponents.length === 1) {
-        const { Component } = pluginComponents[0];
+        const { Component, props } = pluginComponents[0];
 
-        return <Component {...otherProps} />;
+        return <Component {...props} {...otherProps} />;
     }
 
     return (
@@ -80,9 +88,9 @@ export const PluginTabComponent = <TMeta extends object>(props: IPluginTabCompon
                     <Tabs.Trigger key={tabId} label={label ?? id} value={tabId} />
                 ))}
             </Tabs.List>
-            {pluginComponents.map(({ tabId, Component, meta }) => (
+            {pluginComponents.map(({ tabId, Component, props }) => (
                 <Tabs.Content key={tabId} value={tabId} className="pt-5">
-                    <Component {...otherProps} {...meta} />
+                    <Component {...props} {...otherProps} />
                 </Tabs.Content>
             ))}
         </Tabs.Root>

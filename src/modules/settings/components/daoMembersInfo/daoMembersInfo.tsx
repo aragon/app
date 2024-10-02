@@ -1,6 +1,8 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useState } from 'react';
 
 export interface IDaoMembersInfoProps {
     /**
@@ -8,20 +10,26 @@ export interface IDaoMembersInfoProps {
      */
     daoId: string;
     /**
-     * Plugin to display the info for.
+     * DAO plugin to display the governance info for. Renders the info for all DAO plugins when not set.
      */
-    plugin: IDaoPlugin;
+    plugin?: IDaoPlugin;
 }
 
 export const DaoMembersInfo: React.FC<IDaoMembersInfoProps> = (props) => {
     const { daoId, plugin } = props;
 
+    const daoPlugins = useDaoPlugins({ daoId, pluginAddress: plugin?.address })!;
+    const [selectedPlugin, setSelectedPlugin] = useState(daoPlugins[0]);
+
+    const processedPlugins = daoPlugins.map((plugin) => ({ ...plugin, props: { plugin: plugin.meta } }));
+
     return (
-        <PluginSingleComponent
+        <PluginTabComponent
             slotId={SettingsSlotId.SETTINGS_MEMBERS_INFO}
-            pluginId={plugin.subdomain}
+            plugins={processedPlugins}
+            value={selectedPlugin}
+            onValueChange={setSelectedPlugin}
             daoId={daoId}
-            plugin={plugin}
         />
     );
 };

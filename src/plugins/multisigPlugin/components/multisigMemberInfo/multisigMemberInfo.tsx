@@ -1,10 +1,10 @@
 'use client';
 
-import { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, IconType, Link } from '@aragon/ods';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
-import { IMultisigPluginSettings } from '../../types';
+import type { IMultisigPluginSettings } from '../../types';
 
 export interface IMultisigMemberInfoProps {
     /**

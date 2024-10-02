@@ -1,7 +1,7 @@
 'use client';
 
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
