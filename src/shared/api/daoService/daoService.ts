@@ -1,5 +1,5 @@
-import { generateMultisigPluginSettings } from '@/plugins/multisigPlugin/testUtils';
-import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
+import { generateMultisigPluginSettings } from '@/plugins/multisigPlugin/testUtils/generators/multisigPluginSettings';
+import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils/generators/tokenPluginSettings';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { AragonBackendService } from '../aragonBackendService';
 import type { IGetDaoParams } from './daoService.api';
