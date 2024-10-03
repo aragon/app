@@ -28,7 +28,7 @@ describe('<VoteList /> component', () => {
         return <VoteList {...completeProps} />;
     };
 
-    it('renders a plugin tab component with the process plugins and the dao-vote-list slot it', () => {
+    it('renders a plugin tab component with the process plugins and the dao-vote-list slot id', () => {
         const daoPlugin = generateDaoPlugin({ address: '0x1239478' });
         const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
         useDaoPluginsSpy.mockReturnValue(plugins);
