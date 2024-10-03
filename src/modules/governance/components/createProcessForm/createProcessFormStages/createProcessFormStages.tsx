@@ -1,4 +1,4 @@
-import { CreateProcessFormStageFields } from '@/modules/governance/components/createProcessForm/createProcessFormStageInputs/';
+import { CreateProcessFormStageFields } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
 import { Button, IconType } from '@aragon/ods';
 import { useFieldArray } from 'react-hook-form';
 

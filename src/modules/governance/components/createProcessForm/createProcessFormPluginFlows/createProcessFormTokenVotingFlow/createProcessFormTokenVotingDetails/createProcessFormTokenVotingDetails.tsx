@@ -1,5 +1,5 @@
 import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { TokenVotingMemberInputRow } from '@/modules/governance/components/createProcessForm/tokenVotingMemberInputRow/tokenVotingMemberInputRow';
+import { TokenVotingMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingMemberInputRow/tokenVotingMemberInputRow';
 import { Button, IconType, InputContainer, InputText } from '@aragon/ods';
 
 export interface ICreateProcessFormTokenVotingDetailsProps {

@@ -5,7 +5,7 @@ import {
 } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
 
 import { CreateProcessFormBodyField } from '@/modules/governance/components/createProcessForm/createProcessFormBodyField';
-import { ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageInputs';
+import { ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
 import { CreateProcessFormTimingSummary } from '@/modules/governance/components/createProcessForm/createProcessFormTimingSummary';
 import {
     addressUtils,
@@ -26,8 +26,8 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog';
-import { getBodyFieldsArray } from '../getFormFields/getBodyFields';
-import { getAllStageFields } from '../getFormFields/getStageFields';
+import { getBodyFieldsArray } from '../utils/getBodyFields';
+import { getAllStageFields } from '../utils/getStageFields';
 
 export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageFieldsProps> = (props) => {
     const { stageFields, stageName, stageIndex, stageRemove } = props;

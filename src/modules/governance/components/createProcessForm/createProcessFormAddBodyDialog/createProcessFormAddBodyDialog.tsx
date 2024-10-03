@@ -7,7 +7,7 @@ import { CreateProcessFormMultisigDetails } from '@/modules/governance/component
 import { CreateProcessFormMultisigParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultsigParams/createProcessFormMultisigParams';
 import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
 import { CreateProcessFormTokenVotingParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingParams/createProcessFormTokenVotingParams';
-import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/getFormFields/getBodyFields';
+import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/utils/getBodyFields';
 import { Button, Dialog, formatterUtils, InputText, NumberFormat, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
 import { useEffect, useState } from 'react';

@@ -1,5 +1,5 @@
 import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { MultisigMemberInputRow } from '@/modules/governance/components/createProcessForm/multisigMemberInputRow/multisigMemberInputRow';
+import { MultisigMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMemberInputRow/multisigMemberInputRow';
 import { Button, IconType, InputContainer } from '@aragon/ods';
 
 export interface ICreateProcessFormMultisigDetailsProps {

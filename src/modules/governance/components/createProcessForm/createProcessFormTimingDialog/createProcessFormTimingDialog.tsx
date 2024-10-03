@@ -1,4 +1,4 @@
-import { type StageBaseFormFields } from '@/modules/governance/components/createProcessForm/createProcessFormStageInputs';
+import { type StageBaseFormFields } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IUseFormFieldReturn } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
