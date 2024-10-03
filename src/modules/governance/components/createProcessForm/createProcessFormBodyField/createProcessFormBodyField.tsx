@@ -12,15 +12,30 @@ import {
     Tag,
 } from '@aragon/ods';
 
-interface CreateProcessBodyFieldProps {
+export interface ICreateProcessFormBodyFieldProps {
+    /**
+     * The body fields.
+     */
     bodyFields: any[];
+    /**
+     * Callback to set the selected body index.
+     */
     setSelectedBodyIndex: (index: number) => void;
+    /**
+     * Callback to set the body dialog open.
+     */
     setIsBodyDialogOpen: (isOpen: boolean) => void;
+    /**
+     * Callback to remove a body.
+     */
     removeBody: (index: number) => void;
+    /**
+     * Callback to format the address with the block explorer.
+     */
     formattedAddressWithBlockExplorer: (address: string) => React.ReactNode;
 }
 
-export const CreateProcessFormBodyField: React.FC<CreateProcessBodyFieldProps> = ({
+export const CreateProcessFormBodyField: React.FC<ICreateProcessFormBodyFieldProps> = ({
     bodyFields,
     setSelectedBodyIndex,
     setIsBodyDialogOpen,

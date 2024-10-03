@@ -2,12 +2,30 @@ import { ITokenVotingMember } from '@/modules/governance/components/createProces
 import { AddressInput, Button, Dropdown, IconType } from '@aragon/ods';
 import { useCallback } from 'react';
 
-interface IMultisigMemberInputRowProps {
+export interface IMultisigMemberInputRowProps {
+    /**
+     * The index of the member.
+     */
     index: number;
+    /**
+     * The member of the body.
+     */
     member: ITokenVotingMember;
+    /**
+     * The member address input values.
+     */
     memberAddressInputValues: string[];
+    /**
+     * Callback to set the member address input values for controlled component.
+     */
     setMemberAddressInputValues: React.Dispatch<React.SetStateAction<string[]>>;
+    /**
+     * Callback to set the actual members to the field on save.
+     */
     setMembers: React.Dispatch<React.SetStateAction<ITokenVotingMember[]>>;
+    /**
+     * Callback to remove a member.
+     */
     handleRemoveMember: (index: number) => void;
 }
 

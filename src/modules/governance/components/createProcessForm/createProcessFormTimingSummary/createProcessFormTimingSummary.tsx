@@ -1,7 +1,7 @@
 import { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, Tag } from '@aragon/ods';
 
-interface CreateProcessFormTimingSummaryProps {
+export interface ICreateProcessFormTimingSummaryProps {
     votingPeriodField: any;
     earlyStageField: any;
     stageExpirationField: any;
@@ -10,7 +10,7 @@ interface CreateProcessFormTimingSummaryProps {
     onEditTimingClick: () => void;
 }
 
-export const CreateProcessFormTimingSummary: React.FC<CreateProcessFormTimingSummaryProps> = ({
+export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSummaryProps> = ({
     votingPeriodField,
     earlyStageField,
     stageExpirationField,

@@ -2,7 +2,7 @@ import { ITokenVotingMember } from '@/modules/governance/components/createProces
 import { AddressInput, Button, Dropdown, IconType, InputNumber } from '@aragon/ods';
 import { useCallback } from 'react';
 
-interface ITokenVotingMemberInputRow {
+export interface ITokenVotingMemberInputRow {
     index: number;
     member: ITokenVotingMember;
     memberAddressInputValues: string[];

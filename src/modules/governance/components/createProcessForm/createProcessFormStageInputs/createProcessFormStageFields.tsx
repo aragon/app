@@ -1,14 +1,12 @@
-import {
-    ICreateProcessFormData,
-    type ICreateProcessFormBody,
-} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { type ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import {
     CreateProcessFormTimingDialog,
     type ICreateProcessFormTimingValues,
 } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
 
-import { CreateProcessFormBodyField } from '@/modules/governance/components/createProcessForm/createProcessFormBodyField/createProcessFormBodyField';
-import { CreateProcessFormTimingSummary } from '@/modules/governance/components/createProcessForm/createProcessFormTimingSummary/createProcessFormTimingSummary';
+import { CreateProcessFormBodyField } from '@/modules/governance/components/createProcessForm/createProcessFormBodyField';
+import { ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageInputs';
+import { CreateProcessFormTimingSummary } from '@/modules/governance/components/createProcessForm/createProcessFormTimingSummary';
 import {
     addressUtils,
     Button,
@@ -31,36 +29,15 @@ import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialo
 import { getBodyFieldsArray } from '../getFormFields/getBodyFields';
 import { getAllStageFields } from '../getFormFields/getStageFields';
 
-export interface IStageInputItemProps {
-    /**
-     * Name of the field.
-     */
-    stageName: string;
-    /**
-     * The index of the stage in the list.
-     */
-    stageIndex: number;
-    /**
-     * Callback to remove the proposed stage.
-     */
-    stageRemove: (index: number) => void;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type StageInputItemBaseForm = Record<string, any>;
-
-export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
+export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageFieldsProps> = (props) => {
+    const { stageFields, stageName, stageIndex, stageRemove } = props;
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
     const [isBodyDialogOpen, setIsBodyDialogOpen] = useState(false);
     const [selectedBodyIndex, setSelectedBodyIndex] = useState<number>(-1);
-    const { stageName, stageIndex, stageRemove } = props;
     const chainId = useChainId();
 
     const { setValue, getValues } = useFormContext();
     const { buildEntityUrl } = useBlockExplorer();
-
-    /** @ts-expect-error need to figure out formData typing in several places */
-    const currentValues: ICreateProcessFormData = getValues();
 
     const {
         stageNameField,
@@ -192,7 +169,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         }
                     />
                 )}
-                {currentValues.stages.length > 1 && (
+                {stageFields.length > 1 && (
                     <div className="flex self-end">
                         <Dropdown.Container
                             constrainContentWidth={false}

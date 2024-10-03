@@ -13,7 +13,7 @@ import {
 } from '@aragon/ods';
 import { useEffect, useState } from 'react';
 
-interface ICreateProcessFormTokenVotingParams {
+export interface ICreateProcessFormTokenVotingParamsProps {
     supportThresholdPercentageField: any;
     minimumParticipationPercentageField: any;
     voteChangeField: any;
@@ -22,14 +22,15 @@ interface ICreateProcessFormTokenVotingParams {
     setValue: any;
 }
 
-export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormTokenVotingParams> = ({
-    supportThresholdPercentageField,
-    minimumParticipationPercentageField,
-    voteChangeField,
-    members,
-    tokenSymbolField,
-    setValue,
-}) => {
+export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormTokenVotingParamsProps> = (props) => {
+    const {
+        supportThresholdPercentageField,
+        minimumParticipationPercentageField,
+        voteChangeField,
+        members,
+        tokenSymbolField,
+        setValue,
+    } = props;
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
 

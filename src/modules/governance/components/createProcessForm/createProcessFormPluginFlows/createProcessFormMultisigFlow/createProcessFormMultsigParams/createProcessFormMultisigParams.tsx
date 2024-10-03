@@ -1,18 +1,15 @@
-// MultisigStep2.tsx
 import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { InputContainer, InputNumber } from '@aragon/ods';
 
-interface ICreateProcessFormMultisigParams {
+export interface ICreateProcessFormMultisigParamsProps {
     multisigThresholdField: any;
     members: ITokenVotingMember[];
     setValue: any;
 }
 
-export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParams> = ({
-    multisigThresholdField,
-    members,
-    setValue,
-}) => {
+export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParamsProps> = (props) => {
+    const { multisigThresholdField, members, setValue } = props;
+
     return (
         <>
             <InputContainer

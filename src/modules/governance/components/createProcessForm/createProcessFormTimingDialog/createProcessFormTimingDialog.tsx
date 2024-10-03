@@ -1,4 +1,4 @@
-import { type StageInputItemBaseForm } from '@/modules/governance/components/createProcessForm/stageInput/stageInputItem';
+import { type StageBaseFormFields } from '@/modules/governance/components/createProcessForm/createProcessFormStageInputs';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IUseFormFieldReturn } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
@@ -21,7 +21,7 @@ export interface ICreateProcessFormTimingDialogProps {
     /**
      * The stage expiration field.
      */
-    stageExpirationField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
+    stageExpirationField: IUseFormFieldReturn<StageBaseFormFields, string>;
     /**
      * Whether the stage should expire.
      */
@@ -29,7 +29,7 @@ export interface ICreateProcessFormTimingDialogProps {
     /**
      * The early stage field.
      */
-    earlyStageField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
+    earlyStageField: IUseFormFieldReturn<StageBaseFormFields, string>;
     /**
      * The voting period field.
      */
@@ -37,7 +37,7 @@ export interface ICreateProcessFormTimingDialogProps {
     /**
      * The type of process.
      */
-    typeField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
+    typeField: IUseFormFieldReturn<StageBaseFormFields, string>;
 }
 
 export interface ICreateProcessFormTimingValues {

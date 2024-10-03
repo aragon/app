@@ -1,7 +1,8 @@
 import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { MultisigMemberInputRow } from '@/modules/governance/components/createProcessForm/multisigMemberInputRow/multisigMemberInputRow';
 import { Button, IconType, InputContainer } from '@aragon/ods';
-interface ICreateProcessFormMultisigDetails {
+
+export interface ICreateProcessFormMultisigDetailsProps {
     members: ITokenVotingMember[];
     setMembers: React.Dispatch<React.SetStateAction<ITokenVotingMember[]>>;
     memberAddressInputValues: string[];
@@ -10,14 +11,15 @@ interface ICreateProcessFormMultisigDetails {
     handleRemoveMember: (index: number) => void;
 }
 
-export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultisigDetails> = ({
-    members,
-    setMembers,
-    memberAddressInputValues,
-    setMemberAddressInputValues,
-    handleAddMember,
-    handleRemoveMember,
-}) => {
+export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultisigDetailsProps> = (props) => {
+    const {
+        members,
+        setMembers,
+        memberAddressInputValues,
+        setMemberAddressInputValues,
+        handleAddMember,
+        handleRemoveMember,
+    } = props;
     return (
         <>
             <InputContainer
