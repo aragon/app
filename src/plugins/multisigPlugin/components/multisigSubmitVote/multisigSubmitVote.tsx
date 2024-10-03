@@ -3,7 +3,7 @@ import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog'
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button } from '@aragon/ods';
-import { IMultisigProposal } from '../../types';
+import type { IMultisigProposal } from '../../types';
 
 export interface IMultisigSubmitVoteProps {
     /**

@@ -1,7 +1,7 @@
 import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type Hex } from 'viem';
-import { IProposal } from '../../api/governanceService';
+import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IBuildVoteDataParams } from '../../types';
 

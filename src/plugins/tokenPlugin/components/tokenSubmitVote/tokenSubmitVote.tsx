@@ -4,7 +4,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Card, RadioCard, RadioGroup, type VoteIndicator } from '@aragon/ods';
 import { useState } from 'react';
-import { ITokenProposal, VoteOption } from '../../types';
+import { type ITokenProposal, VoteOption } from '../../types';
 
 export interface ITokenSubmitVoteProps {
     /**

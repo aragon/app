@@ -9,7 +9,7 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/ods';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
-import { IProposal } from '../../api/governanceService';
+import type { IProposal } from '../../api/governanceService';
 import { voteDialogUtils } from './voteDialogUtils';
 
 export interface IVoteDialogParams {
