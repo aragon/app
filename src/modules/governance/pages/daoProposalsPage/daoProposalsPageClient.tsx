@@ -30,7 +30,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 title={t('app.governance.daoProposalsPage.main.title')}
                 action={{
                     label: t('app.governance.daoProposalsPage.main.action'),
-                    href: `/dao/${initialParams.queryParams.daoId}/create/proposal`,
+                    href: `/dao/${initialParams.queryParams.daoId}/create/${selectedPlugin.meta.address}/proposal`,
                 }}
             >
                 <DaoProposalList

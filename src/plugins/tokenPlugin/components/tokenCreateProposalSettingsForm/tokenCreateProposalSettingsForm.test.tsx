@@ -1,6 +1,5 @@
 import type { IAdvancedDateInputProps } from '@/shared/components/forms/advancedDateInput';
-import * as usePluginSettings from '@/shared/hooks/usePluginSettings';
-import { FormWrapper } from '@/shared/testUtils';
+import { FormWrapper, generateDaoPlugin } from '@/shared/testUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
@@ -26,25 +25,22 @@ jest.mock('@/shared/components/forms/advancedDateInput', () => ({
 }));
 
 describe('<TokenCreateProposalSettingsForm /> component', () => {
-    const usePluginSettingsSpy = jest.spyOn(usePluginSettings, 'usePluginSettings');
     const secondsToDaysHoursMinutesSpy = jest.spyOn(dateUtils, 'secondsToDaysHoursMinutes');
     const useWatchSpy = jest.spyOn(ReactHookForm, 'useWatch');
 
     beforeEach(() => {
-        usePluginSettingsSpy.mockReturnValue(generateTokenPluginSettings());
         secondsToDaysHoursMinutesSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
         useWatchSpy.mockReturnValue({ date: '2024-09-01', time: '12:00' });
     });
 
     afterEach(() => {
-        usePluginSettingsSpy.mockReset();
         secondsToDaysHoursMinutesSpy.mockReset();
         useWatchSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenCreateProposalSettingsFormProps>) => {
         const completeProps: ITokenCreateProposalSettingsFormProps = {
-            daoId: 'test-dao-id',
+            plugin: generateDaoPlugin({ settings: generateTokenPluginSettings() }),
             ...props,
         };
         return (
@@ -86,20 +82,10 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         expect(endTimeInput).toHaveTextContent('Min Duration: {"days":0,"hours":1,"minutes":0}');
     });
 
-    it('retrieves plugin settings with correct params', () => {
-        render(createTestComponent({ daoId: 'My DAO' }));
-        expect(usePluginSettingsSpy).toHaveBeenCalledWith({ daoId: 'My DAO' });
-    });
-
     it('uses the correct min duration from the plugin settings', () => {
         const pluginSettings = generateTokenPluginSettings({ minDuration: 3600 });
-        usePluginSettingsSpy.mockReturnValue(pluginSettings);
-        render(createTestComponent());
+        const plugin = generateDaoPlugin({ settings: pluginSettings });
+        render(createTestComponent({ plugin }));
         expect(secondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(3600);
-    });
-
-    it('handles undefined minDuration', () => {
-        render(createTestComponent());
-        expect(secondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(0);
     });
 });

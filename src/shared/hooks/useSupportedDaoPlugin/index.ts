@@ -1,1 +1,0 @@
-export { useSupportedDaoPlugin } from './useSupportedDaoPlugin';
