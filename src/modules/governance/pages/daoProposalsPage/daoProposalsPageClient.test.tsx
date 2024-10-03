@@ -41,12 +41,15 @@ describe('<DaoProposalsPageClient /> component', () => {
 
     it('renders the create proposal button with the correct link and label', () => {
         const daoId = 'test-id';
-        const initialParams = { queryParams: { daoId, pluginAddress: '0x123' } };
+        const pluginAddress = '0x082729';
+        const initialParams = { queryParams: { daoId, pluginAddress } };
+        const plugin = generateDaoPlugin({ address: pluginAddress });
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
         render(createTestComponent({ initialParams }));
         const createProposalButton = screen.getByRole<HTMLAnchorElement>('link', {
             name: /daoProposalsPage.main.action/,
         });
         expect(createProposalButton).toBeInTheDocument();
-        expect(createProposalButton).toHaveAttribute('href', `/dao/${daoId}/create/proposal`);
+        expect(createProposalButton).toHaveAttribute('href', `/dao/${daoId}/create/${pluginAddress}/proposal`);
     });
 });

@@ -1,24 +1,28 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { PluginComponent } from '@/shared/components/pluginComponent';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 
 export interface ICreateProposalFormSettingsProps {
     /**
      * The ID of the DAO.
      */
     daoId: string;
+    /**
+     * Address of the plugin to create the proposal for.
+     */
+    pluginAddress: string;
 }
 
 export const CreateProposalFormSettings: React.FC<ICreateProposalFormSettingsProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, pluginAddress } = props;
 
-    const pluginIds = useDaoPluginIds(daoId);
+    const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
 
     return (
-        <PluginComponent
+        <PluginSingleComponent
             slotId={GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM}
-            pluginIds={pluginIds}
-            daoId={daoId}
+            pluginId={daoPlugin.id}
+            plugin={daoPlugin.meta}
         />
     );
 };
