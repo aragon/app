@@ -8,14 +8,14 @@ export type StageInputBaseForm = Record<string, IStageInputResource[]>;
 export const StageInput: React.FC<IStageInputProps> = (props) => {
     const { name } = props;
 
-    const { fields, append, remove } = useFieldArray<StageInputBaseForm>({ name });
+    const { fields: stageFields, append: appendStage, remove: removeStage } = useFieldArray({ name });
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
-            {fields.length > 0 && (
+            {stageFields.length > 0 && (
                 <div className="flex flex-col gap-3 md:gap-2">
-                    {fields.map((field, index) => (
-                        <StageInputItem key={field.id} name={name} index={index} remove={remove} />
+                    {stageFields.map((field, index) => (
+                        <StageInputItem key={field.id} stageName={name} stageIndex={index} stageRemove={removeStage} />
                     ))}
                 </div>
             )}
@@ -24,7 +24,7 @@ export const StageInput: React.FC<IStageInputProps> = (props) => {
                 variant="tertiary"
                 className="w-fit"
                 iconLeft={IconType.PLUS}
-                onClick={() => append({ name: '', url: '' })}
+                onClick={() => appendStage({ name: '', url: '' })}
             >
                 Add a stage
             </Button>

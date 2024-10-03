@@ -27,6 +27,11 @@ export const CreateProcessFormBodyField: React.FC<CreateProcessBodyFieldProps> =
     removeBody,
     formattedAddressWithBlockExplorer,
 }) => {
+    const handleEditBody = (index: number) => {
+        setSelectedBodyIndex(index);
+        setIsBodyDialogOpen(true);
+    };
+
     return (
         <div className="flex flex-col gap-3 md:gap-2">
             {bodyFields.map((field: any, index) => (
@@ -108,10 +113,7 @@ export const CreateProcessFormBodyField: React.FC<CreateProcessBodyFieldProps> =
                                         className="justify-end"
                                         variant="secondary"
                                         size="md"
-                                        onClick={() => {
-                                            setSelectedBodyIndex(index);
-                                            setIsBodyDialogOpen(true);
-                                        }}
+                                        onClick={() => handleEditBody(index)}
                                     >
                                         Edit body
                                     </Button>

@@ -7,44 +7,24 @@ import { CreateProcessFormMultisigDetails } from '@/modules/governance/component
 import { CreateProcessFormMultisigParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultsigParams/createProcessFormMultisigParams';
 import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
 import { CreateProcessFormTokenVotingParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingParams/createProcessFormTokenVotingParams';
-import { StageInputItemBaseForm } from '@/modules/governance/components/createProcessForm/stageInput/stageInputItem';
-import { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
+import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/getFormFields/getBodyFields';
 import { Button, Dialog, formatterUtils, InputText, NumberFormat, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 export interface ICreateProcessFormAddBodyDialogProps {
+    stageName: string;
+    stageIndex: number;
+    bodyIndex: number;
     isBodyDialogOpen: boolean;
     setIsBodyDialogOpen: (value: boolean) => void;
     handleSaveBodyValues: (value: ICreateProcessFormBody) => void;
-    bodyNameField: any;
-    bodyGovernanceTypeField: any;
-    stageIndex: number;
-    bodyIndex: number;
-    tokenNameField: any;
-    tokenSymbolField: any;
-    supportThresholdPercentageField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
-    minimumParticipationPercentageField: any;
-    voteChangeField: any;
-    multisigThresholdField: any;
-    initialValues?: ICreateProcessFormBody | null;
+    initialValues?: ICreateProcessFormBody;
 }
 
 export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
-    const {
-        bodyNameField,
-        handleSaveBodyValues,
-        bodyGovernanceTypeField,
-        tokenNameField,
-        tokenSymbolField,
-        bodyIndex,
-        supportThresholdPercentageField,
-        minimumParticipationPercentageField,
-        voteChangeField,
-        multisigThresholdField,
-        initialValues,
-    } = props;
+    const { handleSaveBodyValues, bodyIndex, stageName, stageIndex, initialValues } = props;
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
     const { resetField, setValue, formState, trigger } = useFormContext();
@@ -52,6 +32,17 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
     const [memberAddressInputValues, setMemberAddressInputValues] = useState<string[]>(members.map(() => ''));
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
+
+    const {
+        bodyNameField,
+        bodyGovernanceTypeField,
+        tokenNameField,
+        tokenSymbolField,
+        supportThresholdPercentageField,
+        minimumParticipationPercentageField,
+        voteChangeField,
+        multisigThresholdField,
+    } = getAllBodyFields(stageName, stageIndex, bodyIndex);
 
     useEffect(() => {
         if (isBodyDialogOpen && initialValues) {
@@ -62,15 +53,26 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             setValue(supportThresholdPercentageField.name, initialValues.supportThresholdPercentage);
             setValue(minimumParticipationPercentageField.name, initialValues.minimumParticipationPercentage);
             setValue(voteChangeField.name, initialValues.voteChange);
+            setValue(multisigThresholdField.name, initialValues.multisigThreshold);
             if (initialValues.members) {
                 setMembers(initialValues.members);
-                setMemberAddressInputValues(initialValues.members.map((member) => member.address));
             }
+        } else if (isBodyDialogOpen) {
+            // Reset fields when adding a new body
+            resetField(bodyNameField.name);
+            resetField(bodyGovernanceTypeField.name);
+            resetField(tokenNameField.name);
+            resetField(tokenSymbolField.name);
+            resetField(supportThresholdPercentageField.name);
+            resetField(minimumParticipationPercentageField.name);
+            resetField(voteChangeField.name);
+            resetField(multisigThresholdField.name);
+            setMembers([{ address: '', tokenAmount: 1 }]);
         }
     }, [isBodyDialogOpen, initialValues]);
 
     const handleSave = () => {
-        handleSaveBodyValues({
+        const values = {
             bodyName: bodyNameField.value,
             governanceType: bodyGovernanceTypeField.value,
             tokenName: tokenNameField.value,
@@ -80,19 +82,8 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             voteChange: voteChangeField.value,
             multisigThreshold: multisigThresholdField.value,
             members,
-        });
-
-        resetField(bodyNameField.name);
-        resetField(bodyGovernanceTypeField.name);
-        resetField(tokenNameField.name);
-        resetField(tokenSymbolField.name);
-        resetField(supportThresholdPercentageField.name);
-        resetField(minimumParticipationPercentageField.name);
-        resetField(voteChangeField.name);
-
-        setMembers([{ address: '', tokenAmount: 1 }]);
-
-        setStep(0);
+        };
+        handleSaveBodyValues(values);
         setIsBodyDialogOpen(false);
     };
 
@@ -277,9 +268,13 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
             open={isBodyDialogOpen}
             onOpenChange={() => setIsBodyDialogOpen(false)}
             onPointerDownOutside={handleCancel}
+            aria-describedby={`Add a body to governance process stage.`}
         >
             <Dialog.Header title="Add voting body" onCloseClick={handleCancel} />
-            <Dialog.Content className="flex flex-col gap-6 pb-1.5">
+            <Dialog.Content
+                aria-describedby={`Add a body to governance process stage.`}
+                className="flex flex-col gap-6 pb-1.5"
+            >
                 {handleStepContent(step)}
                 <div className="flex w-full justify-between">
                     <Button variant="tertiary" onClick={step === 0 ? handleCancel : () => setStep(step - 1)}>

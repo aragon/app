@@ -28,21 +28,22 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog';
-import { getAllStageFields } from '../getFormFields/getFormFields';
+import { getBodyFieldsArray } from '../getFormFields/getBodyFields';
+import { getAllStageFields } from '../getFormFields/getStageFields';
 
 export interface IStageInputItemProps {
     /**
      * Name of the field.
      */
-    name: string;
+    stageName: string;
     /**
      * The index of the stage in the list.
      */
-    index: number;
+    stageIndex: number;
     /**
      * Callback to remove the proposed stage.
      */
-    remove: (index: number) => void;
+    stageRemove: (index: number) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,11 +52,11 @@ export type StageInputItemBaseForm = Record<string, any>;
 export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
     const [isBodyDialogOpen, setIsBodyDialogOpen] = useState(false);
-    const [selectedBodyIndex, setSelectedBodyIndex] = useState<number>(0);
-    const { name, index, remove } = props;
+    const [selectedBodyIndex, setSelectedBodyIndex] = useState<number>(-1);
+    const { stageName, stageIndex, stageRemove } = props;
     const chainId = useChainId();
 
-    const { setValue, formState, getValues } = useFormContext();
+    const { setValue, getValues } = useFormContext();
     const { buildEntityUrl } = useBlockExplorer();
 
     /** @ts-expect-error need to figure out formData typing in several places */
@@ -68,16 +69,9 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
         earlyStageField,
         stageExpirationField,
         stageExpirationPeriodField,
-        supportThresholdPercentageField,
-        minimumParticipationPercentageField,
-        voteChangeField,
-        tokenNameField,
-        tokenSymbolField,
-        bodyNameField,
-        bodyGovernanceTypeField,
-        multisigThresholdField,
-        bodyFields: { fields: bodyFields, append: appendBody, remove: removeBody, update: updateBody },
-    } = getAllStageFields(name, index);
+    } = getAllStageFields(stageName, stageIndex);
+
+    const { fields: bodyFields, appendBody, removeBody, updateBody } = getBodyFieldsArray(stageName, stageIndex);
 
     const handleSaveTimingValues = (values: ICreateProcessFormTimingValues) => {
         setValue(votingPeriodField.name, values.votingPeriod);
@@ -87,25 +81,19 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     };
 
     const handleSaveBodyValues = (values: ICreateProcessFormBody) => {
-        const newBody = {
-            bodyName: bodyNameField.value,
-            governanceType: bodyGovernanceTypeField.value,
-            tokenName: tokenNameField.value,
-            tokenSymbol: tokenSymbolField.value,
-            members: values.members,
-            supportThresholdPercentage: supportThresholdPercentageField.value,
-            minimumParticipationPercentage: minimumParticipationPercentageField.value,
-            voteChange: voteChangeField.value,
-            multisigThreshold: multisigThresholdField.value,
-        };
-
         if (selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length) {
-            updateBody(selectedBodyIndex, newBody);
+            updateBody(selectedBodyIndex, values);
         } else {
-            appendBody(newBody);
+            appendBody(values);
         }
 
         setIsBodyDialogOpen(false);
+        setSelectedBodyIndex(-1);
+    };
+
+    const handleAddBody = () => {
+        setSelectedBodyIndex(bodyFields.length);
+        setIsBodyDialogOpen(true);
     };
 
     const formattedAddressWithBlockExplorer = (address: string) => {
@@ -116,6 +104,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
             </Link>
         );
     };
+
     return (
         <>
             <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
@@ -135,8 +124,9 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                 </RadioGroup>
 
                 <InputContainer
-                    id={`timingSummary.${name}.${index}`}
+                    id={`timingSummary.${name}.${stageIndex}`}
                     useCustomWrapper={true}
+                    label="Timing"
                     className="flex w-full flex-col items-start gap-y-3"
                     helpText="Define the timing of the stage, so all bodies have enough time to execute and advance the proposals."
                 >
@@ -171,10 +161,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                         variant="tertiary"
                         className="w-fit"
                         iconLeft={IconType.PLUS}
-                        onClick={() => {
-                            setSelectedBodyIndex(-1);
-                            setIsBodyDialogOpen(true);
-                        }}
+                        onClick={handleAddBody}
                     >
                         Add
                     </Button>
@@ -186,50 +173,25 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                     stageExpirationPeriodField={stageExpirationPeriodField}
                     votingPeriodField={votingPeriodField}
                     typeField={typeField}
-                    bodyGovernanceTypeField={bodyGovernanceTypeField}
                     setIsTimingDialogOpen={setIsTimingDialogOpen}
                     handleSaveTimingValues={handleSaveTimingValues}
                 />
-                <CreateProcessFormAddBodyDialog
-                    isBodyDialogOpen={isBodyDialogOpen}
-                    setIsBodyDialogOpen={setIsBodyDialogOpen}
-                    handleSaveBodyValues={handleSaveBodyValues}
-                    bodyNameField={bodyNameField}
-                    bodyIndex={selectedBodyIndex}
-                    stageIndex={index}
-                    bodyGovernanceTypeField={bodyGovernanceTypeField}
-                    tokenSymbolField={tokenSymbolField}
-                    tokenNameField={tokenNameField}
-                    supportThresholdPercentageField={supportThresholdPercentageField}
-                    minimumParticipationPercentageField={minimumParticipationPercentageField}
-                    voteChangeField={voteChangeField}
-                    multisigThresholdField={multisigThresholdField}
-                    initialValues={
-                        selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length
-                            ? {
-                                  /** @ts-expect-error will replace */
-                                  bodyName: bodyFields[selectedBodyIndex].bodyName,
-                                  /** @ts-expect-error will replace */
-                                  governanceType: bodyFields[selectedBodyIndex].governanceType,
-                                  /** @ts-expect-error will replace */
-                                  tokenName: bodyFields[selectedBodyIndex].tokenName,
-                                  /** @ts-expect-error will replace */
-                                  tokenSymbol: bodyFields[selectedBodyIndex].tokenSymbol,
-                                  /** @ts-expect-error will replace */
-                                  members: bodyFields[selectedBodyIndex].members,
-                                  /** @ts-expect-error will replace */
-                                  supportThresholdPercentage: bodyFields[selectedBodyIndex].supportThresholdPercentage,
-                                  minimumParticipationPercentage:
-                                      /** @ts-expect-error will replace */
-                                      bodyFields[selectedBodyIndex].minimumParticipationPercentage,
-                                  /** @ts-expect-error will replace */
-                                  voteChange: bodyFields[selectedBodyIndex].voteChange,
-                                  /** @ts-expect-error will replace */
-                                  multisigThreshold: bodyFields[selectedBodyIndex].multisigThreshold,
-                              }
-                            : null
-                    }
-                />
+                {isBodyDialogOpen && (
+                    <CreateProcessFormAddBodyDialog
+                        isBodyDialogOpen={isBodyDialogOpen}
+                        setIsBodyDialogOpen={setIsBodyDialogOpen}
+                        handleSaveBodyValues={handleSaveBodyValues}
+                        name={name}
+                        stageIndex={stageIndex}
+                        bodyIndex={selectedBodyIndex}
+                        /** @ts-expect-error will fix types */
+                        initialValues={
+                            selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length
+                                ? bodyFields[selectedBodyIndex]
+                                : null
+                        }
+                    />
+                )}
                 {currentValues.stages.length > 1 && (
                     <div className="flex self-end">
                         <Dropdown.Container
@@ -246,7 +208,7 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                                 </Button>
                             }
                         >
-                            <Dropdown.Item onClick={() => remove(index)}>Remove stage</Dropdown.Item>
+                            <Dropdown.Item onClick={() => stageRemove(stageIndex)}>Remove stage</Dropdown.Item>
                         </Dropdown.Container>
                     </div>
                 )}
