@@ -59,7 +59,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
     const winningOption = getWinningOption(proposal);
     const proposalResult = winningOption != null ? { ...winningOption, option: t(winningOption.option) } : undefined;
 
-    const { voted } = useVotedStatus({ proposalId: proposal.id, address });
+    const { voted } = useVotedStatus({ proposal: proposal, address });
 
     return (
         <ProposalDataListItem.Structure

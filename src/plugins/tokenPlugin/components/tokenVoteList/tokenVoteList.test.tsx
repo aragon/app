@@ -17,7 +17,7 @@ describe('<TokenVoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenVoteListProps>) => {
         const completeProps: ITokenVoteListProps = {
-            initialParams: { queryParams: {} },
+            initialParams: { queryParams: { pluginAddress: '0x123' } },
             daoId: 'test-id',
             ...props,
         };
@@ -103,7 +103,7 @@ describe('<TokenVoteList /> component', () => {
             errorState: { heading: '', description: '' },
         });
 
-        render(createTestComponent({ initialParams: { queryParams: { includeInfo: true } } }));
+        render(createTestComponent({ initialParams: { queryParams: { includeInfo: true, pluginAddress: '0x123' } } }));
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
@@ -121,6 +121,7 @@ describe('<TokenVoteList /> component', () => {
             queryParams: {
                 daoId: 'test-dao',
                 address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+                pluginAddress: '0x123',
                 includeInfo: true,
                 pageSize: 5,
             },
