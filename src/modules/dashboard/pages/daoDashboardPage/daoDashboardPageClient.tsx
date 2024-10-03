@@ -70,12 +70,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         return null;
     }
 
-    const proposalListParams = {
-        queryParams: { daoId, pageSize: dashboardProposalsCount, pluginAddress: dao.plugins[0]?.address },
-    };
-    const memberListParams = {
-        queryParams: { daoId, pageSize: dashboardMembersCount, pluginAddress: dao.plugins[0]?.address },
-    };
+    const proposalListParams = { queryParams: { daoId, pageSize: dashboardProposalsCount } };
+    const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
     const assetListParams = {
         queryParams: { address: dao.address, network: dao.network, pageSize: dashboardAssetsCount },
     };

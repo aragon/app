@@ -4,6 +4,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -12,7 +13,7 @@ export interface IDaoMemberListProps extends Pick<IPluginTabComponentProps<IDaoP
     /**
      * Initial parameters to use for fetching the member list.
      */
-    initialParams: IGetMemberListParams;
+    initialParams: NestedOmit<IGetMemberListParams, 'queryParams.pluginAddress'>;
     /**
      * Hides the pagination when set to true.
      */
@@ -28,10 +29,12 @@ export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
 
     const bodyPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.BODY });
     const processedPlugins = bodyPlugins?.map((plugin) => {
-        const pluginInitialParams = { ...initialParams };
-        pluginInitialParams.queryParams = { ...initialParams.queryParams, pluginAddress: plugin.meta.address };
+        const pluginInitialParams = {
+            ...initialParams,
+            queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
+        };
 
-        return { ...plugin, props: { initialParams: pluginInitialParams } };
+        return { ...plugin, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
     });
 
     return (

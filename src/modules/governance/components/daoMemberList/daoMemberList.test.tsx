@@ -20,7 +20,7 @@ describe('<DaoMemberList /> component', () => {
 
     const createTestComponent = (props?: Partial<IDaoMemberListProps>) => {
         const completeProps: IDaoMemberListProps = {
-            initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },
+            initialParams: { queryParams: { daoId: 'test-id' } },
             ...props,
         };
 
