@@ -30,7 +30,9 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
 
     const { t } = useTranslations();
 
-    const voteListParams = { queryParams: { proposalId: proposal.id, pageSize: votesPerPage } };
+    const voteListParams = {
+        queryParams: { proposalId: proposal.id, pluginAddress: proposal.pluginAddress, pageSize: votesPerPage },
+    };
 
     const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
         params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
@@ -54,16 +56,15 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                     proposalId={proposal.id}
                 />
                 <ProposalVoting.Votes>
-                    <VoteList initialParams={voteListParams} daoId={daoId} />
+                    <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
                 </ProposalVoting.Votes>
                 <ProposalVoting.Details settings={proposalSettings} />
                 {status === ProposalStatus.ACTIVE && (
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
                         pluginId={proposal.pluginSubdomain}
-                        proposalIndex={proposal.proposalIndex}
+                        proposal={proposal}
                         daoId={daoId}
-                        title={proposal.title}
                     />
                 )}
             </ProposalVoting.Stage>

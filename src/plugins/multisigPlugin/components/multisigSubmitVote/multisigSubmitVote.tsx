@@ -3,6 +3,7 @@ import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog'
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button } from '@aragon/ods';
+import { IMultisigProposal } from '../../types';
 
 export interface IMultisigSubmitVoteProps {
     /**
@@ -10,28 +11,19 @@ export interface IMultisigSubmitVoteProps {
      */
     daoId: string;
     /**
-     * ID of proposal
+     * Proposal to submit the vote for.
      */
-    proposalIndex: string;
-    /**
-     * The title of the proposal
-     */
-    title: string;
+    proposal: IMultisigProposal;
 }
 
 export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) => {
-    const { daoId, proposalIndex, title } = props;
-    const { t } = useTranslations();
+    const { daoId, proposal } = props;
 
+    const { t } = useTranslations();
     const { open } = useDialogContext();
 
     const openTransactionDialog = () => {
-        const params: IVoteDialogParams = {
-            daoId,
-            title,
-            proposalIndex,
-            vote: { label: 'approve' },
-        };
+        const params: IVoteDialogParams = { daoId, proposal, vote: { label: 'approve' } };
         open(GovernanceDialogs.VOTE, { params });
     };
 

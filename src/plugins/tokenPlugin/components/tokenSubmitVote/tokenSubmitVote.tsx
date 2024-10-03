@@ -4,7 +4,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Card, RadioCard, RadioGroup, type VoteIndicator } from '@aragon/ods';
 import { useState } from 'react';
-import { VoteOption } from '../../types';
+import { ITokenProposal, VoteOption } from '../../types';
 
 export interface ITokenSubmitVoteProps {
     /**
@@ -12,22 +12,19 @@ export interface ITokenSubmitVoteProps {
      */
     daoId: string;
     /**
-     * ID of proposal
+     * Proposal to submit the vote for.
      */
-    proposalIndex: string;
-    /**
-     * The title of the proposal
-     */
-    title: string;
+    proposal: ITokenProposal;
 }
 
 export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
+    const { daoId, proposal } = props;
+
     const { t } = useTranslations();
-    const { daoId, title, proposalIndex } = props;
+    const { open } = useDialogContext();
+
     const [showOptions, setShowOptions] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
-
-    const { open } = useDialogContext();
 
     const abstainLabel = t('app.plugins.token.tokenSubmitVote.options.abstain');
     const yesLabel = t('app.plugins.token.tokenSubmitVote.options.yes');
@@ -41,12 +38,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const openTransactionDialog = () => {
         const vote = { value: Number(selectedOption), label: voteOptionToIndicator[selectedOption] };
-        const params: IVoteDialogParams = {
-            daoId,
-            title,
-            proposalIndex,
-            vote,
-        };
+        const params: IVoteDialogParams = { daoId, proposal, vote };
         open(GovernanceDialogs.VOTE, { params });
     };
 

@@ -1,40 +1,35 @@
-import { type IDaoPlugin } from '@/shared/api/daoService';
 import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type Hex } from 'viem';
+import { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IBuildVoteDataParams } from '../../types';
 
 export interface IBuildTransactionParams {
     /**
-     * Incremental ID for the proposal.
+     * Proposal to submit the vote for.
      */
-    proposalIndex: string;
+    proposal: IProposal;
     /**
      * Vote option selected by the user.
      */
     voteValue?: number;
-    /**
-     * Plugin of the DAO to interact with.
-     */
-    plugin: IDaoPlugin;
 }
 
 class VoteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { proposalIndex, voteValue, plugin } = params;
+        const { proposal, voteValue } = params;
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
-            pluginId: plugin.subdomain,
+            pluginId: proposal.pluginSubdomain,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
         })!;
 
-        const buildDataParams: IBuildVoteDataParams = { proposalIndex, vote: voteValue };
-
+        const buildDataParams: IBuildVoteDataParams = { proposalIndex: proposal.proposalIndex, vote: voteValue };
         const transactionData = buildDataFunction(buildDataParams);
 
         const transaction: TransactionDialogPrepareReturn = {
-            to: plugin.address as Hex,
+            to: proposal.pluginAddress as Hex,
             data: transactionData,
         };
 
