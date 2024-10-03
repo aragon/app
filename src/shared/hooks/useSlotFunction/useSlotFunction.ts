@@ -1,5 +1,8 @@
 import { type SlotId, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 
+/**
+ * @deprecated Use IUseSlotSingleFunctionParams instead to properly support multi-plugin DAOs.
+ */
 export interface IUseSlotFunctionParams<TParams> {
     /**
      * Parameters to be passed to the slot function.
@@ -15,6 +18,9 @@ export interface IUseSlotFunctionParams<TParams> {
     pluginIds: string[];
 }
 
+/**
+ * @deprecated Use useSlotSingleFunction instead to properly support multi-plugin DAOs.
+ */
 export const useSlotFunction = <TResult = unknown, TParams = unknown>(params: IUseSlotFunctionParams<TParams>) => {
     const { params: functionParams, slotId, pluginIds } = params;
 

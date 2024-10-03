@@ -32,7 +32,7 @@ describe('<TokenMemberList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenMemberListProps>) => {
         const completeProps: ITokenMemberListProps = {
-            initialParams: { queryParams: { daoId: 'dao-id' } },
+            initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
             ...props,
         };
 

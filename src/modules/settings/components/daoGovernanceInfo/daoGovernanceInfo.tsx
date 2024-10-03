@@ -1,38 +1,26 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import type { IDaoSettingTermAndDefinition } from '@/modules/settings/types';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
-import { DefinitionList } from '@aragon/ods';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 
 export interface IDaoGovernanceInfoProps {
     /**
-     * ID of the Dao
+     * ID of the DAO.
      */
     daoId: string;
+    /**
+     * DAO plugin to display the governance info for. Renders the info for all DAO plugins when not set.
+     */
+    plugin?: IDaoPlugin;
 }
 
 export const DaoGovernanceInfo: React.FC<IDaoGovernanceInfoProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, plugin } = props;
 
-    const pluginIds = useDaoPluginIds(daoId);
-    const governanceParams = { daoId: daoId };
-    const governanceSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
-        params: governanceParams,
-        slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginIds,
-    });
-
-    if (!governanceSettings) {
-        return null;
-    }
+    const daoPlugins = useDaoPlugins({ daoId, pluginAddress: plugin?.address })!;
+    const processedPlugins = daoPlugins.map((plugin) => ({ ...plugin, props: { plugin: plugin.meta } }));
 
     return (
-        <DefinitionList.Container>
-            {governanceSettings.map((governanceSetting, index) => (
-                <DefinitionList.Item key={index} term={governanceSetting.term}>
-                    <p className="text-neutral-500">{governanceSetting.definition}</p>
-                </DefinitionList.Item>
-            ))}
-        </DefinitionList.Container>
+        <PluginTabComponent slotId={SettingsSlotId.SETTINGS_GOVERNANCE_INFO} plugins={processedPlugins} daoId={daoId} />
     );
 };

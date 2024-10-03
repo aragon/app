@@ -10,7 +10,7 @@ import {
 } from '@/modules/governance/api/governanceService';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
-import { type IDaoLink } from '@/shared/api/daoService';
+import type { IDaoLink } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     ProposalActionType as OdsProposalActionType,
@@ -26,15 +26,7 @@ import { formatUnits } from 'viem';
 
 export interface INormalizeActionsParams {
     /**
-     * List of plugins for the DAO.
-     */
-    pluginIds: string[];
-    /**
-     * List of fetched actions in the proposal.
-     */
-    actions: IProposalAction[];
-    /**
-     * The proposal object with full data.
+     * The proposal to normalize the actions for.
      */
     proposal: IProposal;
     /**
@@ -55,14 +47,14 @@ class ProposalActionUtils {
     } as const;
 
     normalizeActions = (params: INormalizeActionsParams): IOdsProposalAction[] => {
-        const { pluginIds, actions, proposal, daoId } = params;
+        const { proposal, daoId } = params;
 
-        return actions.map((action) => {
+        return proposal.actions.map((action) => {
             if (this.isWithdrawTokenAction(action)) {
                 return this.normalizeTransferAction(action);
             }
             if (this.isChangeSettingsAction(action)) {
-                return this.normalizeChangeSettingsAction(action, pluginIds, proposal, daoId);
+                return this.normalizeChangeSettingsAction(action, proposal, daoId);
             }
             if (this.isChangeMembersAction(action)) {
                 return this.normalizeChangeMembersAction(action);
@@ -91,25 +83,24 @@ class ProposalActionUtils {
 
     normalizeChangeSettingsAction = (
         action: IProposalActionChangeSettings,
-        pluginIds: string[],
         proposal: IProposal,
         daoId: string,
     ): IOdsProposalActionChangeSettings => {
         const { type, proposedSettings, ...otherValues } = action;
-        const { settings: existingSettings } = proposal;
+        const { settings: existingSettings, pluginAddress, pluginSubdomain } = proposal;
 
-        const parsingFunction = pluginRegistryUtils.getSupportedSlotFunction<
+        const parsingFunction = pluginRegistryUtils.getSlotFunction<
             IUseGovernanceSettingsParams,
             IDaoSettingTermAndDefinition[]
         >({
-            pluginIds: pluginIds,
+            pluginId: pluginSubdomain,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         })!;
 
         const completeProposedSettings = { ...existingSettings, ...proposedSettings };
 
-        const parsedExistingSettings = parsingFunction({ settings: existingSettings, daoId });
-        const parsedProposedSettings = parsingFunction({ settings: completeProposedSettings, daoId });
+        const parsedExistingSettings = parsingFunction({ settings: existingSettings, daoId, pluginAddress });
+        const parsedProposedSettings = parsingFunction({ settings: completeProposedSettings, daoId, pluginAddress });
 
         return {
             ...otherValues,

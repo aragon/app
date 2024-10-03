@@ -3,8 +3,9 @@
 To keep the logic of Plugins isolated, every service, component, utility, and type related to a specific Plugin is
 implemented under the `/plugins` folder. This allows us to easily add, change, and remove supported Plugins.
 
-The Plugin Encapsulation logic is currently implemented through the `pluginRegistryUtils` utility file and the
-`PluginComponent` React component, both located under the `/shared` folder.
+The Plugin Encapsulation logic is currently implemented through the `pluginRegistryUtils` utility file and other
+components (e.g. `<PluginTabComponent />`) and utilities (e.g. `useSlotSingleFunction`) located under the `/shared`
+folder.
 
 ## Glossary
 
@@ -98,14 +99,15 @@ export const initialiseMultisigPlugin = () => {
 
 #### Rendering of Slot Components
 
-The [`<PluginComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginComponent) React
-component is located under the `/shared/components` folder and renders a Slot Component from a given Slot ID and a list
-of Plugin IDs. As the Application does not currently support multiple Plugins installed on the same DAO, the component
-renders the first Slot Component found from the given Plugin IDs.
+-   The
+    [`<PluginSingleComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginSingleComponent)
+    React component is located under the `/shared/components` folder and renders a Slot Component from a given Slot ID
+    and Plugin ID.
 
-**NOTE**: To render multiple Slot Components, a new `PluginComponentTabs` React component can be implemented to render
-all the Slot Components registered for the specified Plugin IDs list inside tabs. The Plugin-specific Tabs label can be
-specified by a new `metadata` field attached to the Slot Component during its registration.
+-   The
+    [`<PluginTabComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginTabComponent)
+    React component supports rendering multiple Slot Components for the given Slot ID and Plugins. The component renders
+    Slot Components through a Tab component to be able to switch between the Slot Component views.
 
 ## How to Support a New Plugin
 

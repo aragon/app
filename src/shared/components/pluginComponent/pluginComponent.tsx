@@ -1,6 +1,9 @@
 import { pluginRegistryUtils, type PluginId, type SlotId } from '@/shared/utils/pluginRegistryUtils';
 import { cloneElement, isValidElement, type ReactNode } from 'react';
 
+/**
+ * @deprecated Use IPluginSingleComponentProps instead to properly support multi-plugin DAOs.
+ */
 export interface IPluginComponentProps {
     /**
      * Id of the slot component to load.
@@ -20,6 +23,9 @@ export interface IPluginComponentProps {
     children?: ReactNode;
 }
 
+/**
+ * @deprecated Use PluginSingleComponent instead to properly support multi-plugin DAOs.
+ */
 export const PluginComponent: React.FC<IPluginComponentProps> = (props) => {
     const { slotId, pluginIds, children, ...otherProps } = props;
 

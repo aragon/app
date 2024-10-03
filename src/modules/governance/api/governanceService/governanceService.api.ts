@@ -7,6 +7,10 @@ export interface IGetProposalListQueryParams extends IPaginatedRequest {
      */
     daoId: string;
     /**
+     * Address of the plugin to fetch the proposals for.
+     */
+    pluginAddress: string;
+    /**
      * Filter proposals by creator address.
      */
     creatorAddress?: string;
@@ -19,6 +23,10 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
      * ID of the DAO to fetch the members from.
      */
     daoId: string;
+    /**
+     * Address of the plugin to fetch the members for.
+     */
+    pluginAddress: string;
 }
 
 export interface IGetMemberListParams extends IRequestQueryParams<IGetMemberListQueryParams> {}
