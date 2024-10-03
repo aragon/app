@@ -51,11 +51,8 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     };
 
     const wizardContextValues = useMemo(() => ({ ...wizardStepper, submitLabel }), [wizardStepper, submitLabel]);
-    console.log('hasNext', hasNext);
 
-    console.log('finalStep', finalStep);
-
-    const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
+    const nextStepName = hasNext ? steps[activeStepIndex + 1]?.meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
 
     useConfirmWizardExit(isFormDirty);

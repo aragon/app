@@ -54,6 +54,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
             })),
         [t],
     );
+
     return (
         <Page.Main fullWidth={true}>
             <Wizard.Container

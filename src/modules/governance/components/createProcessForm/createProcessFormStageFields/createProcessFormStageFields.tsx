@@ -77,7 +77,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         const url = buildEntityUrl({ id: address, chainId, type: ChainEntityType.ADDRESS });
         return (
             <Link href={url} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                <li>{addressUtils.truncateAddress(address)}</li>
+                {addressUtils.truncateAddress(address)}
             </Link>
         );
     };

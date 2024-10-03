@@ -1,4 +1,3 @@
-// TokenVotingStep2.tsx
 import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import {
     AlertInline,

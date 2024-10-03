@@ -19,6 +19,7 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
     const { steps, daoId } = props;
 
     const [metadataStep, processesStep] = steps;
+
     return (
         <>
             <Wizard.Step

@@ -56,7 +56,6 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
                 setMembers(initialValues.members);
             }
         } else if (isBodyDialogOpen) {
-            // Reset fields when adding a new body
             resetField(bodyNameField.name);
             resetField(bodyGovernanceTypeField.name);
             resetField(tokenNameField.name);
