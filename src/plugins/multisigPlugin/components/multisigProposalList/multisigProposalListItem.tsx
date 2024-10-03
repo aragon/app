@@ -20,7 +20,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
 
     const { address } = useAccount();
 
-    const { voted } = useVotedStatus({ proposalId: proposal.id, address });
+    const { voted } = useVotedStatus({ proposal: proposal, address });
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 

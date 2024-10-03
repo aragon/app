@@ -298,6 +298,12 @@
         "main": {
           "daoMemberships": {
             "title": "Other DAO memberships"
+          },
+          "proposalCreation": {
+            "title": "Proposal creation"
+          },
+          "votingActivity": {
+            "title": "Voting activity"
           }
         },
         "notFound": {

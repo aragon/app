@@ -73,6 +73,10 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
      * Option to show extra proposal information.
      */
     includeInfo?: boolean;
+    /**
+     * Plugin address to fetch the votes from.
+     */
+    pluginAddress: string;
 }
 
 export interface IGetVoteListParams extends IRequestQueryParams<IGetVoteListQueryParams> {}

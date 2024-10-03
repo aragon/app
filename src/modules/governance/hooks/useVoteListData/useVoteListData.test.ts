@@ -21,7 +21,7 @@ describe('useVoteListData hook', () => {
         const votes = [generateVote({ transactionHash: '0x123' })];
         const votesMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: votes.length });
         const votesResponse = generatePaginatedResponse({ data: votes, metadata: votesMetadata });
-        const params = { queryParams: { proposalId: 'my-proposal' } };
+        const params = { queryParams: { proposalId: 'my-proposal', pluginAddress: '0x123' } };
 
         useVoteListSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: { pages: [votesResponse], pageParams: [] } }),
@@ -42,7 +42,7 @@ describe('useVoteListData hook', () => {
     it('returns error state when fetching votes fails', () => {
         useVoteListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
 
-        const { result } = renderHook(() => useVoteListData({ queryParams: {} }));
+        const { result } = renderHook(() => useVoteListData({ queryParams: { pluginAddress: '0x123' } }));
 
         expect(result.current.state).toEqual('error');
     });
@@ -51,7 +51,7 @@ describe('useVoteListData hook', () => {
         useVoteListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
 
         const pageSize = 6;
-        const { result } = renderHook(() => useVoteListData({ queryParams: { pageSize } }));
+        const { result } = renderHook(() => useVoteListData({ queryParams: { pageSize, pluginAddress: '0x123' } }));
 
         expect(result.current.pageSize).toEqual(pageSize);
     });

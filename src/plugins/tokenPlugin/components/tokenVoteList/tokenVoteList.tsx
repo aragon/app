@@ -1,3 +1,4 @@
+import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -12,7 +13,12 @@ import {
 import { formatUnits } from 'viem';
 import { type ITokenVote, VoteOption } from '../../types';
 
-export interface ITokenVoteListProps extends IVoteListProps {}
+export interface ITokenVoteListProps extends IVoteListProps {
+    /**
+     * Parameters to use for fetching votes.
+     */
+    initialParams: IGetVoteListParams;
+}
 
 const voteOptionToIndicator: Record<VoteOption, VoteIndicator> = {
     [VoteOption.ABSTAIN]: 'abstain',

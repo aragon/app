@@ -54,7 +54,7 @@ describe('governance service', () => {
 
     it('getVoteList fetches the votes of a specific proposal', async () => {
         const votes = [generateVote({ transactionHash: '0' }), generateVote({ transactionHash: '1' })];
-        const params = { queryParams: { proposalId: 'proposal-id' } };
+        const params = { queryParams: { proposalId: 'proposal-id', pluginAddress: '0x123' } };
 
         requestSpy.mockResolvedValue(votes);
         const result = await governanceService.getVoteList(params);

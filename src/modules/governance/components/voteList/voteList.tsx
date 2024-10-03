@@ -1,7 +1,9 @@
 'use client';
 
-import { PluginComponent } from '@/shared/components/pluginComponent';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
+import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
+import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { IGetVoteListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
@@ -9,23 +11,32 @@ export interface IVoteListProps {
     /**
      * Parameters to use for fetching the proposal votes.
      */
-    initialParams: IGetVoteListParams;
+    initialParams: NestedOmit<IGetVoteListParams, 'queryParams.pluginAddress'>;
     /**
      * ID of the DAO related to the votes.
      */
     daoId: string;
+    /**
+     * Plugin address to fetch the votes for.
+     */
+    pluginAddress?: string;
 }
 
 export const VoteList: React.FC<IVoteListProps> = (props) => {
-    const { initialParams, daoId } = props;
-    const pluginIds = useDaoPluginIds(daoId);
+    const { initialParams, daoId, pluginAddress } = props;
+
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, pluginAddress });
+
+    const processedPlugins = processPlugins?.map((plugin) => {
+        const pluginInitialParams = {
+            ...initialParams,
+            queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
+        };
+
+        return { ...plugin, props: { initialParams: pluginInitialParams } };
+    });
 
     return (
-        <PluginComponent
-            slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
-            pluginIds={pluginIds}
-            initialParams={initialParams}
-            daoId={daoId}
-        />
+        <PluginTabComponent slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST} plugins={processedPlugins} daoId={daoId} />
     );
 };

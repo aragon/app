@@ -1,4 +1,5 @@
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateTokenMember } from '../../testUtils';
@@ -33,6 +34,7 @@ describe('<TokenMemberList /> component', () => {
     const createTestComponent = (props?: Partial<ITokenMemberListProps>) => {
         const completeProps: ITokenMemberListProps = {
             initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
+            plugin: generateDaoPlugin(),
             ...props,
         };
 
