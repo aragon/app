@@ -33,10 +33,21 @@ export interface ICreateProcessFormBody {
      * Members of the body
      */
     members: ITokenVotingMember[];
-
+    /**
+     * Support threshold percentage
+     */
     supportThresholdPercentage: number;
+    /**
+     * Minimum participation percentage
+     */
     minimumParticipationPercentage: number;
+    /**
+     * Vote change
+     */
     voteChange: boolean;
+    /**
+     * Multisig threshold
+     */
     multisigThreshold: number;
 }
 

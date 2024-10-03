@@ -4,7 +4,7 @@ import {
     type ICreateProcessFormTimingValues,
 } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
 
-import { CreateProcessFormBodyField } from '@/modules/governance/components/createProcessForm/createProcessFormBodyField';
+import { CreateProcessFormBodySummary } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary';
 import { ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
 import { CreateProcessFormTimingSummary } from '@/modules/governance/components/createProcessForm/createProcessFormTimingSummary';
 import {
@@ -25,7 +25,7 @@ import type React from 'react';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useChainId } from 'wagmi';
-import { CreateProcessFormAddBodyDialog } from '../createProcessFormAddBodyDialog';
+import { CreateProcessFormBodyDialog } from '../createProcessFormBodyDialog';
 import { getBodyFieldsArray } from '../utils/getBodyFields';
 import { getAllStageFields } from '../utils/getStageFields';
 
@@ -125,7 +125,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     useCustomWrapper={true}
                 >
                     {bodyFields.length > 0 && (
-                        <CreateProcessFormBodyField
+                        <CreateProcessFormBodySummary
                             bodyFields={bodyFields}
                             setSelectedBodyIndex={setSelectedBodyIndex}
                             setIsBodyDialogOpen={setIsBodyDialogOpen}
@@ -154,14 +154,14 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     handleSaveTimingValues={handleSaveTimingValues}
                 />
                 {isBodyDialogOpen && (
-                    <CreateProcessFormAddBodyDialog
+                    <CreateProcessFormBodyDialog
                         isBodyDialogOpen={isBodyDialogOpen}
                         setIsBodyDialogOpen={setIsBodyDialogOpen}
                         handleSaveBodyValues={handleSaveBodyValues}
-                        name={name}
+                        stageName={stageName}
                         stageIndex={stageIndex}
                         bodyIndex={selectedBodyIndex}
-                        /** @ts-expect-error will fix types */
+                        /** @ts-expect-error will fix types between initial values and formData TODO */
                         initialValues={
                             selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length
                                 ? bodyFields[selectedBodyIndex]

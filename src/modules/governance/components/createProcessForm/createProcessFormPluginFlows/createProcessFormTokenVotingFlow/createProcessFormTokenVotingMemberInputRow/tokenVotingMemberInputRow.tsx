@@ -2,7 +2,7 @@ import { ITokenVotingMember } from '@/modules/governance/components/createProces
 import { AddressInput, Button, Dropdown, IconType, InputNumber } from '@aragon/ods';
 import { useCallback } from 'react';
 
-export interface ITokenVotingMemberInputRow {
+export interface ITokenVotingMemberInputRowProps {
     index: number;
     member: ITokenVotingMember;
     memberAddressInputValues: string[];
@@ -12,7 +12,7 @@ export interface ITokenVotingMemberInputRow {
     handleRemoveMember: (index: number) => void;
 }
 
-export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRow> = ({
+export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps> = ({
     index,
     member,
     memberAddressInputValues,

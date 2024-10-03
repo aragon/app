@@ -1,1 +1,1 @@
-export { TokenVotingMemberInputRow, type ITokenVotingMemberInputRow } from './tokenVotingMemberInputRow';
+export { TokenVotingMemberInputRow, type ITokenVotingMemberInputRowProps } from './tokenVotingMemberInputRow';

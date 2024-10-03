@@ -8,12 +8,12 @@ import { CreateProcessFormMultisigParams } from '@/modules/governance/components
 import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
 import { CreateProcessFormTokenVotingParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingParams/createProcessFormTokenVotingParams';
 import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/utils/getBodyFields';
-import { Button, Dialog, formatterUtils, InputText, NumberFormat, RadioCard, RadioGroup } from '@aragon/ods';
+import { Button, Dialog, InputText, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
-export interface ICreateProcessFormAddBodyDialogProps {
+export interface ICreateProcessFormBodyDialogProps {
     stageName: string;
     stageIndex: number;
     bodyIndex: number;
@@ -23,15 +23,13 @@ export interface ICreateProcessFormAddBodyDialogProps {
     initialValues?: ICreateProcessFormBody;
 }
 
-export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyDialogProps> = (props) => {
+export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogProps> = (props) => {
     const { handleSaveBodyValues, bodyIndex, stageName, stageIndex, initialValues } = props;
     const [step, setStep] = useState(0);
     const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
-    const { resetField, setValue, formState, trigger } = useFormContext();
+    const { resetField, setValue, trigger } = useFormContext();
     const [members, setMembers] = useState<ITokenVotingMember[]>([{ address: '', tokenAmount: 1 }]);
     const [memberAddressInputValues, setMemberAddressInputValues] = useState<string[]>(members.map(() => ''));
-    const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
-    const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
 
     const {
         bodyNameField,
@@ -158,24 +156,6 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         const newInputValues = memberAddressInputValues.filter((_, i) => i !== indexToRemove);
         setMemberAddressInputValues(newInputValues);
     };
-
-    const currentSupportThresholdPercentage = useWatch({ name: supportThresholdPercentageField.name });
-
-    useEffect(() => {
-        const currentTotalTokenAmount = members.reduce((acc, member) => acc + Number(member.tokenAmount), 0);
-        const formattedTotalTokenAmount = formatterUtils.formatNumber(currentTotalTokenAmount, {
-            format: NumberFormat.TOKEN_AMOUNT_SHORT,
-        });
-        setCurrentTotalTokenAmount(currentTotalTokenAmount);
-        setFormattedTotalTokenAmount(formattedTotalTokenAmount);
-    }, [members]);
-
-    const formattedPercentageParticipation = formatterUtils.formatNumber(
-        currentTotalTokenAmount * minimumParticipationPercentageField.value * 0.01,
-        {
-            format: NumberFormat.TOKEN_AMOUNT_SHORT,
-        },
-    );
 
     const handleStepContent = (step: number) => {
         switch (step) {

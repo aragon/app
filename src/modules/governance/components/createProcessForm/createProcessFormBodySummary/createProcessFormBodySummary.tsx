@@ -12,7 +12,7 @@ import {
     Tag,
 } from '@aragon/ods';
 
-export interface ICreateProcessFormBodyFieldProps {
+export interface ICreateProcessFormBodySummaryProps {
     /**
      * The body fields.
      */
@@ -35,7 +35,7 @@ export interface ICreateProcessFormBodyFieldProps {
     formattedAddressWithBlockExplorer: (address: string) => React.ReactNode;
 }
 
-export const CreateProcessFormBodyField: React.FC<ICreateProcessFormBodyFieldProps> = ({
+export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummaryProps> = ({
     bodyFields,
     setSelectedBodyIndex,
     setIsBodyDialogOpen,
