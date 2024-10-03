@@ -1,9 +1,15 @@
+import { IGetMemberListParams } from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
 
-export interface IMultisigMemberListProps extends IDaoMemberListProps {}
+export interface IMultisigMemberListProps extends IDaoMemberListProps {
+    /**
+     * Initial parameters to use for fetching the member list.
+     */
+    initialParams: IGetMemberListParams;
+}
 
 export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) => {
     const { initialParams, hidePagination, children } = props;

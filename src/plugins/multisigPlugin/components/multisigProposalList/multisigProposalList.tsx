@@ -1,3 +1,4 @@
+import { IGetProposalListParams } from '@/modules/governance/api/governanceService';
 import type { IDaoProposalListProps } from '@/modules/governance/components/daoProposalList';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -5,7 +6,12 @@ import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListIt
 import type { IMultisigProposal } from '../../types';
 import { MultisigProposalListItem } from './multisigProposalListItem';
 
-export interface IMultisigProposalListProps extends IDaoProposalListProps {}
+export interface IMultisigProposalListProps extends IDaoProposalListProps {
+    /**
+     * Initial parameters to use for fetching the proposal list.
+     */
+    initialParams: IGetProposalListParams;
+}
 
 export const MultisigProposalList: React.FC<IMultisigProposalListProps> = (props) => {
     const { initialParams, hidePagination, children } = props;

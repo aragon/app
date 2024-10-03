@@ -1,3 +1,4 @@
+import { IGetProposalListParams } from '@/modules/governance/api/governanceService';
 import type { IDaoProposalListProps } from '@/modules/governance/components/daoProposalList';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -5,7 +6,12 @@ import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListIt
 import type { ITokenProposal } from '../../types';
 import { TokenProposalListItem } from './tokenProposalListItem';
 
-export interface ITokenProposalListProps extends IDaoProposalListProps {}
+export interface ITokenProposalListProps extends IDaoProposalListProps {
+    /**
+     * Initial parameters to use for fetching the proposal list.
+     */
+    initialParams: IGetProposalListParams;
+}
 
 export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
     const { initialParams, hidePagination, children } = props;

@@ -1,3 +1,4 @@
+import { IGetMemberListParams } from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -5,7 +6,12 @@ import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem
 import type { ITokenMember } from '../../types';
 import { TokenMemberListItem } from './tokenMemberListItem';
 
-export interface ITokenMemberListProps extends IDaoMemberListProps {}
+export interface ITokenMemberListProps extends IDaoMemberListProps {
+    /**
+     * Initial parameters to use for fetching the member list.
+     */
+    initialParams: IGetMemberListParams;
+}
 
 export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
     const { initialParams, hidePagination, children } = props;
