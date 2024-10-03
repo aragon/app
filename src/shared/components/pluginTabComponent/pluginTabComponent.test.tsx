@@ -1,7 +1,7 @@
 import { generateTabComponentPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
 import { PluginTabComponent } from './pluginTabComponent';
 import type { IPluginTabComponentProps } from './pluginTabComponent.api';
 
