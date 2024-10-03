@@ -1,4 +1,7 @@
-import { type ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import {
+    ICreateProcessFormData,
+    type ICreateProcessFormBody,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import {
     CreateProcessFormTimingDialog,
     type ICreateProcessFormTimingValues,
@@ -55,8 +58,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
     const { setValue, formState, getValues } = useFormContext();
     const { buildEntityUrl } = useBlockExplorer();
 
-    console.log('formState', formState);
-    console.log('getValues', getValues());
+    /** @ts-expect-error need to figure out formData typing in several places */
+    const currentValues: ICreateProcessFormData = getValues();
 
     const {
         stageNameField,
@@ -227,19 +230,26 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                             : null
                     }
                 />
-                <div className="flex self-end">
-                    <Dropdown.Container
-                        constrainContentWidth={false}
-                        size="md"
-                        customTrigger={
-                            <Button className="w-fit" variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL}>
-                                More
-                            </Button>
-                        }
-                    >
-                        <Dropdown.Item onClick={() => remove(index)}>Remove stage</Dropdown.Item>
-                    </Dropdown.Container>
-                </div>
+                {currentValues.stages.length > 1 && (
+                    <div className="flex self-end">
+                        <Dropdown.Container
+                            constrainContentWidth={false}
+                            size="md"
+                            customTrigger={
+                                <Button
+                                    className="w-fit"
+                                    variant="tertiary"
+                                    size="md"
+                                    iconRight={IconType.DOTS_VERTICAL}
+                                >
+                                    More
+                                </Button>
+                            }
+                        >
+                            <Dropdown.Item onClick={() => remove(index)}>Remove stage</Dropdown.Item>
+                        </Dropdown.Container>
+                    </div>
+                )}
             </Card>
         </>
     );

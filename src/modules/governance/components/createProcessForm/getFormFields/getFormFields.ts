@@ -124,7 +124,6 @@ export const getBodyGovernanceTypeField = (name: string, index: number) =>
     useFormField<StageInputItemBaseForm, `${typeof name}.${typeof index}.bodyGovernanceType`>(
         `${name}.${index}.bodyGovernanceType`,
         {
-            label: 'Governance type',
             defaultValue: 'tokenVoting',
         },
     );

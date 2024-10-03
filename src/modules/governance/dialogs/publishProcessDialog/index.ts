@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-export const PublishProposalDialog = dynamic(() =>
-    import('./publishProcessDialog').then((mod) => mod.PublishProposalDialog),
+export const PublishProcessDialog = dynamic(() =>
+    import('./publishProcessDialog').then((mod) => mod.PublishProcessDialog),
 );
-export type { IPublishProposalDialogParams, IPublishProposalDialogProps } from './publishProcessDialog';
+export type { IPublishProcessDialogParams, IPublishProcessDialogProps } from './publishProcessDialog';

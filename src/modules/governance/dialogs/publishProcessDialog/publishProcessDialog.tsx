@@ -19,11 +19,11 @@ import { useAccount } from 'wagmi';
 import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProcessDialogUtils';
 
-export enum PublishProposalStep {
+export enum PublishProcessStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
-export interface IPublishProposalDialogParams {
+export interface IPublishProcessDialogParams {
     /**
      * Values of the create-proposal form.
      */
@@ -42,9 +42,9 @@ export interface IPublishProposalDialogParams {
     prepareActions: PrepareProposalActionMap;
 }
 
-export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
+export interface IPublishProcessDialogProps extends IDialogComponentProps<IPublishProcessDialogParams> {}
 
-export const PublishProcessDialog: React.FC<IPublishProposalDialogProps> = (props) => {
+export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props) => {
     const { location } = props;
 
     invariant(location.params != null, 'PublishProposalDialog: required parameters must be set.');
@@ -62,8 +62,8 @@ export const PublishProcessDialog: React.FC<IPublishProposalDialogProps> = (prop
 
     const setIsBlocked = useSetIsBlocked();
 
-    const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
-        initialActiveStep: PublishProposalStep.PIN_METADATA,
+    const stepper = useStepper<ITransactionDialogStepMeta, PublishProcessStep | TransactionDialogStep>({
+        initialActiveStep: PublishProcessStep.PIN_METADATA,
     });
 
     const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
@@ -91,7 +91,7 @@ export const PublishProcessDialog: React.FC<IPublishProposalDialogProps> = (prop
         });
     };
 
-    const getProposalLink = (txReceipt: TransactionReceipt) => {
+    const getProcessLink = (txReceipt: TransactionReceipt) => {
         const { transactionHash } = txReceipt;
 
         setIsBlocked(false);
@@ -102,15 +102,15 @@ export const PublishProcessDialog: React.FC<IPublishProposalDialogProps> = (prop
         return `/dao/${daoId}/proposals/${extendedProposalId}`;
     };
 
-    const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
+    const customSteps: Array<ITransactionDialogStep<PublishProcessStep>> = useMemo(
         () => [
             {
-                id: PublishProposalStep.PIN_METADATA,
+                id: PublishProcessStep.PIN_METADATA,
                 order: 0,
                 meta: {
-                    label: t(`app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.label`),
+                    label: t(`app.governance.publishProcessDialog.step.${PublishProcessStep.PIN_METADATA}.label`),
                     errorLabel: t(
-                        `app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.errorLabel`,
+                        `app.governance.publishProcessDialog.step.${PublishProcessStep.PIN_METADATA}.errorLabel`,
                     ),
                     state: status,
                     action: handlePinJson,
@@ -122,11 +122,11 @@ export const PublishProcessDialog: React.FC<IPublishProposalDialogProps> = (prop
     );
 
     return (
-        <TransactionDialog<PublishProposalStep>
-            title={t('app.governance.publishProposalDialog.title')}
-            description={t('app.governance.publishProposalDialog.description')}
-            submitLabel={t('app.governance.publishProposalDialog.button.submit')}
-            successLink={{ label: t('app.governance.publishProposalDialog.button.success'), href: getProposalLink }}
+        <TransactionDialog<PublishProcessStep>
+            title={t('app.governance.publishProcessDialog.title')}
+            description={t('app.governance.publishProcessDialog.description')}
+            submitLabel={t('app.governance.publishProcessDialog.button.submit')}
+            successLink={{ label: t('app.governance.publishProcessDialog.button.success'), href: getProcessLink }}
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
