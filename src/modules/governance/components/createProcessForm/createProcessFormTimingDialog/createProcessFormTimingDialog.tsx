@@ -37,7 +37,7 @@ export interface ICreateProcessFormTimingDialogProps {
     /**
      * The type of process.
      */
-    typeValue: string;
+    typeField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
     /**
      * The body governance type field.
      */
@@ -68,7 +68,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
         stageExpirationPeriodField,
         earlyStageField,
         votingPeriodField,
-        typeValue,
+        typeField,
     } = props;
 
     const { t } = useTranslations();
@@ -142,7 +142,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                     </div>
                     <AlertInline message="Recommended minimum expiration time is 7 days" />
                 </div>
-                {typeValue === 'normal' && (
+                {typeField.value === 'normal' && (
                     <Switch
                         helpText="Should the proposal be able to advance this stage early, if it’s successful?"
                         inlineLabel={earlyStage ? 'Yes' : 'No'}

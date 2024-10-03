@@ -88,8 +88,8 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
 
     const handleSaveBodyValues = (values: ICreateProcessFormBody) => {
         const newBody = {
-            bodyName: values.bodyName,
-            governanceType: values.governanceType,
+            bodyName: bodyNameField.value,
+            governanceType: bodyGovernanceTypeField.value,
             tokenName: tokenNameField.value,
             tokenSymbol: tokenSymbolField.value,
             members: values.members,
@@ -181,21 +181,21 @@ export const StageInputItem: React.FC<IStageInputItemProps> = (props) => {
                 </InputContainer>
                 <CreateProcessFormTimingDialog
                     isTimingDialogOpen={isTimingDialogOpen}
-                    setIsTimingDialogOpen={setIsTimingDialogOpen}
                     earlyStageField={earlyStageField}
                     stageExpirationField={stageExpirationField}
                     stageExpirationPeriodField={stageExpirationPeriodField}
                     votingPeriodField={votingPeriodField}
-                    handleSaveTimingValues={handleSaveTimingValues}
-                    typeValue={typeField.value}
+                    typeField={typeField}
                     bodyGovernanceTypeField={bodyGovernanceTypeField}
+                    setIsTimingDialogOpen={setIsTimingDialogOpen}
+                    handleSaveTimingValues={handleSaveTimingValues}
                 />
                 <CreateProcessFormAddBodyDialog
                     isBodyDialogOpen={isBodyDialogOpen}
                     setIsBodyDialogOpen={setIsBodyDialogOpen}
                     handleSaveBodyValues={handleSaveBodyValues}
                     bodyNameField={bodyNameField}
-                    bodyIndex={selectedBodyIndex} // Passing selectedBodyIndex here
+                    bodyIndex={selectedBodyIndex}
                     stageIndex={index}
                     bodyGovernanceTypeField={bodyGovernanceTypeField}
                     tokenSymbolField={tokenSymbolField}

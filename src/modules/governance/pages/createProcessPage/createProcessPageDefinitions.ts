@@ -9,7 +9,7 @@ export const createProcessWizardSteps: IWizardStepperStep[] = [
     {
         id: CreateProcessWizardStep.METADATA,
         order: 0,
-        meta: { name: `app.governance.createProcessPage.steps.${CreateProcessWizardStep.METADATA}.name` },
+        meta: { name: `Process Metadata` },
     },
     {
         id: CreateProcessWizardStep.STAGES,

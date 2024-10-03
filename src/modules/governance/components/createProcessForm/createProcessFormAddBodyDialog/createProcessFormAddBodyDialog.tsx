@@ -7,6 +7,8 @@ import { CreateProcessFormMultisigDetails } from '@/modules/governance/component
 import { CreateProcessFormMultisigParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultsigParams/createProcessFormMultisigParams';
 import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
 import { CreateProcessFormTokenVotingParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingParams/createProcessFormTokenVotingParams';
+import { StageInputItemBaseForm } from '@/modules/governance/components/createProcessForm/stageInput/stageInputItem';
+import { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
 import { Button, Dialog, formatterUtils, InputText, NumberFormat, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
 import { useEffect, useState } from 'react';
@@ -22,7 +24,7 @@ export interface ICreateProcessFormAddBodyDialogProps {
     bodyIndex: number;
     tokenNameField: any;
     tokenSymbolField: any;
-    supportThresholdPercentageField: any;
+    supportThresholdPercentageField: IUseFormFieldReturn<StageInputItemBaseForm, string>;
     minimumParticipationPercentageField: any;
     voteChangeField: any;
     multisigThresholdField: any;
@@ -36,6 +38,7 @@ export const CreateProcessFormAddBodyDialog: React.FC<ICreateProcessFormAddBodyD
         bodyGovernanceTypeField,
         tokenNameField,
         tokenSymbolField,
+        bodyIndex,
         supportThresholdPercentageField,
         minimumParticipationPercentageField,
         voteChangeField,
