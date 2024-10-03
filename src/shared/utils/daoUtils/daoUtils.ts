@@ -1,5 +1,6 @@
-import { daoService, type IDao } from '@/shared/api/daoService';
-import { type IDaoPageParams, PluginType } from '@/shared/types';
+import { daoService, type IDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { PluginType, type IDaoPageParams } from '@/shared/types';
+import { addressUtils } from '@aragon/ods';
 import { type Metadata } from 'next';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
@@ -57,13 +58,17 @@ class DaoUtils {
         const { type, pluginAddress } = params ?? {};
 
         return dao?.plugins.filter(
-            (plugin) =>
-                (pluginAddress == null || plugin.address === pluginAddress) &&
-                (type == null ||
-                    (type === PluginType.BODY && plugin.isBody) ||
-                    (type === PluginType.PROCESS && plugin.isProcess && !plugin.isSubPlugin)),
+            (plugin) => this.filterPluginByAddress(plugin, pluginAddress) && this.filterPluginByType(plugin, type),
         );
     };
+
+    private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
+        address == null || addressUtils.isAddressEqual(plugin.address, address);
+
+    private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
+        type == null ||
+        (type === PluginType.BODY && plugin.isBody) ||
+        (type === PluginType.PROCESS && plugin.isProcess && !plugin.isSubPlugin);
 }
 
 export const daoUtils = new DaoUtils();
