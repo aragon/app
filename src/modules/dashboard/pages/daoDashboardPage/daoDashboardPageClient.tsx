@@ -66,23 +66,23 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
+    if (dao == null) {
+        return null;
+    }
+
     const proposalListParams = { queryParams: { daoId, pageSize: dashboardProposalsCount } };
     const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
     const assetListParams = {
-        queryParams: { address: dao?.address, network: dao?.network, pageSize: dashboardAssetsCount },
+        queryParams: { address: dao.address, network: dao.network, pageSize: dashboardAssetsCount },
     };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
     const dropdownLabel = daoEns ?? truncatedAddress;
 
-    const daoLaunchedAt = formatterUtils.formatDate((dao?.blockTimestamp ?? 0) * 1000, {
+    const daoLaunchedAt = formatterUtils.formatDate(dao.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
     });
-
-    if (dao == null) {
-        return null;
-    }
 
     const { chainId } = networkDefinitions[dao.network];
     const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId });

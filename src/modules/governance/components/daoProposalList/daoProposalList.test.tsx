@@ -1,25 +1,21 @@
-import { type IGetProposalListParams } from '@/modules/governance/api/governanceService';
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
+import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 
-jest.mock('@/shared/components/pluginComponent', () => ({
-    PluginComponent: (props: { slotId: string; pluginIds: string[]; initialParams?: IGetProposalListParams }) => (
-        <div
-            data-testid="plugin-component-mock"
-            data-slotid={props.slotId}
-            data-pluginids={props.pluginIds}
-            data-initialparams={props.initialParams}
-        />
+jest.mock('@/shared/components/pluginTabComponent', () => ({
+    PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
+        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-plugins={props.plugins[0].id} />
     ),
 }));
 
 describe('<DaoProposalList /> component', () => {
-    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     afterEach(() => {
-        useDaoPluginIdsSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalListProps>) => {
@@ -31,23 +27,13 @@ describe('<DaoProposalList /> component', () => {
         return <DaoProposalList {...completeProps} />;
     };
 
-    it('renders a plugin component with the dao plugin ids and the correct slot id', () => {
-        const pluginIds = ['id-1', 'id-2'];
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
+    it('renders a plugin tab component with the process plugins and the correct slot id', () => {
+        const plugins = [generateTabComponentPlugin({ id: 'token', meta: generateDaoPlugin() })];
+        useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent).toBeInTheDocument();
         expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST);
-        expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.join(','));
-    });
-
-    it('passes the initial initialParams with creator address query to the plugin component', () => {
-        const initialParams = {
-            queryParams: { daoId: 'test-id', creatorAddress: '0x1234567890123456789012345678901234567890' },
-        };
-        render(createTestComponent({ initialParams }));
-
-        const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent.dataset.initialparams).toEqual(initialParams.toString());
+        expect(pluginComponent.dataset.plugins).toEqual(plugins[0].id);
     });
 });

@@ -1,11 +1,11 @@
 import { generateTokenPluginSettings, generateTokenProposal } from '@/plugins/tokenPlugin/testUtils';
 import { VoteOption } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { usePluginSettings } from '@/shared/hooks/usePluginSettings';
 import { ProposalVoting } from '@aragon/ods';
-import { generateSppProposal } from '../../testUtils';
-import type { ISppPluginSettings, ISppProposal } from '../../types';
+import { generateSppPluginSettings, generateSppProposal } from '../../testUtils';
+import { SppProposalType, type ISppProposal } from '../../types';
 import { SppVotingTerminalStage } from './sppVotingTerminalStage';
+import { daoMock } from '@/shared/api/daoService/daoService';
 
 const proposal = generateSppProposal({
     currentStageIndex: 0,
@@ -31,6 +31,31 @@ const proposal = generateSppProposal({
     ],
 });
 
+export const settingsMock = generateSppPluginSettings({
+    stages: [
+        {
+            id: '0',
+            name: 'Token holder voting',
+            plugins: [{ ...daoMock.plugins[2], proposalType: SppProposalType.APPROVAL }],
+            votingPeriod: 432000,
+            maxAdvance: 1,
+            minAdvance: 1,
+            approvalThreshold: 0.5,
+            vetoThreshold: 0.1,
+        },
+        {
+            id: '1',
+            name: 'Founders approval',
+            plugins: [{ ...daoMock.plugins[1], proposalType: SppProposalType.VETO }],
+            votingPeriod: 604800,
+            maxAdvance: 1,
+            minAdvance: 1,
+            approvalThreshold: 0.5,
+            vetoThreshold: 0.1,
+        },
+    ],
+});
+
 export interface IProposalVotingTerminalProps {
     /**
      * ID of the DAO for this proposal.
@@ -47,9 +72,7 @@ export const SppVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props)
 
     const { t } = useTranslations();
 
-    const settings = usePluginSettings<ISppPluginSettings>({ daoId });
-
-    const processedStages = settings?.stages.map((stage, index) => ({
+    const processedStages = settingsMock.stages.map((stage, index) => ({
         stage,
         proposals: proposal.subProposals.filter((proposal) => proposal.stageId === stage.id),
         index,

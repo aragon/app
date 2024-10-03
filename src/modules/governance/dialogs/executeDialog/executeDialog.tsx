@@ -6,7 +6,6 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/ods';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
@@ -40,20 +39,17 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { address } = useAccount();
     invariant(address != null, 'ExecuteDialog: user must be connected.');
 
-    const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
-    invariant(supportedPlugin != null, 'ExecuteDialog: DAO has no supported plugin.');
-
     const { t } = useTranslations();
 
     const { proposal, status } = location.params;
-    const { title, summary, creator, proposalIndex } = proposal;
+    const { title, summary, creator, proposalIndex, pluginAddress } = proposal;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
     const handlePrepareTransaction = async () => {
-        return executeDialogUtils.buildTransaction({ plugin: supportedPlugin, proposalIndex });
+        return executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
     };
 
     return (

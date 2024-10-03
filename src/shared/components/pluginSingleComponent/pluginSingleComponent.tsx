@@ -1,31 +1,29 @@
 import { pluginRegistryUtils, type PluginId, type SlotId } from '@/shared/utils/pluginRegistryUtils';
 import { cloneElement, isValidElement, type ReactNode } from 'react';
 
-export interface IPluginComponentProps {
+export interface IPluginSingleComponentProps {
     /**
      * Id of the slot component to load.
      */
     slotId: SlotId;
     /**
-     * Plugin IDs to load the component from. The component renders only the first component slot found.
+     * Plugin ID to load the component from.
      */
-    pluginIds: PluginId[];
-    /**
-     * Other properties passed to the loaded component.
-     */
-    [key: string]: unknown;
+    pluginId: PluginId;
     /**
      * Fallback component to be rendered if no components are registered for the specified slot.
      */
     children?: ReactNode;
+    /**
+     * Other properties passed to the loaded component.
+     */
+    [key: string]: unknown;
 }
 
-export const PluginComponent: React.FC<IPluginComponentProps> = (props) => {
-    const { slotId, pluginIds, children, ...otherProps } = props;
+export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (props) => {
+    const { slotId, pluginId, children, ...otherProps } = props;
 
-    const LoadedComponent = pluginIds
-        .map((pluginId) => pluginRegistryUtils.getSlotComponent({ slotId, pluginId }))
-        .find((component) => component != null);
+    const LoadedComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId });
 
     if (LoadedComponent == null) {
         const renderFallback = children != null && isValidElement(children);

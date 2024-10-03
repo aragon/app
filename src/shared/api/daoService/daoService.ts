@@ -14,6 +14,7 @@ export const daoMock: IDao = generateDao({
             subdomain: 'multisig',
             parentPlugin: '0x17366cae2b9c6C3055e9e3C78936a69006BE5409',
             settings: generateMultisigPluginSettings(),
+            isProcess: true,
         }),
         generateDaoPlugin({
             subdomain: 'token-voting',
@@ -21,6 +22,7 @@ export const daoMock: IDao = generateDao({
             settings: generateTokenPluginSettings({
                 minParticipation: 300000000,
             }),
+            isProcess: true,
         }),
     ],
 });
@@ -37,7 +39,11 @@ class DaoService extends AragonBackendService {
             return daoMock;
         }
 
-        return result;
+        // TODO: remove when isBody, isProcess, isSubPlugin are properly returned from the backend
+        return {
+            ...result,
+            plugins: result.plugins.map((plugin) => ({ ...plugin, isBody: true, isProcess: true, isSubPlugin: false })),
+        };
     };
 }
 

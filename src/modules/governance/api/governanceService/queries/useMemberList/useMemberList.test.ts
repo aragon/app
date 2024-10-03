@@ -12,7 +12,7 @@ describe('useMemberList query', () => {
     });
 
     it('fetches the members of the specified DAO', async () => {
-        const params = { daoId: 'dao-id-test' };
+        const params = { daoId: 'dao-id-test', pluginAddress: '0x123' };
         const membersResult = generatePaginatedResponse({ data: [generateMember()] });
         governanceServiceSpy.mockResolvedValue(membersResult);
         const { result } = renderHook(() => useMemberList({ queryParams: params }), { wrapper: ReactQueryWrapper });

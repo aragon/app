@@ -1,3 +1,4 @@
+import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -10,7 +11,12 @@ import {
 } from '@aragon/ods';
 import { type IMultisigVote } from '../../types';
 
-export interface IMultisigVoteListProps extends IVoteListProps {}
+export interface IMultisigVoteListProps extends IVoteListProps {
+    /**
+     * Parameters to use for fetching votes.
+     */
+    initialParams: IGetVoteListParams;
+}
 
 export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
     const { initialParams, daoId } = props;

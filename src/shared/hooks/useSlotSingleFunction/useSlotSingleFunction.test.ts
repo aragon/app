@@ -1,8 +1,8 @@
 import { type PluginFunction, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { renderHook } from '@testing-library/react';
-import { useSlotFunction } from './useSlotFunction';
+import { useSlotSingleFunction } from './useSlotSingleFunction';
 
-describe('useSlotFunction hook', () => {
+describe('useSlotSingleFunction hook', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 
     afterEach(() => {
@@ -15,7 +15,7 @@ describe('useSlotFunction hook', () => {
         const slotId = 'slot-id';
         const slotFunction: PluginFunction = (value: number) => value * 2;
         getSlotFunctionSpy.mockReturnValue(slotFunction);
-        const { result } = renderHook(() => useSlotFunction({ params, slotId, pluginIds: [pluginId] }));
+        const { result } = renderHook(() => useSlotSingleFunction({ params, slotId, pluginId }));
 
         expect(getSlotFunctionSpy).toHaveBeenCalledWith({ slotId, pluginId });
         expect(result.current).toEqual(slotFunction(params));
@@ -25,19 +25,7 @@ describe('useSlotFunction hook', () => {
         const pluginId = 'plugin-id';
         const slotId = 'slot-id';
         getSlotFunctionSpy.mockReturnValue(undefined);
-        const { result } = renderHook(() => useSlotFunction({ slotId, pluginIds: [pluginId], params: {} }));
+        const { result } = renderHook(() => useSlotSingleFunction({ slotId, pluginId, params: {} }));
         expect(result.current).toBeUndefined();
-    });
-
-    it('only returns the result of the first non-null slot function found', () => {
-        const pluginIds = ['unknown', 'multisig', 'tokenVoting'];
-        const slotId = 'member-stats';
-        getSlotFunctionSpy
-            .mockReturnValueOnce(undefined)
-            .mockReturnValueOnce(() => 'multisig-stats')
-            .mockReturnValueOnce(() => 'token-voting-stats');
-        const { result } = renderHook(() => useSlotFunction({ slotId, pluginIds, params: {} }));
-
-        expect(result.current).toEqual('multisig-stats');
     });
 });

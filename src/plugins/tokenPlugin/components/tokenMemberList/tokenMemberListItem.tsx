@@ -1,4 +1,4 @@
-import { usePluginSettings } from '@/shared/hooks/usePluginSettings';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { MemberDataListItem } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
@@ -12,14 +12,16 @@ export interface ITokenMemberListItemProps {
      * ID of the DAO the user is member of.
      */
     daoId: string;
+    /**
+     * Plugin to display the member for.
+     */
+    plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
 export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (props) => {
-    const { member, daoId } = props;
+    const { member, plugin, daoId } = props;
 
-    const settings = usePluginSettings<ITokenPluginSettings>({ daoId });
-
-    const tokenDecimals = settings?.token.decimals ?? 0;
+    const tokenDecimals = plugin.settings.token.decimals;
     const parsedVotingPower = formatUnits(BigInt(member.votingPower ?? '0'), tokenDecimals);
 
     return (

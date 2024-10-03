@@ -1,3 +1,7 @@
+import { daoOptions } from '@/shared/api/daoService';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { PluginType } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -13,19 +17,23 @@ jest.mock('@tanstack/react-query', () => ({
     ),
 }));
 
-jest.mock('./daoMembersPageClient', () => ({
-    DaoMembersPageClient: () => <div data-testid="page-client-mock" />,
-}));
+jest.mock('./daoMembersPageClient', () => ({ DaoMembersPageClient: () => <div data-testid="page-client-mock" /> }));
 
 describe('<DaoMembersPage /> component', () => {
+    const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
     const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
 
     beforeEach(() => {
+        fetchQuerySpy.mockImplementation(jest.fn());
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
+        getDaoPluginsSpy.mockReturnValue([generateDaoPlugin()]);
     });
 
     afterEach(() => {
+        fetchQuerySpy.mockReset();
         prefetchInfiniteQuerySpy.mockReset();
+        getDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<IDaoMembersPageProps>) => {
@@ -38,10 +46,19 @@ describe('<DaoMembersPage /> component', () => {
         return Component;
     };
 
-    it('prefetches the DAO member list from the given dao ID', async () => {
+    it('prefetches the DAO member list of the first DAO body plugin', async () => {
+        const dao = generateDao();
+        const bodyPlugin = generateDaoPlugin({ address: '0x123' });
+        fetchQuerySpy.mockResolvedValue(dao);
+        getDaoPluginsSpy.mockReturnValue([bodyPlugin]);
+
         const params = { id: 'my-dao' };
-        const memberListParams = { daoId: params.id, pageSize: daoMembersCount };
         render(await createTestComponent({ params }));
+
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
+        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.BODY });
+
+        const memberListParams = { daoId: params.id, pageSize: daoMembersCount, pluginAddress: bodyPlugin.address };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             memberListOptions({ queryParams: memberListParams }).queryKey,
         );

@@ -1,7 +1,7 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
-import * as usePluginSettings from '@/shared/hooks/usePluginSettings';
 import {
+    generateDaoPlugin,
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
@@ -19,21 +19,16 @@ jest.mock('../../../../modules/governance/api/governanceService', () => ({
 }));
 
 describe('<TokenMemberInfo /> component', () => {
-    const usePluginSettingsSpy = jest.spyOn(usePluginSettings, 'usePluginSettings');
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
 
-    beforeEach(() => {
-        usePluginSettingsSpy.mockReturnValue(generateTokenPluginSettings());
-    });
-
     afterEach(() => {
-        usePluginSettingsSpy.mockReset();
         useMemberListSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenMemberInfoProps>) => {
         const completeProps: ITokenMemberInfoProps = {
             daoId: 'test-id',
+            plugin: generateDaoPlugin({ settings: generateTokenPluginSettings() }),
             ...props,
         };
 
@@ -47,6 +42,7 @@ describe('<TokenMemberInfo /> component', () => {
     it('renders the component with the correct eligible voters and members info', async () => {
         const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300' });
         const mockSettings = generateTokenPluginSettings({ votingMode: 2, token });
+        const plugin = generateDaoPlugin({ settings: mockSettings });
 
         const members = [
             generateMember({ address: '0x123' }),
@@ -65,9 +61,7 @@ describe('<TokenMemberInfo /> component', () => {
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
 
-        usePluginSettingsSpy.mockReturnValue(mockSettings);
-
-        render(createTestComponent());
+        render(createTestComponent({ plugin }));
 
         expect(screen.getByText(/tokenMemberInfo.eligibleVoters/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
@@ -102,9 +96,9 @@ describe('<TokenMemberInfo /> component', () => {
 
         const token = generateToken({ symbol: 'WETH', name: 'Wrapped ETH', address: '0xWethAddress' });
         const mockSettings = generateTokenPluginSettings({ token });
-        usePluginSettingsSpy.mockReturnValue(mockSettings);
+        const plugin = generateDaoPlugin({ settings: mockSettings });
 
-        render(createTestComponent());
+        render(createTestComponent({ plugin }));
 
         const link = screen.getByRole<HTMLAnchorElement>('link', { name: /tokenMemberInfo.tokenNameAndSymbol/ });
         expect(link.text).toContain('tokenName=Wrapped ETH,tokenSymbol=WETH');
@@ -113,6 +107,7 @@ describe('<TokenMemberInfo /> component', () => {
     it('contains a link to the members page', () => {
         const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300', address: '0xBtcAddress' });
         const mockSettings = generateTokenPluginSettings({ votingMode: 2, token });
+        const plugin = generateDaoPlugin({ settings: mockSettings });
 
         const members = [
             generateMember({ address: '0x123' }),
@@ -131,8 +126,7 @@ describe('<TokenMemberInfo /> component', () => {
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
 
-        usePluginSettingsSpy.mockReturnValue(mockSettings);
-        render(createTestComponent());
+        render(createTestComponent({ plugin }));
         const linkElement = screen.getByRole('link', {
             name: /tokenMemberInfo.tokenDistribution \(count=5\) 0xBtcAddress/,
         });

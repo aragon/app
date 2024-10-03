@@ -1,11 +1,11 @@
 import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
-import { PluginComponent } from '@/shared/components/pluginComponent';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
 import { ProposalVoting, ProposalVotingStatus, ProposalVotingTab } from '@aragon/ods';
 import type { ISppStage, ISppSubProposal } from '../../types';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -33,22 +33,18 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     // TODO: Support multiple proposals within a stage (APP-3659)
     const proposal = proposals?.[0];
-
-    const pluginIds = [stage.plugins[0].subdomain];
-
     const voteListParams = { queryParams: { proposalId: proposal?.id, pageSize: votesPerPage } };
 
-    const proposalSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
-        params: { daoId, settings: proposal?.settings },
+    const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
+        params: { daoId, settings: proposal?.settings, pluginAddress: proposal?.pluginAddress ?? '' },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginIds,
+        pluginId: proposal?.pluginSubdomain ?? '',
     });
 
     const processedStartDate = (proposal?.startDate ?? 0) * 1000;
     const processedEndDate = ((proposal?.blockTimestamp ?? 0) + stage.votingPeriod) * 1000;
 
     //TODO: Need to make adjustment in ODS to disable tabs for inactive proposals
-
     return (
         <ProposalVoting.Stage
             name={stage.name}
@@ -61,14 +57,13 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         >
             {proposal && (
                 <>
-                    <PluginComponent
+                    <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
-                        pluginIds={pluginIds}
+                        pluginId={proposal.pluginSubdomain}
                         proposalId={proposal.id}
-                        proposal={proposal}
                     />
                     <ProposalVoting.Votes>
-                        <VoteList initialParams={voteListParams} daoId={daoId} />
+                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
                     </ProposalVoting.Votes>
                 </>
             )}

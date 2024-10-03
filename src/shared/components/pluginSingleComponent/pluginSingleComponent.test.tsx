@@ -1,22 +1,22 @@
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
-import { PluginComponent, type IPluginComponentProps } from './pluginComponent';
+import { PluginSingleComponent, type IPluginSingleComponentProps } from './pluginSingleComponent';
 
-describe('<PluginComponent />', () => {
+describe('<PluginSingleComponent /> component', () => {
     const getSlotComponentSpy = jest.spyOn(pluginRegistryUtils, 'getSlotComponent');
 
     afterEach(() => {
         getSlotComponentSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IPluginComponentProps>) => {
-        const completeProps: IPluginComponentProps = {
-            slotId: 'test',
-            pluginIds: [],
+    const createTestComponent = (props?: Partial<IPluginSingleComponentProps>) => {
+        const completeProps: IPluginSingleComponentProps = {
+            slotId: 'slot-test',
+            pluginId: 'plugin-test',
             ...props,
         };
 
-        return <PluginComponent {...completeProps} />;
+        return <PluginSingleComponent {...completeProps} />;
     };
 
     it('renders the registered slot component for the given plugin-id and slot-id`', () => {
@@ -24,7 +24,7 @@ describe('<PluginComponent />', () => {
         const slotId = 'slot-id';
         const slotComponent = () => <div data-testid="slot-component-test" />;
         getSlotComponentSpy.mockReturnValue(slotComponent);
-        render(createTestComponent({ pluginIds: [pluginId], slotId }));
+        render(createTestComponent({ pluginId, slotId }));
 
         expect(getSlotComponentSpy).toHaveBeenCalledWith({ slotId, pluginId });
         expect(screen.getByTestId('slot-component-test')).toBeInTheDocument();
@@ -36,46 +36,21 @@ describe('<PluginComponent />', () => {
         expect(container).toBeEmptyDOMElement();
     });
 
-    it('only renders the first non-null slot component found', () => {
-        const pluginIds = ['unknown', 'multisig', 'tokenVoting'];
-        const slotId = 'member-list';
-        getSlotComponentSpy
-            .mockReturnValueOnce(undefined)
-            .mockReturnValueOnce(() => <div data-testid="multisig-slot-component" />)
-            .mockReturnValueOnce(() => <div data-testid="tokenvoting-slot-component" />);
-        render(createTestComponent({ pluginIds, slotId }));
-
-        expect(screen.getByTestId('multisig-slot-component')).toBeInTheDocument();
-        expect(screen.queryByTestId('tokenvoting-slot-component')).not.toBeInTheDocument();
-    });
-
     it('renders the fallback component when no plugin component is found and children is a valid React element', () => {
         getSlotComponentSpy.mockReturnValue(undefined);
         const FallbackComponent = () => <div data-testid="fallback-component-test" />;
-        render(
-            createTestComponent({
-                children: <FallbackComponent />,
-            }),
-        );
-
+        render(createTestComponent({ children: <FallbackComponent /> }));
         expect(screen.getByTestId('fallback-component-test')).toBeInTheDocument();
     });
 
-    it('does not render the fallback component when a plugin component is found', () => {
+    it('does not render the fallback component when the plugin component is found', () => {
         const pluginId = 'plugin-id';
         const slotId = 'slot-id';
         const slotComponent = () => <div data-testid="slot-component-test" />;
         getSlotComponentSpy.mockReturnValue(slotComponent);
-
         const FallbackComponent = () => <div data-testid="fallback-component-test" />;
 
-        render(
-            createTestComponent({
-                pluginIds: [pluginId],
-                slotId,
-                children: <FallbackComponent />,
-            }),
-        );
+        render(createTestComponent({ pluginId, slotId, children: <FallbackComponent /> }));
 
         expect(screen.getByTestId('slot-component-test')).toBeInTheDocument();
         expect(screen.queryByTestId('fallback-component-test')).not.toBeInTheDocument();

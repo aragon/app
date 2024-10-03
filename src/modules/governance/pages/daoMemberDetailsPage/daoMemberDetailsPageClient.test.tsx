@@ -17,6 +17,10 @@ jest.mock('../../../explore/components/daoList', () => ({
     DaoList: jest.fn(() => <div data-testid="dao-list-mock" />),
 }));
 
+jest.mock('@/modules/governance/components/voteList', () => ({
+    VoteList: jest.fn(() => <div data-testid="vote-list-mock" />),
+}));
+
 describe('<DaoMemberDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');

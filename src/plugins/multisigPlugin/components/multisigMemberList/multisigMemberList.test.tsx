@@ -25,7 +25,7 @@ describe('<MultisigMemberList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigMemberListProps>) => {
         const completeProps: IMultisigMemberListProps = {
-            initialParams: { queryParams: { daoId: 'dao-id' } },
+            initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
             ...props,
         };
 

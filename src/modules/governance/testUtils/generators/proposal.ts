@@ -19,5 +19,7 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     settings: {},
     executed: { status: false },
     actions: [],
+    pluginAddress: '0x123',
+    pluginSubdomain: 'test',
     ...proposal,
 });

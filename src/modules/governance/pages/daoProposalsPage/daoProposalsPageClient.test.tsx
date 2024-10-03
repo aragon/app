@@ -1,3 +1,5 @@
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
 
@@ -10,9 +12,19 @@ jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
 }));
 
 describe('<DaoProposalsPageClient /> component', () => {
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+
+    beforeEach(() => {
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+    });
+
+    afterEach(() => {
+        useDaoPluginsSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
         const completeProps: IDaoProposalsPageClientProps = {
-            initialParams: { queryParams: { daoId: 'test-id' } },
+            initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },
             ...props,
         };
 
@@ -29,12 +41,15 @@ describe('<DaoProposalsPageClient /> component', () => {
 
     it('renders the create proposal button with the correct link and label', () => {
         const daoId = 'test-id';
-        const initialParams = { queryParams: { daoId } };
+        const pluginAddress = '0x082729';
+        const initialParams = { queryParams: { daoId, pluginAddress } };
+        const plugin = generateDaoPlugin({ address: pluginAddress });
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
         render(createTestComponent({ initialParams }));
         const createProposalButton = screen.getByRole<HTMLAnchorElement>('link', {
             name: /daoProposalsPage.main.action/,
         });
         expect(createProposalButton).toBeInTheDocument();
-        expect(createProposalButton).toHaveAttribute('href', `/dao/${daoId}/create/proposal`);
+        expect(createProposalButton).toHaveAttribute('href', `/dao/${daoId}/create/${pluginAddress}/proposal`);
     });
 });

@@ -14,7 +14,7 @@ jest.mock('./createProposalPageClient', () => ({
 describe('<CreateProposalPage /> component', () => {
     const createTestComponent = (props?: Partial<ICreateProposalPageProps>) => {
         const completeProps: ICreateProposalPageProps = {
-            params: { id: 'test' },
+            params: { id: 'test', pluginAddress: '0x123' },
             ...props,
         };
 
