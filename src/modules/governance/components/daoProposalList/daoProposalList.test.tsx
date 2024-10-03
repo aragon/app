@@ -27,7 +27,7 @@ describe('<DaoProposalList /> component', () => {
         return <DaoProposalList {...completeProps} />;
     };
 
-    it('renders a plugin tab component with the process plugins and the correct slot it', () => {
+    it('renders a plugin tab component with the process plugins and the correct slot id', () => {
         const plugins = [generateTabComponentPlugin({ id: 'token', meta: generateDaoPlugin() })];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
