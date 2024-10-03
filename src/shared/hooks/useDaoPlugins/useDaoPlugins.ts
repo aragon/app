@@ -30,7 +30,7 @@ export const useDaoPlugins = (
 
     const processedPlugins = plugins?.map((plugin) => ({
         id: plugin.subdomain,
-        tabId: `${plugin.subdomain}-${plugin.address}`,
+        uniqueId: `${plugin.subdomain}-${plugin.address}`,
         label: daoUtils.formatPluginName(plugin.subdomain),
         meta: plugin,
         props: {},

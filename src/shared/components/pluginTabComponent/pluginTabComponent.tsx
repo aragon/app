@@ -8,9 +8,9 @@ export interface ITabComponentPlugin<TMeta extends object = object, TProps exten
      */
     id: string;
     /**
-     * ID to be used on the Tab component, must be unique.
+     * Unique ID to be used on the Tab component.
      */
-    tabId: string;
+    uniqueId: string;
     /**
      * Label of the plugin to be displayed as on the tab list. Defaults to the plugin id when not set.
      */
@@ -66,7 +66,7 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     );
 
     const updateActivePlugin = (tabId: string) => {
-        const plugin = plugins.find((plugin) => plugin.tabId === tabId)!;
+        const plugin = plugins.find((plugin) => plugin.uniqueId === tabId)!;
         setActivePlugin(plugin);
         onValueChange?.(plugin);
     };
@@ -82,14 +82,14 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     }
 
     return (
-        <Tabs.Root value={activePlugin?.tabId} onValueChange={updateActivePlugin}>
+        <Tabs.Root value={activePlugin?.uniqueId} onValueChange={updateActivePlugin}>
             <Tabs.List>
-                {pluginComponents.map(({ tabId, id, label }) => (
-                    <Tabs.Trigger key={tabId} label={label ?? id} value={tabId} />
+                {pluginComponents.map(({ uniqueId, id, label }) => (
+                    <Tabs.Trigger key={uniqueId} label={label ?? id} value={uniqueId} />
                 ))}
             </Tabs.List>
-            {pluginComponents.map(({ tabId, Component, props }) => (
-                <Tabs.Content key={tabId} value={tabId} className="pt-6">
+            {pluginComponents.map(({ uniqueId, Component, props }) => (
+                <Tabs.Content key={uniqueId} value={uniqueId} className="pt-6">
                     <Component {...props} {...otherProps} />
                 </Tabs.Content>
             ))}

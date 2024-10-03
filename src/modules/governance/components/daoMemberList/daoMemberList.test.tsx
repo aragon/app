@@ -29,7 +29,7 @@ describe('<DaoMemberList /> component', () => {
 
     it('renders a plugin tab component with the body plugins and the dao-member-list slot it', () => {
         const daoPlugin = generateDaoPlugin({ address: '0x1239478' });
-        const plugins = [{ id: 'token', tabId: '0x123-token', label: 'Token', meta: daoPlugin, props: {} }];
+        const plugins = [{ id: 'token', uniqueId: '0x123-token', label: 'Token', meta: daoPlugin, props: {} }];
         useDaoPluginsSpy.mockReturnValue(plugins);
 
         render(createTestComponent());

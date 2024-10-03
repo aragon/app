@@ -46,7 +46,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                 <div className="flex flex-col gap-3">
                     {processPlugins?.map((plugin) => (
                         <Link
-                            key={plugin.tabId}
+                            key={plugin.uniqueId}
                             description={addressUtils.truncateAddress(plugin.meta.address)}
                             iconRight={IconType.LINK_EXTERNAL}
                             href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.meta.address, chainId })}

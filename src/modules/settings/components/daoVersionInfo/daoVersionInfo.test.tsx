@@ -45,7 +45,7 @@ describe('<DaoVersionInfo /> component', () => {
         const dao = generateDao({ plugins: [plugin], version: '1.3.0' });
         const appVersion = '1.0.0';
 
-        useDaoPluginsSpy.mockReturnValue([{ id: '', label: '', tabId: '', meta: plugin, props: {} }]);
+        useDaoPluginsSpy.mockReturnValue([{ id: '', label: '', uniqueId: '', meta: plugin, props: {} }]);
         useApplicationVersionSpy.mockReturnValue(appVersion);
 
         render(createTestComponent({ dao: dao }));
@@ -61,7 +61,7 @@ describe('<DaoVersionInfo /> component', () => {
         const plugin = generateDaoPlugin({ address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c' });
         const dao = generateDao({ plugins: [plugin] });
 
-        useDaoPluginsSpy.mockReturnValue([{ id: '', label: '', tabId: '', meta: plugin, props: {} }]);
+        useDaoPluginsSpy.mockReturnValue([{ id: '', label: '', uniqueId: '', meta: plugin, props: {} }]);
         render(createTestComponent({ dao: dao }));
 
         const linkElement = screen.getByRole('link', { name: /daoVersionInfo.governanceValue .* 0x89…437c/ });

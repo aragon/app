@@ -33,7 +33,7 @@ describe('<DaoGovernanceInfo /> component', () => {
     };
 
     it('renders the plugin-specific dao governance info component', () => {
-        const plugins = [{ id: '', tabId: '', label: '', meta: generateDaoPlugin(), props: {} }];
+        const plugins = [{ id: '', uniqueId: '', label: '', meta: generateDaoPlugin(), props: {} }];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
         const pluginComponent = screen.getByTestId('plugin-component-mock');
