@@ -1,7 +1,7 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoMembersInfo, type IDaoMembersInfoProps } from './daoMembersInfo';
 
@@ -33,7 +33,7 @@ describe('<DaoMembersInfo /> component', () => {
     };
 
     it('renders the plugin-specific dao members info component', () => {
-        const plugins = [{ id: '', uniqueId: '', label: '', meta: generateDaoPlugin(), props: {} }];
+        const plugins = [generateTabComponentPlugin({ meta: generateDaoPlugin() })];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
         const pluginComponent = screen.getByTestId('plugin-component-mock');

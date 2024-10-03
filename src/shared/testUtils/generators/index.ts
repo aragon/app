@@ -9,3 +9,4 @@ export * from './pluginSettings';
 export * from './reactQueryResponse';
 export * from './response';
 export * from './stepperResult';
+export * from './tabComponentPlugin';

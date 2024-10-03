@@ -1,6 +1,6 @@
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin } from '@/shared/testUtils';
+import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoMemberList, type IDaoMemberListProps } from './daoMemberList';
@@ -29,7 +29,7 @@ describe('<DaoMemberList /> component', () => {
 
     it('renders a plugin tab component with the body plugins and the dao-member-list slot it', () => {
         const daoPlugin = generateDaoPlugin({ address: '0x1239478' });
-        const plugins = [{ id: 'token', uniqueId: '0x123-token', label: 'Token', meta: daoPlugin, props: {} }];
+        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
         useDaoPluginsSpy.mockReturnValue(plugins);
 
         render(createTestComponent());

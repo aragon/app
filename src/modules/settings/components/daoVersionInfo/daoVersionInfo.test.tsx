@@ -1,6 +1,6 @@
 import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';
@@ -45,7 +45,7 @@ describe('<DaoVersionInfo /> component', () => {
         const dao = generateDao({ plugins: [plugin], version: '1.3.0' });
         const appVersion = '1.0.0';
 
-        useDaoPluginsSpy.mockReturnValue([{ id: '', label: '', uniqueId: '', meta: plugin, props: {} }]);
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
         useApplicationVersionSpy.mockReturnValue(appVersion);
 
         render(createTestComponent({ dao: dao }));
@@ -61,7 +61,7 @@ describe('<DaoVersionInfo /> component', () => {
         const plugin = generateDaoPlugin({ address: '0x899d49F22E105C2Be505FC6c19C36ABa285D437c' });
         const dao = generateDao({ plugins: [plugin] });
 
-        useDaoPluginsSpy.mockReturnValue([{ id: '', label: '', uniqueId: '', meta: plugin, props: {} }]);
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
         render(createTestComponent({ dao: dao }));
 
         const linkElement = screen.getByRole('link', { name: /daoVersionInfo.governanceValue .* 0x89…437c/ });

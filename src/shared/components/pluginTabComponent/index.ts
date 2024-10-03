@@ -1,1 +1,2 @@
-export { PluginTabComponent, type IPluginTabComponentProps, type ITabComponentPlugin } from './pluginTabComponent';
+export { PluginTabComponent } from './pluginTabComponent';
+export * from './pluginTabComponent.api';
