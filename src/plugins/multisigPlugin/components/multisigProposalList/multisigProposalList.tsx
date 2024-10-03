@@ -1,4 +1,4 @@
-import { IGetProposalListParams } from '@/modules/governance/api/governanceService';
+import type { IGetProposalListParams } from '@/modules/governance/api/governanceService';
 import type { IDaoProposalListProps } from '@/modules/governance/components/daoProposalList';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import { useTranslations } from '@/shared/components/translationsProvider';

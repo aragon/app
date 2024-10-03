@@ -1,4 +1,4 @@
-import { IGetMemberListParams } from '@/modules/governance/api/governanceService';
+import type { IGetMemberListParams } from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import { useTranslations } from '@/shared/components/translationsProvider';

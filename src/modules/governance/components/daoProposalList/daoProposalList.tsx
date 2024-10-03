@@ -4,7 +4,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPluginTabComponentProps, PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
-import { NestedOmit } from '@/shared/types/nestedOmit';
+import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
