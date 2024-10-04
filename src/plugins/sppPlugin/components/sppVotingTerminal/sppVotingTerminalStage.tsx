@@ -4,7 +4,7 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { ProposalVoting, ProposalVotingStatus, ProposalVotingTab } from '@aragon/ods';
+import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
 import type { ISppStage, ISppSubProposal } from '../../types';
 
 export interface IProposalVotingTerminalStageProps {
