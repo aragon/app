@@ -1,11 +1,11 @@
 import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting, ProposalVotingStatus, ProposalVotingTab } from '@aragon/ods';
 import type { ISppStage, ISppSubProposal } from '../../types';
-import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -36,11 +36,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const plugin = stage.plugins[0];
 
     const voteListParams = {
-        queryParams: {
-            proposalId: proposal?.id,
-            pluginAddress: plugin.address,
-            pageSize: votesPerPage,
-        },
+        queryParams: { proposalId: proposal?.id, pluginAddress: plugin.address, pageSize: votesPerPage },
     };
 
     const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({

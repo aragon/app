@@ -1,3 +1,3 @@
 export { generateSppProposal } from './sppProposal';
-export { generateSppSubProposal } from './sppSubProposal';
 export { generateSppPluginSettings } from './sppSettings';
+export { generateSppSubProposal } from './sppSubProposal';
