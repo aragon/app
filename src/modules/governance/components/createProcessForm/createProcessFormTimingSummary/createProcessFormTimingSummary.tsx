@@ -1,23 +1,21 @@
+import { getAllStageFields } from '@/modules/governance/components/createProcessForm/utils/getStageFields';
 import { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, Tag } from '@aragon/ods';
 
 export interface ICreateProcessFormTimingSummaryProps {
-    votingPeriodField: any;
-    earlyStageField: any;
-    stageExpirationField: any;
-    stageExpirationPeriodField: any;
-    typeFieldValue: string;
+    stageName: string;
+    stageIndex: number;
     onEditTimingClick: () => void;
 }
 
 export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSummaryProps> = ({
-    votingPeriodField,
-    earlyStageField,
-    stageExpirationField,
-    stageExpirationPeriodField,
-    typeFieldValue,
+    stageName,
+    stageIndex,
     onEditTimingClick,
 }) => {
+    const { votingPeriodField, earlyStageField, stageExpirationField, stageExpirationPeriodField, stageTypeField } =
+        getAllStageFields(stageName, stageIndex);
+
     return (
         <>
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
@@ -26,7 +24,7 @@ export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSu
                         (votingPeriodField.value as IDateDuration).hours
                     } hours, ${(votingPeriodField.value as IDateDuration).minutes} minutes`}
                 </DefinitionList.Item>
-                {typeFieldValue === 'normal' && (
+                {stageTypeField.value === 'normal' && (
                     <DefinitionList.Item term="Early stage advance">
                         <Tag
                             className="w-fit"

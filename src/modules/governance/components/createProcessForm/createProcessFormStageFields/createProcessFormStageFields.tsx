@@ -1,8 +1,5 @@
 import { type ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import {
-    CreateProcessFormTimingDialog,
-    type ICreateProcessFormTimingValues,
-} from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
+import { CreateProcessFormTimingDialog } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
 
 import { CreateProcessFormBodySummary } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary';
 import { ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
@@ -41,23 +38,9 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
     console.log('formValues', getValues());
     const { buildEntityUrl } = useBlockExplorer();
 
-    const {
-        stageNameField,
-        typeField,
-        votingPeriodField,
-        earlyStageField,
-        stageExpirationField,
-        stageExpirationPeriodField,
-    } = getAllStageFields(stageName, stageIndex);
+    const { stageNameField, stageTypeField } = getAllStageFields(stageName, stageIndex);
 
     const { fields: bodyFields, appendBody, removeBody, updateBody } = getBodyFieldsArray(stageName, stageIndex);
-
-    const handleSaveTimingValues = (values: ICreateProcessFormTimingValues) => {
-        setValue(votingPeriodField.name, values.votingPeriod);
-        setValue(earlyStageField.name, values.earlyStage);
-        setValue(stageExpirationField.name, values.stageExpiration);
-        setIsTimingDialogOpen(false);
-    };
 
     const handleSaveBodyValues = (values: ICreateProcessFormBody) => {
         if (selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length) {
@@ -94,9 +77,9 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                 />
                 <RadioGroup
                     className="flex flex-col gap-x-4 md:!flex-row"
-                    onValueChange={typeField.onChange}
+                    onValueChange={stageTypeField.onChange}
                     helpText="Specify what kind of stage"
-                    {...typeField}
+                    {...stageTypeField}
                 >
                     <RadioCard className="w-full" label="Normal" description="" value="normal" />
                     <RadioCard className="w-full" label="Optimistic" description="" value="optimistic" />
@@ -110,11 +93,8 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     helpText="Define the timing of the stage, so all bodies have enough time to execute and advance the proposals."
                 >
                     <CreateProcessFormTimingSummary
-                        votingPeriodField={votingPeriodField}
-                        earlyStageField={earlyStageField}
-                        stageExpirationField={stageExpirationField}
-                        stageExpirationPeriodField={stageExpirationPeriodField}
-                        typeFieldValue={typeField.value}
+                        stageName={stageName}
+                        stageIndex={stageIndex}
                         onEditTimingClick={() => setIsTimingDialogOpen(true)}
                     />
                 </InputContainer>
@@ -168,14 +148,10 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                 )}
             </Card>
             <CreateProcessFormTimingDialog
+                stageName={stageName}
+                stageIndex={stageIndex}
                 isTimingDialogOpen={isTimingDialogOpen}
-                earlyStageField={earlyStageField}
-                stageExpirationField={stageExpirationField}
-                stageExpirationPeriodField={stageExpirationPeriodField}
-                votingPeriodField={votingPeriodField}
-                typeField={typeField}
                 setIsTimingDialogOpen={setIsTimingDialogOpen}
-                handleSaveTimingValues={handleSaveTimingValues}
             />
             <CreateProcessFormBodyDialog
                 isBodyDialogOpen={isBodyDialogOpen}

@@ -23,7 +23,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
     const { stageIndex, stageName, bodyIndex } = props;
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
-    const { watch, setValue } = useFormContext();
+    const { watch, setValue, getValues } = useFormContext();
 
     const { supportThresholdPercentageField, minimumParticipationPercentageField, voteChangeField } = getAllBodyFields(
         stageName,
@@ -31,8 +31,10 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
         bodyIndex,
     );
 
-    const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenMembers`);
+    const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`);
     const tokenSymbol = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbol`);
+
+    console.log('members', members);
 
     useEffect(() => {
         const totalTokenAmount = members.reduce((acc: any, member: any) => acc + Number(member.tokenAmount), 0);

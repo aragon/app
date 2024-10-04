@@ -11,7 +11,7 @@ export interface ICreateProcessFormMultisigParamsProps {
 export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParamsProps> = (props) => {
     const { stageName, stageIndex, bodyIndex } = props;
     const { watch } = useFormContext();
-    const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.multisigMembers`);
+    const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`);
     const { multisigThresholdField } = getAllBodyFields(stageName, stageIndex, bodyIndex);
     return (
         <>

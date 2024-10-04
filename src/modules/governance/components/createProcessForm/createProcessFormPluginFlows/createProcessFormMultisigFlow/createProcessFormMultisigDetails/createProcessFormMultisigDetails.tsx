@@ -38,7 +38,7 @@ export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultis
                     <MultisigMemberInputRow
                         key={index}
                         index={index}
-                        fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.multisigMembers.${index}`}
+                        fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.members.${index}`}
                         handleRemoveMember={handleRemoveMember}
                         canRemove={multisigMemberFields.length > 1}
                     />

@@ -45,10 +45,7 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
             minimumParticipationPercentage: watch(minimumParticipationPercentageField.name),
             voteChange: watch(voteChangeField.name),
             multisigThreshold: watch(multisigThresholdField.name),
-            members:
-                bodyGovernanceTypeField.value === 'tokenVoting'
-                    ? watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenMembers`)
-                    : watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.multisigMembers`),
+            members: watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`),
         };
         handleSaveBodyValues(values);
         setIsBodyDialogOpen(false);
@@ -93,7 +90,7 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
                         />
                         <RadioGroup
                             className="flex gap-4"
-                            helpText="What kind of governance would you like to add?"
+                            helpText={`${stageName}.${stageIndex}.${bodyIndex}`}
                             onValueChange={(value) => setValue(bodyGovernanceTypeField.name, value)}
                             {...bodyGovernanceTypeField}
                             defaultValue={bodyGovernanceTypeField.value}

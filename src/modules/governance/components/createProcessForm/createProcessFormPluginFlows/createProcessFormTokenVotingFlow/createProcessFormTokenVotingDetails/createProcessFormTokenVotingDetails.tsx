@@ -82,7 +82,7 @@ export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormToke
                     <TokenVotingMemberInputRow
                         key={field.id}
                         index={index}
-                        fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenMembers.${index}`}
+                        fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.members.${index}`}
                         tokenSymbol={tokenSymbol}
                         handleRemoveMember={() => handleRemoveMember(index)}
                         canRemove={tokenMemberFields.length > 1}
