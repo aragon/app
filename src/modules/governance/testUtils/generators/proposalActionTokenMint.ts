@@ -1,5 +1,5 @@
 import { type IProposalActionTokenMint, ProposalActionType } from '@/modules/governance/api/governanceService';
-import { generateToken } from '../../../finance/testUtils/generators/token';
+import { generateToken } from '@/modules/finance/testUtils';
 import { generateProposalAction } from './proposalAction';
 
 export const generateProposalActionTokenMint = (

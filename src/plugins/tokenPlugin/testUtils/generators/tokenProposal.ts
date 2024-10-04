@@ -1,4 +1,4 @@
-import { generateProposal } from '../../../../modules/governance/testUtils/generators/proposal';
+import { generateProposal } from '@/modules/governance/testUtils';
 import type { ITokenProposal } from '../../types';
 import { generateTokenPluginSettings } from './tokenPluginSettings';
 

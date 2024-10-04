@@ -1,4 +1,4 @@
-import { generateProposal } from '../../../../modules/governance/testUtils/generators/proposal';
+import { generateProposal } from '@/modules/governance/testUtils';
 import { type IMultisigProposal } from '../../types';
 import { generateMultisigPluginSettings } from './multisigPluginSettings';
 
