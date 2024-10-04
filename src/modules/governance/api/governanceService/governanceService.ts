@@ -1,7 +1,6 @@
-import { generateSppPluginSettings, generateSppProposal } from '@/plugins/sppPlugin/testUtils';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
-import { generateTokenProposal } from '@/plugins/tokenPlugin/testUtils';
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
+import { Network } from '@/shared/api/daoService';
 import { daoMock } from '@/shared/api/daoService/daoService';
 import type { IMember, IProposal, IVote } from './domain';
 import type {
@@ -13,20 +12,59 @@ import type {
 } from './governanceService.api';
 
 // TODO: Remove these mocks when we have all data from backend for SPP proposals
-const mockSppProposal = generateSppProposal({
+const mockSppProposal = {
+    id: '1',
+    proposalIndex: '0',
+    title: 'title',
+    startDate: 0,
+    endDate: 1234567890,
+    summary: 'summary',
+    creator: {
+        address: '0x51cc608e50D59885009522e1b6307E72A9ECfa2c',
+        ens: null,
+        avatar: null,
+    },
+    blockTimestamp: 0,
+    description: 'description',
+    daoAddress: '0x123',
+    transactionHash: '0x123',
+    resources: [],
+    network: Network.ARBITRUM_MAINNET,
+    executed: { status: false },
+    actions: [],
+    pluginAddress: '0x123',
     pluginSubdomain: 'spp',
     currentStageIndex: 0,
     subProposals: [
         {
-            ...generateTokenProposal({
-                id: '0x63d7ccd4a6a761b1522cfef87896566cb9c04540198d3b77605487a6eb679469-0xCa6f5bd946F52298a7B6154fc827bF87512a15F3-7',
-                pluginSubdomain: 'token-voting',
-                blockTimestamp: 1726153572,
-            }),
+            proposalIndex: '0',
+            title: 'title',
+            startDate: 0,
+            endDate: 1234567890,
+            summary: 'summary',
+            creator: {
+                address: '0x51cc608e50D59885009522e1b6307E72A9ECfa2c',
+                ens: null,
+                avatar: null,
+            },
+            description: 'description',
+            daoAddress: '0x123',
+            transactionHash: '0x123',
+            resources: [],
+            network: Network.ARBITRUM_MAINNET,
+            settings: {},
+            executed: { status: false },
+            actions: [],
+            pluginAddress: '0x123',
+
+            id: '0x63d7ccd4a6a761b1522cfef87896566cb9c04540198d3b77605487a6eb679469-0xCa6f5bd946F52298a7B6154fc827bF87512a15F3-7',
+            pluginSubdomain: 'token-voting',
+            blockTimestamp: 1726153572,
+
             stageId: '0',
         },
     ],
-    settings: generateSppPluginSettings({
+    settings: {
         stages: [
             {
                 id: '0',
@@ -49,8 +87,8 @@ const mockSppProposal = generateSppProposal({
                 vetoThreshold: 0.1,
             },
         ],
-    }),
-});
+    },
+};
 
 class GovernanceService extends AragonBackendService {
     private urls = {
