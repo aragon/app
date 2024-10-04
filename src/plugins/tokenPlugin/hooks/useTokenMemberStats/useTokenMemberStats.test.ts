@@ -1,5 +1,6 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import * as governanceService from '@/modules/governance/api/governanceService';
+import { generateMember } from '@/modules/governance/testUtils';
 import { generateDaoPlugin, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
 import { generateTokenMember, generateTokenMemberMetrics, generateTokenPluginSettings } from '../../testUtils';
@@ -44,6 +45,15 @@ describe('useTokenMemberStats hook', () => {
 
         expect(delegates.label).toBe('app.plugins.token.tokenMemberStats.delegations');
         expect(delegates.value).toBe('47.93M');
+    });
+
+    it('returns empty list when member is not a token member', () => {
+        const member = generateMember();
+        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+        const { result } = renderHook(() =>
+            useTokenMemberStats({ address: '0x123', daoId: '1', plugin: generateDaoPlugin() }),
+        );
+        expect(result.current).toEqual([]);
     });
 
     it('returns empty list when member is null', () => {

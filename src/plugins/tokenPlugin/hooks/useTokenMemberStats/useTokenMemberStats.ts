@@ -1,10 +1,10 @@
-import { useMember } from '@/modules/governance/api/governanceService';
+import { useMember, type IMember } from '@/modules/governance/api/governanceService';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { type ITokenMember, type ITokenPluginSettings } from '../../types';
+import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
 interface IUseTokenMemberStatsParams {
     /**
@@ -21,15 +21,20 @@ interface IUseTokenMemberStatsParams {
     plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
+const isTokenMember = (member?: IMember): member is ITokenMember =>
+    member != null &&
+    (('tokenBalance' in member && member.tokenBalance != null) ||
+        ('votingPower' in member && member.votingPower != null));
+
 export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHeaderStat[] => {
     const { address, daoId, plugin } = params;
     const { t } = useTranslations();
 
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId };
-    const { data: member } = useMember<ITokenMember>({ urlParams: memberUrlParams, queryParams: memberQueryParams });
+    const memberQueryParams = { daoId, pluginAddress: plugin?.address };
+    const { data: member } = useMember({ urlParams: memberUrlParams, queryParams: memberQueryParams });
 
-    if (member == null) {
+    if (!isTokenMember(member)) {
         return [];
     }
 

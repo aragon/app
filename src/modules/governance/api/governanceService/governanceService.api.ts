@@ -43,6 +43,10 @@ export interface IGetMemberQueryParams {
      * ID of the DAO to fetch the member from.
      */
     daoId: string;
+    /**
+     * Address of the plugin used to include the member stats.
+     */
+    pluginAddress?: string;
 }
 
 export interface IGetMemberParams extends IRequestUrlQueryParams<IGetMemberUrlParams, IGetMemberQueryParams> {}
