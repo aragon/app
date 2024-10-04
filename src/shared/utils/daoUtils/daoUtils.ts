@@ -21,6 +21,10 @@ export interface IGetDaoPluginsParams {
      * Only returns the plugin with the specified address when set.
      */
     pluginAddress?: string;
+    /**
+     * Include sub-plugins in the result.
+     */
+    includeSubPlugins?: boolean;
 }
 
 class DaoUtils {
@@ -55,10 +59,12 @@ class DaoUtils {
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
-        const { type, pluginAddress } = params ?? {};
-
+        const { type, pluginAddress, includeSubPlugins = false } = params ?? {};
         return dao?.plugins.filter(
-            (plugin) => this.filterPluginByAddress(plugin, pluginAddress) && this.filterPluginByType(plugin, type),
+            (plugin) =>
+                this.filterPluginByAddress(plugin, pluginAddress) &&
+                this.filterPluginByType(plugin, type) &&
+                this.filterBySubPlugin(plugin, includeSubPlugins),
         );
     };
 
@@ -68,7 +74,10 @@ class DaoUtils {
     private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
         type == null ||
         (type === PluginType.BODY && plugin.isBody) ||
-        (type === PluginType.PROCESS && plugin.isProcess && !plugin.isSubPlugin);
+        (type === PluginType.PROCESS && plugin.isProcess);
+
+    private filterBySubPlugin = (plugin: IDaoPlugin, includeSubPlugins: boolean) =>
+        includeSubPlugins || !plugin.isSubPlugin;
 }
 
 export const daoUtils = new DaoUtils();

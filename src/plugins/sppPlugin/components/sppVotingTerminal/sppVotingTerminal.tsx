@@ -1,60 +1,7 @@
-import { generateTokenPluginSettings, generateTokenProposal } from '@/plugins/tokenPlugin/testUtils';
-import { VoteOption } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ProposalVoting } from '@aragon/ods';
-import { generateSppPluginSettings, generateSppProposal } from '../../testUtils';
-import { SppProposalType, type ISppProposal } from '../../types';
+import { type ISppProposal } from '../../types';
 import { SppVotingTerminalStage } from './sppVotingTerminalStage';
-import { daoMock } from '@/shared/api/daoService/daoService';
-
-const proposal = generateSppProposal({
-    currentStageIndex: 0,
-    subProposals: [
-        {
-            ...generateTokenProposal({
-                id: '0x94beaf110a7e02986e8d4dae097ca6de26c97c42d90b42014c1f0936c679b5aa-0xA2Dee0b38d2CfaDeb52F2B5A738b5Ea7E037DCe9-48',
-                blockTimestamp: 1726153572,
-                settings: generateTokenPluginSettings({
-                    minParticipation: 40,
-                    supportThreshold: 500000,
-                    historicalTotalSupply: '2',
-                }),
-                metrics: {
-                    votesByOption: [
-                        { type: VoteOption.YES, totalVotingPower: '447190' },
-                        { type: VoteOption.NO, totalVotingPower: '4818' },
-                    ],
-                },
-            }),
-            stageId: '0',
-        },
-    ],
-});
-
-export const settingsMock = generateSppPluginSettings({
-    stages: [
-        {
-            id: '0',
-            name: 'Token holder voting',
-            plugins: [{ ...daoMock.plugins[2], proposalType: SppProposalType.APPROVAL }],
-            votingPeriod: 432000,
-            maxAdvance: 1,
-            minAdvance: 1,
-            approvalThreshold: 0.5,
-            vetoThreshold: 0.1,
-        },
-        {
-            id: '1',
-            name: 'Founders approval',
-            plugins: [{ ...daoMock.plugins[1], proposalType: SppProposalType.VETO }],
-            votingPeriod: 604800,
-            maxAdvance: 1,
-            minAdvance: 1,
-            approvalThreshold: 0.5,
-            vetoThreshold: 0.1,
-        },
-    ],
-});
 
 export interface IProposalVotingTerminalProps {
     /**
@@ -68,11 +15,11 @@ export interface IProposalVotingTerminalProps {
 }
 
 export const SppVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, proposal } = props;
 
     const { t } = useTranslations();
 
-    const processedStages = settingsMock.stages.map((stage, index) => ({
+    const processedStages = proposal.settings.stages.map((stage, index) => ({
         stage,
         proposals: proposal.subProposals.filter((proposal) => proposal.stageId === stage.id),
         index,

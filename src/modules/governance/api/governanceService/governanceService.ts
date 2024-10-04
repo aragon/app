@@ -7,6 +7,50 @@ import type {
     IGetProposalParams,
     IGetVoteListParams,
 } from './governanceService.api';
+import { generateSppPluginSettings, generateSppProposal } from '@/plugins/sppPlugin/testUtils';
+import { generateTokenProposal } from '@/plugins/tokenPlugin/testUtils';
+import { daoMock } from '@/shared/api/daoService/daoService';
+import { SppProposalType } from '@/plugins/sppPlugin/types';
+
+// TODO: Remove these mocks when we have all data from backend for SPP proposals
+const mockSppProposal = generateSppProposal({
+    pluginSubdomain: 'spp',
+    currentStageIndex: 0,
+    subProposals: [
+        {
+            ...generateTokenProposal({
+                id: '0x63d7ccd4a6a761b1522cfef87896566cb9c04540198d3b77605487a6eb679469-0xCa6f5bd946F52298a7B6154fc827bF87512a15F3-7',
+                pluginSubdomain: 'token-voting',
+                blockTimestamp: 1726153572,
+            }),
+            stageId: '0',
+        },
+    ],
+    settings: generateSppPluginSettings({
+        stages: [
+            {
+                id: '0',
+                name: 'Token holder voting',
+                plugins: [{ ...daoMock.plugins[2], proposalType: SppProposalType.APPROVAL }],
+                votingPeriod: 432000,
+                maxAdvance: 1,
+                minAdvance: 1,
+                approvalThreshold: 0.5,
+                vetoThreshold: 0.1,
+            },
+            {
+                id: '1',
+                name: 'Founders approval',
+                plugins: [{ ...daoMock.plugins[1], proposalType: SppProposalType.VETO }],
+                votingPeriod: 604800,
+                maxAdvance: 1,
+                minAdvance: 1,
+                approvalThreshold: 0.5,
+                vetoThreshold: 0.1,
+            },
+        ],
+    }),
+});
 
 class GovernanceService extends AragonBackendService {
     private urls = {
@@ -41,6 +85,14 @@ class GovernanceService extends AragonBackendService {
 
     getProposal = async <TProposal extends IProposal = IProposal>(params: IGetProposalParams): Promise<TProposal> => {
         const result = await this.request<TProposal>(this.urls.proposal, params);
+
+        // TODO: Remove this when we have all data from backend for SPP proposals
+        if (
+            result.id ===
+            '0x94beaf110a7e02986e8d4dae097ca6de26c97c42d90b42014c1f0936c679b5aa-0xA2Dee0b38d2CfaDeb52F2B5A738b5Ea7E037DCe9-48'
+        ) {
+            return mockSppProposal as unknown as TProposal;
+        }
 
         return result;
     };

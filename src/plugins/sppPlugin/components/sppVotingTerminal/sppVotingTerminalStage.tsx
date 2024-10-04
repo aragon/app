@@ -33,12 +33,20 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     // TODO: Support multiple proposals within a stage (APP-3659)
     const proposal = proposals?.[0];
-    const voteListParams = { queryParams: { proposalId: proposal?.id, pageSize: votesPerPage } };
+    const plugin = stage.plugins[0];
+
+    const voteListParams = {
+        queryParams: {
+            proposalId: proposal?.id,
+            pluginAddress: plugin.address,
+            pageSize: votesPerPage,
+        },
+    };
 
     const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
-        params: { daoId, settings: proposal?.settings, pluginAddress: proposal?.pluginAddress ?? '' },
+        params: { daoId, settings: plugin.settings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: proposal?.pluginSubdomain ?? '',
+        pluginId: plugin.subdomain,
     });
 
     const processedStartDate = (proposal?.startDate ?? 0) * 1000;
@@ -63,7 +71,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         proposalId={proposal.id}
                     />
                     <ProposalVoting.Votes>
-                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
+                        <VoteList
+                            initialParams={voteListParams}
+                            daoId={daoId}
+                            pluginAddress={plugin.address}
+                            includeSubPlugins={true}
+                        />
                     </ProposalVoting.Votes>
                 </>
             )}

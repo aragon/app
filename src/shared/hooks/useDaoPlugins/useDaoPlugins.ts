@@ -16,17 +16,19 @@ export interface IUseDaoPluginsParams {
      * Only returns the plugin with the specified address when set.
      */
     pluginAddress?: string;
+    /**
+     * Include sub-plugins in the result.
+     */
+    includeSubPlugins?: boolean;
 }
 
-export const useDaoPlugins = (
-    params: IUseDaoPluginsParams,
-): Array<ITabComponentPlugin<IDaoPlugin, object>> | undefined => {
-    const { daoId, type, pluginAddress } = params;
+export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponentPlugin<IDaoPlugin, object>> | undefined => {
+    const { daoId, type, pluginAddress, includeSubPlugins = false } = params;
 
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
 
-    const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress });
+    const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress, includeSubPlugins });
 
     const processedPlugins = plugins?.map((plugin) => ({
         id: plugin.subdomain,

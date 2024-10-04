@@ -20,12 +20,16 @@ export interface IVoteListProps {
      * Plugin address to fetch the votes for.
      */
     pluginAddress?: string;
+    /**
+     * Include sub-plugins in the result.
+     */
+    includeSubPlugins?: boolean;
 }
 
 export const VoteList: React.FC<IVoteListProps> = (props) => {
-    const { initialParams, daoId, pluginAddress } = props;
+    const { initialParams, daoId, pluginAddress, includeSubPlugins } = props;
 
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, pluginAddress });
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, pluginAddress, includeSubPlugins });
 
     const processedPlugins = processPlugins?.map((plugin) => {
         const pluginInitialParams = {
