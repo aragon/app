@@ -1,4 +1,4 @@
-import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/utils/getBodyFields';
 import {
     AlertInline,
     Card,
@@ -11,30 +11,31 @@ import {
     Tag,
 } from '@aragon/ods';
 import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormTokenVotingParamsProps {
-    supportThresholdPercentageField: any;
-    minimumParticipationPercentageField: any;
-    voteChangeField: any;
-    members: ITokenVotingMember[];
-    tokenSymbolField: any;
-    setValue: any;
+    stageName: string;
+    stageIndex: number;
+    bodyIndex: number;
 }
 
 export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormTokenVotingParamsProps> = (props) => {
-    const {
-        supportThresholdPercentageField,
-        minimumParticipationPercentageField,
-        voteChangeField,
-        members,
-        tokenSymbolField,
-        setValue,
-    } = props;
+    const { stageIndex, stageName, bodyIndex } = props;
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
+    const { watch, setValue } = useFormContext();
+
+    const { supportThresholdPercentageField, minimumParticipationPercentageField, voteChangeField } = getAllBodyFields(
+        stageName,
+        stageIndex,
+        bodyIndex,
+    );
+
+    const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenMembers`);
+    const tokenSymbol = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbol`);
 
     useEffect(() => {
-        const totalTokenAmount = members.reduce((acc, member) => acc + Number(member.tokenAmount), 0);
+        const totalTokenAmount = members.reduce((acc: any, member: any) => acc + Number(member.tokenAmount), 0);
         const formattedTotal = formatterUtils.formatNumber(totalTokenAmount, {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });
@@ -103,11 +104,11 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                         />
                         <div className="h-full w-5/6 grow flex-col gap-y-3">
                             <p className="text-primary-400">
-                                {formattedPercentageParticipation} {tokenSymbolField.value}
+                                {formattedPercentageParticipation} {tokenSymbol}
                             </p>
                             <Progress value={minimumParticipationPercentageField.value} />
                             <p className="text-right">
-                                of {formattedTotalTokenAmount} {tokenSymbolField.value}
+                                of {formattedTotalTokenAmount} {tokenSymbol}
                             </p>
                         </div>
                     </div>

@@ -1,80 +1,52 @@
-import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { AddressInput, Button, Dropdown, IconType } from '@aragon/ods';
-import { useCallback } from 'react';
+import React from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 
 export interface IMultisigMemberInputRowProps {
-    /**
-     * The index of the member.
-     */
     index: number;
-    /**
-     * The member of the body.
-     */
-    member: ITokenVotingMember;
-    /**
-     * The member address input values.
-     */
-    memberAddressInputValues: string[];
-    /**
-     * Callback to set the member address input values for controlled component.
-     */
-    setMemberAddressInputValues: React.Dispatch<React.SetStateAction<string[]>>;
-    /**
-     * Callback to set the actual members to the field on save.
-     */
-    setMembers: React.Dispatch<React.SetStateAction<ITokenVotingMember[]>>;
-    /**
-     * Callback to remove a member.
-     */
+    fieldNamePrefix: string;
     handleRemoveMember: (index: number) => void;
+    canRemove: boolean;
 }
 
 export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
     index,
-    member,
-    memberAddressInputValues,
-    setMemberAddressInputValues,
-    setMembers,
+    fieldNamePrefix,
     handleRemoveMember,
+    canRemove,
 }) => {
-    const onChange = useCallback(
-        (value?: string) => {
-            setMemberAddressInputValues((prev) => {
-                const newInputValues = [...prev];
-                newInputValues[index] = value ?? '';
-                return newInputValues;
-            });
-        },
-        [index, setMemberAddressInputValues],
-    );
+    const {
+        control,
+        formState: { errors },
+    } = useFormContext();
 
-    const onAccept = useCallback(
-        (value?: { address?: string; name?: string }) => {
-            setMembers((prev) => {
-                const newMembers = [...prev];
-                newMembers[index].address = value?.address ?? '';
-                return newMembers;
-            });
-        },
-        [index, setMembers],
-    );
+    const addressFieldName = `${fieldNamePrefix}.address`;
 
     return (
         <div className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6">
-            <AddressInput
-                className="grow"
-                label="Address"
-                placeholder="ENS or 0x…"
-                chainId={1}
-                value={memberAddressInputValues[index] ?? ''}
-                onChange={onChange}
-                onAccept={onAccept}
+            <Controller
+                name={addressFieldName}
+                control={control}
+                rules={{ required: 'Address is required' }}
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <AddressInput
+                        className="grow"
+                        label="Address"
+                        placeholder="ENS or 0x…"
+                        chainId={1}
+                        value={value || ''}
+                        onChange={(newValue?: string) => onChange(newValue || '')}
+                        alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
+                    />
+                )}
             />
-            <Dropdown.Container
-                customTrigger={<Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="self-end" />}
-            >
-                <Dropdown.Item onClick={() => handleRemoveMember(index)}>Remove</Dropdown.Item>
-            </Dropdown.Container>
+            {canRemove && (
+                <Dropdown.Container
+                    customTrigger={<Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="self-end" />}
+                >
+                    <Dropdown.Item onClick={() => handleRemoveMember(index)}>Remove</Dropdown.Item>
+                </Dropdown.Container>
+            )}
         </div>
     );
 };

@@ -37,6 +37,8 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
     const chainId = useChainId();
 
     const { setValue, getValues } = useFormContext();
+
+    console.log('formValues', getValues());
     const { buildEntityUrl } = useBlockExplorer();
 
     const {
@@ -143,32 +145,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                         Add
                     </Button>
                 </InputContainer>
-                <CreateProcessFormTimingDialog
-                    isTimingDialogOpen={isTimingDialogOpen}
-                    earlyStageField={earlyStageField}
-                    stageExpirationField={stageExpirationField}
-                    stageExpirationPeriodField={stageExpirationPeriodField}
-                    votingPeriodField={votingPeriodField}
-                    typeField={typeField}
-                    setIsTimingDialogOpen={setIsTimingDialogOpen}
-                    handleSaveTimingValues={handleSaveTimingValues}
-                />
-                {isBodyDialogOpen && (
-                    <CreateProcessFormBodyDialog
-                        isBodyDialogOpen={isBodyDialogOpen}
-                        setIsBodyDialogOpen={setIsBodyDialogOpen}
-                        handleSaveBodyValues={handleSaveBodyValues}
-                        stageName={stageName}
-                        stageIndex={stageIndex}
-                        bodyIndex={selectedBodyIndex}
-                        /** @ts-expect-error will fix types between initial values and formData TODO */
-                        initialValues={
-                            selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length
-                                ? bodyFields[selectedBodyIndex]
-                                : null
-                        }
-                    />
-                )}
+
                 {stageFields.length > 1 && (
                     <div className="flex self-end">
                         <Dropdown.Container
@@ -190,6 +167,24 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     </div>
                 )}
             </Card>
+            <CreateProcessFormTimingDialog
+                isTimingDialogOpen={isTimingDialogOpen}
+                earlyStageField={earlyStageField}
+                stageExpirationField={stageExpirationField}
+                stageExpirationPeriodField={stageExpirationPeriodField}
+                votingPeriodField={votingPeriodField}
+                typeField={typeField}
+                setIsTimingDialogOpen={setIsTimingDialogOpen}
+                handleSaveTimingValues={handleSaveTimingValues}
+            />
+            <CreateProcessFormBodyDialog
+                isBodyDialogOpen={isBodyDialogOpen}
+                setIsBodyDialogOpen={setIsBodyDialogOpen}
+                handleSaveBodyValues={handleSaveBodyValues}
+                stageName={stageName}
+                stageIndex={stageIndex}
+                bodyIndex={selectedBodyIndex}
+            />
         </>
     );
 };

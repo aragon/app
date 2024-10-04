@@ -1,15 +1,18 @@
-import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/utils/getBodyFields';
 import { InputContainer, InputNumber } from '@aragon/ods';
+import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormMultisigParamsProps {
-    multisigThresholdField: any;
-    members: ITokenVotingMember[];
-    setValue: any;
+    stageName: string;
+    stageIndex: number;
+    bodyIndex: number;
 }
 
 export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParamsProps> = (props) => {
-    const { multisigThresholdField, members, setValue } = props;
-
+    const { stageName, stageIndex, bodyIndex } = props;
+    const { watch } = useFormContext();
+    const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.multisigMembers`);
+    const { multisigThresholdField } = getAllBodyFields(stageName, stageIndex, bodyIndex);
     return (
         <>
             <InputContainer
@@ -20,9 +23,9 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
             >
                 <InputNumber
                     max={members.length}
+                    min={1}
                     suffix={`of ${members.length}`}
                     placeholder="Enter a number"
-                    onValueChange={(value: string) => setValue(multisigThresholdField.name, value)}
                     {...multisigThresholdField}
                     label={undefined}
                 />

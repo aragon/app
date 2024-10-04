@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-    ICreateProcessFormBody,
-    ITokenVotingMember,
-} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import type { ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { CreateProcessFormMultisigDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultisigDetails/createProcessFormMultisigDetails';
 import { CreateProcessFormMultisigParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultsigParams/createProcessFormMultisigParams';
 import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
@@ -10,7 +7,7 @@ import { CreateProcessFormTokenVotingParams } from '@/modules/governance/compone
 import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/utils/getBodyFields';
 import { Button, Dialog, InputText, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormBodyDialogProps {
@@ -20,16 +17,12 @@ export interface ICreateProcessFormBodyDialogProps {
     isBodyDialogOpen: boolean;
     setIsBodyDialogOpen: (value: boolean) => void;
     handleSaveBodyValues: (value: ICreateProcessFormBody) => void;
-    initialValues?: ICreateProcessFormBody;
 }
 
 export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogProps> = (props) => {
-    const { handleSaveBodyValues, bodyIndex, stageName, stageIndex, initialValues } = props;
+    const { handleSaveBodyValues, bodyIndex, stageName, stageIndex, isBodyDialogOpen, setIsBodyDialogOpen } = props;
     const [step, setStep] = useState(0);
-    const { isBodyDialogOpen, setIsBodyDialogOpen } = props;
-    const { resetField, setValue, trigger } = useFormContext();
-    const [members, setMembers] = useState<ITokenVotingMember[]>([{ address: '', tokenAmount: 1 }]);
-    const [memberAddressInputValues, setMemberAddressInputValues] = useState<string[]>(members.map(() => ''));
+    const { resetField, setValue, watch } = useFormContext();
 
     const {
         bodyNameField,
@@ -42,43 +35,20 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
         multisigThresholdField,
     } = getAllBodyFields(stageName, stageIndex, bodyIndex);
 
-    useEffect(() => {
-        if (isBodyDialogOpen && initialValues) {
-            setValue(bodyNameField.name, initialValues.bodyName);
-            setValue(bodyGovernanceTypeField.name, initialValues.governanceType);
-            setValue(tokenNameField.name, initialValues.tokenName);
-            setValue(tokenSymbolField.name, initialValues.tokenSymbol);
-            setValue(supportThresholdPercentageField.name, initialValues.supportThresholdPercentage);
-            setValue(minimumParticipationPercentageField.name, initialValues.minimumParticipationPercentage);
-            setValue(voteChangeField.name, initialValues.voteChange);
-            setValue(multisigThresholdField.name, initialValues.multisigThreshold);
-            if (initialValues.members) {
-                setMembers(initialValues.members);
-            }
-        } else if (isBodyDialogOpen) {
-            resetField(bodyNameField.name);
-            resetField(bodyGovernanceTypeField.name);
-            resetField(tokenNameField.name);
-            resetField(tokenSymbolField.name);
-            resetField(supportThresholdPercentageField.name);
-            resetField(minimumParticipationPercentageField.name);
-            resetField(voteChangeField.name);
-            resetField(multisigThresholdField.name);
-            setMembers([{ address: '', tokenAmount: 1 }]);
-        }
-    }, [isBodyDialogOpen, initialValues]);
-
     const handleSave = () => {
         const values = {
-            bodyName: bodyNameField.value,
-            governanceType: bodyGovernanceTypeField.value,
-            tokenName: tokenNameField.value,
-            tokenSymbol: tokenSymbolField.value,
-            supportThresholdPercentage: supportThresholdPercentageField.value,
-            minimumParticipationPercentage: minimumParticipationPercentageField.value,
-            voteChange: voteChangeField.value,
-            multisigThreshold: multisigThresholdField.value,
-            members,
+            bodyName: watch(bodyNameField.name),
+            governanceType: watch(bodyGovernanceTypeField.name),
+            tokenName: watch(tokenNameField.name),
+            tokenSymbol: watch(tokenSymbolField.name),
+            supportThresholdPercentage: watch(supportThresholdPercentageField.name),
+            minimumParticipationPercentage: watch(minimumParticipationPercentageField.name),
+            voteChange: watch(voteChangeField.name),
+            multisigThreshold: watch(multisigThresholdField.name),
+            members:
+                bodyGovernanceTypeField.value === 'tokenVoting'
+                    ? watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenMembers`)
+                    : watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.multisigMembers`),
         };
         handleSaveBodyValues(values);
         setIsBodyDialogOpen(false);
@@ -92,70 +62,25 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
         resetField(supportThresholdPercentageField.name);
         resetField(minimumParticipationPercentageField.name);
         resetField(voteChangeField.name);
-
-        setMembers([{ address: '', tokenAmount: 1 }]);
+        resetField(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`);
 
         setStep(0);
         setIsBodyDialogOpen(false);
     };
     const handleAdvanceStep = async () => {
         if (step === 0) {
-            const complete = await trigger([bodyNameField.name, bodyGovernanceTypeField.name]);
-            if (complete) {
-                setStep(step + 1);
-            }
-            return;
+            setStep(step + 1);
         }
 
         if (step === 1) {
-            if (bodyGovernanceTypeField.value === 'tokenVoting') {
-                const complete = await trigger([tokenNameField.name, tokenSymbolField.name]);
-                const membersComplete = members.every((member) => member.address && member.tokenAmount);
-                if (complete && membersComplete) {
-                    setStep(step + 1);
-                }
-            } else if (bodyGovernanceTypeField.value === 'multisig') {
-                const membersComplete = members.every((member) => member.address);
-                if (membersComplete) {
-                    setStep(step + 1);
-                }
-            }
-            return;
+            setStep(step + 1);
         }
 
         if (step === 2) {
-            if (bodyGovernanceTypeField.value === 'tokenVoting') {
-                const complete = await trigger([
-                    supportThresholdPercentageField.name,
-                    minimumParticipationPercentageField.name,
-                    voteChangeField.name,
-                ]);
-                if (complete) {
-                    handleSave();
-                }
-            } else if (bodyGovernanceTypeField.value === 'multisig') {
-                const complete = await trigger([multisigThresholdField.name]);
-                if (complete) {
-                    handleSave();
-                }
-            }
-            return;
+            handleSave();
         }
     };
-
-    const handleAddMember = () => {
-        setMembers([...members, { address: '', tokenAmount: 1 }]);
-        setMemberAddressInputValues([...memberAddressInputValues, '']);
-    };
-
-    const handleRemoveMember = (indexToRemove: number) => {
-        const newMembers = members.filter((_, i) => i !== indexToRemove);
-        setMembers(newMembers);
-
-        const newInputValues = memberAddressInputValues.filter((_, i) => i !== indexToRemove);
-        setMemberAddressInputValues(newInputValues);
-    };
-
+    console.log('bodyGovernanceTypeField', bodyGovernanceTypeField.value);
     const handleStepContent = (step: number) => {
         switch (step) {
             case 0:
@@ -171,18 +96,27 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
                             helpText="What kind of governance would you like to add?"
                             onValueChange={(value) => setValue(bodyGovernanceTypeField.name, value)}
                             {...bodyGovernanceTypeField}
+                            defaultValue={bodyGovernanceTypeField.value}
                         >
                             <RadioCard
                                 className="w-full"
                                 label="Token voting"
                                 description="Create or import an ERC-20 token"
                                 value="tokenVoting"
+                                disabled={
+                                    bodyGovernanceTypeField.value === 'multisig' &&
+                                    bodyGovernanceTypeField.value !== undefined
+                                }
                             />
                             <RadioCard
                                 className="w-full"
                                 label="Multisig"
                                 description="Define which addresses are members"
                                 value="multisig"
+                                disabled={
+                                    bodyGovernanceTypeField.value === 'tokenVoting' &&
+                                    bodyGovernanceTypeField.value === undefined
+                                }
                             />
                         </RadioGroup>
                     </>
@@ -191,25 +125,17 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
                 if (bodyGovernanceTypeField.value === 'tokenVoting') {
                     return (
                         <CreateProcessFormTokenVotingDetails
-                            tokenNameField={tokenNameField}
-                            tokenSymbolField={tokenSymbolField}
-                            members={members}
-                            setMembers={setMembers}
-                            memberAddressInputValues={memberAddressInputValues}
-                            setMemberAddressInputValues={setMemberAddressInputValues}
-                            handleAddMember={handleAddMember}
-                            handleRemoveMember={handleRemoveMember}
+                            bodyIndex={bodyIndex}
+                            stageName={stageName}
+                            stageIndex={stageIndex}
                         />
                     );
                 } else if (bodyGovernanceTypeField.value === 'multisig') {
                     return (
                         <CreateProcessFormMultisigDetails
-                            members={members}
-                            setMembers={setMembers}
-                            memberAddressInputValues={memberAddressInputValues}
-                            setMemberAddressInputValues={setMemberAddressInputValues}
-                            handleAddMember={handleAddMember}
-                            handleRemoveMember={handleRemoveMember}
+                            bodyIndex={bodyIndex}
+                            stageName={stageName}
+                            stageIndex={stageIndex}
                         />
                     );
                 }
@@ -218,20 +144,17 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
                 if (bodyGovernanceTypeField.value === 'tokenVoting') {
                     return (
                         <CreateProcessFormTokenVotingParams
-                            supportThresholdPercentageField={supportThresholdPercentageField}
-                            minimumParticipationPercentageField={minimumParticipationPercentageField}
-                            voteChangeField={voteChangeField}
-                            members={members}
-                            tokenSymbolField={tokenSymbolField}
-                            setValue={setValue}
+                            stageIndex={stageIndex}
+                            stageName={stageName}
+                            bodyIndex={bodyIndex}
                         />
                     );
                 } else if (bodyGovernanceTypeField.value === 'multisig') {
                     return (
                         <CreateProcessFormMultisigParams
-                            multisigThresholdField={multisigThresholdField}
-                            members={members}
-                            setValue={setValue}
+                            stageIndex={stageIndex}
+                            stageName={stageName}
+                            bodyIndex={bodyIndex}
                         />
                     );
                 }
