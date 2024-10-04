@@ -1,6 +1,6 @@
 import { TransactionType } from '@/modules/finance/api/financeService/domain/enum';
 import { type ITransaction } from '@/modules/finance/api/financeService/domain/transaction';
-import { Network } from '@/shared/api/daoService/domain';
+import { Network } from '@/shared/api/daoService';
 import { generateToken } from './token';
 
 export const generateTransaction = (transaction?: Partial<ITransaction>): ITransaction => ({

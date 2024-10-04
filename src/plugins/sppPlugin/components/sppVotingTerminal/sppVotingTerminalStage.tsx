@@ -57,7 +57,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             endDate={processedEndDate}
             index={index}
             isMultiStage={true}
-            defaultTab={ProposalVotingTab.BREAKDOWN}
+            forceMount={true}
         >
             {proposal && (
                 <>
