@@ -20,7 +20,6 @@ import {
 } from '@aragon/ods';
 import type React from 'react';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 import { CreateProcessFormBodyDialog } from '../createProcessFormBodyDialog';
 import { getBodyFieldsArray } from '../utils/getBodyFields';
@@ -33,9 +32,6 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
     const [selectedBodyIndex, setSelectedBodyIndex] = useState<number>(-1);
     const chainId = useChainId();
 
-    const { setValue, getValues } = useFormContext();
-
-    console.log('formValues', getValues());
     const { buildEntityUrl } = useBlockExplorer();
 
     const { stageNameField, stageTypeField } = getAllStageFields(stageName, stageIndex);
@@ -160,6 +156,8 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                 stageName={stageName}
                 stageIndex={stageIndex}
                 bodyIndex={selectedBodyIndex}
+                // @ts-expect-error - initialValues is not compatible with form data at the moment
+                initialValues={selectedBodyIndex >= 0 ? bodyFields[selectedBodyIndex] : undefined}
             />
         </>
     );

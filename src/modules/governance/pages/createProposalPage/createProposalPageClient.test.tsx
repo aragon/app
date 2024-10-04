@@ -22,6 +22,7 @@ describe('<CreateProposalPageClient /> component', () => {
     const createTestComponent = (props?: Partial<ICreateProposalPageClientProps>) => {
         const completeProps: ICreateProposalPageClientProps = {
             daoId: 'test',
+            pluginAddress: '0x123',
             ...props,
         };
 
@@ -37,24 +38,19 @@ describe('<CreateProposalPageClient /> component', () => {
 
     it('opens the publish proposal dialog on form submit', async () => {
         const daoId = 'test-id';
+        const pluginAddress = '0x472839';
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
-        render(createTestComponent({ daoId }));
+        render(createTestComponent({ daoId, pluginAddress }));
         // Advance the wizard three times to trigger the submit function
         await userEvent.click(screen.getByTestId('steps-mock'));
         await userEvent.click(screen.getByTestId('steps-mock'));
         await userEvent.click(screen.getByTestId('steps-mock'));
         const expectedParams = {
             daoId,
+            pluginAddress,
             prepareActions: {},
-            values: {
-                actions: [],
-                addActions: true,
-                title: '',
-                resources: [],
-                summary: '',
-                body: '',
-            },
+            values: { actions: [] },
         };
         expect(open).toHaveBeenCalledWith(GovernanceDialogs.PUBLISH_PROPOSAL, { params: expectedParams });
     });

@@ -4,8 +4,11 @@ export interface IUseGovernanceSettingsParams<TSettings = unknown> {
      */
     daoId: string;
     /**
-     * Plugin-specific settings object to be parsed. The plugin-specific hook will fetch the settings dynamically
-     * when the settings object is undefined.
+     * Address of the DAO plugin to display the settings for.
      */
-    settings?: TSettings;
+    pluginAddress: string;
+    /**
+     * Plugin-specific settings object to be parsed.
+     */
+    settings: TSettings;
 }

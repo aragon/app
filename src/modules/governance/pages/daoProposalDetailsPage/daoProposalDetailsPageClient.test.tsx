@@ -5,8 +5,7 @@ import {
 import { generateProposal, generateProposalActionChangeMembers } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
-import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
+import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateAddressInfo,
     generateReactQueryResultError,
@@ -30,20 +29,17 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
-    const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
-    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
+    const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
 
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
-        useDaoPluginIdsSpy.mockReturnValue([]);
     });
 
     afterEach(() => {
         useProposalSpy.mockReset();
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
-        useSlotFunctionSpy.mockReset();
-        useDaoPluginIdsSpy.mockReset();
+        useSlotSingleFunctionSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {
@@ -95,18 +91,16 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     });
 
     it('uses the plugin-specific function to process and render the proposal status', () => {
-        const pluginIds = ['test-1', 'test-2'];
         const status = ProposalStatus.REJECTED;
-        const proposal = generateProposal();
-        useSlotFunctionSpy.mockReturnValue(status);
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
+        const proposal = generateProposal({ pluginSubdomain: 'multisig' });
+        useSlotSingleFunctionSpy.mockReturnValue(status);
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
 
-        expect(useSlotFunctionSpy).toHaveBeenCalledWith({
+        expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith({
             params: proposal,
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-            pluginIds,
+            pluginId: proposal.pluginSubdomain,
         });
         expect(screen.getAllByText('Rejected')).toHaveLength(2);
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.status/)).toBeInTheDocument();

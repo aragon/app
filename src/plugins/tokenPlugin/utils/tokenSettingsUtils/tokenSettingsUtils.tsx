@@ -1,5 +1,5 @@
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
-import { DaoTokenVotingMode, type IDaoTokenSettings } from '@/plugins/tokenPlugin/types';
+import { DaoTokenVotingMode, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { Duration } from 'luxon';
@@ -9,7 +9,7 @@ export interface IParseTokenSettingsParams {
     /**
      * Settings passed into the function either from the DAO or the proposal.
      */
-    settings: IDaoTokenSettings;
+    settings: ITokenPluginSettings;
     /**
      * The translation function for internationalization.
      */
@@ -18,8 +18,8 @@ export interface IParseTokenSettingsParams {
 
 class TokenSettingsUtils {
     /**
-     * Percentage values for token-based DAO settings are stored values between 0 and 10**6 (defined as RATIO_BASE). The
-     * function parses the value set on the blockchain and returns it as percentage value between 0 and 100.
+     * Percentage values for token-based plugin settings are stored values between 0 and 10**6 (defined as RATIO_BASE).
+     * The function parses the value set on the blockchain and returns it as percentage value between 0 and 100.
      * (see https://github.com/aragon/osx-commons/blob/main/contracts/src/utils/math/Ratio.sol)
      */
     parsePercentageSetting = (percentage: number) => percentage / 10 ** 4;

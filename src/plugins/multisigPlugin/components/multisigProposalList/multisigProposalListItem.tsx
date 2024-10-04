@@ -20,7 +20,9 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
 
     const { address } = useAccount();
 
-    const { voted } = useVotedStatus({ proposalId: proposal.id, address });
+    const { voted } = useVotedStatus({ proposal: proposal, address });
+
+    const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
     return (
         <ProposalDataListItem.Structure
@@ -28,7 +30,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             key={proposal.id}
             title={proposal.title}
             summary={proposal.summary}
-            date={proposal.executed.blockTimestamp ? proposal.executed.blockTimestamp * 1000 : proposal.endDate * 1000}
+            date={proposalDate}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={multisigProposalUtils.getProposalStatus(proposal)}
             type="approvalThreshold"

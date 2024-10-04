@@ -12,7 +12,7 @@ describe('useVoteList query', () => {
     });
 
     it('fetches the votes of the specified proposal', async () => {
-        const params = { proposalId: 'proposal-id-test' };
+        const params = { proposalId: 'proposal-id-test', pluginAddress: '0x123' };
         const votesResult = generatePaginatedResponse({ data: [generateVote()] });
         governanceServiceSpy.mockResolvedValue(votesResult);
         const { result } = renderHook(() => useVoteList({ queryParams: params }), { wrapper: ReactQueryWrapper });

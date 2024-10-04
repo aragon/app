@@ -1,9 +1,8 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
-import { PluginComponent } from '@/shared/components/pluginComponent';
+import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/ods';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -30,14 +29,15 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     const { proposal, status, daoId } = props;
 
     const { t } = useTranslations();
-    const pluginIds = useDaoPluginIds(daoId);
 
-    const voteListParams = { queryParams: { proposalId: proposal.id, pageSize: votesPerPage } };
+    const voteListParams = {
+        queryParams: { proposalId: proposal.id, pluginAddress: proposal.pluginAddress, pageSize: votesPerPage },
+    };
 
-    const proposalSettings = useSlotFunction<IDaoSettingTermAndDefinition[]>({
-        params: { daoId, settings: proposal.settings },
+    const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
+        params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginIds,
+        pluginId: proposal.pluginSubdomain,
     });
 
     return (
@@ -50,22 +50,21 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                 startDate={proposal.startDate * 1000}
                 endDate={proposal.endDate * 1000}
             >
-                <PluginComponent
+                <PluginSingleComponent
                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
-                    pluginIds={pluginIds}
+                    pluginId={proposal.pluginSubdomain}
                     proposalId={proposal.id}
                 />
                 <ProposalVoting.Votes>
-                    <VoteList initialParams={voteListParams} daoId={daoId} />
+                    <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
                 </ProposalVoting.Votes>
                 <ProposalVoting.Details settings={proposalSettings} />
                 {status === ProposalStatus.ACTIVE && (
-                    <PluginComponent
+                    <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                        pluginIds={pluginIds}
-                        proposalIndex={proposal.proposalIndex}
+                        pluginId={proposal.pluginSubdomain}
+                        proposal={proposal}
                         daoId={daoId}
-                        title={proposal.title}
                     />
                 )}
             </ProposalVoting.Stage>

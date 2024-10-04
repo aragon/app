@@ -1,5 +1,4 @@
 import { executeUtils } from '@/modules/governance/components/executeProposal/utils/executeUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import type { Hex } from 'viem';
 
@@ -9,18 +8,18 @@ export interface IBuildTransactionParams {
      */
     proposalIndex: string;
     /**
-     * Plugin of the DAO to interact with.
+     * Address of the proposal plugin.
      */
-    plugin: IDaoPlugin;
+    pluginAddress: string;
 }
 
 class ExecuteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { plugin } = params;
+        const { pluginAddress } = params;
         const transactionData = executeUtils.buildExecuteData(params);
 
         const transaction: TransactionDialogPrepareReturn = {
-            to: plugin.address as Hex,
+            to: pluginAddress as Hex,
             data: transactionData,
         };
 

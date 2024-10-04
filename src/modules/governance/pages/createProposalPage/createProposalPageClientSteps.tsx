@@ -16,10 +16,14 @@ export interface ICreateProposalPageClientStepsProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Address of the plugin to create the proposal for.
+     */
+    pluginAddress: string;
 }
 
 export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientStepsProps> = (props) => {
-    const { steps, daoId } = props;
+    const { steps, daoId, pluginAddress } = props;
 
     const { t } = useTranslations();
     const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
@@ -54,7 +58,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 )}
                 {...settingsStep}
             >
-                <CreateProposalForm.Settings daoId={daoId} />
+                <CreateProposalForm.Settings daoId={daoId} pluginAddress={pluginAddress} />
             </Wizard.Step>
         </>
     );

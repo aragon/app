@@ -1,19 +1,21 @@
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
+import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoMemberList, type IDaoMemberListProps } from './daoMemberList';
 
-jest.mock('@/shared/components/pluginComponent', () => ({
-    PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
-        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginids={props.pluginIds} />
+jest.mock('@/shared/components/pluginTabComponent', () => ({
+    PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
+        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-plugins={props.plugins[0].id} />
     ),
 }));
 
 describe('<DaoMemberList /> component', () => {
-    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     afterEach(() => {
-        useDaoPluginIdsSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoMemberListProps>) => {
@@ -25,13 +27,17 @@ describe('<DaoMemberList /> component', () => {
         return <DaoMemberList {...completeProps} />;
     };
 
-    it('renders a plugin component with the dao plugins ids and the dao-member-list slot it', () => {
-        const pluginIds = ['id-1', 'id-2'];
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
+    it('renders a plugin tab component with the body plugins and the dao-member-list slot it', () => {
+        const daoPlugin = generateDaoPlugin({ address: '0x1239478' });
+        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
+        useDaoPluginsSpy.mockReturnValue(plugins);
+
         render(createTestComponent());
+
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent).toBeInTheDocument();
+
         expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST);
-        expect(pluginComponent.dataset.pluginids).toEqual(pluginIds.toString());
+        expect(pluginComponent.dataset.plugins).toEqual(plugins[0].id);
     });
 });

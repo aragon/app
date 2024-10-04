@@ -28,7 +28,7 @@ describe('<MultisigProposalList /> component', () => {
 
     const createTestComponent = (props?: Partial<IMultisigProposalListProps>) => {
         const completeProps: IMultisigProposalListProps = {
-            initialParams: { queryParams: { daoId: '' } },
+            initialParams: { queryParams: { daoId: '', pluginAddress: '' } },
             ...props,
         };
 
@@ -82,7 +82,7 @@ describe('<MultisigProposalList /> component', () => {
     });
 
     it('uses initialParams correctly', () => {
-        const initialParams = { queryParams: { daoId: 'dao-test' } };
+        const initialParams = { queryParams: { daoId: 'dao-test', pluginAddress: '0x123' } };
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
             state: 'idle',

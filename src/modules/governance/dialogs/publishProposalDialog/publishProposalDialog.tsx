@@ -9,8 +9,8 @@ import {
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
@@ -32,6 +32,10 @@ export interface IPublishProposalDialogParams {
      */
     daoId: string;
     /**
+     * Address of the plugin to create the proposal for.
+     */
+    pluginAddress: string;
+    /**
      * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
      */
     prepareActions: PrepareProposalActionMap;
@@ -47,13 +51,11 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { address } = useAccount();
     invariant(address != null, 'PublishProposalDialog: user must be connected.');
 
-    const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
-    invariant(supportedPlugin != null, 'PublishProposalDialog: DAO has no supported plugin.');
-
-    const { daoId, values, prepareActions } = location.params;
+    const { daoId, pluginAddress, values, prepareActions } = location.params;
     const { title, summary } = values;
 
     const { t } = useTranslations();
+    const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
 
     const setIsBlocked = useSetIsBlocked();
 
@@ -82,7 +84,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         return publishProposalDialogUtils.buildTransaction({
             values: processedValues,
             metadataCid,
-            plugin: supportedPlugin,
+            plugin: daoPlugin.meta,
         });
     };
 
@@ -92,7 +94,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         setIsBlocked(false);
 
         const proposalId = publishProposalDialogUtils.getProposalId(txReceipt);
-        const extendedProposalId = `${transactionHash}-${supportedPlugin.address}-${proposalId}`;
+        const extendedProposalId = `${transactionHash}-${pluginAddress}-${proposalId}`;
 
         return `/dao/${daoId}/proposals/${extendedProposalId}`;
     };

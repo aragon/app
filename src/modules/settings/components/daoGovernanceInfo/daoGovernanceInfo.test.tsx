@@ -1,47 +1,44 @@
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
-import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
-import { OdsModulesProvider } from '@aragon/ods';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoGovernanceInfo, type IDaoGovernanceInfoProps } from './daoGovernanceInfo';
 
-describe('<DaGovernanceInfo /> component', () => {
-    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
-    const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
+jest.mock('@/shared/components/pluginTabComponent', () => ({
+    PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
+        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-plugins={props.plugins[0].id} />
+    ),
+}));
+
+describe('<DaoGovernanceInfo /> component', () => {
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+
+    beforeEach(() => {
+        useDaoPluginsSpy.mockReturnValue([]);
+    });
 
     afterEach(() => {
-        useDaoPluginIdsSpy.mockReset();
-        useSlotFunctionSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoGovernanceInfoProps>) => {
-        const completeProps = {
+        const completeProps: IDaoGovernanceInfoProps = {
             daoId: 'test-id',
+            plugin: generateDaoPlugin(),
             ...props,
         };
-        return (
-            <OdsModulesProvider>
-                <DaoGovernanceInfo {...completeProps} />
-            </OdsModulesProvider>
-        );
+
+        return <DaoGovernanceInfo {...completeProps} />;
     };
-    it('renders the DAO governance settings', () => {
-        const pluginIds = ['multisig'];
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
-        useSlotFunctionSpy.mockReturnValue([
-            { term: 'Governance Term 1', definition: 'Definition 1' },
-            { term: 'Governance Term 2', definition: 'Definition 2' },
-        ]);
+
+    it('renders the plugin-specific dao governance info component', () => {
+        const plugins = [generateTabComponentPlugin({ meta: generateDaoPlugin() })];
+        useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent());
-
-        expect(screen.getByText('Governance Term 1')).toBeInTheDocument();
-        expect(screen.getByText('Definition 1')).toBeInTheDocument();
-        expect(screen.getByText('Governance Term 2')).toBeInTheDocument();
-        expect(screen.getByText('Definition 2')).toBeInTheDocument();
-    });
-
-    it('returns empty container on dao fetch error', () => {
-        useSlotFunctionSpy.mockReturnValue(null);
-        const { container } = render(createTestComponent());
-        expect(container).toBeEmptyDOMElement();
+        const pluginComponent = screen.getByTestId('plugin-component-mock');
+        expect(pluginComponent).toBeInTheDocument();
+        expect(pluginComponent.dataset.slotid).toEqual(SettingsSlotId.SETTINGS_GOVERNANCE_INFO);
+        expect(pluginComponent.dataset.plugins).toEqual(plugins[0].id);
     });
 });

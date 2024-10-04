@@ -1,16 +1,13 @@
 'use client';
 
 import { DaoList } from '@/modules/explore/components/daoList';
-import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
-import { VoteList } from '@/modules/governance/components/voteList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
-import { useDaoPluginIds } from '@/shared/hooks/useDaoPluginIds';
-import { useSlotFunction } from '@/shared/hooks/useSlotFunction';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import {
     addressUtils,
     ChainEntityType,
@@ -25,6 +22,8 @@ import {
     useBlockExplorer,
 } from '@aragon/ods';
 import { useMember } from '../../api/governanceService';
+import { DaoProposalList } from '../../components/daoProposalList';
+import { VoteList } from '../../components/voteList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoMemberDetailsPageClientProps {
@@ -37,6 +36,10 @@ export interface IDaoMemberDetailsPageClientProps {
      */
     address: string;
 }
+
+const memberProposalsCount = 3;
+const memberVotesCount = 5;
+const memberDaosCount = 3;
 
 export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientProps> = (props) => {
     const { address, daoId } = props;
@@ -53,12 +56,11 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
-    const pluginIds = useDaoPluginIds(daoId);
-    const memberStatsParams = { daoId, address };
-    const pluginStats = useSlotFunction<IPageHeaderStat[]>({
+    const memberStatsParams = { daoId, address, plugin: dao?.plugins[0] };
+    const pluginStats = useSlotSingleFunction<IPageHeaderStat[]>({
         params: memberStatsParams,
         slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
-        pluginIds,
+        pluginId: dao?.plugins[0]?.subdomain ?? '',
     });
 
     const { lastActivity, firstActivity } = member?.metrics ?? {};
@@ -101,11 +103,14 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         { label: memberName },
     ];
 
-    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: 3 } };
+    const proposalsByMemberParams = { queryParams: { daoId, creatorAddress: address, pageSize: memberProposalsCount } };
 
-    const votesByMemberAddressQueryParams = { queryParams: { daoId, address, includeInfo: true, pageSize: 5 } };
+    const votesByMemberParams = { queryParams: { daoId, address, includeInfo: true, pageSize: memberVotesCount } };
 
-    const daoListByMemberParams = { urlParams: { address }, queryParams: { pageSize: 3, excludeDaoId: daoId } };
+    const daoListByMemberParams = {
+        urlParams: { address },
+        queryParams: { pageSize: memberDaosCount, excludeDaoId: daoId },
+    };
 
     return (
         <>
@@ -144,7 +149,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
             <Page.Content>
                 <Page.Main>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.votingActivity.title')}>
-                        <VoteList initialParams={votesByMemberAddressQueryParams} daoId={daoId} />
+                        <VoteList initialParams={votesByMemberParams} daoId={daoId} />
                     </Page.Section>
                     <Page.Section title={t('app.governance.daoMemberDetailsPage.main.proposalCreation.title')}>
                         <DaoProposalList initialParams={proposalsByMemberParams} />

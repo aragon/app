@@ -21,13 +21,15 @@ describe('useProposalListData hook', () => {
         const proposals = [generateProposal()];
         const proposalsMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: proposals.length });
         const proposalsResponse = generatePaginatedResponse({ data: proposals, metadata: proposalsMetadata });
-        const params = {
-            queryParams: { daoId: 'dao-test', creatorAddress: '0x1234567890123456789012345678901234567890' },
+        const queryParams = {
+            daoId: 'dao-test',
+            creatorAddress: '0x1234567890123456789012345678901234567890',
+            pluginAddress: '0x123',
         };
+        const params = { queryParams };
 
-        useProposalListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [proposalsResponse], pageParams: [] } }),
-        );
+        const mockResult = { data: { pages: [proposalsResponse], pageParams: [] } };
+        useProposalListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess(mockResult));
 
         const { result } = renderHook(() => useProposalListData(params));
 
@@ -43,9 +45,7 @@ describe('useProposalListData hook', () => {
 
     it('returns error state if fetching proposals fails', () => {
         useProposalListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-
-        const { result } = renderHook(() => useProposalListData({ queryParams: { daoId: '' } }));
-
+        const { result } = renderHook(() => useProposalListData({ queryParams: { daoId: '', pluginAddress: '' } }));
         expect(result.current.state).toEqual('error');
     });
 
@@ -53,7 +53,8 @@ describe('useProposalListData hook', () => {
         useProposalListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
 
         const pageSize = 6;
-        const { result } = renderHook(() => useProposalListData({ queryParams: { daoId: '', pageSize } }));
+        const params = { queryParams: { daoId: '', pluginAddress: '', pageSize } };
+        const { result } = renderHook(() => useProposalListData(params));
 
         expect(result.current.pageSize).toEqual(pageSize);
     });

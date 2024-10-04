@@ -14,7 +14,7 @@ export const Link: React.FC<ILinkProps> = (props) => {
     const processedRel = target === '_blank' ? `noopener noreferrer ${rel}` : rel;
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (isBlocked && !target && !window.confirm(t('app.governance.createProposalPage.exitAlertDescription'))) {
+        if (isBlocked && !target && !window.confirm(t('app.shared.confirmWizardExit.message'))) {
             e.preventDefault();
             return;
         }

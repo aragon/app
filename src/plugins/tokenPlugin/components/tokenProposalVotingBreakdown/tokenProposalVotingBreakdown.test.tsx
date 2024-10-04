@@ -3,7 +3,7 @@ import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { ProposalVotingTab, Tabs } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
+import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
 import { VoteOption } from '../../types/enum/voteOption';
 import { TokenProposalVotingBreakdown, type ITokenProposalVotingBreakdownProps } from './tokenProposalVotingBreakdown';
 
@@ -34,7 +34,7 @@ describe('<TokenProposalVotingBreakdown /> component', () => {
     });
 
     it('correctly displays the breakdown of the token proposal', () => {
-        const settings = generateDaoTokenSettings({
+        const settings = generateTokenPluginSettings({
             minParticipation: 200000,
             supportThreshold: 500000,
             historicalTotalSupply: '1000000',

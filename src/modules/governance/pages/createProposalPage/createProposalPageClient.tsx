@@ -22,10 +22,14 @@ export interface ICreateProposalPageClientProps {
      * ID of the current DAO.
      */
     daoId: string;
+    /**
+     * Address of the plugin to create the proposal for.
+     */
+    pluginAddress: string;
 }
 
 export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, pluginAddress } = props;
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -39,7 +43,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
-        const params: IPublishProposalDialogParams = { values, daoId, prepareActions };
+        const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
         open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
     };
 
@@ -61,10 +65,10 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 submitLabel={t('app.governance.createProposalPage.submitLabel')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                defaultValues={{ actions: [], addActions: true, title: '', resources: [], summary: '', body: '' }}
+                defaultValues={{ actions: [] }}
             >
                 <CreateProposalForm.Provider value={contextValues}>
-                    <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} />
+                    <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
                 </CreateProposalForm.Provider>
             </Wizard.Container>
         </Page.Main>

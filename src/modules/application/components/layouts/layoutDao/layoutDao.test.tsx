@@ -1,4 +1,4 @@
-import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
+import { daoOptions } from '@/shared/api/daoService';
 import { testLogger } from '@/test/utils';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -49,14 +49,10 @@ describe('<LayoutDao /> component', () => {
         expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('prefetches the DAO and its settings from the given slug', async () => {
+    it('prefetches the DAO from the given slug', async () => {
         const params = { id: 'my-dao' };
-        const daoSettingsParams = { daoId: params.id };
         render(await createTestComponent({ params }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
-        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
-            daoSettingsOptions({ urlParams: daoSettingsParams }).queryKey,
-        );
     });
 
     it('dehydrates the query client state', async () => {
@@ -78,15 +74,6 @@ describe('<LayoutDao /> component', () => {
     it('renders error with a link to explore page on fetch DAO error', async () => {
         const daoId = 'dao-id';
         fetchQuerySpy.mockRejectedValue('error');
-        render(await createTestComponent({ params: { id: daoId } }));
-        const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
-        expect(errorLink).toBeInTheDocument();
-        expect(errorLink.getAttribute('href')).toEqual(`/`);
-    });
-
-    it('renders error with a link to explore page on fetch DAO settings error', async () => {
-        const daoId = 'dao-id';
-        fetchQuerySpy.mockResolvedValueOnce('ok').mockRejectedValueOnce('error');
         render(await createTestComponent({ params: { id: daoId } }));
         const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
         expect(errorLink).toBeInTheDocument();

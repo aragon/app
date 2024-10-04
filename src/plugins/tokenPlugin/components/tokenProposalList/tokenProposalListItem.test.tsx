@@ -2,7 +2,7 @@ import { generateToken } from '@/modules/finance/testUtils';
 import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
 import { OdsModulesProvider, ProposalStatus } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { generateDaoTokenSettings, generateTokenProposal } from '../../testUtils';
+import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
 import { VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
@@ -39,7 +39,9 @@ describe('<TokenProposalListItem /> component', () => {
     };
 
     it('renders the token proposal', () => {
-        const proposal = generateTokenProposal({ settings: generateDaoTokenSettings({ historicalTotalSupply: '0' }) });
+        const proposal = generateTokenProposal({
+            settings: generateTokenPluginSettings({ historicalTotalSupply: '0' }),
+        });
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
@@ -53,7 +55,7 @@ describe('<TokenProposalListItem /> component', () => {
 
     it('renders the parsed amount and percentage of winning option', () => {
         const votes = [{ type: VoteOption.YES, totalVotingPower: '80000' }];
-        const settings = generateDaoTokenSettings({ token: generateToken({ decimals: 2, symbol: 'TEST' }) });
+        const settings = generateTokenPluginSettings({ token: generateToken({ decimals: 2, symbol: 'TEST' }) });
         const proposal = generateTokenProposal({ metrics: { votesByOption: votes }, settings });
         getWinningOptionSpy.mockReturnValue(VoteOption.YES);
         getTotalVotesSpy.mockReturnValue(BigInt(100000));
@@ -75,7 +77,7 @@ describe('<TokenProposalListItem /> component', () => {
 
     it('renders abstain as winning option with 100% when the are only abstain votes', () => {
         const votes = [{ type: VoteOption.ABSTAIN, totalVotingPower: '145' }];
-        const settings = generateDaoTokenSettings({ token: generateToken({ decimals: 3, symbol: 'ABS' }) });
+        const settings = generateTokenPluginSettings({ token: generateToken({ decimals: 3, symbol: 'ABS' }) });
         const proposal = generateTokenProposal({ metrics: { votesByOption: votes }, settings });
         getWinningOptionSpy.mockReturnValue(VoteOption.ABSTAIN);
         getTotalVotesSpy.mockReturnValue(BigInt(0));

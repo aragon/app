@@ -1,10 +1,10 @@
 import { useMember } from '@/modules/governance/api/governanceService';
-import { useDaoSettings } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { type IDaoTokenSettings, type ITokenMember } from '../../types';
+import { type ITokenMember, type ITokenPluginSettings } from '../../types';
 
 interface IUseTokenMemberStatsParams {
     /**
@@ -15,24 +15,25 @@ interface IUseTokenMemberStatsParams {
      * Address of the DAO member.
      */
     address: string;
+    /**
+     * Plugin to display the stats for.
+     */
+    plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
 export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHeaderStat[] => {
-    const { address, daoId } = params;
+    const { address, daoId, plugin } = params;
     const { t } = useTranslations();
 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
     const { data: member } = useMember<ITokenMember>({ urlParams: memberUrlParams, queryParams: memberQueryParams });
 
-    const daoSettingsParams = { daoId };
-    const { data: daoSettings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
-
-    if (member == null || daoSettings == null) {
+    if (member == null) {
         return [];
     }
 
-    const { token } = daoSettings;
+    const { token } = plugin.settings;
 
     const parsedVotingPower = formatUnits(BigInt(member.votingPower ?? '0'), token.decimals);
     const formattedVotingPower = formatterUtils.formatNumber(parsedVotingPower, { format: NumberFormat.GENERIC_SHORT });

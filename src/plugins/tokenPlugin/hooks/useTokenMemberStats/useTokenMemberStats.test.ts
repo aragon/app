@@ -1,34 +1,30 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import * as governanceService from '@/modules/governance/api/governanceService';
-import * as daoService from '@/shared/api/daoService';
-import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateDaoPlugin, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
-import { generateDaoTokenSettings, generateTokenMember, generateTokenMemberMetrics } from '../../testUtils';
+import { generateTokenMember, generateTokenMemberMetrics, generateTokenPluginSettings } from '../../testUtils';
 import { useTokenMemberStats } from './useTokenMemberStats';
 
 describe('useTokenMemberStats hook', () => {
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
-    const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
 
     beforeEach(() => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateTokenMember() }));
     });
 
     afterEach(() => {
         useMemberSpy.mockReset();
-        useDaoSettingsSpy.mockReset();
     });
 
     it('returns token member stats', () => {
+        const token = generateToken({ decimals: 6 });
+        const daoTokenSettings = generateTokenPluginSettings({ token });
+        const plugin = generateDaoPlugin({ settings: daoTokenSettings });
         const memberStatsParams = {
             address: '0x1234567890123456789012345678901234567890',
             daoId: 'dao-id',
+            plugin,
         };
-
-        const token = generateToken({ decimals: 6 });
-        const daoTokenSettings = generateDaoTokenSettings({ token });
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoTokenSettings }));
 
         const member = generateTokenMember({
             votingPower: '47928374987234',
@@ -52,13 +48,9 @@ describe('useTokenMemberStats hook', () => {
 
     it('returns empty list when member is null', () => {
         useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        const { result } = renderHook(() => useTokenMemberStats({ address: '0x123', daoId: '1' }));
-        expect(result.current).toEqual([]);
-    });
-
-    it('returns empty list when daoSettings is null', () => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        const { result } = renderHook(() => useTokenMemberStats({ address: '0x123', daoId: '2' }));
+        const { result } = renderHook(() =>
+            useTokenMemberStats({ address: '0x123', daoId: '1', plugin: generateDaoPlugin() }),
+        );
         expect(result.current).toEqual([]);
     });
 });

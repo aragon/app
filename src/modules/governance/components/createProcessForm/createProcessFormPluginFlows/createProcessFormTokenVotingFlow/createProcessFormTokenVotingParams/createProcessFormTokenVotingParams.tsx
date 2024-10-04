@@ -23,7 +23,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
     const { stageIndex, stageName, bodyIndex } = props;
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
-    const { watch, setValue, getValues } = useFormContext();
+    const { watch, setValue } = useFormContext();
 
     const { supportThresholdPercentageField, minimumParticipationPercentageField, voteChangeField } = getAllBodyFields(
         stageName,
@@ -34,10 +34,11 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
     const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`);
     const tokenSymbol = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbol`);
 
-    console.log('members', members);
-
     useEffect(() => {
-        const totalTokenAmount = members.reduce((acc: any, member: any) => acc + Number(member.tokenAmount), 0);
+        const totalTokenAmount = members.reduce(
+            (acc: number, member: { tokenAmount: string }) => acc + Number(member.tokenAmount),
+            0,
+        );
         const formattedTotal = formatterUtils.formatNumber(totalTokenAmount, {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });
@@ -88,7 +89,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
             <InputContainer
                 id="participation"
                 label="Minimum participation"
-                helpText={`The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value for the proposal to pass.`}
+                helpText="The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value for the proposal to pass."
                 useCustomWrapper={true}
                 {...minimumParticipationPercentageField}
             >

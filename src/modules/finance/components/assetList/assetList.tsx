@@ -65,7 +65,7 @@ export const AssetList: React.FC<IAssetListProps> = (props) => {
                 <DataListFilter
                     onSearchValueChange={setSearchValue}
                     searchValue={searchValue}
-                    placeholder={t('app.finance.assetSelectionList.searchPlaceholder')}
+                    placeholder={t('app.finance.assetList.searchPlaceholder')}
                 />
             ) : null}
             <DataListContainer

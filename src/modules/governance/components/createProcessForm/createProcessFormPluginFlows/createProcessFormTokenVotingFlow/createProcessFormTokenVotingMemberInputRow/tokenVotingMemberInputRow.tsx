@@ -22,8 +22,6 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
     const addressField = `${fieldNamePrefix}.address`;
     const tokenAmountField = `${fieldNamePrefix}.tokenAmount`;
 
-    console.log(addressField, tokenAmountField);
-
     return (
         <div className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6">
             <Controller

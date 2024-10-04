@@ -1,11 +1,9 @@
-import * as daoService from '@/shared/api/daoService';
 import type { IAdvancedDateInputProps } from '@/shared/components/forms/advancedDateInput';
-
-import { FormWrapper, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { FormWrapper, generateDaoPlugin } from '@/shared/testUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
-import { generateDaoTokenSettings } from '../../testUtils';
+import { generateTokenPluginSettings } from '../../testUtils';
 import {
     TokenCreateProposalSettingsForm,
     type ITokenCreateProposalSettingsFormProps,
@@ -27,25 +25,22 @@ jest.mock('@/shared/components/forms/advancedDateInput', () => ({
 }));
 
 describe('<TokenCreateProposalSettingsForm /> component', () => {
-    const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
     const secondsToDaysHoursMinutesSpy = jest.spyOn(dateUtils, 'secondsToDaysHoursMinutes');
     const useWatchSpy = jest.spyOn(ReactHookForm, 'useWatch');
 
     beforeEach(() => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
         secondsToDaysHoursMinutesSpy.mockReturnValue({ days: 0, hours: 1, minutes: 0 });
         useWatchSpy.mockReturnValue({ date: '2024-09-01', time: '12:00' });
     });
 
     afterEach(() => {
-        useDaoSettingsSpy.mockReset();
         secondsToDaysHoursMinutesSpy.mockReset();
         useWatchSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenCreateProposalSettingsFormProps>) => {
         const completeProps: ITokenCreateProposalSettingsFormProps = {
-            daoId: 'test-dao-id',
+            plugin: generateDaoPlugin({ settings: generateTokenPluginSettings() }),
             ...props,
         };
         return (
@@ -87,20 +82,10 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         expect(endTimeInput).toHaveTextContent('Min Duration: {"days":0,"hours":1,"minutes":0}');
     });
 
-    it('fetches DAO settings with correct params', () => {
-        render(createTestComponent({ daoId: 'My DAO' }));
-        expect(useDaoSettingsSpy).toHaveBeenCalledWith({ urlParams: { daoId: 'My DAO' } });
-    });
-
-    it('fetches the correct min duration from the dao settings', () => {
-        const daoSettings = generateDaoTokenSettings({ minDuration: 3600 });
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: daoSettings }));
-        render(createTestComponent());
+    it('uses the correct min duration from the plugin settings', () => {
+        const pluginSettings = generateTokenPluginSettings({ minDuration: 3600 });
+        const plugin = generateDaoPlugin({ settings: pluginSettings });
+        render(createTestComponent({ plugin }));
         expect(secondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(3600);
-    });
-
-    it('handles undefined minDuration', () => {
-        render(createTestComponent());
-        expect(secondsToDaysHoursMinutesSpy).toHaveBeenCalledWith(0);
     });
 });

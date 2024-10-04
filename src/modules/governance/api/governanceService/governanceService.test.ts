@@ -10,7 +10,7 @@ describe('governance service', () => {
 
     it('getMemberList fetches the members of the specified DAO', async () => {
         const members = [generateMember({ address: '0x123' }), generateMember({ address: '0x456' })];
-        const params = { queryParams: { daoId: 'dao-id-test' } };
+        const params = { queryParams: { daoId: 'dao-id-test', pluginAddress: '0x123' } };
 
         requestSpy.mockResolvedValue(members);
         const result = await governanceService.getMemberList(params);
@@ -32,7 +32,7 @@ describe('governance service', () => {
 
     it('getProposalList fetches proposals of the specified DAO', async () => {
         const proposals = [generateProposal({ id: '0' }), generateProposal({ id: '1' })];
-        const params = { queryParams: { daoId: 'dao-id-test' } };
+        const params = { queryParams: { daoId: 'dao-id-test', pluginAddress: '0x123' } };
 
         requestSpy.mockResolvedValue(proposals);
         const result = await governanceService.getProposalList(params);
@@ -54,7 +54,7 @@ describe('governance service', () => {
 
     it('getVoteList fetches the votes of a specific proposal', async () => {
         const votes = [generateVote({ transactionHash: '0' }), generateVote({ transactionHash: '1' })];
-        const params = { queryParams: { proposalId: 'proposal-id' } };
+        const params = { queryParams: { proposalId: 'proposal-id', pluginAddress: '0x123' } };
 
         requestSpy.mockResolvedValue(votes);
         const result = await governanceService.getVoteList(params);

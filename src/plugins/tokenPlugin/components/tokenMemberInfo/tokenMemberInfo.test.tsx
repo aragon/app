@@ -1,11 +1,10 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import { generateDaoTokenSettings } from '@/plugins/tokenPlugin/testUtils';
-import * as daoService from '@/shared/api/daoService';
+import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import {
+    generateDaoPlugin,
     generatePaginatedResponse,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
-    generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
@@ -20,21 +19,16 @@ jest.mock('../../../../modules/governance/api/governanceService', () => ({
 }));
 
 describe('<TokenMemberInfo /> component', () => {
-    const useDaoSettingsSpy = jest.spyOn(daoService, 'useDaoSettings');
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
 
-    beforeEach(() => {
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDaoTokenSettings() }));
-    });
-
     afterEach(() => {
-        useDaoSettingsSpy.mockReset();
         useMemberListSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenMemberInfoProps>) => {
         const completeProps: ITokenMemberInfoProps = {
             daoId: 'test-id',
+            plugin: generateDaoPlugin({ settings: generateTokenPluginSettings() }),
             ...props,
         };
 
@@ -47,7 +41,8 @@ describe('<TokenMemberInfo /> component', () => {
 
     it('renders the component with the correct eligible voters and members info', async () => {
         const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300' });
-        const mockSettings = generateDaoTokenSettings({ votingMode: 2, token });
+        const mockSettings = generateTokenPluginSettings({ votingMode: 2, token });
+        const plugin = generateDaoPlugin({ settings: mockSettings });
 
         const members = [
             generateMember({ address: '0x123' }),
@@ -66,9 +61,7 @@ describe('<TokenMemberInfo /> component', () => {
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
 
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
-
-        render(createTestComponent());
+        render(createTestComponent({ plugin }));
 
         expect(screen.getByText(/tokenMemberInfo.eligibleVoters/)).toBeInTheDocument();
         expect(screen.getByText(/tokenMemberInfo.tokenHolders/)).toBeInTheDocument();
@@ -102,10 +95,10 @@ describe('<TokenMemberInfo /> component', () => {
         );
 
         const token = generateToken({ symbol: 'WETH', name: 'Wrapped ETH', address: '0xWethAddress' });
-        const mockSettings = generateDaoTokenSettings({ token });
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
+        const mockSettings = generateTokenPluginSettings({ token });
+        const plugin = generateDaoPlugin({ settings: mockSettings });
 
-        render(createTestComponent());
+        render(createTestComponent({ plugin }));
 
         const link = screen.getByRole<HTMLAnchorElement>('link', { name: /tokenMemberInfo.tokenNameAndSymbol/ });
         expect(link.text).toContain('tokenName=Wrapped ETH,tokenSymbol=WETH');
@@ -113,7 +106,8 @@ describe('<TokenMemberInfo /> component', () => {
 
     it('contains a link to the members page', () => {
         const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300', address: '0xBtcAddress' });
-        const mockSettings = generateDaoTokenSettings({ votingMode: 2, token });
+        const mockSettings = generateTokenPluginSettings({ votingMode: 2, token });
+        const plugin = generateDaoPlugin({ settings: mockSettings });
 
         const members = [
             generateMember({ address: '0x123' }),
@@ -132,8 +126,7 @@ describe('<TokenMemberInfo /> component', () => {
             generateReactQueryInfiniteResultSuccess({ data: { pages: [membersResponse], pageParams: [] } }),
         );
 
-        useDaoSettingsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: mockSettings }));
-        render(createTestComponent());
+        render(createTestComponent({ plugin }));
         const linkElement = screen.getByRole('link', {
             name: /tokenMemberInfo.tokenDistribution \(count=5\) 0xBtcAddress/,
         });

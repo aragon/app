@@ -1,29 +1,28 @@
 import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
-import { useDaoSettings } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
 import { DateTime } from 'luxon';
 import { useWatch } from 'react-hook-form';
-import { type IDaoTokenSettings } from '../../types';
+import type { ITokenPluginSettings } from '../../types';
 
 export interface ITokenCreateProposalSettingsFormProps {
     /**
-     * The DAO ID.
+     * Plugin to create the proposal for.
      */
-    daoId: string;
+    plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
-export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSettingsFormProps> = ({ daoId }) => {
-    const daoSettingsParams = { daoId };
-    const { data: settings } = useDaoSettings<IDaoTokenSettings>({ urlParams: daoSettingsParams });
+export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSettingsFormProps> = (props) => {
+    const { plugin } = props;
 
     const { t } = useTranslations();
 
     const startTimeFixed = useWatch<ICreateProposalFormData, 'startTimeFixed'>({ name: 'startTimeFixed' });
 
-    const minDuration = settings?.minDuration ?? 0;
+    const minDuration = plugin.settings.minDuration;
     const parsedMinDuration = dateUtils.secondsToDaysHoursMinutes(minDuration);
     const { days, hours, minutes } = parsedMinDuration;
 

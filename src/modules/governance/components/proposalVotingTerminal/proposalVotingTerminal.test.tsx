@@ -1,6 +1,5 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import * as useDaoPluginIds from '@/shared/hooks/useDaoPluginIds';
-import * as useSlotFunction from '@/shared/hooks/useSlotFunction';
+import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalStatus } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -8,9 +7,9 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
 import { type IProposalVotingTerminalProps, ProposalVotingTerminal } from './proposalVotingTerminal';
 
-jest.mock('@/shared/components/pluginComponent', () => ({
-    PluginComponent: (props: { slotId: string; pluginIds: string[] }) => (
-        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginids={props.pluginIds} />
+jest.mock('@/shared/components/pluginSingleComponent', () => ({
+    PluginSingleComponent: (props: { slotId: string; pluginId: string }) => (
+        <div data-testid="plugin-component-mock" data-slotid={props.slotId} data-pluginid={props.pluginId} />
     ),
 }));
 
@@ -19,16 +18,10 @@ jest.mock('../voteList', () => ({
 }));
 
 describe('<ProposalVotingTerminal /> component', () => {
-    const useDaoPluginIdsSpy = jest.spyOn(useDaoPluginIds, 'useDaoPluginIds');
-    const useSlotFunctionSpy = jest.spyOn(useSlotFunction, 'useSlotFunction');
-
-    beforeEach(() => {
-        useDaoPluginIdsSpy.mockReturnValue([]);
-    });
+    const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
 
     afterEach(() => {
-        useDaoPluginIdsSpy.mockReset();
-        useSlotFunctionSpy.mockReset();
+        useSlotSingleFunctionSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IProposalVotingTerminalProps>) => {
@@ -48,13 +41,12 @@ describe('<ProposalVotingTerminal /> component', () => {
     });
 
     it('renders the plugin-specific proposal breakdown component', () => {
-        const pluginIds = ['multisig'];
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
-        render(createTestComponent());
+        const proposal = generateProposal({ pluginSubdomain: 'multisig' });
+        render(createTestComponent({ proposal }));
         const pluginComponent = screen.getAllByTestId('plugin-component-mock');
         expect(pluginComponent[0]).toBeInTheDocument();
         expect(pluginComponent[0].dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN);
-        expect(pluginComponent[0].dataset.pluginids).toEqual(pluginIds.toString());
+        expect(pluginComponent[0].dataset.pluginid).toEqual(proposal.pluginSubdomain);
     });
 
     it('renders the list of votes', async () => {
@@ -64,19 +56,17 @@ describe('<ProposalVotingTerminal /> component', () => {
     });
 
     it('renders the proposal settings', () => {
-        const pluginIds = ['plugin-id'];
         const daoId = 'test-id';
         const settings = { pluginConfig: 'pluginValue' };
         const parsedSettings = { term: 'plugin-term', definition: 'plugin-value' };
-        const proposal = generateProposal({ settings });
+        const proposal = generateProposal({ settings, pluginSubdomain: 'plugin-id' });
 
-        useDaoPluginIdsSpy.mockReturnValue(pluginIds);
-        useSlotFunctionSpy.mockReturnValue([parsedSettings]);
+        useSlotSingleFunctionSpy.mockReturnValue([parsedSettings]);
 
         render(createTestComponent({ daoId, proposal }));
-        expect(useSlotFunctionSpy).toHaveBeenCalledWith({
-            params: { daoId, settings: proposal.settings },
-            pluginIds,
+        expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith({
+            params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
+            pluginId: proposal.pluginSubdomain,
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         });
         expect(screen.getByText(parsedSettings.term)).toBeInTheDocument();

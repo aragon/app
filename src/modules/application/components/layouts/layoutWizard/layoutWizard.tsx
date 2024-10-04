@@ -1,6 +1,6 @@
 import { ErrorBoundary } from '@/modules/application/components/errorBoundary';
 import { NavigationWizard } from '@/modules/application/components/navigations/navigationWizard';
-import { daoOptions, daoSettingsOptions } from '@/shared/api/daoService';
+import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
@@ -36,9 +36,6 @@ export const LayoutWizard: React.FC<ILayoutWizardProps> = async (props) => {
         if (params?.id != null) {
             const daoUrlParams = { id: params.id };
             await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
-
-            const daoSettingsUrlParams = { daoId: params.id };
-            await queryClient.fetchQuery(daoSettingsOptions({ urlParams: daoSettingsUrlParams }));
         }
     } catch (error: unknown) {
         return (

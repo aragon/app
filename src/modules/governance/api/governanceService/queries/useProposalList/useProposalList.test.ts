@@ -12,7 +12,7 @@ describe('useProposalList query', () => {
     });
 
     it('fetches the proposals of the specified DAO', async () => {
-        const params = { daoId: 'dao-id-test' };
+        const params = { daoId: 'dao-id-test', pluginAddress: '0x123' };
         const proposalsResult = generatePaginatedResponse({ data: [generateProposal()] });
         governanceServiceSpy.mockResolvedValue(proposalsResult);
         const { result } = renderHook(() => useProposalList({ queryParams: params }), { wrapper: ReactQueryWrapper });
