@@ -1,6 +1,6 @@
-// es-lint-disable @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import { useFormField } from '@/shared/hooks/useFormField';
+import type { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 
 export interface IMultisigVotingMember {
@@ -8,6 +8,17 @@ export interface IMultisigVotingMember {
      * Address details of the member.
      */
     address: IAddressInputResolvedValue;
+}
+
+export interface IOpenDialogState {
+    /**
+     * Dialog open state.
+     */
+    dialogOpen: boolean;
+    /**
+     * Index of the body to edit.
+     */
+    editBodyIndex?: number;
 }
 
 export interface ITokenVotingMember {
@@ -82,7 +93,7 @@ export interface ICreateProcessFormData {
     startTimeMode?: 'fixed' | 'now';
     endTimeMode?: 'fixed' | 'duration';
     addActions?: boolean;
-    actions?: any[];
+    actions: any[];
     title?: string;
     /**
      * Name of the process

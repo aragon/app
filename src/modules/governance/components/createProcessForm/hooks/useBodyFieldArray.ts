@@ -1,4 +1,4 @@
-import { ICreateProcessFormBodyData } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import type { ICreateProcessFormBodyData } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { useFieldArray, useFormContext, type UseFieldArrayReturn } from 'react-hook-form';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,7 +23,7 @@ export const useBodiesFieldArray = (stageName: string, stageIndex: number): UseB
 
     const controlledFields = watchBodiesFieldArray.map((field: ICreateProcessFormBodyData, index: number) => {
         return {
-            ...field,
+            ...fields,
             ...watchBodiesFieldArray[index],
         };
     });

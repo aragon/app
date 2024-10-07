@@ -1,5 +1,5 @@
 import { AddressInput, Button, Dropdown, IconType } from '@aragon/ods';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 export interface IMultisigMemberInputRowProps {
@@ -15,10 +15,7 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
     handleRemoveMember,
     canRemove,
 }) => {
-    const {
-        control,
-        formState: { errors },
-    } = useFormContext();
+    const { control } = useFormContext();
 
     const addressFieldName = `${fieldNamePrefix}.address`;
 

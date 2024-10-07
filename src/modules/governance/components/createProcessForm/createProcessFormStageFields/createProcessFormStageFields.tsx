@@ -1,7 +1,8 @@
 import { CreateProcessFormBodyDialog } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialog';
 import { CreateProcessFormBodySummary } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary';
-import {
+import type {
     IMultisigVotingMember,
+    IOpenDialogState,
     ITokenVotingMember,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { type ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
@@ -25,13 +26,7 @@ import {
 } from '@aragon/ods';
 import type React from 'react';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { useChainId } from 'wagmi';
-
-export interface IOpenDialogState {
-    dialogOpen: boolean;
-    editBodyIndex?: number;
-}
 
 export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageFieldsProps> = (props) => {
     const { stagesFieldArray, stageName, stageIndex, stageRemove } = props;
@@ -40,7 +35,6 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         dialogOpen: false,
         editBodyIndex: undefined,
     });
-    const { getValues } = useFormContext();
 
     const chainId = useChainId();
 

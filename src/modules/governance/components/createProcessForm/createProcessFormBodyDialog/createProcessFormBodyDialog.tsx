@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ICreateProcessFormBodyData } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import type {
+    ICreateProcessFormBodyData,
+    IOpenDialogState,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { CreateProcessFormMultisigDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultisigDetails/createProcessFormMultisigDetails';
 import { CreateProcessFormMultisigParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultsigParams/createProcessFormMultisigParams';
 import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
 import { CreateProcessFormTokenVotingParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingParams/createProcessFormTokenVotingParams';
-import { IOpenDialogState } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields/createProcessFormStageFields';
 import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
 import { Button, Dialog, InputText, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
@@ -41,7 +43,7 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
 
             initialStateRef.current = JSON.parse(JSON.stringify(currentState));
         }
-    }, [isBodyDialogOpen.dialogOpen]);
+    }, [isBodyDialogOpen.dialogOpen, bodyIndex, getValues, stageIndex, stageName]);
 
     const handleCancel = () => {
         if (isBodyDialogOpen.editBodyIndex === undefined) {
@@ -153,13 +155,9 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
             containerClassName="!max-w-[640px]"
             open={isBodyDialogOpen.dialogOpen}
             onPointerDownOutside={handleCancel}
-            aria-describedby={`Add a body to governance process stage.`}
         >
             <Dialog.Header title="Add voting body" onCloseClick={handleCancel} />
-            <Dialog.Content
-                aria-describedby={`Add a body to governance process stage.`}
-                className="flex flex-col gap-6 pb-1.5"
-            >
+            <Dialog.Content className="flex flex-col gap-6 pb-1.5">
                 {handleStepContent(step)}
                 <div className="flex w-full justify-between">
                     <Button variant="tertiary" onClick={step === 0 ? handleCancel : () => setStep(step - 1)}>

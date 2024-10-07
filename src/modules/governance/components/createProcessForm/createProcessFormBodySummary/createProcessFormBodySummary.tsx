@@ -1,8 +1,9 @@
-import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ICreateProcessFormBodySummaryProps } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary/createProcessFormBodySummary.api';
+import type {
     IMultisigVotingMember,
     ITokenVotingMember,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { IOpenDialogState } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields/createProcessFormStageFields';
 import {
     Accordion,
     Button,
@@ -16,38 +17,6 @@ import {
     Tag,
 } from '@aragon/ods';
 import { useWatch } from 'react-hook-form';
-
-export interface ICreateProcessFormBodySummaryProps {
-    /**
-     * The body fields.
-     */
-    // @typescript-eslint/no-explicit-any
-    bodyFieldsArray: any[];
-    /**
-     * Callback to set the body dialog open.
-     */
-    setIsBodyDialogOpen: (value: IOpenDialogState) => void;
-    /**
-     * Callback to remove a body.
-     */
-    removeBody: (index: number) => void;
-    /**
-     * Callback to format the address with the block explorer.
-     */
-    formattedAddressWithBlockExplorer: (memberType?: ITokenVotingMember | IMultisigVotingMember) => React.ReactNode;
-    /**
-     * Callback to handle editing a body.
-     */
-    onEditBody: (index: number) => void;
-    /**
-     * Stage name.
-     */
-    stageName: string;
-    /**
-     * Stage index.
-     */
-    stageIndex: number;
-}
 
 export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummaryProps> = (props) => {
     const { stageName, stageIndex, removeBody, formattedAddressWithBlockExplorer, onEditBody } = props;

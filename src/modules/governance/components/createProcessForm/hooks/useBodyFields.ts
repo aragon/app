@@ -1,4 +1,4 @@
-import {
+import type {
     BodyInputItemBaseForm,
     IBodyFields,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';

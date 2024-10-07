@@ -1,5 +1,5 @@
 import { generateTransaction } from '@/modules/finance/testUtils';
-import { ICreateProcessFormData } from '@/modules/governance/components/createProcessForm';
+import { type ICreateProcessFormData } from '@/modules/governance/components/createProcessForm';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
@@ -11,7 +11,6 @@ import {
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Card, Heading, invariant } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
@@ -53,11 +52,10 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     const { address } = useAccount();
     invariant(address != null, 'PublishProposalDialog: user must be connected.');
 
-    const { daoId, pluginAddress, values, prepareActions } = location.params;
+    const { daoId, pluginAddress, values } = location.params;
     const { processName, processId, stages } = values;
 
     const { t } = useTranslations();
-    const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
 
     const setIsBlocked = useSetIsBlocked();
 
@@ -65,7 +63,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
         initialActiveStep: PublishProcessStep.PIN_METADATA,
     });
 
-    const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
+    const { status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
@@ -75,38 +73,38 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
         [pinJson, values],
     );
 
-    const handlePrepareTransaction = async () => {
-        invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
-        const { IpfsHash: metadataCid } = pinJsonData;
-        const { actions } = values;
+    // const handlePrepareTransaction = async () => {
+    //     invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
+    //     const { IpfsHash: metadataCid } = pinJsonData;
+    //     const { actions } = values;
 
-        const processedActions = await publishProcessDialogUtils.prepareActions({ actions, prepareActions });
-        const processedValues = {
-            ...values,
-            actions: processedActions.map((action) => ({
-                ...action,
-                type: action.data.type,
-                daoId,
-                value: action.data.value,
-                to: action.data.to,
-                from: action.data.from,
-                inputData: action.data.inputData,
-                data: JSON.stringify(action.data),
-            })),
-        };
+    //     const processedActions = await publishProcessDialogUtils.prepareActions({ actions, prepareActions });
+    //     const processedValues = {
+    //         ...values,
+    //         actions: processedActions.map((action) => ({
+    //             ...action,
+    //             type: action.data.type,
+    //             daoId,
+    //             value: action.data.value,
+    //             to: action.data.to,
+    //             from: action.data.from,
+    //             inputData: action.data.inputData,
+    //             data: JSON.stringify(action.data),
+    //         })),
+    //     };
 
-        return publishProcessDialogUtils.buildTransaction({
-            values: {
-                ...processedValues,
-                title: values.title,
-                addActions: values.addActions,
-                startTimeMode: values.startTimeMode,
-                endTimeMode: values.endTimeMode,
-            },
-            metadataCid,
-            plugin: daoPlugin.meta,
-        });
-    };
+    //     return publishProcessDialogUtils.buildTransaction({
+    //         values: {
+    //             ...processedValues,
+    //             title: values.title!,
+    //             addActions: values.addActions!,
+    //             startTimeMode: values.startTimeMode!,
+    //             endTimeMode: values.endTimeMode!,
+    //         },
+    //         metadataCid,
+    //         plugin: daoPlugin.meta,
+    //     });
+    // };
 
     const getProcessLink = (txReceipt: TransactionReceipt) => {
         const { transactionHash } = txReceipt;

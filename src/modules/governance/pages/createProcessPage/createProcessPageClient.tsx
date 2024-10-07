@@ -45,6 +45,7 @@ const defaultStage: ICreateProcessFormStage = {
 };
 
 const defaultValues: ICreateProcessFormData = {
+    actions: [],
     processName: '',
     processId: '',
     summary: '',

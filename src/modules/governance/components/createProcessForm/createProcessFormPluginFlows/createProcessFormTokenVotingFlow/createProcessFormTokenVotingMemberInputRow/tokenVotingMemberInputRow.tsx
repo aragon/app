@@ -1,5 +1,5 @@
 import { AddressInput, Button, Dropdown, IconType, InputNumber } from '@aragon/ods';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 export interface ITokenVotingMemberInputRowProps {

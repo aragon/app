@@ -16,7 +16,7 @@ export interface ICreateProcessPageClientStepsProps {
 }
 
 export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStepsProps> = (props) => {
-    const { steps, daoId } = props;
+    const { steps } = props;
 
     const [metadataStep, processesStep] = steps;
 

@@ -1,4 +1,7 @@
-import { ICreateProcessFormData, ICreateProcessFormStage } from '@/modules/governance/components/createProcessForm';
+import type {
+    ICreateProcessFormData,
+    ICreateProcessFormStage,
+} from '@/modules/governance/components/createProcessForm';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';

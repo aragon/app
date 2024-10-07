@@ -1,1 +1,2 @@
-export { CreateProcessFormBodySummary, type ICreateProcessFormBodySummaryProps } from './createProcessFormBodySummary';
+export { CreateProcessFormBodySummary } from './createProcessFormBodySummary';
+export * from './createProcessFormBodySummary.api';

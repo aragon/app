@@ -42,11 +42,11 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
             containerClassName="!max-w-[640px]"
             open={isTimingDialogOpen}
             onOpenChange={() => setIsTimingDialogOpen(false)}
-            aria-describedby={`Edit timing of governance process stage.`}
+            aria-describedby="Edit timing of governance process stage."
         >
             <Dialog.Header title="Timing" />
             <Dialog.Content
-                aria-describedby={`Edit timing of governance process stage.`}
+                aria-describedby="Edit timing of governance process stage."
                 className="flex flex-col gap-6 pb-4"
             >
                 <InputContainer
