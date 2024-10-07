@@ -5,6 +5,7 @@ import { generateSppPluginSettings } from './sppSettings';
 export const generateSppProposal = (proposal?: Partial<ISppProposal>): ISppProposal => ({
     ...generateProposal(proposal),
     currentStageIndex: 0,
+    lastStageTransition: 0,
     subProposals: [],
     settings: generateSppPluginSettings(),
     ...proposal,
