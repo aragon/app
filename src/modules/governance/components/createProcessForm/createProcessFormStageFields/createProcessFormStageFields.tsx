@@ -26,7 +26,6 @@ import {
 } from '@aragon/ods';
 import type React from 'react';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 
 export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageFieldsProps> = (props) => {
@@ -36,9 +35,6 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         dialogOpen: false,
         editBodyIndex: undefined,
     });
-
-    const { getValues } = useFormContext();
-    console.log('values', getValues());
 
     const chainId = useChainId();
 
