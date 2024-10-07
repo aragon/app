@@ -10,6 +10,7 @@ import type {
     IGetProposalParams,
     IGetVoteListParams,
 } from './governanceService.api';
+import { DaoTokenVotingMode, VoteOption } from '@/plugins/tokenPlugin/types';
 
 // TODO: Remove these mocks when we have all data from backend for SPP proposals
 const mockSppProposal = {
@@ -19,6 +20,7 @@ const mockSppProposal = {
     startDate: 0,
     endDate: 1234567890,
     summary: 'summary',
+    lastStageTransition: 0,
     creator: {
         address: '0x51cc608e50D59885009522e1b6307E72A9ECfa2c',
         ens: null,
@@ -47,12 +49,40 @@ const mockSppProposal = {
                 ens: null,
                 avatar: null,
             },
+            metrics: {
+                proposalsCreated: 0,
+                members: 0,
+                tvlUSD: '0',
+                votesByOption: [
+                    { type: VoteOption.YES, totalVotingPower: '447190' },
+                    { type: VoteOption.NO, totalVotingPower: '4818' },
+                ],
+            },
             description: 'description',
             daoAddress: '0x123',
             transactionHash: '0x123',
             resources: [],
             network: Network.ARBITRUM_MAINNET,
-            settings: {},
+            settings: {
+                votingMode: DaoTokenVotingMode.EARLY_EXECUTION,
+                supportThreshold: 0,
+                minDuration: 0,
+                minParticipation: 300000000,
+                minProposerVotingPower: '0',
+                historicalTotalSupply: '100000000',
+                token: {
+                    address: '0xTestAddress',
+                    network: Network.ETHEREUM_MAINNET,
+                    symbol: 'ETH',
+                    logo: 'https://test.com',
+                    name: 'Ethereum',
+                    type: 'ERC-20',
+                    decimals: 0,
+                    priceChangeOnDayUsd: '0.00',
+                    priceUsd: '0.00',
+                    totalSupply: '0',
+                },
+            },
             executed: { status: false },
             actions: [],
             pluginAddress: '0x123',

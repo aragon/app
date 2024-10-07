@@ -24,12 +24,20 @@ export interface IProposalVotingTerminalStageProps {
      * Index of the stage.
      */
     index: number;
+    /**
+     * Current stage index.
+     */
+    currentStageIndex: number;
+    /**
+     * Last stage transition.
+     */
+    lastStageTransition: number;
 }
 
 const votesPerPage = 6;
 
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
-    const { stage, daoId, subProposals, index } = props;
+    const { stage, daoId, subProposals, index, currentStageIndex, lastStageTransition } = props;
 
     // TODO: Support multiple proposals within a stage (APP-3659)
     const proposal = subProposals?.[0];
@@ -45,8 +53,11 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         pluginId: plugin.subdomain,
     });
 
-    const processedStartDate = (proposal?.startDate ?? 0) * 1000;
-    const processedEndDate = ((proposal?.blockTimestamp ?? 0) + stage.votingPeriod) * 1000;
+    const startDate = proposal?.startDate ?? 0;
+
+    const processedStartDate = currentStageIndex === 0 ? startDate : lastStageTransition;
+    const processedEndDate =
+        currentStageIndex === 0 ? startDate + stage.votingPeriod : lastStageTransition + stage.votingPeriod;
 
     return (
         <ProposalVoting.Stage
@@ -64,7 +75,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={proposal.pluginSubdomain}
-                        proposalId={proposal.id}
+                        proposal={proposal}
                     />
                     <ProposalVoting.Votes>
                         <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />
