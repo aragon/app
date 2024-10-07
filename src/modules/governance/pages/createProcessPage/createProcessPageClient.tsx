@@ -6,7 +6,11 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
-import type { ICreateProcessFormData, ICreateProcessFormStage } from '../../components/createProcessForm';
+import type {
+    ICreateProcessFormBodyData,
+    ICreateProcessFormData,
+    ICreateProcessFormStage,
+} from '../../components/createProcessForm';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
 
@@ -16,6 +20,18 @@ export interface ICreateProcessPageClientProps {
      */
     daoId: string;
 }
+
+export const defaultBody: ICreateProcessFormBodyData = {
+    bodyNameField: '',
+    bodyGovernanceTypeField: 'tokenVoting',
+    tokenNameField: '',
+    tokenSymbolField: '',
+    membersField: [],
+    supportThresholdField: 50,
+    minimumParticipationField: 50,
+    voteChangeField: false,
+    multisigThresholdField: 1,
+};
 
 const defaultStage: ICreateProcessFormStage = {
     stageName: '',

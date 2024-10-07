@@ -1,3 +1,5 @@
+import { type StageInputItemBaseForm } from '@/modules/governance/components/createProcessForm/hooks/useStagesFields';
+
 export interface IStageInputResource {
     /**
      * Name of the resource.
@@ -16,7 +18,7 @@ export interface ICreateProcessFormStageFieldsProps {
     /**
      * Array field of stage fields.
      */
-    stageFields: Record<'id', string>[];
+    stagesFieldArray: StageInputItemBaseForm[];
     /**
      * Name of the field.
      */

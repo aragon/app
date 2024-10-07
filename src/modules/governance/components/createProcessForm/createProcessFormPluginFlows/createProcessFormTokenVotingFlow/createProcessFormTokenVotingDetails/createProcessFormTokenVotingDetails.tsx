@@ -1,13 +1,9 @@
 import { TokenVotingMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingMemberInputRow/tokenVotingMemberInputRow';
-import { getTokenMembersFieldArray } from '@/modules/governance/components/createProcessForm/utils/getMembersFields';
+import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
 import { Button, IconType, InputContainer, InputText } from '@aragon/ods';
-import React, { useEffect } from 'react';
+import type React from 'react';
+import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-
-interface TokenMember {
-    address: string;
-    tokenAmount: number;
-}
 
 interface CreateProcessFormTokenVotingDetailsProps {
     stageName: string;
@@ -21,26 +17,22 @@ export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormToke
     bodyIndex,
 }) => {
     const { watch, control } = useFormContext();
-    const tokenSymbol = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbol`);
+    const tokenSymbol = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`);
 
-    const { tokenMemberFields, appendTokenMember, removeTokenMember } = getTokenMembersFieldArray(
-        stageName,
-        stageIndex,
-        bodyIndex,
-    );
+    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(stageName, stageIndex, bodyIndex);
 
     const handleAddMember = () => {
-        appendTokenMember({ address: '', tokenAmount: 1 });
+        appendMember({ address: '', tokenAmount: 1 });
     };
 
     const handleRemoveMember = (index: number) => {
-        if (tokenMemberFields.length > 1) {
-            removeTokenMember(index);
+        if (membersFieldArray.length > 1) {
+            removeMember(index);
         }
     };
 
     useEffect(() => {
-        if (tokenMemberFields.length === 0) {
+        if (membersFieldArray.length === 0) {
             handleAddMember();
         }
     });
@@ -48,7 +40,7 @@ export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormToke
     return (
         <>
             <Controller
-                name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenName`}
+                name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenNameField`}
                 control={control}
                 render={({ field }) => (
                     <InputText
@@ -60,7 +52,7 @@ export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormToke
             />
 
             <Controller
-                name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbol`}
+                name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`}
                 control={control}
                 render={({ field }) => (
                     <InputText
@@ -78,14 +70,14 @@ export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormToke
                 helpText="Add the wallets you'd like to distribute tokens to."
                 useCustomWrapper={true}
             >
-                {tokenMemberFields.map((field, index) => (
+                {membersFieldArray.map((field, index) => (
                     <TokenVotingMemberInputRow
                         key={field.id}
                         index={index}
                         fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.members.${index}`}
                         tokenSymbol={tokenSymbol}
                         handleRemoveMember={() => handleRemoveMember(index)}
-                        canRemove={tokenMemberFields.length > 1}
+                        canRemove={membersFieldArray.length > 1}
                     />
                 ))}
             </InputContainer>

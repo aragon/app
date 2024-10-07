@@ -1,4 +1,4 @@
-import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/utils/getBodyFields';
+import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
 import { InputContainer, InputNumber } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
 
@@ -12,7 +12,7 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
     const { stageName, stageIndex, bodyIndex } = props;
     const { watch } = useFormContext();
     const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`);
-    const { multisigThresholdField } = getAllBodyFields(stageName, stageIndex, bodyIndex);
+    const { multisigThresholdField } = useBodyFields(stageName, stageIndex, bodyIndex);
     return (
         <>
             <InputContainer
@@ -22,9 +22,9 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
                 useCustomWrapper={true}
             >
                 <InputNumber
-                    max={members.length}
+                    max={members?.length}
                     min={1}
-                    suffix={`of ${members.length}`}
+                    suffix={`of ${members?.length}`}
                     placeholder="Enter a number"
                     {...multisigThresholdField}
                     label={undefined}

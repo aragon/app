@@ -1,4 +1,4 @@
-import { getAllStageFields } from '@/modules/governance/components/createProcessForm/utils/getStageFields';
+import { useStageFields } from '@/modules/governance/components/createProcessForm/hooks/useStagesFields';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
@@ -29,7 +29,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
     const { setValue } = useFormContext();
 
     const { votingPeriodField, earlyStageField, stageExpirationField, stageExpirationPeriodField, stageTypeField } =
-        getAllStageFields(stageName, stageIndex) as {
+        useStageFields(stageName, stageIndex) as {
             votingPeriodField: { name: string; value: { minutes: number; hours: number; days: number } };
             earlyStageField: { name: string; value: boolean };
             stageExpirationField: { name: string; value: boolean };

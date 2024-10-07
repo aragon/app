@@ -1,4 +1,4 @@
-import { getAllBodyFields } from '@/modules/governance/components/createProcessForm/utils/getBodyFields';
+import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
 import {
     AlertInline,
     Card,
@@ -25,17 +25,17 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
     const { watch, setValue } = useFormContext();
 
-    const { supportThresholdPercentageField, minimumParticipationPercentageField, voteChangeField } = getAllBodyFields(
+    const { supportThresholdField, minimumParticipationField, voteChangeField } = useBodyFields(
         stageName,
         stageIndex,
         bodyIndex,
     );
 
     const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`);
-    const tokenSymbol = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbol`);
+    const tokenSymbolField = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`);
 
     useEffect(() => {
-        const totalTokenAmount = members.reduce(
+        const totalTokenAmount = members?.reduce(
             (acc: number, member: { tokenAmount: string }) => acc + Number(member.tokenAmount),
             0,
         );
@@ -46,8 +46,8 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
         setFormattedTotalTokenAmount(formattedTotal);
     }, [members]);
 
-    const formattedPercentageParticipation = formatterUtils.formatNumber(
-        currentTotalTokenAmount * minimumParticipationPercentageField.value * 0.01,
+    const formattedParticipation = formatterUtils.formatNumber(
+        currentTotalTokenAmount * minimumParticipationField.value * 0.01,
         {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         },
@@ -59,29 +59,29 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                 id="threshold"
                 helpText={`The percentage of tokens that vote "Yes" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.`}
                 useCustomWrapper={true}
-                {...supportThresholdPercentageField}
+                {...supportThresholdField}
             >
                 <Card className="flex flex-col gap-y-6 border border-neutral-100 p-6">
                     <div className="flex items-center justify-between gap-x-6">
                         <InputNumber
-                            prefix={supportThresholdPercentageField.value == 100 ? undefined : '>'}
+                            prefix={supportThresholdField.value == 100 ? undefined : '>'}
                             suffix="%"
                             min={1}
                             max={100}
                             placeholder=">1%"
-                            {...supportThresholdPercentageField}
+                            {...supportThresholdField}
                             label={undefined}
                         />
                         <div className="flex w-5/6 grow items-center gap-x-1">
                             <Tag label="Yes" variant="primary" />
                             <Progress
-                                value={supportThresholdPercentageField.value}
-                                thresholdIndicator={supportThresholdPercentageField.value}
+                                value={supportThresholdField.value}
+                                thresholdIndicator={supportThresholdField.value}
                             />
                             <Tag label="No" variant="neutral" />
                         </div>
                     </div>
-                    {supportThresholdPercentageField.value >= 50 && (
+                    {supportThresholdField.value >= 50 && (
                         <AlertInline variant="success" message="Proposal will be approved by majority" />
                     )}
                 </Card>
@@ -91,27 +91,27 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                 label="Minimum participation"
                 helpText="The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value for the proposal to pass."
                 useCustomWrapper={true}
-                {...minimumParticipationPercentageField}
+                {...minimumParticipationField}
             >
                 <Card className="flex flex-col border border-neutral-100 p-6">
                     <div className="flex items-center justify-between gap-x-6">
                         <InputNumber
-                            prefix={minimumParticipationPercentageField.value == 100 ? undefined : '>'}
+                            prefix={minimumParticipationField.value == 100 ? undefined : '>'}
                             suffix="%"
                             min={1}
                             max={100}
                             placeholder=">1%"
                             className="max-w-fit shrink"
-                            {...minimumParticipationPercentageField}
+                            {...minimumParticipationField}
                             label={undefined}
                         />
                         <div className="h-full w-5/6 grow flex-col gap-y-3">
                             <p className="text-primary-400">
-                                {formattedPercentageParticipation} {tokenSymbol}
+                                {formattedParticipation} {tokenSymbolField}
                             </p>
-                            <Progress value={minimumParticipationPercentageField.value} />
+                            <Progress value={minimumParticipationField.value} />
                             <p className="text-right">
-                                of {formattedTotalTokenAmount} {tokenSymbol}
+                                of {formattedTotalTokenAmount} {tokenSymbolField}
                             </p>
                         </div>
                     </div>

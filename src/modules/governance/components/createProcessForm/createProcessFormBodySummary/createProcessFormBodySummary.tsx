@@ -1,4 +1,5 @@
 import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { IOpenDialogState } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields/createProcessFormStageFields';
 import {
     Accordion,
     Button,
@@ -11,20 +12,18 @@ import {
     NumberFormat,
     Tag,
 } from '@aragon/ods';
+import { useWatch } from 'react-hook-form';
 
 export interface ICreateProcessFormBodySummaryProps {
     /**
      * The body fields.
      */
-    bodyFields: any[];
-    /**
-     * Callback to set the selected body index.
-     */
-    setSelectedBodyIndex: (index: number) => void;
+    // @typescript-eslint/no-explicit-any
+    bodyFieldsArray: any[];
     /**
      * Callback to set the body dialog open.
      */
-    setIsBodyDialogOpen: (isOpen: boolean) => void;
+    setIsBodyDialogOpen: (value: IOpenDialogState) => void;
     /**
      * Callback to remove a body.
      */
@@ -33,40 +32,48 @@ export interface ICreateProcessFormBodySummaryProps {
      * Callback to format the address with the block explorer.
      */
     formattedAddressWithBlockExplorer: (address: string) => React.ReactNode;
+    /**
+     * Callback to handle editing a body.
+     */
+    onEditBody: (index: number) => void;
+    /**
+     * Stage name.
+     */
+    stageName: string;
+    /**
+     * Stage index.
+     */
+    stageIndex: number;
 }
 
-export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummaryProps> = ({
-    bodyFields,
-    setSelectedBodyIndex,
-    setIsBodyDialogOpen,
-    removeBody,
-    formattedAddressWithBlockExplorer,
-}) => {
-    const handleEditBody = (index: number) => {
-        setSelectedBodyIndex(index);
-        setIsBodyDialogOpen(true);
-    };
+export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummaryProps> = (props) => {
+    const { stageName, stageIndex, removeBody, formattedAddressWithBlockExplorer, onEditBody } = props;
+
+    const bodyNamePrefix = `${stageName}.${stageIndex}.bodies`;
+
+    const bodyFieldsArray = useWatch({ name: `${stageName}.${stageIndex}.bodies` });
 
     return (
         <div className="flex flex-col gap-3 md:gap-2">
-            {bodyFields.map((field: any, index) => (
-                <Card key={field.id} className="overflow-hidden border border-neutral-100">
+            {bodyFieldsArray.map((field: any, index: number) => (
+                <Card key={`${bodyNamePrefix}.${index}`} className="overflow-hidden border border-neutral-100">
                     <Accordion.Container isMulti={true}>
-                        <Accordion.Item value={field.id}>
+                        <Accordion.Item value={bodyNamePrefix}>
                             <Accordion.ItemHeader>
-                                <Heading size="h4">{field.bodyName}</Heading>
+                                <Heading size="h4">{field.bodyNameField}</Heading>
                             </Accordion.ItemHeader>
                             <Accordion.ItemContent>
                                 <DefinitionList.Container className="w-full">
-                                    {field.governanceType === 'tokenVoting' && (
+                                    {field.bodyGovernanceTypeField === 'tokenVoting' && (
                                         <>
                                             <DefinitionList.Item term="Token">
-                                                {field.tokenName} (${field.tokenSymbol})
+                                                {field.tokenNameField} (${field.tokenSymbolField})
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Distribution">
-                                                {field.members?.length} token holders
+                                                {field.members?.length}{' '}
+                                                {field.members?.length > 1 ? 'token holders' : 'token holder'}
                                                 <ul className="flex flex-col gap-y-2 px-4 py-2">
-                                                    {field.members.map(
+                                                    {field.members?.map(
                                                         (member: ITokenVotingMember, memberIndex: number) => (
                                                             <li key={memberIndex}>
                                                                 {formattedAddressWithBlockExplorer(member.address)}
@@ -77,37 +84,38 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Supply">
                                                 {formatterUtils.formatNumber(
-                                                    field.members.reduce(
+                                                    field.members?.reduce(
                                                         (sum: number, member: ITokenVotingMember) =>
                                                             sum + Number(member.tokenAmount),
                                                         0,
                                                     ),
                                                     { format: NumberFormat.TOKEN_AMOUNT_LONG },
                                                 )}{' '}
-                                                ${field.tokenSymbol}
+                                                ${field.tokenSymbolField}
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Approval threshold">
-                                                {field.supportThresholdPercentage}%
+                                                {field.supportThresholdField}%
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Minimum participation">
-                                                {field.minimumParticipationPercentage}%
+                                                {field.minimumParticipationField}%
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Voting change">
                                                 <Tag
-                                                    label={field.voteChange ? 'Yes' : 'No'}
-                                                    variant={field.voteChange ? 'primary' : 'neutral'}
+                                                    label={field.voteChangeField ? 'Yes' : 'No'}
+                                                    variant={field.voteChangeField ? 'primary' : 'neutral'}
                                                     className="max-w-fit"
                                                 />
                                             </DefinitionList.Item>
                                         </>
                                     )}
 
-                                    {field.governanceType === 'multisig' && (
+                                    {field.bodyGovernanceTypeField === 'multisig' && (
                                         <>
                                             <DefinitionList.Item term="Multisig Members">
-                                                {field.members?.length} members
+                                                {field.members?.length}{' '}
+                                                {field.members?.length > 1 ? 'members' : 'member'}
                                                 <ul className="flex flex-col gap-y-2 px-4 py-2">
-                                                    {field.members.map(
+                                                    {field.members?.map(
                                                         (member: ITokenVotingMember, memberIndex: number) => (
                                                             <li key={memberIndex}>
                                                                 {formattedAddressWithBlockExplorer(member.address)}
@@ -117,20 +125,19 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                                 </ul>
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Multisig Threshold">
-                                                {field.multisigThreshold} of {field.members.length}
+                                                {field.multisigThresholdField} of {field.members?.length}
                                             </DefinitionList.Item>
                                         </>
                                     )}
                                 </DefinitionList.Container>
-
                                 <div className="flex w-full grow justify-between">
                                     <Button
                                         className="justify-end"
                                         variant="secondary"
                                         size="md"
-                                        onClick={() => handleEditBody(index)}
+                                        onClick={() => onEditBody(index)}
                                     >
-                                        Edit body
+                                        Edit
                                     </Button>
                                     <Dropdown.Container
                                         constrainContentWidth={false}

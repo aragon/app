@@ -1,5 +1,5 @@
 import { MultisigMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMemberInputRow/multisigMemberInputRow';
-import { getMultisigMembersFieldArray } from '@/modules/governance/components/createProcessForm/utils/getMembersFields';
+import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
 import { Button, IconType, InputContainer } from '@aragon/ods';
 
 export interface ICreateProcessFormMultisigDetailsProps {
@@ -11,19 +11,15 @@ export interface ICreateProcessFormMultisigDetailsProps {
 export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultisigDetailsProps> = (props) => {
     const { stageName, stageIndex, bodyIndex } = props;
 
-    const { multisigMemberFields, appendMultisigMember, removeMultisigMember } = getMultisigMembersFieldArray(
-        stageName,
-        stageIndex,
-        bodyIndex,
-    );
+    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(stageName, stageIndex, bodyIndex);
 
     const handleAddMember = () => {
-        appendMultisigMember({ address: '', tokenAmount: 1 });
+        appendMember({ address: '', tokenAmount: 1 });
     };
 
     const handleRemoveMember = (index: number) => {
-        if (multisigMemberFields.length > 1) {
-            removeMultisigMember(index);
+        if (membersFieldArray.length > 1) {
+            removeMember(index);
         }
     };
     return (
@@ -34,13 +30,13 @@ export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultis
                 helpText="Add the addresses that will be part of the multisig."
                 useCustomWrapper={true}
             >
-                {multisigMemberFields.map((member, index) => (
+                {membersFieldArray.map((member, index) => (
                     <MultisigMemberInputRow
                         key={index}
                         index={index}
                         fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.members.${index}`}
                         handleRemoveMember={handleRemoveMember}
-                        canRemove={multisigMemberFields.length > 1}
+                        canRemove={membersFieldArray.length > 1}
                     />
                 ))}
             </InputContainer>

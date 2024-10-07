@@ -1,3 +1,4 @@
+import { ICreateProcessFormData, ICreateProcessFormStage } from '@/modules/governance/components/createProcessForm';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
@@ -7,11 +8,7 @@ import { invariant } from '@aragon/ods';
 import { DateTime, Duration } from 'luxon';
 import { decodeAbiParameters, type Hex, type TransactionReceipt } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
-import type {
-    ICreateProposalFormData,
-    IProposalActionData,
-    PrepareProposalActionMap,
-} from '../../components/createProposalForm';
+import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
 
@@ -34,18 +31,18 @@ export interface IPrepareActionsParams {
     /**
      * List of actions of the proposal.
      */
-    actions: IProposalActionData[];
+    actions: ICreateProcessFormStage[];
     /**
      * Partial map of action-type and prepare-action function.
      */
     prepareActions?: PrepareProposalActionMap;
 }
 
-class PublishProposalDialogUtils {
-    prepareMetadata = (formValues: ICreateProposalFormData) => {
-        const { title, summary, body: description, resources } = formValues;
+class PublishProcessDialogUtils {
+    prepareMetadata = (formValues: ICreateProcessFormData) => {
+        const { processName, summary, stages } = formValues;
 
-        return { title, summary, description, resources };
+        return { processName, summary, stages };
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
@@ -88,8 +85,10 @@ class PublishProposalDialogUtils {
         const { actions, prepareActions } = params;
 
         const prepareActionDataPromises = actions.map(async (action) => {
-            const prepareFunction = prepareActions?.[action.type];
-            const actionData = await (prepareFunction != null ? prepareFunction(action) : action.data);
+            const prepareFunction = prepareActions?.[action.actionType as keyof typeof prepareActions];
+            const actionData: IProposalAction = (await (prepareFunction != null
+                ? prepareFunction(action as unknown as IProposalAction)
+                : this.formToProposalActions([action as unknown as IProposalAction])[0])) as IProposalAction;
 
             return actionData;
         });
@@ -160,4 +159,4 @@ class PublishProposalDialogUtils {
         Duration.fromObject(first ?? {}).equals(Duration.fromObject(second ?? {}));
 }
 
-export const publishProposalDialogUtils = new PublishProposalDialogUtils();
+export const publishProcessDialogUtils = new PublishProcessDialogUtils();

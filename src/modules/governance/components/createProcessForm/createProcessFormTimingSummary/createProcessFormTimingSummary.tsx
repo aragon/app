@@ -1,5 +1,5 @@
-import { getAllStageFields } from '@/modules/governance/components/createProcessForm/utils/getStageFields';
-import { IDateDuration } from '@/shared/utils/dateUtils';
+import { useStageFields } from '@/modules/governance/components/createProcessForm/hooks/useStagesFields';
+import { type IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, Tag } from '@aragon/ods';
 
 export interface ICreateProcessFormTimingSummaryProps {
@@ -14,7 +14,7 @@ export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSu
     onEditTimingClick,
 }) => {
     const { votingPeriodField, earlyStageField, stageExpirationField, stageExpirationPeriodField, stageTypeField } =
-        getAllStageFields(stageName, stageIndex);
+        useStageFields(stageName, stageIndex);
 
     return (
         <>

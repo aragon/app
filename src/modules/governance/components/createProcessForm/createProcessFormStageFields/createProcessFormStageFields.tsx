@@ -1,9 +1,10 @@
-import { type ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { CreateProcessFormTimingDialog } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
-
+import { CreateProcessFormBodyDialog } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialog';
 import { CreateProcessFormBodySummary } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary';
-import { ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
+import { type ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
+import { CreateProcessFormTimingDialog } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
 import { CreateProcessFormTimingSummary } from '@/modules/governance/components/createProcessForm/createProcessFormTimingSummary';
+import { useBodiesFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useBodyFieldArray';
+import { useStageFields } from '@/modules/governance/components/createProcessForm/hooks/useStagesFields';
 import {
     addressUtils,
     Button,
@@ -21,37 +22,36 @@ import {
 import type React from 'react';
 import { useState } from 'react';
 import { useChainId } from 'wagmi';
-import { CreateProcessFormBodyDialog } from '../createProcessFormBodyDialog';
-import { getBodyFieldsArray } from '../utils/getBodyFields';
-import { getAllStageFields } from '../utils/getStageFields';
+
+export interface IOpenDialogState {
+    dialogOpen: boolean;
+    editBodyIndex?: number;
+}
 
 export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageFieldsProps> = (props) => {
-    const { stageFields, stageName, stageIndex, stageRemove } = props;
+    const { stagesFieldArray, stageName, stageIndex, stageRemove } = props;
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
-    const [isBodyDialogOpen, setIsBodyDialogOpen] = useState(false);
-    const [selectedBodyIndex, setSelectedBodyIndex] = useState<number>(-1);
+    const [isBodyDialogOpen, setIsBodyDialogOpen] = useState<IOpenDialogState>({
+        dialogOpen: false,
+        editBodyIndex: undefined,
+    });
+
     const chainId = useChainId();
 
     const { buildEntityUrl } = useBlockExplorer();
 
-    const { stageNameField, stageTypeField } = getAllStageFields(stageName, stageIndex);
+    const stageFields = useStageFields(stageName, stageIndex);
 
-    const { fields: bodyFields, appendBody, removeBody, updateBody } = getBodyFieldsArray(stageName, stageIndex);
+    const { stageNameField, stageTypeField } = stageFields;
 
-    const handleSaveBodyValues = (values: ICreateProcessFormBody) => {
-        if (selectedBodyIndex >= 0 && selectedBodyIndex < bodyFields.length) {
-            updateBody(selectedBodyIndex, values);
-        } else {
-            appendBody(values);
-        }
-
-        setIsBodyDialogOpen(false);
-        setSelectedBodyIndex(-1);
-    };
+    const { bodiesFieldArray, removeBody, updateBody } = useBodiesFieldArray(stageName, stageIndex);
 
     const handleAddBody = () => {
-        setSelectedBodyIndex(bodyFields.length);
-        setIsBodyDialogOpen(true);
+        setIsBodyDialogOpen({ dialogOpen: true, editBodyIndex: undefined });
+    };
+
+    const handleEditBody = (index: number) => {
+        setIsBodyDialogOpen({ dialogOpen: true, editBodyIndex: index });
     };
 
     const formattedAddressWithBlockExplorer = (address: string) => {
@@ -102,13 +102,17 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     helpText="Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage."
                     useCustomWrapper={true}
                 >
-                    {bodyFields.length > 0 && (
+                    {bodiesFieldArray.length > 0 && (
                         <CreateProcessFormBodySummary
-                            bodyFields={bodyFields}
-                            setSelectedBodyIndex={setSelectedBodyIndex}
-                            setIsBodyDialogOpen={setIsBodyDialogOpen}
+                            bodyFieldsArray={bodiesFieldArray}
+                            setIsBodyDialogOpen={() =>
+                                setIsBodyDialogOpen({ dialogOpen: true, editBodyIndex: undefined })
+                            }
                             removeBody={removeBody}
+                            stageName={stageName}
+                            stageIndex={stageIndex}
                             formattedAddressWithBlockExplorer={formattedAddressWithBlockExplorer}
+                            onEditBody={handleEditBody}
                         />
                     )}
                     <Button
@@ -122,7 +126,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     </Button>
                 </InputContainer>
 
-                {stageFields.length > 1 && (
+                {stagesFieldArray.length > 1 && (
                     <div className="flex self-end">
                         <Dropdown.Container
                             constrainContentWidth={false}
@@ -149,16 +153,16 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                 isTimingDialogOpen={isTimingDialogOpen}
                 setIsTimingDialogOpen={setIsTimingDialogOpen}
             />
-            <CreateProcessFormBodyDialog
-                isBodyDialogOpen={isBodyDialogOpen}
-                setIsBodyDialogOpen={setIsBodyDialogOpen}
-                handleSaveBodyValues={handleSaveBodyValues}
-                stageName={stageName}
-                stageIndex={stageIndex}
-                bodyIndex={selectedBodyIndex}
-                // @ts-expect-error - initialValues is not compatible with form data at the moment
-                initialValues={selectedBodyIndex >= 0 ? bodyFields[selectedBodyIndex] : undefined}
-            />
+            {isBodyDialogOpen.dialogOpen && (
+                <CreateProcessFormBodyDialog
+                    removeBody={removeBody}
+                    updateBody={updateBody}
+                    isBodyDialogOpen={isBodyDialogOpen}
+                    setIsBodyDialogOpen={setIsBodyDialogOpen}
+                    stageName={stageName}
+                    stageIndex={stageIndex}
+                />
+            )}
         </>
     );
 };

@@ -1,3 +1,4 @@
+import { generateTransaction } from '@/modules/finance/testUtils';
 import { ICreateProcessFormData } from '@/modules/governance/components/createProcessForm';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -10,14 +11,14 @@ import {
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { useSupportedDaoPlugin } from '@/shared/hooks/useSupportedDaoPlugin';
 import { Card, Heading, invariant } from '@aragon/ods';
 import { useCallback, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
-import { publishProposalDialogUtils } from './publishProcessDialogUtils';
+import type { PrepareProposalActionMap } from '../../components/createProposalForm';
+import { publishProcessDialogUtils } from './publishProcessDialogUtils';
 
 export enum PublishProcessStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -27,15 +28,15 @@ export interface IPublishProcessDialogParams {
     /**
      * Values of the create-proposal form.
      */
-    values: ICreateProposalFormData;
-    /**
-     * ID of the DAO to create the proposal for.
-     */
-    processValues: ICreateProcessFormData;
+    values: ICreateProcessFormData;
     /**
      * ID of the DAO to create the proposal for.
      */
     daoId: string;
+    /**
+     * Address of the plugin to create the proposal for.
+     */
+    pluginAddress: string;
     /**
      * Partial map of action-type and prepare-action functions as not all actions require an async data preparation.
      */
@@ -52,13 +53,11 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     const { address } = useAccount();
     invariant(address != null, 'PublishProposalDialog: user must be connected.');
 
-    const supportedPlugin = useSupportedDaoPlugin(location.params.daoId);
-    invariant(supportedPlugin != null, 'PublishProposalDialog: DAO has no supported plugin.');
-
-    const { daoId, values, processValues, prepareActions } = location.params;
-    const { processName, processId, stages } = processValues;
+    const { daoId, pluginAddress, values, prepareActions } = location.params;
+    const { processName, processId, stages } = values;
 
     const { t } = useTranslations();
+    const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
 
     const setIsBlocked = useSetIsBlocked();
 
@@ -70,7 +69,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = publishProposalDialogUtils.prepareMetadata(values);
+            const proposalMetadata = publishProcessDialogUtils.prepareMetadata(values);
             pinJson({ body: proposalMetadata }, params);
         },
         [pinJson, values],
@@ -81,13 +80,31 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
         const { IpfsHash: metadataCid } = pinJsonData;
         const { actions } = values;
 
-        const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
-        const processedValues = { ...values, actions: processedActions };
+        const processedActions = await publishProcessDialogUtils.prepareActions({ actions, prepareActions });
+        const processedValues = {
+            ...values,
+            actions: processedActions.map((action) => ({
+                ...action,
+                type: action.data.type,
+                daoId,
+                value: action.data.value,
+                to: action.data.to,
+                from: action.data.from,
+                inputData: action.data.inputData,
+                data: JSON.stringify(action.data),
+            })),
+        };
 
-        return publishProposalDialogUtils.buildTransaction({
-            values: processedValues,
+        return publishProcessDialogUtils.buildTransaction({
+            values: {
+                ...processedValues,
+                title: values.title,
+                addActions: values.addActions,
+                startTimeMode: values.startTimeMode,
+                endTimeMode: values.endTimeMode,
+            },
             metadataCid,
-            plugin: supportedPlugin,
+            plugin: daoPlugin.meta,
         });
     };
 
@@ -96,8 +113,8 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
 
         setIsBlocked(false);
 
-        const proposalId = publishProposalDialogUtils.getProposalId(txReceipt);
-        const extendedProposalId = `${transactionHash}-${supportedPlugin.address}-${proposalId}`;
+        const proposalId = publishProcessDialogUtils.getProposalId(txReceipt);
+        const extendedProposalId = `${transactionHash}-${pluginAddress}-${proposalId}`;
 
         return `/dao/${daoId}/proposals/${extendedProposalId}`;
     };
@@ -108,9 +125,9 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
                 id: PublishProcessStep.PIN_METADATA,
                 order: 0,
                 meta: {
-                    label: t(`app.governance.publishProcessDialog.step.${PublishProcessStep.PIN_METADATA}.label`),
+                    label: t(`app.governance.publishProposalDialog.step.${PublishProcessStep.PIN_METADATA}.label`),
                     errorLabel: t(
-                        `app.governance.publishProcessDialog.step.${PublishProcessStep.PIN_METADATA}.errorLabel`,
+                        `app.governance.publishProposalDialog.step.${PublishProcessStep.PIN_METADATA}.errorLabel`,
                     ),
                     state: status,
                     action: handlePinJson,
@@ -129,7 +146,12 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
             successLink={{ label: t('app.governance.publishProcessDialog.button.success'), href: getProcessLink }}
             stepper={stepper}
             customSteps={customSteps}
-            prepareTransaction={handlePrepareTransaction}
+            prepareTransaction={async () => {
+                const mockTransaction = generateTransaction();
+                return {
+                    to: mockTransaction.toAddress as `0x${string}`,
+                };
+            }}
         >
             <Card className="flex w-full flex-col items-center justify-center gap-y-6 border border-success-400 p-6 text-left">
                 <pre className="flex flex-col gap-y-2">
@@ -146,7 +168,8 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
                                     <Heading size="h4">BODIES:</Heading>
                                     {stage.bodies?.map((votingBody, index) => (
                                         <li key={index} className="pl-2">
-                                            {votingBody.bodyName} - {votingBody.governanceType}
+                                            {votingBody.bodyNameField.value} -{' '}
+                                            {votingBody.bodyGovernanceTypeField.value}
                                         </li>
                                     ))}
                                 </ul>
