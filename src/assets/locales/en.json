@@ -423,6 +423,9 @@
       "layoutWizardCreateProposal": {
         "name": "Create Proposal"
       },
+      "layoutWizardCreateProposal": {
+        "name": "Create process"
+      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",

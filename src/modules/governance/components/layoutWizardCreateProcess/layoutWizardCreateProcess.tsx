@@ -4,5 +4,11 @@ import { type Route } from 'next';
 export interface ILayoutWizardCreateProcessProps extends Omit<ILayoutWizardProps, 'name' | 'exitPath'> {}
 
 export const LayoutWizardCreateProcess: React.FC<ILayoutWizardCreateProcessProps> = (props) => {
-    return <LayoutWizard exitPath={`/dao/${props.params?.id}/settings` as Route} name="Create process" {...props} />;
+    return (
+        <LayoutWizard
+            exitPath={`/dao/${props.params?.id}/settings` as Route}
+            name="app.governance.layoutWizardCreateProcess.name"
+            {...props}
+        />
+    );
 };
