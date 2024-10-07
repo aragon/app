@@ -114,12 +114,12 @@ describe('dao utils', () => {
         it('only returns body plugins when plugin type is set to body', () => {
             const plugins = [
                 generateDaoPlugin({ subdomain: 'spp', isBody: false }),
-                generateDaoPlugin({ subdomain: 'multisig', isBody: true, isSubPlugin: true }),
-                generateDaoPlugin({ subdomain: 'token', isBody: true, isSubPlugin: true }),
+                generateDaoPlugin({ subdomain: 'multisig', isBody: true }),
+                generateDaoPlugin({ subdomain: 'token', isBody: true }),
             ];
             const dao = generateDao({ plugins });
             const type = PluginType.BODY;
-            expect(daoUtils.getDaoPlugins(dao, { type, includeSubPlugins: true })).toEqual([plugins[1], plugins[2]]);
+            expect(daoUtils.getDaoPlugins(dao, { type })).toEqual([plugins[1], plugins[2]]);
         });
 
         it('only returns process plugins that are not sub-plugins when plugin type is set to process', () => {
@@ -140,8 +140,7 @@ describe('dao utils', () => {
                 generateDaoPlugin({ subdomain: 'sub-plugin', isProcess: true, isSubPlugin: true }),
             ];
             const dao = generateDao({ plugins });
-            const type = PluginType.PROCESS;
-            expect(daoUtils.getDaoPlugins(dao, { type, includeSubPlugins: true })).toEqual(plugins);
+            expect(daoUtils.getDaoPlugins(dao, { includeSubPlugins: true })).toEqual(plugins);
         });
 
         it('excludes sub-plugins when includeSubPlugins is false', () => {
@@ -151,8 +150,7 @@ describe('dao utils', () => {
                 generateDaoPlugin({ subdomain: 'sub-plugin', isProcess: true, isSubPlugin: true }),
             ];
             const dao = generateDao({ plugins });
-            const type = PluginType.PROCESS;
-            expect(daoUtils.getDaoPlugins(dao, { type, includeSubPlugins: false })).toEqual([plugins[0], plugins[1]]);
+            expect(daoUtils.getDaoPlugins(dao, { includeSubPlugins: false })).toEqual([plugins[0], plugins[1]]);
         });
 
         it('correctly filters by type and includes sub-plugins when specified', () => {
