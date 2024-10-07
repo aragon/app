@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon';
-import { type ISppProposal, type ISppStage, type ISppSubProposal, SppStageStatus } from '../types';
+import { type ISppProposal, type ISppStage, SppStageStatus } from '../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
-        const now = DateTime.utc();
+        const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal);
         const stageEndDate = this.getStageEndDate(proposal, stage);
 
@@ -38,43 +38,31 @@ class SppStageUtils {
         return SppStageStatus.INACTIVE;
     };
 
-    getVetoCount = (proposal: ISppProposal, stage: ISppStage): number => {
-        return proposal.subProposals.filter(
-            (subProposal) => subProposal.stageId === stage.id && this.isSubProposalVetoed(subProposal),
-        ).length;
+    getStageStartDate = (proposal: ISppProposal): DateTime => {
+        if (proposal.currentStageIndex === 0) {
+            return DateTime.fromSeconds(proposal.startDate);
+        }
+        return DateTime.fromSeconds(proposal.lastStageTransition);
     };
 
     getStageEndDate = (proposal: ISppProposal, stage: ISppStage): DateTime => {
-        return this.getStageStartDate(proposal).plus({ seconds: stage.votingPeriod });
-    };
-
-    isStageVetoed = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const vetoCount = this.getVetoCount(proposal, stage);
-        return vetoCount >= stage.vetoThreshold;
+        if (proposal.currentStageIndex === 0) {
+            return DateTime.fromSeconds(proposal.startDate).plus({ seconds: stage.votingPeriod });
+        }
+        return DateTime.fromSeconds(proposal.lastStageTransition).plus({ seconds: stage.votingPeriod });
     };
 
     isProposalActive = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const now = DateTime.utc();
+        const now = DateTime.now();
         const startDate = DateTime.fromSeconds(proposal.startDate);
         const endDate = this.getStageEndDate(proposal, stage);
 
         return now >= startDate && now <= endDate;
     };
 
-    getApprovalCount = (proposal: ISppProposal, stage: ISppStage): number => {
-        return proposal.subProposals.filter(
-            (subProposal) => subProposal.stageId === stage.id && this.isSubProposalApproved(subProposal),
-        ).length;
-    };
-
-    isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const approvalCount = this.getApprovalCount(proposal, stage);
-        return approvalCount >= stage.approvalThreshold;
-    };
-
     isStageRejected = (proposal: ISppProposal, stage: ISppStage): boolean => {
         const stageEndDate = this.getStageEndDate(proposal, stage);
-        const now = DateTime.utc();
+        const now = DateTime.now();
 
         return now > stageEndDate && !this.isApprovalReached(proposal, stage);
     };
@@ -87,22 +75,30 @@ class SppStageUtils {
         if (this.isApprovalReached(proposal, stage) && !this.isStageVetoed(proposal, stage)) {
             const stageEndDate = this.getStageEndDate(proposal, stage);
             const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
-            const now = DateTime.utc();
+            const now = DateTime.now();
             return now > maxAdvanceDate;
         }
         return false;
     };
 
-    getStageStartDate = (proposal: ISppProposal): DateTime => {
-        return DateTime.fromSeconds(proposal.startDate);
+    isStageVetoed = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const vetoCount = this.getVetoCount(proposal, stage);
+        return vetoCount >= stage.vetoThreshold;
     };
 
-    isSubProposalApproved = (subProposal: ISppSubProposal): boolean => {
-        return true;
+    isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const approvalCount = this.getApprovalCount(proposal, stage);
+        return approvalCount >= stage.approvalThreshold;
     };
 
-    isSubProposalVetoed = (subProposal: ISppSubProposal): boolean => {
-        return true;
+    getVetoCount = (proposal: ISppProposal, stage: ISppStage): number => {
+        // logic to calculate veto count
+        return 0;
+    };
+
+    getApprovalCount = (proposal: ISppProposal, stage: ISppStage): number => {
+        // logic to calculate approval count
+        return 0;
     };
 }
 
