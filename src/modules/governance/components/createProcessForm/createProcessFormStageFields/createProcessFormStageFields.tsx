@@ -26,6 +26,7 @@ import {
 } from '@aragon/ods';
 import type React from 'react';
 import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 
 export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageFieldsProps> = (props) => {
@@ -35,6 +36,9 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         dialogOpen: false,
         editBodyIndex: undefined,
     });
+
+    const { getValues } = useFormContext();
+    console.log('values', getValues());
 
     const chainId = useChainId();
 
@@ -103,7 +107,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     helpText="Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage."
                     useCustomWrapper={true}
                 >
-                    {bodiesFieldArray.length > 0 && (
+                    {bodiesFieldArray?.length > 0 && (
                         <CreateProcessFormBodySummary
                             bodyFieldsArray={bodiesFieldArray}
                             setIsBodyDialogOpen={() =>

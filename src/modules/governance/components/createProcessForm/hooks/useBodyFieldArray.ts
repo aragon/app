@@ -21,7 +21,7 @@ export const useBodiesFieldArray = (stageName: string, stageIndex: number): UseB
 
     const watchBodiesFieldArray = watch(bodyFieldArrayName);
 
-    const controlledFields = watchBodiesFieldArray.map((field: ICreateProcessFormBodyData, index: number) => {
+    const controlledFields = watchBodiesFieldArray?.map((field: ICreateProcessFormBodyData, index: number) => {
         return {
             ...fields,
             ...watchBodiesFieldArray[index],

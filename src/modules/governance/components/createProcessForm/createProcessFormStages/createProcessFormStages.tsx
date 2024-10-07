@@ -8,6 +8,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
     const stageName = 'stages';
 
     const { stagesFieldArray, appendStage, removeStage } = useStagesFieldArray(stageName);
+
     return (
         <div className="flex flex-col gap-10">
             <div className="flex flex-col gap-2 md:gap-3">
@@ -29,7 +30,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
                     variant="tertiary"
                     className="w-fit"
                     iconLeft={IconType.PLUS}
-                    onClick={() => appendStage({ name: '', url: '' })}
+                    onClick={() => appendStage({})}
                 >
                     Add a stage
                 </Button>

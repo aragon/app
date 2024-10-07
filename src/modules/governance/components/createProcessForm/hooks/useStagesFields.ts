@@ -26,8 +26,8 @@ export const useStageFields = (stageName: string, stageIndex: number): StageFiel
         },
     );
 
-    const stageTypeField = useFormField<StageInputItemBaseForm, `${typeof stageName}.${typeof stageIndex}.type`>(
-        `${basePath}.type`,
+    const stageTypeField = useFormField<StageInputItemBaseForm, `${typeof stageName}.${typeof stageIndex}.stageType`>(
+        `${basePath}.stageType`,
         {
             label: 'Type',
             defaultValue: 'normal',
@@ -47,13 +47,13 @@ export const useStageFields = (stageName: string, stageIndex: number): StageFiel
         } as IDateDuration,
     });
 
-    const earlyStageField = useFormField<StageInputItemBaseForm, `${typeof stageName}.${typeof stageIndex}.earlyStage`>(
-        `${basePath}.earlyStage`,
-        {
-            label: 'Early stage advance',
-            defaultValue: false,
-        },
-    );
+    const earlyStageField = useFormField<
+        StageInputItemBaseForm,
+        `${typeof stageName}.${typeof stageIndex}.earlyStageAdvance`
+    >(`${basePath}.earlyStageAdvance`, {
+        label: 'Early stage advance',
+        defaultValue: false,
+    });
 
     const stageExpirationField = useFormField<
         StageInputItemBaseForm,
