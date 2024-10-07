@@ -1,4 +1,3 @@
-import { useProposal } from '@/modules/governance/api/governanceService';
 import { ProposalVoting } from '@aragon/ods';
 import { formatUnits } from 'viem';
 import type { ITokenProposal } from '../../types';
@@ -7,13 +6,9 @@ import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 
 export interface ITokenProposalVotingBreakdownProps {
     /**
-     * Proposal ID to display the proposal breakdown for.
-     */
-    proposalId: string;
-    /**
      * Proposal to be used to display the breakdown.
      */
-    proposal?: ITokenProposal;
+    proposal: ITokenProposal;
 }
 
 const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
@@ -24,13 +19,7 @@ const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
 };
 
 export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdownProps> = (props) => {
-    const { proposal: proposalProp, proposalId } = props;
-
-    const proposalUrlParams = { id: proposalId };
-    const proposalParams = { urlParams: proposalUrlParams };
-    const { data: fetchedProposal } = useProposal<ITokenProposal>(proposalParams, { enabled: proposalProp == null });
-
-    const proposal = proposalProp ?? fetchedProposal;
+    const { proposal } = props;
 
     if (proposal == null) {
         return null;

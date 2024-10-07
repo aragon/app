@@ -1,1 +1,1 @@
-export { SppVotingTerminal } from './sppVotingTerminal';
+export { SppVotingTerminal, type IProposalVotingTerminalProps } from './sppVotingTerminal';

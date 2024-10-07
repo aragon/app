@@ -21,21 +21,21 @@ export const SppVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props)
 
     const processedStages = proposal.settings.stages.map((stage, index) => ({
         stage,
-        proposals: proposal.subProposals.filter((proposal) => proposal.stageId === stage.id),
+        subProposals: proposal.subProposals.filter((proposal) => proposal.stageId === stage.id),
         index,
     }));
 
     return (
         <ProposalVoting.Container
-            title={t('app.governance.proposalVotingTerminal.title')}
-            description={t('app.governance.proposalVotingTerminal.description')}
+            title={t('app.plugins.spp.sppVotingTerminal.title')}
+            description={t('app.plugins.spp.sppVotingTerminal.description')}
             activeStage={proposal.currentStageIndex.toString()}
         >
-            {processedStages?.map(({ stage, proposals, index }) => (
+            {processedStages?.map(({ stage, subProposals, index }) => (
                 <SppVotingTerminalStage
                     key={stage.id}
                     daoId={daoId}
-                    proposals={proposals}
+                    subProposals={subProposals}
                     stage={stage}
                     index={index}
                 />

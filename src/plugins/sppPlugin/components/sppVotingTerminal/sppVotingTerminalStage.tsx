@@ -17,11 +17,11 @@ export interface IProposalVotingTerminalStageProps {
      */
     stage: ISppStage;
     /**
-     * Sub-proposal.
+     * Sub proposals of the SPP stage.
      */
-    proposals?: ISppSubProposal[];
+    subProposals?: ISppSubProposal[];
     /**
-     * Index of the sub proposal.
+     * Index of the stage.
      */
     index: number;
 }
@@ -29,10 +29,10 @@ export interface IProposalVotingTerminalStageProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
-    const { stage, daoId, proposals, index } = props;
+    const { stage, daoId, subProposals, index } = props;
 
     // TODO: Support multiple proposals within a stage (APP-3659)
-    const proposal = proposals?.[0];
+    const proposal = subProposals?.[0];
     const plugin = stage.plugins[0];
 
     const voteListParams = {
@@ -48,10 +48,10 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedStartDate = (proposal?.startDate ?? 0) * 1000;
     const processedEndDate = ((proposal?.blockTimestamp ?? 0) + stage.votingPeriod) * 1000;
 
-    //TODO: Need to make adjustment in ODS to disable tabs for inactive proposals
     return (
         <ProposalVoting.Stage
             name={stage.name}
+            // TODO: process and set correct stage status (APP-3662)
             status={index === 0 ? ProposalVotingStatus.ACTIVE : ProposalVotingStatus.PENDING}
             startDate={processedStartDate}
             endDate={processedEndDate}
@@ -67,12 +67,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         proposalId={proposal.id}
                     />
                     <ProposalVoting.Votes>
-                        <VoteList
-                            initialParams={voteListParams}
-                            daoId={daoId}
-                            pluginAddress={plugin.address}
-                            includeSubPlugins={true}
-                        />
+                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />
                     </ProposalVoting.Votes>
                 </>
             )}

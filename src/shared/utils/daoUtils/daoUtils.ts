@@ -23,6 +23,7 @@ export interface IGetDaoPluginsParams {
     pluginAddress?: string;
     /**
      * Include sub-plugins in the result.
+     * @default false
      */
     includeSubPlugins?: boolean;
 }
