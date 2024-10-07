@@ -37,6 +37,6 @@ describe('useDaoPlugins hook', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
 
         renderHook(() => useDaoPlugins({ daoId: dao.id, type, pluginAddress }));
-        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type, pluginAddress, includeSubPlugins: false });
+        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type, pluginAddress });
     });
 });
