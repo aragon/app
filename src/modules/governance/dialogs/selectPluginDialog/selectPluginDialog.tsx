@@ -35,7 +35,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
+    const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
     const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>();
 

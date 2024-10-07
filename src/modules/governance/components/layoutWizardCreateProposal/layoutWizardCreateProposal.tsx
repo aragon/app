@@ -11,7 +11,7 @@ export interface ILayoutWizardCreateProposalProps
     extends Omit<ILayoutWizardProps<ICreateProposalPageParams>, 'name' | 'exitPath'> {}
 
 const getWizardName = (dao: IDao, pluginAddress: string): ILayoutWizardProps['name'] => {
-    const processes = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS })!;
+    const processes = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS, includeSubPlugins: false })!;
 
     const processPlugin = processes.find(({ address }) => address.toLowerCase() === pluginAddress.toLowerCase())!;
     const pluginName = daoUtils.formatPluginName(processPlugin?.subdomain);

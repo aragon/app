@@ -1,23 +1,73 @@
 import { type ILayoutWizardProps } from '@/modules/application/components/layouts/layoutWizard';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { mockTranslations } from '@/test/utils';
+import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { type ILayoutWizardCreateProposalProps, LayoutWizardCreateProposal } from './layoutWizardCreateProposal';
 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
-    LayoutWizard: (props: ILayoutWizardProps) => <div data-testid="layout-wizard-mock">{props.name}</div>,
+    LayoutWizard: (props: ILayoutWizardProps) => (
+        <div data-testid="layout-wizard-mock">
+            {typeof props.name === 'string' ? props.name : mockTranslations.tMock(...props.name)}
+        </div>
+    ),
 }));
 
 describe('<LayoutWizardCreateProposal /> component', () => {
-    const createTestComponent = (props?: Partial<ILayoutWizardCreateProposalProps>) => {
+    const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
+
+    afterEach(() => {
+        fetchQuerySpy.mockReset();
+        getDaoPluginsSpy.mockReset();
+    });
+
+    const createTestComponent = async (props?: Partial<ILayoutWizardCreateProposalProps>) => {
         const completeProps: ILayoutWizardCreateProposalProps = {
             ...props,
         };
 
-        return <LayoutWizardCreateProposal {...completeProps} />;
+        const Component = await LayoutWizardCreateProposal(completeProps);
+
+        return Component;
     };
 
-    it('renders and passes the create-proposal wizard name prop to children', () => {
-        render(createTestComponent());
-        expect(screen.getByTestId('layout-wizard-mock')).toBeInTheDocument();
-        expect(screen.getByText(/layoutWizardCreateProposal.name/)).toBeInTheDocument();
+    it('renders error when properties are not defined', async () => {
+        const props = undefined;
+        render(await createTestComponent(props));
+        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+    });
+
+    it('renders error feedback on fetch DAO error', async () => {
+        fetchQuerySpy.mockImplementation(() => {
+            throw new Error('fetch DAO error');
+        });
+        const params = { id: 'dao-id', pluginAddress: '0x123' };
+        render(await createTestComponent({ params }));
+        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+    });
+
+    it('renders the plugin name on the wizard name when DAO has multiple process plugins', async () => {
+        const dao = generateDao({ address: '0x987' });
+        const plugins = [
+            generateDaoPlugin({ subdomain: 'token', address: '0x123', isProcess: true }),
+            generateDaoPlugin({ subdomain: 'multisig', address: '0x456', isProcess: true }),
+        ];
+        fetchQuerySpy.mockResolvedValue(generateDao());
+        getDaoPluginsSpy.mockReturnValue(plugins);
+        const params = { id: dao.address, pluginAddress: plugins[1].address };
+        render(await createTestComponent({ params }));
+        expect(screen.getByText(/layoutWizardCreateProposal.namePlugin \(plugin=Multisig\)/)).toBeInTheDocument();
+    });
+
+    it('only renders the wizard name when DAO has one process plugin', async () => {
+        const dao = generateDao({ address: '0x987' });
+        const plugins = [generateDaoPlugin({ subdomain: 'spp', address: '0x123', isProcess: true })];
+        fetchQuerySpy.mockResolvedValue(generateDao());
+        getDaoPluginsSpy.mockReturnValue(plugins);
+        const params = { id: dao.address, pluginAddress: plugins[0].address };
+        render(await createTestComponent({ params }));
+        expect(screen.getByText(/layoutWizardCreateProposal.name \(plugin=Spp\)/)).toBeInTheDocument();
     });
 });
