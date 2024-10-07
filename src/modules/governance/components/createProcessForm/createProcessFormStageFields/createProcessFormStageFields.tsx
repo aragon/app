@@ -1,5 +1,9 @@
 import { CreateProcessFormBodyDialog } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialog';
 import { CreateProcessFormBodySummary } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary';
+import {
+    IMultisigVotingMember,
+    ITokenVotingMember,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { type ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
 import { CreateProcessFormTimingDialog } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
 import { CreateProcessFormTimingSummary } from '@/modules/governance/components/createProcessForm/createProcessFormTimingSummary';
@@ -21,6 +25,7 @@ import {
 } from '@aragon/ods';
 import type React from 'react';
 import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 
 export interface IOpenDialogState {
@@ -35,6 +40,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         dialogOpen: false,
         editBodyIndex: undefined,
     });
+    const { getValues } = useFormContext();
 
     const chainId = useChainId();
 
@@ -54,11 +60,12 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         setIsBodyDialogOpen({ dialogOpen: true, editBodyIndex: index });
     };
 
-    const formattedAddressWithBlockExplorer = (address: string) => {
-        const url = buildEntityUrl({ id: address, chainId, type: ChainEntityType.ADDRESS });
+    const formattedAddressWithBlockExplorer = (memberType?: ITokenVotingMember | IMultisigVotingMember) => {
+        const url = buildEntityUrl({ id: memberType?.address?.address, chainId, type: ChainEntityType.ADDRESS });
+
         return (
             <Link href={url} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                {addressUtils.truncateAddress(address)}
+                {addressUtils.truncateAddress(memberType?.address?.address)}
             </Link>
         );
     };

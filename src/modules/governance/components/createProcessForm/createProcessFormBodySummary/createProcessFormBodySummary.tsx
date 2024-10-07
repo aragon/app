@@ -1,4 +1,7 @@
-import { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import {
+    IMultisigVotingMember,
+    ITokenVotingMember,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { IOpenDialogState } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields/createProcessFormStageFields';
 import {
     Accordion,
@@ -31,7 +34,7 @@ export interface ICreateProcessFormBodySummaryProps {
     /**
      * Callback to format the address with the block explorer.
      */
-    formattedAddressWithBlockExplorer: (address: string) => React.ReactNode;
+    formattedAddressWithBlockExplorer: (memberType?: ITokenVotingMember | IMultisigVotingMember) => React.ReactNode;
     /**
      * Callback to handle editing a body.
      */
@@ -76,7 +79,7 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                                     {field.members?.map(
                                                         (member: ITokenVotingMember, memberIndex: number) => (
                                                             <li key={memberIndex}>
-                                                                {formattedAddressWithBlockExplorer(member.address)}
+                                                                {formattedAddressWithBlockExplorer(member)}
                                                             </li>
                                                         ),
                                                     )}
@@ -116,9 +119,9 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                                 {field.members?.length > 1 ? 'members' : 'member'}
                                                 <ul className="flex flex-col gap-y-2 px-4 py-2">
                                                     {field.members?.map(
-                                                        (member: ITokenVotingMember, memberIndex: number) => (
+                                                        (member: IMultisigVotingMember, memberIndex: number) => (
                                                             <li key={memberIndex}>
-                                                                {formattedAddressWithBlockExplorer(member.address)}
+                                                                {formattedAddressWithBlockExplorer(member)}
                                                             </li>
                                                         ),
                                                     )}

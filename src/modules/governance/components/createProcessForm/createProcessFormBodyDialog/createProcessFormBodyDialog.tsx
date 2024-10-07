@@ -8,7 +8,7 @@ import { IOpenDialogState } from '@/modules/governance/components/createProcessF
 import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
 import { Button, Dialog, InputText, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormBodyDialogProps {
@@ -29,13 +29,29 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
 
     const [bodyIndex] = useState<number>(() => isBodyDialogOpen.editBodyIndex ?? bodies.length);
 
-    const currentState = getValues(`${stageName}.${stageIndex}.bodies.${bodyIndex}`);
-
-    const [saveState] = useState<ICreateProcessFormBodyData>(currentState);
-
     const bodyFields = useBodyFields(stageName, stageIndex, bodyIndex);
 
     const { bodyNameField, bodyGovernanceTypeField } = bodyFields;
+
+    const initialStateRef = useRef<ICreateProcessFormBodyData | null>(null);
+
+    useEffect(() => {
+        if (isBodyDialogOpen.dialogOpen) {
+            const currentState = getValues(`${stageName}.${stageIndex}.bodies.${bodyIndex}`);
+
+            initialStateRef.current = JSON.parse(JSON.stringify(currentState));
+        }
+    }, [isBodyDialogOpen.dialogOpen]);
+
+    const handleCancel = () => {
+        if (isBodyDialogOpen.editBodyIndex === undefined) {
+            removeBody(bodyIndex);
+        } else if (initialStateRef.current) {
+            updateBody(bodyIndex, initialStateRef.current);
+        }
+
+        setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: undefined });
+    };
 
     const handleSave = () => {
         setStep(0);
@@ -43,15 +59,6 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
         setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: undefined });
     };
 
-    const handleCancel = () => {
-        if (isBodyDialogOpen.editBodyIndex === undefined) {
-            removeBody(bodyIndex);
-        }
-
-        updateBody(bodyIndex, saveState);
-
-        setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: undefined });
-    };
     const handleAdvanceStep = async () => {
         if (step === 0) {
             setStep(step + 1);

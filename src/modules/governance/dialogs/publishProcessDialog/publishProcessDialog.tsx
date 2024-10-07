@@ -168,8 +168,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
                                     <Heading size="h4">BODIES:</Heading>
                                     {stage.bodies?.map((votingBody, index) => (
                                         <li key={index} className="pl-2">
-                                            {votingBody.bodyNameField.value} -{' '}
-                                            {votingBody.bodyGovernanceTypeField.value}
+                                            {votingBody.bodyNameField} - {votingBody.bodyGovernanceTypeField}
                                         </li>
                                     ))}
                                 </ul>

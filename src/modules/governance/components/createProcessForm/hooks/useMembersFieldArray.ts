@@ -1,16 +1,5 @@
 import { useFieldArray, type UseFieldArrayReturn } from 'react-hook-form';
 
-export interface ITokenVotingMember {
-    address: string;
-    name?: string;
-    tokenAmount: number;
-}
-
-export interface IMultisigMember {
-    address: string;
-    name?: string;
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MemberInputItemBaseForm = Record<string, any>;
 

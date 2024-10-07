@@ -1,6 +1,6 @@
 import { AddressInput, Button, Dropdown, IconType } from '@aragon/ods';
-import React from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import React, { useState } from 'react';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 export interface IMultisigMemberInputRowProps {
     index: number;
@@ -22,20 +22,24 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
 
     const addressFieldName = `${fieldNamePrefix}.address`;
 
+    const inputValue = useWatch({ name: addressFieldName });
+    const [memberInput, setMemberInput] = useState<string | undefined>(inputValue?.address);
+
     return (
         <div className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6">
             <Controller
                 name={addressFieldName}
                 control={control}
                 rules={{ required: 'Address is required' }}
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                render={({ field: { onChange: onMemberChange }, fieldState: { error } }) => (
                     <AddressInput
                         className="grow"
                         label="Address"
                         placeholder="ENS or 0x…"
                         chainId={1}
-                        value={value || ''}
-                        onChange={(newValue?: string) => onChange(newValue || '')}
+                        value={memberInput}
+                        onChange={setMemberInput}
+                        onAccept={onMemberChange}
                         alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
                     />
                 )}

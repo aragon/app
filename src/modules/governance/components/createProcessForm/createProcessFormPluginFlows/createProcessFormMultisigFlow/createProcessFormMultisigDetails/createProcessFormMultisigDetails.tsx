@@ -14,7 +14,7 @@ export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultis
     const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(stageName, stageIndex, bodyIndex);
 
     const handleAddMember = () => {
-        appendMember({ address: '', tokenAmount: 1 });
+        appendMember({});
     };
 
     const handleRemoveMember = (index: number) => {

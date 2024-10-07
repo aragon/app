@@ -1,20 +1,10 @@
+import {
+    BodyInputItemBaseForm,
+    IBodyFields,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type BodyInputItemBaseForm = Record<string, any>;
-
-interface BodyFields {
-    bodyNameField: ReturnType<typeof useFormField>;
-    bodyGovernanceTypeField: ReturnType<typeof useFormField>;
-    tokenNameField: ReturnType<typeof useFormField>;
-    tokenSymbolField: ReturnType<typeof useFormField>;
-    supportThresholdField: ReturnType<typeof useFormField>;
-    minimumParticipationField: ReturnType<typeof useFormField>;
-    voteChangeField: ReturnType<typeof useFormField>;
-    multisigThresholdField: ReturnType<typeof useFormField>;
-}
-
-export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: number): BodyFields => {
+export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: number): IBodyFields => {
     const basePath = `${stageName}.${stageIndex}.bodies.${bodyIndex}` as const;
 
     const bodyNameField = useFormField<

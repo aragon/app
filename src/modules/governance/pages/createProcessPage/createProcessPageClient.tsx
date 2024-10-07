@@ -41,6 +41,7 @@ const defaultStage: ICreateProcessFormStage = {
     stageExpiration: false,
     bodies: [],
     requiredApprovals: undefined,
+    actionType: undefined,
 };
 
 const defaultValues: ICreateProcessFormData = {

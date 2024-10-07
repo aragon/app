@@ -2,16 +2,15 @@ import { TokenVotingMemberInputRow } from '@/modules/governance/components/creat
 import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
 import { Button, IconType, InputContainer, InputText } from '@aragon/ods';
 import type React from 'react';
-import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-interface CreateProcessFormTokenVotingDetailsProps {
+export interface ICreateProcessFormTokenVotingDetailsProps {
     stageName: string;
     stageIndex: number;
     bodyIndex: number;
 }
 
-export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormTokenVotingDetailsProps> = ({
+export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTokenVotingDetailsProps> = ({
     stageName,
     stageIndex,
     bodyIndex,
@@ -22,7 +21,7 @@ export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormToke
     const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(stageName, stageIndex, bodyIndex);
 
     const handleAddMember = () => {
-        appendMember({ address: '', tokenAmount: 1 });
+        appendMember({ tokenAmount: 1 });
     };
 
     const handleRemoveMember = (index: number) => {
@@ -30,12 +29,6 @@ export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormToke
             removeMember(index);
         }
     };
-
-    useEffect(() => {
-        if (membersFieldArray.length === 0) {
-            handleAddMember();
-        }
-    });
 
     return (
         <>
@@ -83,7 +76,7 @@ export const CreateProcessFormTokenVotingDetails: React.FC<CreateProcessFormToke
             </InputContainer>
 
             <div className="flex w-full justify-between">
-                <Button size="md" variant="tertiary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
+                <Button size="md" variant="secondary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
                     Add
                 </Button>
             </div>

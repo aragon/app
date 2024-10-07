@@ -1,6 +1,6 @@
 import { AddressInput, Button, Dropdown, IconType, InputNumber } from '@aragon/ods';
-import React from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import React, { useState } from 'react';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 export interface ITokenVotingMemberInputRowProps {
     index: number;
@@ -19,30 +19,34 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
 }) => {
     const { control } = useFormContext();
 
-    const addressField = `${fieldNamePrefix}.address`;
-    const tokenAmountField = `${fieldNamePrefix}.tokenAmount`;
+    const addressFieldName = `${fieldNamePrefix}.address`;
+    const tokenAmountFieldName = `${fieldNamePrefix}.tokenAmount`;
+
+    const inputValue = useWatch({ name: addressFieldName });
+    const [receiverInput, setReceiverInput] = useState<string | undefined>(inputValue?.address);
 
     return (
         <div className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6">
             <Controller
-                name={addressField}
+                name={addressFieldName}
                 control={control}
                 rules={{ required: 'Address is required' }}
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                render={({ field: { onChange: onReceiverChange }, fieldState: { error } }) => (
                     <AddressInput
                         className="grow"
                         label="Address"
                         placeholder="ENS or 0x…"
                         chainId={1}
-                        value={value || ''}
-                        onChange={(newValue?: string) => onChange(newValue || '')}
+                        value={receiverInput}
+                        onChange={setReceiverInput}
+                        onAccept={onReceiverChange}
                         alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
                     />
                 )}
             />
 
             <Controller
-                name={tokenAmountField}
+                name={tokenAmountFieldName}
                 control={control}
                 rules={{ required: 'Token amount is required', min: { value: 1, message: 'Minimum amount is 1' } }}
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
