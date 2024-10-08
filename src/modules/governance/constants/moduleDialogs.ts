@@ -1,6 +1,7 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
+import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
 import { VoteDialog } from '../dialogs/voteDialog';
 import { PublishProcessDialog } from './../dialogs/publishProcessDialog';
 
@@ -9,6 +10,7 @@ export enum GovernanceDialogs {
     PUBLISH_PROCESS = 'PUBLISH_PROCESS',
     VOTE = 'VOTE',
     EXECUTE = 'EXECUTE',
+    SELECT_PLUGIN = 'SELECT_PLUGIN',
 }
 
 export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefinitions> = {
@@ -32,4 +34,5 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
         title: 'app.governance.voteDialog.title',
         description: 'app.governance.voteDialog.description',
     },
+    [GovernanceDialogs.SELECT_PLUGIN]: { Component: SelectPluginDialog },
 };

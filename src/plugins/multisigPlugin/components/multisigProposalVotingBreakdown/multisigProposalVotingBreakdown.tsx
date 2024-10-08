@@ -1,24 +1,15 @@
-import { useProposal } from '@/modules/governance/api/governanceService';
 import { ProposalVoting } from '@aragon/ods';
 import type { IMultisigProposal } from '../../types';
 
 export interface IMultisigProposalVotingBreakdownProps {
     /**
-     * Proposal ID to display the proposal breakdown for.
+     * Proposal to be used to display the breakdown.
      */
-    proposalId: string;
+    proposal: IMultisigProposal;
 }
 
 export const MultisigProposalVotingBreakdown: React.FC<IMultisigProposalVotingBreakdownProps> = (props) => {
-    const { proposalId } = props;
-
-    const proposalUrlParams = { id: proposalId };
-    const proposalParams = { urlParams: proposalUrlParams };
-    const { data: proposal } = useProposal<IMultisigProposal>(proposalParams);
-
-    if (proposal == null) {
-        return null;
-    }
+    const { proposal } = props;
 
     return (
         <ProposalVoting.BreakdownMultisig

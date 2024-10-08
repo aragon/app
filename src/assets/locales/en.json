@@ -421,7 +421,8 @@
         "name": "Create DAO"
       },
       "layoutWizardCreateProposal": {
-        "name": "Create Proposal"
+        "name": "Create Proposal",
+        "namePlugin": "{{plugin}}: Create Proposal"
       },
       "layoutWizardCreateProposal": {
         "name": "Create process"
@@ -466,6 +467,14 @@
           }
         },
         "title": "Publish proposal"
+      },
+      "selectPluginDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "select": "Create"
+        },
+        "description": "Select the proposal you'd like to create and start the process",
+        "title": "Create proposal"
       },
       "voteDialog": {
         "button": {
@@ -526,6 +535,12 @@
         },
         "multisigVoteList": {
           "entity": "Votes"
+        }
+      },
+      "spp": {
+        "sppVotingTerminal": {
+          "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
+          "title": "Voting"
         }
       },
       "token": {

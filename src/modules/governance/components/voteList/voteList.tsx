@@ -25,7 +25,7 @@ export interface IVoteListProps {
 export const VoteList: React.FC<IVoteListProps> = (props) => {
     const { initialParams, daoId, pluginAddress } = props;
 
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, pluginAddress });
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, pluginAddress, includeSubPlugins: true });
 
     const processedPlugins = processPlugins?.map((plugin) => {
         const pluginInitialParams = {

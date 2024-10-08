@@ -86,6 +86,12 @@ describe('<NavigationWizard /> component', () => {
         expect(screen.getByText(name)).toBeInTheDocument();
     });
 
+    it('supports params as wizard name', () => {
+        const name: INavigationWizardProps['name'] = ['app.wizardParams', { key: 'value' }];
+        render(createTestComponent({ name }));
+        expect(screen.getByText('app.wizardParams (key=value)')).toBeInTheDocument();
+    });
+
     it('renders the user wallet address and opens the user dialog when clicked', async () => {
         const address = '0xUser123';
         const open = jest.fn();

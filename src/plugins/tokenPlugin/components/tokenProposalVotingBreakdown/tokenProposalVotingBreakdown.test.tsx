@@ -1,6 +1,4 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import * as governanceService from '@/modules/governance/api/governanceService';
-import { generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { ProposalVotingTab, Tabs } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
@@ -8,15 +6,15 @@ import { VoteOption } from '../../types/enum/voteOption';
 import { TokenProposalVotingBreakdown, type ITokenProposalVotingBreakdownProps } from './tokenProposalVotingBreakdown';
 
 describe('<TokenProposalVotingBreakdown /> component', () => {
-    const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
-
-    afterEach(() => {
-        useProposalSpy.mockReset();
-    });
-
     const createTestComponent = (props?: Partial<ITokenProposalVotingBreakdownProps>) => {
+        const baseProposal = generateTokenProposal({
+            settings: generateTokenPluginSettings({
+                token: generateToken(),
+                historicalTotalSupply: '1',
+            }),
+        });
         const completeProps: ITokenProposalVotingBreakdownProps = {
-            proposalId: 'proposal-id',
+            proposal: baseProposal,
             ...props,
         };
 
@@ -26,12 +24,6 @@ describe('<TokenProposalVotingBreakdown /> component', () => {
             </Tabs.Root>
         );
     };
-
-    it('returns null when proposal cannot be fetched', () => {
-        useProposalSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        render(createTestComponent());
-        expect(screen.queryByRole('tabpanel')).not.toBeInTheDocument();
-    });
 
     it('correctly displays the breakdown of the token proposal', () => {
         const settings = generateTokenPluginSettings({
@@ -45,8 +37,7 @@ describe('<TokenProposalVotingBreakdown /> component', () => {
             { type: VoteOption.NO, totalVotingPower: '2500' },
         ];
         const proposal = generateTokenProposal({ settings, metrics: { votesByOption } });
-        useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
-        render(createTestComponent());
+        render(createTestComponent({ proposal }));
         expect(screen.getByRole('tabpanel')).toBeInTheDocument();
 
         expect(screen.getAllByRole('progressbar')[0].dataset.value).toEqual('75');

@@ -13,9 +13,7 @@ jest.mock('@/shared/components/pluginSingleComponent', () => ({
     ),
 }));
 
-jest.mock('../voteList', () => ({
-    VoteList: () => <div data-testid="vote-list-mock" />,
-}));
+jest.mock('../voteList', () => ({ VoteList: () => <div data-testid="vote-list-mock" /> }));
 
 describe('<ProposalVotingTerminal /> component', () => {
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
@@ -34,6 +32,7 @@ describe('<ProposalVotingTerminal /> component', () => {
 
         return <ProposalVotingTerminal {...completeProps} />;
     };
+
     it('renders the proposal voting component', () => {
         render(createTestComponent());
         expect(screen.getByText(/proposalVotingTerminal.title/)).toBeInTheDocument();
@@ -49,8 +48,8 @@ describe('<ProposalVotingTerminal /> component', () => {
         expect(pluginComponent[0].dataset.pluginid).toEqual(proposal.pluginSubdomain);
     });
 
-    it('renders the list of votes', async () => {
-        render(createTestComponent());
+    it('renders the list of votes when proposal status is not pending or unreached', async () => {
+        render(createTestComponent({ status: ProposalStatus.ACTIVE }));
         await userEvent.click(screen.getByRole('tab', { name: 'Votes' }));
         expect(screen.getByTestId('vote-list-mock')).toBeInTheDocument();
     });
