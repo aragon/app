@@ -1,4 +1,4 @@
-import { StageInputItemBaseForm } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { type StageInputItemBaseForm } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 
 export interface IStageInputResource {
     /**
