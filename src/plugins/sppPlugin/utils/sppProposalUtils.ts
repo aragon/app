@@ -60,7 +60,7 @@ class SppProposalUtils {
         const stageEndDate = sppStageUtils.getStageEndDate(proposal, currentStage);
 
         if (!isLastStage) {
-            return true; // If not in the last stage, it  essentially ends in future
+            return true; // If not in the last stage, and is not executed/rejected it  essentially ends in future
         }
 
         return stageEndDate > now;
