@@ -5,7 +5,7 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
-import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
+import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -39,6 +39,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     // TODO: Support multiple proposals within a stage (APP-3659)
     const subProposal = subProposals?.[0];
     const plugin = stage.plugins[0];
+    const isVeto = plugin.proposalType === SppProposalType.VETO;
 
     const voteListParams = {
         queryParams: { proposalId: proposal?.id, pluginAddress: plugin.address, pageSize: votesPerPage },
