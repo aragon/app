@@ -1,0 +1,13 @@
+import type { ISppStage } from '../../types';
+
+export const generateSppStage = (stage?: Partial<ISppStage>): ISppStage => ({
+    id: '0',
+    name: 'Stage Name',
+    plugins: [],
+    votingPeriod: 1,
+    maxAdvance: 1,
+    minAdvance: 1,
+    approvalThreshold: 0.5,
+    vetoThreshold: 0.1,
+    ...stage,
+});
