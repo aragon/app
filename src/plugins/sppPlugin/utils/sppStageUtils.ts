@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { type ISppProposal, type ISppStage, SppStageStatus, SppProposalType } from '../types';
+import { type ISppProposal, type ISppStage, SppProposalType, SppStageStatus } from '../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
