@@ -69,6 +69,13 @@ export const useStageFields = (stageName: string, stageIndex: number): IStageFie
         } as IDateDuration,
     });
 
+    const bodyThresholdField = useFormField<
+        StageInputItemBaseForm,
+        `${typeof stageName}.${typeof stageIndex}.bodyThreshold`
+    >(`${basePath}.bodyThreshold`, {
+        defaultValue: 1,
+    });
+
     return {
         stageNameField,
         stageTypeField,
@@ -76,5 +83,6 @@ export const useStageFields = (stageName: string, stageIndex: number): IStageFie
         earlyStageField,
         stageExpirationField,
         stageExpirationPeriodField,
+        bodyThresholdField,
     };
 };

@@ -420,12 +420,12 @@
       "layoutWizardCreateDao": {
         "name": "Create DAO"
       },
+      "layoutWizardCreateProcess": {
+        "name": "Create process"
+      },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
-      },
-      "layoutWizardCreateProposal": {
-        "name": "Create process"
       },
       "proposalExecutionStatus": {
         "buttons": {

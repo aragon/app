@@ -14,7 +14,13 @@ export const useProcessFields = (stageName: string) => {
     const idField = useFormField<ProcessInputItemBaseForm, `${typeof stageName}.id`>(`${basePath}.id`, {
         label: 'ID',
         trimOnBlur: true,
-        rules: { required: true },
+        rules: {
+            required: 'Process ID is required',
+            pattern: {
+                value: /^[A-Z]+$/,
+                message: 'Only alphabetic characters are allowed',
+            },
+        },
         defaultValue: '',
     });
 

@@ -52,7 +52,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                 <InputContainer
                     id={votingPeriodField.name}
                     useCustomWrapper={true}
-                    helpText="The shortest period of time a proposal is open for voting. Proposals can be created with a longer duration, but not shorter."
+                    helpText="The shortest period of time a process is open for voting."
                     {...votingPeriodField}
                 />
                 <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
@@ -106,7 +106,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                 </div>
                 {stageTypeField.value === 'normal' && (
                     <Switch
-                        helpText="Should the proposal be able to advance this stage early, if it’s successful?"
+                        helpText="Should the members be able to advance this stage early, if it’s successful?"
                         inlineLabel={earlyStageField ? 'Yes' : 'No'}
                         onCheckedChanged={(checked) => setValue(earlyStageField.name, checked)}
                         checked={earlyStageField.value}
@@ -114,7 +114,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                     />
                 )}
                 <Switch
-                    helpText="The amount of time that the proposal will be eligible to be advanced to the next stage."
+                    helpText="The amount of time that the process will be eligible to be advanced to the next stage."
                     inlineLabel={stageExpirationField ? 'Yes' : 'No'}
                     onCheckedChanged={(checked) => setValue(stageExpirationField.name, checked)}
                     checked={stageExpirationField.value}
@@ -125,7 +125,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                     <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
                         <div className="flex flex-col justify-between gap-4 md:flex-row">
                             <InputNumber
-                                label="Expiration Minutes"
+                                label={t('app.shared.advancedDateInput.duration.minutes')}
                                 min={0}
                                 max={59}
                                 className="w-full md:w-1/3"
@@ -140,7 +140,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 }
                             />
                             <InputNumber
-                                label="Expiration Hours"
+                                label={t('app.shared.advancedDateInput.duration.hours')}
                                 min={0}
                                 max={23}
                                 className="w-full md:w-1/3"
@@ -155,7 +155,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 }
                             />
                             <InputNumber
-                                label="Expiration Days"
+                                label={t('app.shared.advancedDateInput.duration.days')}
                                 min={0}
                                 className="w-full md:w-1/3"
                                 value={stageExpirationPeriodField.value.days}

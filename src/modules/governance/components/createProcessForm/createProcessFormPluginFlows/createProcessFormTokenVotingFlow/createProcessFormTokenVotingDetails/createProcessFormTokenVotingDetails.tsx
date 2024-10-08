@@ -59,15 +59,25 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
             <Controller
                 name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`}
                 control={control}
-                render={({ field }) => (
+                rules={{
+                    required: 'Token symbol is required',
+                    pattern: {
+                        value: /^[A-Z]+$/,
+                        message: 'Only alphabetic characters are allowed',
+                    },
+                }}
+                render={({ field, fieldState: { error } }) => (
                     <InputText
                         {...field}
                         value={field.value ? field.value.toUpperCase() : ''}
-                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        onChange={(e) => {
+                            field.onChange(e.target.value.toUpperCase());
+                        }}
                         maxLength={8}
                         label="Token Symbol"
                         placeholder="Enter a symbol"
                         helpText="The abbreviation of the token. For example: UNI"
+                        alert={error ? { message: error.message ?? '', variant: 'critical' } : undefined}
                     />
                 )}
             />

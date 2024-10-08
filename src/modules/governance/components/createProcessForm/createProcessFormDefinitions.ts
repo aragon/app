@@ -158,4 +158,5 @@ export interface IStageFields {
     earlyStageField: ReturnType<typeof useFormField>;
     stageExpirationField: ReturnType<typeof useFormField>;
     stageExpirationPeriodField: ReturnType<typeof useFormField>;
+    bodyThresholdField: ReturnType<typeof useFormField>;
 }

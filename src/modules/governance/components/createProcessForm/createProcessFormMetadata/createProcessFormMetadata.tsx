@@ -12,7 +12,7 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
             <InputText
                 helpText="Give your governance process a name, so member can differentiate it."
                 placeholder="Type a name"
-                maxLength={128}
+                maxLength={18}
                 {...nameField}
             />
             <InputText

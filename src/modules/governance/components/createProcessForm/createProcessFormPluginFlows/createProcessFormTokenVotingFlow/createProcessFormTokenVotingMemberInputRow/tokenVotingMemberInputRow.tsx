@@ -31,7 +31,7 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
                     control={control}
                     rules={{
                         required: 'Address is required',
-                        validate: (value) => addressUtils.isAddress(value?.address),
+                        validate: (value) => addressUtils.isAddress(value?.address) || 'Invalid address',
                     }}
                     render={({ field: { onChange: onReceiverChange }, fieldState: { error } }) => (
                         <AddressInput
@@ -51,15 +51,14 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
                     control={control}
                     rules={{
                         required: 'Token amount is required',
-                        min: { value: 0.00001, message: 'Minimum amount is 0.00001' },
-                        validate: (value) => value > 0 || 'Amount must be greater than zero',
+                        validate: (value) => (value > 0 ? true : 'Amount must be greater than 0'),
                     }}
+                    defaultValue={undefined}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <InputNumber
                             label="Tokens"
                             value={value !== undefined ? value : ''}
                             onChange={(newValue: string) => {
-                                // Parse the input as a float. If the input is invalid or empty, set to undefined.
                                 const parsedValue = parseFloat(newValue);
                                 if (isNaN(parsedValue)) {
                                     onChange(undefined);
@@ -69,6 +68,7 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
                             }}
                             alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
                             className="w-1/2"
+                            min={0}
                         />
                     )}
                 />

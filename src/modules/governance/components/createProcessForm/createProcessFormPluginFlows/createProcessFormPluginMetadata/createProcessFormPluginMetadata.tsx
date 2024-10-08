@@ -12,7 +12,7 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
 
     return (
         <>
-            <InputText id={bodyNameField.name} label="Body name" placeholder="Type a name" {...bodyNameField} />
+            <InputText maxLength={40} label="Body name" placeholder="Type a name" {...bodyNameField} />
             <TextArea
                 helpText="Summarize your stage body in 2-3 sentences. This gives your members a sense of what the body will be responsible for."
                 placeholder="Type a summary"

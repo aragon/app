@@ -90,6 +90,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
         label: 'Approval Threshold',
         defaultValue: 1,
         rules: {
+            required: true,
             min: {
                 value: 1,
                 message: 'Threshold must be at least 1',
