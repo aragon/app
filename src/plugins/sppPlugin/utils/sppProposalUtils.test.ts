@@ -1,8 +1,9 @@
-import { IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { generateSppPluginSettings } from '../testUtils';
+import { SppStageStatus } from '../types';
 import { generateSppProposal } from './../testUtils/generators/sppProposal';
 import { generateSppStage } from './../testUtils/generators/sppStage';
 import { sppProposalUtils } from './sppProposalUtils';
@@ -15,15 +16,14 @@ describe('sppProposal Utils', () => {
         const getCurrentStageSpy = jest.spyOn(sppProposalUtils, 'getCurrentStage');
         const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted');
         const isExecutionExpiredSpy = jest.spyOn(sppProposalUtils, 'isExecutionExpired');
+        const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
 
         afterEach(() => {
-            isStageVetoedSpy.mockReset();
-            endsInFutureSpy.mockReset();
+            jest.resetAllMocks();
         });
 
         afterAll(() => {
-            isStageVetoedSpy.mockRestore();
-            endsInFutureSpy.mockRestore();
+            jest.restoreAllMocks();
         });
 
         it('returns executed status when proposal has been executed', () => {
@@ -49,7 +49,8 @@ describe('sppProposal Utils', () => {
                 settings: generateSppPluginSettings({ stages: [generateSppStage({ votingPeriod: 100 })] }),
             });
             timeUtils.setTime(now);
-            isStageVetoedSpy.mockReturnValueOnce(false).mockReturnValueOnce(true);
+            isStageVetoedSpy.mockReturnValue(true);
+            endsInFutureSpy.mockReturnValue(true);
             expect(sppProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.VETOED);
         });
 
@@ -60,6 +61,7 @@ describe('sppProposal Utils', () => {
             timeUtils.setTime(now);
             endsInFutureSpy.mockReturnValue(true);
             getCurrentStageSpy.mockReturnValue(generateSppStage());
+            getStageStatusSpy.mockReturnValue(SppStageStatus.ACTIVE);
             expect(sppProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.ACTIVE);
         });
 
@@ -70,6 +72,7 @@ describe('sppProposal Utils', () => {
             timeUtils.setTime(now);
             endsInFutureSpy.mockReturnValue(false);
             getCurrentStageSpy.mockReturnValue(generateSppStage());
+            getStageStatusSpy.mockReturnValue(SppStageStatus.REJECTED);
             expect(sppProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.REJECTED);
         });
 
@@ -83,6 +86,7 @@ describe('sppProposal Utils', () => {
             timeUtils.setTime(now);
             endsInFutureSpy.mockReturnValue(false);
             getCurrentStageSpy.mockReturnValue(generateSppStage());
+            getStageStatusSpy.mockReturnValue(SppStageStatus.ACCEPTED);
             areAllStagesAcceptedSpy.mockReturnValue(true);
             isExecutionExpiredSpy.mockReturnValue(true);
             expect(sppProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXPIRED);
