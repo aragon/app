@@ -504,6 +504,13 @@
         }
       },
       "spp": {
+        "advanceStageDialog": {
+          "button": {
+            "submit": "TODO"
+          },
+          "description": "TODO",
+          "title": "TODO"
+        },
         "sppVotingTerminal": {
           "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
           "title": "Voting"
