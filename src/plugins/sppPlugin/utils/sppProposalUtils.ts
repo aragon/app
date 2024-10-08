@@ -13,8 +13,7 @@ class SppProposalUtils {
             return ProposalStatus.VETOED;
         }
 
-        // Maybe we should use .utc() instead of .now()??
-        const now = DateTime.now();
+        const now = DateTime.now().toUTC();
         const startDate = DateTime.fromSeconds(proposal.startDate);
 
         if (startDate > now) {
@@ -53,8 +52,7 @@ class SppProposalUtils {
     };
 
     endsInFuture = (proposal: ISppProposal): boolean => {
-        // Maybe we should use .utc() instead of .now()??
-        const now = DateTime.now();
+        const now = DateTime.now().toUTC();
         const currentStage = this.getCurrentStage(proposal);
         const isLastStage = proposal.currentStageIndex === proposal.settings.stages.length - 1;
         const stageEndDate = sppStageUtils.getStageEndDate(proposal, currentStage);
