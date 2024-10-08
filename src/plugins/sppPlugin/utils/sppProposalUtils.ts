@@ -36,7 +36,6 @@ class SppProposalUtils {
             return ProposalStatus.ACTIVE;
         }
 
-        // Proposal has ended
         if (currentStageStatus === SppStageStatus.REJECTED) {
             return ProposalStatus.REJECTED;
         }
