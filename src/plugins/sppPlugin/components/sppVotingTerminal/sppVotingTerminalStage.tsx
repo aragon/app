@@ -7,6 +7,7 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
+import { SppStageStatus } from '../sppStageStatus';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -38,14 +39,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     // TODO: Support multiple proposals within a stage (APP-3659)
     const subProposal = subProposals?.[0];
-    const plugin = stage.plugins[0];
+    const { address: pluginAddress, ...plugin } = stage.plugins[0];
 
-    const voteListParams = {
-        queryParams: { proposalId: proposal?.id, pluginAddress: plugin.address, pageSize: votesPerPage },
-    };
+    const voteListParams = { queryParams: { proposalId: proposal.id, pluginAddress, pageSize: votesPerPage } };
 
     const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
-        params: { daoId, settings: plugin.settings, pluginAddress: plugin.address },
+        params: { daoId, settings: plugin.settings, pluginAddress },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain,
     });
@@ -72,11 +71,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         proposal={subProposal}
                     />
                     <ProposalVoting.Votes>
-                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />
+                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={pluginAddress} />
                     </ProposalVoting.Votes>
                 </>
             )}
             <ProposalVoting.Details settings={proposalSettings} />
+            <SppStageStatus proposal={proposal} stage={stage} />
         </ProposalVoting.Stage>
     );
 };

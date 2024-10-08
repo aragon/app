@@ -506,10 +506,15 @@
       "spp": {
         "advanceStageDialog": {
           "button": {
-            "submit": "TODO"
+            "submit": "Advance",
+            "success": "Proposal advanced"
           },
-          "description": "TODO",
-          "title": "TODO"
+          "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
+          "title": "Advance proposal"
+        },
+        "sppStageStatus": {
+          "advance": "Advance proposal",
+          "info": "left to advance"
         },
         "sppVotingTerminal": {
           "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",

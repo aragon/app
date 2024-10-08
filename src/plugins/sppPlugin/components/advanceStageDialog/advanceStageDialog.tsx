@@ -23,11 +23,12 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
     const { t } = useTranslations();
     const router = useRouter();
 
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
-        initialActiveStep: TransactionDialogStep.PREPARE,
-    });
+    const initialActiveStep = TransactionDialogStep.PREPARE;
+    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
     const handlePrepareTransaction = () => advanceStageDialogUtils.buildTransaction(proposal);
+
+    const { address: creatorAddress, ens: creatorEns } = proposal.creator;
 
     return (
         <Dialog.Root {...props}>
@@ -35,25 +36,21 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                 title={t('app.plugins.spp.advanceStageDialog.title')}
                 description={t('app.plugins.spp.advanceStageDialog.description')}
                 submitLabel={t('app.plugins.spp.advanceStageDialog.button.submit')}
-                successLink={{
-                    label: t('app.plugins.spp.advanceStageDialog.button.success'),
-                    action: () => router.refresh(),
-                }}
                 stepper={stepper}
                 prepareTransaction={handlePrepareTransaction}
+                successLink={{
+                    label: t('app.plugins.spp.advanceStageDialog.button.success'),
+                    action: router.refresh,
+                }}
             >
                 <Dialog.Content>
                     <ProposalDataListItem.Structure
                         id={proposal.proposalIndex}
                         title={proposal.title}
                         summary={proposal.summary}
-                        // TODO: set correct status
-                        status={ProposalStatus.ACCEPTED}
+                        status={ProposalStatus.ACTIVE}
                         type="approvalThreshold"
-                        publisher={{
-                            address: proposal.creator.address,
-                            name: proposal.creator.ens ?? undefined,
-                        }}
+                        publisher={{ address: creatorAddress, name: creatorEns ?? undefined }}
                     />
                 </Dialog.Content>
             </TransactionDialog>
