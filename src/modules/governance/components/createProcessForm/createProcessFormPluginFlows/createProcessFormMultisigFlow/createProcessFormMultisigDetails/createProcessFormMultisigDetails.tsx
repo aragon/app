@@ -1,12 +1,9 @@
+import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { MultisigMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMemberInputRow/multisigMemberInputRow';
 import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
 import { Button, IconType, InputContainer } from '@aragon/ods';
 
-export interface ICreateProcessFormMultisigDetailsProps {
-    stageName: string;
-    stageIndex: number;
-    bodyIndex: number;
-}
+export interface ICreateProcessFormMultisigDetailsProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultisigDetailsProps> = (props) => {
     const { stageName, stageIndex, bodyIndex } = props;

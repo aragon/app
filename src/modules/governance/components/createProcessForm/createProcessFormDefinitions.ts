@@ -40,14 +40,17 @@ export interface ICreateProcessFormBodyData {
     supportThresholdField: number;
     minimumParticipationField: number;
     voteChangeField: boolean;
+    resourcesField: IResourcesInputResource[];
     membersField?: ITokenVotingMember[] | IMultisigVotingMember[];
     multisigThresholdField: number;
+    bodyResourceField: IResourcesInputResource[];
 }
 
 export type BodyInputItemBaseForm = Record<string, any>;
 
 export interface IBodyFields {
     bodyNameField: ReturnType<typeof useFormField>;
+    bodySummaryField: ReturnType<typeof useFormField>;
     bodyGovernanceTypeField: ReturnType<typeof useFormField>;
     tokenNameField: ReturnType<typeof useFormField>;
     tokenSymbolField: ReturnType<typeof useFormField>;
@@ -89,28 +92,31 @@ export interface ICreateProcessFormStage {
     requiredApprovals?: number;
 }
 
+export type ProcessInputItemBaseForm = Record<string, any>;
 export interface ICreateProcessFormData {
     startTimeMode?: 'fixed' | 'now';
     endTimeMode?: 'fixed' | 'duration';
     addActions?: boolean;
     actions: any[];
     title?: string;
-    /**
-     * Name of the process
-     */
-    processName: string;
-    /**
-     * ID of the process
-     */
-    processId: string;
-    /**
-     * Short description of the proposal.
-     */
-    summary: string;
-    /**
-     * Resources of the proposal.
-     */
-    resources: IResourcesInputResource[];
+    process: {
+        /**
+         * Name of the process
+         */
+        name: string;
+        /**
+         * ID of the process
+         */
+        id: string;
+        /**
+         * Short description of the proposal.
+         */
+        summary: string;
+        /**
+         * Resources of the proposal.
+         */
+        resources: IResourcesInputResource[];
+    };
     /**
      * Process stages
      */
@@ -126,4 +132,19 @@ export interface IAddressInputResolvedValue {
      * ENS name linked to the given address.
      */
     name?: string;
+}
+
+export interface ICreateProcessFormBodyNameProps {
+    /**
+     * The name of the stage.
+     */
+    stageName: string;
+    /**
+     * The index of the stage.
+     */
+    stageIndex: number;
+    /**
+     * The index of the body.
+     */
+    bodyIndex: number;
 }

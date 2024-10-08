@@ -29,8 +29,10 @@ export const defaultBody: ICreateProcessFormBodyData = {
     membersField: [],
     supportThresholdField: 50,
     minimumParticipationField: 1,
+    resourcesField: [],
     voteChangeField: false,
     multisigThresholdField: 1,
+    bodyResourceField: [],
 };
 
 const defaultStage: ICreateProcessFormStage = {
@@ -46,10 +48,13 @@ const defaultStage: ICreateProcessFormStage = {
 
 const defaultValues: ICreateProcessFormData = {
     actions: [],
-    processName: '',
-    processId: '',
-    summary: '',
-    resources: [],
+    process: {
+        name: '',
+        id: '',
+        summary: '',
+        resources: [],
+    },
+
     stages: [defaultStage],
 };
 

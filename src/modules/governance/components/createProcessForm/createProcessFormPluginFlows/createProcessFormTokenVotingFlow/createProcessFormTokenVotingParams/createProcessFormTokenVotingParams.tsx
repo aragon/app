@@ -1,3 +1,4 @@
+import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
 import {
     AlertInline,
@@ -13,11 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-export interface ICreateProcessFormTokenVotingParamsProps {
-    stageName: string;
-    stageIndex: number;
-    bodyIndex: number;
-}
+export interface ICreateProcessFormTokenVotingParamsProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormTokenVotingParamsProps> = (props) => {
     const { stageIndex, stageName, bodyIndex } = props;

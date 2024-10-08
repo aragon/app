@@ -1,29 +1,11 @@
+import { useProcessFields } from '@/modules/governance/components/createProcessForm/hooks/useProcessFields';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
-import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, TextArea } from '@aragon/ods';
-import type { ICreateProcessFormData } from '../createProcessFormDefinitions';
 
 export interface ICreateProcessFormMetadataProps {}
 
 export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps> = () => {
-    const nameField = useFormField<ICreateProcessFormData, 'processName'>('processName', {
-        label: 'Name',
-        trimOnBlur: true,
-        rules: { required: true },
-        defaultValue: '',
-    });
-
-    const idField = useFormField<ICreateProcessFormData, 'processId'>('processId', {
-        label: 'ID',
-        trimOnBlur: true,
-        rules: { required: true },
-        defaultValue: '',
-    });
-
-    const summaryField = useFormField<ICreateProcessFormData, 'summary'>('summary', {
-        label: 'Summary',
-        defaultValue: '',
-    });
+    const { nameField, idField, summaryField } = useProcessFields('process');
 
     return (
         <div className="flex flex-col gap-10">
@@ -34,7 +16,7 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
                 {...nameField}
             />
             <InputText
-                helpText="Define a prefix for this governance process to have an unique ID. Something like DPF, which leads to PDF-42 and counting up for each proposal."
+                helpText="Define a prefix for this governance process to have an unique ID. Something like DPF, which leads to PDF-01 and counting up for each proposal."
                 placeholder="Type an ID"
                 maxLength={5}
                 addon={idField.value != '' ? '-01' : undefined}
@@ -59,7 +41,7 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
                 {...summaryField}
             />
             <ResourcesInput
-                name="resources"
+                name="process.resources"
                 helpText="Add any additional external resources that help members understand the governance process."
             />
         </div>

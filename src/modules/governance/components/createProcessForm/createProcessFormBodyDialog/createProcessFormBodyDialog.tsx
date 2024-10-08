@@ -5,10 +5,12 @@ import type {
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { CreateProcessFormMultisigDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultisigDetails/createProcessFormMultisigDetails';
 import { CreateProcessFormMultisigParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultsigParams/createProcessFormMultisigParams';
+import { CreateProcessFormPluginMetadata } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormPluginMetadata/createProcessFormPluginMetadata';
+import { CreateProcessFormPluginSelect } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormPluginSelect/createProcessFormPluginSelect';
 import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
 import { CreateProcessFormTokenVotingParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingParams/createProcessFormTokenVotingParams';
 import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
-import { Button, Dialog, InputText, RadioCard, RadioGroup } from '@aragon/ods';
+import { Button, Dialog } from '@aragon/ods';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -24,8 +26,8 @@ export interface ICreateProcessFormBodyDialogProps {
 
 export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogProps> = (props) => {
     const { stageName, stageIndex, removeBody, updateBody, isBodyDialogOpen, setIsBodyDialogOpen } = props;
-    const [step, setStep] = useState(0);
-    const { setValue, getValues } = useFormContext();
+    const [step, setStep] = useState(isBodyDialogOpen.editBodyIndex != null ? 1 : 0);
+    const { getValues } = useFormContext();
 
     const bodies = getValues(`${stageName}.${stageIndex}.bodies`);
 
@@ -33,7 +35,7 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
 
     const bodyFields = useBodyFields(stageName, stageIndex, bodyIndex);
 
-    const { bodyNameField, bodyGovernanceTypeField } = bodyFields;
+    const { bodyGovernanceTypeField } = bodyFields;
 
     const initialStateRef = useRef<ICreateProcessFormBodyData | null>(null);
 
@@ -71,6 +73,10 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
         }
 
         if (step === 2) {
+            setStep(step + 1);
+        }
+
+        if (step === 3) {
             handleSave();
         }
     };
@@ -79,35 +85,21 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
         switch (step) {
             case 0:
                 return (
-                    <>
-                        <InputText
-                            placeholder="Enter a name"
-                            helpText="Give modules a name so members are able to recognise which body is participating."
-                            {...bodyNameField}
-                        />
-                        <RadioGroup
-                            className="flex gap-4"
-                            helpText="Choose your governance plugin primitive."
-                            onValueChange={(value) => setValue(bodyGovernanceTypeField.name, value)}
-                            {...bodyGovernanceTypeField}
-                            defaultValue={bodyGovernanceTypeField.value}
-                        >
-                            <RadioCard
-                                className="w-full"
-                                label="Token voting"
-                                description="Create or import an ERC-20 token"
-                                value="tokenVoting"
-                            />
-                            <RadioCard
-                                className="w-full"
-                                label="Multisig"
-                                description="Define which addresses are members"
-                                value="multisig"
-                            />
-                        </RadioGroup>
-                    </>
+                    <CreateProcessFormPluginSelect
+                        stageName={stageName}
+                        stageIndex={stageIndex}
+                        bodyIndex={bodyIndex}
+                    />
                 );
             case 1:
+                return (
+                    <CreateProcessFormPluginMetadata
+                        stageName={stageName}
+                        stageIndex={stageIndex}
+                        bodyIndex={bodyIndex}
+                    />
+                );
+            case 2:
                 if (bodyGovernanceTypeField.value === 'tokenVoting') {
                     return (
                         <CreateProcessFormTokenVotingDetails
@@ -126,7 +118,7 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
                     );
                 }
                 break;
-            case 2:
+            case 3:
                 if (bodyGovernanceTypeField.value === 'tokenVoting') {
                     return (
                         <CreateProcessFormTokenVotingParams
@@ -154,17 +146,21 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
         <Dialog.Root
             containerClassName="!max-w-[640px]"
             open={isBodyDialogOpen.dialogOpen}
-            onPointerDownOutside={handleCancel}
+            onPointerDownOutside={(e) => e.preventDefault()}
         >
             <Dialog.Header title="Add voting body" onCloseClick={handleCancel} />
             <Dialog.Content className="flex flex-col gap-6 pb-1.5 pt-6">
                 {handleStepContent(step)}
                 <div className="flex w-full justify-between">
-                    <Button variant="tertiary" onClick={step === 0 ? handleCancel : () => setStep(step - 1)}>
+                    <Button
+                        variant="tertiary"
+                        disabled={isBodyDialogOpen.editBodyIndex != null && step === 1}
+                        onClick={step === 0 ? handleCancel : () => setStep(step - 1)}
+                    >
                         {step === 0 ? 'Cancel' : 'Back'}
                     </Button>
                     <Button type="submit" onClick={handleAdvanceStep}>
-                        {step === 2 ? 'Save' : 'Next'}
+                        {step === 3 ? 'Save' : 'Next'}
                     </Button>
                 </div>
             </Dialog.Content>

@@ -1,20 +1,14 @@
+import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { TokenVotingMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingMemberInputRow/tokenVotingMemberInputRow';
 import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
-import { Button, IconType, InputContainer, InputText } from '@aragon/ods';
+import { Button, IconType, InputContainer, InputText, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-export interface ICreateProcessFormTokenVotingDetailsProps {
-    stageName: string;
-    stageIndex: number;
-    bodyIndex: number;
-}
+export interface ICreateProcessFormTokenVotingDetailsProps extends ICreateProcessFormBodyNameProps {}
 
-export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTokenVotingDetailsProps> = ({
-    stageName,
-    stageIndex,
-    bodyIndex,
-}) => {
+export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTokenVotingDetailsProps> = (props) => {
+    const { stageName, stageIndex, bodyIndex } = props;
     const { control } = useFormContext();
 
     const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(stageName, stageIndex, bodyIndex);
@@ -31,6 +25,25 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
 
     return (
         <>
+            <InputContainer
+                id="token"
+                label="ERC-20 token"
+                helpText="Import or create a new ERC-20 token, which is used for this Token Voting Plugin"
+                useCustomWrapper={true}
+            >
+                <RadioGroup defaultValue="createToken" className="w-full">
+                    <div className="flex w-full flex-row gap-x-2">
+                        <RadioCard
+                            className="w-1/2"
+                            label="Import token"
+                            description=""
+                            value="importToken"
+                            disabled={true}
+                        />
+                        <RadioCard className="w-1/2" label="Create new token" description="" value="createToken" />
+                    </div>
+                </RadioGroup>
+            </InputContainer>
             <Controller
                 name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenNameField`}
                 control={control}
@@ -43,7 +56,6 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
                     />
                 )}
             />
-
             <Controller
                 name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`}
                 control={control}

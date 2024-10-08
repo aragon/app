@@ -43,9 +43,11 @@ export interface IPrepareActionsParams {
 
 class PublishProcessDialogUtils {
     prepareMetadata = (formValues: ICreateProcessFormData) => {
-        const { processName, summary, stages } = formValues;
+        const { process, stages } = formValues;
 
-        return { processName, summary, stages };
+        const { name, summary } = process;
+
+        return { name, summary, stages };
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {

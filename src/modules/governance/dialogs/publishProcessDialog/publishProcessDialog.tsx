@@ -53,7 +53,8 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
     invariant(address != null, 'PublishProposalDialog: user must be connected.');
 
     const { daoId, pluginAddress, values } = location.params;
-    const { processName, processId, stages } = values;
+    const { process, stages } = values;
+    const { name, id } = process;
 
     const { t } = useTranslations();
 
@@ -155,7 +156,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
                 <pre className="flex flex-col gap-y-2">
                     <Heading size="h2">PROCESS:</Heading>
                     <Heading size="h3" className="pl-2">
-                        {processName} - {processId}
+                        {name} - {id}
                     </Heading>
                     <ul className="flex flex-col gap-y-2 pl-4">
                         <Heading size="h3">STAGES:</Heading>

@@ -1,12 +1,9 @@
+import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
 import { InputContainer, InputNumber } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
 
-export interface ICreateProcessFormMultisigParamsProps {
-    stageName: string;
-    stageIndex: number;
-    bodyIndex: number;
-}
+export interface ICreateProcessFormMultisigParamsProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParamsProps> = (props) => {
     const { stageName, stageIndex, bodyIndex } = props;

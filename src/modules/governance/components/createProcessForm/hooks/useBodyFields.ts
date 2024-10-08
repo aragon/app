@@ -17,6 +17,16 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
         rules: { required: true },
     });
 
+    const bodySummaryField = useFormField<
+        BodyInputItemBaseForm,
+        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.bodySummaryField`
+    >(`${basePath}.bodySummaryField`, {
+        label: 'Summary',
+        defaultValue: '',
+
+        rules: { required: true },
+    });
+
     const bodyGovernanceTypeField = useFormField<
         BodyInputItemBaseForm,
         `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.bodyGovernanceTypeField`
@@ -89,6 +99,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
 
     return {
         bodyNameField,
+        bodySummaryField,
         bodyGovernanceTypeField,
         tokenNameField,
         tokenSymbolField,
