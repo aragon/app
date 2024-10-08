@@ -1,6 +1,7 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import type { ISppPluginSettings } from './sppPluginSettings';
 import type { ISppSubProposal } from './sppSubProposal';
+import type { SppProposalType } from './enum';
 
 export interface ISppProposal extends Omit<IProposal<ISppPluginSettings>, 'endDate'> {
     /**
@@ -15,4 +16,15 @@ export interface ISppProposal extends Omit<IProposal<ISppPluginSettings>, 'endDa
      * Stage sub proposals.
      */
     subProposals: ISppSubProposal[];
+    /**
+     * plugin results from the smart contract
+     */
+    pluginResults: {
+        [stageId: string]: {
+            [pluginAddress: string]: {
+                proposalType: SppProposalType;
+                result: boolean;
+            };
+        };
+    };
 }

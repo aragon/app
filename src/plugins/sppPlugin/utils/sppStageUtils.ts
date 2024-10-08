@@ -1,30 +1,30 @@
 import { DateTime } from 'luxon';
-import { type ISppProposal, type ISppStage, SppStageStatus } from '../types';
+import { type ISppProposal, type ISppStage, SppStageStatus, SppProposalType } from '../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
-        const now = DateTime.now();
+        const now = DateTime.now().toUTC();
         const stageStartDate = this.getStageStartDate(proposal);
         const stageEndDate = this.getStageEndDate(proposal, stage);
+        const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
 
         if (this.isStageVetoed(proposal, stage)) {
             return SppStageStatus.VETOED;
         }
 
         if (stageStartDate > now) {
-            return this.isProposalActive(proposal, stage) ? SppStageStatus.PENDING : SppStageStatus.INACTIVE;
+            return SppStageStatus.PENDING;
         }
 
-        if (now >= stageStartDate && now < stageEndDate) {
-            return SppStageStatus.ACTIVE;
+        if (this.isApprovalReached(proposal, stage)) {
+            if (now > maxAdvanceDate) {
+                return SppStageStatus.EXPIRED;
+            }
+            return this.canStageAdvance(proposal, stage) ? SppStageStatus.ACCEPTED : SppStageStatus.ACTIVE;
         }
 
-        if (this.isStageRejected(proposal, stage)) {
-            return SppStageStatus.REJECTED;
-        }
-
-        if (this.isStageAccepted(proposal, stage)) {
-            return this.isStageExpired(proposal, stage) ? SppStageStatus.EXPIRED : SppStageStatus.ACCEPTED;
+        if (now > stageEndDate) {
+            return this.isApprovalReached(proposal, stage) ? SppStageStatus.EXPIRED : SppStageStatus.REJECTED;
         }
 
         return SppStageStatus.INACTIVE;
@@ -32,51 +32,32 @@ class SppStageUtils {
 
     getStageStartDate = (proposal: ISppProposal): DateTime => {
         if (proposal.currentStageIndex === 0) {
-            return DateTime.fromSeconds(proposal.startDate);
+            return DateTime.fromSeconds(proposal.startDate).toUTC();
         }
-
-        return DateTime.fromSeconds(proposal.lastStageTransition);
+        return DateTime.fromSeconds(proposal.lastStageTransition).toUTC();
     };
 
     getStageEndDate = (proposal: ISppProposal, stage: ISppStage): DateTime => {
-        if (proposal.currentStageIndex === 0) {
-            return DateTime.fromSeconds(proposal.startDate).plus({ seconds: stage.votingPeriod });
-        }
-
-        return DateTime.fromSeconds(proposal.lastStageTransition).plus({ seconds: stage.votingPeriod });
+        const startDate = this.getStageStartDate(proposal);
+        return startDate.plus({ seconds: stage.votingPeriod });
     };
 
     isProposalActive = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        // Maybe we should use .utc() instead of .now()??
-        const now = DateTime.now();
-        const startDate = DateTime.fromSeconds(proposal.startDate);
-        const endDate = this.getStageEndDate(proposal, stage);
-
-        return now >= startDate && now <= endDate;
-    };
-
-    isStageRejected = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const now = DateTime.now().toUTC();
+        const stageStartDate = this.getStageStartDate(proposal);
         const stageEndDate = this.getStageEndDate(proposal, stage);
-        // Maybe we should use .utc() instead of .now()??
-        const now = DateTime.now();
+        const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
 
-        return now > stageEndDate && !this.isApprovalReached(proposal, stage);
-    };
-
-    isStageAccepted = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        return this.isApprovalReached(proposal, stage) && !this.isStageVetoed(proposal, stage);
-    };
-
-    isStageExpired = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        if (this.isApprovalReached(proposal, stage) && !this.isStageVetoed(proposal, stage)) {
-            const stageEndDate = this.getStageEndDate(proposal, stage);
-            const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
-            // Maybe we should use .utc() instead of .now()??
-            const now = DateTime.now();
-
-            return now > maxAdvanceDate;
+        if (proposal.executed?.status === true) {
+            return false;
         }
-        return false;
+
+        if (this.isStageVetoed(proposal, stage)) {
+            return false;
+        }
+
+        const isActive = now >= stageStartDate && now <= maxAdvanceDate;
+        return isActive;
     };
 
     isStageVetoed = (proposal: ISppProposal, stage: ISppStage): boolean => {
@@ -89,14 +70,48 @@ class SppStageUtils {
         return approvalCount >= stage.approvalThreshold;
     };
 
+    canStageAdvance = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const now = DateTime.now().toUTC();
+        const stageStartDate = this.getStageStartDate(proposal);
+        const minAdvanceDate = stageStartDate.plus({ seconds: stage.minAdvance });
+        const maxAdvanceDate = stageStartDate.plus({ seconds: stage.maxAdvance });
+
+        // Check if we're within the min and max advance period
+        const isWithinMinAndMaxAdvance = now >= minAdvanceDate && now <= maxAdvanceDate;
+
+        const isApproved = this.isApprovalReached(proposal, stage);
+
+        const isNotVetoed = !this.isStageVetoed(proposal, stage);
+
+        return isWithinMinAndMaxAdvance && isApproved && isNotVetoed;
+    };
+
+    isStageExpired = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const now = DateTime.now().toUTC();
+        const stageStartDate = this.getStageStartDate(proposal);
+        const maxAdvanceDate = stageStartDate.plus({ seconds: stage.maxAdvance });
+
+        return now > maxAdvanceDate;
+    };
+
     getVetoCount = (proposal: ISppProposal, stage: ISppStage): number => {
-        // logic to calculate veto count
-        return 0;
+        return stage.plugins.reduce((count, plugin) => {
+            const result = proposal.pluginResults[stage.id]?.[plugin.address];
+            if (result && result.proposalType === SppProposalType.VETO && result.result) {
+                return count + 1;
+            }
+            return count;
+        }, 0);
     };
 
     getApprovalCount = (proposal: ISppProposal, stage: ISppStage): number => {
-        // logic to calculate approval count
-        return 0;
+        return stage.plugins.reduce((count, plugin) => {
+            const result = proposal.pluginResults[stage.id]?.[plugin.address];
+            if (result && result.proposalType === SppProposalType.APPROVAL && result.result) {
+                return count + 1;
+            }
+            return count;
+        }, 0);
     };
 }
 
