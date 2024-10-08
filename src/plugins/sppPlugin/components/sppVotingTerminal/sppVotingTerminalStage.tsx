@@ -5,7 +5,7 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
-import type { ISppStage, ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -25,22 +25,19 @@ export interface IProposalVotingTerminalStageProps {
      */
     index: number;
     /**
-     * Current stage index.
+     * Parent Proposal of the stage
      */
-    currentStageIndex: number;
-    /**
-     * Last stage transition.
-     */
-    lastStageTransition: number;
+     proposal: ISppProposal
 }
 
 const votesPerPage = 6;
 
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
-    const { stage, daoId, subProposals, index, currentStageIndex, lastStageTransition } = props;
+    const { stage, daoId, subProposals, index, proposal } = props;
+    const { currentStageIndex, lastStageTransition } = proposal;
 
     // TODO: Support multiple proposals within a stage (APP-3659)
-    const proposal = subProposals?.[0];
+    const subProposal = subProposals?.[0];
     const plugin = stage.plugins[0];
 
     const voteListParams = {
@@ -70,12 +67,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             isMultiStage={true}
             forceMount={true}
         >
-            {proposal && (
+            {subProposal && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
-                        pluginId={proposal.pluginSubdomain}
-                        proposal={proposal}
+                        pluginId={subProposal.pluginSubdomain}
+                        proposal={subProposal}
                     />
                     <ProposalVoting.Votes>
                         <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />

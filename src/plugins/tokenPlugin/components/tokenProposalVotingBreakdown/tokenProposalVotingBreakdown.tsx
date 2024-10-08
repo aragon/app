@@ -21,10 +21,6 @@ const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
 export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdownProps> = (props) => {
     const { proposal } = props;
 
-    if (proposal == null) {
-        return null;
-    }
-
     const { symbol, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold, historicalTotalSupply } = proposal.settings;
 
