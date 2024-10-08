@@ -7,8 +7,12 @@ import { QueryClient } from '@tanstack/react-query';
 import { type Route } from 'next';
 import type { ICreateProposalPageParams } from '../../types';
 
-export interface ILayoutWizardCreateProposalProps
-    extends Omit<ILayoutWizardProps<ICreateProposalPageParams>, 'name' | 'exitPath'> {}
+export interface ILayoutWizardCreateProposalProps {
+    /**
+     * URL parameters of the create proposal page.
+     */
+    params: ICreateProposalPageParams;
+}
 
 const getWizardName = (dao: IDao, pluginAddress: string): ILayoutWizardProps['name'] => {
     const processes = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS, includeSubPlugins: false })!;
