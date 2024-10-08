@@ -438,7 +438,7 @@
           "submit": "Submit vote",
           "success": "View proposal"
         },
-        "confirmationLabel": "Voting",
+        "confirmationLabel": "Voting {{veto}}",
         "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
         "title": "Submit vote"
       },
@@ -562,7 +562,7 @@
           },
           "options": {
             "abstain": "Abstain",
-            "label": "Choose your option",
+            "label": "Do you want to {{label}} this proposal?",
             "no": "No",
             "yes": "Yes"
           }

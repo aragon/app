@@ -15,10 +15,14 @@ export interface ITokenSubmitVoteProps {
      * Proposal to submit the vote for.
      */
     proposal: ITokenProposal;
+    /**
+     *  Voting to veto
+     */
+    isVeto?: boolean;
 }
 
 export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
-    const { daoId, proposal } = props;
+    const { daoId, proposal, isVeto } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -57,7 +61,9 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <RadioGroup
-                        label={t('app.plugins.token.tokenSubmitVote.options.label')}
+                        label={t('app.plugins.token.tokenSubmitVote.options.label', {
+                            label: isVeto ? 'veto' : 'approve',
+                        })}
                         value={selectedOption}
                         onValueChange={setSelectedOption}
                     >

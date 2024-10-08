@@ -25,6 +25,10 @@ export interface IVoteDialogParams {
      * Proposal to submit the vote for.
      */
     proposal: IProposal;
+    /**
+     *  Voting to veto
+     */
+    isVeto?: boolean;
 }
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
@@ -40,7 +44,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { address } = useAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
 
-    const { vote, proposal } = location.params;
+    const { vote, proposal, isVeto } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
@@ -61,7 +65,9 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                 proposalId={proposal.proposalIndex}
                 proposalTitle={proposal.title}
                 voteIndicator={vote.label}
-                confirmationLabel={t('app.governance.voteDialog.confirmationLabel')}
+                confirmationLabel={t('app.governance.voteDialog.confirmationLabel', {
+                    veto: isVeto ? 'to veto' : undefined,
+                })}
             />
         </TransactionDialog>
     );
