@@ -5,13 +5,16 @@ import { type ILayoutWizardCreateProcessProps, LayoutWizardCreateProcess } from 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
     LayoutWizard: (props: ILayoutWizardProps) => {
         const { name } = props;
-        return <div data-testid="layout-wizard-mock">{name}</div>;
+        return <div data-testid="layout-wizard-mock">{name as string}</div>;
     },
 }));
 
 describe('<LayoutWizardCreateProcess /> component', () => {
     const createTestComponent = (props?: Partial<ILayoutWizardCreateProcessProps>) => {
         const completeProps: ILayoutWizardCreateProcessProps = {
+            params: {
+                id: 'test-id',
+            },
             ...props,
         };
 

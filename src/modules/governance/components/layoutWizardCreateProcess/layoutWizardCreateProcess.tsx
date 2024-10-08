@@ -1,7 +1,13 @@
-import { type ILayoutWizardProps, LayoutWizard } from '@/modules/application/components/layouts/layoutWizard';
+import { LayoutWizard } from '@/modules/application/components/layouts/layoutWizard';
+import { IDaoPageParams } from '@/shared/types';
 import { type Route } from 'next';
 
-export interface ILayoutWizardCreateProcessProps extends Omit<ILayoutWizardProps, 'name' | 'exitPath'> {}
+export interface ILayoutWizardCreateProcessProps {
+    /**
+     * URL parameters of the create process page.
+     */
+    params: IDaoPageParams;
+}
 
 export const LayoutWizardCreateProcess: React.FC<ILayoutWizardCreateProcessProps> = (props) => {
     return (
