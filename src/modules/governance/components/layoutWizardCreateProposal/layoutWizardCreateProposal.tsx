@@ -36,7 +36,7 @@ export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalPro
     let wizardName: ILayoutWizardProps['name'] = '';
 
     try {
-        const { id, pluginAddress } = params!;
+        const { id, pluginAddress } = params;
         const dao = await queryClient.fetchQuery(daoOptions({ urlParams: { id } }));
         wizardName = getWizardName(dao, pluginAddress);
     } catch (error: unknown) {

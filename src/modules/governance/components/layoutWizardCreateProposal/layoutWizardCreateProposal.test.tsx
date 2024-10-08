@@ -25,6 +25,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutWizardCreateProposalProps>) => {
         const completeProps: ILayoutWizardCreateProposalProps = {
+            params: { id: 'dao-id', pluginAddress: '0x123' },
             ...props,
         };
 
@@ -32,12 +33,6 @@ describe('<LayoutWizardCreateProposal /> component', () => {
 
         return Component;
     };
-
-    it('renders error when properties are not defined', async () => {
-        const props = undefined;
-        render(await createTestComponent(props));
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
-    });
 
     it('renders error feedback on fetch DAO error', async () => {
         fetchQuerySpy.mockImplementation(() => {
