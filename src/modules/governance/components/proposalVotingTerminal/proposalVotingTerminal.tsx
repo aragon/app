@@ -53,7 +53,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                 <PluginSingleComponent
                     slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                     pluginId={proposal.pluginSubdomain}
-                    proposalId={proposal.id}
+                    proposal={proposal}
                 />
                 <ProposalVoting.Votes>
                     <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
