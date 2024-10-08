@@ -13,6 +13,7 @@ class SppProposalUtils {
             return ProposalStatus.VETOED;
         }
 
+        // Maybe we should use .utc() instead of .now()??
         const now = DateTime.now();
         const startDate = DateTime.fromSeconds(proposal.startDate);
 
@@ -44,6 +45,7 @@ class SppProposalUtils {
             if (!hasActions) {
                 return ProposalStatus.ACCEPTED;
             }
+
             return this.isExecutionExpired(proposal) ? ProposalStatus.EXPIRED : ProposalStatus.EXECUTABLE;
         }
 
@@ -51,6 +53,7 @@ class SppProposalUtils {
     };
 
     endsInFuture = (proposal: ISppProposal): boolean => {
+        // Maybe we should use .utc() instead of .now()??
         const now = DateTime.now();
         const currentStage = this.getCurrentStage(proposal);
         const isLastStage = proposal.currentStageIndex === proposal.settings.stages.length - 1;
@@ -81,6 +84,7 @@ class SppProposalUtils {
         const now = DateTime.now();
         return proposal.settings.stages.some((stage) => {
             const stageEndDate = sppStageUtils.getStageEndDate(proposal, stage);
+
             return stage.maxAdvance && now > stageEndDate.plus({ seconds: stage.maxAdvance });
         });
     };

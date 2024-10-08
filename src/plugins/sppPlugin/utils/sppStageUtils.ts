@@ -3,6 +3,7 @@ import { type ISppProposal, type ISppStage, SppStageStatus } from '../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
+        // Maybe we should use .utc() instead of .now()??
         const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal);
         const stageEndDate = this.getStageEndDate(proposal, stage);
@@ -42,6 +43,7 @@ class SppStageUtils {
         if (proposal.currentStageIndex === 0) {
             return DateTime.fromSeconds(proposal.startDate);
         }
+
         return DateTime.fromSeconds(proposal.lastStageTransition);
     };
 
@@ -49,10 +51,12 @@ class SppStageUtils {
         if (proposal.currentStageIndex === 0) {
             return DateTime.fromSeconds(proposal.startDate).plus({ seconds: stage.votingPeriod });
         }
+
         return DateTime.fromSeconds(proposal.lastStageTransition).plus({ seconds: stage.votingPeriod });
     };
 
     isProposalActive = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        // Maybe we should use .utc() instead of .now()??
         const now = DateTime.now();
         const startDate = DateTime.fromSeconds(proposal.startDate);
         const endDate = this.getStageEndDate(proposal, stage);
@@ -62,6 +66,7 @@ class SppStageUtils {
 
     isStageRejected = (proposal: ISppProposal, stage: ISppStage): boolean => {
         const stageEndDate = this.getStageEndDate(proposal, stage);
+        // Maybe we should use .utc() instead of .now()??
         const now = DateTime.now();
 
         return now > stageEndDate && !this.isApprovalReached(proposal, stage);
@@ -75,7 +80,9 @@ class SppStageUtils {
         if (this.isApprovalReached(proposal, stage) && !this.isStageVetoed(proposal, stage)) {
             const stageEndDate = this.getStageEndDate(proposal, stage);
             const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
+            // Maybe we should use .utc() instead of .now()??
             const now = DateTime.now();
+
             return now > maxAdvanceDate;
         }
         return false;
