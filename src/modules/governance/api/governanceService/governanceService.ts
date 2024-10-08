@@ -41,6 +41,7 @@ class GovernanceService extends AragonBackendService {
 
     getProposal = async <TProposal extends IProposal = IProposal>(params: IGetProposalParams): Promise<TProposal> => {
         const result = await this.request<TProposal>(this.urls.proposal, params);
+
         return result;
     };
 
