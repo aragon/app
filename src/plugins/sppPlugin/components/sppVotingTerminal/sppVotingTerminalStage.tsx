@@ -27,7 +27,7 @@ export interface IProposalVotingTerminalStageProps {
     /**
      * Parent Proposal of the stage
      */
-     proposal: ISppProposal
+    proposal: ISppProposal;
 }
 
 const votesPerPage = 6;
