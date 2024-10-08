@@ -1,13 +1,6 @@
 import { Page } from '@/shared/components/page';
-import type { IDaoPageParams } from '@/shared/types';
+import type { ICreateProposalPageParams } from '../../types';
 import { CreateProposalPageClient } from './createProposalPageClient';
-
-export interface ICreateProposalPageParams extends IDaoPageParams {
-    /**
-     * Address of the plugin to create the proposal for.
-     */
-    pluginAddress: string;
-}
 
 export interface ICreateProposalPageProps {
     /**
