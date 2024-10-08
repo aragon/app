@@ -9,7 +9,7 @@ class SppProposalUtils {
             return ProposalStatus.EXECUTED;
         }
 
-        if (this.isStageVetoed(proposal)) {
+        if (this.isAnyStageVetoed(proposal)) {
             return ProposalStatus.VETOED;
         }
 
@@ -66,7 +66,7 @@ class SppProposalUtils {
         return stageEndDate > now;
     };
 
-    isStageVetoed = (proposal: ISppProposal): boolean => {
+    isAnyStageVetoed = (proposal: ISppProposal): boolean => {
         return proposal.settings.stages.some((stage) => sppStageUtils.isStageVetoed(proposal, stage));
     };
 
