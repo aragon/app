@@ -61,51 +61,53 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 </Page.Section>
             </Page.Aside>
             <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
-                <Dialog.Content className="flex flex-col gap-y-6 py-8">
-                    <div className="flex flex-col gap-y-3">
-                        <Heading size="h3">Create governance process</Heading>
-                        <p className="text-base font-normal leading-normal text-neutral-500">
-                            Define any kind of governance process to help your onchain organisation making great
-                            decisions and only allow to execute what it’s right for certain decisions 😉
-                        </p>
-                    </div>
-                    <div className="flex flex-col">
-                        <div className="flex items-center gap-x-6 py-4">
-                            <IllustrationObject
-                                className="size-16 rounded-full border border-neutral-100"
-                                object="LABELS"
-                            />
-                            <p className="grow py-4 text-lg font-normal leading-normal text-neutral-800">
-                                Describe governance process
+                <Dialog.Content className="flex flex-col gap-y-6 py-10">
+                    <div className="px-4">
+                        <div className="flex flex-col gap-y-3">
+                            <Heading size="h3">Create governance process</Heading>
+                            <p className="text-base font-normal leading-normal text-neutral-500">
+                                Define any kind of governance process to help your onchain organisation making great
+                                decisions and only allow to execute what it’s right for certain decisions 😉
                             </p>
-                            <p className="text-base font-normal leading-normal text-neutral-500">Step 1</p>
                         </div>
-                        <div className="flex items-center gap-x-6 py-4">
-                            <IllustrationObject
-                                className="size-16 rounded-full border border-neutral-100"
-                                object="USERS"
-                            />
-                            <p className="grow py-4 text-lg font-normal leading-normal text-neutral-800">
-                                Setup governance process
-                            </p>
-                            <p className="text-base font-normal leading-normal text-neutral-500">Step 2</p>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-x-6 py-4">
+                                <IllustrationObject
+                                    className="size-16 rounded-full border border-neutral-100"
+                                    object="LABELS"
+                                />
+                                <p className="grow py-4 font-normal leading-normal text-neutral-800">
+                                    Describe governance process
+                                </p>
+                                <p className="text-base font-normal leading-normal text-neutral-500">Step 1</p>
+                            </div>
+                            <div className="flex items-center gap-x-6 py-4">
+                                <IllustrationObject
+                                    className="size-16 rounded-full border border-neutral-100"
+                                    object="USERS"
+                                />
+                                <p className="grow py-4 font-normal leading-normal text-neutral-800">
+                                    Setup governance process
+                                </p>
+                                <p className="text-base font-normal leading-normal text-neutral-500">Step 2</p>
+                            </div>
+                            <div className="flex items-center gap-x-6 py-4">
+                                <IllustrationObject
+                                    className="size-16 rounded-full border border-neutral-100"
+                                    object="SETTINGS"
+                                />
+                                <p className="t grow py-4 font-normal leading-normal text-neutral-800">
+                                    Manage permissions
+                                </p>
+                                <p className="text-base font-normal leading-normal text-neutral-500">Step 3</p>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-x-6 py-4">
-                            <IllustrationObject
-                                className="size-16 rounded-full border border-neutral-100"
-                                object="SETTINGS"
-                            />
-                            <p className="grow py-4 text-lg font-normal leading-normal text-neutral-800">
-                                Manage permissions
-                            </p>
-                            <p className="text-base font-normal leading-normal text-neutral-500">Step 3</p>
+                        <div className="flex gap-x-4 pt-6">
+                            <Button href={`/dao/${daoId}/create/process`}>Create new</Button>
+                            <Button variant="tertiary" onClick={() => setDialogOpen(false)}>
+                                Cancel
+                            </Button>
                         </div>
-                    </div>
-                    <div className="flex gap-x-4 pt-6">
-                        <Button href={`/dao/${daoId}/create/process`}>Create new</Button>
-                        <Button variant="tertiary" onClick={() => setDialogOpen(false)}>
-                            Cancel
-                        </Button>
                     </div>
                 </Dialog.Content>
             </Dialog.Root>
