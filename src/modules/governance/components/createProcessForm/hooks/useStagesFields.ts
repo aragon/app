@@ -21,6 +21,7 @@ export const useStageFields = (stageName: string, stageIndex: number): StageFiel
         `${basePath}.stageName`,
         {
             label: 'Name',
+            trimOnBlur: true,
             rules: { required: true },
             defaultValue: '',
         },

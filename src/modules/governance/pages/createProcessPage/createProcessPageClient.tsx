@@ -28,7 +28,7 @@ export const defaultBody: ICreateProcessFormBodyData = {
     tokenSymbolField: '',
     membersField: [],
     supportThresholdField: 50,
-    minimumParticipationField: 50,
+    minimumParticipationField: 1,
     voteChangeField: false,
     multisigThresholdField: 1,
 };

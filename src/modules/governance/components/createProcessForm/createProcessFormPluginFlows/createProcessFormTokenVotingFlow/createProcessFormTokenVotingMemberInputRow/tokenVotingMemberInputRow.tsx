@@ -1,11 +1,10 @@
-import { AddressInput, Button, Dropdown, IconType, InputNumber } from '@aragon/ods';
+import { AddressInput, addressUtils, Button, Dropdown, IconType, InputNumber } from '@aragon/ods';
 import { useState } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 export interface ITokenVotingMemberInputRowProps {
     index: number;
     fieldNamePrefix: string;
-    tokenSymbol: string;
     handleRemoveMember: (index: number) => void;
     canRemove: boolean;
 }
@@ -13,7 +12,6 @@ export interface ITokenVotingMemberInputRowProps {
 export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps> = ({
     index,
     fieldNamePrefix,
-    tokenSymbol,
     handleRemoveMember,
     canRemove,
 }) => {
@@ -26,44 +24,61 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
     const [receiverInput, setReceiverInput] = useState<string | undefined>(inputValue?.address);
 
     return (
-        <div className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6">
-            <Controller
-                name={addressFieldName}
-                control={control}
-                rules={{ required: 'Address is required' }}
-                render={({ field: { onChange: onReceiverChange }, fieldState: { error } }) => (
-                    <AddressInput
-                        className="grow"
-                        label="Address"
-                        placeholder="ENS or 0x…"
-                        chainId={1}
-                        value={receiverInput}
-                        onChange={setReceiverInput}
-                        onAccept={onReceiverChange}
-                        alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
-                    />
-                )}
-            />
-
-            <Controller
-                name={tokenAmountFieldName}
-                control={control}
-                rules={{ required: 'Token amount is required', min: { value: 1, message: 'Minimum amount is 1' } }}
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
-                    <InputNumber
-                        label="Tokens"
-                        suffix={tokenSymbol}
-                        min={1}
-                        value={value || 1}
-                        onChange={(newValue: string) => onChange(Number(newValue))}
-                        alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
-                    />
-                )}
-            />
+        <div className="flex items-start gap-x-4 rounded-xl border border-neutral-100 p-6">
+            <div className="flex w-full gap-x-4">
+                <Controller
+                    name={addressFieldName}
+                    control={control}
+                    rules={{
+                        required: 'Address is required',
+                        validate: (value) => addressUtils.isAddress(value?.address),
+                    }}
+                    render={({ field: { onChange: onReceiverChange }, fieldState: { error } }) => (
+                        <AddressInput
+                            label="Address"
+                            placeholder="ENS or 0x…"
+                            chainId={1}
+                            value={receiverInput}
+                            onChange={setReceiverInput}
+                            onAccept={onReceiverChange}
+                            alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
+                            className="w-1/2"
+                        />
+                    )}
+                />
+                <Controller
+                    name={tokenAmountFieldName}
+                    control={control}
+                    rules={{
+                        required: 'Token amount is required',
+                        min: { value: 0.00001, message: 'Minimum amount is 0.00001' },
+                        validate: (value) => value > 0 || 'Amount must be greater than zero',
+                    }}
+                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        <InputNumber
+                            label="Tokens"
+                            value={value !== undefined ? value : ''}
+                            onChange={(newValue: string) => {
+                                // Parse the input as a float. If the input is invalid or empty, set to undefined.
+                                const parsedValue = parseFloat(newValue);
+                                if (isNaN(parsedValue)) {
+                                    onChange(undefined);
+                                } else {
+                                    onChange(parsedValue);
+                                }
+                            }}
+                            alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
+                            className="w-1/2"
+                        />
+                    )}
+                />
+            </div>
 
             {canRemove && (
                 <Dropdown.Container
-                    customTrigger={<Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="self-end" />}
+                    customTrigger={
+                        <Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="mt-[34.5px] shrink-0" />
+                    }
                 >
                     <Dropdown.Item onClick={() => handleRemoveMember(index)}>Remove</Dropdown.Item>
                 </Dropdown.Container>

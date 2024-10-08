@@ -1,32 +1,14 @@
 import { CreateProcessFormBodyDialog } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialog';
 import { CreateProcessFormBodySummary } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary';
-import type {
-    IMultisigVotingMember,
-    IOpenDialogState,
-    ITokenVotingMember,
-} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import type { IOpenDialogState } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { type ICreateProcessFormStageFieldsProps } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
 import { CreateProcessFormTimingDialog } from '@/modules/governance/components/createProcessForm/createProcessFormTimingDialog';
 import { CreateProcessFormTimingSummary } from '@/modules/governance/components/createProcessForm/createProcessFormTimingSummary';
 import { useBodiesFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useBodyFieldArray';
 import { useStageFields } from '@/modules/governance/components/createProcessForm/hooks/useStagesFields';
-import {
-    addressUtils,
-    Button,
-    Card,
-    ChainEntityType,
-    Dropdown,
-    IconType,
-    InputContainer,
-    InputText,
-    Link,
-    RadioCard,
-    RadioGroup,
-    useBlockExplorer,
-} from '@aragon/ods';
+import { Button, Card, Dropdown, IconType, InputContainer, InputText, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
 import { useState } from 'react';
-import { useChainId } from 'wagmi';
 
 export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageFieldsProps> = (props) => {
     const { stagesFieldArray, stageName, stageIndex, stageRemove } = props;
@@ -35,10 +17,6 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         dialogOpen: false,
         editBodyIndex: undefined,
     });
-
-    const chainId = useChainId();
-
-    const { buildEntityUrl } = useBlockExplorer();
 
     const stageFields = useStageFields(stageName, stageIndex);
 
@@ -52,16 +30,6 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
 
     const handleEditBody = (index: number) => {
         setIsBodyDialogOpen({ dialogOpen: true, editBodyIndex: index });
-    };
-
-    const formattedAddressWithBlockExplorer = (memberType?: ITokenVotingMember | IMultisigVotingMember) => {
-        const url = buildEntityUrl({ id: memberType?.address?.address, chainId, type: ChainEntityType.ADDRESS });
-
-        return (
-            <Link href={url} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                {addressUtils.truncateAddress(memberType?.address?.address)}
-            </Link>
-        );
     };
 
     return (
@@ -83,7 +51,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                 </RadioGroup>
 
                 <InputContainer
-                    id={`timingSummary.${name}.${stageIndex}`}
+                    id={`timingSummary.${stageName}.${stageIndex}`}
                     useCustomWrapper={true}
                     label="Timing"
                     className="flex w-full flex-col items-start gap-y-3"
@@ -112,7 +80,6 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                             removeBody={removeBody}
                             stageName={stageName}
                             stageIndex={stageIndex}
-                            formattedAddressWithBlockExplorer={formattedAddressWithBlockExplorer}
                             onEditBody={handleEditBody}
                         />
                     )}

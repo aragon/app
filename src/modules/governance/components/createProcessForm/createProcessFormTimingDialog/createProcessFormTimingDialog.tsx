@@ -44,10 +44,10 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
             onOpenChange={() => setIsTimingDialogOpen(false)}
             aria-describedby="Edit timing of governance process stage."
         >
-            <Dialog.Header title="Timing" />
+            <Dialog.Header title="Edit timing" />
             <Dialog.Content
                 aria-describedby="Edit timing of governance process stage."
-                className="flex flex-col gap-6 pb-4"
+                className="flex flex-col gap-6 py-4"
             >
                 <InputContainer
                     id={votingPeriodField.name}

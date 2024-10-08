@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ICreateProcessFormBodySummaryProps } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary/createProcessFormBodySummary.api';
-import type {
-    IMultisigVotingMember,
-    ITokenVotingMember,
-} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import type { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import {
     Accordion,
     Button,
@@ -19,7 +16,7 @@ import {
 import { useWatch } from 'react-hook-form';
 
 export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummaryProps> = (props) => {
-    const { stageName, stageIndex, removeBody, formattedAddressWithBlockExplorer, onEditBody } = props;
+    const { stageName, stageIndex, removeBody, onEditBody } = props;
 
     const bodyNamePrefix = `${stageName}.${stageIndex}.bodies`;
 
@@ -44,15 +41,6 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                             <DefinitionList.Item term="Distribution">
                                                 {field.members?.length}{' '}
                                                 {field.members?.length > 1 ? 'token holders' : 'token holder'}
-                                                <ul className="flex flex-col gap-y-2 px-4 py-2">
-                                                    {field.members?.map(
-                                                        (member: ITokenVotingMember, memberIndex: number) => (
-                                                            <li key={memberIndex}>
-                                                                {formattedAddressWithBlockExplorer(member)}
-                                                            </li>
-                                                        ),
-                                                    )}
-                                                </ul>
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Supply">
                                                 {formatterUtils.formatNumber(
@@ -65,11 +53,11 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                                 )}{' '}
                                                 ${field.tokenSymbolField}
                                             </DefinitionList.Item>
-                                            <DefinitionList.Item term="Approval threshold">
-                                                {field.supportThresholdField}%
+                                            <DefinitionList.Item term="Support threshold">
+                                                {`> ${field.supportThresholdField}%`}
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Minimum participation">
-                                                {field.minimumParticipationField}%
+                                                {`≥ ${field.minimumParticipationField}%`}
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Voting change">
                                                 <Tag
@@ -86,15 +74,6 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                             <DefinitionList.Item term="Multisig Members">
                                                 {field.members?.length}{' '}
                                                 {field.members?.length > 1 ? 'members' : 'member'}
-                                                <ul className="flex flex-col gap-y-2 px-4 py-2">
-                                                    {field.members?.map(
-                                                        (member: IMultisigVotingMember, memberIndex: number) => (
-                                                            <li key={memberIndex}>
-                                                                {formattedAddressWithBlockExplorer(member)}
-                                                            </li>
-                                                        ),
-                                                    )}
-                                                </ul>
                                             </DefinitionList.Item>
                                             <DefinitionList.Item term="Multisig Threshold">
                                                 {field.multisigThresholdField} of {field.members?.length}

@@ -8,12 +8,14 @@ export interface ICreateProcessFormMetadataProps {}
 export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps> = () => {
     const nameField = useFormField<ICreateProcessFormData, 'processName'>('processName', {
         label: 'Name',
+        trimOnBlur: true,
         rules: { required: true },
         defaultValue: '',
     });
 
     const idField = useFormField<ICreateProcessFormData, 'processId'>('processId', {
         label: 'ID',
+        trimOnBlur: true,
         rules: { required: true },
         defaultValue: '',
     });
@@ -35,9 +37,19 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
                 helpText="Define a prefix for this governance process to have an unique ID. Something like DPF, which leads to PDF-42 and counting up for each proposal."
                 placeholder="Type an ID"
                 maxLength={5}
-                addon="-42"
+                addon={idField.value != '' ? '-01' : undefined}
                 addonPosition="right"
                 {...idField}
+                onChange={(e) => {
+                    const upperValue = e.target.value.toUpperCase();
+                    idField.onChange({
+                        ...e,
+                        target: {
+                            ...e.target,
+                            value: upperValue,
+                        },
+                    });
+                }}
             />
             <TextArea
                 helpText="Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand."

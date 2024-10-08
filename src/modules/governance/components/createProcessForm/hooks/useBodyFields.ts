@@ -31,6 +31,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
     >(`${basePath}.tokenNameField`, {
         label: 'Name',
         defaultValue: '',
+        trimOnBlur: true,
         rules: { required: true },
     });
 
@@ -40,6 +41,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
     >(`${basePath}.tokenSymbolField`, {
         label: 'Symbol',
         defaultValue: '',
+        trimOnBlur: true,
         rules: {
             maxLength: 10,
             required: true,
@@ -60,7 +62,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
         `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.minimumParticipationField`
     >(`${basePath}.minimumParticipationField`, {
         label: 'Minimum participation',
-        defaultValue: 50,
+        defaultValue: 1,
     });
 
     const voteChangeField = useFormField<

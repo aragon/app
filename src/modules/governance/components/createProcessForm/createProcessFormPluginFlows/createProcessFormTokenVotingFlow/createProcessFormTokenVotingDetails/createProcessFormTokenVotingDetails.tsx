@@ -15,8 +15,7 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
     stageIndex,
     bodyIndex,
 }) => {
-    const { watch, control } = useFormContext();
-    const tokenSymbol = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`);
+    const { control } = useFormContext();
 
     const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(stageName, stageIndex, bodyIndex);
 
@@ -38,6 +37,7 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
                 render={({ field }) => (
                     <InputText
                         {...field}
+                        label="Token name"
                         placeholder="Enter a name"
                         helpText="The full name of the token. For example: Uniswap"
                     />
@@ -50,7 +50,10 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
                 render={({ field }) => (
                     <InputText
                         {...field}
-                        maxLength={10}
+                        value={field.value ? field.value.toUpperCase() : ''}
+                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        maxLength={8}
+                        label="Token Symbol"
                         placeholder="Enter a symbol"
                         helpText="The abbreviation of the token. For example: UNI"
                     />
@@ -68,7 +71,6 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
                         key={field.id}
                         index={index}
                         fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.members.${index}`}
-                        tokenSymbol={tokenSymbol}
                         handleRemoveMember={() => handleRemoveMember(index)}
                         canRemove={membersFieldArray.length > 1}
                     />

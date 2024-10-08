@@ -16,13 +16,33 @@ export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSu
     const { votingPeriodField, earlyStageField, stageExpirationField, stageExpirationPeriodField, stageTypeField } =
         useStageFields(stageName, stageIndex);
 
+    const formatDuration = (duration: IDateDuration): string => {
+        const units = [
+            { value: duration.days, label: 'days' },
+            { value: duration.hours, label: 'hours' },
+            { value: duration.minutes, label: 'minutes' },
+        ];
+
+        while (units.length > 0 && units[0].value === 0) {
+            units.shift();
+        }
+
+        while (units.length > 0 && units[units.length - 1].value === 0) {
+            units.pop();
+        }
+
+        if (units.length === 0) {
+            return '0 minutes';
+        }
+
+        return units.map((unit) => `${unit.value} ${unit.label}`).join(', ');
+    };
+
     return (
         <>
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
                 <DefinitionList.Item term="Voting period">
-                    {`${(votingPeriodField.value as IDateDuration).days} days, ${
-                        (votingPeriodField.value as IDateDuration).hours
-                    } hours, ${(votingPeriodField.value as IDateDuration).minutes} minutes`}
+                    {formatDuration(votingPeriodField.value as IDateDuration)}
                 </DefinitionList.Item>
                 {stageTypeField.value === 'normal' && (
                     <DefinitionList.Item term="Early stage advance">
@@ -42,9 +62,7 @@ export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSu
                 </DefinitionList.Item>
                 {stageExpirationField.value && (
                     <DefinitionList.Item term="Expiration period">
-                        {`${(stageExpirationPeriodField.value as IDateDuration).days} days, ${
-                            (stageExpirationPeriodField.value as IDateDuration).hours
-                        } hours, ${(stageExpirationPeriodField.value as IDateDuration).minutes} minutes`}
+                        {formatDuration(stageExpirationPeriodField.value as IDateDuration)}
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>

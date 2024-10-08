@@ -74,15 +74,14 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                         />
                         <div className="flex w-5/6 grow items-center gap-x-1">
                             <Tag label="Yes" variant="primary" />
-                            <Progress
-                                value={supportThresholdField.value}
-                                thresholdIndicator={supportThresholdField.value}
-                            />
+                            <Progress value={supportThresholdField.value} />
                             <Tag label="No" variant="neutral" />
                         </div>
                     </div>
-                    {supportThresholdField.value >= 50 && (
+                    {supportThresholdField.value >= 50 ? (
                         <AlertInline variant="success" message="Proposal will be approved by majority" />
+                    ) : (
+                        <AlertInline variant="warning" message="Proposal will be approved by minority" />
                     )}
                 </Card>
             </InputContainer>
@@ -96,7 +95,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                 <Card className="flex flex-col border border-neutral-100 p-6">
                     <div className="flex items-center justify-between gap-x-6">
                         <InputNumber
-                            prefix={minimumParticipationField.value == 100 ? undefined : '>'}
+                            prefix={minimumParticipationField.value == 100 ? undefined : '≥'}
                             suffix="%"
                             min={1}
                             max={100}

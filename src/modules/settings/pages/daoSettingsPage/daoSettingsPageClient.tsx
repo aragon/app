@@ -5,7 +5,7 @@ import { DaoMembersInfo } from '@/modules/settings/components/daoMembersInfo';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Card, Dialog, IllustrationObject } from '@aragon/ods';
+import { Button, Card, Dialog, Heading, IllustrationObject } from '@aragon/ods';
 import { useState } from 'react';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
@@ -61,40 +61,53 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 </Page.Section>
             </Page.Aside>
             <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
-                <Dialog.Header title="Create governance process" />
-                <Dialog.Content className="flex flex-col gap-4">
-                    <p className="text-base font-normal leading-normal text-neutral-500">
-                        Define any kind of governance process to help your onchain organisation making great decisions
-                        and only allow to execute what it’s right for certain decisions 😉
-                    </p>
-                    <div className="flex flex-col gap-4">
-                        <div className="flex items-center gap-2">
-                            <IllustrationObject className="size-16" object="LABELS" />
-                            <p className="grow text-lg font-normal leading-normal text-neutral-800">
+                <Dialog.Content className="flex flex-col gap-y-6 py-8">
+                    <div className="flex flex-col gap-y-3">
+                        <Heading size="h3">Create governance process</Heading>
+                        <p className="text-base font-normal leading-normal text-neutral-500">
+                            Define any kind of governance process to help your onchain organisation making great
+                            decisions and only allow to execute what it’s right for certain decisions 😉
+                        </p>
+                    </div>
+                    <div className="flex flex-col">
+                        <div className="flex items-center gap-x-6 py-4">
+                            <IllustrationObject
+                                className="size-16 rounded-full border border-neutral-100"
+                                object="LABELS"
+                            />
+                            <p className="grow py-4 text-lg font-normal leading-normal text-neutral-800">
                                 Describe governance process
                             </p>
                             <p className="text-base font-normal leading-normal text-neutral-500">Step 1</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <IllustrationObject className="size-16" object="USERS" />
-                            <p className="grow text-lg font-normal leading-normal text-neutral-800">
+                        <div className="flex items-center gap-x-6 py-4">
+                            <IllustrationObject
+                                className="size-16 rounded-full border border-neutral-100"
+                                object="USERS"
+                            />
+                            <p className="grow py-4 text-lg font-normal leading-normal text-neutral-800">
                                 Setup governance process
                             </p>
                             <p className="text-base font-normal leading-normal text-neutral-500">Step 2</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <IllustrationObject className="size-16" object="SETTINGS" />
-                            <p className="grow text-lg font-normal leading-normal text-neutral-800">
+                        <div className="flex items-center gap-x-6 py-4">
+                            <IllustrationObject
+                                className="size-16 rounded-full border border-neutral-100"
+                                object="SETTINGS"
+                            />
+                            <p className="grow py-4 text-lg font-normal leading-normal text-neutral-800">
                                 Manage permissions
                             </p>
                             <p className="text-base font-normal leading-normal text-neutral-500">Step 3</p>
                         </div>
                     </div>
+                    <div className="flex gap-x-4 pt-6">
+                        <Button href={`/dao/${daoId}/create/process`}>Create new</Button>
+                        <Button variant="tertiary" onClick={() => setDialogOpen(false)}>
+                            Cancel
+                        </Button>
+                    </div>
                 </Dialog.Content>
-                <Dialog.Footer
-                    primaryAction={{ label: 'Create new', href: `/dao/${daoId}/create/process` }}
-                    secondaryAction={{ label: 'Cancel', onClick: () => setDialogOpen(false) }}
-                />
             </Dialog.Root>
         </>
     );

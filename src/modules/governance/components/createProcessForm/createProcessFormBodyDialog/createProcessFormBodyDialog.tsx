@@ -157,7 +157,7 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
             onPointerDownOutside={handleCancel}
         >
             <Dialog.Header title="Add voting body" onCloseClick={handleCancel} />
-            <Dialog.Content className="flex flex-col gap-6 pb-1.5">
+            <Dialog.Content className="flex flex-col gap-6 pb-1.5 pt-6">
                 {handleStepContent(step)}
                 <div className="flex w-full justify-between">
                     <Button variant="tertiary" onClick={step === 0 ? handleCancel : () => setStep(step - 1)}>

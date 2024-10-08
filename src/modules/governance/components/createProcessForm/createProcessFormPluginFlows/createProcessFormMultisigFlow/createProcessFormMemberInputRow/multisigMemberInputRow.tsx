@@ -1,4 +1,4 @@
-import { AddressInput, Button, Dropdown, IconType } from '@aragon/ods';
+import { AddressInput, addressUtils, Button, Dropdown, IconType } from '@aragon/ods';
 import { useState } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
@@ -27,7 +27,7 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
             <Controller
                 name={addressFieldName}
                 control={control}
-                rules={{ required: 'Address is required' }}
+                rules={{ required: 'Address is required', validate: (value) => addressUtils.isAddress(value?.address) }}
                 render={({ field: { onChange: onMemberChange }, fieldState: { error } }) => (
                     <AddressInput
                         className="grow"
