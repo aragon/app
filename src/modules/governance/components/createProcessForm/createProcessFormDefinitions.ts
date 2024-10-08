@@ -148,3 +148,14 @@ export interface ICreateProcessFormBodyNameProps {
      */
     bodyIndex: number;
 }
+
+export type StageInputItemBaseForm = Record<string, any>;
+
+export interface IStageFields {
+    stageNameField: ReturnType<typeof useFormField>;
+    stageTypeField: ReturnType<typeof useFormField>;
+    votingPeriodField: ReturnType<typeof useFormField>;
+    earlyStageField: ReturnType<typeof useFormField>;
+    stageExpirationField: ReturnType<typeof useFormField>;
+    stageExpirationPeriodField: ReturnType<typeof useFormField>;
+}

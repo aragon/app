@@ -1,20 +1,12 @@
 // src/hooks/useStageFields.ts
+import {
+    IStageFields,
+    StageInputItemBaseForm,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type StageInputItemBaseForm = Record<string, any>;
-
-interface StageFields {
-    stageNameField: ReturnType<typeof useFormField>;
-    stageTypeField: ReturnType<typeof useFormField>;
-    votingPeriodField: ReturnType<typeof useFormField>;
-    earlyStageField: ReturnType<typeof useFormField>;
-    stageExpirationField: ReturnType<typeof useFormField>;
-    stageExpirationPeriodField: ReturnType<typeof useFormField>;
-}
-
-export const useStageFields = (stageName: string, stageIndex: number): StageFields => {
+export const useStageFields = (stageName: string, stageIndex: number): IStageFields => {
     const basePath = `${stageName}.${stageIndex}` as const;
 
     const stageNameField = useFormField<StageInputItemBaseForm, `${typeof stageName}.${typeof stageIndex}.stageName`>(

@@ -3,9 +3,9 @@ import { useBodyFields } from '@/modules/governance/components/createProcessForm
 import { RadioCard, RadioGroup } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
 
-export interface ICreateProcessFormPluginSelect extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormPluginSelectProps extends ICreateProcessFormBodyNameProps {}
 
-export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSelect> = (props) => {
+export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSelectProps> = (props) => {
     const { stageName, stageIndex, bodyIndex } = props;
 
     const { setValue } = useFormContext();
