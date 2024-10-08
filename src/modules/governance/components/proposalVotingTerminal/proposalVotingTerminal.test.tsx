@@ -50,11 +50,7 @@ describe('<ProposalVotingTerminal /> component', () => {
     });
 
     it('renders the list of votes when proposal status is not pending or unreached', async () => {
-        render(
-            createTestComponent({
-                status: ProposalStatus.ACTIVE,
-            }),
-        );
+        render(createTestComponent({ status: ProposalStatus.ACTIVE }));
         await userEvent.click(screen.getByRole('tab', { name: 'Votes' }));
         expect(screen.getByTestId('vote-list-mock')).toBeInTheDocument();
     });
