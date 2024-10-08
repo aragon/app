@@ -3,7 +3,6 @@ import { type ISppProposal, type ISppStage, SppStageStatus } from '../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
-        // Maybe we should use .utc() instead of .now()??
         const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal);
         const stageEndDate = this.getStageEndDate(proposal, stage);
@@ -12,28 +11,20 @@ class SppStageUtils {
             return SppStageStatus.VETOED;
         }
 
-        if (stageStartDate > now && this.isProposalActive(proposal, stage)) {
-            return SppStageStatus.PENDING;
-        }
-
-        if (stageStartDate > now && !this.isProposalActive(proposal, stage)) {
-            return SppStageStatus.INACTIVE;
-        }
-
-        if (this.isStageRejected(proposal, stage)) {
-            return SppStageStatus.REJECTED;
+        if (stageStartDate > now) {
+            return this.isProposalActive(proposal, stage) ? SppStageStatus.PENDING : SppStageStatus.INACTIVE;
         }
 
         if (now >= stageStartDate && now < stageEndDate) {
             return SppStageStatus.ACTIVE;
         }
 
-        if (this.isStageAccepted(proposal, stage)) {
-            return SppStageStatus.ACCEPTED;
+        if (this.isStageRejected(proposal, stage)) {
+            return SppStageStatus.REJECTED;
         }
 
-        if (this.isStageExpired(proposal, stage)) {
-            return SppStageStatus.EXPIRED;
+        if (this.isStageAccepted(proposal, stage)) {
+            return this.isStageExpired(proposal, stage) ? SppStageStatus.EXPIRED : SppStageStatus.ACCEPTED;
         }
 
         return SppStageStatus.INACTIVE;
