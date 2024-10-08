@@ -33,4 +33,8 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * Settings of the DAO plugin.
      */
     settings: TSettings;
+    /**
+     * Address of the parent plugin's smart contract.
+     */
+    parentPlugin?: string;
 }

@@ -1,4 +1,5 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
+import type { ISppPluginSettings } from './sppPluginSettings';
 import type { ISppSubProposal } from './sppSubProposal';
 import type { ISppPluginSettings } from './sppPluginSettings';
 

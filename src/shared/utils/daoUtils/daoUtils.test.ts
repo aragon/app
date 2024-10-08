@@ -114,8 +114,8 @@ describe('dao utils', () => {
         it('only returns body plugins when plugin type is set to body', () => {
             const plugins = [
                 generateDaoPlugin({ subdomain: 'spp', isBody: false }),
-                generateDaoPlugin({ subdomain: 'multisig', isBody: true, isSubPlugin: true }),
-                generateDaoPlugin({ subdomain: 'token', isBody: true, isSubPlugin: true }),
+                generateDaoPlugin({ subdomain: 'multisig', isBody: true }),
+                generateDaoPlugin({ subdomain: 'token', isBody: true }),
             ];
             const dao = generateDao({ plugins });
             const type = PluginType.BODY;
@@ -131,6 +131,44 @@ describe('dao utils', () => {
             const dao = generateDao({ plugins });
             const type = PluginType.PROCESS;
             expect(daoUtils.getDaoPlugins(dao, { type })).toEqual([plugins[0], plugins[1]]);
+        });
+
+        it('includes sub-plugins when includeSubPlugins is true', () => {
+            const plugins = [
+                generateDaoPlugin({ subdomain: 'spp', isProcess: true, isSubPlugin: false }),
+                generateDaoPlugin({ subdomain: 'multisig', isProcess: true, isSubPlugin: false }),
+                generateDaoPlugin({ subdomain: 'sub-plugin', isProcess: true, isSubPlugin: true }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao, { includeSubPlugins: true })).toEqual(plugins);
+        });
+
+        it('excludes sub-plugins when includeSubPlugins is false', () => {
+            const plugins = [
+                generateDaoPlugin({ subdomain: 'spp', isProcess: true, isSubPlugin: false }),
+                generateDaoPlugin({ subdomain: 'multisig', isProcess: true, isSubPlugin: false }),
+                generateDaoPlugin({ subdomain: 'sub-plugin', isProcess: true, isSubPlugin: true }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao, { includeSubPlugins: false })).toEqual([plugins[0], plugins[1]]);
+        });
+
+        it('correctly filters by type and includes sub-plugins when specified', () => {
+            const plugins = [
+                generateDaoPlugin({ subdomain: 'spp', isProcess: true, isSubPlugin: false }),
+                generateDaoPlugin({ subdomain: 'token', isBody: true, isSubPlugin: false }),
+                generateDaoPlugin({ subdomain: 'sub-process', isProcess: true, isSubPlugin: true }),
+                generateDaoPlugin({ subdomain: 'sub-body', isBody: true, isSubPlugin: true }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS, includeSubPlugins: true })).toEqual([
+                plugins[0],
+                plugins[2],
+            ]);
+            expect(daoUtils.getDaoPlugins(dao, { type: PluginType.BODY, includeSubPlugins: true })).toEqual([
+                plugins[1],
+                plugins[3],
+            ]);
         });
     });
 });
