@@ -1,5 +1,5 @@
 // src/hooks/useStageFields.ts
-import {
+import type {
     IStageFields,
     StageInputItemBaseForm,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';

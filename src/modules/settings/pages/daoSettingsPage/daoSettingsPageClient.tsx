@@ -96,7 +96,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                                     className="size-16 rounded-full border border-neutral-100"
                                     object="SETTINGS"
                                 />
-                                <p className="t grow py-4 font-normal leading-normal text-neutral-800">
+                                <p className="grow py-4 font-normal leading-normal text-neutral-800">
                                     Manage permissions
                                 </p>
                                 <p className="text-base font-normal leading-normal text-neutral-500">Step 3</p>
