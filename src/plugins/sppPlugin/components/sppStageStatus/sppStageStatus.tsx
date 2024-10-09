@@ -42,30 +42,31 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const maxAdvanceTime = DateTime.fromSeconds(proposal.lastStageTransition + stage.maxAdvance);
     const formattedMaxAdvance = formatterUtils.formatDate(maxAdvanceTime, { format: DateFormat.DURATION });
 
+    const displayAdvanceTime = maxAdvanceTime.diffNow().days < 90;
+
     if (!canAdvanceStage && !canVote) {
         return null;
     }
 
+    // Only render the plugin-specific vote button when stage cannot be advanced yet and user can vote
     if (canVote && !canAdvanceStage) {
-        return (
-            <PluginSingleComponent
-                slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                pluginId={subProposal.pluginSubdomain}
-                proposal={subProposal}
-                daoId={daoId}
-            />
-        );
+        const slotId = GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE;
+        const { pluginSubdomain: pluginId } = subProposal;
+
+        return <PluginSingleComponent slotId={slotId} pluginId={pluginId} proposal={subProposal} daoId={daoId} />;
     }
 
     return (
-        <div className="mt-4 flex flex-col gap-3 md:self-start">
+        <div className="mt-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <Button variant="primary" size="md" onClick={handleAdvanceStage}>
                 {t('app.plugins.spp.sppStageStatus.button.advance')}
             </Button>
-            <div className="flex flex-row justify-center gap-0.5">
-                <span className="text-neutral-800">{formattedMaxAdvance}</span>
-                <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceInfo')}</span>
-            </div>
+            {displayAdvanceTime && (
+                <div className="flex flex-row justify-center gap-0.5">
+                    <span className="text-neutral-800">{formattedMaxAdvance}</span>
+                    <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceInfo')}</span>
+                </div>
+            )}
             <AdvanceStageDialog open={isAdvanceDialogOpen} onOpenChange={setIsAdvanceDialogOpen} proposal={proposal} />
         </div>
     );
