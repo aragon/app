@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ICreateProcessFormBodySummaryProps } from '@/modules/governance/components/createProcessForm/createProcessFormBodySummary/createProcessFormBodySummary.api';
 import type { ITokenVotingMember } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     Accordion,
     Button,
@@ -17,6 +18,8 @@ import { useWatch } from 'react-hook-form';
 
 export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummaryProps> = (props) => {
     const { stageName, stageIndex, removeBody, onEditBody } = props;
+
+    const { t } = useTranslations();
 
     const bodyNamePrefix = `${stageName}.${stageIndex}.bodies`;
 
@@ -35,14 +38,32 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                 <DefinitionList.Container className="w-full">
                                     {field.bodyGovernanceTypeField === 'tokenVoting' && (
                                         <>
-                                            <DefinitionList.Item term="Token">
+                                            <DefinitionList.Item
+                                                term={t(
+                                                    'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.token',
+                                                )}
+                                            >
                                                 {field.tokenNameField} (${field.tokenSymbolField})
                                             </DefinitionList.Item>
-                                            <DefinitionList.Item term="Distribution">
+                                            <DefinitionList.Item
+                                                term={t(
+                                                    'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.distribution',
+                                                )}
+                                            >
                                                 {field.members?.length}{' '}
-                                                {field.members?.length > 1 ? 'token holders' : 'token holder'}
+                                                {field.members?.length > 1
+                                                    ? t(
+                                                          'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.plural',
+                                                      )
+                                                    : t(
+                                                          'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.single',
+                                                      )}
                                             </DefinitionList.Item>
-                                            <DefinitionList.Item term="Supply">
+                                            <DefinitionList.Item
+                                                term={t(
+                                                    'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.supply',
+                                                )}
+                                            >
                                                 {formatterUtils.formatNumber(
                                                     field.members?.reduce(
                                                         (sum: number, member: ITokenVotingMember) =>
@@ -53,15 +74,35 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                                 )}{' '}
                                                 ${field.tokenSymbolField}
                                             </DefinitionList.Item>
-                                            <DefinitionList.Item term="Support threshold">
+                                            <DefinitionList.Item
+                                                term={t(
+                                                    'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.support',
+                                                )}
+                                            >
                                                 {`> ${field.supportThresholdField}%`}
                                             </DefinitionList.Item>
-                                            <DefinitionList.Item term="Minimum participation">
+                                            <DefinitionList.Item
+                                                term={t(
+                                                    'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.minimum',
+                                                )}
+                                            >
                                                 {`≥ ${field.minimumParticipationField}%`}
                                             </DefinitionList.Item>
-                                            <DefinitionList.Item term="Voting change">
+                                            <DefinitionList.Item
+                                                term={t(
+                                                    'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.voteChange',
+                                                )}
+                                            >
                                                 <Tag
-                                                    label={field.voteChangeField ? 'Yes' : 'No'}
+                                                    label={
+                                                        field.voteChangeField
+                                                            ? t(
+                                                                  'app.governance.createProcessForm.stage.bodies.summary.no',
+                                                              )
+                                                            : t(
+                                                                  'app.governance.createProcessForm.stage.bodies.summary.no',
+                                                              )
+                                                    }
                                                     variant={field.voteChangeField ? 'primary' : 'neutral'}
                                                     className="max-w-fit"
                                                 />
@@ -71,11 +112,25 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
 
                                     {field.bodyGovernanceTypeField === 'multisig' && (
                                         <>
-                                            <DefinitionList.Item term="Multisig Members">
+                                            <DefinitionList.Item
+                                                term={t(
+                                                    'app.governance.createProcessForm.stage.bodies.summary.multisig.members',
+                                                )}
+                                            >
                                                 {field.members?.length}{' '}
-                                                {field.members?.length > 1 ? 'members' : 'member'}
+                                                {field.members?.length > 1
+                                                    ? t(
+                                                          'app.governance.createProcessForm.stage.bodies.summary.multisig.plural',
+                                                      )
+                                                    : t(
+                                                          'app.governance.createProcessForm.stage.bodies.summary.multisig.single',
+                                                      )}
                                             </DefinitionList.Item>
-                                            <DefinitionList.Item term="Multisig Threshold">
+                                            <DefinitionList.Item
+                                                term={t(
+                                                    'app.governance.createProcessForm.stage.bodies.summary.multisig.threshold',
+                                                )}
+                                            >
                                                 {field.multisigThresholdField} of {field.members?.length}
                                             </DefinitionList.Item>
                                         </>
@@ -88,7 +143,7 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                         size="md"
                                         onClick={() => onEditBody(index)}
                                     >
-                                        Edit
+                                        {t('app.governance.createProcessForm.stage.bodies.summary.edit')}
                                     </Button>
                                     <Dropdown.Container
                                         constrainContentWidth={false}
@@ -100,7 +155,7 @@ export const CreateProcessFormBodySummary: React.FC<ICreateProcessFormBodySummar
                                                 size="md"
                                                 iconRight={IconType.DOTS_VERTICAL}
                                             >
-                                                More
+                                                {t('app.governance.createProcessForm.stage.bodies.summary.more')}
                                             </Button>
                                         }
                                     >

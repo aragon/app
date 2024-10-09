@@ -3,16 +3,19 @@ import type {
     IStageFields,
     StageInputItemBaseForm,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 
 export const useStageFields = (stageName: string, stageIndex: number): IStageFields => {
     const basePath = `${stageName}.${stageIndex}` as const;
 
+    const { t } = useTranslations();
+
     const stageNameField = useFormField<StageInputItemBaseForm, `${typeof stageName}.${typeof stageIndex}.stageName`>(
         `${basePath}.stageName`,
         {
-            label: 'Name',
+            label: t('app.governance.createProcessForm.stage.name.label'),
             trimOnBlur: true,
             rules: { required: true },
             defaultValue: '',
@@ -31,7 +34,7 @@ export const useStageFields = (stageName: string, stageIndex: number): IStageFie
         Record<string, IDateDuration>,
         `${typeof stageName}.${typeof stageIndex}.votingPeriod`
     >(`${basePath}.votingPeriod`, {
-        label: 'Voting Period',
+        label: t('app.governance.createProcessForm.stage.timing.dialog.votingPeriod.label'),
         // @ts-expect-error - This is a valid default value
         defaultValue: {
             days: 7,
@@ -44,7 +47,7 @@ export const useStageFields = (stageName: string, stageIndex: number): IStageFie
         StageInputItemBaseForm,
         `${typeof stageName}.${typeof stageIndex}.earlyStageAdvance`
     >(`${basePath}.earlyStageAdvance`, {
-        label: 'Early stage advance',
+        label: t('app.governance.createProcessForm.stage.timing.dialog.earlyAdvance.label'),
         defaultValue: false,
     });
 
@@ -52,7 +55,7 @@ export const useStageFields = (stageName: string, stageIndex: number): IStageFie
         StageInputItemBaseForm,
         `${typeof stageName}.${typeof stageIndex}.stageExpiration`
     >(`${basePath}.stageExpiration`, {
-        label: 'Stage expiration',
+        label: t('app.governance.createProcessForm.stage.timing.dialog.expiration.label'),
         defaultValue: false,
     });
 

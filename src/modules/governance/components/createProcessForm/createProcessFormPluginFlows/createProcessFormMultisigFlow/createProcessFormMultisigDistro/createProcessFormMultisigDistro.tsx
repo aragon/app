@@ -2,13 +2,20 @@ import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/compo
 import { MultisigMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMemberInputRow/multisigMemberInputRow';
 import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
 import { Button, IconType, InputContainer } from '@aragon/ods';
+import { useEffect } from 'react';
 
-export interface ICreateProcessFormMultisigDetailsProps extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormMultisigDistroProps extends ICreateProcessFormBodyNameProps {}
 
-export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultisigDetailsProps> = (props) => {
+export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisigDistroProps> = (props) => {
     const { stageName, stageIndex, bodyIndex } = props;
 
-    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(stageName, stageIndex, bodyIndex);
+    const useMembersFieldArrayProps = {
+        stageName,
+        stageIndex,
+        bodyIndex,
+    };
+
+    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(useMembersFieldArrayProps);
 
     const handleAddMember = () => {
         appendMember({});
@@ -19,6 +26,13 @@ export const CreateProcessFormMultisigDetails: React.FC<ICreateProcessFormMultis
             removeMember(index);
         }
     };
+
+    useEffect(() => {
+        if (membersFieldArray.length === 0) {
+            handleAddMember();
+        }
+    });
+
     return (
         <>
             <InputContainer

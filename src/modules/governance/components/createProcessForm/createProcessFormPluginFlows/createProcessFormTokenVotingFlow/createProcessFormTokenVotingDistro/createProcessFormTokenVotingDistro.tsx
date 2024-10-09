@@ -3,15 +3,22 @@ import { TokenVotingMemberInputRow } from '@/modules/governance/components/creat
 import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
 import { Button, IconType, InputContainer, InputText, RadioCard, RadioGroup } from '@aragon/ods';
 import type React from 'react';
+import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-export interface ICreateProcessFormTokenVotingDetailsProps extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormTokenVotingDistroProps extends ICreateProcessFormBodyNameProps {}
 
-export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTokenVotingDetailsProps> = (props) => {
+export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormTokenVotingDistroProps> = (props) => {
     const { stageName, stageIndex, bodyIndex } = props;
     const { control } = useFormContext();
 
-    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(stageName, stageIndex, bodyIndex);
+    const useMembersFieldArrayProps = {
+        stageName,
+        stageIndex,
+        bodyIndex,
+    };
+
+    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(useMembersFieldArrayProps);
 
     const handleAddMember = () => {
         appendMember({ tokenAmount: 1 });
@@ -23,12 +30,18 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
         }
     };
 
+    useEffect(() => {
+        if (membersFieldArray.length === 0) {
+            handleAddMember();
+        }
+    });
+
     return (
         <>
             <InputContainer
                 id="token"
                 label="ERC-20 token"
-                helpText="Import or create a new ERC-20 token, which is used for this Token Voting Plugin"
+                helpText="Import or create a new ERC-20 token, which is used for this Token Voting plugin"
                 useCustomWrapper={true}
             >
                 <RadioGroup defaultValue="createToken" className="w-full">
@@ -47,25 +60,19 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
             <Controller
                 name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenNameField`}
                 control={control}
-                render={({ field }) => (
+                render={({ field, fieldState: { error } }) => (
                     <InputText
                         {...field}
                         label="Token name"
                         placeholder="Enter a name"
                         helpText="The full name of the token. For example: Uniswap"
+                        alert={error ? { message: error.message ?? '', variant: 'critical' } : undefined}
                     />
                 )}
             />
             <Controller
                 name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`}
                 control={control}
-                rules={{
-                    required: 'Token symbol is required',
-                    pattern: {
-                        value: /^[A-Z]+$/,
-                        message: 'Only alphabetic characters are allowed',
-                    },
-                }}
                 render={({ field, fieldState: { error } }) => (
                     <InputText
                         {...field}
@@ -87,10 +94,11 @@ export const CreateProcessFormTokenVotingDetails: React.FC<ICreateProcessFormTok
                 label="Distribute Tokens"
                 helpText="Add the wallets you'd like to distribute tokens to."
                 useCustomWrapper={true}
+                {...membersFieldArray}
             >
                 {membersFieldArray.map((field, index) => (
                     <TokenVotingMemberInputRow
-                        key={field.id}
+                        key={`member-${index}`}
                         index={index}
                         fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.members.${index}`}
                         handleRemoveMember={() => handleRemoveMember(index)}

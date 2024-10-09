@@ -1,33 +1,57 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { CreateProcessFormBodyDialogSteps } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialog/createProcessFormBodyDialogSteps/createProcessFormBodyDialogSteps';
+import { validateStep } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialog/createProcessFormBodyDialogStepsValidation/createProcessFormBodyDialogStepsValidation';
+import {
+    BodyCreationDialogSteps,
+    CreateProcessFormBodyDialogStepper,
+    orderedBodyCreationDialogSteps,
+} from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialogStepper/createProcessFormBodyDialogStepper';
 import type {
     ICreateProcessFormBodyData,
     IOpenDialogState,
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { CreateProcessFormMultisigDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultisigDetails/createProcessFormMultisigDetails';
-import { CreateProcessFormMultisigParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMultsigParams/createProcessFormMultisigParams';
-import { CreateProcessFormPluginMetadata } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormPluginMetadata/createProcessFormPluginMetadata';
-import { CreateProcessFormPluginSelect } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormPluginSelect/createProcessFormPluginSelect';
-import { CreateProcessFormTokenVotingDetails } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingDetails/createProcessFormTokenVotingDetails';
-import { CreateProcessFormTokenVotingParams } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingParams/createProcessFormTokenVotingParams';
 import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
-import { Button, Dialog } from '@aragon/ods';
+import { Dialog } from '@aragon/ods';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export interface ICreateProcessFormBodyDialogProps {
+    /**
+     * The name of the stage
+     */
     stageName: string;
+    /**
+     * The index of the stage
+     */
     stageIndex: number;
+    /**
+     * Function to remove a body from the stage.
+     */
     removeBody: (index: number) => void;
+    /**
+     * Function to update a body from the stage.
+     */
     updateBody: (index: number, values: ICreateProcessFormBodyData) => void;
+    /**
+     * State to control the dialog open state.
+     */
     isBodyDialogOpen: IOpenDialogState;
+    /**
+     * Function to set the dialog open state.
+     */
     setIsBodyDialogOpen: (value: IOpenDialogState) => void;
 }
 
 export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogProps> = (props) => {
     const { stageName, stageIndex, removeBody, updateBody, isBodyDialogOpen, setIsBodyDialogOpen } = props;
-    const [step, setStep] = useState(isBodyDialogOpen.editBodyIndex != null ? 1 : 0);
-    const { getValues } = useFormContext();
+    const { getValues, setError, trigger } = useFormContext();
+    const [currentStep, setCurrentStep] = useState<BodyCreationDialogSteps>(
+        isBodyDialogOpen.editBodyIndex != null
+            ? BodyCreationDialogSteps.PLUGIN_METADATA
+            : BodyCreationDialogSteps.PLUGIN_SELECT,
+    );
 
     const bodies = getValues(`${stageName}.${stageIndex}.bodies`);
 
@@ -42,7 +66,6 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
     useEffect(() => {
         if (isBodyDialogOpen.dialogOpen) {
             const currentState = getValues(`${stageName}.${stageIndex}.bodies.${bodyIndex}`);
-
             initialStateRef.current = JSON.parse(JSON.stringify(currentState));
         }
     }, [isBodyDialogOpen.dialogOpen, bodyIndex, getValues, stageIndex, stageName]);
@@ -53,92 +76,49 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
         } else if (initialStateRef.current) {
             updateBody(bodyIndex, initialStateRef.current);
         }
-
+        setCurrentStep(BodyCreationDialogSteps.PLUGIN_SELECT);
         setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: undefined });
     };
 
     const handleSave = () => {
-        setStep(0);
-
+        setCurrentStep(BodyCreationDialogSteps.PLUGIN_SELECT);
         setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: undefined });
     };
+    const stepComponentProps = {
+        stageName,
+        stageIndex,
+        bodyIndex,
+        bodyGovernanceType: bodyGovernanceTypeField.value,
+    };
 
-    const handleAdvanceStep = async () => {
-        if (step === 0) {
-            setStep(step + 1);
-        }
+    const currentStepComponent = CreateProcessFormBodyDialogSteps[currentStep](stepComponentProps);
 
-        if (step === 1) {
-            setStep(step + 1);
-        }
+    const totalSteps = orderedBodyCreationDialogSteps.length;
 
-        if (step === 2) {
-            setStep(step + 1);
-        }
+    const handleValidateStep = async (step: BodyCreationDialogSteps): Promise<boolean> => {
+        return await validateStep({
+            step,
+            trigger,
+            getValues,
+            setError,
+            stageName,
+            stageIndex,
+            bodyIndex,
+            bodyGovernanceType: bodyGovernanceTypeField.value,
+        });
+    };
 
-        if (step === 3) {
-            handleSave();
+    const handleNext = () => {
+        const currentIndex = orderedBodyCreationDialogSteps.indexOf(currentStep);
+        if (currentIndex < orderedBodyCreationDialogSteps.length - 1) {
+            setCurrentStep(orderedBodyCreationDialogSteps[currentIndex + 1]);
         }
     };
 
-    const handleStepContent = (step: number) => {
-        switch (step) {
-            case 0:
-                return (
-                    <CreateProcessFormPluginSelect
-                        stageName={stageName}
-                        stageIndex={stageIndex}
-                        bodyIndex={bodyIndex}
-                    />
-                );
-            case 1:
-                return (
-                    <CreateProcessFormPluginMetadata
-                        stageName={stageName}
-                        stageIndex={stageIndex}
-                        bodyIndex={bodyIndex}
-                    />
-                );
-            case 2:
-                if (bodyGovernanceTypeField.value === 'tokenVoting') {
-                    return (
-                        <CreateProcessFormTokenVotingDetails
-                            bodyIndex={bodyIndex}
-                            stageName={stageName}
-                            stageIndex={stageIndex}
-                        />
-                    );
-                } else if (bodyGovernanceTypeField.value === 'multisig') {
-                    return (
-                        <CreateProcessFormMultisigDetails
-                            bodyIndex={bodyIndex}
-                            stageName={stageName}
-                            stageIndex={stageIndex}
-                        />
-                    );
-                }
-                break;
-            case 3:
-                if (bodyGovernanceTypeField.value === 'tokenVoting') {
-                    return (
-                        <CreateProcessFormTokenVotingParams
-                            stageIndex={stageIndex}
-                            stageName={stageName}
-                            bodyIndex={bodyIndex}
-                        />
-                    );
-                } else if (bodyGovernanceTypeField.value === 'multisig') {
-                    return (
-                        <CreateProcessFormMultisigParams
-                            stageIndex={stageIndex}
-                            stageName={stageName}
-                            bodyIndex={bodyIndex}
-                        />
-                    );
-                }
-                break;
-            default:
-                return <></>;
+    const handleBack = () => {
+        const currentIndex = orderedBodyCreationDialogSteps.indexOf(currentStep);
+        if (currentIndex > 0) {
+            setCurrentStep(orderedBodyCreationDialogSteps[currentIndex - 1]);
         }
     };
 
@@ -147,22 +127,24 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
             containerClassName="!max-w-[640px]"
             open={isBodyDialogOpen.dialogOpen}
             onPointerDownOutside={(e) => e.preventDefault()}
+            role="dialog"
+            aria-labelledby="dialog-title"
+            aria-modal="true"
         >
-            <Dialog.Header title="Add voting body" onCloseClick={handleCancel} />
-            <Dialog.Content className="flex flex-col gap-6 pb-1.5 pt-6">
-                {handleStepContent(step)}
-                <div className="flex w-full justify-between">
-                    <Button
-                        variant="tertiary"
-                        disabled={isBodyDialogOpen.editBodyIndex != null && step === 1}
-                        onClick={step === 0 ? handleCancel : () => setStep(step - 1)}
-                    >
-                        {step === 0 ? 'Cancel' : 'Back'}
-                    </Button>
-                    <Button type="submit" onClick={handleAdvanceStep}>
-                        {step === 3 ? 'Save' : 'Next'}
-                    </Button>
-                </div>
+            <Dialog.Header id="dialog-title" title="Add voting body" onCloseClick={handleCancel} />
+            <Dialog.Content>
+                <CreateProcessFormBodyDialogStepper
+                    currentStep={currentStep}
+                    totalSteps={totalSteps}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    onCancel={handleCancel}
+                    onSave={handleSave}
+                    editMode={isBodyDialogOpen.editBodyIndex != null}
+                    validateStep={handleValidateStep}
+                >
+                    {currentStepComponent}
+                </CreateProcessFormBodyDialogStepper>
             </Dialog.Content>
             <Dialog.Footer />
         </Dialog.Root>

@@ -14,7 +14,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
         label: 'Name',
         defaultValue: '',
         trimOnBlur: true,
-        rules: { required: true },
+        rules: { required: 'Name is required' },
     });
 
     const bodySummaryField = useFormField<
@@ -23,8 +23,6 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
     >(`${basePath}.bodySummaryField`, {
         label: 'Summary',
         defaultValue: '',
-
-        rules: { required: true },
     });
 
     const bodyGovernanceTypeField = useFormField<
@@ -42,7 +40,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
         label: 'Name',
         defaultValue: '',
         trimOnBlur: true,
-        rules: { required: true },
+        rules: { required: 'Token name is required' },
     });
 
     const tokenSymbolField = useFormField<
@@ -53,8 +51,11 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
         defaultValue: '',
         trimOnBlur: true,
         rules: {
-            maxLength: 10,
-            required: true,
+            maxLength: {
+                value: 10,
+                message: 'Symbol cannot exceed 10 characters',
+            },
+            required: 'Token symbol is required',
             validate: (value) => /^[A-Za-z]+$/.test(value) || 'Only letters are allowed',
         },
     });
@@ -90,7 +91,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
         label: 'Approval Threshold',
         defaultValue: 1,
         rules: {
-            required: true,
+            required: 'Threshold must be at least 1',
             min: {
                 value: 1,
                 message: 'Threshold must be at least 1',

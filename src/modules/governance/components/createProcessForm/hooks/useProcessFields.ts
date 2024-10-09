@@ -1,21 +1,24 @@
 import type { ProcessInputItemBaseForm } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 
 export const useProcessFields = (stageName: string) => {
     const basePath = `${stageName}` as const;
 
+    const { t } = useTranslations();
+
     const nameField = useFormField<ProcessInputItemBaseForm, `${typeof stageName}.name`>(`${basePath}.name`, {
-        label: 'Name',
+        label: t('app.governance.createProcessForm.process.name.label'),
         trimOnBlur: true,
         rules: { required: true },
         defaultValue: '',
     });
 
-    const idField = useFormField<ProcessInputItemBaseForm, `${typeof stageName}.id`>(`${basePath}.id`, {
-        label: 'ID',
+    const keyField = useFormField<ProcessInputItemBaseForm, `${typeof stageName}.key`>(`${basePath}.key`, {
+        label: t('app.governance.createProcessForm.process.key.label'),
         trimOnBlur: true,
         rules: {
-            required: 'Process ID is required',
+            required: 'Process key is required',
             pattern: {
                 value: /^[A-Z]+$/,
                 message: 'Only alphabetic characters are allowed',
@@ -25,13 +28,13 @@ export const useProcessFields = (stageName: string) => {
     });
 
     const summaryField = useFormField<ProcessInputItemBaseForm, `${typeof stageName}.summary`>(`${basePath}.summary`, {
-        label: 'Summary',
+        label: t('app.governance.createProcessForm.process.summary.label'),
         defaultValue: '',
     });
 
     return {
         nameField,
-        idField,
+        keyField,
         summaryField,
     };
 };

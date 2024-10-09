@@ -1,3 +1,3 @@
 export * from './createProcessFormMemberInputRow';
-export * from './createProcessFormMultisigDetails';
+export * from './createProcessFormMultisigDistro';
 export * from './createProcessFormMultsigParams';

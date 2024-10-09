@@ -43,7 +43,9 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
             />
             {canRemove && (
                 <Dropdown.Container
-                    customTrigger={<Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="self-end" />}
+                    customTrigger={
+                        <Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="mt-[34.5px] shrink-0" />
+                    }
                 >
                     <Dropdown.Item onClick={() => handleRemoveMember(index)}>Remove</Dropdown.Item>
                 </Dropdown.Container>

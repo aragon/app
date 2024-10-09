@@ -1,11 +1,14 @@
 import { CreateProcessFormStageFields } from '@/modules/governance/components/createProcessForm/createProcessFormStageFields';
 import { useStagesFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useStageFieldArray';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType } from '@aragon/ods';
 
 export interface ICreateProcessFormStagesProps {}
 
 export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = () => {
     const stageName = 'stages';
+
+    const { t } = useTranslations();
 
     const { stagesFieldArray, appendStage, removeStage } = useStagesFieldArray(stageName);
 
@@ -32,7 +35,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
                     iconLeft={IconType.PLUS}
                     onClick={() => appendStage({})}
                 >
-                    Add a stage
+                    {t('app.governance.createProcessForm.stage.add')}
                 </Button>
             </div>
         </div>

@@ -6,6 +6,7 @@ import { CreateProcessFormTimingDialog } from '@/modules/governance/components/c
 import { CreateProcessFormTimingSummary } from '@/modules/governance/components/createProcessForm/createProcessFormTimingSummary';
 import { useBodiesFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useBodyFieldArray';
 import { useStageFields } from '@/modules/governance/components/createProcessForm/hooks/useStagesFields';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     Button,
     Card,
@@ -29,6 +30,8 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         editBodyIndex: undefined,
     });
 
+    const { t } = useTranslations();
+
     const stageFields = useStageFields(stageName, stageIndex);
 
     const { stageNameField, stageTypeField, bodyThresholdField } = stageFields;
@@ -47,26 +50,36 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
             <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
                 <InputText
                     maxLength={40}
-                    helpText="Name the stage, so members are able to recognize it"
-                    placeholder="Type a name"
+                    helpText={t('app.governance.createProcessForm.stage.name.helpText')}
+                    placeholder={t('app.governance.createProcessForm.stage.name.placeholder')}
                     {...stageNameField}
                 />
                 <RadioGroup
                     className="flex flex-col gap-x-4 md:!flex-row"
                     onValueChange={stageTypeField.onChange}
-                    helpText="Specify what kind of stage"
+                    helpText={t('app.governance.createProcessForm.stage.type.helpText')}
                     {...stageTypeField}
                 >
-                    <RadioCard className="w-full" label="Normal" description="" value="normal" />
-                    <RadioCard className="w-full" label="Optimistic" description="" value="optimistic" />
+                    <RadioCard
+                        className="w-full"
+                        label={t('app.governance.createProcessForm.stage.type.normal')}
+                        description=""
+                        value="normal"
+                    />
+                    <RadioCard
+                        className="w-full"
+                        label={t('app.governance.createProcessForm.stage.type.optimistic')}
+                        description=""
+                        value="optimistic"
+                    />
                 </RadioGroup>
 
                 <InputContainer
                     id={`timingSummary.${stageName}.${stageIndex}`}
                     useCustomWrapper={true}
-                    label="Timing"
+                    label={t('app.governance.createProcessForm.stage.timing.label')}
                     className="flex w-full flex-col items-start gap-y-3"
-                    helpText="Define the timing of the stage, so all bodies have enough time to execute and advance the proposals."
+                    helpText={t('app.governance.createProcessForm.stage.timing.helpText')}
                 >
                     <CreateProcessFormTimingSummary
                         stageName={stageName}
@@ -78,8 +91,12 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                 <InputContainer
                     className="flex flex-col gap-2"
                     id="resourcesInput"
-                    label={stageTypeField.value === 'optimistic' ? 'Vetoing bodies' : 'Voting bodies'}
-                    helpText="Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage."
+                    label={
+                        stageTypeField.value === 'optimistic'
+                            ? t('app.governance.createProcessForm.stage.bodies.label.vetoing')
+                            : t('app.governance.createProcessForm.stage.bodies.label.voting')
+                    }
+                    helpText={t('app.governance.createProcessForm.stage.bodies.helpText')}
                     useCustomWrapper={true}
                 >
                     {bodiesFieldArray?.length > 0 && (
@@ -101,7 +118,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                         iconLeft={IconType.PLUS}
                         onClick={handleAddBody}
                     >
-                        Add
+                        {t('app.governance.createProcessForm.stage.bodies.add')}
                     </Button>
                 </InputContainer>
 
@@ -117,27 +134,38 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                                     size="md"
                                     iconRight={IconType.DOTS_VERTICAL}
                                 >
-                                    More
+                                    {t('app.governance.createProcessForm.stage.bodies.more')}
                                 </Button>
                             }
                         >
-                            <Dropdown.Item onClick={() => stageRemove(stageIndex)}>Remove stage</Dropdown.Item>
+                            <Dropdown.Item onClick={() => stageRemove(stageIndex)}>
+                                {t('app.governance.createProcessForm.stage.bodies.remove')}
+                            </Dropdown.Item>
                         </Dropdown.Container>
                     </div>
                 )}
-                {bodiesFieldArray.length > 0 && stageTypeField.value !== 'optimistic' && (
+                {bodiesFieldArray?.length > 0 && (
                     <InputContainer
                         id="bodyThreshold"
-                        label="Bodies required to approve"
+                        label={
+                            stageTypeField.value === 'optimistic'
+                                ? t('app.governance.createProcessForm.stage.bodies.threshold.label.vetoing')
+                                : t('app.governance.createProcessForm.stage.bodies.threshold.label.voting')
+                        }
                         useCustomWrapper={true}
-                        helpText="The amount of bodies that must approve the proposal in order for it to advance to the next stage or become executable."
+                        helpText={
+                            stageTypeField.value === 'optimistic'
+                                ? t('app.governance.createProcessForm.stage.bodies.threshold.helpText.vetoing')
+                                : t('app.governance.createProcessForm.stage.bodies.threshold.helpText.voting')
+                        }
                     >
                         <div className="flex w-full items-center gap-x-4 rounded-xl border border-neutral-100 p-6">
                             <InputNumber min={0} max={bodiesFieldArray.length} {...bodyThresholdField} />
-                            <div className="my-auto flex size-full flex-col justify-center">
+                            <div className="my-auto flex size-full flex-col justify-center gap-y-2">
                                 <Progress value={(bodyThresholdField.value / bodiesFieldArray.length) * 100} />
                                 <p className="text-right">
-                                    {bodyThresholdField.value} of {bodiesFieldArray.length} bodies
+                                    {bodyThresholdField.value} of {bodiesFieldArray.length}{' '}
+                                    {t('app.governance.createProcessForm.stage.bodies.threshold.bodies')}
                                 </p>
                             </div>
                         </div>

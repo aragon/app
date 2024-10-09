@@ -42,17 +42,13 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
             containerClassName="!max-w-[640px]"
             open={isTimingDialogOpen}
             onOpenChange={() => setIsTimingDialogOpen(false)}
-            aria-describedby="Edit timing of governance process stage."
         >
-            <Dialog.Header title="Edit timing" />
-            <Dialog.Content
-                aria-describedby="Edit timing of governance process stage."
-                className="flex flex-col gap-6 py-4"
-            >
+            <Dialog.Header title={t('app.governance.createProcessForm.stage.timing.dialog.title')} />
+            <Dialog.Content className="flex flex-col gap-6 py-4">
                 <InputContainer
                     id={votingPeriodField.name}
                     useCustomWrapper={true}
-                    helpText="The shortest period of time a process is open for voting."
+                    helpText={t('app.governance.createProcessForm.stage.timing.dialog.votingPeriod.helpText')}
                     {...votingPeriodField}
                 />
                 <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
@@ -102,20 +98,28 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                             }
                         />
                     </div>
-                    <AlertInline message="Recommended minimum expiration time is 7 days" />
+                    <AlertInline message={t('app.governance.createProcessForm.stage.timing.dialog.helpInfo')} />
                 </div>
                 {stageTypeField.value === 'normal' && (
                     <Switch
-                        helpText="Should the members be able to advance this stage early, if it’s successful?"
-                        inlineLabel={earlyStageField ? 'Yes' : 'No'}
+                        helpText={t('app.governance.createProcessForm.stage.timing.dialog.earlyAdvance.helpText')}
+                        inlineLabel={
+                            earlyStageField.value
+                                ? t('app.governance.createProcessForm.stage.timing.dialog.yes')
+                                : t('app.governance.createProcessForm.stage.timing.dialog.no')
+                        }
                         onCheckedChanged={(checked) => setValue(earlyStageField.name, checked)}
                         checked={earlyStageField.value}
                         {...earlyStageField}
                     />
                 )}
                 <Switch
-                    helpText="The amount of time that the process will be eligible to be advanced to the next stage."
-                    inlineLabel={stageExpirationField ? 'Yes' : 'No'}
+                    helpText={t('app.governance.createProcessForm.stage.timing.dialog.expiration.helpText')}
+                    inlineLabel={
+                        stageExpirationField.value
+                            ? t('app.governance.createProcessForm.stage.timing.dialog.yes')
+                            : t('app.governance.createProcessForm.stage.timing.dialog.no')
+                    }
                     onCheckedChanged={(checked) => setValue(stageExpirationField.name, checked)}
                     checked={stageExpirationField.value}
                     {...stageExpirationField}
@@ -169,7 +173,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 }
                             />
                         </div>
-                        <AlertInline message="Recommended minimum expiration time is 7 days" />
+                        <AlertInline message={t('app.governance.createProcessForm.stage.timing.dialog.helpInfo')} />
                     </div>
                 )}
             </Dialog.Content>

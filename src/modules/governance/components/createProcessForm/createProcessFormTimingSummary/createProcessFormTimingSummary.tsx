@@ -1,4 +1,5 @@
 import { useStageFields } from '@/modules/governance/components/createProcessForm/hooks/useStagesFields';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, Tag } from '@aragon/ods';
 
@@ -13,6 +14,7 @@ export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSu
     stageIndex,
     onEditTimingClick,
 }) => {
+    const { t } = useTranslations();
     const { votingPeriodField, earlyStageField, stageExpirationField, stageExpirationPeriodField, stageTypeField } =
         useStageFields(stageName, stageIndex);
 
@@ -41,11 +43,11 @@ export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSu
     return (
         <>
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                <DefinitionList.Item term="Voting period">
+                <DefinitionList.Item term={t('app.governance.createProcessForm.stage.timing.summary.votingPeriod')}>
                     {formatDuration(votingPeriodField.value as IDateDuration)}
                 </DefinitionList.Item>
                 {stageTypeField.value === 'normal' && (
-                    <DefinitionList.Item term="Early stage advance">
+                    <DefinitionList.Item term={t('app.governance.createProcessForm.stage.timing.summary.earlyAdvance')}>
                         <Tag
                             className="w-fit"
                             label={earlyStageField.value === true ? 'Yes' : 'No'}
@@ -53,7 +55,7 @@ export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSu
                         />
                     </DefinitionList.Item>
                 )}
-                <DefinitionList.Item term="Stage expiration">
+                <DefinitionList.Item term={t('app.governance.createProcessForm.stage.timing.summary.expiration')}>
                     <Tag
                         className="w-fit"
                         label={stageExpirationField.value === true ? 'Yes' : 'No'}
@@ -67,7 +69,7 @@ export const CreateProcessFormTimingSummary: React.FC<ICreateProcessFormTimingSu
                 )}
             </DefinitionList.Container>
             <Button onClick={onEditTimingClick} variant="tertiary" size="md" className="w-fit">
-                Edit timing
+                {t('app.governance.createProcessForm.stage.timing.summary.edit')}
             </Button>
         </>
     );
