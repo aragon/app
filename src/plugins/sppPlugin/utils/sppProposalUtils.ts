@@ -68,12 +68,21 @@ class SppProposalUtils {
     };
 
     isExecutionExpired = (proposal: ISppProposal): boolean => {
-        const now = DateTime.now();
-        return proposal.settings.stages.some((stage) => {
-            const stageEndDate = sppStageUtils.getStageEndDate(proposal, stage);
+        // All stages should be accepted before we consider if the execution has expired
+        if (!this.areAllStagesAccepted(proposal)) {
+            return false;
+        }
 
-            return stage.maxAdvance && now > stageEndDate.plus({ seconds: stage.maxAdvance });
-        });
+        const now = DateTime.now();
+        const lastStage = proposal.settings.stages[proposal.settings.stages.length - 1];
+        const lastStageEndDate = sppStageUtils.getStageEndDate(proposal, lastStage);
+
+        // If no maxAdvance for the last stage - the proposal doesn't expire
+        if (!lastStage.maxAdvance) {
+            return false;
+        }
+
+        return now > lastStageEndDate.plus({ seconds: lastStage.maxAdvance });
     };
 }
 
