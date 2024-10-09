@@ -100,9 +100,13 @@ class SppStageUtils {
     };
 
     getVetoCount = (proposal: ISppProposal, stage: ISppStage): number => {
-        return stage.plugins.reduce((count, plugin) => {
-            const result = proposal.pluginResults[stage.id]?.[plugin.address];
-            if (result && result.proposalType === SppProposalType.VETO && result.result) {
+        return proposal.subProposals.reduce((count, subProposal, index) => {
+            const plugin = stage.plugins[index];
+            if (
+                subProposal.stageId === stage.id &&
+                plugin.proposalType === SppProposalType.VETO &&
+                subProposal.result
+            ) {
                 return count + 1;
             }
             return count;
@@ -110,9 +114,13 @@ class SppStageUtils {
     };
 
     getApprovalCount = (proposal: ISppProposal, stage: ISppStage): number => {
-        return stage.plugins.reduce((count, plugin) => {
-            const result = proposal.pluginResults[stage.id]?.[plugin.address];
-            if (result && result.proposalType === SppProposalType.APPROVAL && result.result) {
+        return proposal.subProposals.reduce((count, subProposal, index) => {
+            const plugin = stage.plugins[index];
+            if (
+                subProposal.stageId === stage.id &&
+                plugin.proposalType === SppProposalType.APPROVAL &&
+                subProposal.result
+            ) {
                 return count + 1;
             }
             return count;

@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { generateSppProposal, generateSppStage, generateSppStagePlugin } from '../testUtils';
+import { generateSppProposal, generateSppStage, generateSppStagePlugin, generateSppSubProposal } from '../testUtils';
 import { SppProposalType, SppStageStatus } from '../types';
 import { sppStageUtils } from './sppStageUtils';
 
@@ -70,11 +70,7 @@ describe('SppStageUtils', () => {
                 startDate: now.minus({ hours: 12 }).toSeconds(),
                 currentStageIndex: 0,
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: false },
-                    },
-                },
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
                 executed: { status: false },
             });
 
@@ -99,12 +95,10 @@ describe('SppStageUtils', () => {
             });
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.VETO, result: true },
-                        plugin2: { proposalType: SppProposalType.VETO, result: false },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', result: false }),
+                ],
             });
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBe(true);
         });
@@ -120,12 +114,10 @@ describe('SppStageUtils', () => {
             });
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.VETO, result: true },
-                        plugin2: { proposalType: SppProposalType.VETO, result: false },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', result: false }),
+                ],
             });
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBe(false);
         });
@@ -137,18 +129,16 @@ describe('SppStageUtils', () => {
                 id: 'stage-1',
                 approvalThreshold: 1,
                 plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
+                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
+                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
                 ],
             });
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                        plugin2: { proposalType: SppProposalType.APPROVAL, result: false },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
+                ],
             });
             expect(sppStageUtils.isApprovalReached(proposal, stage)).toBe(true);
         });
@@ -158,18 +148,16 @@ describe('SppStageUtils', () => {
                 id: 'stage-1',
                 approvalThreshold: 2,
                 plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
+                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
+                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
                 ],
             });
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                        plugin2: { proposalType: SppProposalType.APPROVAL, result: false },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
+                ],
             });
             expect(sppStageUtils.isApprovalReached(proposal, stage)).toBe(false);
         });
@@ -192,12 +180,10 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ hours: 2 }).toSeconds(),
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                        plugin2: { proposalType: SppProposalType.VETO, result: false },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', result: false }),
+                ],
             });
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBe(true);
         });
@@ -214,11 +200,7 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ hours: 3 }).toSeconds(),
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                    },
-                },
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
             });
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBe(false);
         });
@@ -257,14 +239,12 @@ describe('SppStageUtils', () => {
             });
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.VETO, result: true },
-                        plugin2: { proposalType: SppProposalType.VETO, result: false },
-                        plugin3: { proposalType: SppProposalType.APPROVAL, result: true },
-                        plugin4: { proposalType: SppProposalType.APPROVAL, result: true },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin3', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin4', result: true }),
+                ],
             });
             expect(sppStageUtils.getVetoCount(proposal, stage)).toBe(1);
             expect(sppStageUtils.getApprovalCount(proposal, stage)).toBe(2);
@@ -283,11 +263,7 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ hours: 1 }).toSeconds(),
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.VETO, result: true },
-                    },
-                },
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
             });
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.VETOED);
         });
@@ -314,12 +290,10 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ hours: 12 }).toSeconds(),
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                        plugin2: { proposalType: SppProposalType.APPROVAL, result: false },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
+                ],
             });
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.REJECTED);
         });
@@ -336,11 +310,7 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ minutes: 30 }).toSeconds(),
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                    },
-                },
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
             });
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.ACTIVE);
         });
@@ -357,11 +327,7 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ minutes: 45 }).toSeconds(),
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                    },
-                },
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
             });
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.ACCEPTED);
         });
@@ -380,12 +346,10 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ hours: 6 }).toSeconds(),
                 settings: { stages: [stage] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                        plugin2: { proposalType: SppProposalType.APPROVAL, result: true },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: true }),
+                ],
             });
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.EXPIRED);
         });
@@ -411,12 +375,10 @@ describe('SppStageUtils', () => {
                 startDate: now.minus({ hours: 2 }).toSeconds(),
                 currentStageIndex: 0,
                 settings: { stages: [stage1, stage2] },
-                pluginResults: {
-                    'stage-1': {
-                        plugin1: { proposalType: SppProposalType.APPROVAL, result: true },
-                        plugin2: { proposalType: SppProposalType.APPROVAL, result: false },
-                    },
-                },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: false }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
+                ],
             });
 
             expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(SppStageStatus.INACTIVE);

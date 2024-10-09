@@ -8,6 +8,5 @@ export const generateSppProposal = (proposal?: Partial<ISppProposal>): ISppPropo
     lastStageTransition: 0,
     subProposals: [],
     settings: generateSppPluginSettings(),
-    pluginResults: {},
     ...proposal,
 });
