@@ -439,7 +439,7 @@
           "cancel": "Cancel",
           "select": "Create"
         },
-        "description": "Select the proposal you'd like to create and start the process",
+        "description": "Select the proposal type that you'd like to create.",
         "title": "Create proposal"
       },
       "voteDialog": {
