@@ -30,59 +30,6 @@ describe('SppStageUtils', () => {
         });
     });
 
-    describe('isProposalActive', () => {
-        const isVetoReachedSpy = jest.spyOn(sppStageUtils, 'isVetoReached');
-        const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
-
-        beforeEach(() => {
-            isVetoReachedSpy.mockReset();
-            isApprovalReachedSpy.mockReset();
-        });
-
-        afterEach(() => {
-            isVetoReachedSpy.mockRestore();
-            isApprovalReachedSpy.mockRestore();
-        });
-
-        it('should return false for executed proposals', () => {
-            const proposal = generateSppProposal({ executed: { status: true } });
-            const stage = generateSppStage();
-            expect(sppStageUtils.isProposalActive(proposal, stage)).toBe(false);
-        });
-
-        it('should return false for vetoed proposals', () => {
-            isVetoReachedSpy.mockReturnValue(true);
-            const proposal = generateSppProposal();
-            const stage = generateSppStage();
-            expect(sppStageUtils.isProposalActive(proposal, stage)).toBe(false);
-        });
-
-        it('should return true for active proposals', () => {
-            const now = DateTime.now();
-
-            const stage = generateSppStage({
-                id: 'stage-1',
-                votingPeriod: 86400,
-                maxAdvance: 3600,
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
-            });
-            const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 12 }).toSeconds(),
-                currentStageIndex: 0,
-                settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
-                executed: { status: false },
-            });
-
-            isVetoReachedSpy.mockReturnValue(false);
-            isApprovalReachedSpy.mockReturnValue(false);
-
-            const result = sppStageUtils.isProposalActive(proposal, stage);
-
-            expect(result).toBe(true);
-        });
-    });
-
     describe('isVetoReached', () => {
         it('should return true when veto count reaches threshold', () => {
             const stage = generateSppStage({
@@ -96,8 +43,8 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 subProposals: [
-                    generateSppSubProposal({ stageId: 'stage-1', result: true }),
-                    generateSppSubProposal({ stageId: 'stage-1', result: false }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBe(true);
@@ -115,8 +62,8 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 subProposals: [
-                    generateSppSubProposal({ stageId: 'stage-1', result: true }),
-                    generateSppSubProposal({ stageId: 'stage-1', result: false }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBe(false);
@@ -181,8 +128,8 @@ describe('SppStageUtils', () => {
                 startDate: now.minus({ hours: 2 }).toSeconds(),
                 settings: { stages: [stage] },
                 subProposals: [
-                    generateSppSubProposal({ stageId: 'stage-1', result: true }),
-                    generateSppSubProposal({ stageId: 'stage-1', result: false }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBe(true);
@@ -200,33 +147,13 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ hours: 3 }).toSeconds(),
                 settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBe(false);
         });
     });
 
-    describe('isStageExpired', () => {
-        it('should return true when current time is past maxAdvance', () => {
-            const now = DateTime.now();
-            const stage = generateSppStage({ maxAdvance: 3600 });
-            const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 2 }).toSeconds(),
-            });
-            expect(sppStageUtils.isStageExpired(proposal, stage)).toBe(true);
-        });
-
-        it('should return false when current time is within maxAdvance', () => {
-            const now = DateTime.now();
-            const stage = generateSppStage({ maxAdvance: 86400 });
-            const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 2 }).toSeconds(),
-            });
-            expect(sppStageUtils.isStageExpired(proposal, stage)).toBe(false);
-        });
-    });
-
-    describe('getVetoCount and getApprovalCount', () => {
+    describe('getCount', () => {
         it('should return correct veto and approval counts', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
@@ -246,8 +173,27 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin4', result: true }),
                 ],
             });
-            expect(sppStageUtils.getVetoCount(proposal, stage)).toBe(1);
-            expect(sppStageUtils.getApprovalCount(proposal, stage)).toBe(2);
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(1);
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(2);
+        });
+
+        it('should return 0 when no matching subProposals are found', () => {
+            const stage = generateSppStage({
+                id: 'stage-1',
+                plugins: [
+                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
+                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
+                ],
+            });
+            const proposal = generateSppProposal({
+                settings: { stages: [stage] },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin3', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin4', result: true }),
+                ],
+            });
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(0);
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(0);
         });
     });
 
@@ -263,7 +209,7 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ hours: 1 }).toSeconds(),
                 settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.VETOED);
         });
@@ -276,11 +222,37 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.PENDING);
         });
 
-        it('should return rejected when approval threshold is not met and does not end in the future', () => {
+        it('should return pending when current stage index is less than the stage index', () => {
+            const stage1 = generateSppStage({
+                id: 'stage-1',
+                votingPeriod: 3600,
+                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
+            });
+            const stage2 = generateSppStage({
+                id: 'stage-2',
+                votingPeriod: 3600,
+            });
+            const proposal = generateSppProposal({
+                startDate: now.minus({ minutes: 30 }).toSeconds(),
+                currentStageIndex: 0,
+                settings: { stages: [stage1, stage2] },
+                subProposals: [
+                    generateSppSubProposal({
+                        stageId: 'stage-1',
+                        pluginAddress: 'plugin1',
+                        result: false,
+                    }),
+                ],
+            });
+
+            expect(sppStageUtils.getStageStatus(proposal, stage1)).toBe(SppStageStatus.ACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(SppStageStatus.PENDING);
+        });
+
+        it('should return rejected when approval threshold is not met and stage end date has passed', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 votingPeriod: 3600,
-                maxAdvance: 7200,
                 approvalThreshold: 2,
                 plugins: [
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
@@ -288,7 +260,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 12 }).toSeconds(),
+                startDate: now.minus({ hours: 2 }).toSeconds(),
                 settings: { stages: [stage] },
                 subProposals: [
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
@@ -327,7 +299,7 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ minutes: 45 }).toSeconds(),
                 settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.ACCEPTED);
         });
@@ -382,6 +354,27 @@ describe('SppStageUtils', () => {
             });
 
             expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(SppStageStatus.INACTIVE);
+        });
+
+        it('should return active when stage has started but not ended and approval not reached', () => {
+            const stage = generateSppStage({
+                id: 'stage-1',
+                votingPeriod: 3600,
+                approvalThreshold: 2,
+                plugins: [
+                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
+                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
+                ],
+            });
+            const proposal = generateSppProposal({
+                startDate: now.minus({ minutes: 30 }).toSeconds(),
+                settings: { stages: [stage] },
+                subProposals: [
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
+                ],
+            });
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.ACTIVE);
         });
     });
 });

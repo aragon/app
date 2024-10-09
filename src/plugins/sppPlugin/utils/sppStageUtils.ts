@@ -9,30 +9,37 @@ class SppStageUtils {
         const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
         const stageIndex = proposal.settings.stages.findIndex((s) => s.id === stage.id);
 
-        if (proposal.currentStageIndex < stageIndex) {
-            return SppStageStatus.INACTIVE;
-        }
-
         if (this.isVetoReached(proposal, stage)) {
             return SppStageStatus.VETOED;
         }
 
-        if (stageStartDate > now) {
+        if (this.isPreviousStageRejectedOrVetoed(proposal, stageIndex)) {
+            return SppStageStatus.INACTIVE;
+        }
+
+        if (stageStartDate > now || stageIndex > proposal.currentStageIndex) {
             return SppStageStatus.PENDING;
         }
 
         if (this.isApprovalReached(proposal, stage)) {
-            if (now > maxAdvanceDate) {
-                return SppStageStatus.EXPIRED;
-            }
-            return this.canStageAdvance(proposal, stage) ? SppStageStatus.ACCEPTED : SppStageStatus.ACTIVE;
-        }
+                    if (now > maxAdvanceDate) {
+                        return SppStageStatus.EXPIRED;
+                    }
+                    return this.canStageAdvance(proposal, stage) ? SppStageStatus.ACCEPTED : SppStageStatus.ACTIVE;
+                }
 
         if (now > stageEndDate) {
-            return this.isApprovalReached(proposal, stage) ? SppStageStatus.EXPIRED : SppStageStatus.REJECTED;
+            return SppStageStatus.REJECTED;
         }
 
-        return SppStageStatus.INACTIVE;
+        return SppStageStatus.ACTIVE;
+    };
+
+    isPreviousStageRejectedOrVetoed = (proposal: ISppProposal, currentStageIndex: number): boolean => {
+        return proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
+            const status = this.getStageStatus(proposal, stage);
+            return status === SppStageStatus.VETOED || status === SppStageStatus.REJECTED;
+        });
     };
 
     getStageStartDate = (proposal: ISppProposal): DateTime => {
@@ -47,31 +54,13 @@ class SppStageUtils {
         return startDate.plus({ seconds: stage.votingPeriod });
     };
 
-    isProposalActive = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const now = DateTime.now();
-        const stageStartDate = this.getStageStartDate(proposal);
-        const stageEndDate = this.getStageEndDate(proposal, stage);
-        const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
-
-        if (proposal.executed?.status === true) {
-            return false;
-        }
-
-        if (this.isVetoReached(proposal, stage)) {
-            return false;
-        }
-
-        const isActive = now >= stageStartDate && now <= maxAdvanceDate;
-        return isActive;
-    };
-
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const vetoCount = this.getVetoCount(proposal, stage);
+        const vetoCount = this.getCount(proposal, stage, SppProposalType.VETO);
         return vetoCount >= stage.vetoThreshold;
     };
 
     isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const approvalCount = this.getApprovalCount(proposal, stage);
+        const approvalCount = this.getCount(proposal, stage, SppProposalType.APPROVAL);
         return approvalCount >= stage.approvalThreshold;
     };
 
@@ -91,40 +80,14 @@ class SppStageUtils {
         return isWithinMinAndMaxAdvance && isApproved && isNotVetoed;
     };
 
-    isStageExpired = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const now = DateTime.now();
-        const stageStartDate = this.getStageStartDate(proposal);
-        const maxAdvanceDate = stageStartDate.plus({ seconds: stage.maxAdvance });
-
-        return now > maxAdvanceDate;
-    };
-
-    getVetoCount = (proposal: ISppProposal, stage: ISppStage): number => {
-        return proposal.subProposals.reduce((count, subProposal, index) => {
-            const plugin = stage.plugins[index];
-            if (
-                subProposal.stageId === stage.id &&
-                plugin.proposalType === SppProposalType.VETO &&
-                subProposal.result
-            ) {
-                return count + 1;
-            }
-            return count;
-        }, 0);
-    };
-
-    getApprovalCount = (proposal: ISppProposal, stage: ISppStage): number => {
-        return proposal.subProposals.reduce((count, subProposal, index) => {
-            const plugin = stage.plugins[index];
-            if (
-                subProposal.stageId === stage.id &&
-                plugin.proposalType === SppProposalType.APPROVAL &&
-                subProposal.result
-            ) {
-                return count + 1;
-            }
-            return count;
-        }, 0);
+    getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
+        return proposal.subProposals.filter(
+            (subProposal) =>
+                stage.plugins.some((plugin) => plugin.address === subProposal.pluginAddress) &&
+                stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress)?.proposalType ===
+                    proposalType &&
+                subProposal.result,
+        ).length;
     };
 }
 

@@ -399,11 +399,13 @@ describe('SppProposalUtils', () => {
                 startDate: now.minus({ hours: 3 }).toSeconds(),
             });
 
-            jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(false);
+            const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(false);
 
             const result = sppProposalUtils.isExecutionExpired(proposal);
 
             expect(result).toBe(false);
+
+            areAllStagesAcceptedSpy.mockRestore();
         });
 
         it('should return true when all stages are accepted and last stage execution window has passed', () => {
@@ -415,12 +417,19 @@ describe('SppProposalUtils', () => {
                 startDate: now.minus({ hours: 5 }).toSeconds(),
             });
 
-            jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(true);
-            jest.spyOn(sppStageUtils, 'getStageEndDate').mockReturnValue(now.minus({ hours: 2 }));
+            const stageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus').mockImplementation((_, stage) => {
+                if (stage.id === 'stage-2') {
+                    return SppStageStatus.EXPIRED;
+                }
+
+                return SppStageStatus.ACCEPTED;
+            });
 
             const result = sppProposalUtils.isExecutionExpired(proposal);
 
             expect(result).toBe(true);
+
+            stageStatusSpy.mockRestore();
         });
 
         it('should return false when all stages are accepted and last stage execution window has not passed', () => {
@@ -432,29 +441,19 @@ describe('SppProposalUtils', () => {
                 startDate: now.minus({ hours: 1 }).toSeconds(),
             });
 
-            jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(true);
-            jest.spyOn(sppStageUtils, 'getStageEndDate').mockReturnValue(now.plus({ minutes: 30 }));
+            const stageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus').mockImplementation((_, stage) => {
+                if (stage.id === 'stage-2') {
+                    return SppStageStatus.ACTIVE;
+                }
 
-            const result = sppProposalUtils.isExecutionExpired(proposal);
-
-            expect(result).toBe(false);
-        });
-
-        it('should return false when all stages are accepted but last stage has no maxAdvance', () => {
-            const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
-            const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: undefined });
-            const proposal = generateSppProposal({
-                settings: { stages: [stage1, stage2] },
-                currentStageIndex: 1,
-                startDate: now.minus({ hours: 5 }).toSeconds(),
+                return SppStageStatus.ACCEPTED;
             });
 
-            jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(true);
-            jest.spyOn(sppStageUtils, 'getStageEndDate').mockReturnValue(now.minus({ hours: 2 }));
-
             const result = sppProposalUtils.isExecutionExpired(proposal);
 
             expect(result).toBe(false);
+
+            stageStatusSpy.mockRestore();
         });
     });
 });
