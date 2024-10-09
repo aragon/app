@@ -43,16 +43,13 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                     action: router.refresh,
                 }}
             >
-                <Dialog.Content>
-                    <ProposalDataListItem.Structure
-                        id={proposal.proposalIndex}
-                        title={proposal.title}
-                        summary={proposal.summary}
-                        status={ProposalStatus.ACTIVE}
-                        type="approvalThreshold"
-                        publisher={{ address: creatorAddress, name: creatorEns ?? undefined }}
-                    />
-                </Dialog.Content>
+                <ProposalDataListItem.Structure
+                    title={proposal.title}
+                    summary={proposal.summary}
+                    status={ProposalStatus.ACTIVE}
+                    type="approvalThreshold"
+                    publisher={{ address: creatorAddress, name: creatorEns ?? undefined }}
+                />
             </TransactionDialog>
         </Dialog.Root>
     );
