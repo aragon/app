@@ -13,46 +13,35 @@ class SppProposalUtils {
             return ProposalStatus.VETOED;
         }
 
-        const now = DateTime.now().toUTC();
+        const now = DateTime.now();
         const startDate = DateTime.fromSeconds(proposal.startDate);
 
         if (startDate > now) {
             return ProposalStatus.PENDING;
         }
 
-        const currentStage = this.getCurrentStage(proposal);
-        const currentStageStatus = sppStageUtils.getStageStatus(proposal, currentStage);
         const hasActions = proposal.actions.length > 0;
+        const endsInFuture = this.endsInFuture(proposal);
+        const allStagesAccepted = this.areAllStagesAccepted(proposal);
+        const executionExpired = this.isExecutionExpired(proposal);
 
-        if (this.endsInFuture(proposal)) {
-            if (currentStageStatus === SppStageStatus.ACTIVE) {
-                return ProposalStatus.ACTIVE;
-            }
-
-            if (currentStageStatus === SppStageStatus.ACCEPTED && hasActions) {
-                return ProposalStatus.EXECUTABLE;
-            }
-
+        if (endsInFuture && !allStagesAccepted) {
             return ProposalStatus.ACTIVE;
         }
 
-        if (currentStageStatus === SppStageStatus.REJECTED) {
-            return ProposalStatus.REJECTED;
-        }
-
-        if (currentStageStatus === SppStageStatus.ACCEPTED || this.areAllStagesAccepted(proposal)) {
-            if (!hasActions) {
-                return ProposalStatus.ACCEPTED;
-            }
-
-            return this.isExecutionExpired(proposal) ? ProposalStatus.EXPIRED : ProposalStatus.EXECUTABLE;
+        if (allStagesAccepted) {
+            return !hasActions
+                ? ProposalStatus.ACCEPTED
+                : executionExpired
+                  ? ProposalStatus.EXPIRED
+                  : ProposalStatus.EXECUTABLE;
         }
 
         return ProposalStatus.REJECTED;
     };
 
     endsInFuture = (proposal: ISppProposal): boolean => {
-        const now = DateTime.now().toUTC();
+        const now = DateTime.now();
         const currentStage = this.getCurrentStage(proposal);
         const isLastStage = proposal.currentStageIndex === proposal.settings.stages.length - 1;
         const stageEndDate = sppStageUtils.getStageEndDate(proposal, currentStage);
@@ -65,7 +54,7 @@ class SppProposalUtils {
     };
 
     isAnyStageVetoed = (proposal: ISppProposal): boolean => {
-        return proposal.settings.stages.some((stage) => sppStageUtils.isStageVetoed(proposal, stage));
+        return proposal.settings.stages.some((stage) => sppStageUtils.isVetoReached(proposal, stage));
     };
 
     getCurrentStage = (proposal: ISppProposal): ISppStage => {

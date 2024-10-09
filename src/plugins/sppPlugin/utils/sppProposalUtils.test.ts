@@ -26,15 +26,15 @@ describe('SppProposalUtils', () => {
                 settings: { stages: [stage1, stage2] },
             });
 
-            const isStageVetoedSpy = jest
-                .spyOn(sppStageUtils, 'isStageVetoed')
-                .mockImplementation((prop, stage) => stage.id === 'stage-2');
+            const isVetoReachedSpy = jest
+                .spyOn(sppStageUtils, 'isVetoReached')
+                .mockImplementation((_, stage) => stage.id === 'stage-2');
 
             const result = sppProposalUtils.getProposalStatus(proposal);
 
             expect(result).toBe(ProposalStatus.VETOED);
 
-            isStageVetoedSpy.mockRestore();
+            isVetoReachedSpy.mockRestore();
         });
 
         it('returns pending when proposal has not started yet', () => {
@@ -73,10 +73,10 @@ describe('SppProposalUtils', () => {
             endsInFutureSpy.mockRestore();
         });
 
-        it('returns executable when current stage is accepted, has actions, and ends in future', () => {
+        it('returns executable when all stages are accepted, has actions, and ends in future', () => {
             const now = DateTime.now();
 
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ id: 'stage-1', maxAdvance: 36000 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -300,15 +300,15 @@ describe('SppProposalUtils', () => {
                 settings: { stages: [stage1, stage2] },
             });
 
-            const isStageVetoedSpy = jest
-                .spyOn(sppStageUtils, 'isStageVetoed')
+            const isVetoReachedSpy = jest
+                .spyOn(sppStageUtils, 'isVetoReached')
                 .mockImplementation((_, stage) => stage.id === 'stage-2');
 
             const result = sppProposalUtils.isAnyStageVetoed(proposal);
 
             expect(result).toBe(true);
 
-            isStageVetoedSpy.mockRestore();
+            isVetoReachedSpy.mockRestore();
         });
 
         it('should return false when no stages are vetoed', () => {
@@ -319,13 +319,13 @@ describe('SppProposalUtils', () => {
                 settings: { stages: [stage1, stage2] },
             });
 
-            const isStageVetoedSpy = jest.spyOn(sppStageUtils, 'isStageVetoed').mockReturnValue(false);
+            const isVetoReachedSpy = jest.spyOn(sppStageUtils, 'isVetoReached').mockReturnValue(false);
 
             const result = sppProposalUtils.isAnyStageVetoed(proposal);
 
             expect(result).toBe(false);
 
-            isStageVetoedSpy.mockRestore();
+            isVetoReachedSpy.mockRestore();
         });
     });
 

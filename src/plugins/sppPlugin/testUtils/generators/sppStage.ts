@@ -7,7 +7,7 @@ export const generateSppStage = (stage?: Partial<ISppStage>): ISppStage => ({
     votingPeriod: 1,
     maxAdvance: 1,
     minAdvance: 1,
-    approvalThreshold: 0.5,
-    vetoThreshold: 0.1,
+    approvalThreshold: 1,
+    vetoThreshold: 1,
     ...stage,
 });
