@@ -513,8 +513,11 @@
           "title": "Advance proposal"
         },
         "sppStageStatus": {
-          "advance": "Advance proposal",
-          "info": "left to advance"
+          "advanceInfo": "left to advance",
+          "button": {
+            "advance": "Advance proposal",
+            "vote": "Vote on proposal"
+          }
         },
         "sppVotingTerminal": {
           "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",

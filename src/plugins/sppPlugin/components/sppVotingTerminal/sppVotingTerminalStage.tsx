@@ -52,6 +52,10 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedStartDate = sppStageUtils.getStageStartDate(proposal).toMillis();
     const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage).toMillis();
 
+    // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
+    const processedSubProposal =
+        subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
@@ -76,7 +80,9 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                 </>
             )}
             <ProposalVoting.Details settings={proposalSettings} />
-            <SppStageStatus proposal={proposal} stage={stage} />
+            {processedSubProposal && (
+                <SppStageStatus proposal={proposal} subProposal={processedSubProposal} daoId={daoId} stage={stage} />
+            )}
         </ProposalVoting.Stage>
     );
 };
