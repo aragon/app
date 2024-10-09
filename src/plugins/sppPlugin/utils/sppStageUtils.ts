@@ -22,11 +22,12 @@ class SppStageUtils {
         }
 
         if (this.isApprovalReached(proposal, stage)) {
-                    if (now > maxAdvanceDate) {
-                        return SppStageStatus.EXPIRED;
-                    }
-                    return this.canStageAdvance(proposal, stage) ? SppStageStatus.ACCEPTED : SppStageStatus.ACTIVE;
-                }
+            if (now > maxAdvanceDate) {
+                return SppStageStatus.EXPIRED;
+            }
+
+            return this.canStageAdvance(proposal, stage) ? SppStageStatus.ACCEPTED : SppStageStatus.ACTIVE;
+        }
 
         if (now > stageEndDate) {
             return SppStageStatus.REJECTED;
