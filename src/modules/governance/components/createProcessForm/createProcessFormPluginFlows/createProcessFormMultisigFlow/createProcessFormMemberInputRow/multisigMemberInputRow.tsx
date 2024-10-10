@@ -15,7 +15,7 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
     handleRemoveMember,
     canRemove,
 }) => {
-    const { control } = useFormContext();
+    const { control, formState, getValues } = useFormContext();
 
     const addressFieldName = `${fieldNamePrefix}.address`;
 
@@ -23,11 +23,15 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
     const [memberInput, setMemberInput] = useState<string | undefined>(inputValue?.address);
 
     return (
-        <div className="flex items-center gap-4 rounded-xl border border-neutral-100 p-6">
+        <div className="flex items-start gap-4 rounded-xl border border-neutral-100 p-6">
             <Controller
                 name={addressFieldName}
                 control={control}
-                rules={{ required: 'Address is required', validate: (value) => addressUtils.isAddress(value?.address) }}
+                defaultValue=""
+                rules={{
+                    required: 'Address is required',
+                    validate: (value) => addressUtils.isAddress(value?.address) || 'Valid 0x... or ENS Address',
+                }}
                 render={({ field: { onChange: onMemberChange }, fieldState: { error } }) => (
                     <AddressInput
                         className="grow"

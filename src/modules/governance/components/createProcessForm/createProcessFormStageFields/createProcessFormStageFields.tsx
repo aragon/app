@@ -20,7 +20,8 @@ import {
     RadioGroup,
 } from '@aragon/ods';
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageFieldsProps> = (props) => {
     const { stagesFieldArray, stageName, stageIndex, stageRemove } = props;
@@ -29,6 +30,15 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         dialogOpen: false,
         editBodyIndex: undefined,
     });
+
+    const {
+        setError,
+        clearErrors,
+        formState: { errors, isSubmitted },
+    } = useFormContext();
+
+    console.log('errors', errors);
+    console.log('isSubmitted', isSubmitted);
 
     const { t } = useTranslations();
 
@@ -44,6 +54,17 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
     const handleEditBody = (index: number) => {
         setIsBodyDialogOpen({ dialogOpen: true, editBodyIndex: index });
     };
+
+    useEffect(() => {
+        if (isSubmitted && bodiesFieldArray.length < 1 && stageNameField.value !== '') {
+            setError(`stages.${stageIndex}.bodies`, {
+                type: 'minLength',
+                message: 'You must create at least one body per stage.',
+            });
+        } else {
+            clearErrors(`stages.${stageIndex}.bodies`);
+        }
+    }, [bodiesFieldArray.length, setError, clearErrors, stageIndex, isSubmitted, stageNameField.value]);
 
     return (
         <>
@@ -98,6 +119,11 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     }
                     helpText={t('app.governance.createProcessForm.stage.bodies.helpText')}
                     useCustomWrapper={true}
+                    alert={
+                        Array.isArray(errors.stages) && errors.stages[stageIndex]?.bodies
+                            ? { message: (errors.stages[stageIndex] as any).bodies.message, variant: 'critical' }
+                            : undefined
+                    }
                 >
                     {bodiesFieldArray?.length > 0 && (
                         <CreateProcessFormBodySummary

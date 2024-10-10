@@ -21,7 +21,7 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
     const tokenAmountFieldName = `${fieldNamePrefix}.tokenAmount`;
 
     const inputValue = useWatch({ name: addressFieldName });
-    const [receiverInput, setReceiverInput] = useState<string | undefined>(inputValue?.address);
+    const [memberInput, setMemberInput] = useState<string | undefined>(inputValue?.address);
 
     return (
         <div className="flex items-start gap-x-4 rounded-xl border border-neutral-100 p-6">
@@ -29,20 +29,21 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
                 <Controller
                     name={addressFieldName}
                     control={control}
+                    defaultValue=""
                     rules={{
                         required: 'Address is required',
-                        validate: (value) => addressUtils.isAddress(value?.address) || 'Invalid address',
+                        validate: (value) => addressUtils.isAddress(value?.address) || 'Valid 0x... or ENS Address',
                     }}
-                    render={({ field: { onChange: onReceiverChange }, fieldState: { error } }) => (
+                    render={({ field: { onChange: onMemberChange }, fieldState: { error } }) => (
                         <AddressInput
+                            className="grow"
                             label="Address"
                             placeholder="ENS or 0x…"
                             chainId={1}
-                            value={receiverInput}
-                            onChange={setReceiverInput}
-                            onAccept={onReceiverChange}
+                            value={memberInput}
+                            onChange={setMemberInput}
+                            onAccept={onMemberChange}
                             alert={error?.message ? { message: error.message, variant: 'critical' } : undefined}
-                            className="w-1/2"
                         />
                     )}
                 />
