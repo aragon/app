@@ -9,11 +9,11 @@ class SppProposalUtils {
             return ProposalStatus.EXECUTED;
         }
 
-        if (this.isAnyStageVetoed(proposal)) {
+        if (this.hasAnyStageStatus(proposal, ProposalStatus.VETOED)) {
             return ProposalStatus.VETOED;
         }
 
-        if (this.isAnyStageRejected(proposal)) {
+        if (this.hasAnyStageStatus(proposal, ProposalStatus.REJECTED)) {
             return ProposalStatus.REJECTED;
         }
 
@@ -27,9 +27,8 @@ class SppProposalUtils {
         const hasActions = proposal.actions.length > 0;
         const endsInFuture = this.endsInFuture(proposal);
         const allStagesAccepted = this.areAllStagesAccepted(proposal);
-        const executionExpired = this.isExecutionExpired(proposal);
 
-        if (executionExpired) {
+        if (this.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED)) {
             return ProposalStatus.EXPIRED;
         }
 
@@ -57,16 +56,8 @@ class SppProposalUtils {
         return stageEndDate > now;
     };
 
-    isAnyStageVetoed = (proposal: ISppProposal): boolean => {
-        return proposal.settings.stages.some(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.VETOED,
-        );
-    };
-
-    isAnyStageRejected = (proposal: ISppProposal): boolean => {
-        return proposal.settings.stages.some(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.REJECTED,
-        );
+    hasAnyStageStatus = (proposal: ISppProposal, status: ProposalStatus): boolean => {
+        return proposal.settings.stages.some((stage) => sppStageUtils.getStageStatus(proposal, stage) === status);
     };
 
     getCurrentStage = (proposal: ISppProposal): ISppStage => {
@@ -76,12 +67,6 @@ class SppProposalUtils {
     areAllStagesAccepted = (proposal: ISppProposal): boolean => {
         return proposal.settings.stages.every(
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.ACCEPTED,
-        );
-    };
-
-    isExecutionExpired = (proposal: ISppProposal): boolean => {
-        return proposal.settings.stages.some(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.EXPIRED,
         );
     };
 }

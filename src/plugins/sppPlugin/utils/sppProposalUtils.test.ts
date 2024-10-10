@@ -155,23 +155,24 @@ describe('SppProposalUtils', () => {
                 currentStageIndex: 0,
                 startDate: now.minus({ hours: 1 }).toSeconds(),
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
+                executed: { status: false },
             });
 
-            const getStageStatusSpy = jest
-                .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(ProposalStatus.ACCEPTED);
+            const hasAnyStageStatusExpiredSpy = jest
+                .spyOn(sppProposalUtils, 'hasAnyStageStatus')
+                .mockImplementation((_, status) => {
+                    if (status === ProposalStatus.EXPIRED) {
+                        return true;
+                    }
 
-            const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(true);
-
-            const isExecutionExpiredSpy = jest.spyOn(sppProposalUtils, 'isExecutionExpired').mockReturnValue(true);
+                    return false;
+                });
 
             const result = sppProposalUtils.getProposalStatus(proposal);
 
             expect(result).toBe(ProposalStatus.EXPIRED);
 
-            getStageStatusSpy.mockRestore();
-            areAllStagesAcceptedSpy.mockRestore();
-            isExecutionExpiredSpy.mockRestore();
+            hasAnyStageStatusExpiredSpy.mockRestore();
         });
 
         it('returns executable when proposal is accepted, has actions, and execution not expired', () => {
@@ -192,7 +193,9 @@ describe('SppProposalUtils', () => {
 
             const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(true);
 
-            const isExecutionExpiredSpy = jest.spyOn(sppProposalUtils, 'isExecutionExpired').mockReturnValue(false);
+            const hasAnyStageStatusExpiredSpy = jest
+                .spyOn(sppProposalUtils, 'hasAnyStageStatus')
+                .mockReturnValue(false);
 
             const result = sppProposalUtils.getProposalStatus(proposal);
 
@@ -200,7 +203,7 @@ describe('SppProposalUtils', () => {
 
             getStageStatusSpy.mockRestore();
             areAllStagesAcceptedSpy.mockRestore();
-            isExecutionExpiredSpy.mockRestore();
+            hasAnyStageStatusExpiredSpy.mockRestore();
         });
 
         it('returns rejected when none of the conditions are met', () => {
@@ -290,7 +293,7 @@ describe('SppProposalUtils', () => {
         });
     });
 
-    describe('isAnyStageVetoed', () => {
+    describe('hasAnyStageVetoed', () => {
         it('should return true when any stage is vetoed', () => {
             const stage1 = generateSppStage({ id: 'stage-1' });
             const stage2 = generateSppStage({ id: 'stage-2' });
@@ -303,7 +306,7 @@ describe('SppProposalUtils', () => {
                 .spyOn(sppStageUtils, 'isVetoReached')
                 .mockImplementation((_, stage) => stage.id === 'stage-2');
 
-            const result = sppProposalUtils.isAnyStageVetoed(proposal);
+            const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.VETOED);
 
             expect(result).toBe(true);
 
@@ -320,7 +323,7 @@ describe('SppProposalUtils', () => {
 
             const isVetoReachedSpy = jest.spyOn(sppStageUtils, 'isVetoReached').mockReturnValue(false);
 
-            const result = sppProposalUtils.isAnyStageVetoed(proposal);
+            const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.VETOED);
 
             expect(result).toBe(false);
 
@@ -386,7 +389,7 @@ describe('SppProposalUtils', () => {
         });
     });
 
-    describe('isExecutionExpired', () => {
+    describe('hasAnyStageExpired', () => {
         const now = DateTime.now();
 
         it('should return false when not all stages are accepted', () => {
@@ -400,7 +403,7 @@ describe('SppProposalUtils', () => {
 
             const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(false);
 
-            const result = sppProposalUtils.isExecutionExpired(proposal);
+            const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
             expect(result).toBe(false);
 
@@ -424,7 +427,7 @@ describe('SppProposalUtils', () => {
                 return ProposalStatus.ACCEPTED;
             });
 
-            const result = sppProposalUtils.isExecutionExpired(proposal);
+            const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
             expect(result).toBe(true);
 
@@ -448,7 +451,7 @@ describe('SppProposalUtils', () => {
                 return ProposalStatus.ACCEPTED;
             });
 
-            const result = sppProposalUtils.isExecutionExpired(proposal);
+            const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
             expect(result).toBe(false);
 
