@@ -1,4 +1,8 @@
+import { SppProposalType } from '@/plugins/sppPlugin/types';
+import { DaoTokenVotingMode, VoteOption } from '@/plugins/tokenPlugin/types';
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
+import { Network } from '@/shared/api/daoService';
+import { daoMock } from '@/shared/api/daoService/daoService';
 import type { IMember, IProposal, IVote } from './domain';
 import type {
     IGetMemberListParams,
@@ -7,10 +11,6 @@ import type {
     IGetProposalParams,
     IGetVoteListParams,
 } from './governanceService.api';
-import { SppProposalType } from '@/plugins/sppPlugin/types';
-import { DaoTokenVotingMode, VoteOption } from '@/plugins/tokenPlugin/types';
-import { Network } from '@/shared/api/daoService';
-import { daoMock } from '@/shared/api/daoService/daoService';
 
 // TODO: Remove these mocks when we have all data from backend for SPP proposals
 const mockSppProposal = {
