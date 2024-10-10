@@ -210,9 +210,15 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.minus({ hours: 1 }).toSeconds(),
                 settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
+
+            const isVetoReachedSpy = jest.spyOn(sppStageUtils, 'isVetoReached');
+
+            isVetoReachedSpy.mockReturnValue(true);
+
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.VETOED);
+
+            isVetoReachedSpy.mockRestore();
         });
 
         it('returns pending when stage start date is in the future', () => {
