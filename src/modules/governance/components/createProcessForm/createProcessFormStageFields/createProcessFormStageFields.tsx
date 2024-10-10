@@ -37,9 +37,6 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         formState: { errors, isSubmitted },
     } = useFormContext();
 
-    console.log('errors', errors);
-    console.log('isSubmitted', isSubmitted);
-
     const { t } = useTranslations();
 
     const stageFields = useStageFields(stageName, stageIndex);
@@ -121,7 +118,11 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
                     useCustomWrapper={true}
                     alert={
                         Array.isArray(errors.stages) && errors.stages[stageIndex]?.bodies
-                            ? { message: (errors.stages[stageIndex] as any).bodies.message, variant: 'critical' }
+                            ? {
+                                  message: (errors.stages[stageIndex] as { bodies: { message: string } }).bodies
+                                      .message,
+                                  variant: 'critical',
+                              }
                             : undefined
                     }
                 >

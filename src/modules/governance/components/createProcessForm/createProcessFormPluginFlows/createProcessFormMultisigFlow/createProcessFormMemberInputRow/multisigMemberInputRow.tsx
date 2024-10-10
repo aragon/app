@@ -15,7 +15,7 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = ({
     handleRemoveMember,
     canRemove,
 }) => {
-    const { control, formState, getValues } = useFormContext();
+    const { control } = useFormContext();
 
     const addressFieldName = `${fieldNamePrefix}.address`;
 
