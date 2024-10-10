@@ -42,7 +42,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const openTransactionDialog = () => {
         const vote = { value: Number(selectedOption), label: voteOptionToIndicator[selectedOption] };
-        const params: IVoteDialogParams = { daoId, proposal, vote };
+        const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
         open(GovernanceDialogs.VOTE, { params });
     };
 
