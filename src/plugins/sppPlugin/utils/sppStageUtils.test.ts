@@ -6,14 +6,14 @@ import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 
 describe('SppStageUtils', () => {
     describe('getStageStartDate', () => {
-        it('should return startDate for the first stage', () => {
+        it('returns startDate for the first stage', () => {
             const startDate = DateTime.now().minus({ days: 1 }).toSeconds();
             const proposal = generateSppProposal({ startDate, currentStageIndex: 0 });
             const result = sppStageUtils.getStageStartDate(proposal);
             expect(result.toSeconds()).toBe(startDate);
         });
 
-        it('should return lastStageTransition for subsequent stages', () => {
+        it('returns lastStageTransition for subsequent stages', () => {
             const lastStageTransition = DateTime.now().minus({ hours: 2 }).toSeconds();
             const proposal = generateSppProposal({ lastStageTransition, currentStageIndex: 1 });
             const result = sppStageUtils.getStageStartDate(proposal);
@@ -22,7 +22,7 @@ describe('SppStageUtils', () => {
     });
 
     describe('getStageEndDate', () => {
-        it('should return correct end date based on votingPeriod', () => {
+        it('returns correct end date based on votingPeriod', () => {
             const startDate = DateTime.now().toSeconds();
             const proposal = generateSppProposal({ startDate });
             const stage = generateSppStage({ votingPeriod: 86400 });
@@ -32,7 +32,7 @@ describe('SppStageUtils', () => {
     });
 
     describe('isVetoReached', () => {
-        it('should return true when veto count reaches threshold', () => {
+        it('returns true when veto count reaches threshold', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 vetoThreshold: 1,
@@ -51,7 +51,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBe(true);
         });
 
-        it('should return false when veto count is below threshold', () => {
+        it('returns false when veto count is below threshold', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 vetoThreshold: 2,
@@ -72,7 +72,7 @@ describe('SppStageUtils', () => {
     });
 
     describe('isApprovalReached', () => {
-        it('should return true when approval count reaches threshold', () => {
+        it('returns true when approval count reaches threshold', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 approvalThreshold: 1,
@@ -91,7 +91,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.isApprovalReached(proposal, stage)).toBe(true);
         });
 
-        it('should return false when approval count is below threshold', () => {
+        it('returns false when approval count is below threshold', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 approvalThreshold: 2,
@@ -112,7 +112,7 @@ describe('SppStageUtils', () => {
     });
 
     describe('canStageAdvance', () => {
-        it('should return true when all conditions are met', () => {
+        it('returns true when all conditions are met', () => {
             const now = DateTime.now();
             const stage = generateSppStage({
                 id: 'stage-1',
@@ -136,7 +136,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBe(true);
         });
 
-        it('should return false when outside time window', () => {
+        it('returns false when outside time window', () => {
             const now = DateTime.now();
             const stage = generateSppStage({
                 id: 'stage-1',
@@ -155,7 +155,7 @@ describe('SppStageUtils', () => {
     });
 
     describe('getCount', () => {
-        it('should return correct veto and approval counts', () => {
+        it('returns correct veto and approval counts', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 plugins: [
@@ -178,7 +178,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(2);
         });
 
-        it('should return 0 when no matching subProposals are found', () => {
+        it('returns 0 when no matching subProposals are found', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 plugins: [
@@ -201,7 +201,7 @@ describe('SppStageUtils', () => {
     describe('getStageStatus', () => {
         const now = DateTime.now();
 
-        it('should return vetoed when stage is vetoed', () => {
+        it('returns vetoed when stage is vetoed', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 vetoThreshold: 1,
@@ -215,7 +215,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.VETOED);
         });
 
-        it('should return pending when stage start date is in the future', () => {
+        it('returns pending when stage start date is in the future', () => {
             const stage = generateSppStage();
             const proposal = generateSppProposal({
                 startDate: now.plus({ hours: 1 }).toSeconds(),
@@ -223,7 +223,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.PENDING);
         });
 
-        it('should return pending when current stage index is less than the stage index', () => {
+        it('returns pending when current stage index is less than the stage index', () => {
             const stage1 = generateSppStage({
                 id: 'stage-1',
                 votingPeriod: 3600,
@@ -250,7 +250,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(ProposalStatus.PENDING);
         });
 
-        it('should return rejected when approval threshold is not met and stage end date has passed', () => {
+        it('returns rejected when approval threshold is not met and stage end date has passed', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 votingPeriod: 3600,
@@ -271,7 +271,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.REJECTED);
         });
 
-        it('should return active when approval is reached but min advance is in the future', () => {
+        it('returns active when approval is reached but min advance is in the future', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 votingPeriod: 3600,
@@ -288,7 +288,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
         });
 
-        it('should return accepted when approval is reached and stage can advance', () => {
+        it('returns accepted when approval is reached and stage can advance', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 votingPeriod: 3600,
@@ -305,7 +305,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
         });
 
-        it('should return expired when past max advance date and approved', () => {
+        it('returns expired when past max advance date and approved', () => {
             const now = DateTime.now();
             const stage = generateSppStage({
                 votingPeriod: 3600,
@@ -327,7 +327,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.EXPIRED);
         });
 
-        it('should return inactive for an unreached stage when the previous stage is rejected', () => {
+        it('returns inactive for an unreached stage when the previous stage is rejected', () => {
             const stage1 = generateSppStage({
                 id: 'stage-1',
                 votingPeriod: 3600,
@@ -357,7 +357,7 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(ProposalVotingStatus.UNREACHED);
         });
 
-        it('should return active when stage has started but not ended and approval not reached', () => {
+        it('returns active when stage has started but not ended and approval not reached', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
                 votingPeriod: 3600,

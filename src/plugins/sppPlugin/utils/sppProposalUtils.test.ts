@@ -234,7 +234,7 @@ describe('SppProposalUtils', () => {
     });
 
     describe('endsInFuture', () => {
-        it('should return true when proposal is not in the last stage', () => {
+        it('returns true when proposal is not in the last stage', () => {
             const stage1 = generateSppStage({ id: 'stage-1' });
             const stage2 = generateSppStage({ id: 'stage-2' });
 
@@ -248,7 +248,7 @@ describe('SppProposalUtils', () => {
             expect(result).toBe(true);
         });
 
-        it('should return true when in last stage and stageEndDate > now', () => {
+        it('returns true when in last stage and stageEndDate > now', () => {
             const now = DateTime.now();
 
             const stage = generateSppStage({ id: 'stage-1' });
@@ -270,7 +270,7 @@ describe('SppProposalUtils', () => {
             getStageEndDateSpy.mockRestore();
         });
 
-        it('should return false when in last stage and stageEndDate <= now', () => {
+        it('returns false when in last stage and stageEndDate <= now', () => {
             const now = DateTime.now();
 
             const stage = generateSppStage({ id: 'stage-1' });
@@ -294,7 +294,7 @@ describe('SppProposalUtils', () => {
     });
 
     describe('hasAnyStageVetoed', () => {
-        it('should return true when any stage is vetoed', () => {
+        it('returns true when any stage is vetoed', () => {
             const stage1 = generateSppStage({ id: 'stage-1' });
             const stage2 = generateSppStage({ id: 'stage-2' });
 
@@ -313,7 +313,7 @@ describe('SppProposalUtils', () => {
             isVetoReachedSpy.mockRestore();
         });
 
-        it('should return false when no stages are vetoed', () => {
+        it('returns false when no stages are vetoed', () => {
             const stage1 = generateSppStage({ id: 'stage-1' });
             const stage2 = generateSppStage({ id: 'stage-2' });
 
@@ -332,7 +332,7 @@ describe('SppProposalUtils', () => {
     });
 
     describe('getCurrentStage', () => {
-        it('should return the current stage', () => {
+        it('returns the current stage', () => {
             const stage1 = generateSppStage({ id: 'stage-1' });
             const stage2 = generateSppStage({ id: 'stage-2' });
 
@@ -348,7 +348,7 @@ describe('SppProposalUtils', () => {
     });
 
     describe('areAllStagesAccepted', () => {
-        it('should return true when all stages are accepted', () => {
+        it('returns true when all stages are accepted', () => {
             const stage1 = generateSppStage({ id: 'stage-1' });
             const stage2 = generateSppStage({ id: 'stage-2' });
 
@@ -367,7 +367,7 @@ describe('SppProposalUtils', () => {
             getStageStatusSpy.mockRestore();
         });
 
-        it('should return false when any stage is not accepted', () => {
+        it('returns false when any stage is not accepted', () => {
             const stage1 = generateSppStage({ id: 'stage-1' });
             const stage2 = generateSppStage({ id: 'stage-2' });
 
@@ -392,7 +392,7 @@ describe('SppProposalUtils', () => {
     describe('hasAnyStageExpired', () => {
         const now = DateTime.now();
 
-        it('should return false when not all stages are accepted', () => {
+        it('returns false when not all stages are accepted', () => {
             const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
             const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
             const proposal = generateSppProposal({
@@ -410,7 +410,7 @@ describe('SppProposalUtils', () => {
             areAllStagesAcceptedSpy.mockRestore();
         });
 
-        it('should return true when all stages are accepted and last stage execution window has passed', () => {
+        it('returns true when all stages are accepted and last stage execution window has passed', () => {
             const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
             const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
             const proposal = generateSppProposal({
@@ -434,7 +434,7 @@ describe('SppProposalUtils', () => {
             stageStatusSpy.mockRestore();
         });
 
-        it('should return false when all stages are accepted and last stage execution window has not passed', () => {
+        it('returns false when all stages are accepted and last stage execution window has not passed', () => {
             const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
             const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
             const proposal = generateSppProposal({
