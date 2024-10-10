@@ -1,9 +1,9 @@
+import { timeUtils } from '@/test/utils';
+import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { generateSppProposal, generateSppStage, generateSppStagePlugin, generateSppSubProposal } from '../testUtils';
 import { SppProposalType } from '../types';
 import { sppStageUtils } from './sppStageUtils';
-import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
-import { timeUtils } from '@/test/utils';
 
 describe('SppStageUtils', () => {
     describe('getStageStartDate', () => {

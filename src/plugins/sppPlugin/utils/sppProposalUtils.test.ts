@@ -1,10 +1,10 @@
 import { generateProposalActionUpdateMetadata } from '@/modules/governance/testUtils';
+import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { generateSppProposal, generateSppStage } from '../testUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 import { sppStageUtils } from './sppStageUtils';
-import { timeUtils } from '@/test/utils';
 
 const actionBaseValues = { data: '0x123456', to: '0x000', value: '0' };
 
@@ -421,27 +421,25 @@ describe('SppProposalUtils', () => {
 
     describe('hasAnyStageExpired', () => {
         const now = '2023-01-01T12:00:00.000Z';
-                    it('returns false when not all stages are accepted', () => {
-                        const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
-                        const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
-                        const proposal = generateSppProposal({
-                            settings: { stages: [stage1, stage2] },
-                            currentStageIndex: 1,
-                            startDate: DateTime.fromISO(now).minus({ hours: 3 }).toSeconds(),
-                        });
+        it('returns false when not all stages are accepted', () => {
+            const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
+            const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
+            const proposal = generateSppProposal({
+                settings: { stages: [stage1, stage2] },
+                currentStageIndex: 1,
+                startDate: DateTime.fromISO(now).minus({ hours: 3 }).toSeconds(),
+            });
 
-                        timeUtils.setTime(now);
+            timeUtils.setTime(now);
 
-                        const areAllStagesAcceptedSpy = jest
-                            .spyOn(sppProposalUtils, 'areAllStagesAccepted')
-                            .mockReturnValue(false);
+            const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(false);
 
-                        const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
+            const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
-                        expect(result).toBeFalsy();
+            expect(result).toBeFalsy();
 
-                        areAllStagesAcceptedSpy.mockRestore();
-                    });
+            areAllStagesAcceptedSpy.mockRestore();
+        });
 
         it('returns true when all stages are accepted and last stage execution window has passed', () => {
             const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });

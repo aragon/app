@@ -1,6 +1,6 @@
+import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { type ISppProposal, type ISppStage, SppProposalType, type SppStageStatus } from '../types';
-import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
