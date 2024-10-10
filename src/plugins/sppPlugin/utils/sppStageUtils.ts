@@ -89,10 +89,8 @@ class SppStageUtils {
     getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
         return proposal.subProposals.filter(
             (subProposal) =>
-                stage.plugins.some((plugin) => plugin.address === subProposal.pluginAddress) &&
                 stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress)?.proposalType ===
-                    proposalType &&
-                subProposal.result,
+                    proposalType && subProposal.result,
         ).length;
     };
 }
