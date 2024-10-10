@@ -81,9 +81,9 @@ class SppStageUtils {
 
         const isApproved = this.isApprovalReached(proposal, stage);
 
-        const isNotVetoed = !this.isVetoReached(proposal, stage);
+        const isVetoed = this.isVetoReached(proposal, stage);
 
-        return isWithinMinAndMaxAdvance && isApproved && isNotVetoed;
+        return isWithinMinAndMaxAdvance && isApproved && !isVetoed;
     };
 
     getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
