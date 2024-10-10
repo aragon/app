@@ -1,3 +1,4 @@
+import * as useDialogContext from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
@@ -13,13 +14,16 @@ jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
 
 describe('<DaoProposalsPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDialogContextSpy.mockReturnValue({ close: jest.fn(), open: jest.fn() });
     });
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
+        useDialogContextSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {

@@ -404,7 +404,8 @@
         "name": "Create DAO"
       },
       "layoutWizardCreateProposal": {
-        "name": "Create Proposal"
+        "name": "Create Proposal",
+        "namePlugin": "{{plugin}}: Create Proposal"
       },
       "proposalExecutionStatus": {
         "buttons": {
@@ -432,6 +433,14 @@
           }
         },
         "title": "Publish proposal"
+      },
+      "selectPluginDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "select": "Create"
+        },
+        "description": "Select the proposal type that you'd like to create.",
+        "title": "Create proposal"
       },
       "voteDialog": {
         "button": {
