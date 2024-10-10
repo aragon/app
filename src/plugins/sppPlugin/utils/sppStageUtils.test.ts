@@ -48,7 +48,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.isVetoReached(proposal, stage)).toBe(true);
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeTruthy();
         });
 
         it('returns false when veto count is below threshold', () => {
@@ -67,7 +67,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.isVetoReached(proposal, stage)).toBe(false);
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
     });
 
@@ -88,7 +88,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.isApprovalReached(proposal, stage)).toBe(true);
+            expect(sppStageUtils.isApprovalReached(proposal, stage)).toBeTruthy();
         });
 
         it('returns false when approval count is below threshold', () => {
@@ -107,7 +107,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.isApprovalReached(proposal, stage)).toBe(false);
+            expect(sppStageUtils.isApprovalReached(proposal, stage)).toBeFalsy();
         });
     });
 
@@ -133,7 +133,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBe(true);
+            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeTruthy();
         });
 
         it('returns false when outside time window', () => {
@@ -150,7 +150,7 @@ describe('SppStageUtils', () => {
                 settings: { stages: [stage] },
                 subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
-            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBe(false);
+            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
         });
     });
 

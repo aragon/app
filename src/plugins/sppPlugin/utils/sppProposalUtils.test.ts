@@ -245,7 +245,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.endsInFuture(proposal);
 
-            expect(result).toBe(true);
+            expect(result).toBeTruthy();
         });
 
         it('returns true when in last stage and stageEndDate > now', () => {
@@ -265,7 +265,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.endsInFuture(proposal);
 
-            expect(result).toBe(true);
+            expect(result).toBeTruthy();
 
             getStageEndDateSpy.mockRestore();
         });
@@ -287,7 +287,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.endsInFuture(proposal);
 
-            expect(result).toBe(false);
+            expect(result).toBeFalsy();
 
             getStageEndDateSpy.mockRestore();
         });
@@ -308,7 +308,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.VETOED);
 
-            expect(result).toBe(true);
+            expect(result).toBeTruthy();
 
             isVetoReachedSpy.mockRestore();
         });
@@ -325,7 +325,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.VETOED);
 
-            expect(result).toBe(false);
+            expect(result).toBeFalsy();
 
             isVetoReachedSpy.mockRestore();
         });
@@ -362,7 +362,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.areAllStagesAccepted(proposal);
 
-            expect(result).toBe(true);
+            expect(result).toBeTruthy();
 
             getStageStatusSpy.mockRestore();
         });
@@ -383,7 +383,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.areAllStagesAccepted(proposal);
 
-            expect(result).toBe(false);
+            expect(result).toBeFalsy();
 
             getStageStatusSpy.mockRestore();
         });
@@ -405,7 +405,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
-            expect(result).toBe(false);
+            expect(result).toBeFalsy();
 
             areAllStagesAcceptedSpy.mockRestore();
         });
@@ -429,7 +429,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
-            expect(result).toBe(true);
+            expect(result).toBeTruthy();
 
             stageStatusSpy.mockRestore();
         });
@@ -453,7 +453,7 @@ describe('SppProposalUtils', () => {
 
             const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
-            expect(result).toBe(false);
+            expect(result).toBeFalsy();
 
             stageStatusSpy.mockRestore();
         });
