@@ -1,6 +1,6 @@
 import { ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { SppStageStatus, type ISppProposal, type ISppStage } from '../types';
+import type { ISppProposal, ISppStage } from '../types';
 import { sppStageUtils } from './sppStageUtils';
 
 class SppProposalUtils {
@@ -59,13 +59,13 @@ class SppProposalUtils {
 
     isAnyStageVetoed = (proposal: ISppProposal): boolean => {
         return proposal.settings.stages.some(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === SppStageStatus.VETOED,
+            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.VETOED,
         );
     };
 
     isAnyStageRejected = (proposal: ISppProposal): boolean => {
         return proposal.settings.stages.some(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === SppStageStatus.REJECTED,
+            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.REJECTED,
         );
     };
 
@@ -75,13 +75,13 @@ class SppProposalUtils {
 
     areAllStagesAccepted = (proposal: ISppProposal): boolean => {
         return proposal.settings.stages.every(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === SppStageStatus.ACCEPTED,
+            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.ACCEPTED,
         );
     };
 
     isExecutionExpired = (proposal: ISppProposal): boolean => {
         return proposal.settings.stages.some(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === SppStageStatus.EXPIRED,
+            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.EXPIRED,
         );
     };
 }

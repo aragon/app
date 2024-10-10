@@ -1,8 +1,7 @@
 import { generateProposalActionUpdateMetadata } from '@/modules/governance/testUtils';
-import { ProposalStatus } from '@aragon/ods';
+import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { generateSppProposal, generateSppStage } from '../testUtils';
-import { SppStageStatus } from '../types';
 import { sppProposalUtils } from './sppProposalUtils';
 import { sppStageUtils } from './sppStageUtils';
 
@@ -62,7 +61,7 @@ describe('SppProposalUtils', () => {
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(SppStageStatus.ACTIVE);
+                .mockReturnValue(ProposalStatus.ACTIVE);
             const endsInFutureSpy = jest.spyOn(sppProposalUtils, 'endsInFuture').mockReturnValue(true);
 
             const result = sppProposalUtils.getProposalStatus(proposal);
@@ -87,7 +86,7 @@ describe('SppProposalUtils', () => {
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(SppStageStatus.ACCEPTED);
+                .mockReturnValue(ProposalStatus.ACCEPTED);
 
             const endsInFutureSpy = jest.spyOn(sppProposalUtils, 'endsInFuture').mockReturnValue(true);
 
@@ -112,7 +111,7 @@ describe('SppProposalUtils', () => {
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(SppStageStatus.REJECTED);
+                .mockReturnValue(ProposalStatus.REJECTED);
 
             const result = sppProposalUtils.getProposalStatus(proposal);
 
@@ -134,7 +133,7 @@ describe('SppProposalUtils', () => {
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(SppStageStatus.ACCEPTED);
+                .mockReturnValue(ProposalStatus.ACCEPTED);
 
             const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(true);
 
@@ -160,7 +159,7 @@ describe('SppProposalUtils', () => {
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(SppStageStatus.ACCEPTED);
+                .mockReturnValue(ProposalStatus.ACCEPTED);
 
             const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(true);
 
@@ -189,7 +188,7 @@ describe('SppProposalUtils', () => {
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(SppStageStatus.ACCEPTED);
+                .mockReturnValue(ProposalStatus.ACCEPTED);
 
             const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(true);
 
@@ -218,7 +217,7 @@ describe('SppProposalUtils', () => {
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(SppStageStatus.INACTIVE);
+                .mockReturnValue(ProposalVotingStatus.UNREACHED);
 
             const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(false);
 
@@ -356,7 +355,7 @@ describe('SppProposalUtils', () => {
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
-                .mockReturnValue(SppStageStatus.ACCEPTED);
+                .mockReturnValue(ProposalStatus.ACCEPTED);
 
             const result = sppProposalUtils.areAllStagesAccepted(proposal);
 
@@ -376,7 +375,7 @@ describe('SppProposalUtils', () => {
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
                 .mockImplementation((_, stage) =>
-                    stage.id === 'stage-1' ? SppStageStatus.ACCEPTED : SppStageStatus.REJECTED,
+                    stage.id === 'stage-1' ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED,
                 );
 
             const result = sppProposalUtils.areAllStagesAccepted(proposal);
@@ -419,10 +418,10 @@ describe('SppProposalUtils', () => {
 
             const stageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus').mockImplementation((_, stage) => {
                 if (stage.id === 'stage-2') {
-                    return SppStageStatus.EXPIRED;
+                    return ProposalStatus.EXPIRED;
                 }
 
-                return SppStageStatus.ACCEPTED;
+                return ProposalStatus.ACCEPTED;
             });
 
             const result = sppProposalUtils.isExecutionExpired(proposal);
@@ -443,10 +442,10 @@ describe('SppProposalUtils', () => {
 
             const stageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus').mockImplementation((_, stage) => {
                 if (stage.id === 'stage-2') {
-                    return SppStageStatus.ACTIVE;
+                    return ProposalStatus.ACTIVE;
                 }
 
-                return SppStageStatus.ACCEPTED;
+                return ProposalStatus.ACCEPTED;
             });
 
             const result = sppProposalUtils.isExecutionExpired(proposal);

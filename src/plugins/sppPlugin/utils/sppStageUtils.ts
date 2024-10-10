@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
-import { type ISppProposal, type ISppStage, SppProposalType, SppStageStatus } from '../types';
+import { type ISppProposal, type ISppStage, SppProposalType, type SppStageStatus } from '../types';
+import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
@@ -10,36 +11,36 @@ class SppStageUtils {
         const stageIndex = proposal.settings.stages.findIndex((s) => s.id === stage.id);
 
         if (this.isVetoReached(proposal, stage)) {
-            return SppStageStatus.VETOED;
+            return ProposalStatus.VETOED;
         }
 
         if (this.isPreviousStageRejectedOrVetoed(proposal, stageIndex)) {
-            return SppStageStatus.INACTIVE;
+            return ProposalVotingStatus.UNREACHED;
         }
 
         if (stageStartDate > now || stageIndex > proposal.currentStageIndex) {
-            return SppStageStatus.PENDING;
+            return ProposalStatus.PENDING;
         }
 
         if (this.isApprovalReached(proposal, stage)) {
             if (now > maxAdvanceDate) {
-                return SppStageStatus.EXPIRED;
+                return ProposalStatus.EXPIRED;
             }
 
-            return this.canStageAdvance(proposal, stage) ? SppStageStatus.ACCEPTED : SppStageStatus.ACTIVE;
+            return this.canStageAdvance(proposal, stage) ? ProposalStatus.ACCEPTED : ProposalStatus.ACTIVE;
         }
 
         if (now > stageEndDate) {
-            return SppStageStatus.REJECTED;
+            return ProposalStatus.REJECTED;
         }
 
-        return SppStageStatus.ACTIVE;
+        return ProposalStatus.ACTIVE;
     };
 
     isPreviousStageRejectedOrVetoed = (proposal: ISppProposal, currentStageIndex: number): boolean => {
         return proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
             const status = this.getStageStatus(proposal, stage);
-            return status === SppStageStatus.VETOED || status === SppStageStatus.REJECTED;
+            return status === ProposalStatus.VETOED || status === ProposalStatus.REJECTED;
         });
     };
 

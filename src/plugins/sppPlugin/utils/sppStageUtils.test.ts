@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon';
 import { generateSppProposal, generateSppStage, generateSppStagePlugin, generateSppSubProposal } from '../testUtils';
-import { SppProposalType, SppStageStatus } from '../types';
+import { SppProposalType } from '../types';
 import { sppStageUtils } from './sppStageUtils';
+import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 
 describe('SppStageUtils', () => {
     describe('getStageStartDate', () => {
@@ -211,7 +212,7 @@ describe('SppStageUtils', () => {
                 settings: { stages: [stage] },
                 subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.VETOED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.VETOED);
         });
 
         it('should return pending when stage start date is in the future', () => {
@@ -219,7 +220,7 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 startDate: now.plus({ hours: 1 }).toSeconds(),
             });
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.PENDING);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.PENDING);
         });
 
         it('should return pending when current stage index is less than the stage index', () => {
@@ -245,8 +246,8 @@ describe('SppStageUtils', () => {
                 ],
             });
 
-            expect(sppStageUtils.getStageStatus(proposal, stage1)).toBe(SppStageStatus.ACTIVE);
-            expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(SppStageStatus.PENDING);
+            expect(sppStageUtils.getStageStatus(proposal, stage1)).toBe(ProposalStatus.ACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(ProposalStatus.PENDING);
         });
 
         it('should return rejected when approval threshold is not met and stage end date has passed', () => {
@@ -267,7 +268,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.REJECTED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.REJECTED);
         });
 
         it('should return active when approval is reached but min advance is in the future', () => {
@@ -284,7 +285,7 @@ describe('SppStageUtils', () => {
                 settings: { stages: [stage] },
                 subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
             });
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.ACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
         });
 
         it('should return accepted when approval is reached and stage can advance', () => {
@@ -301,7 +302,7 @@ describe('SppStageUtils', () => {
                 settings: { stages: [stage] },
                 subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.ACCEPTED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
         });
 
         it('should return expired when past max advance date and approved', () => {
@@ -323,7 +324,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: true }),
                 ],
             });
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.EXPIRED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.EXPIRED);
         });
 
         it('should return inactive for an unreached stage when the previous stage is rejected', () => {
@@ -353,7 +354,7 @@ describe('SppStageUtils', () => {
                 ],
             });
 
-            expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(SppStageStatus.INACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(ProposalVotingStatus.UNREACHED);
         });
 
         it('should return active when stage has started but not ended and approval not reached', () => {
@@ -374,7 +375,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(SppStageStatus.ACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
         });
     });
 });
