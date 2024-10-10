@@ -14,7 +14,7 @@ class SppStageUtils {
             return ProposalStatus.VETOED;
         }
 
-        if (this.isPreviousStageRejectedOrVetoed(proposal, stageIndex)) {
+        if (this.isStagedUnreached(proposal, stageIndex)) {
             return ProposalVotingStatus.UNREACHED;
         }
 
@@ -37,10 +37,14 @@ class SppStageUtils {
         return ProposalStatus.ACTIVE;
     };
 
-    isPreviousStageRejectedOrVetoed = (proposal: ISppProposal, currentStageIndex: number): boolean => {
+    isStagedUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
         return proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
             const status = this.getStageStatus(proposal, stage);
-            return status === ProposalStatus.VETOED || status === ProposalStatus.REJECTED;
+            return (
+                status === ProposalStatus.VETOED ||
+                status === ProposalStatus.REJECTED ||
+                status === ProposalStatus.EXPIRED
+            );
         });
     };
 
