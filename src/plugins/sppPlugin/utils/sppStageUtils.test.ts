@@ -3,18 +3,21 @@ import { generateSppProposal, generateSppStage, generateSppStagePlugin, generate
 import { SppProposalType } from '../types';
 import { sppStageUtils } from './sppStageUtils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
+import { timeUtils } from '@/test/utils';
 
 describe('SppStageUtils', () => {
     describe('getStageStartDate', () => {
         it('returns startDate for the first stage', () => {
-            const startDate = DateTime.now().minus({ days: 1 }).toSeconds();
+            const now = '2022-02-10T07:55:55.868Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 1 }).toSeconds();
             const proposal = generateSppProposal({ startDate, currentStageIndex: 0 });
             const result = sppStageUtils.getStageStartDate(proposal);
             expect(result.toSeconds()).toBe(startDate);
         });
 
         it('returns lastStageTransition for subsequent stages', () => {
-            const lastStageTransition = DateTime.now().minus({ hours: 2 }).toSeconds();
+            const now = '2022-02-10T07:55:55.868Z';
+            const lastStageTransition = DateTime.fromISO(now).minus({ hours: 2 }).toSeconds();
             const proposal = generateSppProposal({ lastStageTransition, currentStageIndex: 1 });
             const result = sppStageUtils.getStageStartDate(proposal);
             expect(result.toSeconds()).toBe(lastStageTransition);
@@ -23,7 +26,8 @@ describe('SppStageUtils', () => {
 
     describe('getStageEndDate', () => {
         it('returns correct end date based on votingPeriod', () => {
-            const startDate = DateTime.now().toSeconds();
+            const now = '2022-02-10T07:55:55.868Z';
+            const startDate = DateTime.fromISO(now).toSeconds();
             const proposal = generateSppProposal({ startDate });
             const stage = generateSppStage({ votingPeriod: 86400 });
             const result = sppStageUtils.getStageEndDate(proposal, stage);
@@ -113,7 +117,8 @@ describe('SppStageUtils', () => {
 
     describe('canStageAdvance', () => {
         it('returns true when all conditions are met', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 2 }).toSeconds();
             const stage = generateSppStage({
                 id: 'stage-1',
                 minAdvance: 3600,
@@ -126,18 +131,20 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 2 }).toSeconds(),
+                startDate,
                 settings: { stages: [stage] },
                 subProposals: [
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
+            timeUtils.setTime(now);
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeTruthy();
         });
 
         it('returns false when outside time window', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 3 }).toSeconds();
             const stage = generateSppStage({
                 id: 'stage-1',
                 minAdvance: 3600,
@@ -146,10 +153,11 @@ describe('SppStageUtils', () => {
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 3 }).toSeconds(),
+                startDate,
                 settings: { stages: [stage] },
                 subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
+            timeUtils.setTime(now);
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
         });
     });
@@ -199,8 +207,7 @@ describe('SppStageUtils', () => {
     });
 
     describe('getStageStatus', () => {
-        const now = DateTime.now();
-
+        const now = '2023-01-01T12:00:00.000Z';
         it('returns vetoed when stage is vetoed', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
@@ -208,7 +215,7 @@ describe('SppStageUtils', () => {
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO })],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ hours: 1 }).toSeconds(),
                 settings: { stages: [stage] },
             });
 
@@ -224,8 +231,9 @@ describe('SppStageUtils', () => {
         it('returns pending when stage start date is in the future', () => {
             const stage = generateSppStage();
             const proposal = generateSppProposal({
-                startDate: now.plus({ hours: 1 }).toSeconds(),
+                startDate: DateTime.fromISO(now).plus({ hours: 1 }).toSeconds(),
             });
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.PENDING);
         });
 
@@ -240,7 +248,7 @@ describe('SppStageUtils', () => {
                 votingPeriod: 3600,
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ minutes: 30 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ minutes: 30 }).toSeconds(),
                 currentStageIndex: 0,
                 settings: { stages: [stage1, stage2] },
                 subProposals: [
@@ -251,7 +259,7 @@ describe('SppStageUtils', () => {
                     }),
                 ],
             });
-
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage1)).toBe(ProposalStatus.ACTIVE);
             expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(ProposalStatus.PENDING);
         });
@@ -267,7 +275,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 2 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ hours: 2 }).toSeconds(),
                 settings: { stages: [stage] },
                 subProposals: [
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
@@ -287,10 +295,11 @@ describe('SppStageUtils', () => {
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ minutes: 30 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ minutes: 30 }).toSeconds(),
                 settings: { stages: [stage] },
                 subProposals: [generateSppSubProposal({ stageId: 'stage-1', result: true })],
             });
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
         });
 
@@ -304,15 +313,17 @@ describe('SppStageUtils', () => {
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ minutes: 45 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ minutes: 45 }).toSeconds(),
                 settings: { stages: [stage] },
                 subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
         });
 
         it('returns expired when past max advance date and approved', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 6 }).toSeconds();
             const stage = generateSppStage({
                 votingPeriod: 3600,
                 maxAdvance: 7200,
@@ -323,13 +334,14 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 6 }).toSeconds(),
+                startDate,
                 settings: { stages: [stage] },
                 subProposals: [
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: true }),
                 ],
             });
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.EXPIRED);
         });
 
@@ -351,7 +363,7 @@ describe('SppStageUtils', () => {
             });
 
             const proposal = generateSppProposal({
-                startDate: now.minus({ hours: 2 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ hours: 2 }).toSeconds(),
                 currentStageIndex: 0,
                 settings: { stages: [stage1, stage2] },
                 subProposals: [
@@ -359,7 +371,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
-
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(ProposalVotingStatus.UNREACHED);
         });
 
@@ -374,13 +386,14 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                startDate: now.minus({ minutes: 30 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ minutes: 30 }).toSeconds(),
                 settings: { stages: [stage] },
                 subProposals: [
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
             });
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
         });
     });

@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import { generateSppProposal, generateSppStage } from '../testUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 import { sppStageUtils } from './sppStageUtils';
+import { timeUtils } from '@/test/utils';
 
 const actionBaseValues = { data: '0x123456', to: '0x000', value: '0' };
 
@@ -37,11 +38,14 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns pending when proposal has not started yet', () => {
-            const startDate = DateTime.now().plus({ days: 1 }).toSeconds();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).plus({ days: 1 }).toSeconds();
 
             const proposal = generateSppProposal({
                 startDate,
             });
+
+            timeUtils.setTime(now);
 
             const result = sppProposalUtils.getProposalStatus(proposal);
 
@@ -49,15 +53,18 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns active when current stage is active and ends in future', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
             const stage = generateSppStage({ id: 'stage-1' });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate,
             });
+
+            timeUtils.setTime(now);
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
@@ -73,14 +80,15 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns executable when all stages are accepted, has actions, and ends in future', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
             const stage = generateSppStage({ id: 'stage-1', maxAdvance: 36000 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate,
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
             });
 
@@ -89,6 +97,8 @@ describe('SppProposalUtils', () => {
                 .mockReturnValue(ProposalStatus.ACCEPTED);
 
             const endsInFutureSpy = jest.spyOn(sppProposalUtils, 'endsInFuture').mockReturnValue(true);
+
+            timeUtils.setTime(now);
 
             const result = sppProposalUtils.getProposalStatus(proposal);
 
@@ -99,15 +109,17 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns rejected when current stage is rejected', () => {
-            const now = DateTime.now();
-
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
             const stage = generateSppStage({ id: 'stage-1' });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate,
             });
+
+            timeUtils.setTime(now);
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
@@ -121,15 +133,18 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns accepted when all stages are accepted and has no actions', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
             const stage = generateSppStage({ id: 'stage-1' });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate,
             });
+
+            timeUtils.setTime(now);
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
@@ -146,17 +161,20 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns expired when proposal is accepted, has actions, and execution expired', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
             const stage = generateSppStage({ id: 'stage-1' });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate,
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
                 executed: { status: false },
             });
+
+            timeUtils.setTime(now);
 
             const hasAnyStageStatusExpiredSpy = jest
                 .spyOn(sppProposalUtils, 'hasAnyStageStatus')
@@ -176,16 +194,19 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns executable when proposal is accepted, has actions, and execution not expired', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
             const stage = generateSppStage({ id: 'stage-1' });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate,
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
             });
+
+            timeUtils.setTime(now);
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
@@ -207,16 +228,19 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns rejected when none of the conditions are met', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
             const stage = generateSppStage({ id: 'stage-1' });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate,
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
             });
+
+            timeUtils.setTime(now);
 
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
@@ -249,19 +273,22 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns true when in last stage and stageEndDate > now', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
             const stage = generateSppStage({ id: 'stage-1' });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate,
             });
 
             const getStageEndDateSpy = jest
                 .spyOn(sppStageUtils, 'getStageEndDate')
-                .mockReturnValue(now.plus({ hours: 1 }));
+                .mockReturnValue(DateTime.fromISO(now).plus({ hours: 1 }));
+
+            timeUtils.setTime(now);
 
             const result = sppProposalUtils.endsInFuture(proposal);
 
@@ -271,19 +298,22 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns false when in last stage and stageEndDate <= now', () => {
-            const now = DateTime.now();
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
             const stage = generateSppStage({ id: 'stage-1' });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 currentStageIndex: 0,
-                startDate: now.minus({ hours: 2 }).toSeconds(),
+                startDate,
             });
 
             const getStageEndDateSpy = jest
                 .spyOn(sppStageUtils, 'getStageEndDate')
-                .mockReturnValue(now.minus({ hours: 1 }));
+                .mockReturnValue(DateTime.fromISO(now).minus({ hours: 1 }));
+
+            timeUtils.setTime(now);
 
             const result = sppProposalUtils.endsInFuture(proposal);
 
@@ -390,25 +420,28 @@ describe('SppProposalUtils', () => {
     });
 
     describe('hasAnyStageExpired', () => {
-        const now = DateTime.now();
+        const now = '2023-01-01T12:00:00.000Z';
+                    it('returns false when not all stages are accepted', () => {
+                        const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
+                        const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
+                        const proposal = generateSppProposal({
+                            settings: { stages: [stage1, stage2] },
+                            currentStageIndex: 1,
+                            startDate: DateTime.fromISO(now).minus({ hours: 3 }).toSeconds(),
+                        });
 
-        it('returns false when not all stages are accepted', () => {
-            const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
-            const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
-            const proposal = generateSppProposal({
-                settings: { stages: [stage1, stage2] },
-                currentStageIndex: 1,
-                startDate: now.minus({ hours: 3 }).toSeconds(),
-            });
+                        timeUtils.setTime(now);
 
-            const areAllStagesAcceptedSpy = jest.spyOn(sppProposalUtils, 'areAllStagesAccepted').mockReturnValue(false);
+                        const areAllStagesAcceptedSpy = jest
+                            .spyOn(sppProposalUtils, 'areAllStagesAccepted')
+                            .mockReturnValue(false);
 
-            const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
+                        const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
 
-            expect(result).toBeFalsy();
+                        expect(result).toBeFalsy();
 
-            areAllStagesAcceptedSpy.mockRestore();
-        });
+                        areAllStagesAcceptedSpy.mockRestore();
+                    });
 
         it('returns true when all stages are accepted and last stage execution window has passed', () => {
             const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
@@ -416,8 +449,10 @@ describe('SppProposalUtils', () => {
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
                 currentStageIndex: 1,
-                startDate: now.minus({ hours: 5 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ hours: 5 }).toSeconds(),
             });
+
+            timeUtils.setTime(now);
 
             const stageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus').mockImplementation((_, stage) => {
                 if (stage.id === 'stage-2') {
@@ -440,8 +475,10 @@ describe('SppProposalUtils', () => {
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
                 currentStageIndex: 1,
-                startDate: now.minus({ hours: 1 }).toSeconds(),
+                startDate: DateTime.fromISO(now).minus({ hours: 1 }).toSeconds(),
             });
+
+            timeUtils.setTime(now);
 
             const stageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus').mockImplementation((_, stage) => {
                 if (stage.id === 'stage-2') {
