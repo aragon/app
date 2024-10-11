@@ -317,6 +317,7 @@
           "description": "DAO has currently no members.",
           "title": "No members found"
         },
+        "entity": "Members",
         "error": {
           "description": "There was an error loading the DAO members. Please try again later.",
           "title": "Error loading members"
@@ -482,9 +483,6 @@
           "members": "Multisig members",
           "minimumApproval": "Minimum approval",
           "proposalCreation": "Proposal creation"
-        },
-        "multisigMemberList": {
-          "entity": "Members"
         },
         "multisigMembersInfo": {
           "eligibleVoters": "Eligible voters",

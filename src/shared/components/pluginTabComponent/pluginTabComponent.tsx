@@ -1,21 +1,14 @@
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Tabs } from '@aragon/ods';
 import { useEffect, useState } from 'react';
+import { PluginSingleComponent } from '../pluginSingleComponent';
 import type { IPluginTabComponentProps, ITabComponentPlugin } from './pluginTabComponent.api';
 
 export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     props: IPluginTabComponentProps<TMeta, TProps>,
 ) => {
-    const { slotId, plugins = [], value, onValueChange, ...otherProps } = props;
+    const { slotId, plugins = [], value, onValueChange, Fallback, children, ...otherProps } = props;
 
-    const pluginComponents = plugins
-        .map((plugin) => ({
-            ...plugin,
-            Component: pluginRegistryUtils.getSlotComponent({ slotId, pluginId: plugin.id })!,
-        }))
-        .filter(({ Component }) => Component != null);
-
-    const defaultActivePlugin = value ?? pluginComponents[0];
+    const defaultActivePlugin = value ?? plugins[0];
     const [activePlugin, setActivePlugin] = useState<ITabComponentPlugin<TMeta, TProps> | undefined>(
         defaultActivePlugin,
     );
@@ -33,26 +26,30 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
         }
     }, [value]);
 
-    if (!pluginComponents.length) {
+    if (!plugins.length) {
         return null;
     }
 
-    if (pluginComponents.length === 1) {
-        const { Component, props } = pluginComponents[0];
-
-        return <Component {...props} {...otherProps} />;
+    if (plugins.length === 1) {
+        return (
+            <PluginSingleComponent slotId={slotId} pluginId={plugins[0].id} {...plugins[0].props} {...otherProps}>
+                {Fallback != null && <Fallback>{children}</Fallback>}
+            </PluginSingleComponent>
+        );
     }
 
     return (
         <Tabs.Root value={activePlugin?.uniqueId} onValueChange={updateActivePlugin}>
             <Tabs.List>
-                {pluginComponents.map(({ uniqueId, id, label }) => (
+                {plugins.map(({ uniqueId, id, label }) => (
                     <Tabs.Trigger key={uniqueId} label={label ?? id} value={uniqueId} />
                 ))}
             </Tabs.List>
-            {pluginComponents.map(({ uniqueId, Component, props }) => (
+            {plugins.map(({ id, uniqueId, props }) => (
                 <Tabs.Content key={uniqueId} value={uniqueId} className="pt-6">
-                    <Component {...props} {...otherProps} />
+                    <PluginSingleComponent slotId={slotId} pluginId={id} {...props} {...otherProps}>
+                        {Fallback != null && <Fallback>{children}</Fallback>}
+                    </PluginSingleComponent>
                 </Tabs.Content>
             ))}
         </Tabs.Root>

@@ -1,17 +1,23 @@
 import type { IGetMemberListParams } from '@/modules/governance/api/governanceService';
-import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
+import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
+import type { IDaoMemberListContainerProps } from './daoMemberListContainer';
 
-export interface IMultisigMemberListProps extends IDaoMemberListProps {
+export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = IPluginSettings>
+    extends IDaoMemberListContainerProps {
     /**
      * Initial parameters to use for fetching the member list.
      */
     initialParams: IGetMemberListParams;
+    /**
+     * DAO plugin to display to members for.
+     */
+    plugin: IDaoPlugin<TSettings>;
 }
 
-export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) => {
+export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props) => {
     const { initialParams, hidePagination, children } = props;
 
     const { t } = useTranslations();
@@ -21,7 +27,7 @@ export const MultisigMemberList: React.FC<IMultisigMemberListProps> = (props) =>
 
     return (
         <DataListRoot
-            entityLabel={t('app.plugins.multisig.multisigMemberList.entity')}
+            entityLabel={t('app.governance.daoMemberList.entity')}
             onLoadMore={onLoadMore}
             state={state}
             pageSize={pageSize}

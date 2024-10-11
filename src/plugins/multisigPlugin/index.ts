@@ -4,7 +4,6 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 import { MultisigGovernanceInfo } from './components/multisigGovernanceInfo';
 import { MultisigMemberInfo } from './components/multisigMemberInfo';
-import { MultisigMemberList } from './components/multisigMemberList';
 import { MultisigProposalList } from './components/multisigProposalList';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
 import { MultisigSubmitVote } from './components/multisigSubmitVote';
@@ -19,12 +18,6 @@ export const initialiseMultisigPlugin = () => {
         // Plugin definitions
         .registerPlugin(plugin)
 
-        // Governance module slots
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
-            pluginId: plugin.id,
-            component: MultisigMemberList,
-        })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
             pluginId: plugin.id,
