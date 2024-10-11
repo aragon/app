@@ -377,6 +377,7 @@
           "description": "This will show relevant proposals when available.",
           "title": "No proposals found"
         },
+        "entity": "Proposals",
         "error": {
           "description": "There was an error loading the DAO proposals. Please try again later.",
           "title": "Error loading proposals"

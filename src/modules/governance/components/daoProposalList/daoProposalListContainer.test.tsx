@@ -3,7 +3,7 @@ import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
+import { DaoProposalListContainer, type IDaoProposalListContainerProps } from './daoProposalListContainer';
 
 jest.mock('@/shared/components/pluginTabComponent', () => ({
     PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
@@ -11,20 +11,20 @@ jest.mock('@/shared/components/pluginTabComponent', () => ({
     ),
 }));
 
-describe('<DaoProposalList /> component', () => {
+describe('<DaoProposalListContainer /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IDaoProposalListProps>) => {
-        const completeProps: IDaoProposalListProps = {
+    const createTestComponent = (props?: Partial<IDaoProposalListContainerProps>) => {
+        const completeProps: IDaoProposalListContainerProps = {
             initialParams: { queryParams: { daoId: 'dao-id' } },
             ...props,
         };
 
-        return <DaoProposalList {...completeProps} />;
+        return <DaoProposalListContainer {...completeProps} />;
     };
 
     it('renders a plugin tab component with the process plugins and the correct slot id', () => {

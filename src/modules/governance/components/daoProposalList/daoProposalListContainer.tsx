@@ -8,8 +8,10 @@ import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { DaoProposalListDefault } from './daoProposalListDefault';
 
-export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
+export interface IDaoProposalListContainerProps
+    extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Parameters to use for fetching the proposal list.
      */
@@ -24,7 +26,7 @@ export interface IDaoProposalListProps extends Pick<IPluginTabComponentProps<IDa
     children?: ReactNode;
 }
 
-export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
+export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> = (props) => {
     const { initialParams, ...otherProps } = props;
 
     const processPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.PROCESS });
@@ -41,6 +43,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
         <PluginTabComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST}
             plugins={processedPlugins}
+            Fallback={DaoProposalListDefault}
             {...otherProps}
         />
     );

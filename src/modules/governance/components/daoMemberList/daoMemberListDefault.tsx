@@ -3,10 +3,9 @@ import { useMemberListData } from '@/modules/governance/hooks/useMemberListData'
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
-import type { IDaoMemberListContainerProps } from './daoMemberListContainer';
+import type { ReactNode } from 'react';
 
-export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = IPluginSettings>
-    extends IDaoMemberListContainerProps {
+export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = IPluginSettings> {
     /**
      * Initial parameters to use for fetching the member list.
      */
@@ -15,6 +14,14 @@ export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = 
      * DAO plugin to display to members for.
      */
     plugin: IDaoPlugin<TSettings>;
+    /**
+     * Hides the pagination when set to true.
+     */
+    hidePagination?: boolean;
+    /**
+     * Children of the component.
+     */
+    children?: ReactNode;
 }
 
 export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props) => {
