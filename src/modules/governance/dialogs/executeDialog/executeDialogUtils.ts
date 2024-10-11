@@ -1,6 +1,5 @@
-import { executeUtils } from '@/modules/governance/components/executeProposal/utils/executeUtils';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
-import type { Hex } from 'viem';
+import { encodeFunctionData, type Hex } from 'viem';
 
 export interface IBuildTransactionParams {
     /**
@@ -13,15 +12,22 @@ export interface IBuildTransactionParams {
     pluginAddress: string;
 }
 
+const executeAbi = [
+    {
+        type: 'function',
+        inputs: [{ name: '_proposalId', internalType: 'uint256', type: 'uint256' }],
+        name: 'execute',
+        outputs: [],
+        stateMutability: 'nonpayable',
+    },
+];
+
 class ExecuteDialogUtils {
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { pluginAddress } = params;
-        const transactionData = executeUtils.buildExecuteData(params);
+        const { proposalIndex, pluginAddress } = params;
 
-        const transaction: TransactionDialogPrepareReturn = {
-            to: pluginAddress as Hex,
-            data: transactionData,
-        };
+        const data = encodeFunctionData({ abi: executeAbi, functionName: 'execute', args: [proposalIndex] });
+        const transaction: TransactionDialogPrepareReturn = { to: pluginAddress as Hex, data: data };
 
         return transaction;
     };

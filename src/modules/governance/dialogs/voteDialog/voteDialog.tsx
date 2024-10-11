@@ -26,7 +26,7 @@ export interface IVoteDialogParams {
      */
     proposal: IProposal;
     /**
-     *  Voting to veto
+     *  Bool indicating if the vote is a veto.
      */
     isVeto?: boolean;
 }

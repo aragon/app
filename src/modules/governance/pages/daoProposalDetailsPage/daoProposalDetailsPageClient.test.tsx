@@ -21,7 +21,7 @@ jest.mock('../../components/proposalVotingTerminal', () => ({
     ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
 }));
 
-jest.mock('../../components/executeProposal', () => ({
+jest.mock('../../components/proposalExecutionStatus', () => ({
     ProposalExecutionStatus: () => <div data-testid="proposal-execution-status-mock" />,
 }));
 

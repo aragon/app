@@ -1,8 +1,8 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { sppProposalUtils } from '../utils/sppProposalUtils';
 import { SppVotingTerminal } from './components/sppVotingTerminal';
 import { plugin } from './constants/plugin';
+import { sppProposalUtils } from './utils/sppProposalUtils';
 
 export const initialiseSppPlugin = () => {
     pluginRegistryUtils

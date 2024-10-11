@@ -4,5 +4,6 @@ import type { ISppSubProposal } from '../../types';
 export const generateSppSubProposal = (proposal?: Partial<ISppSubProposal>): ISppSubProposal => ({
     ...generateProposal(proposal),
     stageId: '0',
+    result: false,
     ...proposal,
 });
