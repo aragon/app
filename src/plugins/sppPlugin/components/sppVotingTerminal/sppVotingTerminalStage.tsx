@@ -4,9 +4,10 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
+import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
+import { SppStageStatus } from '../sppStageStatus';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -38,14 +39,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     // TODO: Support multiple proposals within a stage (APP-3659)
     const subProposal = subProposals?.[0];
-    const plugin = stage.plugins[0];
+    const { address: pluginAddress, ...plugin } = stage.plugins[0];
 
-    const voteListParams = {
-        queryParams: { proposalId: proposal?.id, pluginAddress: plugin.address, pageSize: votesPerPage },
-    };
+    const voteListParams = { queryParams: { proposalId: proposal.id, pluginAddress, pageSize: votesPerPage } };
 
     const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
-        params: { daoId, settings: plugin.settings, pluginAddress: plugin.address },
+        params: { daoId, settings: plugin.settings, pluginAddress },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain,
     });
@@ -53,11 +52,18 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedStartDate = sppStageUtils.getStageStartDate(proposal).toMillis();
     const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage).toMillis();
 
+    // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
+    const processedSubProposal =
+        subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
+
+    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const processedStageStatus =
+        stageStatus === ProposalVotingStatus.UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
-            // TODO: process and set correct stage status (APP-3662)
-            status={index === 0 ? ProposalVotingStatus.ACTIVE : ProposalVotingStatus.PENDING}
+            status={processedStageStatus}
             startDate={processedStartDate}
             endDate={processedEndDate}
             index={index}
@@ -72,11 +78,14 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         proposal={subProposal}
                     />
                     <ProposalVoting.Votes>
-                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />
+                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={pluginAddress} />
                     </ProposalVoting.Votes>
                 </>
             )}
             <ProposalVoting.Details settings={proposalSettings} />
+            {processedSubProposal && (
+                <SppStageStatus proposal={proposal} subProposal={processedSubProposal} daoId={daoId} stage={stage} />
+            )}
         </ProposalVoting.Stage>
     );
 };
