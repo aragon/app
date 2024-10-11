@@ -1,4 +1,4 @@
-import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
+import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -20,7 +20,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
 
     const { t } = useTranslations();
 
-    const startTimeFixed = useWatch<ICreateProposalFormData, 'startTimeFixed'>({ name: 'startTimeFixed' });
+    const startTimeFixed = useWatch<ICreateProposalEndDateForm, 'startTimeFixed'>({ name: 'startTimeFixed' });
 
     const minDuration = plugin.settings.minDuration;
     const parsedMinDuration = dateUtils.secondsToDaysHoursMinutes(minDuration);
@@ -29,7 +29,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
     const minEndTime = startTimeFixed ? dateUtils.parseFixedDate(startTimeFixed) : DateTime.now();
 
     // Add min duration to the form values for later use
-    useFormField<ICreateProposalFormData, 'minimumDuration'>('minimumDuration', { defaultValue: parsedMinDuration });
+    useFormField<ICreateProposalEndDateForm, 'minimumDuration'>('minimumDuration', { defaultValue: parsedMinDuration });
 
     return (
         <>

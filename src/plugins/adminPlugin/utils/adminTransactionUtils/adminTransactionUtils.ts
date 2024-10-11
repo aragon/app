@@ -6,7 +6,7 @@ class AdminTransactionUtils {
     buildCreateProposalData = (params: IBuildCreateProposalDataParams): Hex => {
         const { metadata, actions } = params;
 
-        const functionArgs = [metadata, actions, BigInt(0), BigInt(0), null];
+        const functionArgs = [metadata, actions, BigInt(0), BigInt(0), ''];
         const data = encodeFunctionData({
             abi: adminPluginAbi,
             functionName: 'createProposal',

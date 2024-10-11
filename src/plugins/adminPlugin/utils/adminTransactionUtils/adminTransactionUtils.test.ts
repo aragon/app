@@ -1,3 +1,4 @@
+import { generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import * as Viem from 'viem';
 import { adminPluginAbi } from './adminPluginAbi';
 import { adminTransactionUtils } from './adminTransactionUtils';
@@ -22,14 +23,13 @@ describe('adminTransaction utils', () => {
                         value: '0',
                     },
                 ],
-                startDate: 0,
-                endDate: 0,
+                values: generateCreateProposalFormData(),
             };
             adminTransactionUtils.buildCreateProposalData(params);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: adminPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), BigInt(0), null],
+                args: [params.metadata, params.actions, BigInt(0), BigInt(0), ''],
             });
         });
     });

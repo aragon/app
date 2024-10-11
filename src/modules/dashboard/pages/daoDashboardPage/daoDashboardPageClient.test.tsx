@@ -21,11 +21,15 @@ jest.mock('@aragon/ods', () => ({
 }));
 
 jest.mock('@/modules/governance/components/daoProposalList', () => ({
-    DaoProposalList: (props: { children: ReactNode }) => <div data-testid="proposal-list-mock">{props.children}</div>,
+    DaoProposalList: {
+        Container: (props: { children: ReactNode }) => <div data-testid="proposal-list-mock">{props.children}</div>,
+    },
 }));
 
 jest.mock('@/modules/governance/components/daoMemberList', () => ({
-    DaoMemberList: (props: { children: ReactNode }) => <div data-testid="member-list-mock">{props.children}</div>,
+    DaoMemberList: {
+        Container: (props: { children: ReactNode }) => <div data-testid="member-list-mock">{props.children}</div>,
+    },
 }));
 
 jest.mock('@/modules/finance/components/assetList', () => ({
