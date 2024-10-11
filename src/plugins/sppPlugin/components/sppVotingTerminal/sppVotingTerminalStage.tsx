@@ -4,7 +4,7 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
+import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/ods';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppStageStatus } from '../sppStageStatus';
@@ -56,11 +56,14 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
+    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const processedStageStatus =
+        stageStatus === ProposalVotingStatus.UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
-            // TODO: process and set correct stage status (APP-3662)
-            status={index === 0 ? ProposalVotingStatus.ACTIVE : ProposalVotingStatus.PENDING}
+            status={processedStageStatus}
             startDate={processedStartDate}
             endDate={processedEndDate}
             index={index}

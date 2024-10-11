@@ -1,10 +1,11 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, DateFormat, formatterUtils } from '@aragon/ods';
+import { Button, DateFormat, formatterUtils, ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
+import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
 
 export interface ISppStageStatusProps {
@@ -35,9 +36,10 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
 
-    // TODO: properly set these when SPP statuses are processed (APP-3662)
-    const canAdvanceStage = false;
-    const canVote = true;
+    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+
+    const canAdvanceStage = stageStatus === ProposalStatus.ACCEPTED;
+    const canVote = stageStatus === ProposalStatus.ACTIVE;
 
     const maxAdvanceTime = DateTime.fromSeconds(proposal.lastStageTransition + stage.maxAdvance);
     const formattedMaxAdvance = formatterUtils.formatDate(maxAdvanceTime, { format: DateFormat.DURATION });
