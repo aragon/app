@@ -16,7 +16,7 @@ export interface ITokenSubmitVoteProps {
      */
     proposal: ITokenProposal;
     /**
-     *  Bool indicating if the vote is a veto.
+     *  Is the vote to approve or veto
      */
     isVeto?: boolean;
 }
