@@ -1,5 +1,5 @@
 import * as Viem from 'viem';
-import { tokenPluginAbi } from './abi/tokenPlugin';
+import { tokenPluginAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual('viem') }));

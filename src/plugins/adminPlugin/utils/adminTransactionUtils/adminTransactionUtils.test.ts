@@ -1,10 +1,10 @@
 import * as Viem from 'viem';
-import { multisigPluginAbi } from './multisigPluginAbi';
-import { multisigTransactionUtils } from './multisigTransactionUtils';
+import { adminPluginAbi } from './adminPluginAbi';
+import { adminTransactionUtils } from './adminTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual('viem') }));
 
-describe('multisigTransaction utils', () => {
+describe('adminTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
 
     afterEach(() => {
@@ -23,13 +23,13 @@ describe('multisigTransaction utils', () => {
                     },
                 ],
                 startDate: 0,
-                endDate: 1724167,
+                endDate: 0,
             };
-            multisigTransactionUtils.buildCreateProposalData(params);
+            adminTransactionUtils.buildCreateProposalData(params);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
-                abi: multisigPluginAbi,
+                abi: adminPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), false, false, params.startDate, params.endDate],
+                args: [params.metadata, params.actions, BigInt(0), BigInt(0), null],
             });
         });
     });

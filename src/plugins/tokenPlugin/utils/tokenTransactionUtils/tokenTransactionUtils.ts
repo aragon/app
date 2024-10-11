@@ -1,6 +1,6 @@
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { encodeFunctionData, type Hex } from 'viem';
-import { tokenPluginAbi } from './abi/tokenPlugin';
+import { tokenPluginAbi } from './tokenPluginAbi';
 
 class TokenTransactionUtils {
     buildCreateProposalData = (params: IBuildCreateProposalDataParams): Hex => {

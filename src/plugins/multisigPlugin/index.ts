@@ -18,6 +18,7 @@ export const initialiseMultisigPlugin = () => {
         // Plugin definitions
         .registerPlugin(plugin)
 
+        // Governance module slots
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
             pluginId: plugin.id,
