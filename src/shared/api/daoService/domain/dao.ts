@@ -1,7 +1,8 @@
+import type { IMember } from '@/modules/governance/api/governanceService';
 import type { IDaoLink } from './daoLink';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
-import { type Network } from './enum';
+import type { Network } from './enum';
 
 export interface IDao {
     /**
@@ -60,4 +61,8 @@ export interface IDao {
      * Transaction hash of the DAO creation.
      */
     transactionHash: string;
+    /**
+     * Creator of the DAO.
+     */
+    creator: IMember;
 }

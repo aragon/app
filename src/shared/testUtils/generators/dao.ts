@@ -16,5 +16,6 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     links: [],
     blockTimestamp: 0,
     transactionHash: '',
+    creator: { address: '', ens: '', type: '', metrics: { firstActivity: 0, lastActivity: 0 } },
     ...dao,
 });
