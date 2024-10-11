@@ -62,7 +62,9 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <RadioGroup
                         label={t('app.plugins.token.tokenSubmitVote.options.label', {
-                            label: isVeto ? 'veto' : 'approve',
+                            label: isVeto
+                                ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
+                                : t('app.plugins.token.tokenSubmitVote.options.approveLabel'),
                         })}
                         value={selectedOption}
                         onValueChange={setSelectedOption}

@@ -448,6 +448,7 @@
           "success": "View proposal"
         },
         "confirmationLabel": "Voting {{veto}}",
+        "confirmationLabelVeto": "Voting to veto",
         "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
         "title": "Submit vote"
       },
@@ -586,8 +587,10 @@
           },
           "options": {
             "abstain": "Abstain",
+            "approveLabel": "approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
+            "vetoLabel": "veto",
             "yes": "Yes"
           }
         },
