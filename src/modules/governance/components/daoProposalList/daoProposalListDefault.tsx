@@ -48,7 +48,6 @@ export const DaoProposalListDefault: React.FC<IDaoProposalListDefaultProps> = (p
                 layoutClassName="grid grid-cols-1"
             >
                 {proposalList?.map(({ executed, creator, endDate, ...proposal }) => (
-                    /* @ts-expect-error TODO: update ODS component to remove type requirement (APP-3590) */
                     <ProposalDataListItem.Structure
                         className="min-w-0"
                         status={ProposalStatus.EXECUTED}
@@ -59,7 +58,7 @@ export const DaoProposalListDefault: React.FC<IDaoProposalListDefaultProps> = (p
                         href={`/dao/${daoId}/proposals/${proposal.id}`}
                         publisher={{
                             address: creator.address,
-                            link: `members/${creator.address}`,
+                            link: `/dao/${daoId}/members/${creator.address}`,
                             name: creator.ens ?? undefined,
                         }}
                     />
