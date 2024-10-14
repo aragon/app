@@ -8,7 +8,7 @@ import { useAdminGovernanceSettings } from './hooks/useAdminGovernanceSettings';
 import { adminProposalUtils } from './utils/adminProposalUtils';
 import { adminTransactionUtils } from './utils/adminTransactionUtils';
 
-export const initialiseSppPlugin = () => {
+export const initialiseAdminPlugin = () => {
     pluginRegistryUtils
         // Plugin definitions
         .registerPlugin(plugin)
