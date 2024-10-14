@@ -466,6 +466,18 @@
       }
     },
     "plugins": {
+      "admin": {
+        "adminGovernanceSettings": {
+          "auto": "Automatic",
+          "members": "Admin members",
+          "proposalCreation": "Proposal creation",
+          "proposalExecution": "Proposal execution"
+        },
+        "adminMemberInfo": {
+          "admins": "Admins",
+          "membersCount": "{{count}} addresses"
+        }
+      },
       "multisig": {
         "multisigCreateProposalSettingsForm": {
           "endTime": {

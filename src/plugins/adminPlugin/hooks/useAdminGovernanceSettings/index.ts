@@ -1,0 +1,1 @@
+export { useAdminGovernanceSettings } from './useAdminGovernanceSettings';
