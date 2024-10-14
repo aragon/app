@@ -581,7 +581,7 @@
           "cancel": "Cancel",
           "select": "Create"
         },
-        "description": "Select the proposal you'd like to create and start the process",
+        "description": "Select the proposal type that you'd like to create.",
         "title": "Create proposal"
       },
       "voteDialog": {
@@ -646,6 +646,21 @@
         }
       },
       "spp": {
+        "advanceStageDialog": {
+          "button": {
+            "submit": "Advance",
+            "success": "Proposal advanced"
+          },
+          "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
+          "title": "Advance proposal"
+        },
+        "sppStageStatus": {
+          "advanceInfo": "left to advance",
+          "button": {
+            "advance": "Advance proposal",
+            "vote": "Vote on proposal"
+          }
+        },
         "sppVotingTerminal": {
           "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
           "title": "Voting"

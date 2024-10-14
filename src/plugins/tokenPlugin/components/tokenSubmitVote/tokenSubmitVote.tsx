@@ -50,7 +50,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     return (
         <div className="flex flex-col gap-4 pt-4">
             {!showOptions && (
-                <Button className="w-fit" onClick={() => setShowOptions(true)}>
+                <Button className="w-fit" size="md" onClick={() => setShowOptions(true)}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
