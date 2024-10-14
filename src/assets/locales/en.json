@@ -447,7 +447,7 @@
           "submit": "Submit vote",
           "success": "View proposal"
         },
-        "confirmationLabel": "Voting {{veto}}",
+        "confirmationLabelApprove": "Voting to approve",
         "confirmationLabelVeto": "Voting to veto",
         "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
         "title": "Submit vote"
