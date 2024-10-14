@@ -2,8 +2,9 @@ import type { IGetProposalListParams } from '@/modules/governance/api/governance
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem, ProposalStatus } from '@aragon/ods';
+import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/ods';
 import type { ReactNode } from 'react';
+import { DaoProposalListDefaultItem } from './daoProposalListDefaultItem';
 
 export interface IDaoProposalListDefaultProps<TSettings extends IPluginSettings = IPluginSettings> {
     /**
@@ -47,21 +48,8 @@ export const DaoProposalListDefault: React.FC<IDaoProposalListDefaultProps> = (p
                 errorState={errorState}
                 layoutClassName="grid grid-cols-1"
             >
-                {proposalList?.map(({ executed, creator, endDate, ...proposal }) => (
-                    <ProposalDataListItem.Structure
-                        className="min-w-0"
-                        status={ProposalStatus.EXECUTED}
-                        key={proposal.id}
-                        title={proposal.title}
-                        summary={proposal.summary}
-                        date={(executed.blockTimestamp ? executed.blockTimestamp : endDate) * 1000}
-                        href={`/dao/${daoId}/proposals/${proposal.id}`}
-                        publisher={{
-                            address: creator.address,
-                            link: `/dao/${daoId}/members/${creator.address}`,
-                            name: creator.ens ?? undefined,
-                        }}
-                    />
+                {proposalList?.map((proposal) => (
+                    <DaoProposalListDefaultItem key={proposal.id} daoId={daoId} proposal={proposal} />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
