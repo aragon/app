@@ -28,6 +28,7 @@ export function useBannerContent({ id }: IBannerProps) {
         return memberList?.some((member) => member.address === address) ?? false;
     }, [dao, address, memberList]);
 
+    // leaving this for discussion
     // const hasAdmin = useMemo(() => {
     //     if (!dao) {
     //         return '';
