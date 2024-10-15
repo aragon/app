@@ -1,6 +1,6 @@
 'use client';
 
-import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo/daoPluginInfo';
+import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';

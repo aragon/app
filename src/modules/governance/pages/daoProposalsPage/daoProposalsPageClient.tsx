@@ -1,6 +1,6 @@
 'use client';
 
-import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo/daoPluginInfo';
+import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';

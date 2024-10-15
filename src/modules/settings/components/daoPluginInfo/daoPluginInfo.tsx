@@ -6,7 +6,13 @@ import { type PluginType } from '@/shared/types';
 import { addressUtils, DateFormat, DefinitionList, formatterUtils, IconType, Link } from '@aragon/ods';
 
 export interface IDaoPlugInfoProps {
+    /**
+     * The DAO plugin to display information for.
+     */
     plugin: IDaoPlugin;
+    /**
+     * The type of plugin.
+     */
     type: PluginType;
 }
 
