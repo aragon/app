@@ -447,7 +447,8 @@
           "submit": "Submit vote",
           "success": "View proposal"
         },
-        "confirmationLabel": "Voting",
+        "confirmationLabelApprove": "Voting to approve",
+        "confirmationLabelVeto": "Voting to veto",
         "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
         "title": "Submit vote"
       },
@@ -504,6 +505,21 @@
         }
       },
       "spp": {
+        "advanceStageDialog": {
+          "button": {
+            "submit": "Advance",
+            "success": "Proposal advanced"
+          },
+          "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
+          "title": "Advance proposal"
+        },
+        "sppStageStatus": {
+          "advanceInfo": "left to advance",
+          "button": {
+            "advance": "Advance proposal",
+            "vote": "Vote on proposal"
+          }
+        },
         "sppVotingTerminal": {
           "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
           "title": "Voting"
@@ -571,8 +587,10 @@
           },
           "options": {
             "abstain": "Abstain",
-            "label": "Choose your option",
+            "approveLabel": "approve",
+            "label": "Do you want to {{label}} this proposal?",
             "no": "No",
+            "vetoLabel": "veto",
             "yes": "Yes"
           }
         },

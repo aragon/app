@@ -9,4 +9,8 @@ export interface ISppSubProposal extends IProposal {
      * Timestamp of the creation date in seconds.
      */
     blockTimestamp: number;
+    /**
+     * The result of the sub-proposal (for approval/veto)
+     */
+    result: boolean;
 }

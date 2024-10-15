@@ -8,7 +8,7 @@ import { Button, ChainEntityType, type IButtonProps, IconType, ProposalStatus, u
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
-export interface IExecuteProposalProps {
+export interface IProposalExecutionStatusProps {
     /**
      * The ID of the DAO.
      */
@@ -19,20 +19,21 @@ export interface IExecuteProposalProps {
     proposal: IProposal;
 }
 
-export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) => {
+export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = (props) => {
     const { daoId, proposal } = props;
+
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
     const { open } = useDialogContext();
-    const { chainId } = networkDefinitions[proposal.network];
+
+    const { network, pluginSubdomain, executed } = proposal;
+    const { chainId } = networkDefinitions[network];
 
     const proposalStatus = useSlotSingleFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-        pluginId: proposal.pluginSubdomain,
+        pluginId: pluginSubdomain,
     })!;
-
-    const { executed } = proposal;
 
     const executedBlockLink = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
@@ -41,11 +42,7 @@ export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) 
     });
 
     const openTransactionDialog = () => {
-        const params: IExecuteDialogParams = {
-            daoId,
-            proposal,
-            status: proposalStatus,
-        };
+        const params: IExecuteDialogParams = { daoId, proposal, status: proposalStatus };
         open(GovernanceDialogs.EXECUTE, { params });
     };
 
@@ -74,9 +71,5 @@ export const ProposalExecutionStatus: React.FC<IExecuteProposalProps> = (props) 
         );
     }
 
-    return (
-        <Button className="w-full md:w-fit" {...buttonConfig}>
-            {buttonConfig.children}
-        </Button>
-    );
+    return <Button className="w-full md:w-fit" {...buttonConfig} />;
 };
