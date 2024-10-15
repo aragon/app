@@ -1,21 +1,24 @@
 'use client';
 
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
 import { CreateDaoForm, ICreateDaoFormData } from '../../components/createDaoForm';
+import { CreateDaoDialog } from '../../constants/moduleDialogs';
+import { IPublishDaoDialogParams } from '../../dialogs/publishDaoDialog';
 import { CreateDaoWizardStep, createDaoWizardSteps } from './createDaoPageDefinitions';
 
 export interface ICreateDaoPageClientProps {}
 
 export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
+    const { open } = useDialogContext();
     const { t } = useTranslations();
 
     const handleFormSubmit = (values: ICreateDaoFormData) => {
-        console.log({ values });
-        // const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
-        // open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
+        const params: IPublishDaoDialogParams = { values };
+        open(CreateDaoDialog.PUBLISH_DAO, { params });
     };
 
     const [debugStep, metadataStep] = createDaoWizardSteps;

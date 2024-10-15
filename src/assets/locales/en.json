@@ -123,6 +123,20 @@
           }
         },
         "submitLabel": "Publish DAO"
+      },
+      "publishDaoDialog": {
+        "button": {
+          "submit": "Create DAO",
+          "success": "View DAO"
+        },
+        "description": "To create your DAO you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Create DAO"
       }
     },
     "dashboard": {
