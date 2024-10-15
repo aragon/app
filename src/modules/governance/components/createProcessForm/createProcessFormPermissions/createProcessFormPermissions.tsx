@@ -1,19 +1,53 @@
-import { Card, Heading } from '@aragon/ods';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { InputContainer, RadioCard, RadioGroup } from '@aragon/ods';
+import { useMemo } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { BodyCheckboxCard } from './components/bodyCheckboxCard';
+import type { Body, PermissionsData } from './createProcessFormPermissions.api';
 
 export interface ICreateProcessFormPermissionProps {}
 
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
+    const { getValues } = useFormContext();
+
+    const eligibleField = useFormField<PermissionsData, 'eligibleVoters'>('eligibleVoters', {
+        label: 'Who is eligible',
+        defaultValue: 'bodies',
+    });
+
+    const votingBodyField = useFormField<PermissionsData, 'votingBodies'>('votingBodies', {
+        defaultValue: [],
+    });
+
+    const bodies: Body[] = useMemo(
+        () => getValues('stages')?.flatMap((stage: { bodies: Body[] }) => stage.bodies || []) || [],
+        [getValues],
+    );
+
     return (
-        <Card className="flex grow flex-col justify-center p-6">
-            <div className="mx-auto flex flex-col space-y-2">
-                <Heading size="h1">TBD</Heading>
-                <p>Open questions at:</p>
-                <ul className="flex flex-col items-start">
-                    <li>Proposal Creation (Threshold)</li>
-                    <li>Permissions to protected OSx contracts</li>
-                    <li>Permissions to any smart contract actions</li>
-                </ul>
-            </div>
-        </Card>
+        <>
+            <RadioGroup className="flex gap-4 md:!flex-row" onValueChange={eligibleField.onChange} {...eligibleField}>
+                <RadioCard
+                    className="w-full"
+                    label="Voting bodies"
+                    description="Select voting bodies and define requirements"
+                    value="bodies"
+                />
+                <RadioCard
+                    className="w-full"
+                    label="Any address"
+                    description="Any address can create proposals"
+                    value="any"
+                />
+            </RadioGroup>
+            {eligibleField.value === 'bodies' && (
+                <InputContainer id="votingBodies" label="Voting Bodies" useCustomWrapper={true} {...votingBodyField}>
+                    {bodies &&
+                        bodies.map((body: Body, index: number) => (
+                            <BodyCheckboxCard values={votingBodyField.value} key={index} body={body} />
+                        ))}
+                </InputContainer>
+            )}
+        </>
     );
 };

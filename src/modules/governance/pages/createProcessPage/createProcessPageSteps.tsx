@@ -17,8 +17,7 @@ export interface ICreateProcessPageClientStepsProps {
 
 export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStepsProps> = (props) => {
     const { steps } = props;
-
-    const [metadataStep, processesStep] = steps;
+    const [metadataStep, processesStep, permissionsStep] = steps;
 
     return (
         <>
@@ -35,6 +34,13 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 {...processesStep}
             >
                 <CreateProcessForm.Stages />
+            </Wizard.Step>
+            <Wizard.Step
+                title="Setup governance process"
+                description="Create a multibody process as you see fit."
+                {...permissionsStep}
+            >
+                <CreateProcessForm.Permissions />
             </Wizard.Step>
         </>
     );

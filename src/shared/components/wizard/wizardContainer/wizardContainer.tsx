@@ -5,6 +5,7 @@ import { useEffect, useMemo, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
+import { DevTool } from '@hookform/devtools';
 export interface IWizardContainerProps<TFormData extends FieldValues = FieldValues>
     extends Omit<ComponentProps<'form'>, 'onSubmit'> {
     /**
@@ -37,7 +38,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
 
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
 
-    const { formState, reset, handleSubmit } = formMethods;
+    const { formState, reset, handleSubmit, control } = formMethods;
 
     const wizardStepper = useStepper({ initialSteps });
     const { hasNext, activeStepIndex, steps } = wizardStepper;
@@ -94,7 +95,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
                     {children}
                 </form>
             </WizardProvider>
-            {/* <DevTool control={control} /> */}
+            <DevTool control={control} />
         </FormProvider>
     );
 };
