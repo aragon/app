@@ -3,7 +3,7 @@ import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { DaoMemberList, type IDaoMemberListProps } from './daoMemberList';
+import { DaoProposalListContainer, type IDaoProposalListContainerProps } from './daoProposalListContainer';
 
 jest.mock('@/shared/components/pluginTabComponent', () => ({
     PluginTabComponent: (props: { slotId: string; plugins: ITabComponentPlugin[] }) => (
@@ -11,33 +11,29 @@ jest.mock('@/shared/components/pluginTabComponent', () => ({
     ),
 }));
 
-describe('<DaoMemberList /> component', () => {
+describe('<DaoProposalListContainer /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IDaoMemberListProps>) => {
-        const completeProps: IDaoMemberListProps = {
-            initialParams: { queryParams: { daoId: 'test-id' } },
+    const createTestComponent = (props?: Partial<IDaoProposalListContainerProps>) => {
+        const completeProps: IDaoProposalListContainerProps = {
+            initialParams: { queryParams: { daoId: 'dao-id' } },
             ...props,
         };
 
-        return <DaoMemberList {...completeProps} />;
+        return <DaoProposalListContainer {...completeProps} />;
     };
 
-    it('renders a plugin tab component with the body plugins and the dao-member-list slot it', () => {
-        const daoPlugin = generateDaoPlugin({ address: '0x1239478' });
-        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
+    it('renders a plugin tab component with the process plugins and the correct slot id', () => {
+        const plugins = [generateTabComponentPlugin({ id: 'token', meta: generateDaoPlugin() })];
         useDaoPluginsSpy.mockReturnValue(plugins);
-
         render(createTestComponent());
-
         const pluginComponent = screen.getByTestId('plugin-component-mock');
         expect(pluginComponent).toBeInTheDocument();
-
-        expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST);
+        expect(pluginComponent.dataset.slotid).toEqual(GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST);
         expect(pluginComponent.dataset.plugins).toEqual(plugins[0].id);
     });
 });

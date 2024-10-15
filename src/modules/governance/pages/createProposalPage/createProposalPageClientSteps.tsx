@@ -3,8 +3,11 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { useWatch } from 'react-hook-form';
 import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { CreateProposalWizardStep } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientStepsProps {
@@ -29,6 +32,11 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
     const addActions = useWatch<ICreateProposalFormData>({ name: 'addActions' });
 
     const [metadataStep, actionsStep, settingsStep] = steps;
+
+    // Hide settings step if plugin has no custom settings for create-proposal flow
+    const { id: pluginId } = useDaoPlugins({ daoId, pluginAddress })![0];
+    const slotId = GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM;
+    const hideSettingsStep = pluginRegistryUtils.getSlotComponent({ slotId, pluginId }) == null;
 
     return (
         <>
@@ -56,6 +64,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 description={t(
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.description`,
                 )}
+                hidden={hideSettingsStep}
                 {...settingsStep}
             >
                 <CreateProposalForm.Settings daoId={daoId} pluginAddress={pluginAddress} />

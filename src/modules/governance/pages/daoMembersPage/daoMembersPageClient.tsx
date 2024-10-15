@@ -28,7 +28,11 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
     return (
         <>
             <Page.Main title={t('app.governance.daoMembersPage.main.title')}>
-                <DaoMemberList initialParams={initialParams} onValueChange={setSelectedPlugin} value={selectedPlugin} />
+                <DaoMemberList.Container
+                    initialParams={initialParams}
+                    onValueChange={setSelectedPlugin}
+                    value={selectedPlugin}
+                />
             </Page.Main>
             <Page.Aside>
                 <DaoPluginInfo plugin={selectedPlugin.meta} type={PluginType.BODY} />

@@ -50,7 +50,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 title={t('app.governance.daoProposalsPage.main.title')}
                 action={{ label: t('app.governance.daoProposalsPage.main.action'), ...actionProps }}
             >
-                <DaoProposalList
+                <DaoProposalList.Container
                     initialParams={initialParams}
                     value={selectedPlugin}
                     onValueChange={setSelectedPlugin}

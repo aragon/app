@@ -3,7 +3,9 @@ import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtil
 import { render, screen } from '@testing-library/react';
 import { DaoMembersPageClient, type IDaoMembersPageClientProps } from './daoMembersPageClient';
 
-jest.mock('../../components/daoMemberList', () => ({ DaoMemberList: () => <div data-testid="member-list-mock" /> }));
+jest.mock('../../components/daoMemberList', () => ({
+    DaoMemberList: { Container: () => <div data-testid="member-list-mock" /> },
+}));
 
 jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
     DaoMembersInfo: () => <div data-testid="members-info-mock" />,

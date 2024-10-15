@@ -3,7 +3,7 @@ import { ProposalVoting } from '@aragon/ods';
 import { type ISppProposal } from '../../types';
 import { SppVotingTerminalStage } from './sppVotingTerminalStage';
 
-export interface IProposalVotingTerminalProps {
+export interface ISppVotingTerminalProps {
     /**
      * ID of the DAO for this proposal.
      */
@@ -14,7 +14,7 @@ export interface IProposalVotingTerminalProps {
     proposal: ISppProposal;
 }
 
-export const SppVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
+export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
     const { daoId, proposal } = props;
 
     const { t } = useTranslations();
