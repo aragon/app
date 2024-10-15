@@ -1,4 +1,4 @@
-import { type ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
+import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dateUtils } from '@/shared/utils/dateUtils';
@@ -12,7 +12,7 @@ const recommendedMinDays = 5;
 export const MultisigCreateProposalSettingsForm: React.FC<IMultisigCreateProposalSettingsFormProps> = () => {
     const { t } = useTranslations();
 
-    const startTimeFixed = useWatch<ICreateProposalFormData, 'startTimeFixed'>({ name: 'startTimeFixed' });
+    const startTimeFixed = useWatch<ICreateProposalEndDateForm, 'startTimeFixed'>({ name: 'startTimeFixed' });
     const minEndTime = startTimeFixed ? dateUtils.parseFixedDate(startTimeFixed) : DateTime.now();
 
     return (

@@ -317,6 +317,7 @@
           "description": "DAO has currently no members.",
           "title": "No members found"
         },
+        "entity": "Members",
         "error": {
           "description": "There was an error loading the DAO members. Please try again later.",
           "title": "Error loading members"
@@ -376,6 +377,7 @@
           "description": "This will show relevant proposals when available.",
           "title": "No proposals found"
         },
+        "entity": "Proposals",
         "error": {
           "description": "There was an error loading the DAO proposals. Please try again later.",
           "title": "Error loading proposals"
@@ -464,6 +466,18 @@
       }
     },
     "plugins": {
+      "admin": {
+        "adminGovernanceSettings": {
+          "auto": "Automatic",
+          "members": "Admin members",
+          "proposalCreation": "Proposal creation",
+          "proposalExecution": "Proposal execution"
+        },
+        "adminMemberInfo": {
+          "admins": "Admins",
+          "membersCount": "{{count}} addresses"
+        }
+      },
       "multisig": {
         "multisigCreateProposalSettingsForm": {
           "endTime": {
@@ -482,9 +496,6 @@
           "members": "Multisig members",
           "minimumApproval": "Minimum approval",
           "proposalCreation": "Proposal creation"
-        },
-        "multisigMemberList": {
-          "entity": "Members"
         },
         "multisigMembersInfo": {
           "eligibleVoters": "Eligible voters",

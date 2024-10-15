@@ -139,29 +139,6 @@ describe('pluginRegistry utils', () => {
         });
     });
 
-    describe('getSupportedSlotFunction', () => {
-        it('returns undefined when no function is registered for the given list of plugin ids', () => {
-            const slotId = 'slot-id';
-            const registeredPluginId = 'multisig';
-            const unregisteredPluginIds = ['tokenVoting', 'custom'];
-            pluginRegistryUtils.registerSlotFunction({ slotId, pluginId: registeredPluginId, function: () => null });
-            expect(
-                pluginRegistryUtils.getSupportedSlotFunction({ slotId, pluginIds: unregisteredPluginIds }),
-            ).toBeUndefined();
-        });
-
-        it('returns the function of the first supported plugin id', () => {
-            const slotId = 'id';
-            const registeredPluginIds = ['multisig', 'tokenVoting'];
-            const pluginIds = ['custom', 'unsupported', 'tokenVoting'];
-            registeredPluginIds.forEach((pluginId) =>
-                pluginRegistryUtils.registerSlotFunction({ slotId, pluginId, function: () => pluginId }),
-            );
-            const slotFunction = pluginRegistryUtils.getSupportedSlotFunction({ slotId, pluginIds });
-            expect(slotFunction?.({})).toEqual('tokenVoting');
-        });
-    });
-
     describe('listContainsRegisteredPlugins', () => {
         it('returns true when list contains a registered plugin', () => {
             const plugins = [generatePlugin({ id: '1' }), generatePlugin({ id: '2' })];

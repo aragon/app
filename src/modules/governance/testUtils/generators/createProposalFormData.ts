@@ -1,4 +1,5 @@
 import { type ICreateProposalFormData } from '../../components/createProposalForm';
+import type { ICreateProposalEndDateForm, ICreateProposalStartDateForm } from '../../utils/createProposalUtils';
 
 export const generateCreateProposalFormData = (values?: Partial<ICreateProposalFormData>): ICreateProposalFormData => ({
     title: 'title',
@@ -6,8 +7,21 @@ export const generateCreateProposalFormData = (values?: Partial<ICreateProposalF
     addActions: false,
     resources: [],
     actions: [],
+    ...values,
+});
+
+export const generateCreateProposalStartDateFormData = (
+    values?: Partial<ICreateProposalStartDateForm>,
+): ICreateProposalStartDateForm => ({
     startTimeMode: 'now',
+    ...values,
+});
+
+export const generateCreateProposalEndDateFormData = (
+    values?: Partial<ICreateProposalEndDateForm>,
+): ICreateProposalEndDateForm => ({
+    ...generateCreateProposalStartDateFormData(values),
     endTimeMode: 'duration',
-    endTimeDuration: { hours: 0, minutes: 0, days: 2 },
+    endTimeDuration: { days: 2, hours: 0, minutes: 0 },
     ...values,
 });
