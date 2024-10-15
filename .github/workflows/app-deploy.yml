@@ -29,7 +29,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.NODE_CACHE }}
       - name: Restore NextJs cache
-        uses: actions/cache@v4.1.0
+        uses: actions/cache@v4.1.1
         with:
           path: ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.[jt]sx?') }}
@@ -42,7 +42,7 @@ jobs:
           yarn setup ${{ env.APP_ENV }}
           yarn build
       - name: Cache NextJs build
-        uses: actions/cache@v4.1.0
+        uses: actions/cache@v4.1.1
         with:
           path: |
             ${{ github.workspace }}/.next
@@ -64,7 +64,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
       - name: Restore cached NextJs build
-        uses: actions/cache@v4.1.0
+        uses: actions/cache@v4.1.1
         with:
           path: |
             ${{ github.workspace }}/.next
@@ -95,7 +95,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
       - name: Restore cached NextJs build
-        uses: actions/cache@v4.1.0
+        uses: actions/cache@v4.1.1
         with:
           path: |
             ${{ github.workspace }}/.next

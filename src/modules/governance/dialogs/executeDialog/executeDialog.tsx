@@ -65,7 +65,6 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
         >
             <DataList.Root entityLabel="">
-                {/* @ts-expect-error TODO: update ODS component to remove type requirement (APP-3590) */}
                 <ProposalDataListItem.Structure
                     title={title}
                     summary={summary}
