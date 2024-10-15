@@ -23,5 +23,5 @@ export interface IBannerContent<TRouteType extends string> {
     /**
      * Route to navigate to when the button is clicked.
      */
-    href: Route<TRouteType>;
+    buttonHref: Route<TRouteType>;
 }

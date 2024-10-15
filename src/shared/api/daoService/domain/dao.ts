@@ -1,4 +1,4 @@
-import type { IMember } from '@/modules/governance/api/governanceService';
+import type { IAddressInfo } from '@/shared/api/daoService/domain/addressInfo';
 import type { IDaoLink } from './daoLink';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
@@ -64,5 +64,5 @@ export interface IDao {
     /**
      * Creator of the DAO.
      */
-    creator: IMember;
+    creator: IAddressInfo;
 }

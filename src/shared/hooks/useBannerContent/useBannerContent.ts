@@ -1,6 +1,5 @@
-import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
-import { useDao } from '@/shared/api/daoService';
-import type { IBannerContent, IBannerProps } from '@/shared/components/banner';
+import { useMember } from '@/modules/governance/api/governanceService';
+import type { IBannerProps } from '@/shared/components/banner';
 import { BannerContent } from '@/shared/constants/bannerContent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { BannerType } from '@/shared/types/enum/bannerType';
@@ -10,74 +9,53 @@ import { useAccount } from 'wagmi';
 
 export function useBannerContent({ id }: IBannerProps) {
     const { address } = useAccount();
+    const isConnected = address != null;
 
-    const params = { id };
-    const { data: dao } = useDao({ urlParams: params });
-
-    const processedPlugins = useDaoPlugins({ daoId: id });
-
-    const { memberList } = useMemberListData({
-        queryParams: { daoId: id, pluginAddress: processedPlugins![0].meta.address },
+    const adminPlugin = useDaoPlugins({
+        daoId: id,
+        subdomain: 'multisig',
     });
+    const adminPluginAddress = useMemo(() => adminPlugin?.[0]?.meta?.address, [adminPlugin]);
 
-    const isMember = useMemo(() => {
-        if (!dao || !address) {
-            return false;
-        }
+    const { data: adminMember } = useMember(
+        {
+            queryParams: { daoId: id, pluginAddress: adminPluginAddress ?? '' },
+            urlParams: { address: address ?? '' },
+        },
+        { enabled: Boolean(adminPluginAddress) && isConnected },
+    );
+    const isAdminMember = adminMember != null;
 
-        return memberList?.some((member) => member.address === address) ?? false;
-    }, [dao, address, memberList]);
-
-    // leaving this for discussion
-    // const hasAdmin = useMemo(() => {
-    //     if (!dao) {
-    //         return '';
-    //     }
-
-    //     return dao.plugins.find((plugin) => plugin.subdomain === 'admin')?.address;
-    // }, [dao]);
-
-    const isAdmin = useMemo(() => {
-        if (!dao || !address) {
-            return false;
-        }
-
-        return dao.creator.address === address; // TODO: Replace with actual admin check when available
-    }, [dao, address]);
-
-    const bannerTypes = useMemo<BannerType[]>(() => {
+    const bannerTypes = useMemo(() => {
         const types: BannerType[] = [];
-
-        if (!dao || !isMember) {
-            return types;
+        if (isConnected) {
+            if (isAdminMember) {
+                types.push(BannerType.IS_ADMIN);
+            }
+            if (adminPluginAddress != null) {
+                types.push(BannerType.HAS_ADMIN);
+            }
         }
-
-        if (isAdmin) {
-            types.push(BannerType.IS_ADMIN);
-        } else {
-            types.push(BannerType.HAS_ADMIN);
-        }
-
         return types;
-    }, [dao, isMember, isAdmin]);
+    }, [isConnected, isAdminMember, adminPluginAddress]);
 
-    const bannerContentList = useMemo<Array<IBannerContent<string>>>(() => {
+    const bannerContentList = useMemo(() => {
         return bannerTypes.map((type) => {
             const content = BannerContent[type];
             return {
                 priority: content.priority,
                 message: content.message,
                 buttonLabel: content.buttonLabel,
-                href: content.href({ id }) as Route<string>,
+                buttonHref: content.buttonHref({ id }) as Route<string>,
             };
         });
     }, [bannerTypes, id]);
 
-    const sortedBannerContentList = useMemo<Array<IBannerContent<string>>>(() => {
+    const sortedBannerContentList = useMemo(() => {
         return [...bannerContentList].sort((a, b) => a.priority - b.priority);
     }, [bannerContentList]);
 
-    const bannerContent = useMemo<IBannerContent<string> | null>(() => {
+    const bannerContent = useMemo(() => {
         if (sortedBannerContentList.length === 0) {
             return null;
         }
