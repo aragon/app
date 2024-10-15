@@ -2,14 +2,12 @@ export type EligibleType = 'bodies' | 'any';
 
 type BodyGovernanceType = 'tokenVoting' | 'multisig';
 
-// Base interface for all body types
 interface BaseBody {
     bodyNameField: string;
     bodySummaryField: string;
     bodyGovernanceTypeField: BodyGovernanceType;
 }
 
-// Interface for token-based body
 interface TokenBody extends BaseBody {
     bodyGovernanceTypeField: 'tokenVoting';
     tokenNameField: string;
@@ -17,7 +15,6 @@ interface TokenBody extends BaseBody {
     tokenTotalSupplyField: string;
 }
 
-// Interface for multisig body
 interface MultisigBody extends BaseBody {
     bodyGovernanceTypeField: 'multisig';
     multisigMembersField: string[];
@@ -33,3 +30,10 @@ export interface PermissionsData {
     eligibleVoters: EligibleType;
     votingBodies: Body[];
 }
+
+export interface IBodyCheckboxCardProps {
+    body: Body;
+    values: Body[];
+}
+
+export interface ICreateProcessFormPermissionProps {}

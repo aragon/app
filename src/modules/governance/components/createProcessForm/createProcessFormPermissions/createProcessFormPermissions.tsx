@@ -3,15 +3,13 @@ import { InputContainer, RadioCard, RadioGroup } from '@aragon/ods';
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { BodyCheckboxCard } from './components/bodyCheckboxCard';
-import type { Body, PermissionsData } from './createProcessFormPermissions.api';
-
-export interface ICreateProcessFormPermissionProps {}
+import type { Body, ICreateProcessFormPermissionProps, PermissionsData } from './createProcessFormPermissions.api';
 
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
     const { getValues } = useFormContext();
 
     const eligibleField = useFormField<PermissionsData, 'eligibleVoters'>('eligibleVoters', {
-        label: 'Who is eligible',
+        label: 'Who is eligible?',
         defaultValue: 'bodies',
     });
 

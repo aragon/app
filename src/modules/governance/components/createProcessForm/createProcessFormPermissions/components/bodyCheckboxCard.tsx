@@ -1,11 +1,6 @@
 import { CheckboxCard, InputNumber } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
-import type { Body } from '../createProcessFormPermissions.api';
-
-interface IBodyCheckboxCardProps {
-    body: Body;
-    values: Body[];
-}
+import type { Body, IBodyCheckboxCardProps } from '../createProcessFormPermissions.api';
 
 export const BodyCheckboxCard: React.FC<IBodyCheckboxCardProps> = (props) => {
     const { body, values } = props;
@@ -17,7 +12,7 @@ export const BodyCheckboxCard: React.FC<IBodyCheckboxCardProps> = (props) => {
 
         if (isChecked) {
             if (!currentBodies.some((b) => b.bodyNameField === body.bodyNameField)) {
-                updatedBodies = [...currentBodies, { ...body }];
+                updatedBodies = [...currentBodies, body];
             } else {
                 updatedBodies = currentBodies;
             }
@@ -29,9 +24,10 @@ export const BodyCheckboxCard: React.FC<IBodyCheckboxCardProps> = (props) => {
     };
 
     const handleMinRequirementChange = (bodyName: string, value: number) => {
-        const updatedVotingBodies = values.map((vb) =>
-            vb.bodyNameField === bodyName ? { ...vb, minimumRequirement: value } : vb,
+        const updatedVotingBodies = values.map((votingBody) =>
+            votingBody.bodyNameField === bodyName ? { ...votingBody, minimumRequirement: value } : votingBody,
         );
+
         setValue('votingBodies', updatedVotingBodies);
     };
 
