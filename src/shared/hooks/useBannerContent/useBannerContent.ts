@@ -1,4 +1,4 @@
-import { useMember } from '@/modules/governance/api/governanceService';
+import { useMemberOf } from '@/modules/governance/api/governanceService/queries/useMemberOf';
 import type { IBannerProps } from '@/shared/components/banner';
 import { BannerContent } from '@/shared/constants/bannerContent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -13,18 +13,14 @@ export function useBannerContent({ id }: IBannerProps) {
 
     const adminPlugin = useDaoPlugins({
         daoId: id,
-        subdomain: 'multisig',
+        subdomain: 'admin',
     });
     const adminPluginAddress = useMemo(() => adminPlugin?.[0]?.meta?.address, [adminPlugin]);
 
-    const { data: adminMember } = useMember(
-        {
-            queryParams: { daoId: id, pluginAddress: adminPluginAddress ?? '' },
-            urlParams: { address: address ?? '' },
-        },
-        { enabled: Boolean(adminPluginAddress) && isConnected },
+    const { data: isAdminMember } = useMemberOf(
+        { urlParams: { address: address ?? '', pluginAddress: adminPluginAddress ?? '' } },
+        { enabled: isConnected && !!adminPluginAddress },
     );
-    const isAdminMember = adminMember != null;
 
     const bannerTypes = useMemo(() => {
         const types: BannerType[] = [];

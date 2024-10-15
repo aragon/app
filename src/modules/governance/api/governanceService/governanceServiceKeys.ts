@@ -1,5 +1,6 @@
 import type {
     IGetMemberListParams,
+    IGetMemberOfParams,
     IGetMemberParams,
     IGetProposalListParams,
     IGetProposalParams,
@@ -11,6 +12,7 @@ export enum GovernanceServiceKey {
     PROPOSAL = 'PROPOSAL',
     MEMBER_LIST = 'MEMBER_LIST',
     MEMBER = 'MEMBER',
+    MEMBER_OF = 'MEMBER_OF',
     VOTE_LIST = 'VOTE_LIST',
 }
 
@@ -19,5 +21,6 @@ export const governanceServiceKeys = {
     proposal: (params: IGetProposalParams) => [GovernanceServiceKey.PROPOSAL, params],
     memberList: (params: IGetMemberListParams) => [GovernanceServiceKey.MEMBER_LIST, params],
     member: (params: IGetMemberParams) => [GovernanceServiceKey.MEMBER, params],
+    memberOf: (params: IGetMemberOfParams) => [GovernanceServiceKey.MEMBER_OF, params],
     voteList: (params: IGetVoteListParams) => [GovernanceServiceKey.VOTE_LIST, params],
 };
