@@ -327,6 +327,9 @@
           "details": {
             "blockchain": "Blockchain",
             "title": "Details"
+          },
+          "settings": {
+            "title": "Settings"
           }
         },
         "main": {

@@ -13,9 +13,8 @@ export interface IDaoPlugInfoProps {
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, type } = props;
 
-    console.log('yeppp', plugin, type);
-
     const { t } = useTranslations();
+
     return (
         <Page.Section
             title={t('app.governance.daoProposalsPage.aside.details.title')}
