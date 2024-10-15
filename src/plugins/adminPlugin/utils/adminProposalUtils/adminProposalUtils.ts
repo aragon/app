@@ -1,7 +1,7 @@
 import { ProposalStatus } from '@aragon/ods';
 
 class AdminProposalUtils {
-    getProposalStatus = () => ProposalStatus.ACTIVE;
+    getProposalStatus = () => ProposalStatus.EXECUTED;
 }
 
 export const adminProposalUtils = new AdminProposalUtils();
