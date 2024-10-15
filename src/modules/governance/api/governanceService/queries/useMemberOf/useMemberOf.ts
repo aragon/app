@@ -1,7 +1,7 @@
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
 import { governanceService } from '../../governanceService';
-import { IGetMemberOfParams } from '../../governanceService.api';
+import { type IGetMemberOfParams } from '../../governanceService.api';
 import { governanceServiceKeys } from '../../governanceServiceKeys';
 
 export const memberOfOptions = <TMemberOf extends boolean = boolean>(
