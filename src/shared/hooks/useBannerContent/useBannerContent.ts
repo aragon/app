@@ -1,10 +1,10 @@
+import { useMember } from '@/modules/governance/api/governanceService';
 import { useMemberOf } from '@/modules/governance/api/governanceService/queries/useMemberOf';
 import type { IBannerProps } from '@/shared/components/banner';
 import { BannerContent } from '@/shared/constants/bannerContent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { BannerType } from '@/shared/types/enum/bannerType';
 import { type Route } from 'next';
-import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 
 export function useBannerContent({ id }: IBannerProps) {
@@ -13,50 +13,44 @@ export function useBannerContent({ id }: IBannerProps) {
 
     const adminPlugin = useDaoPlugins({
         daoId: id,
-        subdomain: 'admin',
+        subdomain: 'multisig',
     });
-    const adminPluginAddress = useMemo(() => adminPlugin?.[0]?.meta?.address, [adminPlugin]);
+    const adminPluginAddress = adminPlugin?.[0]?.meta?.address;
+
+    const { data: isMember } = useMember(
+        { urlParams: { address: address ?? '' }, queryParams: { daoId: id } },
+        { enabled: isConnected && !!adminPluginAddress },
+    );
+    const isDaoMember = isMember?.metrics != null;
 
     const { data: isAdminMember } = useMemberOf(
         { urlParams: { address: address ?? '', pluginAddress: adminPluginAddress ?? '' } },
-        { enabled: isConnected && !!adminPluginAddress },
+        { enabled: isDaoMember },
     );
 
-    const bannerTypes = useMemo(() => {
-        const types: BannerType[] = [];
-        if (isConnected) {
-            if (isAdminMember) {
-                types.push(BannerType.IS_ADMIN);
-            }
-            if (adminPluginAddress != null) {
-                types.push(BannerType.HAS_ADMIN);
-            }
+    const bannerTypes: BannerType[] = [];
+    if (isConnected && isDaoMember) {
+        if (isAdminMember) {
+            bannerTypes.push(BannerType.IS_ADMIN);
         }
-        return types;
-    }, [isConnected, isAdminMember, adminPluginAddress]);
-
-    const bannerContentList = useMemo(() => {
-        return bannerTypes.map((type) => {
-            const content = BannerContent[type];
-            return {
-                priority: content.priority,
-                message: content.message,
-                buttonLabel: content.buttonLabel,
-                buttonHref: content.buttonHref({ id }) as Route<string>,
-            };
-        });
-    }, [bannerTypes, id]);
-
-    const sortedBannerContentList = useMemo(() => {
-        return [...bannerContentList].sort((a, b) => a.priority - b.priority);
-    }, [bannerContentList]);
-
-    const bannerContent = useMemo(() => {
-        if (sortedBannerContentList.length === 0) {
-            return null;
+        if (adminPluginAddress != null) {
+            bannerTypes.push(BannerType.HAS_ADMIN);
         }
-        return sortedBannerContentList[0];
-    }, [sortedBannerContentList]);
+    }
+
+    const bannerContentList = bannerTypes.map((type) => {
+        const content = BannerContent[type];
+        return {
+            priority: content.priority,
+            message: content.message,
+            buttonLabel: content.buttonLabel,
+            buttonHref: content.buttonHref({ id }) as Route<string>,
+        };
+    });
+
+    const sortedBannerContentList = [...bannerContentList].sort((a, b) => a.priority - b.priority);
+
+    const bannerContent = sortedBannerContentList.length > 0 ? sortedBannerContentList[0] : null;
 
     return {
         bannerContent,
