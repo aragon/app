@@ -385,6 +385,9 @@
         "aside": {
           "details": {
             "title": "Details"
+          },
+          "settings": {
+            "title": "Settings"
           }
         },
         "main": {

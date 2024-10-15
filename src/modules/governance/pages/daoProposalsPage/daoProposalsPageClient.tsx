@@ -1,5 +1,6 @@
 'use client';
 
+import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo/daoPluginInfo';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -56,7 +57,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={false}>
+                <DaoPluginInfo plugin={selectedPlugin.meta} type={PluginType.PROCESS} />
+                <Page.Section title={t('app.governance.daoProposalsPage.aside.settings.title')} inset={false}>
                     <DaoGovernanceInfo daoId={daoId} plugin={selectedPlugin.meta} />
                 </Page.Section>
             </Page.Aside>

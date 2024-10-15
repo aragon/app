@@ -1,4 +1,4 @@
-import type { IDaoLink } from './daoLink';
+import { IResource } from '@/shared/api/daoService/domain/resource';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
 import { type Network } from './enum';
@@ -51,7 +51,7 @@ export interface IDao {
     /**
      * Links of the DAO.
      */
-    links: IDaoLink[];
+    links: IResource[];
     /**
      * DAO creation date by block timestamp (in seconds).
      */

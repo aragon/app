@@ -1,5 +1,6 @@
 'use client';
 
+import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo/daoPluginInfo';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -30,6 +31,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
                 <DaoMemberList initialParams={initialParams} onValueChange={setSelectedPlugin} value={selectedPlugin} />
             </Page.Main>
             <Page.Aside>
+                <DaoPluginInfo plugin={selectedPlugin.meta} type={PluginType.BODY} />
                 <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')} inset={false}>
                     <DaoMembersInfo daoId={initialParams.queryParams.daoId} plugin={selectedPlugin.meta} />
                 </Page.Section>

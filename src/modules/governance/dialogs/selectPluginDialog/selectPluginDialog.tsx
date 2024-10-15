@@ -62,7 +62,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                                 plugin.uniqueId === selectedPlugin?.uniqueId,
                         })}
                     >
-                        {daoUtils.formatPluginName(plugin.meta.subdomain)}
+                        {daoUtils.getPluginName(plugin.meta)}
                     </DataList.Item>
                 ))}
             </Dialog.Content>
