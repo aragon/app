@@ -53,16 +53,19 @@ export interface IGetMemberParams extends IRequestUrlQueryParams<IGetMemberUrlPa
 
 export interface IGetMemberOfUrlParams {
     /**
-     * ID of the DAO to fetch the member from.
+     * Address of the member to query a plugin for.
      */
     address: string;
+}
+
+export interface IGetMemberOfQueryParams {
     /**
      * Address of the plugin used to include the member stats.
      */
-    pluginAddress: string;
+    pluginAddress?: string;
 }
 
-export interface IGetMemberOfParams extends IRequestUrlParams<IGetMemberOfUrlParams> {}
+export interface IGetMemberOfParams extends IRequestUrlQueryParams<IGetMemberOfUrlParams, IGetMemberOfQueryParams> {}
 
 export interface IGetProposalUrlParams {
     /**

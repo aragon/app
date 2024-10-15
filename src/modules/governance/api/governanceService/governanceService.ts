@@ -13,7 +13,7 @@ class GovernanceService extends AragonBackendService {
     private urls = {
         members: '/members',
         member: '/members/:address',
-        memberOf: ' /members/:address/:pluginAddress/exists',
+        memberOf: ' /members/isDaoMember/:address',
         proposals: '/proposals',
         proposal: '/proposals/:id',
         votes: '/votes',
