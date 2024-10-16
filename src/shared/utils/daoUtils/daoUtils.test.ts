@@ -92,7 +92,9 @@ describe('dao utils', () => {
 
     describe('getPluginName', () => {
         it('formats plugin subdomain', () => {
-            expect(daoUtils.getPluginName(generateDaoPlugin())).toEqual('Token Voting');
+            const subdomain = 'token-voting';
+            const plugin = generateDaoPlugin({ subdomain });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
         });
     });
 

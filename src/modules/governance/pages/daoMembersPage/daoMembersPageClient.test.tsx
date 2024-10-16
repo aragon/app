@@ -11,6 +11,10 @@ jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
     DaoMembersInfo: () => <div data-testid="members-info-mock" />,
 }));
 
+jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
+    DaoPluginInfo: () => <div data-testid="plugin-info-mock" />,
+}));
+
 describe('<DaoMembersPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
