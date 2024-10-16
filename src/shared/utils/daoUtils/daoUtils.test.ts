@@ -173,4 +173,11 @@ describe('dao utils', () => {
             ]);
         });
     });
+
+    describe('getNetwork', () => {
+        it('returns the network name from the daoId', () => {
+            const daoId = 'ethereum-sepolia-0x123abc';
+            expect(daoUtils.getNetwork(daoId)).toEqual('ethereum-sepolia');
+        });
+    });
 });
