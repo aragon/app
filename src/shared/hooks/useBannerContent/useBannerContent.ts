@@ -1,4 +1,4 @@
-import { useMemberOf } from '@/modules/governance/api/governanceService/queries/useMemberOf';
+import { useIsDaoMemberOf } from '@/modules/governance/api/governanceService/queries/useIsDaoMemberOf';
 import { BannerContent } from '@/shared/constants/bannerContent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { BannerType } from '@/shared/types/enum/bannerType';
@@ -22,7 +22,7 @@ export function useBannerContent(params: IUseBannerContentParams) {
     });
     const adminPluginAddress = adminPlugin?.[0]?.meta?.address;
 
-    const { data: isAdminMember } = useMemberOf(
+    const { data: isAdminMember } = useIsDaoMemberOf(
         { urlParams: { address: address as string }, queryParams: { pluginAddress: adminPluginAddress } },
         { enabled: address != null && adminPluginAddress != null },
     );
