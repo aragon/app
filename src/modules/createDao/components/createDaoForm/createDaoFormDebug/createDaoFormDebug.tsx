@@ -2,7 +2,7 @@ import { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { addressUtils, InputContainer, InputText, Toggle, ToggleGroup } from '@aragon/ods';
+import { addressUtils, InputText, RadioCard, RadioGroup } from '@aragon/ods';
 import { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormDebugProps {}
@@ -32,23 +32,13 @@ export const CreateDaoFormDebug: React.FC<ICreateDaoFormDebugProps> = () => {
 
     return (
         <div className="flex flex-col gap-10">
-            <InputContainer
-                id={networkField.name}
-                useCustomWrapper={true}
-                label={t('app.createDao.createDaoForm.debug.network.label')}
-                helpText={t('app.createDao.createDaoForm.debug.network.helpText')}
-            >
-                <ToggleGroup isMultiSelect={false} {...networkField}>
-                    {Object.values(Network).map((network) => (
-                        <Toggle
-                            key={network}
-                            value={network}
-                            label={networkDefinitions[network as Network].name}
-                            disabled={network !== Network.ETHEREUM_SEPOLIA}
-                        />
-                    ))}
-                </ToggleGroup>
-            </InputContainer>
+            <RadioGroup helpText={t('app.createDao.createDaoForm.debug.network.helpText')} {...networkField}>
+                <RadioCard
+                    value={Network.ETHEREUM_SEPOLIA}
+                    label={networkDefinitions[Network.ETHEREUM_SEPOLIA].name}
+                    avatar={networkDefinitions[Network.ETHEREUM_SEPOLIA].logo}
+                />
+            </RadioGroup>
             <InputText
                 helpText={t('app.createDao.createDaoForm.debug.factoryAddress.helpText')}
                 placeholder={t('app.createDao.createDaoForm.debug.factoryAddress.placeholder')}
