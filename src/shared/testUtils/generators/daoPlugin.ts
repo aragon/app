@@ -12,5 +12,6 @@ export const generateDaoPlugin = <TSettings extends IPluginSettings = IPluginSet
     isBody: false,
     isSubPlugin: false,
     settings: generatePluginSettings() as TSettings,
+    blockTimestamp: daoPlugin?.blockTimestamp ?? Date.now(),
     ...daoPlugin,
 });

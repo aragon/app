@@ -1,10 +1,20 @@
 import { type IDaoPlugin } from '@/shared/api/daoService';
-import { IResource } from '@/shared/api/daoService/domain/resource';
-
+import { type IResource } from '@/shared/api/daoService/domain/resource';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { PluginType } from '@/shared/types';
-import { addressUtils, DateFormat, DefinitionList, formatterUtils, IconType, Link } from '@aragon/ods';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import {
+    addressUtils,
+    ChainEntityType,
+    DateFormat,
+    DefinitionList,
+    formatterUtils,
+    IconType,
+    Link,
+    useBlockExplorer,
+} from '@aragon/ods';
 
 export interface IDaoPlugInfoProps {
     /**
@@ -15,12 +25,19 @@ export interface IDaoPlugInfoProps {
      * The type of plugin.
      */
     type: PluginType;
+    /**
+     * The DAO ID.
+     */
+    daoId: string;
 }
 
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
-    const { plugin, type } = props;
+    const { plugin, type, daoId } = props;
 
     const { t } = useTranslations();
+
+    const chainId = networkDefinitions[daoUtils.getNetwork(daoId)].chainId;
+    const { buildEntityUrl } = useBlockExplorer();
 
     return (
         <Page.Section
@@ -28,67 +45,50 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
             inset={false}
             className="gap-y-4"
         >
-            {type === PluginType.PROCESS && (
-                <>
-                    <p className="text-neutral-500">{plugin.description}</p>
-                    {plugin.resources?.map((resource: IResource, index: number) => (
-                        <div key={index}>
-                            <Link href={resource.url} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                {resource.name}
-                            </Link>
-                            <p className="truncate">{resource.url}</p>
-                        </div>
-                    ))}
-                    <DefinitionList.Container>
-                        <DefinitionList.Item term={t('Process name')}>{plugin.name}</DefinitionList.Item>
-                        <DefinitionList.Item term={t('Process key')} className="text-neutral-500">
-                            <p className="text-neutral-500"> {plugin.processKey}</p>
-                        </DefinitionList.Item>
-                        <DefinitionList.Item term={t('Plugin')}>
-                            <Link className="capitalize" href="/" iconRight={IconType.LINK_EXTERNAL}>
-                                {plugin.subdomain}
-                            </Link>
-                            <p className="text-neutral-500">{addressUtils.truncateAddress(plugin.address)}</p>
-                        </DefinitionList.Item>
-                        <DefinitionList.Item term="Launched at">
-                            <Link href="/" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                {formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
-                                    format: DateFormat.YEAR_MONTH,
-                                })}
-                            </Link>
-                        </DefinitionList.Item>
-                    </DefinitionList.Container>
-                </>
-            )}
-            {type === PluginType.BODY && (
-                <>
-                    <p className="text-neutral-500">{plugin.description}</p>
-                    {plugin.resources?.map((resource: IResource, index: number) => (
-                        <div key={index}>
-                            <Link href={resource.url} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                {resource.name}
-                            </Link>
-                            <p className="truncate">{resource.url}</p>
-                        </div>
-                    ))}
-                    <DefinitionList.Container>
-                        <DefinitionList.Item term={t('Body Name')}>{plugin.name}</DefinitionList.Item>
-                        <DefinitionList.Item term={t('Plugin')}>
-                            <Link className="capitalize" href="/" iconRight={IconType.LINK_EXTERNAL}>
-                                {plugin.subdomain}
-                            </Link>
-                            <p className="text-neutral-500">{addressUtils.truncateAddress(plugin.address)}</p>
-                        </DefinitionList.Item>
-                        <DefinitionList.Item term="Launched at">
-                            <Link href="/" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                {formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
-                                    format: DateFormat.YEAR_MONTH,
-                                })}
-                            </Link>
-                        </DefinitionList.Item>
-                    </DefinitionList.Container>
-                </>
-            )}
+            <p className="text-neutral-500">{plugin.description}</p>
+            {plugin.resources?.map((resource: IResource, index: number) => (
+                <div key={index}>
+                    <Link
+                        description={resource.url}
+                        href={resource.url}
+                        target="_blank"
+                        iconRight={IconType.LINK_EXTERNAL}
+                    >
+                        {resource.name}
+                    </Link>
+                </div>
+            ))}
+            <DefinitionList.Container>
+                <DefinitionList.Item term={t(type === PluginType.PROCESS ? 'Process name' : 'Body Name')}>
+                    {plugin.name}
+                </DefinitionList.Item>
+                {type === PluginType.PROCESS && (
+                    <DefinitionList.Item term={t('Process key')} className="text-neutral-500">
+                        <p className="text-neutral-500"> {plugin.processKey}</p>
+                    </DefinitionList.Item>
+                )}
+                <DefinitionList.Item term={t('Plugin')}>
+                    <Link
+                        description={addressUtils.truncateAddress(plugin.address)}
+                        iconRight={IconType.LINK_EXTERNAL}
+                        href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.address, chainId })}
+                        target="_blank"
+                    >
+                        {t('app.settings.daoVersionInfo.governanceValue', {
+                            name: daoUtils.getPluginName(plugin),
+                            release: plugin.release,
+                            build: plugin.build,
+                        })}
+                    </Link>
+                </DefinitionList.Item>
+                <DefinitionList.Item term="Launched at">
+                    <Link href="/" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                        {formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
+                            format: DateFormat.YEAR_MONTH,
+                        })}
+                    </Link>
+                </DefinitionList.Item>
+            </DefinitionList.Container>
         </Page.Section>
     );
 };

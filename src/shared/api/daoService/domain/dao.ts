@@ -1,7 +1,7 @@
-import { IResource } from '@/shared/api/daoService/domain/resource';
+import type { IResource } from '@/shared/api/daoService/domain/resource';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
-import { type Network } from './enum';
+import type { Network } from './enum';
 
 export interface IDao {
     /**
