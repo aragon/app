@@ -31,9 +31,8 @@ export interface PermissionsData {
     votingBodies: Body[];
 }
 
-export interface IBodyCheckboxCardProps {
+export interface IVotingBodyCheckboxCardProps {
     body: Body;
     values: Body[];
 }
 
-export interface ICreateProcessFormPermissionProps {}

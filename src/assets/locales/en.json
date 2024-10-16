@@ -223,6 +223,22 @@
 
       "createProcessForm": {
         "body": {},
+        "permissions": {
+          "TokenMinRequirementInput": {
+            "helpText": "Only token holders with at least the minimum required balance or delegates minimum required voting power can create proposals.",
+            "label": "Minimum requirement"
+          },
+          "eligibleVoters": {
+            "anyDescription": "Any address can create proposals",
+            "anyLabel": "Any address",
+            "bodiesDescription": "Select voting bodies and define requirements",
+            "bodiesLabel": "Voting bodies",
+            "label": "Who is eligible?"
+          },
+          "votingBodies": {
+            "label": "Voting Bodies"
+          }
+        },
         "process": {
           "key": {
             "helpText": "Define a prefix for this governance process to have an unique ID. Something like PDF, which leads to PDF-01 and counting up for each proposal.",

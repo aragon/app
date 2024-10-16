@@ -2,14 +2,19 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/ods';
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { BodyCheckboxCard } from './components/bodyCheckboxCard';
-import type { Body, ICreateProcessFormPermissionProps, PermissionsData } from './createProcessFormPermissions.api';
+import { VotingBodyCheckboxCard } from './components/votingBodyCheckboxCard';
+import type { Body, PermissionsData } from './createProcessFormPermissions.api';
+import { useTranslations } from '@/shared/components/translationsProvider';
+
+export interface ICreateProcessFormPermissionProps {}
 
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
     const { getValues } = useFormContext();
 
+    const { t } = useTranslations();
+
     const eligibleField = useFormField<PermissionsData, 'eligibleVoters'>('eligibleVoters', {
-        label: 'Who is eligible?',
+        label: t('app.governance.createProcessForm.permissions.eligibleVoters.label'),
         defaultValue: 'bodies',
     });
 
@@ -27,22 +32,27 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
             <RadioGroup className="flex gap-4 md:!flex-row" onValueChange={eligibleField.onChange} {...eligibleField}>
                 <RadioCard
                     className="w-full"
-                    label="Voting bodies"
-                    description="Select voting bodies and define requirements"
+                    label={t('app.governance.createProcessForm.permissions.eligibleVoters.bodiesLabel')}
+                    description={t('app.governance.createProcessForm.permissions.eligibleVoters.bodiesDescription')}
                     value="bodies"
                 />
                 <RadioCard
                     className="w-full"
-                    label="Any address"
-                    description="Any address can create proposals"
+                    label={t('app.governance.createProcessForm.permissions.eligibleVoters.anyLabel')}
+                    description={t('app.governance.createProcessForm.permissions.eligibleVoters.anyDescription')}
                     value="any"
                 />
             </RadioGroup>
             {eligibleField.value === 'bodies' && (
-                <InputContainer id="votingBodies" label="Voting Bodies" useCustomWrapper={true} {...votingBodyField}>
+                <InputContainer
+                    id="votingBodies"
+                    label={t('app.governance.createProcessForm.permissions.votingBodies.label')}
+                    useCustomWrapper={true}
+                    {...votingBodyField}
+                >
                     {bodies &&
                         bodies.map((body: Body, index: number) => (
-                            <BodyCheckboxCard values={votingBodyField.value} key={index} body={body} />
+                            <VotingBodyCheckboxCard values={votingBodyField.value} key={index} body={body} />
                         ))}
                 </InputContainer>
             )}
