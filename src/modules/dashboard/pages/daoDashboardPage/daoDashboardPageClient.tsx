@@ -120,7 +120,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             <Page.Content>
                 <Page.Main>
                     <Page.Section title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
-                        <DaoProposalList initialParams={proposalListParams} hidePagination={true}>
+                        <DaoProposalList.Container initialParams={proposalListParams} hidePagination={true}>
                             <Button
                                 className="self-start"
                                 variant="tertiary"
@@ -130,7 +130,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             >
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>
-                        </DaoProposalList>
+                        </DaoProposalList.Container>
                     </Page.Section>
                     <Page.Section title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
                         <AssetList initialParams={assetListParams} hidePagination={true}>
@@ -147,7 +147,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                     </Page.Section>
                     {hasSupportedPlugins && (
                         <Page.Section title={t('app.dashboard.daoDashboardPage.main.members.title')}>
-                            <DaoMemberList initialParams={memberListParams} hidePagination={true}>
+                            <DaoMemberList.Container initialParams={memberListParams} hidePagination={true}>
                                 <Button
                                     className="self-start"
                                     variant="tertiary"
@@ -157,7 +157,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 >
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
-                            </DaoMemberList>
+                            </DaoMemberList.Container>
                         </Page.Section>
                     )}
                 </Page.Main>

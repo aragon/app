@@ -1,5 +1,6 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
@@ -29,6 +30,7 @@ describe('<TokenProposalList /> component', () => {
     const createTestComponent = (props?: Partial<ITokenProposalListProps>) => {
         const completeProps: ITokenProposalListProps = {
             initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
+            plugin: generateDaoPlugin(),
             ...props,
         };
 

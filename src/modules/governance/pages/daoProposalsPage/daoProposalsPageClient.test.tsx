@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
 
 jest.mock('../../components/daoProposalList', () => ({
-    DaoProposalList: () => <div data-testid="proposal-list-mock" />,
+    DaoProposalList: { Container: () => <div data-testid="proposal-list-mock" /> },
 }));
 
 jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({

@@ -1,10 +1,11 @@
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
 import { generateMember } from '@/modules/governance/testUtils';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
-import { MultisigMemberList, type IMultisigMemberListProps } from './multisigMemberList';
+import { DaoMemberListDefault, type IDaoMemberListDefaultProps } from './daoMemberListDefault';
 
-describe('<MultisigMemberList /> component', () => {
+describe('<DaoMemberListDefault /> component', () => {
     const useMemberListDataSpy = jest.spyOn(useMemberListData, 'useMemberListData');
 
     beforeEach(() => {
@@ -23,15 +24,16 @@ describe('<MultisigMemberList /> component', () => {
         useMemberListDataSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IMultisigMemberListProps>) => {
-        const completeProps: IMultisigMemberListProps = {
+    const createTestComponent = (props?: Partial<IDaoMemberListDefaultProps>) => {
+        const completeProps: IDaoMemberListDefaultProps = {
             initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
+            plugin: generateDaoPlugin(),
             ...props,
         };
 
         return (
             <OdsModulesProvider>
-                <MultisigMemberList {...completeProps} />
+                <DaoMemberListDefault {...completeProps} />
             </OdsModulesProvider>
         );
     };

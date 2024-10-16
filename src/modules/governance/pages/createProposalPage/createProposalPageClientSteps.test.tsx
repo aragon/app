@@ -1,4 +1,7 @@
 import type { IWizardStepProps } from '@/shared/components/wizard';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateTabComponentPlugin } from '@/shared/testUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
 import {
@@ -29,13 +32,19 @@ jest.mock('@/shared/components/wizard', () => ({
 
 describe('<CreateProposalPageClientSteps /> component', () => {
     const useWatchSpy: jest.SpyInstance<unknown> = jest.spyOn(ReactHookForm, 'useWatch');
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+    const getSlotComponentSpy = jest.spyOn(pluginRegistryUtils, 'getSlotComponent');
 
     beforeEach(() => {
         useWatchSpy.mockReturnValue(true);
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
+        getSlotComponentSpy.mockReturnValue(undefined);
     });
 
     afterEach(() => {
         useWatchSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
+        getSlotComponentSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ICreateProposalPageClientStepsProps>) => {
@@ -70,5 +79,17 @@ describe('<CreateProposalPageClientSteps /> component', () => {
         useWatchSpy.mockReturnValue(false);
         render(createTestComponent());
         expect(screen.getByTestId(CreateProposalWizardStep.ACTIONS).dataset.hidden).toEqual('true');
+    });
+
+    it('hides the settings step when plugin has no custom settings component', () => {
+        getSlotComponentSpy.mockReturnValue(undefined);
+        render(createTestComponent());
+        expect(screen.getByTestId(CreateProposalWizardStep.SETTINGS).dataset.hidden).toEqual('true');
+    });
+
+    it('renders the settings step when plugin has custom settings component', () => {
+        getSlotComponentSpy.mockReturnValue(() => <div />);
+        render(createTestComponent());
+        expect(screen.getByTestId(CreateProposalWizardStep.SETTINGS).dataset.hidden).toEqual('false');
     });
 });

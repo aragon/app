@@ -1,7 +1,8 @@
 import type { Hex } from 'viem';
 import type { IProposalAction } from '../api/governanceService';
+import type { ICreateProposalFormData } from '../components/createProposalForm';
 
-export interface IBuildCreateProposalDataParams {
+export interface IBuildCreateProposalDataParams<TValues extends ICreateProposalFormData = ICreateProposalFormData> {
     /**
      * Metadata of the proposal in Hex format.
      */
@@ -11,11 +12,7 @@ export interface IBuildCreateProposalDataParams {
      */
     actions: Array<Pick<IProposalAction, 'to' | 'value' | 'data'>>;
     /**
-     * Start date of the proposal in seconds.
+     * Form values collected on the create-proposal wizard.
      */
-    startDate: number;
-    /**
-     * End date of the proposal in seconds.
-     */
-    endDate: number;
+    values: TValues;
 }
