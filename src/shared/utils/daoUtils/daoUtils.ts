@@ -72,13 +72,9 @@ class DaoUtils {
     };
 
     getNetwork = (daoId: string): Network => {
-        const networkName = daoId.split('-').slice(0, 2).join('-');
+        const networkName = daoId?.split('-').slice(0, 2).join('-');
 
-        const networkEnumKey = networkName.toUpperCase().replace(/-/g, '_') as keyof typeof Network;
-
-        const networkEnumValue = Network[networkEnumKey];
-
-        return networkEnumValue;
+        return networkName as Network;
     };
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
