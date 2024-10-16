@@ -1,10 +1,10 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/ods';
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { VotingBodyCheckboxCard } from './components/votingBodyCheckboxCard';
 import type { Body, PermissionsData } from './createProcessFormPermissions.api';
-import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ICreateProcessFormPermissionProps {}
 

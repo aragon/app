@@ -1,11 +1,11 @@
 import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Progress } from '@aragon/ods';
+import { DevTool } from '@hookform/devtools';
 import { useEffect, useMemo, type ComponentProps } from 'react';
 import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
-import { DevTool } from '@hookform/devtools';
 export interface IWizardContainerProps<TFormData extends FieldValues = FieldValues>
     extends Omit<ComponentProps<'form'>, 'onSubmit'> {
     /**

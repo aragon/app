@@ -35,4 +35,3 @@ export interface IVotingBodyCheckboxCardProps {
     body: Body;
     values: Body[];
 }
-
