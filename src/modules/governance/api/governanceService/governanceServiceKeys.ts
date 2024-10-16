@@ -1,6 +1,6 @@
 import type {
+    IGetIsDaoMemberParams,
     IGetMemberListParams,
-    IGetMemberOfParams,
     IGetMemberParams,
     IGetProposalListParams,
     IGetProposalParams,
@@ -21,6 +21,6 @@ export const governanceServiceKeys = {
     proposal: (params: IGetProposalParams) => [GovernanceServiceKey.PROPOSAL, params],
     memberList: (params: IGetMemberListParams) => [GovernanceServiceKey.MEMBER_LIST, params],
     member: (params: IGetMemberParams) => [GovernanceServiceKey.MEMBER, params],
-    memberOf: (params: IGetMemberOfParams) => [GovernanceServiceKey.MEMBER_OF, params],
+    memberOf: (params: IGetIsDaoMemberParams) => [GovernanceServiceKey.MEMBER_OF, params],
     voteList: (params: IGetVoteListParams) => [GovernanceServiceKey.VOTE_LIST, params],
 };
