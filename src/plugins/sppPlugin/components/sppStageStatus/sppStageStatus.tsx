@@ -4,7 +4,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, DateFormat, formatterUtils, ProposalStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
+import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
 
@@ -50,12 +50,22 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         return null;
     }
 
+    const isVeto = stage.plugins[0].proposalType === SppProposalType.VETO;
+
     // Only render the plugin-specific vote button when stage cannot be advanced yet and user can vote
     if (canVote && !canAdvanceStage) {
         const slotId = GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE;
         const { pluginSubdomain: pluginId } = subProposal;
 
-        return <PluginSingleComponent slotId={slotId} pluginId={pluginId} proposal={subProposal} daoId={daoId} />;
+        return (
+            <PluginSingleComponent
+                slotId={slotId}
+                pluginId={pluginId}
+                proposal={subProposal}
+                daoId={daoId}
+                isVeto={isVeto}
+            />
+        );
     }
 
     return (

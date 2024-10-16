@@ -1,22 +1,11 @@
-import type { IGetMemberListParams } from '@/modules/governance/api/governanceService';
-import type { IDaoMemberListProps } from '@/modules/governance/components/daoMemberList';
+import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 import { TokenMemberListItem } from './tokenMemberListItem';
 
-export interface ITokenMemberListProps extends IDaoMemberListProps {
-    /**
-     * Initial parameters to use for fetching the member list.
-     */
-    initialParams: IGetMemberListParams;
-    /**
-     * DAO plugin to display to members for.
-     */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
-}
+export interface ITokenMemberListProps extends IDaoMemberListDefaultProps<ITokenPluginSettings> {}
 
 export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
     const { initialParams, hidePagination, plugin, children } = props;

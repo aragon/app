@@ -14,16 +14,20 @@ export interface IMultisigSubmitVoteProps {
      * Proposal to submit the vote for.
      */
     proposal: IMultisigProposal;
+    /**
+     *  Defines if the vote to approve or veto the proposal.
+     */
+    isVeto?: boolean;
 }
 
 export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) => {
-    const { daoId, proposal } = props;
+    const { daoId, proposal, isVeto } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
     const openTransactionDialog = () => {
-        const params: IVoteDialogParams = { daoId, proposal, vote: { label: 'approve' } };
+        const params: IVoteDialogParams = { daoId, proposal, vote: { label: 'approve' }, isVeto };
         open(GovernanceDialogs.VOTE, { params });
     };
 

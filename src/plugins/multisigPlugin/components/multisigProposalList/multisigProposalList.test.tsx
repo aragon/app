@@ -1,5 +1,6 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { OdsModulesProvider } from '@aragon/ods';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigProposal } from '../../testUtils';
@@ -29,6 +30,7 @@ describe('<MultisigProposalList /> component', () => {
     const createTestComponent = (props?: Partial<IMultisigProposalListProps>) => {
         const completeProps: IMultisigProposalListProps = {
             initialParams: { queryParams: { daoId: '', pluginAddress: '' } },
+            plugin: generateDaoPlugin(),
             ...props,
         };
 

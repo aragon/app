@@ -21,20 +21,45 @@ describe('<PluginTabComponent /> component', () => {
         return <PluginTabComponent {...completeProps} />;
     };
 
-    it('returns empty container when no plugin component is found', () => {
+    it('returns empty container when no plugin component is found and fallback is not specified', () => {
         const plugins = [generateTabComponentPlugin()];
         getSlotComponentSpy.mockReturnValue(undefined);
         const { container } = render(createTestComponent({ plugins }));
         expect(container).toBeEmptyDOMElement();
     });
 
-    it('does not render the tabs when having only one slot component registered', () => {
+    it('renders a single component without tabs when the slot has one component registered', () => {
         const plugins = [generateTabComponentPlugin()];
         const component = () => <div data-testid="component-mock" />;
         getSlotComponentSpy.mockReturnValue(component);
         render(createTestComponent({ plugins }));
         expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
         expect(screen.getByTestId('component-mock')).toBeInTheDocument();
+    });
+
+    it('renders a single component without tabs when the fallback component is specified and plugins array has one element', () => {
+        const plugins = [generateTabComponentPlugin()];
+        const registeredComponent = undefined;
+        const Fallback = () => <div data-testid="fallback-mock" />;
+        getSlotComponentSpy.mockReturnValue(registeredComponent);
+        render(createTestComponent({ plugins, Fallback }));
+        expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
+        expect(screen.getByTestId('fallback-mock')).toBeInTheDocument();
+    });
+
+    it('renders the same fallback inside tabs when having multiple unsupported plugins', () => {
+        const plugins = [
+            generateTabComponentPlugin({ id: 'one', uniqueId: '1', label: 'one' }),
+            generateTabComponentPlugin({ id: 'two', uniqueId: '2', label: 'two' }),
+        ];
+        const registeredComponent = undefined;
+        const Fallback = () => <div data-testid="fallback-mock" />;
+        getSlotComponentSpy.mockReturnValue(registeredComponent);
+        render(createTestComponent({ plugins, Fallback }));
+        expect(screen.getByRole('tablist')).toBeInTheDocument();
+        expect(screen.getByRole('tab', { name: plugins[0].label })).toBeInTheDocument();
+        expect(screen.getByRole('tab', { name: plugins[1].label })).toBeInTheDocument();
+        expect(screen.getByTestId('fallback-mock')).toBeInTheDocument();
     });
 
     it('renders all the slot components as tabs when having multiple slot components registered', () => {

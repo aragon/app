@@ -8,8 +8,10 @@ import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { ReactNode } from 'react';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { DaoMemberListDefault } from './daoMemberListDefault';
 
-export interface IDaoMemberListProps extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
+export interface IDaoMemberListContainerProps
+    extends Pick<IPluginTabComponentProps<IDaoPlugin>, 'value' | 'onValueChange'> {
     /**
      * Initial parameters to use for fetching the member list.
      */
@@ -24,7 +26,7 @@ export interface IDaoMemberListProps extends Pick<IPluginTabComponentProps<IDaoP
     children?: ReactNode;
 }
 
-export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
+export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (props) => {
     const { initialParams, ...otherProps } = props;
 
     const bodyPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.BODY });
@@ -41,6 +43,7 @@ export const DaoMemberList: React.FC<IDaoMemberListProps> = (props) => {
         <PluginTabComponent
             slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
             plugins={processedPlugins}
+            Fallback={DaoMemberListDefault}
             {...otherProps}
         />
     );
