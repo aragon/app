@@ -4,15 +4,15 @@ import { governanceService } from '../../governanceService';
 import { type IGetIsDaoMemberParams } from '../../governanceService.api';
 import { governanceServiceKeys } from '../../governanceServiceKeys';
 
-export const isDaoMemberOfOptions = (
+export const isDaoMemberOptions = (
     params: IGetIsDaoMemberParams,
     options?: QueryOptions<boolean>,
 ): SharedQueryOptions<boolean> => ({
-    queryKey: governanceServiceKeys.memberOf(params),
+    queryKey: governanceServiceKeys.isDaoMember(params),
     queryFn: () => governanceService.getIsDaoMember(params),
     ...options,
 });
 
-export const useIsDaoMemberOf = (params: IGetIsDaoMemberParams, options?: QueryOptions<boolean>) => {
-    return useQuery(isDaoMemberOfOptions(params, options));
+export const useIsDaoMember = (params: IGetIsDaoMemberParams, options?: QueryOptions<boolean>) => {
+    return useQuery(isDaoMemberOptions(params, options));
 };

@@ -1,5 +1,5 @@
-import { useIsDaoMemberOf } from '@/modules/governance/api/governanceService/queries/useIsDaoMemberOf';
-import { BannerContent } from '@/shared/constants/bannerContent';
+import { useIsDaoMember } from '@/modules/governance/api/governanceService/queries/useIsDaoMember';
+import { bannerContent } from '@/shared/constants/bannerContent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { BannerType } from '@/shared/types/enum/bannerType';
 import { type Route } from 'next';
@@ -22,7 +22,7 @@ export function useBannerContent(params: IUseBannerContentParams) {
     });
     const adminPluginAddress = adminPlugin?.[0]?.meta?.address;
 
-    const { data: isAdminMember } = useIsDaoMemberOf(
+    const { data: isAdminMember } = useIsDaoMember(
         { urlParams: { address: address as string }, queryParams: { pluginAddress: adminPluginAddress } },
         { enabled: address != null && adminPluginAddress != null },
     );
@@ -37,7 +37,7 @@ export function useBannerContent(params: IUseBannerContentParams) {
     }
 
     const bannerContentList = bannerTypes.map((type) => {
-        const content = BannerContent[type];
+        const content = bannerContent[type];
         return {
             priority: content.priority,
             message: content.message,
@@ -48,9 +48,9 @@ export function useBannerContent(params: IUseBannerContentParams) {
 
     const sortedBannerContentList = [...bannerContentList].sort((a, b) => a.priority - b.priority);
 
-    const bannerContent = sortedBannerContentList.length > 0 ? sortedBannerContentList[0] : null;
+    const priorityBannerContent = sortedBannerContentList.length > 0 ? sortedBannerContentList[0] : null;
 
     return {
-        bannerContent,
+        priorityBannerContent,
     };
 }

@@ -9,15 +9,15 @@ import { Button, Icon, IconType } from '@aragon/ods';
 export const Banner: React.FC<IBannerProps> = (props) => {
     const { id } = props;
 
-    const { bannerContent } = useBannerContent({ id });
+    const { priorityBannerContent } = useBannerContent({ id });
 
     const { t } = useTranslations();
 
-    if (!bannerContent) {
+    if (!priorityBannerContent) {
         return null;
     }
 
-    const { message, buttonLabel, buttonHref } = bannerContent;
+    const { message, buttonLabel, buttonHref } = priorityBannerContent;
 
     return (
         <div className="flex w-full bg-warning-100">

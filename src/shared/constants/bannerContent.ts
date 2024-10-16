@@ -1,7 +1,7 @@
 import { type IBannerContent } from '@/shared/components/banner';
 import { BannerType } from '@/shared/types/enum/bannerType';
 
-export const BannerContent: Record<
+export const bannerContent: Record<
     BannerType,
     Omit<IBannerContent<string>, 'buttonHref'> & { buttonHref: (params: { id: string }) => string }
 > = {
