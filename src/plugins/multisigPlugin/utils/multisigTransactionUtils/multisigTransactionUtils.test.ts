@@ -1,18 +1,27 @@
+import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
+import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import * as Viem from 'viem';
-import { multisigPluginAbi } from './abi/multisigPlugin';
+import { multisigPluginAbi } from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual('viem') }));
 
 describe('multisigTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
+    const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
+    const parseEndDateSpy = jest.spyOn(createProposalUtils, 'parseEndDate');
 
     afterEach(() => {
         encodeFunctionDataSpy.mockReset();
+        parseStartDateSpy.mockReset();
+        parseEndDateSpy.mockReset();
     });
 
     describe('buildCreateProposalData', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
+            const startDate = 0;
+            const endDate = 1728660603;
+            const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
             const params = {
                 metadata: '0xdao-metadata-cid' as const,
                 actions: [
@@ -22,14 +31,15 @@ describe('multisigTransaction utils', () => {
                         value: '0',
                     },
                 ],
-                startDate: 0,
-                endDate: 1724167,
+                values,
             };
+            parseStartDateSpy.mockReturnValue(startDate);
+            parseEndDateSpy.mockReturnValue(endDate);
             multisigTransactionUtils.buildCreateProposalData(params);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: multisigPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), false, false, params.startDate, params.endDate],
+                args: [params.metadata, params.actions, BigInt(0), false, false, startDate, endDate],
             });
         });
     });

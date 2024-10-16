@@ -15,10 +15,14 @@ export interface ITokenSubmitVoteProps {
      * Proposal to submit the vote for.
      */
     proposal: ITokenProposal;
+    /**
+     *  Defines if the vote to approve or veto the proposal.
+     */
+    isVeto?: boolean;
 }
 
 export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
-    const { daoId, proposal } = props;
+    const { daoId, proposal, isVeto } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -38,7 +42,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const openTransactionDialog = () => {
         const vote = { value: Number(selectedOption), label: voteOptionToIndicator[selectedOption] };
-        const params: IVoteDialogParams = { daoId, proposal, vote };
+        const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
         open(GovernanceDialogs.VOTE, { params });
     };
 
@@ -50,14 +54,18 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     return (
         <div className="flex flex-col gap-4 pt-4">
             {!showOptions && (
-                <Button className="w-fit" onClick={() => setShowOptions(true)}>
+                <Button className="w-fit" size="md" onClick={() => setShowOptions(true)}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
             {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <RadioGroup
-                        label={t('app.plugins.token.tokenSubmitVote.options.label')}
+                        label={t('app.plugins.token.tokenSubmitVote.options.label', {
+                            label: isVeto
+                                ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
+                                : t('app.plugins.token.tokenSubmitVote.options.approveLabel'),
+                        })}
                         value={selectedOption}
                         onValueChange={setSelectedOption}
                     >

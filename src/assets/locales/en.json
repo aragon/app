@@ -442,6 +442,7 @@
           "description": "DAO has currently no members.",
           "title": "No members found"
         },
+        "entity": "Members",
         "error": {
           "description": "There was an error loading the DAO members. Please try again later.",
           "title": "Error loading members"
@@ -501,6 +502,7 @@
           "description": "This will show relevant proposals when available.",
           "title": "No proposals found"
         },
+        "entity": "Proposals",
         "error": {
           "description": "There was an error loading the DAO proposals. Please try again later.",
           "title": "Error loading proposals"
@@ -581,7 +583,7 @@
           "cancel": "Cancel",
           "select": "Create"
         },
-        "description": "Select the proposal you'd like to create and start the process",
+        "description": "Select the proposal type that you'd like to create.",
         "title": "Create proposal"
       },
       "voteDialog": {
@@ -589,7 +591,8 @@
           "submit": "Submit vote",
           "success": "View proposal"
         },
-        "confirmationLabel": "Voting",
+        "confirmationLabelApprove": "Voting to approve",
+        "confirmationLabelVeto": "Voting to veto",
         "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
         "title": "Submit vote"
       },
@@ -605,6 +608,18 @@
       }
     },
     "plugins": {
+      "admin": {
+        "adminGovernanceSettings": {
+          "auto": "Automatic",
+          "members": "Admin members",
+          "proposalCreation": "Proposal creation",
+          "proposalExecution": "Proposal execution"
+        },
+        "adminMemberInfo": {
+          "admins": "Admins",
+          "membersCount": "{{count}} addresses"
+        }
+      },
       "multisig": {
         "multisigCreateProposalSettingsForm": {
           "endTime": {
@@ -623,9 +638,6 @@
           "members": "Multisig members",
           "minimumApproval": "Minimum approval",
           "proposalCreation": "Proposal creation"
-        },
-        "multisigMemberList": {
-          "entity": "Members"
         },
         "multisigMembersInfo": {
           "eligibleVoters": "Eligible voters",
@@ -646,6 +658,21 @@
         }
       },
       "spp": {
+        "advanceStageDialog": {
+          "button": {
+            "submit": "Advance",
+            "success": "Proposal advanced"
+          },
+          "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
+          "title": "Advance proposal"
+        },
+        "sppStageStatus": {
+          "advanceInfo": "left to advance",
+          "button": {
+            "advance": "Advance proposal",
+            "vote": "Vote on proposal"
+          }
+        },
         "sppVotingTerminal": {
           "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
           "title": "Voting"
@@ -713,8 +740,10 @@
           },
           "options": {
             "abstain": "Abstain",
-            "label": "Choose your option",
+            "approveLabel": "approve",
+            "label": "Do you want to {{label}} this proposal?",
             "no": "No",
+            "vetoLabel": "veto",
             "yes": "Yes"
           }
         },

@@ -128,7 +128,6 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
         >
-            {/* @ts-expect-error TODO: update ODS component to remove type requirement (APP-3590) */}
             <ProposalDataListItem.Structure
                 title={title}
                 summary={summary}

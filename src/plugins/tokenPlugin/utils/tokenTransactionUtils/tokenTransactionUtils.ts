@@ -1,10 +1,17 @@
+import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
+import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { encodeFunctionData, type Hex } from 'viem';
-import { tokenPluginAbi } from './abi/tokenPlugin';
+import { tokenPluginAbi } from './tokenPluginAbi';
+
+export interface ICreateTokenProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class TokenTransactionUtils {
-    buildCreateProposalData = (params: IBuildCreateProposalDataParams): Hex => {
-        const { metadata, actions, startDate, endDate } = params;
+    buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateTokenProposalFormData>): Hex => {
+        const { metadata, actions, values } = params;
+
+        const startDate = createProposalUtils.parseStartDate(values);
+        const endDate = createProposalUtils.parseEndDate(values);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, endDate, 0, false];
         const data = encodeFunctionData({
