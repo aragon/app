@@ -62,9 +62,11 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                     type={PluginType.PROCESS}
                     daoId={initialParams.queryParams.daoId}
                 />
-                <Page.Section title={t('app.governance.daoProposalsPage.aside.settings.title')} inset={false}>
-                    <DaoGovernanceInfo daoId={daoId} plugin={selectedPlugin.meta} />
-                </Page.Section>
+                {selectedPlugin.meta.subdomain !== 'spp' && (
+                    <Page.Section title={t('app.governance.daoProposalsPage.aside.settings.title')} inset={false}>
+                        <DaoGovernanceInfo daoId={daoId} plugin={selectedPlugin.meta} />
+                    </Page.Section>
+                )}
             </Page.Aside>
         </>
     );
