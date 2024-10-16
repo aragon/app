@@ -13,5 +13,6 @@ export const generateSppStagePlugin = (plugin?: Partial<ISppStagePlugin>): ISppS
     isBody: false,
     isSubPlugin: false,
     settings: generateSppPluginSettings(),
+    blockTimestamp: 0,
     ...plugin,
 });

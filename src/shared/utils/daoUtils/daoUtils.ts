@@ -1,4 +1,4 @@
-import { daoService, Network, type IDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { daoService, type IDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
 import { PluginType, type IDaoPageParams } from '@/shared/types';
 import { addressUtils } from '@aragon/ods';
 import { type Metadata } from 'next';
