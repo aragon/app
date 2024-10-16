@@ -10,7 +10,7 @@ import {
 } from '@/modules/governance/api/governanceService';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
-import type { IDaoLink } from '@/shared/api/daoService';
+import type { IResource } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     ProposalActionType as OdsProposalActionType,
@@ -123,8 +123,8 @@ class ProposalActionUtils {
     normalizeUpdateMetaDataAction = (action: IProposalActionUpdateMetadata): IOdsProposalActionUpdateMetadata => {
         const { type, proposedMetadata, existingMetadata, ...otherValues } = action;
 
-        const normalizeLinks = (links: IDaoLink[]): IProposalActionUpdateMetadataDaoMetadataLink[] =>
-            links.map((link: IDaoLink) => ({ label: link.name, href: link.url }));
+        const normalizeLinks = (links: IResource[]): IProposalActionUpdateMetadataDaoMetadataLink[] =>
+            links.map((link: IResource) => ({ label: link.name, href: link.url }));
 
         return {
             ...otherValues,
