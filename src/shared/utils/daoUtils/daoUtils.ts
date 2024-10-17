@@ -1,4 +1,4 @@
-import { daoService, type IDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
+import { daoService, type IDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { PluginType, type IDaoPageParams } from '@/shared/types';
 import { addressUtils } from '@aragon/ods';
 import { type Metadata } from 'next';
@@ -57,6 +57,7 @@ class DaoUtils {
         if (plugin.name) {
             return plugin.name;
         }
+
         const parts = plugin.subdomain.split('-');
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
     };
@@ -69,12 +70,6 @@ class DaoUtils {
                 this.filterPluginByType(plugin, type) &&
                 this.filterBySubPlugin(plugin, includeSubPlugins),
         );
-    };
-
-    getNetwork = (daoId: string): Network => {
-        const networkName = daoId?.split('-').slice(0, 2).join('-');
-
-        return networkName as Network;
     };
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>

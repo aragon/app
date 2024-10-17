@@ -617,6 +617,14 @@
       }
     },
     "settings": {
+      "daoPluginInfo": {
+        "bodyName": "Body name",
+        "launchedAt": "Launched at",
+        "plugin": "Plugin",
+        "pluginVersionInfo": "{{name}} v{{release}}.{{build}}",
+        "processKey": "Process key",
+        "processName": "Process name"
+      },
       "daoSettingsInfo": {
         "blockchain": "Blockchain",
         "ens": "ENS name",
@@ -644,14 +652,6 @@
         "governanceValue": "{{name}} v{{release}}.{{build}}",
         "osLabel": "Operating system",
         "osValue": "Aragon OSx v{{version}}"
-      },
-      "details": {
-        "bodyName": "Body name",
-        "launchedAt": "Launched at",
-        "plugin": "Plugin",
-        "pluginVersionInfo": "{{name}} v{{release}}.{{build}}",
-        "processKey": "Process key",
-        "processName": "Process name"
       }
     },
     "shared": {

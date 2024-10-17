@@ -1,6 +1,5 @@
-import { type IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, type Network } from '@/shared/api/daoService';
 import { type IResource } from '@/shared/api/daoService/domain/resource';
-import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { PluginType } from '@/shared/types';
@@ -36,13 +35,18 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const daoNetwork = daoUtils.getNetwork(daoId);
-    const chainId = networkDefinitions[daoNetwork].chainId;
+    const networkName = daoId?.split('-').slice(0, 2).join('-') as Network;
+    const chainId = networkDefinitions[networkName].chainId;
 
     const { buildEntityUrl } = useBlockExplorer();
 
+    const pluginLaunchedAt = formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
+        format: DateFormat.YEAR_MONTH,
+    });
+    const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: plugin.address, chainId });
+
     return (
-        <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={false}>
+        <>
             <div className="gap-y-4">
                 {plugin.description && <p className="text-neutral-500">{plugin.description}</p>}
                 {plugin.resources?.map((resource: IResource, index: number) => (
@@ -90,13 +94,11 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                     </Link>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.settings.details.launchedAt')}>
-                    <Link href="/" target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                        {formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
-                            format: DateFormat.YEAR_MONTH,
-                        })}
+                    <Link href={pluginCreationLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                        {pluginLaunchedAt}
                     </Link>
                 </DefinitionList.Item>
             </DefinitionList.Container>
-        </Page.Section>
+        </>
     );
 };

@@ -55,7 +55,7 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      */
     parentPlugin?: string;
     /**
-     * Address of the parent plugin's smart contract.
+     * Block timestamp when the plugin was created.
      */
     blockTimestamp: number;
 }

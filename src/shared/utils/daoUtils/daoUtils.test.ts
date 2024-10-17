@@ -96,6 +96,12 @@ describe('dao utils', () => {
             const plugin = generateDaoPlugin({ subdomain });
             expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
         });
+
+        it('returns plugin name when available', () => {
+            const name = 'Custom plugin';
+            const plugin = generateDaoPlugin({ name });
+            expect(daoUtils.getPluginName(plugin)).toEqual(name);
+        });
     });
 
     describe('getDaoPlugin', () => {
@@ -171,13 +177,6 @@ describe('dao utils', () => {
                 plugins[1],
                 plugins[3],
             ]);
-        });
-    });
-
-    describe('getNetwork', () => {
-        it('returns the network name from the daoId', () => {
-            const daoId = 'ethereum-sepolia-0x123abc';
-            expect(daoUtils.getNetwork(daoId)).toEqual('ethereum-sepolia');
         });
     });
 });
