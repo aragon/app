@@ -675,6 +675,16 @@
           "select": "Select"
         }
       },
+      "bannerContent": {
+        "HAS_ADMIN": {
+          "buttonLabel": "View Admins",
+          "message": "This DAO is under construction. One or more admins can make any change to the DAO without a proposal"
+        },
+        "IS_ADMIN": {
+          "buttonLabel": "Add Governance",
+          "message": "Your DAO is under construction. You can create any number of custom governance processes for your DAO."
+        }
+      },
       "confirmWizardExit": {
         "message": "If you leave this process, you'll lose all the information you've entered so far."
       },

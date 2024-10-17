@@ -51,6 +51,19 @@ export interface IGetMemberQueryParams {
 
 export interface IGetMemberParams extends IRequestUrlQueryParams<IGetMemberUrlParams, IGetMemberQueryParams> {}
 
+export interface IGetMemberExistsUrlParams {
+    /**
+     * Address of the member to query a plugin for.
+     */
+    memberAddress: string;
+    /**
+     * Address of the plugin to check the member for.
+     */
+    pluginAddress: string;
+}
+
+export interface IGetMemberExistsParams extends IRequestUrlParams<IGetMemberExistsUrlParams> {}
+
 export interface IGetProposalUrlParams {
     /**
      * ID of the proposal to fetch.
