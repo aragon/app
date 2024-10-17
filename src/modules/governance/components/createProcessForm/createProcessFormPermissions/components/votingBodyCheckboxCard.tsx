@@ -6,7 +6,7 @@ import { TokenMinRequirementInput } from './tokenMinRequirementInput';
 export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (props) => {
     const { body, values } = props;
 
-    const { setValue } = useFormContext();
+    const { setValue, trigger } = useFormContext();
 
     const handleCheckboxChange = (body: Body, isChecked: boolean) => {
         const updatedBodies = isChecked
@@ -16,6 +16,7 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
             : values.filter((b) => b.bodyNameField !== body.bodyNameField);
 
         setValue('votingBodies', updatedBodies);
+        trigger('votingBodies');
     };
 
     const handleMinRequirementChange = (bodyName: string, value: number) => {

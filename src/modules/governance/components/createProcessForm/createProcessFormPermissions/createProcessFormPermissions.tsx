@@ -9,7 +9,7 @@ import type { Body, PermissionsData } from './createProcessFormPermissions.api';
 export interface ICreateProcessFormPermissionProps {}
 
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
-    const { getValues } = useFormContext();
+    const { getValues, trigger } = useFormContext();
 
     const { t } = useTranslations();
 
@@ -20,6 +20,10 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
 
     const votingBodyField = useFormField<PermissionsData, 'votingBodies'>('votingBodies', {
         defaultValue: [],
+        rules: {
+            // if bodies are selected, at least one body must be selected
+            validate: eligibleField.value === 'bodies' ? (value) => value.length > 0 : undefined,
+        },
     });
 
     const bodies: Body[] = useMemo(
@@ -27,9 +31,14 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         [getValues],
     );
 
+    const onEligibleFieldChange = (value: string) => {
+        eligibleField.onChange(value);
+        trigger('votingBodies');
+    };
+
     return (
         <>
-            <RadioGroup className="flex gap-4 md:!flex-row" onValueChange={eligibleField.onChange} {...eligibleField}>
+            <RadioGroup className="flex gap-4 md:!flex-row" onValueChange={onEligibleFieldChange} {...eligibleField}>
                 <RadioCard
                     className="w-full"
                     label={t('app.governance.createProcessForm.permissions.eligibleVoters.bodiesLabel')}
