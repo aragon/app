@@ -9,6 +9,7 @@ import {
     type TransactionReceipt,
 } from 'viem';
 import { ICreateDaoFormData } from '../../components/createDaoForm';
+import { adminPluginSetupAbi } from './adminPluginSetupAbi';
 import { daoFactoryAbi } from './daoFactoryAbi';
 import { daoRegistryAbi } from './daoRegistryAbi';
 
@@ -82,12 +83,15 @@ class PublishDaoDialogUtils {
     };
 
     private buildPluginSettingsParams = (adminPluginRepo: string, connectedAddress: string) => {
-        const pluginSettingsData = encodeAbiParameters([{ name: 'admin', type: 'address' }], [connectedAddress as Hex]);
+        const pluginSettingsData = encodeAbiParameters(adminPluginSetupAbi, [
+            connectedAddress as Hex,
+            { target: zeroAddress, operation: 0 },
+        ]);
 
         const pluginSettingsParams = {
             pluginSetupRef: {
                 pluginSetupRepo: adminPluginRepo as Hex,
-                versionTag: { release: 1, build: 1 },
+                versionTag: { release: 1, build: 3 },
             },
             data: pluginSettingsData,
         };
