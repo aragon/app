@@ -1,11 +1,11 @@
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
 import { generateSppProposal, generateSppStage, generateSppStagePlugin, generateSppSubProposal } from '../testUtils';
 import { SppProposalType } from '../types';
 import { sppStageUtils } from './sppStageUtils';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 
 describe('SppStageUtils', () => {
     describe('getStageStartDate', () => {
