@@ -15,7 +15,7 @@ export const createProcessWizardSteps: IWizardStepperStep[] = [
     {
         id: CreateProcessWizardStep.STAGES,
         order: 1,
-        meta: { name: 'Publish process' },
+        meta: { name: 'Process stages' },
     },
     {
         id: CreateProcessWizardStep.PERMISSIONS,
