@@ -5,9 +5,9 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
-import { CreateDaoForm, ICreateDaoFormData } from '../../components/createDaoForm';
+import { CreateDaoForm, type ICreateDaoFormData } from '../../components/createDaoForm';
 import { CreateDaoDialog } from '../../constants/moduleDialogs';
-import { IPublishDaoDialogParams } from '../../dialogs/publishDaoDialog';
+import type { IPublishDaoDialogParams } from '../../dialogs/publishDaoDialog';
 import { CreateDaoWizardStep, createDaoWizardSteps } from './createDaoPageDefinitions';
 
 export interface ICreateDaoPageClientProps {}

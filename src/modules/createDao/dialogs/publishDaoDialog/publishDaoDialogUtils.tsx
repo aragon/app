@@ -8,7 +8,7 @@ import {
     type Hex,
     type TransactionReceipt,
 } from 'viem';
-import { ICreateDaoFormData } from '../../components/createDaoForm';
+import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { adminPluginSetupAbi } from './adminPluginSetupAbi';
 import { daoFactoryAbi } from './daoFactoryAbi';
 import { daoRegistryAbi } from './daoRegistryAbi';

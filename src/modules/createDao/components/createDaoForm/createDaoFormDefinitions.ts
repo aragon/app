@@ -1,5 +1,5 @@
-import { Network } from '@/shared/api/daoService';
-import { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
+import type { Network } from '@/shared/api/daoService';
+import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 
 export interface ICreateDaoFormData {
     /**

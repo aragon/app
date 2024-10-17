@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { addressUtils, InputText, RadioCard, RadioGroup } from '@aragon/ods';
-import { ICreateDaoFormData } from '../createDaoFormDefinitions';
+import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormDebugProps {}
 
