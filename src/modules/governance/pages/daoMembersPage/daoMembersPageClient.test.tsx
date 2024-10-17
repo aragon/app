@@ -39,7 +39,7 @@ describe('<DaoMembersPageClient /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByText(/daoMembersPage.main.title/)).toBeInTheDocument();
-        expect(screen.getByText(/daoMembersPage.aside.details.title/)).toBeInTheDocument();
+        expect(screen.getByText(/daoMembersPage.aside.settings.title/)).toBeInTheDocument();
         expect(screen.getByTestId('member-list-mock')).toBeInTheDocument();
         expect(screen.getByTestId('members-info-mock')).toBeInTheDocument();
     });
