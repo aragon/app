@@ -1,4 +1,3 @@
-import type { IAddressInfo } from '@/shared/api/daoService/domain/addressInfo';
 import type { IDaoLink } from './daoLink';
 import type { IDaoMetrics } from './daoMetrics';
 import type { IDaoPlugin } from './daoPlugin';
@@ -61,8 +60,4 @@ export interface IDao {
      * Transaction hash of the DAO creation.
      */
     transactionHash: string;
-    /**
-     * Creator of the DAO.
-     */
-    creator: IAddressInfo;
 }

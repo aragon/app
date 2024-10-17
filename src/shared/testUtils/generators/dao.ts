@@ -1,5 +1,4 @@
 import { Network, type IDao } from '@/shared/api/daoService';
-import { generateAddressInfo } from '@/shared/testUtils/generators/addressInfo';
 import { generateDaoMetrics } from './daoMetrics';
 
 export const generateDao = (dao?: Partial<IDao>): IDao => ({
@@ -17,6 +16,5 @@ export const generateDao = (dao?: Partial<IDao>): IDao => ({
     links: [],
     blockTimestamp: 0,
     transactionHash: '',
-    creator: generateAddressInfo(),
     ...dao,
 });
