@@ -97,6 +97,7 @@ class SppStageUtils {
     getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
         return proposal.subProposals.reduce((count, subProposal) => {
             const plugin = stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress);
+
             if (plugin?.proposalType !== proposalType) {
                 return count;
             }
