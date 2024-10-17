@@ -1,9 +1,11 @@
 import { CreateProcessFormMetadata } from './createProcessFormMetadata';
+import { CreateProcessFormPermissions } from './createProcessFormPermissions';
 import { CreateProcessFormStages } from './createProcessFormStages';
 
 export const CreateProcessForm = {
     Metadata: CreateProcessFormMetadata,
     Stages: CreateProcessFormStages,
+    Permissions: CreateProcessFormPermissions,
 };
 
 export * from './createProcessFormBodyDialog';

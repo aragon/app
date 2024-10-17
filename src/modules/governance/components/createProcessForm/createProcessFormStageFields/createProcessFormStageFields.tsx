@@ -61,7 +61,7 @@ export const CreateProcessFormStageFields: React.FC<ICreateProcessFormStageField
         } else {
             clearErrors(`stages.${stageIndex}.bodies`);
         }
-    }, [bodiesFieldArray.length, setError, clearErrors, stageIndex, isSubmitted, stageNameField.value]);
+    }, [bodiesFieldArray?.length, setError, clearErrors, stageIndex, isSubmitted, stageNameField.value]);
 
     return (
         <>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvider';
 import { CreateProcessForm } from '../../components/createProcessForm';
@@ -18,23 +19,31 @@ export interface ICreateProcessPageClientStepsProps {
 export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStepsProps> = (props) => {
     const { steps } = props;
 
-    const [metadataStep, processesStep] = steps;
+    const { t } = useTranslations();
+    const [metadataStep, processesStep, permissionsStep] = steps;
 
     return (
         <>
             <Wizard.Step
-                title="Describe governance process"
-                description="Provide all of the information members will need in order to understand the governance process."
+                title={t('app.governance.createProcessForm.steps.metadata.title')}
+                description={t('app.governance.createProcessForm.steps.metadata.description')}
                 {...metadataStep}
             >
                 <CreateProcessForm.Metadata />
             </Wizard.Step>
             <Wizard.Step
-                title="Setup governance process"
-                description="Create a multibody process as you see fit."
+                title={t('app.governance.createProcessForm.steps.processes.title')}
+                description={t('app.governance.createProcessForm.steps.processes.description')}
                 {...processesStep}
             >
                 <CreateProcessForm.Stages />
+            </Wizard.Step>
+            <Wizard.Step
+                title={t('app.governance.createProcessForm.steps.permissions.title')}
+                description={t('app.governance.createProcessForm.steps.permissions.description')}
+                {...permissionsStep}
+            >
+                <CreateProcessForm.Permissions />
             </Wizard.Step>
         </>
     );
