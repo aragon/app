@@ -1,4 +1,4 @@
-import { useIsDaoMember } from '@/modules/governance/api/governanceService/queries/useIsDaoMember';
+import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
 import { bannerContent } from '@/shared/constants/bannerContent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { BannerType } from '@/shared/types/enum/bannerType';
@@ -14,17 +14,22 @@ export interface IUseBannerContentParams {
 
 export function useBannerContent(params: IUseBannerContentParams) {
     const { id } = params;
-    const { address } = useAccount();
+    const { address: memberAddress } = useAccount();
 
     const adminPlugin = useDaoPlugins({
         daoId: id,
         subdomain: 'admin',
     });
-    const adminPluginAddress = adminPlugin?.[0]?.meta?.address;
+    const pluginAddress = adminPlugin?.[0]?.meta?.address;
 
-    const { data: isAdminMember } = useIsDaoMember(
-        { urlParams: { address: address as string }, queryParams: { pluginAddress: adminPluginAddress } },
-        { enabled: address != null && adminPluginAddress != null },
+    const urlParams = {
+        memberAddress: memberAddress as string,
+        pluginAddress: pluginAddress as string,
+    };
+
+    const { data: isAdminMember } = useMemberExists(
+        { urlParams },
+        { enabled: memberAddress != null && pluginAddress != null },
     );
 
     const bannerTypes: BannerType[] = [];
@@ -32,7 +37,7 @@ export function useBannerContent(params: IUseBannerContentParams) {
     if (isAdminMember) {
         bannerTypes.push(BannerType.IS_ADMIN);
     }
-    if (adminPluginAddress != null) {
+    if (pluginAddress != null) {
         bannerTypes.push(BannerType.HAS_ADMIN);
     }
 

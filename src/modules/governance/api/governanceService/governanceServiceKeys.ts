@@ -1,5 +1,5 @@
 import type {
-    IGetIsDaoMemberParams,
+    IGetMemberExistsParams,
     IGetMemberListParams,
     IGetMemberParams,
     IGetProposalListParams,
@@ -12,7 +12,7 @@ export enum GovernanceServiceKey {
     PROPOSAL = 'PROPOSAL',
     MEMBER_LIST = 'MEMBER_LIST',
     MEMBER = 'MEMBER',
-    IS_DAO_MEMBER = 'IS_DAO_MEMBER',
+    MEMBER_EXISTS = 'MEMBER_EXISTS',
     VOTE_LIST = 'VOTE_LIST',
 }
 
@@ -21,6 +21,6 @@ export const governanceServiceKeys = {
     proposal: (params: IGetProposalParams) => [GovernanceServiceKey.PROPOSAL, params],
     memberList: (params: IGetMemberListParams) => [GovernanceServiceKey.MEMBER_LIST, params],
     member: (params: IGetMemberParams) => [GovernanceServiceKey.MEMBER, params],
-    isDaoMember: (params: IGetIsDaoMemberParams) => [GovernanceServiceKey.IS_DAO_MEMBER, params],
+    memberExists: (params: IGetMemberExistsParams) => [GovernanceServiceKey.MEMBER_EXISTS, params],
     voteList: (params: IGetVoteListParams) => [GovernanceServiceKey.VOTE_LIST, params],
 };

@@ -1,7 +1,7 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IMember, IProposal, IVote } from './domain';
 import type {
-    IGetIsDaoMemberParams,
+    IGetMemberExistsParams,
     IGetMemberListParams,
     IGetMemberParams,
     IGetProposalListParams,
@@ -13,7 +13,7 @@ class GovernanceService extends AragonBackendService {
     private urls = {
         members: '/members',
         member: '/members/:address',
-        isDaoMember: ' /members/isDaoMember/:address',
+        memberExists: '/:memberAddress/:pluginAddress/exists',
         proposals: '/proposals',
         proposal: '/proposals/:id',
         votes: '/votes',
@@ -33,8 +33,8 @@ class GovernanceService extends AragonBackendService {
         return result;
     };
 
-    getIsDaoMember = async (params: IGetIsDaoMemberParams): Promise<boolean> => {
-        const result = await this.request<boolean>(this.urls.isDaoMember, params);
+    getMemberExists = async (params: IGetMemberExistsParams): Promise<boolean> => {
+        const result = await this.request<boolean>(this.urls.memberExists, params);
 
         return result;
     };
