@@ -224,16 +224,16 @@
       "createProcessForm": {
         "body": {},
         "permissions": {
-          "TokenMinRequirementInput": {
-            "helpText": "Only token holders with at least the minimum required balance or delegates minimum required voting power can create proposals.",
-            "label": "Minimum requirement"
-          },
           "eligibleVoters": {
             "anyDescription": "Any address can create proposals",
             "anyLabel": "Any address",
             "bodiesDescription": "Select voting bodies and define requirements",
             "bodiesLabel": "Voting bodies",
             "label": "Who is eligible?"
+          },
+          "tokenMinRequirementInput": {
+            "helpText": "Only token holders with at least the minimum required balance or delegates minimum required voting power can create proposals.",
+            "label": "Minimum requirement"
           },
           "votingBodies": {
             "label": "Voting Bodies"

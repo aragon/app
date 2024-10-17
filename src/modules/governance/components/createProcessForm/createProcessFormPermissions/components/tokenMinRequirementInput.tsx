@@ -16,8 +16,8 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
         <button className="text-left" onClick={(e) => e.preventDefault()}>
             <InputNumber
                 prefix="≥"
-                label={t('app.governance.createProcessForm.permissions.TokenMinRequirementInput.label')}
-                helpText={t('app.governance.createProcessForm.permissions.TokenMinRequirementInput.helpText')}
+                label={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.label')}
+                helpText={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
                 placeholder="≥ 1"
                 onChange={(value) => handleMinRequirementChange(body.bodyNameField, Number(value))}
             />
