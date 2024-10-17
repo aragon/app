@@ -80,12 +80,12 @@
           "adminPluginRepo": {
             "helpText": "Address of the Admin Plugin contract",
             "label": "Admin Plugin",
-            "placeholder": "0x152c9E28995E418870b85cbbc0AEE4e53020edb2"
+            "placeholder": "Insert address"
           },
           "factoryAddress": {
             "helpText": "Address of the DAO Factory contract",
             "label": "DAO Factory",
-            "placeholder": "0x7a62da7B56fB3bfCdF70E900787010Bc4c9Ca42e"
+            "placeholder": "Insert address"
           },
           "network": {
             "helpText": "The chain you choose is where your tokens and assets are stored. ",
