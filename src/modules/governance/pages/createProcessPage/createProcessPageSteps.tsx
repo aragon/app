@@ -1,9 +1,9 @@
 'use client';
 
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvider';
 import { CreateProcessForm } from '../../components/createProcessForm';
-import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ICreateProcessPageClientStepsProps {
     /**
