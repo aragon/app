@@ -8,6 +8,14 @@ import { SppProposalType } from '../../types';
 import { sppStageUtils } from './sppStageUtils';
 
 describe('SppStageUtils', () => {
+    // Add the spy at the beginning of the test file
+    const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
+
+    beforeEach(() => {
+        // Clear all mocks before each test
+        jest.clearAllMocks();
+    });
+
     describe('getStageStartDate', () => {
         it('returns startDate for the first stage', () => {
             const now = '2022-02-10T07:55:55.868Z';
@@ -224,13 +232,8 @@ describe('SppStageUtils', () => {
                 ],
             });
 
-            const mockStatusFunction = jest.fn().mockReturnValue(ProposalStatus.ACCEPTED);
-
-            pluginRegistryUtils.registerSlotFunction({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-                pluginId: 'test-plugin',
-                function: mockStatusFunction,
-            });
+            const mockStatusFunction = jest.fn(() => ProposalStatus.ACCEPTED);
+            getSlotFunctionSpy.mockReturnValue(mockStatusFunction);
 
             const count = sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL);
 
@@ -255,13 +258,7 @@ describe('SppStageUtils', () => {
                 subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true })],
             });
 
-            const mockStatusFunction = jest.fn().mockReturnValue(null);
-
-            pluginRegistryUtils.registerSlotFunction({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-                pluginId: 'test-plugin',
-                function: mockStatusFunction,
-            });
+            getSlotFunctionSpy.mockReturnValue(undefined);
 
             const count = sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL);
 
@@ -295,19 +292,11 @@ describe('SppStageUtils', () => {
             });
 
             const mockRejectedStatusFunction = jest.fn().mockReturnValue(ProposalStatus.REJECTED);
-            const mockPendingStatusFunction = jest.fn().mockReturnValue(ProposalStatus.PENDING);
+                        const mockPendingStatusFunction = jest.fn().mockReturnValue(ProposalStatus.PENDING);
 
-            pluginRegistryUtils.registerSlotFunction({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-                pluginId: 'test-plugin1',
-                function: mockRejectedStatusFunction,
-            });
-
-            pluginRegistryUtils.registerSlotFunction({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-                pluginId: 'test-plugin2',
-                function: mockPendingStatusFunction,
-            });
+                        getSlotFunctionSpy
+                            .mockReturnValueOnce(mockRejectedStatusFunction)
+                            .mockReturnValueOnce(mockPendingStatusFunction);
 
             const count = sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL);
 
