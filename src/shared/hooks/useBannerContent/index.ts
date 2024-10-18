@@ -1,1 +1,0 @@
-export { useBannerContent } from './useBannerContent';

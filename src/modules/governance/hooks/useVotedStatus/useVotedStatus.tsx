@@ -1,22 +1,21 @@
-import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
-import type { IProposal } from '../../api/governanceService';
+import { useAccount } from 'wagmi';
+import { useVoteList, type IProposal } from '../../api/governanceService';
 
-export interface IVotedStatusParams {
+export interface IUseVotedStatusParams {
     /**
      * Proposal to check the vote status for.
      */
     proposal: IProposal;
-    /**
-     * Address of the member to check the vote status for.
-     */
-    address?: string;
 }
 
-export const useVotedStatus = (params: IVotedStatusParams) => {
-    const { proposal, address } = params;
+export const useVotedStatus = (params: IUseVotedStatusParams) => {
+    const { proposal } = params;
+    const { id, pluginAddress } = proposal;
 
-    const initialParamsVoteList = { queryParams: { proposalId: proposal.id, pluginAddress: proposal.pluginAddress } };
-    const { voteList } = useVoteListData(initialParamsVoteList);
+    const { address } = useAccount();
 
-    return { voted: voteList?.some((vote) => vote.member.address === address) };
+    const voteListParams = { proposalId: id, pluginAddress, address: address as string };
+    const { data: userVote } = useVoteList({ queryParams: voteListParams }, { enabled: address != null });
+
+    return userVote != null && userVote.pages[0].metadata.totalRecords > 0;
 };

@@ -1,8 +1,8 @@
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { generateSppProposal, generateSppStage, generateSppStagePlugin, generateSppSubProposal } from '../testUtils';
-import { SppProposalType } from '../types';
+import { generateSppProposal, generateSppStage, generateSppStagePlugin, generateSppSubProposal } from '../../testUtils';
+import { SppProposalType } from '../../types';
 import { sppStageUtils } from './sppStageUtils';
 
 describe('SppStageUtils', () => {

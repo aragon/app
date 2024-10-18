@@ -119,19 +119,21 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             </Page.Header>
             <Page.Content>
                 <Page.Main>
-                    <Page.Section title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
-                        <DaoProposalList.Container initialParams={proposalListParams} hidePagination={true}>
-                            <Button
-                                className="self-start"
-                                variant="tertiary"
-                                size="md"
-                                iconRight={IconType.CHEVRON_RIGHT}
-                                href={`/dao/${daoId}/proposals`}
-                            >
-                                {t('app.dashboard.daoDashboardPage.main.viewAll')}
-                            </Button>
-                        </DaoProposalList.Container>
-                    </Page.Section>
+                    {hasSupportedPlugins && (
+                        <Page.Section title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
+                            <DaoProposalList.Container initialParams={proposalListParams} hidePagination={true}>
+                                <Button
+                                    className="self-start"
+                                    variant="tertiary"
+                                    size="md"
+                                    iconRight={IconType.CHEVRON_RIGHT}
+                                    href={`/dao/${daoId}/proposals`}
+                                >
+                                    {t('app.dashboard.daoDashboardPage.main.viewAll')}
+                                </Button>
+                            </DaoProposalList.Container>
+                        </Page.Section>
+                    )}
                     <Page.Section title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
                         <AssetList initialParams={assetListParams} hidePagination={true}>
                             <Button

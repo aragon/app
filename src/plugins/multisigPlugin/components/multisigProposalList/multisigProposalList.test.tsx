@@ -20,7 +20,7 @@ describe('<MultisigProposalList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
-        useVotedStatusSpy.mockReturnValue({ voted: false });
+        useVotedStatusSpy.mockReturnValue(false);
     });
 
     afterEach(() => {

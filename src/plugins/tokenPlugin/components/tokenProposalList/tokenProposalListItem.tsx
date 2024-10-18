@@ -2,7 +2,6 @@ import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat, ProposalDataListItem } from '@aragon/ods';
 import { formatUnits } from 'viem';
-import { useAccount } from 'wagmi';
 import { VoteOption, type ITokenProposal } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 
@@ -52,14 +51,12 @@ const getWinningOption = (proposal: ITokenProposal) => {
 export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
-    const { address } = useAccount();
-
     const { t } = useTranslations();
 
     const winningOption = getWinningOption(proposal);
     const proposalResult = winningOption != null ? { ...winningOption, option: t(winningOption.option) } : undefined;
 
-    const { voted } = useVotedStatus({ proposal, address });
+    const voted = useVotedStatus({ proposal });
 
     return (
         <ProposalDataListItem.Structure
