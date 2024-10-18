@@ -62,8 +62,17 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                                 plugin.uniqueId === selectedPlugin?.uniqueId,
                         })}
                     >
-                        <p>{daoUtils.getPluginName(plugin.meta)}</p>
-                        {plugin.meta.description && <p className="text-neutral-500">{plugin.meta.description}</p>}
+                        <div className="flex flex-col gap-y-1">
+                            <div className="flex gap-x-4">
+                                <p className="line-clamp-1">{daoUtils.getPluginName(plugin.meta)}</p>
+                                {plugin.meta.processKey && (
+                                    <p className="text-right text-neutral-500">{plugin.meta.processKey}</p>
+                                )}
+                            </div>
+                            {plugin.meta.description && (
+                                <p className="line-clamp-2 text-neutral-500">{plugin.meta.description}</p>
+                            )}
+                        </div>
                     </DataList.Item>
                 ))}
             </Dialog.Content>

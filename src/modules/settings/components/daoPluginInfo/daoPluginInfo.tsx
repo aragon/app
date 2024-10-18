@@ -1,4 +1,4 @@
-import { type IDaoPlugin, type Network } from '@/shared/api/daoService';
+import { Network, useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { type IResource } from '@/shared/api/daoService/domain/resource';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -35,10 +35,15 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const networkName = daoId?.split('-').slice(0, 2).join('-') as Network;
-    const chainId = networkDefinitions[networkName].chainId;
-
     const { buildEntityUrl } = useBlockExplorer();
+
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    if (dao == null) {
+        return null;
+    }
+
+    const chainId = networkDefinitions[dao.network as Network].chainId;
 
     const pluginLaunchedAt = formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
@@ -67,33 +72,33 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                     <DefinitionList.Item
                         term={t(
                             type === PluginType.PROCESS
-                                ? 'app.settings.details.processName'
-                                : 'app.settings.details.bodyName',
+                                ? 'app.settings.daoPluginInfo.processName'
+                                : 'app.settings.daoPluginInfo.bodyName',
                         )}
                     >
                         <p className="text-neutral-500">{daoUtils.getPluginName(plugin)}</p>
                     </DefinitionList.Item>
                 )}
                 {type === PluginType.PROCESS && plugin.processKey && (
-                    <DefinitionList.Item term={t('app.settings.details.processKey')} className="text-neutral-500">
+                    <DefinitionList.Item term={t('app.settings.daoPluginInfo.processKey')} className="text-neutral-500">
                         <p className="text-neutral-500"> {plugin.processKey}</p>
                     </DefinitionList.Item>
                 )}
-                <DefinitionList.Item term={t('app.settings.details.plugin')}>
+                <DefinitionList.Item term={t('app.settings.daoPluginInfo.plugin')}>
                     <Link
                         description={addressUtils.truncateAddress(plugin.address)}
                         iconRight={IconType.LINK_EXTERNAL}
                         href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.address, chainId })}
                         target="_blank"
                     >
-                        {t('app.settings.details.pluginVersionInfo', {
+                        {t('app.settings.daoPluginInfo.pluginVersionInfo', {
                             name: daoUtils.getPluginName(plugin),
                             release: plugin.release,
                             build: plugin.build,
                         })}
                     </Link>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.settings.details.launchedAt')}>
+                <DefinitionList.Item term={t('app.settings.daoPluginInfo.launchedAt')}>
                     <Link href={pluginCreationLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                         {pluginLaunchedAt}
                     </Link>
