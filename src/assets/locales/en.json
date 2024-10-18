@@ -377,6 +377,9 @@
           "details": {
             "blockchain": "Blockchain",
             "title": "Details"
+          },
+          "settings": {
+            "title": "Settings"
           }
         },
         "main": {
@@ -436,6 +439,9 @@
         "aside": {
           "details": {
             "title": "Details"
+          },
+          "settings": {
+            "title": "Settings"
           }
         },
         "main": {
@@ -660,6 +666,14 @@
       }
     },
     "settings": {
+      "daoPluginInfo": {
+        "bodyName": "Body name",
+        "launchedAt": "Launched at",
+        "plugin": "Plugin",
+        "pluginVersionInfo": "{{name}} v{{release}}.{{build}}",
+        "processKey": "Process key",
+        "processName": "Process name"
+      },
       "daoSettingsInfo": {
         "blockchain": "Blockchain",
         "ens": "ENS name",

@@ -90,9 +90,17 @@ describe('dao utils', () => {
         });
     });
 
-    describe('formatPluginName', () => {
+    describe('getPluginName', () => {
         it('formats plugin subdomain', () => {
-            expect(daoUtils.formatPluginName('token-voting')).toEqual('Token Voting');
+            const subdomain = 'token-voting';
+            const plugin = generateDaoPlugin({ subdomain });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
+        });
+
+        it('returns plugin name when available', () => {
+            const name = 'Custom plugin';
+            const plugin = generateDaoPlugin({ name });
+            expect(daoUtils.getPluginName(plugin)).toEqual(name);
         });
     });
 

@@ -18,7 +18,7 @@ const getWizardName = (dao: IDao, pluginAddress: string): ILayoutWizardProps['na
     const processes = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS, includeSubPlugins: false })!;
 
     const processPlugin = processes.find(({ address }) => address.toLowerCase() === pluginAddress.toLowerCase())!;
-    const pluginName = daoUtils.formatPluginName(processPlugin?.subdomain);
+    const pluginName = daoUtils.getPluginName(processPlugin);
 
     const nameSuffix = processes.length > 1 ? 'namePlugin' : 'name';
     const wizardName: ILayoutWizardProps['name'] = [

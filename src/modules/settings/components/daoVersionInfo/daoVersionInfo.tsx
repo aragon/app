@@ -53,7 +53,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                             target="_blank"
                         >
                             {t('app.settings.daoVersionInfo.governanceValue', {
-                                name: daoUtils.formatPluginName(plugin.meta.subdomain),
+                                name: daoUtils.getPluginName(plugin.meta),
                                 release: plugin.meta.release,
                                 build: plugin.meta.build,
                             })}
