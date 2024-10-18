@@ -1,4 +1,4 @@
-import { Network, useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { useDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
 import { type IResource } from '@/shared/api/daoService/domain/resource';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
