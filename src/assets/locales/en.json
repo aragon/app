@@ -76,6 +76,22 @@
     },
     "createDao": {
       "createDaoForm": {
+        "debug": {
+          "adminPluginRepo": {
+            "helpText": "Address of the Admin Plugin contract",
+            "label": "Admin Plugin",
+            "placeholder": "Insert address"
+          },
+          "factoryAddress": {
+            "helpText": "Address of the DAO Factory contract",
+            "label": "DAO Factory",
+            "placeholder": "Insert address"
+          },
+          "network": {
+            "helpText": "The chain you choose is where your tokens and assets are stored. ",
+            "label": "Select blockchain"
+          }
+        },
         "metadata": {
           "description": {
             "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
@@ -86,8 +102,41 @@
             "helpText": "Maximum of {{max}} characters",
             "label": "Name",
             "placeholder": "Name of the DAO"
+          },
+          "resources": {
+            "helpText": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers."
           }
         }
+      },
+      "createDaoPage": {
+        "finalStep": "Publish DAO",
+        "steps": {
+          "DEBUG": {
+            "description": "Debug step for creating your DAO",
+            "name": "Debug",
+            "title": "Debug"
+          },
+          "METADATA": {
+            "description": "Name and define your DAO so members know they've come to the right place. This information will be displayed at the top of your dashboard and can be changed with a vote.",
+            "name": "Describe your DAO",
+            "title": "Describe your DAO"
+          }
+        },
+        "submitLabel": "Publish DAO"
+      },
+      "publishDaoDialog": {
+        "button": {
+          "submit": "Create DAO",
+          "success": "View DAO"
+        },
+        "description": "To create your DAO you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Create DAO"
       }
     },
     "dashboard": {
