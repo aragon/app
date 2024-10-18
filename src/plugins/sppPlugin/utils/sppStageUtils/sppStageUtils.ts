@@ -1,6 +1,14 @@
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { type ISppProposal, type ISppStage, SppProposalType, type SppStageStatus } from '../../types';
+import {
+    type ISppProposal,
+    type ISppStage,
+    type ISppSubProposal,
+    SppProposalType,
+    type SppStageStatus,
+} from '../../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
@@ -87,11 +95,31 @@ class SppStageUtils {
     };
 
     getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
-        return proposal.subProposals.filter(
-            (subProposal) =>
-                stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress)?.proposalType ===
-                    proposalType && subProposal.result,
-        ).length;
+        return proposal.subProposals.reduce((count, subProposal) => {
+            const plugin = stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress);
+
+            if (plugin?.proposalType !== proposalType) {
+                return count;
+            }
+
+            const getStatusFunction = pluginRegistryUtils.getSlotFunction<ISppSubProposal, ProposalStatus>({
+                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+                pluginId: subProposal.pluginSubdomain,
+            });
+
+            if (getStatusFunction) {
+                const subProposalStatus = getStatusFunction(subProposal);
+                const isApprovalReached = [
+                    ProposalStatus.ACCEPTED,
+                    ProposalStatus.EXECUTABLE,
+                    ProposalStatus.EXECUTED,
+                ].includes(subProposalStatus);
+
+                return isApprovalReached ? count + 1 : count;
+            }
+
+            return subProposal.result ? count + 1 : count;
+        }, 0);
     };
 }
 
