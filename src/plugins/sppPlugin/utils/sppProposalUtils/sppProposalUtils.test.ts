@@ -2,9 +2,9 @@ import { generateProposalActionUpdateMetadata } from '@/modules/governance/testU
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import { generateSppProposal, generateSppStage } from '../testUtils';
+import { generateSppProposal, generateSppStage } from '../../testUtils';
+import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
 import { sppProposalUtils } from './sppProposalUtils';
-import { sppStageUtils } from './sppStageUtils';
 
 const actionBaseValues = { data: '0x123456', to: '0x000', value: '0' };
 

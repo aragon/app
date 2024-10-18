@@ -1,1 +1,1 @@
-export { useVotedStatus, type IVotedStatusParams } from './useVotedStatus';
+export { useVotedStatus, type IUseVotedStatusParams } from './useVotedStatus';

@@ -123,9 +123,8 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             proposal={proposal}
                             status={proposalStatus}
                             daoId={daoId}
-                        >
-                            <ProposalVotingTerminal proposal={proposal} status={proposalStatus} daoId={daoId} />
-                        </PluginSingleComponent>
+                            Fallback={ProposalVotingTerminal}
+                        />
                     </Page.Section>
                     <Page.Section
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}

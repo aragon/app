@@ -36,7 +36,7 @@ export const DaoProposalListContainer: React.FC<IDaoProposalListContainerProps> 
             queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
         };
 
-        return { ...plugin, props: { initialParams: pluginInitialParams } };
+        return { ...plugin, props: { initialParams: pluginInitialParams, plugin: plugin.meta } };
     });
 
     return (

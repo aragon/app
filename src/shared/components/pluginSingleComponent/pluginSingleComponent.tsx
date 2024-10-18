@@ -1,5 +1,7 @@
 import { pluginRegistryUtils, type PluginId, type SlotId } from '@/shared/utils/pluginRegistryUtils';
-import { cloneElement, isValidElement, type ReactNode } from 'react';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FallbackComponent = React.FC<any>;
 
 export interface IPluginSingleComponentProps {
     /**
@@ -11,9 +13,9 @@ export interface IPluginSingleComponentProps {
      */
     pluginId: PluginId;
     /**
-     * Fallback component to be rendered if no components are registered for the specified slot.
+     * Fallback component rendered if no components is registered with the specified slot and plugin IDs
      */
-    children?: ReactNode;
+    Fallback?: FallbackComponent;
     /**
      * Other properties passed to the loaded component.
      */
@@ -21,14 +23,12 @@ export interface IPluginSingleComponentProps {
 }
 
 export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (props) => {
-    const { slotId, pluginId, children, ...otherProps } = props;
+    const { slotId, pluginId, Fallback, ...otherProps } = props;
 
     const LoadedComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId });
 
     if (LoadedComponent == null) {
-        const renderFallback = children != null && isValidElement(children);
-
-        return renderFallback ? cloneElement(children, { ...otherProps }) : null;
+        return Fallback?.({ ...otherProps });
     }
 
     return <LoadedComponent {...otherProps} />;

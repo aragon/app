@@ -2,13 +2,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
 import { DateTime } from 'luxon';
-import {
-    type ISppProposal,
-    type ISppStage,
-    type ISppSubProposal,
-    SppProposalType,
-    type SppStageStatus,
-} from '../types';
+import { type ISppProposal, type ISppStage, ISppSubProposal, SppProposalType, type SppStageStatus } from '../../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {

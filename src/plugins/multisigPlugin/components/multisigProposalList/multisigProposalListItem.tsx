@@ -1,6 +1,5 @@
 import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
 import { ProposalDataListItem } from '@aragon/ods';
-import { useAccount } from 'wagmi';
 import { type IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 
@@ -18,9 +17,7 @@ export interface IMultisigProposalListItemProps {
 export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
-    const { address } = useAccount();
-
-    const { voted } = useVotedStatus({ proposal: proposal, address });
+    const voted = useVotedStatus({ proposal: proposal });
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 

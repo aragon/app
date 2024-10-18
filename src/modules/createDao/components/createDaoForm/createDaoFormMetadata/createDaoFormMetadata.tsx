@@ -1,3 +1,4 @@
+import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, TextArea } from '@aragon/ods';
@@ -46,6 +47,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 placeholder={t('app.createDao.createDaoForm.metadata.description.placeholder')}
                 {...descriptionField}
             />
+            <ResourcesInput name="resources" helpText={t('app.createDao.createDaoForm.metadata.resources.helpText')} />
         </div>
     );
 };

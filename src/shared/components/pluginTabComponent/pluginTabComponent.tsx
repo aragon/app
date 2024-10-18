@@ -7,7 +7,7 @@ import type { IPluginTabComponentProps, ITabComponentPlugin } from './pluginTabC
 export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     props: IPluginTabComponentProps<TMeta, TProps>,
 ) => {
-    const { slotId, plugins = [], value, onValueChange, Fallback, children, ...otherProps } = props;
+    const { slotId, plugins = [], value, onValueChange, Fallback, ...otherProps } = props;
 
     const supportedPlugins = plugins.filter(
         (plugin) => pluginRegistryUtils.getSlotComponent({ slotId, pluginId: plugin.id }) != null,
@@ -46,9 +46,13 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
 
     if (isSingleComponent) {
         return (
-            <PluginSingleComponent slotId={slotId} pluginId={plugins[0].id} {...plugins[0].props} {...otherProps}>
-                {Fallback != null && <Fallback>{children}</Fallback>}
-            </PluginSingleComponent>
+            <PluginSingleComponent
+                slotId={slotId}
+                pluginId={plugins[0].id}
+                Fallback={Fallback}
+                {...plugins[0].props}
+                {...otherProps}
+            />
         );
     }
 
@@ -61,9 +65,13 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
             </Tabs.List>
             {plugins.map(({ id, uniqueId, props }) => (
                 <Tabs.Content key={uniqueId} value={uniqueId} className="pt-6">
-                    <PluginSingleComponent slotId={slotId} pluginId={id} {...props} {...otherProps}>
-                        {Fallback != null && <Fallback>{children}</Fallback>}
-                    </PluginSingleComponent>
+                    <PluginSingleComponent
+                        slotId={slotId}
+                        pluginId={id}
+                        Fallback={Fallback}
+                        {...props}
+                        {...otherProps}
+                    />
                 </Tabs.Content>
             ))}
         </Tabs.Root>

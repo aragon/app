@@ -1,8 +1,5 @@
 import type { SlotId } from '@/shared/utils/pluginRegistryUtils';
-import type { ComponentType } from 'react';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FallbackComponent = ComponentType<any>;
+import type { IPluginSingleComponentProps } from '../pluginSingleComponent';
 
 export interface ITabComponentPlugin<TMeta extends object = object, TProps extends object = object> {
     /**
@@ -47,7 +44,7 @@ export interface IPluginTabComponentProps<TMeta extends object = object, TProps 
     /**
      * Fallback component rendered if no components is registered with the specified slot and plugin IDs
      */
-    Fallback?: FallbackComponent;
+    Fallback?: IPluginSingleComponentProps['Fallback'];
     /**
      * Other properties passed to the loaded component.
      */
