@@ -9,7 +9,7 @@ import type { Body, PermissionsData } from './createProcessFormPermissions.api';
 export interface ICreateProcessFormPermissionProps {}
 
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
-    const { getValues, trigger } = useFormContext();
+    const { getValues, trigger, setValue } = useFormContext();
 
     const { t } = useTranslations();
 
@@ -18,22 +18,25 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         defaultValue: 'bodies',
     });
 
-    const votingBodyField = useFormField<PermissionsData, 'votingBodies'>('votingBodies', {
-        defaultValue: [],
+    const allBodies: Body[] = useMemo(
+        () => getValues('stages')?.flatMap((stage: { bodies: Body[] }) => stage.bodies || []) || [],
+        [getValues],
+    );
+
+    const votingBodyField = useFormField<PermissionsData, 'selectedBodies'>('selectedBodies', {
+        defaultValue: allBodies ?? [],
         rules: {
             // if bodies are selected, at least one body must be selected
             validate: eligibleField.value === 'bodies' ? (value) => value.length > 0 : undefined,
         },
     });
 
-    const bodies: Body[] = useMemo(
-        () => getValues('stages')?.flatMap((stage: { bodies: Body[] }) => stage.bodies || []) || [],
-        [getValues],
-    );
-
     const onEligibleFieldChange = (value: string) => {
         eligibleField.onChange(value);
-        trigger('votingBodies');
+        if (value === 'bodies') {
+            setValue('selectedBodies', allBodies);
+            trigger('selectedBodies');
+        }
     };
 
     return (
@@ -59,8 +62,8 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     useCustomWrapper={true}
                     {...votingBodyField}
                 >
-                    {bodies &&
-                        bodies.map((body: Body, index: number) => (
+                    {allBodies &&
+                        allBodies.map((body: Body, index: number) => (
                             <VotingBodyCheckboxCard values={votingBodyField.value} key={index} body={body} />
                         ))}
                 </InputContainer>

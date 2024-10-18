@@ -28,7 +28,7 @@ export interface VotingBody extends TokenBody {
 
 export interface PermissionsData {
     eligibleVoters: EligibleType;
-    votingBodies: Body[];
+    selectedBodies: Body[];
 }
 
 export interface IVotingBodyCheckboxCardProps {
