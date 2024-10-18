@@ -26,7 +26,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const votingBodyField = useFormField<PermissionsData, 'selectedBodies'>('selectedBodies', {
         defaultValue: allBodies ?? [],
         rules: {
-            // if bodies are selected, at least one body must be selected
+            // if bodies are selected, at least one body must be selected for the user to continue
             validate: eligibleField.value === 'bodies' ? (value) => value.length > 0 : undefined,
         },
     });
@@ -63,8 +63,12 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     {...votingBodyField}
                 >
                     {allBodies &&
-                        allBodies.map((body: Body, index: number) => (
-                            <VotingBodyCheckboxCard values={votingBodyField.value} key={index} body={body} />
+                        allBodies.map((body: Body) => (
+                            <VotingBodyCheckboxCard
+                                values={votingBodyField.value}
+                                key={body.bodyNameField}
+                                body={body}
+                            />
                         ))}
                 </InputContainer>
             )}

@@ -19,9 +19,9 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
         trigger('selectedBodies');
     };
 
-    const handleMinRequirementChange = (bodyName: string, value: number) => {
+    const handleMinRequirementChange = (value: number) => {
         const updatedVotingBodies = values.map((votingBody) =>
-            votingBody.bodyNameField === bodyName ? { ...votingBody, minimumRequirement: value } : votingBody,
+            votingBody.bodyNameField === body.bodyNameField ? { ...votingBody, minimumRequirement: value } : votingBody,
         );
 
         setValue('selectedBodies', updatedVotingBodies);
@@ -35,7 +35,7 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
             defaultChecked={true}
         >
             {body.bodyGovernanceTypeField === 'tokenVoting' && (
-                <TokenMinRequirementInput body={body} handleMinRequirementChange={handleMinRequirementChange} />
+                <TokenMinRequirementInput handleMinRequirementChange={handleMinRequirementChange} />
             )}
         </CheckboxCard>
     );
