@@ -103,9 +103,13 @@ class SppStageUtils {
 
             if (getStatusFunction) {
                 const subProposalStatus = getStatusFunction(subProposal);
-                return subProposalStatus === ProposalStatus.ACCEPTED || subProposalStatus === ProposalStatus.EXECUTABLE
-                    ? count + 1
-                    : count;
+                const isApprovalReached = [
+                    ProposalStatus.ACCEPTED,
+                    ProposalStatus.EXECUTABLE,
+                    ProposalStatus.EXECUTED,
+                ].includes(subProposalStatus);
+
+                return isApprovalReached ? count + 1 : count;
             }
 
             return subProposal.result ? count + 1 : count;
