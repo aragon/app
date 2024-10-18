@@ -292,11 +292,11 @@ describe('SppStageUtils', () => {
             });
 
             const mockRejectedStatusFunction = jest.fn().mockReturnValue(ProposalStatus.REJECTED);
-                        const mockPendingStatusFunction = jest.fn().mockReturnValue(ProposalStatus.PENDING);
+            const mockPendingStatusFunction = jest.fn().mockReturnValue(ProposalStatus.PENDING);
 
-                        getSlotFunctionSpy
-                            .mockReturnValueOnce(mockRejectedStatusFunction)
-                            .mockReturnValueOnce(mockPendingStatusFunction);
+            getSlotFunctionSpy
+                .mockReturnValueOnce(mockRejectedStatusFunction)
+                .mockReturnValueOnce(mockPendingStatusFunction);
 
             const count = sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL);
 
