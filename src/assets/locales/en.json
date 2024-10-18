@@ -99,9 +99,9 @@
             "placeholder": "Description of the DAO"
           },
           "name": {
-            "helpText": "Maximum of {{max}} characters",
-            "label": "Name",
-            "placeholder": "Name of the DAO"
+            "helpText": "Give the DAO a name that it will be be recognized by.",
+            "label": "DAO Name",
+            "placeholder": "Type the DAO's name"
           },
           "resources": {
             "helpText": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers."
@@ -129,14 +129,14 @@
           "submit": "Create DAO",
           "success": "View DAO"
         },
-        "description": "To create your DAO you have to confirm the onchain transaction with your wallet.",
+        "description": "To publish the DAO you have to confirm the onchain transaction with your wallet.",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
             "label": "Pin data on IPFS"
           }
         },
-        "title": "Create DAO"
+        "title": "Publish DAO"
       }
     },
     "dashboard": {

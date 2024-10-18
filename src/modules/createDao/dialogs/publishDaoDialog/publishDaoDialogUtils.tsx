@@ -32,7 +32,7 @@ class PublishDaoDialogUtils {
     prepareMetadata = (formValues: ICreateDaoFormData) => {
         const { name, description, resources } = formValues;
 
-        return { name, description, resources };
+        return { name, description, links: resources };
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
