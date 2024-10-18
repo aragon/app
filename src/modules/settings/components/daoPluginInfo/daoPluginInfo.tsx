@@ -1,4 +1,4 @@
-import { useDao, type IDaoPlugin, type Network } from '@/shared/api/daoService';
+import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { type IResource } from '@/shared/api/daoService/domain/resource';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -43,7 +43,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
         return null;
     }
 
-    const chainId = networkDefinitions[dao.network as Network].chainId;
+    const chainId = networkDefinitions[dao.network].chainId;
 
     const pluginLaunchedAt = formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
