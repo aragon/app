@@ -6,9 +6,9 @@ import { InputText, TextArea } from '@aragon/ods';
 export interface ICreateProcessFormPluginMetadataProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginMetadataProps> = (props) => {
-    const { stageName, stageIndex, bodyIndex } = props;
+    const { stageFieldName, bodyIndex } = props;
 
-    const { bodyNameField, bodySummaryField } = useBodyFields(stageName, stageIndex, bodyIndex);
+    const { bodyNameField, bodySummaryField } = useBodyFields(stageFieldName, bodyIndex);
 
     return (
         <>
@@ -21,7 +21,7 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
                 {...bodySummaryField}
             />
             <ResourcesInput
-                name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.resources`}
+                name={`${stageFieldName}.bodies.${bodyIndex}.resources`}
                 helpText="Add any additional external resources that help members understand the purpose of this body."
             />
         </>

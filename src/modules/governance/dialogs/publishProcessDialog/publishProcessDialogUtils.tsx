@@ -40,9 +40,7 @@ export interface IPrepareActionsParams {
 
 class PublishProcessDialogUtils {
     prepareMetadata = (formValues: ICreateProcessFormData) => {
-        const { process, stages } = formValues;
-
-        const { name, summary } = process;
+        const { name, summary, stages } = formValues;
 
         return { name, summary, stages };
     };
@@ -79,28 +77,6 @@ class PublishProcessDialogUtils {
         const decodedProposalId = decodedParams[0].toString();
 
         return decodedProposalId;
-    };
-
-    prepareActions = async (params: IPrepareActionsParams) => {
-        const { actions, prepareActions } = params;
-
-        const prepareActionDataPromises = actions.map(async (action) => {
-            const prepareFunction = prepareActions?.[action.actionType as keyof typeof prepareActions];
-            const actionData: IProposalAction = (await (prepareFunction != null
-                ? prepareFunction(action as unknown as IProposalAction)
-                : this.formToProposalActions([action as unknown as IProposalAction])[0])) as IProposalAction;
-
-            return actionData;
-        });
-
-        const resolvedActionDataPromises = await Promise.all(prepareActionDataPromises);
-
-        const processedActions = actions.map((action, index) => ({
-            ...action,
-            data: resolvedActionDataPromises[index],
-        }));
-
-        return processedActions;
     };
 
     private formToProposalActions = (actions: IProposalAction[]) =>

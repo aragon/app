@@ -6,11 +6,8 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
-import type {
-    ICreateProcessFormBodyData,
-    ICreateProcessFormData,
-    ICreateProcessFormStage,
-} from '../../components/createProcessForm';
+import type { ICreateProcessFormData, ICreateProcessFormStage } from '../../components/createProcessForm';
+import type { IPublishProcessDialogParams } from '../../dialogs/publishProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
 
@@ -21,41 +18,13 @@ export interface ICreateProcessPageClientProps {
     daoId: string;
 }
 
-export const defaultBody: ICreateProcessFormBodyData = {
-    bodyNameField: '',
-    bodyGovernanceTypeField: 'tokenVoting',
-    tokenNameField: '',
-    tokenSymbolField: '',
-    membersField: [],
-    supportThresholdField: 50,
-    minimumParticipationField: 1,
-    resourcesField: [],
-    voteChangeField: false,
-    multisigThresholdField: 1,
-    bodyResourceField: [],
-};
-
 const defaultStage: ICreateProcessFormStage = {
-    stageName: '',
-    stageType: 'normal',
+    name: '',
+    type: 'normal',
     votingPeriod: { days: 7, minutes: 0, hours: 0 },
     earlyStageAdvance: false,
-    stageExpiration: false,
     bodies: [],
-    requiredApprovals: undefined,
-    actionType: undefined,
-};
-
-const defaultValues: ICreateProcessFormData = {
-    actions: [],
-    process: {
-        name: '',
-        id: '',
-        summary: '',
-        resources: [],
-    },
-
-    stages: [defaultStage],
+    requiredApprovals: 1,
 };
 
 export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = (props) => {
@@ -66,7 +35,8 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
     const { open } = useDialogContext();
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
-        open(GovernanceDialogs.PUBLISH_PROCESS, { params: { daoId, values, processValues: values } });
+        const dialogParams: IPublishProcessDialogParams = { daoId, values };
+        open(GovernanceDialogs.PUBLISH_PROCESS, { params: dialogParams });
     };
 
     const processedSteps = useMemo(
@@ -85,7 +55,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
                 submitLabel="Publish Process"
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                defaultValues={defaultValues}
+                defaultValues={{ stages: [defaultStage] }}
             >
                 <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
             </Wizard.Container>

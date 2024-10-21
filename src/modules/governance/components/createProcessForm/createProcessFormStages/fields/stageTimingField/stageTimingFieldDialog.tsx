@@ -1,9 +1,10 @@
-import { useStageFields } from '@/modules/governance/components/createProcessForm/hooks/useStagesFields';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
+import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 
-export interface ICreateProcessFormTimingDialogProps {
+export interface IStageTimingFieldDialogProps {
     /**
      * Whether the dialog is open or not.
      */
@@ -15,27 +16,33 @@ export interface ICreateProcessFormTimingDialogProps {
     /**
      * The name of the current stage.
      */
-    stageName: string;
+    stageFieldName: string;
     /**
-     * The index of the current stage.
+     * Defines if current stage is optimistic or not.
      */
-    stageIndex: number;
+    isOptimisticStage: boolean;
 }
 
-export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDialogProps> = (props) => {
-    const { isTimingDialogOpen, setIsTimingDialogOpen, stageName, stageIndex } = props;
+export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (props) => {
+    const { isTimingDialogOpen, setIsTimingDialogOpen, stageFieldName, isOptimisticStage } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
 
-    const { votingPeriodField, earlyStageField, stageExpirationField, stageExpirationPeriodField, stageTypeField } =
-        useStageFields(stageName, stageIndex) as {
-            votingPeriodField: { name: string; value: { minutes: number; hours: number; days: number } };
-            earlyStageField: { name: string; value: boolean };
-            stageExpirationField: { name: string; value: boolean };
-            stageExpirationPeriodField: { name: string; value: { minutes: number; hours: number; days: number } };
-            stageTypeField: { name: string; value: string };
-        };
+    const votingPeriodField = useFormField<ICreateProcessFormStage, 'votingPeriod'>('votingPeriod', {
+        label: t('app.governance.createProcessForm.stage.timing.dialog.votingPeriod.label'),
+        fieldPrefix: stageFieldName,
+    });
+
+    const earlyStageField = useFormField<ICreateProcessFormStage, 'earlyStageAdvance'>('earlyStageAdvance', {
+        label: t('app.governance.createProcessForm.stage.timing.dialog.earlyAdvance.label'),
+        fieldPrefix: stageFieldName,
+    });
+
+    const stageExpirationField = useFormField<ICreateProcessFormStage, 'stageExpiration'>('stageExpiration', {
+        label: t('app.governance.createProcessForm.stage.timing.dialog.expiration.label'),
+        fieldPrefix: stageFieldName,
+    });
 
     return (
         <Dialog.Root
@@ -100,7 +107,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                     </div>
                     <AlertInline message={t('app.governance.createProcessForm.stage.timing.dialog.helpInfo')} />
                 </div>
-                {stageTypeField.value === 'normal' && (
+                {!isOptimisticStage && (
                     <Switch
                         helpText={t('app.governance.createProcessForm.stage.timing.dialog.earlyAdvance.helpText')}
                         inlineLabel={
@@ -120,12 +127,15 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                             ? t('app.governance.createProcessForm.stage.timing.dialog.yes')
                             : t('app.governance.createProcessForm.stage.timing.dialog.no')
                     }
-                    onCheckedChanged={(checked) => setValue(stageExpirationField.name, checked)}
-                    checked={stageExpirationField.value}
+                    onCheckedChanged={(checked) => {
+                        const newValue = checked ? { days: 7, minutes: 0, hours: 0 } : undefined;
+                        setValue(stageExpirationField.name, newValue);
+                    }}
+                    checked={stageExpirationField.value != null}
                     {...stageExpirationField}
                 />
 
-                {stageExpirationField.value === true && (
+                {stageExpirationField.value != null && (
                     <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
                         <div className="flex flex-col justify-between gap-4 md:flex-row">
                             <InputNumber
@@ -133,12 +143,12 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 min={0}
                                 max={59}
                                 className="w-full md:w-1/3"
-                                value={stageExpirationPeriodField.value.minutes}
+                                value={stageExpirationField.value.minutes}
                                 placeholder="0 m"
                                 suffix="m"
                                 onChange={(e) =>
-                                    setValue(stageExpirationPeriodField.name, {
-                                        ...stageExpirationPeriodField.value,
+                                    setValue(stageExpirationField.name, {
+                                        ...stageExpirationField.value,
                                         minutes: Number(e),
                                     })
                                 }
@@ -148,12 +158,12 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 min={0}
                                 max={23}
                                 className="w-full md:w-1/3"
-                                value={stageExpirationPeriodField.value.hours}
+                                value={stageExpirationField.value.hours}
                                 placeholder="0 h"
                                 suffix="h"
                                 onChange={(e) =>
-                                    setValue(stageExpirationPeriodField.name, {
-                                        ...stageExpirationPeriodField.value,
+                                    setValue(stageExpirationField.name, {
+                                        ...stageExpirationField.value,
                                         hours: Number(e),
                                     })
                                 }
@@ -162,12 +172,12 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                                 label={t('app.shared.advancedDateInput.duration.days')}
                                 min={0}
                                 className="w-full md:w-1/3"
-                                value={stageExpirationPeriodField.value.days}
+                                value={stageExpirationField.value.days}
                                 placeholder="0 d"
                                 suffix="d"
                                 onChange={(e) =>
-                                    setValue(stageExpirationPeriodField.name, {
-                                        ...stageExpirationPeriodField.value,
+                                    setValue(stageExpirationField.name, {
+                                        ...stageExpirationField.value,
                                         days: Number(e),
                                     })
                                 }
@@ -178,10 +188,7 @@ export const CreateProcessFormTimingDialog: React.FC<ICreateProcessFormTimingDia
                 )}
             </Dialog.Content>
             <Dialog.Footer
-                primaryAction={{
-                    label: 'Save',
-                    onClick: () => setIsTimingDialogOpen(false),
-                }}
+                primaryAction={{ label: 'Save', onClick: () => setIsTimingDialogOpen(false) }}
                 secondaryAction={{ label: 'Cancel', onClick: () => setIsTimingDialogOpen(false) }}
             />
         </Dialog.Root>

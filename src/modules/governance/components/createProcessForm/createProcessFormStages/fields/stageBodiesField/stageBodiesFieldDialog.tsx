@@ -1,31 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { CreateProcessFormBodyDialogSteps } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialog/createProcessFormBodyDialogSteps/createProcessFormBodyDialogSteps';
-import { validateStep } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialog/createProcessFormBodyDialogStepsValidation/createProcessFormBodyDialogStepsValidation';
+import { Dialog } from '@aragon/ods';
+import { useEffect, useRef, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import {
     BodyCreationDialogSteps,
     CreateProcessFormBodyDialogStepper,
     orderedBodyCreationDialogSteps,
-} from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialogStepper/createProcessFormBodyDialogStepper';
-import type {
-    ICreateProcessFormBodyData,
-    IOpenDialogState,
-} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
-import { Dialog } from '@aragon/ods';
-import type React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+} from '../../../createProcessFormBodyDialogStepper/createProcessFormBodyDialogStepper';
+import type { ICreateProcessFormBody, IOpenDialogState } from '../../../createProcessFormDefinitions';
+import { useBodyFields } from '../../../hooks';
+import { CreateProcessFormBodyDialogSteps, validationMap } from './stageBodiesFieldDefinitions';
 
-export interface ICreateProcessFormBodyDialogProps {
+export interface IStageBodiesFieldDialogProps {
     /**
      * The name of the stage
      */
-    stageName: string;
-    /**
-     * The index of the stage
-     */
-    stageIndex: number;
+    stageFieldName: string;
     /**
      * Function to remove a body from the stage.
      */
@@ -33,7 +22,7 @@ export interface ICreateProcessFormBodyDialogProps {
     /**
      * Function to update a body from the stage.
      */
-    updateBody: (index: number, values: ICreateProcessFormBodyData) => void;
+    updateBody: (index: number, values: ICreateProcessFormBody) => void;
     /**
      * State to control the dialog open state.
      */
@@ -44,49 +33,45 @@ export interface ICreateProcessFormBodyDialogProps {
     setIsBodyDialogOpen: (value: IOpenDialogState) => void;
 }
 
-export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogProps> = (props) => {
-    const { stageName, stageIndex, removeBody, updateBody, isBodyDialogOpen, setIsBodyDialogOpen } = props;
+export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (props) => {
+    const { stageFieldName, removeBody, updateBody, isBodyDialogOpen, setIsBodyDialogOpen } = props;
     const { getValues, setError, trigger } = useFormContext();
     const [currentStep, setCurrentStep] = useState<BodyCreationDialogSteps>(
-        isBodyDialogOpen.editBodyIndex != null
-            ? BodyCreationDialogSteps.PLUGIN_METADATA
-            : BodyCreationDialogSteps.PLUGIN_SELECT,
+        isBodyDialogOpen.newBody ? BodyCreationDialogSteps.PLUGIN_SELECT : BodyCreationDialogSteps.PLUGIN_METADATA,
     );
 
-    const bodies = getValues(`${stageName}.${stageIndex}.bodies`);
+    const [bodyIndex] = useState<number>(() => isBodyDialogOpen.editBodyIndex);
 
-    const [bodyIndex] = useState<number>(() => isBodyDialogOpen.editBodyIndex ?? bodies.length);
-
-    const bodyFields = useBodyFields(stageName, stageIndex, bodyIndex);
+    const bodyFields = useBodyFields(stageFieldName, bodyIndex);
 
     const { bodyGovernanceTypeField } = bodyFields;
 
-    const initialStateRef = useRef<ICreateProcessFormBodyData | null>(null);
+    const initialStateRef = useRef<ICreateProcessFormBody | null>(null);
 
     useEffect(() => {
         if (isBodyDialogOpen.dialogOpen) {
-            const currentState = getValues(`${stageName}.${stageIndex}.bodies.${bodyIndex}`);
+            const currentState = getValues(`${stageFieldName}.bodies.${bodyIndex}`);
             initialStateRef.current = JSON.parse(JSON.stringify(currentState));
         }
-    }, [isBodyDialogOpen.dialogOpen, bodyIndex, getValues, stageIndex, stageName]);
+    }, [isBodyDialogOpen.dialogOpen, bodyIndex, getValues, stageFieldName]);
 
     const handleCancel = () => {
-        if (isBodyDialogOpen.editBodyIndex === undefined) {
+        if (isBodyDialogOpen.newBody) {
             removeBody(bodyIndex);
         } else if (initialStateRef.current) {
             updateBody(bodyIndex, initialStateRef.current);
         }
         setCurrentStep(BodyCreationDialogSteps.PLUGIN_SELECT);
-        setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: undefined });
+        setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: 0 });
     };
 
     const handleSave = () => {
         setCurrentStep(BodyCreationDialogSteps.PLUGIN_SELECT);
-        setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: undefined });
+        setIsBodyDialogOpen({ dialogOpen: false, editBodyIndex: 0 });
     };
+
     const stepComponentProps = {
-        stageName,
-        stageIndex,
+        stageFieldName,
         bodyIndex,
         bodyGovernanceType: bodyGovernanceTypeField.value,
     };
@@ -96,16 +81,19 @@ export const CreateProcessFormBodyDialog: React.FC<ICreateProcessFormBodyDialogP
     const totalSteps = orderedBodyCreationDialogSteps.length;
 
     const handleValidateStep = async (step: BodyCreationDialogSteps): Promise<boolean> => {
-        return await validateStep({
-            step,
-            trigger,
-            getValues,
-            setError,
-            stageName,
-            stageIndex,
-            bodyIndex,
-            bodyGovernanceType: bodyGovernanceTypeField.value,
-        });
+        const validationFunction = validationMap[step];
+        if (validationFunction) {
+            return await validationFunction({
+                step,
+                trigger,
+                getValues,
+                setError,
+                stageFieldName,
+                bodyIndex,
+                bodyGovernanceType: bodyGovernanceTypeField.value,
+            });
+        }
+        return false;
     };
 
     const handleNext = () => {

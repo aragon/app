@@ -4,22 +4,22 @@ import type {
 } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 
-export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: number): IBodyFields => {
-    const basePath = `${stageName}.${stageIndex}.bodies.${bodyIndex}` as const;
+export const useBodyFields = (stageFieldName: string, bodyIndex: number): IBodyFields => {
+    const basePath = `${stageFieldName}.bodies.${bodyIndex}` as const;
 
     const bodyNameField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.bodyNameField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.bodyNameField`
     >(`${basePath}.bodyNameField`, {
         label: 'Name',
         defaultValue: '',
         trimOnBlur: true,
-        rules: { required: 'Name is required' },
+        rules: { required: true },
     });
 
     const bodySummaryField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.bodySummaryField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.bodySummaryField`
     >(`${basePath}.bodySummaryField`, {
         label: 'Summary',
         defaultValue: '',
@@ -27,7 +27,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
 
     const bodyGovernanceTypeField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.bodyGovernanceTypeField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.bodyGovernanceTypeField`
     >(`${basePath}.bodyGovernanceTypeField`, {
         label: 'Governance type',
         defaultValue: 'tokenVoting',
@@ -35,7 +35,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
 
     const tokenNameField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.tokenNameField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.tokenNameField`
     >(`${basePath}.tokenNameField`, {
         label: 'Name',
         defaultValue: '',
@@ -45,7 +45,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
 
     const tokenSymbolField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.tokenSymbolField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.tokenSymbolField`
     >(`${basePath}.tokenSymbolField`, {
         label: 'Symbol',
         defaultValue: '',
@@ -62,7 +62,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
 
     const supportThresholdField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.supportThresholdField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.supportThresholdField`
     >(`${basePath}.supportThresholdField`, {
         label: 'Support threshold',
         defaultValue: 50,
@@ -70,7 +70,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
 
     const minimumParticipationField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.minimumParticipationField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.minimumParticipationField`
     >(`${basePath}.minimumParticipationField`, {
         label: 'Minimum participation',
         defaultValue: 1,
@@ -78,7 +78,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
 
     const voteChangeField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.voteChangeField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.voteChangeField`
     >(`${basePath}.voteChangeField`, {
         label: 'Vote change',
         defaultValue: false,
@@ -86,7 +86,7 @@ export const useBodyFields = (stageName: string, stageIndex: number, bodyIndex: 
 
     const multisigThresholdField = useFormField<
         BodyInputItemBaseForm,
-        `${typeof stageName}.${typeof stageIndex}.bodies.${typeof bodyIndex}.multisigThresholdField`
+        `${typeof stageFieldName}.bodies.${typeof bodyIndex}.multisigThresholdField`
     >(`${basePath}.multisigThresholdField`, {
         label: 'Approval Threshold',
         defaultValue: 1,

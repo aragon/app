@@ -6,10 +6,11 @@ import { useFormContext } from 'react-hook-form';
 export interface ICreateProcessFormMultisigParamsProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParamsProps> = (props) => {
-    const { stageName, stageIndex, bodyIndex } = props;
+    const { stageFieldName, bodyIndex } = props;
     const { watch } = useFormContext();
-    const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`);
-    const { multisigThresholdField } = useBodyFields(stageName, stageIndex, bodyIndex);
+    const members = watch(`${stageFieldName}.bodies.${bodyIndex}.members`);
+    const { multisigThresholdField } = useBodyFields(stageFieldName, bodyIndex);
+
     return (
         <InputNumber
             label="Approval Threshold"

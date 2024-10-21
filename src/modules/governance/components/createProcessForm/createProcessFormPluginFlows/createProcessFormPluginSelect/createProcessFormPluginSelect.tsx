@@ -6,11 +6,11 @@ import { useFormContext } from 'react-hook-form';
 export interface ICreateProcessFormPluginSelectProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSelectProps> = (props) => {
-    const { stageName, stageIndex, bodyIndex } = props;
+    const { stageFieldName, bodyIndex } = props;
 
     const { setValue } = useFormContext();
 
-    const { bodyGovernanceTypeField } = useBodyFields(stageName, stageIndex, bodyIndex);
+    const { bodyGovernanceTypeField } = useBodyFields(stageFieldName, bodyIndex);
 
     return (
         <>

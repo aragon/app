@@ -9,16 +9,10 @@ import { Controller, useFormContext } from 'react-hook-form';
 export interface ICreateProcessFormTokenVotingDistroProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormTokenVotingDistroProps> = (props) => {
-    const { stageName, stageIndex, bodyIndex } = props;
+    const { stageFieldName, bodyIndex } = props;
     const { control } = useFormContext();
 
-    const useMembersFieldArrayProps = {
-        stageName,
-        stageIndex,
-        bodyIndex,
-    };
-
-    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(useMembersFieldArrayProps);
+    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray({ stageFieldName, bodyIndex });
 
     const handleAddMember = () => {
         appendMember({ tokenAmount: 1 });
@@ -58,7 +52,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                 </RadioGroup>
             </InputContainer>
             <Controller
-                name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenNameField`}
+                name={`${stageFieldName}.bodies.${bodyIndex}.tokenNameField`}
                 control={control}
                 render={({ field, fieldState: { error } }) => (
                     <InputText
@@ -71,7 +65,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                 )}
             />
             <Controller
-                name={`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`}
+                name={`${stageFieldName}.bodies.${bodyIndex}.tokenSymbolField`}
                 control={control}
                 render={({ field, fieldState: { error } }) => (
                     <InputText
@@ -100,7 +94,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                     <TokenVotingMemberInputRow
                         key={`member-${index}`}
                         index={index}
-                        fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.members.${index}`}
+                        fieldNamePrefix={`${stageFieldName}.bodies.${bodyIndex}.members.${index}`}
                         handleRemoveMember={() => handleRemoveMember(index)}
                         canRemove={membersFieldArray.length > 1}
                     />

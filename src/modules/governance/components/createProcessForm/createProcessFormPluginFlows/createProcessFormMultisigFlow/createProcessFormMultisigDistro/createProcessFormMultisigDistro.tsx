@@ -7,15 +7,9 @@ import { useEffect } from 'react';
 export interface ICreateProcessFormMultisigDistroProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisigDistroProps> = (props) => {
-    const { stageName, stageIndex, bodyIndex } = props;
+    const { stageFieldName, bodyIndex } = props;
 
-    const useMembersFieldArrayProps = {
-        stageName,
-        stageIndex,
-        bodyIndex,
-    };
-
-    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray(useMembersFieldArrayProps);
+    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray({ stageFieldName, bodyIndex });
 
     const handleAddMember = () => {
         appendMember({});
@@ -45,7 +39,7 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
                     <MultisigMemberInputRow
                         key={index}
                         index={index}
-                        fieldNamePrefix={`${stageName}.${stageIndex}.bodies.${bodyIndex}.members.${index}`}
+                        fieldNamePrefix={`${stageFieldName}.bodies.${bodyIndex}.members.${index}`}
                         handleRemoveMember={handleRemoveMember}
                         canRemove={membersFieldArray.length > 1}
                     />

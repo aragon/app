@@ -17,19 +17,18 @@ import { useFormContext } from 'react-hook-form';
 export interface ICreateProcessFormTokenVotingParamsProps extends ICreateProcessFormBodyNameProps {}
 
 export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormTokenVotingParamsProps> = (props) => {
-    const { stageIndex, stageName, bodyIndex } = props;
+    const { stageFieldName, bodyIndex } = props;
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
     const { watch, setValue } = useFormContext();
 
     const { supportThresholdField, minimumParticipationField, voteChangeField } = useBodyFields(
-        stageName,
-        stageIndex,
+        stageFieldName,
         bodyIndex,
     );
 
-    const members = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.members`);
-    const tokenSymbolField = watch(`${stageName}.${stageIndex}.bodies.${bodyIndex}.tokenSymbolField`);
+    const members = watch(`${stageFieldName}.bodies.${bodyIndex}.members`);
+    const tokenSymbolField = watch(`${stageFieldName}.bodies.${bodyIndex}.tokenSymbolField`);
 
     useEffect(() => {
         const totalTokenAmount = members?.reduce(

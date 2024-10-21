@@ -40,13 +40,11 @@ export const useMembersFieldArray = <
 >(
     props: ICreateProcessFormBodyNameProps,
 ): UseMembersReturn<TFieldValues, TName> => {
-    const { stageName, stageIndex, bodyIndex } = props;
+    const { stageFieldName, bodyIndex } = props;
 
-    const name = `${stageName}.${stageIndex}.bodies.${bodyIndex}.members` as TName;
+    const name = `${stageFieldName}.bodies.${bodyIndex}.members` as TName;
 
-    const { fields, append, remove, update } = useFieldArray<TFieldValues, TName>({
-        name,
-    });
+    const { fields, append, remove, update } = useFieldArray<TFieldValues, TName>({ name });
 
     return {
         membersFieldArray: fields as Array<MemberInputItemBaseForm & FieldArrayWithId<TFieldValues, TName, 'id'>>,
