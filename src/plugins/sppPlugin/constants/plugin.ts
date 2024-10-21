@@ -1,6 +1,6 @@
 import type { IPlugin } from '@/shared/utils/pluginRegistryUtils';
 
 export const plugin: IPlugin = {
-    id: 'devspp',
+    id: 'spp',
     name: 'Staged Proposal Processor',
 };

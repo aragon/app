@@ -8,13 +8,11 @@ export const SppCreateProposalSettingsForm: React.FC<ISppCreateProposalSettingsF
     const { t } = useTranslations();
 
     return (
-        <>
-            <AdvancedDateInput
-                label={t('app.plugins.spp.sppCreateProposalSettingsForm.startTime.label')}
-                field="startTime"
-                helpText={t('app.plugins.spp.sppCreateProposalSettingsForm.startTime.helpText')}
-                minTime={DateTime.now()}
-            />
-        </>
+        <AdvancedDateInput
+            label={t('app.plugins.spp.sppCreateProposalSettingsForm.startTime.label')}
+            field="startTime"
+            helpText={t('app.plugins.spp.sppCreateProposalSettingsForm.startTime.helpText')}
+            minTime={DateTime.now()}
+        />
     );
 };
