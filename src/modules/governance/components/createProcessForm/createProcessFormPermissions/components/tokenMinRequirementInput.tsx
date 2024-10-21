@@ -1,14 +1,12 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { InputNumber } from '@aragon/ods';
-import type { Body } from '../createProcessFormPermissions.api';
 
 interface ITokenMinRequirementInputProps {
-    body: Body;
-    handleMinRequirementChange: (bodyName: string, value: number) => void;
+    handleMinRequirementChange: (value: number) => void;
 }
 
 export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> = (props) => {
-    const { body, handleMinRequirementChange } = props;
+    const { handleMinRequirementChange } = props;
 
     const { t } = useTranslations();
 
@@ -19,7 +17,7 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
                 label={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.label')}
                 helpText={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
                 placeholder="≥ 1"
-                onChange={(value) => handleMinRequirementChange(body.bodyNameField, Number(value))}
+                onChange={(value) => handleMinRequirementChange(Number(value))}
             />
         </button>
     );

@@ -364,8 +364,13 @@
         "steps": {
           "METADATA": {
             "description": "This metadata will define the process so voters can make an informed decision.",
-            "name": "Set the",
+            "name": "Process metadata",
             "title": "Define content"
+          },
+          "PERMISSIONS": {
+            "description": "Define who is eligible to create proposals within this governance process.",
+            "name": "Define permissions",
+            "title": "Define permissions"
           },
           "STAGES": {
             "description": "Compose your process flow here.",
