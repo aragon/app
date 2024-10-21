@@ -319,9 +319,9 @@
             "title": "Define content"
           },
           "SETTINGS": {
-            "description": "Set start date, and end date for your vote.",
-            "name": "Initiate voting",
-            "title": "Initiate the vote"
+            "description": "Define the settings for this proposal..",
+            "name": "Proposal settings",
+            "title": "Proposal settings"
           }
         },
         "submitLabel": "Publish proposal"
@@ -578,6 +578,12 @@
           },
           "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
           "title": "Advance proposal"
+        },
+        "sppCreateProposalSettingsForm": {
+          "startTime": {
+            "helpText": "Define when the first stage should start. If now is selected, the first stage is immediately active after publishing.",
+            "label": "Start time"
+          }
         },
         "sppStageStatus": {
           "advanceInfo": "left to advance",
