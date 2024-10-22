@@ -319,7 +319,7 @@
             "title": "Define content"
           },
           "SETTINGS": {
-            "description": "Define the settings for this proposal..",
+            "description": "Define the settings for this proposal.",
             "name": "Proposal settings",
             "title": "Proposal settings"
           }
