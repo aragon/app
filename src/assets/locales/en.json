@@ -301,7 +301,8 @@
           },
           "tokenMinRequirementInput": {
             "helpText": "Only token holders with at least the minimum required balance or delegates minimum required voting power can create proposals.",
-            "label": "Minimum requirement"
+            "label": "Minimum requirement",
+            "placeholder": "≥ 1"
           },
           "votingBodies": {
             "label": "Voting Bodies"

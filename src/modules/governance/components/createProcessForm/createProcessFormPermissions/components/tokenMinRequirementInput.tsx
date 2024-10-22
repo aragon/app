@@ -17,7 +17,7 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
                 prefix="≥"
                 label={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.label')}
                 helpText={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
-                placeholder="≥ 1"
+                placeholder={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.placeholder')}
                 onChange={(value) => handleMinRequirementChange(Number(value))}
                 min={0}
                 max={maxTokens}
