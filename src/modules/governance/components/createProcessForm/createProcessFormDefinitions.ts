@@ -1,5 +1,4 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/ods';
 
@@ -13,17 +12,21 @@ export interface ICreateProcessFormData {
      */
     key: string;
     /**
-     * Short description of the proposal.
+     * Description of the process.
      */
-    summary: string;
+    description: string;
     /**
-     * Resources of the proposal.
+     * Resources of the process.
      */
     resources: IResourcesInputResource[];
     /**
-     * Process stages
+     * List of stages of the process.
      */
     stages: ICreateProcessFormStage[];
+    /**
+     * Permissions for creating proposals.
+     */
+    permissions: ICreateProcessFormPermissions;
 }
 
 export interface ICreateProcessFormStage {
@@ -36,15 +39,15 @@ export interface ICreateProcessFormStage {
      */
     type: 'normal' | 'optimistic';
     /**
-     * The period of time a process is open for voting.
+     * The period of time the stage is open for voting.
      */
     votingPeriod: IDateDuration;
     /**
-     * Defines if the stage can advance early.
+     * Defines if the stage can advance early or not.
      */
     earlyStageAdvance: boolean;
     /**
-     * The amount of time that the proposal will be eligible to be advanced to the next stage.
+     * The amount of time that the stage will be eligible to be advanced.
      */
     stageExpiration?: IDateDuration;
     /**
@@ -58,71 +61,87 @@ export interface ICreateProcessFormStage {
 }
 
 export interface ICreateProcessFormBody {
-    bodyNameField: string;
-    bodyGovernanceTypeField: string;
-    tokenNameField: string;
-    tokenSymbolField: string;
-    supportThresholdField: number;
-    minimumParticipationField: number;
-    voteChangeField: boolean;
-    resourcesField: IResourcesInputResource[];
-    members: ITokenVotingMember[] | IMultisigVotingMember[];
-    multisigThresholdField: number;
-    bodyResourceField: IResourcesInputResource[];
+    /**
+     * Name of the body.
+     */
+    name: string;
+    /**
+     * ID of the body generated internally to reference bodies to permissions.
+     */
+    id: string;
+    /**
+     * Optional description of the voting body.
+     */
+    description?: string;
+    /**
+     * Resources of the body.
+     */
+    resources: IResourcesInputResource[];
+    /**
+     * Governance type of the body.
+     */
+    governanceType: 'multisig' | 'tokenVoting';
+    /**
+     * Members of the voting body.
+     */
+    members: ICompositeAddress[] | ITokenVotingMember[];
+
+    // Token-specific values
+    /**
+     * Name of the governance token.
+     */
+    tokenName: string;
+    /**
+     * Symbol of the governance token.
+     */
+    tokenSymbol: string;
+    /**
+     * The percentage of tokens that vote yes, out of all tokens that have voted, must be greater than this value for
+     * the proposal to pass.
+     */
+    supportThreshold: number;
+    /**
+     * The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal
+     * to this value for the proposal to pass.
+     */
+    minimumParticipation: number;
+    /**
+     * Allows voters to change their vote during the voting period.
+     */
+    voteChange: boolean;
+
+    // Multisig-specific values
+    /**
+     * Amount of addresses in the authorized list that must approve a proposal for it to pass.
+     */
+    multisigThreshold: number;
 }
 
-export interface IMultisigVotingMember {
+export interface ICreateProcessFormPermissions {
     /**
-     * Address details of the member.
+     * Defines who can create proposals on this process.
      */
-    address: ICompositeAddress;
+    proposalCreation: 'any' | 'bodies';
+    /**
+     * List of bodies that can create proposals.
+     */
+    proposalCreationBodies: ICreateProcessFormProposalCreationBody[];
 }
 
-export interface IOpenDialogState {
+export interface ICreateProcessFormProposalCreationBody {
     /**
-     * Dialog open state.
+     * ID of the body.
      */
-    dialogOpen: boolean;
+    id: string;
     /**
-     * Index of the body to edit.
+     * Settings of the specific body for creating proposals.
      */
-    editBodyIndex: number;
-    newBody?: boolean;
+    settings?: Record<string, unknown>;
 }
 
-export interface ITokenVotingMember {
-    /**
-     * Address details of the member.
-     */
-    address: ICompositeAddress;
+export interface ITokenVotingMember extends ICompositeAddress {
     /**
      * Token amount to be distributed.
      */
     tokenAmount: string | number;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type BodyInputItemBaseForm = Record<string, any>;
-
-export interface IBodyFields {
-    bodyNameField: ReturnType<typeof useFormField>;
-    bodySummaryField: ReturnType<typeof useFormField>;
-    bodyGovernanceTypeField: ReturnType<typeof useFormField>;
-    tokenNameField: ReturnType<typeof useFormField>;
-    tokenSymbolField: ReturnType<typeof useFormField>;
-    supportThresholdField: ReturnType<typeof useFormField>;
-    minimumParticipationField: ReturnType<typeof useFormField>;
-    voteChangeField: ReturnType<typeof useFormField>;
-    multisigThresholdField: ReturnType<typeof useFormField>;
-}
-
-export interface ICreateProcessFormBodyNameProps {
-    /**
-     * The name of the stage.
-     */
-    stageFieldName: string;
-    /**
-     * The index of the body.
-     */
-    bodyIndex: number;
 }

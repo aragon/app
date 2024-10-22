@@ -9,12 +9,8 @@ export interface ITokenVotingMemberInputRowProps {
     canRemove: boolean;
 }
 
-export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps> = ({
-    index,
-    fieldNamePrefix,
-    handleRemoveMember,
-    canRemove,
-}) => {
+export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps> = (props) => {
+    const { index, fieldNamePrefix, handleRemoveMember, canRemove } = props;
     const { control } = useFormContext();
 
     const addressFieldName = `${fieldNamePrefix}.address`;

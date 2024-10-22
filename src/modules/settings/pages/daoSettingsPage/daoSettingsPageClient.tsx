@@ -34,12 +34,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         <>
             <Page.Main
                 title={t('app.settings.daoSettingsPage.main.title')}
-                action={{
-                    label: 'Process',
-                    onClick: () => {
-                        setDialogOpen(true);
-                    },
-                }}
+                action={{ label: 'Process', onClick: () => setDialogOpen(true) }}
             >
                 <Page.Section title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />

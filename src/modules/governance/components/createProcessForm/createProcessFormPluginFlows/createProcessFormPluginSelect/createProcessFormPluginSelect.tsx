@@ -1,25 +1,26 @@
-import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/ods';
-import { useFormContext } from 'react-hook-form';
+import type { ICreateProcessFormBody } from '../../createProcessFormDefinitions';
+import type { ICreateProcessFormBodyDialogStepsProps } from '../../createProcessFormStages/fields/stageBodiesField/stageBodiesFieldDefinitions';
 
-export interface ICreateProcessFormPluginSelectProps extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormPluginSelectProps extends ICreateProcessFormBodyDialogStepsProps {}
 
 export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSelectProps> = (props) => {
-    const { stageFieldName, bodyIndex } = props;
+    const { fieldPrefix } = props;
 
-    const { setValue } = useFormContext();
-
-    const { bodyGovernanceTypeField } = useBodyFields(stageFieldName, bodyIndex);
+    const { onChange, ...governanceTypeField } = useFormField<ICreateProcessFormBody, 'governanceType'>(
+        'governanceType',
+        { label: 'Governance type', fieldPrefix },
+    );
 
     return (
         <>
             <RadioGroup
                 className="flex gap-4"
                 helpText="What kind of governance would you like to add?"
-                onValueChange={(value) => setValue(bodyGovernanceTypeField.name, value)}
-                {...bodyGovernanceTypeField}
-                defaultValue={bodyGovernanceTypeField.value}
+                onValueChange={(value) => onChange(value)}
+                defaultValue={governanceTypeField.value}
+                {...governanceTypeField}
             >
                 <RadioCard
                     className="w-full"

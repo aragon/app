@@ -223,6 +223,11 @@
 
       "createProcessForm": {
         "metadata": {
+          "description": {
+            "helpText": "Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
+            "label": "Summary",
+            "placeholder": "Type a summary"
+          },
           "key": {
             "helpText": "Define a prefix for this governance process to have an unique ID. Something like PDF, which leads to PDF-01 and counting up for each proposal.",
             "label": "Key",
@@ -235,11 +240,6 @@
           },
           "resources": {
             "helpText": "Add any additional external resources that help members understand the governance process."
-          },
-          "summary": {
-            "helpText": "Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
-            "label": "Summary",
-            "placeholder": "Type a summary"
           }
         },
         "permissions": {

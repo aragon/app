@@ -1,34 +1,48 @@
-import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import type { ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { TokenVotingMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingMemberInputRow/tokenVotingMemberInputRow';
-import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
-import { Button, IconType, InputContainer, InputText, RadioCard, RadioGroup } from '@aragon/ods';
+import { useFormField } from '@/shared/hooks/useFormField';
+import {
+    Button,
+    type ICompositeAddress,
+    IconType,
+    InputContainer,
+    InputText,
+    RadioCard,
+    RadioGroup,
+} from '@aragon/ods';
 import type React from 'react';
-import { useEffect } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
+import type { ICreateProcessFormBodyDialogStepsProps } from '../../../createProcessFormStages/fields/stageBodiesField/stageBodiesFieldDefinitions';
 
-export interface ICreateProcessFormTokenVotingDistroProps extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormTokenVotingDistroProps extends ICreateProcessFormBodyDialogStepsProps {}
 
 export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormTokenVotingDistroProps> = (props) => {
-    const { stageFieldName, bodyIndex } = props;
-    const { control } = useFormContext();
+    const { fieldPrefix } = props;
 
-    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray({ stageFieldName, bodyIndex });
-
-    const handleAddMember = () => {
-        appendMember({ tokenAmount: 1 });
-    };
-
-    const handleRemoveMember = (index: number) => {
-        if (membersFieldArray.length > 1) {
-            removeMember(index);
-        }
-    };
-
-    useEffect(() => {
-        if (membersFieldArray.length === 0) {
-            handleAddMember();
-        }
+    const tokenNameField = useFormField<ICreateProcessFormBody, 'tokenName'>('tokenName', {
+        label: 'Token Name',
+        defaultValue: '',
+        trimOnBlur: true,
+        fieldPrefix,
+        rules: { required: 'Token name is required' },
     });
+
+    const tokenSymbolField = useFormField<ICreateProcessFormBody, 'tokenSymbol'>('tokenSymbol', {
+        label: 'Token Symbol',
+        defaultValue: '',
+        trimOnBlur: true,
+        rules: {
+            maxLength: { value: 10, message: 'Symbol cannot exceed 10 characters' },
+            required: 'Token symbol is required',
+            validate: (value) => /^[A-Za-z]+$/.test(value) || 'Only letters are allowed',
+        },
+    });
+
+    const { fields, append, remove } = useFieldArray<Record<string, ICreateProcessFormBody['members']>>({
+        name: `${fieldPrefix}.members`,
+    });
+
+    const handleAddMember = () => append({ address: '', tokenAmount: 1 } as ICompositeAddress);
 
     return (
         <>
@@ -51,52 +65,30 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                     </div>
                 </RadioGroup>
             </InputContainer>
-            <Controller
-                name={`${stageFieldName}.bodies.${bodyIndex}.tokenNameField`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                    <InputText
-                        {...field}
-                        label="Token name"
-                        placeholder="Enter a name"
-                        helpText="The full name of the token. For example: Uniswap"
-                        alert={error ? { message: error.message ?? '', variant: 'critical' } : undefined}
-                    />
-                )}
+            <InputText
+                placeholder="Enter a name"
+                helpText="The full name of the token. For example: Uniswap"
+                {...tokenNameField}
             />
-            <Controller
-                name={`${stageFieldName}.bodies.${bodyIndex}.tokenSymbolField`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                    <InputText
-                        {...field}
-                        value={field.value ? field.value.toUpperCase() : ''}
-                        onChange={(e) => {
-                            field.onChange(e.target.value.toUpperCase());
-                        }}
-                        maxLength={8}
-                        label="Token Symbol"
-                        placeholder="Enter a symbol"
-                        helpText="The abbreviation of the token. For example: UNI"
-                        alert={error ? { message: error.message ?? '', variant: 'critical' } : undefined}
-                    />
-                )}
+            <InputText
+                placeholder="Enter a symbol"
+                helpText="The abbreviation of the token. For example: UNI"
+                {...tokenSymbolField}
             />
-
             <InputContainer
                 id="distribute"
                 label="Distribute Tokens"
                 helpText="Add the wallets you'd like to distribute tokens to."
                 useCustomWrapper={true}
-                {...membersFieldArray}
+                {...fields}
             >
-                {membersFieldArray.map((field, index) => (
+                {fields.map((field, index) => (
                     <TokenVotingMemberInputRow
-                        key={`member-${index}`}
+                        key={field.id}
                         index={index}
-                        fieldNamePrefix={`${stageFieldName}.bodies.${bodyIndex}.members.${index}`}
-                        handleRemoveMember={() => handleRemoveMember(index)}
-                        canRemove={membersFieldArray.length > 1}
+                        fieldNamePrefix={`${fieldPrefix}.members.${index}`}
+                        handleRemoveMember={() => remove(index)}
+                        canRemove={fields.length > 1}
                     />
                 ))}
             </InputContainer>

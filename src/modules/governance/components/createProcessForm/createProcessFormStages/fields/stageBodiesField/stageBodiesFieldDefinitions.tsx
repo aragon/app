@@ -10,9 +10,8 @@ import {
 } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows';
 import type { UseFormGetValues, UseFormSetError, UseFormTrigger } from 'react-hook-form';
 
-interface ICreateProcessFormBodyDialogStepsProps {
-    stageFieldName: string;
-    bodyIndex: number;
+export interface ICreateProcessFormBodyDialogStepsProps {
+    fieldPrefix: string;
     bodyGovernanceType: string;
 }
 
@@ -22,14 +21,14 @@ export const CreateProcessFormBodyDialogSteps: Record<
 > = {
     [BodyCreationDialogSteps.PLUGIN_SELECT]: (props) => <CreateProcessFormPluginSelect {...props} />,
     [BodyCreationDialogSteps.PLUGIN_METADATA]: (props) => <CreateProcessFormPluginMetadata {...props} />,
-    [BodyCreationDialogSteps.GOVERNANCE_DISTRO]: ({ bodyGovernanceType, ...props }) =>
-        bodyGovernanceType === 'tokenVoting' ? (
+    [BodyCreationDialogSteps.GOVERNANCE_DISTRO]: (props) =>
+        props.bodyGovernanceType === 'tokenVoting' ? (
             <CreateProcessFormTokenVotingDistro {...props} />
         ) : (
             <CreateProcessFormMultisigDistro {...props} />
         ),
-    [BodyCreationDialogSteps.GOVERNANCE_PARAMS]: ({ bodyGovernanceType, ...props }) =>
-        bodyGovernanceType === 'tokenVoting' ? (
+    [BodyCreationDialogSteps.GOVERNANCE_PARAMS]: (props) =>
+        props.bodyGovernanceType === 'tokenVoting' ? (
             <CreateProcessFormTokenVotingParams {...props} />
         ) : (
             <CreateProcessFormMultisigParams {...props} />
@@ -50,13 +49,13 @@ type ValidationFunction = (props: ValidateStepProps) => Promise<boolean>;
 
 export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> = {
     [BodyCreationDialogSteps.PLUGIN_SELECT]: async ({ trigger, stageFieldName, bodyIndex }) => {
-        const fieldPath = `${stageFieldName}.bodies.${bodyIndex}.bodyGovernanceTypeField`;
+        const fieldPath = `${stageFieldName}.bodies.${bodyIndex}.governanceType`;
         return await trigger(fieldPath);
     },
     [BodyCreationDialogSteps.PLUGIN_METADATA]: async ({ trigger, stageFieldName, bodyIndex }) => {
         const fieldPaths = [
-            `${stageFieldName}.bodies.${bodyIndex}.bodyNameField`,
-            `${stageFieldName}.bodies.${bodyIndex}.bodySummaryField`,
+            `${stageFieldName}.bodies.${bodyIndex}.name`,
+            `${stageFieldName}.bodies.${bodyIndex}.description`,
         ];
         return await trigger(fieldPaths);
     },
@@ -82,9 +81,9 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
         let fieldPaths: string[];
 
         if (bodyGovernanceType === 'tokenVoting') {
-            fieldPaths = [`${basePath}.tokenNameField`, `${basePath}.tokenSymbolField`, `${basePath}.members`];
+            fieldPaths = [`${basePath}.tokenName`, `${basePath}.tokenSymbol`, `${basePath}.members`];
         } else {
-            fieldPaths = [`${basePath}.multisigThresholdField`, `${basePath}.members`];
+            fieldPaths = [`${basePath}.multisigThreshold`, `${basePath}.members`];
         }
 
         const result = await trigger(fieldPaths);
@@ -96,13 +95,9 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
 
         let fieldPaths: string[];
         if (bodyGovernanceType === 'tokenVoting') {
-            fieldPaths = [
-                `${basePath}.supportThresholdField`,
-                `${basePath}.minimumParticipationField`,
-                `${basePath}.voteChangeField`,
-            ];
+            fieldPaths = [`${basePath}.supportThreshold`, `${basePath}.minimumParticipation`, `${basePath}.voteChange`];
         } else {
-            fieldPaths = [`${basePath}.multisigThresholdField`];
+            fieldPaths = [`${basePath}.supportThreshold`];
         }
         return await trigger(fieldPaths);
     },

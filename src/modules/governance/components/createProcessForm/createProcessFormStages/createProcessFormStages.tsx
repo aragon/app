@@ -1,15 +1,27 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType } from '@aragon/ods';
 import { useFieldArray } from 'react-hook-form';
+import type { ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { CreateProcessFormStagesItem } from './createProcessFormStagesItem';
 
 export interface ICreateProcessFormStagesProps {}
 
 export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = () => {
     const { t } = useTranslations();
-    const { fields, append, remove } = useFieldArray({ name: 'stages' });
 
-    const handleAddStage = () => append({});
+    const { fields, append, remove } = useFieldArray<Record<string, ICreateProcessFormData['stages']>>({
+        name: 'stages',
+    });
+
+    const handleAddStage = () =>
+        append({
+            name: '',
+            type: 'normal',
+            votingPeriod: { days: 7, minutes: 0, hours: 0 },
+            earlyStageAdvance: false,
+            requiredApprovals: 1,
+            bodies: [],
+        });
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">

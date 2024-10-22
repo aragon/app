@@ -69,10 +69,7 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                             suffix="m"
                             value={votingPeriodField.value.minutes}
                             onChange={(e) =>
-                                setValue(votingPeriodField.name, {
-                                    ...(typeof votingPeriodField.value === 'object' ? votingPeriodField.value : {}),
-                                    minutes: Number(e),
-                                })
+                                setValue(votingPeriodField.name, { ...votingPeriodField.value, minutes: Number(e) })
                             }
                         />
                         <InputNumber
@@ -84,10 +81,7 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                             suffix="h"
                             value={votingPeriodField.value.hours}
                             onChange={(e) =>
-                                setValue(votingPeriodField.name, {
-                                    ...votingPeriodField.value,
-                                    hours: Number(e),
-                                })
+                                setValue(votingPeriodField.name, { ...votingPeriodField.value, hours: Number(e) })
                             }
                         />
                         <InputNumber
@@ -98,10 +92,7 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                             suffix="d"
                             value={votingPeriodField.value.days}
                             onChange={(e) =>
-                                setValue(votingPeriodField.name, {
-                                    ...votingPeriodField.value,
-                                    days: Number(e),
-                                })
+                                setValue(votingPeriodField.name, { ...votingPeriodField.value, days: Number(e) })
                             }
                         />
                     </div>

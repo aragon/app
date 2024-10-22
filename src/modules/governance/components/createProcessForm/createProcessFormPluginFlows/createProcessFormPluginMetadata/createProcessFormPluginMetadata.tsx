@@ -1,14 +1,27 @@
-import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
+import type { ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, TextArea } from '@aragon/ods';
+import type { ICreateProcessFormBodyDialogStepsProps } from '../../createProcessFormStages/fields/stageBodiesField/stageBodiesFieldDefinitions';
 
-export interface ICreateProcessFormPluginMetadataProps extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormPluginMetadataProps extends ICreateProcessFormBodyDialogStepsProps {}
 
 export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginMetadataProps> = (props) => {
-    const { stageFieldName, bodyIndex } = props;
+    const { fieldPrefix } = props;
 
-    const { bodyNameField, bodySummaryField } = useBodyFields(stageFieldName, bodyIndex);
+    const bodyNameField = useFormField<ICreateProcessFormBody, `name`>(`name`, {
+        label: 'Name',
+        defaultValue: '',
+        fieldPrefix,
+        trimOnBlur: true,
+        rules: { required: true },
+    });
+
+    const bodySummaryField = useFormField<ICreateProcessFormBody, 'description'>('description', {
+        label: 'Summary',
+        fieldPrefix,
+        defaultValue: '',
+    });
 
     return (
         <>
@@ -21,7 +34,7 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
                 {...bodySummaryField}
             />
             <ResourcesInput
-                name={`${stageFieldName}.bodies.${bodyIndex}.resources`}
+                name={`${fieldPrefix}.resources`}
                 helpText="Add any additional external resources that help members understand the purpose of this body."
             />
         </>

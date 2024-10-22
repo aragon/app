@@ -1,15 +1,25 @@
-import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
+import type { ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { InputNumber } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
+import type { ICreateProcessFormBodyDialogStepsProps } from '../../../createProcessFormStages/fields/stageBodiesField/stageBodiesFieldDefinitions';
 
-export interface ICreateProcessFormMultisigParamsProps extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormMultisigParamsProps extends ICreateProcessFormBodyDialogStepsProps {}
 
 export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParamsProps> = (props) => {
-    const { stageFieldName, bodyIndex } = props;
+    const { fieldPrefix } = props;
+
     const { watch } = useFormContext();
-    const members = watch(`${stageFieldName}.bodies.${bodyIndex}.members`);
-    const { multisigThresholdField } = useBodyFields(stageFieldName, bodyIndex);
+    const members = watch(`${fieldPrefix}.members`);
+
+    const multisigThresholdField = useFormField<ICreateProcessFormBody, 'multisigThreshold'>('multisigThreshold', {
+        label: 'Approval Threshold',
+        defaultValue: 1,
+        rules: {
+            required: 'Threshold must be at least 1',
+            min: { value: 1, message: 'Threshold must be at least 1' },
+        },
+    });
 
     return (
         <InputNumber

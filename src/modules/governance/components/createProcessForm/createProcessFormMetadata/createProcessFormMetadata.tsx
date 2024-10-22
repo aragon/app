@@ -27,8 +27,8 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
         defaultValue: '',
     });
 
-    const summaryField = useFormField<ICreateProcessFormData, 'summary'>('summary', {
-        label: t('app.governance.createProcessForm.metadata.summary.label'),
+    const summaryField = useFormField<ICreateProcessFormData, 'description'>('description', {
+        label: t('app.governance.createProcessForm.metadata.description.label'),
         defaultValue: '',
     });
 
@@ -55,8 +55,8 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
                 {...keyField}
             />
             <TextArea
-                helpText={t('app.governance.createProcessForm.metadata.summary.helpText')}
-                placeholder={t('app.governance.createProcessForm.metadata.summary.placeholder')}
+                helpText={t('app.governance.createProcessForm.metadata.description.helpText')}
+                placeholder={t('app.governance.createProcessForm.metadata.description.placeholder')}
                 isOptional={true}
                 maxLength={480}
                 {...summaryField}

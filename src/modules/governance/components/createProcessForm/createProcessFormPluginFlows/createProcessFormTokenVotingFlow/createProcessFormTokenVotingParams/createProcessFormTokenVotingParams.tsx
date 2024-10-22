@@ -1,5 +1,5 @@
-import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
-import { useBodyFields } from '@/modules/governance/components/createProcessForm/hooks/useBodyFields';
+import type { ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AlertInline,
     Card,
@@ -13,22 +13,35 @@ import {
 } from '@aragon/ods';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import type { ICreateProcessFormBodyDialogStepsProps } from '../../../createProcessFormStages/fields/stageBodiesField/stageBodiesFieldDefinitions';
 
-export interface ICreateProcessFormTokenVotingParamsProps extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormTokenVotingParamsProps extends ICreateProcessFormBodyDialogStepsProps {}
 
 export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormTokenVotingParamsProps> = (props) => {
-    const { stageFieldName, bodyIndex } = props;
+    const { fieldPrefix } = props;
+
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
+
     const { watch, setValue } = useFormContext();
 
-    const { supportThresholdField, minimumParticipationField, voteChangeField } = useBodyFields(
-        stageFieldName,
-        bodyIndex,
+    const supportThresholdField = useFormField<ICreateProcessFormBody, 'supportThreshold'>('supportThreshold', {
+        fieldPrefix,
+        label: 'Support threshold',
+    });
+
+    const minimumParticipationField = useFormField<ICreateProcessFormBody, `minimumParticipation`>(
+        'minimumParticipation',
+        { fieldPrefix, label: 'Minimum participation' },
     );
 
-    const members = watch(`${stageFieldName}.bodies.${bodyIndex}.members`);
-    const tokenSymbolField = watch(`${stageFieldName}.bodies.${bodyIndex}.tokenSymbolField`);
+    const voteChangeField = useFormField<ICreateProcessFormBody, 'voteChange'>('voteChange', {
+        label: 'Vote change',
+        fieldPrefix,
+    });
+
+    const members = watch(`${fieldPrefix}.members`);
+    const tokenSymbolField = watch(`${fieldPrefix}.tokenSymbolField`);
 
     useEffect(() => {
         const totalTokenAmount = members?.reduce(
@@ -44,9 +57,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
 
     const formattedParticipation = formatterUtils.formatNumber(
         currentTotalTokenAmount * minimumParticipationField.value * 0.01,
-        {
-            format: NumberFormat.TOKEN_AMOUNT_SHORT,
-        },
+        { format: NumberFormat.TOKEN_AMOUNT_SHORT },
     );
 
     return (
@@ -64,7 +75,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                             suffix="%"
                             min={1}
                             max={100}
-                            placeholder=">1%"
+                            placeholder="> 1 %"
                             {...supportThresholdField}
                             label={undefined}
                         />

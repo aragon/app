@@ -14,11 +14,10 @@ import {
 } from '@aragon/ods';
 import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useAccount } from 'wagmi';
 import type {
     ICreateProcessFormBody,
     ICreateProcessFormData,
-    IMultisigVotingMember,
-    IOpenDialogState,
     ITokenVotingMember,
 } from '../../../createProcessFormDefinitions';
 import { StageRequiredApprovalsField } from '../stageRequiredApprovalsField';
@@ -39,29 +38,48 @@ export interface IStageBodiesFieldProps {
     index: number;
 }
 
+interface IBodyDialogState {
+    /**
+     * Dialog open state.
+     */
+    isOpen: boolean;
+    /**
+     * Index of the body to edit.
+     */
+    bodyIndex: number;
+    /**
+     * Displays the select governance type view when creating a new body.
+     */
+    isNewBody?: boolean;
+}
+
+let bodyId = 0;
+
 export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
     const { stageFieldName, isOptimisticStage, index } = props;
 
-    const [isBodyDialogOpen, setIsBodyDialogOpen] = useState<IOpenDialogState>({ dialogOpen: false, editBodyIndex: 0 });
+    const [bodyDialogState, setBodyDialogState] = useState<IBodyDialogState>({ isOpen: false, bodyIndex: 0 });
+
+    const { address } = useAccount();
 
     const handleAddBody = () => {
         appendBody({
-            bodyNameField: '',
-            bodyGovernanceTypeField: 'tokenVoting',
-            bodyResourceField: [],
-            tokenNameField: '',
-            tokenSymbolField: '',
-            supportThresholdField: 50,
-            minimumParticipationField: 0,
-            voteChangeField: false,
-            resourcesField: [],
-            members: [],
-            multisigThresholdField: 1,
+            name: '',
+            id: (bodyId++).toString(),
+            governanceType: 'tokenVoting',
+            resources: [],
+            members: [{ address: address ?? '' }],
+            tokenName: '',
+            tokenSymbol: '',
+            supportThreshold: 50,
+            minimumParticipation: 0,
+            voteChange: false,
+            multisigThreshold: 1,
         });
-        setIsBodyDialogOpen({ dialogOpen: true, editBodyIndex: controlledBodyField.length, newBody: true });
+        setBodyDialogState({ isOpen: true, bodyIndex: controlledBodyField.length, isNewBody: true });
     };
 
-    const handleEditBody = (bodyIndex: number) => setIsBodyDialogOpen({ dialogOpen: true, editBodyIndex: bodyIndex });
+    const handleEditBody = (bodyIndex: number) => setBodyDialogState({ isOpen: true, bodyIndex: bodyIndex });
 
     const { t } = useTranslations();
     const { watch, formState } = useFormContext<ICreateProcessFormData>();
@@ -101,18 +119,18 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                             <Accordion.Container isMulti={true}>
                                 <Accordion.Item value={field.id}>
                                     <Accordion.ItemHeader>
-                                        <Heading size="h4">{field.bodyNameField}</Heading>
+                                        <Heading size="h4">{field.name}</Heading>
                                     </Accordion.ItemHeader>
                                     <Accordion.ItemContent>
                                         <DefinitionList.Container className="w-full">
-                                            {field.bodyGovernanceTypeField === 'tokenVoting' && (
+                                            {field.governanceType === 'tokenVoting' && (
                                                 <>
                                                     <DefinitionList.Item
                                                         term={t(
                                                             'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.token',
                                                         )}
                                                     >
-                                                        {field.tokenNameField} (${field.tokenSymbolField})
+                                                        {field.tokenName} (${field.tokenSymbol})
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
@@ -135,31 +153,28 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                     >
                                                         {formatterUtils.formatNumber(
                                                             field.members.reduce(
-                                                                (
-                                                                    sum: number,
-                                                                    member: ITokenVotingMember | IMultisigVotingMember,
-                                                                ) =>
+                                                                (sum, member) =>
                                                                     sum +
                                                                     Number((member as ITokenVotingMember).tokenAmount),
                                                                 0,
                                                             ),
                                                             { format: NumberFormat.TOKEN_AMOUNT_LONG },
                                                         )}{' '}
-                                                        ${field.tokenSymbolField}
+                                                        ${field.tokenSymbol}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
                                                             'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.support',
                                                         )}
                                                     >
-                                                        {`> ${field.supportThresholdField}%`}
+                                                        {`> ${field.supportThreshold}%`}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
                                                             'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.minimum',
                                                         )}
                                                     >
-                                                        {`≥ ${field.minimumParticipationField}%`}
+                                                        {`≥ ${field.minimumParticipation}%`}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
@@ -168,7 +183,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                     >
                                                         <Tag
                                                             label={
-                                                                field.voteChangeField
+                                                                field.voteChange
                                                                     ? t(
                                                                           'app.governance.createProcessForm.stage.bodies.summary.no',
                                                                       )
@@ -176,14 +191,14 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                                           'app.governance.createProcessForm.stage.bodies.summary.no',
                                                                       )
                                                             }
-                                                            variant={field.voteChangeField ? 'primary' : 'neutral'}
+                                                            variant={field.voteChange ? 'primary' : 'neutral'}
                                                             className="max-w-fit"
                                                         />
                                                     </DefinitionList.Item>
                                                 </>
                                             )}
 
-                                            {field.bodyGovernanceTypeField === 'multisig' && (
+                                            {field.governanceType === 'multisig' && (
                                                 <>
                                                     <DefinitionList.Item
                                                         term={t(
@@ -204,7 +219,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                             'app.governance.createProcessForm.stage.bodies.summary.multisig.threshold',
                                                         )}
                                                     >
-                                                        {field.multisigThresholdField} of {field.members.length}
+                                                        {field.multisigThreshold} of {field.members.length}
                                                     </DefinitionList.Item>
                                                 </>
                                             )}
@@ -253,13 +268,13 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                     >
                         {t('app.governance.createProcessForm.stage.bodies.add')}
                     </Button>
-                    {isBodyDialogOpen.dialogOpen && (
+                    {bodyDialogState.isOpen && (
                         <StageBodiesFieldDialog
+                            stageFieldName={stageFieldName}
                             removeBody={removeBody}
                             updateBody={updateBody}
-                            isBodyDialogOpen={isBodyDialogOpen}
-                            setIsBodyDialogOpen={setIsBodyDialogOpen}
-                            stageFieldName={stageFieldName}
+                            onClose={() => setBodyDialogState({ isOpen: false, bodyIndex: 0 })}
+                            {...bodyDialogState}
                         />
                     )}
                 </div>

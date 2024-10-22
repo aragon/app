@@ -3,8 +3,8 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/ods';
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
+import type { ICreateProcessFormBody, ICreateProcessFormPermissions } from '../createProcessFormDefinitions';
 import { VotingBodyCheckboxCard } from './components/votingBodyCheckboxCard';
-import type { Body, PermissionsData } from './createProcessFormPermissions.api';
 
 export interface ICreateProcessFormPermissionProps {}
 
@@ -13,23 +13,26 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
 
     const { t } = useTranslations();
 
-    const eligibleField = useFormField<PermissionsData, 'eligibleVoters'>('eligibleVoters', {
+    const eligibleField = useFormField<ICreateProcessFormPermissions, 'proposalCreation'>('proposalCreation', {
         label: t('app.governance.createProcessForm.permissions.eligibleVoters.label'),
         defaultValue: 'bodies',
     });
 
-    const allBodies: Body[] = useMemo(
-        () => getValues('stages')?.flatMap((stage: { bodies: Body[] }) => stage.bodies || []) || [],
+    const allBodies: ICreateProcessFormBody[] = useMemo(
+        () => getValues('stages')?.flatMap((stage: { bodies: ICreateProcessFormBody[] }) => stage.bodies || []) || [],
         [getValues],
     );
 
-    const votingBodyField = useFormField<PermissionsData, 'selectedBodies'>('selectedBodies', {
-        defaultValue: allBodies ?? [],
-        rules: {
-            // if bodies are selected, at least one body must be selected for the user to continue
-            validate: eligibleField.value === 'bodies' ? (value) => value.length > 0 : undefined,
+    const votingBodyField = useFormField<ICreateProcessFormPermissions, 'proposalCreationBodies'>(
+        'proposalCreationBodies',
+        {
+            defaultValue: allBodies.map((body) => ({ id: body.id, settings: {} })),
+            rules: {
+                // if bodies are selected, at least one body must be selected for the user to continue
+                validate: eligibleField.value === 'bodies' ? (value) => value.length > 0 : undefined,
+            },
         },
-    });
+    );
 
     const onEligibleFieldChange = (value: string) => {
         eligibleField.onChange(value);
@@ -62,14 +65,9 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     useCustomWrapper={true}
                     {...votingBodyField}
                 >
-                    {allBodies &&
-                        allBodies.map((body: Body) => (
-                            <VotingBodyCheckboxCard
-                                values={votingBodyField.value}
-                                key={body.bodyNameField}
-                                body={body}
-                            />
-                        ))}
+                    {allBodies?.map((body) => (
+                        <VotingBodyCheckboxCard key={body.id} values={votingBodyField.value} body={body} />
+                    ))}
                 </InputContainer>
             )}
         </>

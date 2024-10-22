@@ -1,31 +1,20 @@
-import type { ICreateProcessFormBodyNameProps } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import type { ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { MultisigMemberInputRow } from '@/modules/governance/components/createProcessForm/createProcessFormPluginFlows/createProcessFormMultisigFlow/createProcessFormMemberInputRow/multisigMemberInputRow';
-import { useMembersFieldArray } from '@/modules/governance/components/createProcessForm/hooks/useMembersFieldArray';
 import { Button, IconType, InputContainer } from '@aragon/ods';
-import { useEffect } from 'react';
+import { useFieldArray } from 'react-hook-form';
+import type { ICreateProcessFormBodyDialogStepsProps } from '../../../createProcessFormStages/fields/stageBodiesField/stageBodiesFieldDefinitions';
 
-export interface ICreateProcessFormMultisigDistroProps extends ICreateProcessFormBodyNameProps {}
+export interface ICreateProcessFormMultisigDistroProps extends ICreateProcessFormBodyDialogStepsProps {}
 
 export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisigDistroProps> = (props) => {
-    const { stageFieldName, bodyIndex } = props;
+    const { fieldPrefix } = props;
 
-    const { membersFieldArray, appendMember, removeMember } = useMembersFieldArray({ stageFieldName, bodyIndex });
-
-    const handleAddMember = () => {
-        appendMember({});
-    };
-
-    const handleRemoveMember = (index: number) => {
-        if (membersFieldArray.length > 1) {
-            removeMember(index);
-        }
-    };
-
-    useEffect(() => {
-        if (membersFieldArray.length === 0) {
-            handleAddMember();
-        }
+    const membersFieldName = `${fieldPrefix}.members`;
+    const { fields, append, remove } = useFieldArray<Record<string, ICreateProcessFormBody['members']>>({
+        name: membersFieldName,
     });
+
+    const handleAddMember = () => append({ address: '' });
 
     return (
         <>
@@ -35,13 +24,13 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
                 helpText="Add the addresses that will be part of the multisig."
                 useCustomWrapper={true}
             >
-                {membersFieldArray.map((member, index) => (
+                {fields.map((member, index) => (
                     <MultisigMemberInputRow
-                        key={index}
+                        key={member.id}
                         index={index}
-                        fieldNamePrefix={`${stageFieldName}.bodies.${bodyIndex}.members.${index}`}
-                        handleRemoveMember={handleRemoveMember}
-                        canRemove={membersFieldArray.length > 1}
+                        fieldNamePrefix={`${fieldPrefix}.members.${index}`}
+                        handleRemoveMember={() => remove(index)}
+                        canRemove={fields.length > 0}
                     />
                 ))}
             </InputContainer>
