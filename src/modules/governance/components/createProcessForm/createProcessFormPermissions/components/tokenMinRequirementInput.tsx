@@ -3,10 +3,11 @@ import { InputNumber } from '@aragon/ods';
 
 interface ITokenMinRequirementInputProps {
     handleMinRequirementChange: (value: number) => void;
+    maxTokens: number;
 }
 
 export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> = (props) => {
-    const { handleMinRequirementChange } = props;
+    const { handleMinRequirementChange, maxTokens } = props;
 
     const { t } = useTranslations();
 
@@ -18,6 +19,9 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
                 helpText={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
                 placeholder="≥ 1"
                 onChange={(value) => handleMinRequirementChange(Number(value))}
+                min={0}
+                max={maxTokens}
+                defaultValue={0}
             />
         </button>
     );

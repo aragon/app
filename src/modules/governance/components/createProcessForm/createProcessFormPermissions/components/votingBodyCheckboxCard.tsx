@@ -1,6 +1,10 @@
-import { CheckboxCard } from '@aragon/ods';
+import { CheckboxCard, type ICompositeAddress } from '@aragon/ods';
 import { useFormContext } from 'react-hook-form';
-import type { ICreateProcessFormBody, ICreateProcessFormPermissions } from '../../createProcessFormDefinitions';
+import type {
+    ICreateProcessFormBody,
+    ICreateProcessFormPermissions,
+    ITokenVotingMember,
+} from '../../createProcessFormDefinitions';
 import { TokenMinRequirementInput } from './tokenMinRequirementInput';
 
 export interface IVotingBodyCheckboxCardProps {
@@ -12,6 +16,8 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
     const { body, values } = props;
 
     const { setValue, trigger } = useFormContext();
+
+    const isTokenVoting = body.governanceType === 'tokenVoting';
 
     const handleCheckboxChange = (isChecked: boolean) => {
         const updatedBodies = isChecked
@@ -32,6 +38,17 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
         setValue('proposalCreationBodies', updatedVotingBodies);
     };
 
+    function isTokenVotingMember(member: ICompositeAddress | ITokenVotingMember): member is ITokenVotingMember {
+        return 'tokenAmount' in member;
+    }
+
+    const maxTokens = isTokenVoting
+        ? body.members.reduce(
+              (sum, member) => (isTokenVotingMember(member) ? sum + Number(member.tokenAmount) : sum),
+              0,
+          )
+        : undefined;
+
     return (
         <CheckboxCard
             label={body.name}
@@ -39,8 +56,11 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
             onCheckedChange={(isChecked) => handleCheckboxChange(isChecked as boolean)}
             defaultChecked={true}
         >
-            {body.governanceType === 'tokenVoting' && (
-                <TokenMinRequirementInput handleMinRequirementChange={handleMinRequirementChange} />
+            {isTokenVoting && (
+                <TokenMinRequirementInput
+                    handleMinRequirementChange={handleMinRequirementChange}
+                    maxTokens={maxTokens ?? 0}
+                />
             )}
         </CheckboxCard>
     );
