@@ -1,5 +1,5 @@
 import { type ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum';
-import { type IDaoLink } from '@/shared/api/daoService';
+import { type IResource } from '@/shared/api/daoService';
 import { type IProposalActionUpdateMetadata as IOdsProposalActionUpdateMetadata } from '@aragon/ods';
 
 export interface IProposalActionUpdateMetadataObject {
@@ -18,7 +18,7 @@ export interface IProposalActionUpdateMetadataObject {
     /**
      * The links of the DAO
      */
-    links: IDaoLink[];
+    links: IResource[];
 }
 
 export interface IProposalActionUpdateMetadata

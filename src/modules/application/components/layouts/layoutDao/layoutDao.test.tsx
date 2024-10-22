@@ -18,6 +18,10 @@ jest.mock('../../navigations/navigationDao', () => ({
     NavigationDao: () => <div data-testid="navigation-dao-mock" />,
 }));
 
+jest.mock('../../../../../shared/components/banner', () => ({
+    Banner: () => <div data-testid="banner-mock" />,
+}));
+
 describe('<LayoutDao /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const consoleErrorSpy = jest.spyOn(console, 'error');

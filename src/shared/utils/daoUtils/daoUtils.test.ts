@@ -90,9 +90,17 @@ describe('dao utils', () => {
         });
     });
 
-    describe('formatPluginName', () => {
+    describe('getPluginName', () => {
         it('formats plugin subdomain', () => {
-            expect(daoUtils.formatPluginName('token-voting')).toEqual('Token Voting');
+            const subdomain = 'token-voting';
+            const plugin = generateDaoPlugin({ subdomain });
+            expect(daoUtils.getPluginName(plugin)).toEqual('Token Voting');
+        });
+
+        it('returns plugin name when available', () => {
+            const name = 'Custom plugin';
+            const plugin = generateDaoPlugin({ name });
+            expect(daoUtils.getPluginName(plugin)).toEqual(name);
         });
     });
 
@@ -169,6 +177,39 @@ describe('dao utils', () => {
                 plugins[1],
                 plugins[3],
             ]);
+        });
+
+        it('only returns the plugin with the specified subdomain', () => {
+            const plugins = [
+                generateDaoPlugin({ subdomain: 'pluginA' }),
+                generateDaoPlugin({ subdomain: 'pluginB' }),
+                generateDaoPlugin({ subdomain: 'pluginC' }),
+            ];
+            const dao = generateDao({ plugins });
+            const subdomain = 'pluginB';
+            expect(daoUtils.getDaoPlugins(dao, { subdomain })).toEqual([plugins[1]]);
+        });
+
+        it('returns an empty array when no plugin matches the specified subdomain', () => {
+            const plugins = [generateDaoPlugin({ subdomain: 'pluginA' }), generateDaoPlugin({ subdomain: 'pluginB' })];
+            const dao = generateDao({ plugins });
+            const subdomain = 'pluginC';
+            expect(daoUtils.getDaoPlugins(dao, { subdomain })).toEqual([]);
+        });
+
+        it('returns all plugins with the specified subdomain when multiple plugins share the same subdomain', () => {
+            const plugins = [
+                generateDaoPlugin({ subdomain: 'sharedSubdomain', address: '0x1' }),
+                generateDaoPlugin({ subdomain: 'sharedSubdomain', address: '0x2' }),
+                generateDaoPlugin({ subdomain: 'uniqueSubdomain', address: '0x3' }),
+            ];
+            const dao = generateDao({ plugins });
+            const subdomain = 'sharedSubdomain';
+            expect(daoUtils.getDaoPlugins(dao, { subdomain })).toEqual([plugins[0], plugins[1]]);
+        });
+
+        it('returns undefined when dao parameter is not defined', () => {
+            expect(daoUtils.getDaoPlugins(undefined)).toBeUndefined();
         });
     });
 });

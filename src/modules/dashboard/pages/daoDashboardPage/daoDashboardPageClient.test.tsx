@@ -128,7 +128,8 @@ describe('<DaoDashboardPageClient /> component', () => {
         expect(clipboardCopySpy).toHaveBeenCalledWith('localhost/');
     });
 
-    it('renders the DAO proposal list with a button to redirect to the proposals page', () => {
+    it('renders the DAO proposal list with a button to redirect to the proposals page when DAO has supported plugins', () => {
+        hasSupportedPluginsSpy.mockReturnValue(true);
         const daoId = 'my-dao';
         render(createTestComponent({ daoId }));
         const proposalList = screen.getByTestId('proposal-list-mock');
@@ -138,6 +139,12 @@ describe('<DaoDashboardPageClient /> component', () => {
         });
         expect(proposalPageLink).toBeInTheDocument();
         expect(proposalPageLink.href).toMatch(new RegExp(`dao/${daoId}/proposals`));
+    });
+
+    it('does not render the DAO proposal list when DAO has no supported plugins', () => {
+        hasSupportedPluginsSpy.mockReturnValue(false);
+        render(createTestComponent());
+        expect(screen.queryByTestId('proposal-list-mock')).not.toBeInTheDocument();
     });
 
     it('renders the DAO asset list with a button to redirect to the asset page', () => {

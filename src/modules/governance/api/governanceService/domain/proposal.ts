@@ -1,7 +1,7 @@
 import type { IAddressInfo, IPluginSettings, Network } from '@/shared/api/daoService';
+import type { IResource } from '../../../../../shared/api/daoService/domain/resource';
 import type { IProposalAction } from './proposalAction';
 import type { IProposalExecution } from './proposalExecution';
-import type { IProposalResource } from './proposalResource';
 
 export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> {
     /**
@@ -55,7 +55,7 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
     /**
      * Array of resources of the proposal.
      */
-    resources: IProposalResource[];
+    resources: IResource[];
     /**
      * Plugin settings when the proposal was created.
      */

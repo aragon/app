@@ -1,6 +1,23 @@
 import type { IPluginSettings } from './pluginSettings';
+import type { IResource } from './resource';
 
 export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings> {
+    /**
+     * Name of the plugin.
+     */
+    name?: string;
+    /**
+     * Description of the plugin.
+     */
+    description?: string;
+    /**
+     * Links of the plugin.
+     */
+    resources?: IResource[];
+    /**
+     * Key of the plugin used to prefix the incremental proposal IDs in a process.
+     */
+    processKey?: string;
     /**
      * Address of the plugin.
      */
@@ -29,7 +46,7 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * Defines if the plugin is installed on the DAO as a sub / child plugin.
      */
     isSubPlugin: boolean;
-    /*
+    /**
      * Settings of the DAO plugin.
      */
     settings: TSettings;
@@ -37,4 +54,8 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * Address of the parent plugin's smart contract.
      */
     parentPlugin?: string;
+    /**
+     * Block timestamp when the plugin was created.
+     */
+    blockTimestamp: number;
 }

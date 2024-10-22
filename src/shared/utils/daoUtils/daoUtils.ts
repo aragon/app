@@ -26,6 +26,10 @@ export interface IGetDaoPluginsParams {
      * @default false
      */
     includeSubPlugins?: boolean;
+    /**
+     * Only returns the plugin with the specified subdomain when set.
+     */
+    subdomain?: string;
 }
 
 class DaoUtils {
@@ -53,19 +57,23 @@ class DaoUtils {
     getDaoEns = (dao?: IDao): string | undefined =>
         dao?.subdomain != null && dao.subdomain !== '' ? `${dao.subdomain}.dao.eth` : undefined;
 
-    formatPluginName = (pluginSubdomain: string): string => {
-        const parts = pluginSubdomain.split('-');
+    getPluginName = (plugin: IDaoPlugin): string => {
+        if (plugin.name) {
+            return plugin.name;
+        }
 
+        const parts = plugin.subdomain.split('-');
         return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
     };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
-        const { type, pluginAddress, includeSubPlugins = false } = params ?? {};
+        const { type, pluginAddress, includeSubPlugins = false, subdomain } = params ?? {};
         return dao?.plugins.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type) &&
-                this.filterBySubPlugin(plugin, includeSubPlugins),
+                this.filterBySubPlugin(plugin, includeSubPlugins) &&
+                this.filterBySubdomain(plugin, subdomain),
         );
     };
 
@@ -79,6 +87,9 @@ class DaoUtils {
 
     private filterBySubPlugin = (plugin: IDaoPlugin, includeSubPlugins: boolean) =>
         includeSubPlugins || !plugin.isSubPlugin;
+
+    private filterBySubdomain = (plugin: IDaoPlugin, subdomain?: string) =>
+        subdomain == null || plugin.subdomain === subdomain;
 }
 
 export const daoUtils = new DaoUtils();
