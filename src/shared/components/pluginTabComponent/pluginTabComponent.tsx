@@ -45,15 +45,9 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     }
 
     if (isSingleComponent) {
-        return (
-            <PluginSingleComponent
-                slotId={slotId}
-                pluginId={plugins[0].id}
-                Fallback={Fallback}
-                {...plugins[0].props}
-                {...otherProps}
-            />
-        );
+        const { id, props } = supportedPlugins.length === 1 ? supportedPlugins[0] : plugins[0];
+
+        return <PluginSingleComponent slotId={slotId} pluginId={id} Fallback={Fallback} {...props} {...otherProps} />;
     }
 
     return (

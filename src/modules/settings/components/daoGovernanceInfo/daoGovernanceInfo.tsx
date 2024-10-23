@@ -2,6 +2,7 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
 
 export interface IDaoGovernanceInfoProps {
     /**
@@ -17,7 +18,7 @@ export interface IDaoGovernanceInfoProps {
 export const DaoGovernanceInfo: React.FC<IDaoGovernanceInfoProps> = (props) => {
     const { daoId, plugin } = props;
 
-    const daoPlugins = useDaoPlugins({ daoId, pluginAddress: plugin?.address })!;
+    const daoPlugins = useDaoPlugins({ daoId, pluginAddress: plugin?.address, type: PluginType.PROCESS })!;
     const processedPlugins = daoPlugins.map((plugin) => ({ ...plugin, props: { plugin: plugin.meta } }));
 
     return (
