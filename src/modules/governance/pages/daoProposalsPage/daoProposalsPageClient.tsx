@@ -57,7 +57,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={false}>
+                <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={true}>
                     <DaoPluginInfo
                         plugin={selectedPlugin.meta}
                         type={PluginType.PROCESS}

@@ -35,7 +35,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')} inset={false}>
+                <Page.Section title={t('app.governance.daoMembersPage.aside.details.title')} inset={true}>
                     <DaoPluginInfo
                         plugin={selectedPlugin.meta}
                         type={PluginType.BODY}

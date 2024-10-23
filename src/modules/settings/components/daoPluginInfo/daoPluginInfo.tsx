@@ -56,7 +56,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     });
 
     return (
-        <div className="mt-4 flex flex-col gap-y-6">
+        <div className="flex flex-col gap-y-6">
             {plugin.description && <p className="text-neutral-500">{plugin.description}</p>}
             {plugin.links?.map((resource: IResource, index: number) => (
                 <div className="flex flex-col gap-y-3" key={index}>

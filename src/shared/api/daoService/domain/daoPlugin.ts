@@ -59,7 +59,7 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      */
     blockTimestamp: number;
     /**
-     * Transaction hash of the plugin creation transaction.
+     * Transaction hash of the plugin creation.
      */
     transactionHash: string;
 }
