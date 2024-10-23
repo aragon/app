@@ -36,8 +36,6 @@ export const useDaoPlugins = (
 
     const plugins = daoUtils.getDaoPlugins(dao, { type, pluginAddress, includeSubPlugins, subdomain });
 
-    console.log({ dao, plugins });
-
     const processedPlugins = plugins?.map((plugin) => ({
         id: plugin.subdomain,
         uniqueId: `${plugin.subdomain}-${plugin.address}`,
