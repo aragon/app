@@ -36,6 +36,10 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      * Flag to control trimming behavior.
      */
     trimOnBlur?: boolean;
+    /**
+     * Custom error message for field
+     */
+    errorMessage?: string;
 }
 
 export type IUseFormFieldReturn<
