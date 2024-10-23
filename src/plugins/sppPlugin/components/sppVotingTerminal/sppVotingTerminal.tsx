@@ -29,7 +29,7 @@ export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
         <ProposalVoting.Container
             title={t('app.plugins.spp.sppVotingTerminal.title')}
             description={t('app.plugins.spp.sppVotingTerminal.description')}
-            activeStage={proposal.currentStageIndex.toString()}
+            activeStage={proposal.stageIndex.toString()}
         >
             {processedStages?.map(({ stage, subProposals, index }) => (
                 <SppVotingTerminalStage

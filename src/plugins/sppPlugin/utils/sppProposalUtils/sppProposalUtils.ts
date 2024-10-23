@@ -46,7 +46,7 @@ class SppProposalUtils {
     endsInFuture = (proposal: ISppProposal): boolean => {
         const now = DateTime.now();
         const currentStage = this.getCurrentStage(proposal);
-        const isLastStage = proposal.currentStageIndex === proposal.settings.stages.length - 1;
+        const isLastStage = proposal.stageIndex === proposal.settings.stages.length - 1;
         const stageEndDate = sppStageUtils.getStageEndDate(proposal, currentStage);
 
         if (!isLastStage) {
@@ -61,7 +61,7 @@ class SppProposalUtils {
     };
 
     getCurrentStage = (proposal: ISppProposal): ISppStage => {
-        return proposal.settings.stages[proposal.currentStageIndex];
+        return proposal.settings.stages[proposal.stageIndex];
     };
 
     areAllStagesAccepted = (proposal: ISppProposal): boolean => {
