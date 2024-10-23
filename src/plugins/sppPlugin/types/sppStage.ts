@@ -16,7 +16,7 @@ export interface ISppStage {
     /**
      * Duration in seconds of the stage.
      */
-    votingPeriod: number;
+    voteDuration: number;
     /**
      * The maximum amount of time a proposal can be advanced to the next stage.
      */

@@ -4,7 +4,7 @@ export const generateSppStage = (stage?: Partial<ISppStage>): ISppStage => ({
     id: '0',
     name: 'Stage Name',
     plugins: [],
-    votingPeriod: 1,
+    voteDuration: 1,
     maxAdvance: 1,
     minAdvance: 1,
     approvalThreshold: 1,
