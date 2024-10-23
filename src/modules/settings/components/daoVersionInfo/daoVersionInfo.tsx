@@ -21,7 +21,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const chainId = networkDefinitions[dao.network].chainId;
     const { buildEntityUrl } = useBlockExplorer();
 
-    const processPlugins = useDaoPlugins({ daoId: dao.id, type: PluginType.PROCESS });
+    const processPlugins = useDaoPlugins({ daoId: dao.id, type: PluginType.PROCESS, includeSubPlugins: true });
 
     const version = useApplicationVersion();
 

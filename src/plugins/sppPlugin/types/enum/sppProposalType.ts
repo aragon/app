@@ -1,4 +1,5 @@
 export enum SppProposalType {
-    APPROVAL = 'Approval',
-    VETO = 'Veto',
+    NONE = 0,
+    APPROVAL = 1,
+    VETO = 2,
 }
