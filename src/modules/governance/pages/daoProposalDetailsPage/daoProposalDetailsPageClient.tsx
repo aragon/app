@@ -116,16 +116,14 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             </CardCollapsible>
                         </Page.Section>
                     )}
-                    <Page.Section title={t('app.governance.daoProposalDetailsPage.main.governance')}>
-                        <PluginSingleComponent
-                            slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
-                            pluginId={proposal.pluginSubdomain}
-                            proposal={proposal}
-                            status={proposalStatus}
-                            daoId={daoId}
-                            Fallback={ProposalVotingTerminal}
-                        />
-                    </Page.Section>
+                    <PluginSingleComponent
+                        slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
+                        pluginId={proposal.pluginSubdomain}
+                        proposal={proposal}
+                        status={proposalStatus}
+                        daoId={daoId}
+                        Fallback={ProposalVotingTerminal}
+                    />
                     <Page.Section
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
@@ -144,7 +142,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
-                                <p className="text-neutral-500">{proposal.proposalIndex}</p>
+                                <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}
