@@ -37,7 +37,7 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      */
     trimOnBlur?: boolean;
     /**
-     * Custom error message for field
+     * Custom error message for form field
      */
     errorMessage?: string;
 }
