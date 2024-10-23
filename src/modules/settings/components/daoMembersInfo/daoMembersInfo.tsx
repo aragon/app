@@ -17,7 +17,7 @@ export interface IDaoMembersInfoProps {
 export const DaoMembersInfo: React.FC<IDaoMembersInfoProps> = (props) => {
     const { daoId, plugin } = props;
 
-    const daoPlugins = useDaoPlugins({ daoId, pluginAddress: plugin?.address })!;
+    const daoPlugins = useDaoPlugins({ daoId, pluginAddress: plugin?.address, includeSubPlugins: true })!;
     const processedPlugins = daoPlugins.map((plugin) => ({ ...plugin, props: { plugin: plugin.meta } }));
 
     return (

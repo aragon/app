@@ -29,7 +29,12 @@ export interface IDaoMemberListContainerProps
 export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (props) => {
     const { initialParams, ...otherProps } = props;
 
-    const bodyPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.BODY });
+    const bodyPlugins = useDaoPlugins({
+        daoId: initialParams.queryParams.daoId,
+        type: PluginType.BODY,
+        includeSubPlugins: true,
+    });
+
     const processedPlugins = bodyPlugins?.map((plugin) => {
         const pluginInitialParams = {
             ...initialParams,
