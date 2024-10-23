@@ -22,7 +22,11 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
 
     const { t } = useTranslations();
 
-    const bodyPlugins = useDaoPlugins({ daoId: initialParams.queryParams.daoId, type: PluginType.BODY })!;
+    const bodyPlugins = useDaoPlugins({
+        daoId: initialParams.queryParams.daoId,
+        type: PluginType.BODY,
+        includeSubPlugins: true,
+    })!;
     const [selectedPlugin, setSelectedPlugin] = useState(bodyPlugins[0]);
 
     return (

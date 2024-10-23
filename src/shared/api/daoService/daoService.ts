@@ -10,11 +10,7 @@ class DaoService extends AragonBackendService {
     getDao = async (params: IGetDaoParams): Promise<IDao> => {
         const result = await this.request<IDao>(this.urls.dao, params);
 
-        // TODO: remove when isBody, isProcess, isSubPlugin are properly returned from the backend
-        return {
-            ...result,
-            plugins: result.plugins.map((plugin) => ({ ...plugin, isBody: true, isProcess: true, isSubPlugin: false })),
-        };
+        return result;
     };
 }
 
