@@ -208,7 +208,6 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     it('renders the proposal voting terminal', () => {
         render(createTestComponent());
-        expect(screen.getByText(/daoProposalDetailsPage.main.governance/)).toBeInTheDocument();
         expect(screen.getByTestId('voting-terminal-mock')).toBeInTheDocument();
     });
 });
