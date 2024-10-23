@@ -13,5 +13,6 @@ export const generateDaoPlugin = <TSettings extends IPluginSettings = IPluginSet
     isSubPlugin: false,
     settings: generatePluginSettings() as TSettings,
     blockTimestamp: Date.now(),
+    transactionHash: '0x123',
     ...daoPlugin,
 });

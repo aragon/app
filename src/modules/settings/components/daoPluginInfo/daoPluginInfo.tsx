@@ -48,6 +48,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const pluginLaunchedAt = formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
     });
+
     const pluginCreationLink = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
         id: plugin.transactionHash,
