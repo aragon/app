@@ -1,6 +1,7 @@
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { TransactionReceipt } from 'viem';
+import * as viem from 'viem';
 import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
@@ -9,13 +10,18 @@ import {
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '../../testUtils';
+import { proposalAbi } from './proposalAbi';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
+
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual('viem') }));
 
 describe('publishProposalDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
+    const parseEventLogsSpy = jest.spyOn(viem, 'parseEventLogs');
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
+        parseEventLogsSpy.mockReset();
     });
 
     describe('prepareMetadata', () => {
@@ -71,13 +77,17 @@ describe('publishProposalDialog utils', () => {
 
     describe('getProposalId', () => {
         it('parses the transaction receipt to return the proposal id as string', () => {
-            const logTopics = [
-                '0xa6c1f8f4276dc3f243459e13b557c84e8f4e90b2e09070bad5f6909cee687c92',
-                '0x0000000000000000000000000000000000000000000000000000000000000002', // ProposalId
-                '0x00000000000000000000000017366cae2b9c6c3055e9e3c78936a69006be5409',
-            ];
-            const transactionReceipt = { logs: [{ topics: logTopics }] } as TransactionReceipt;
-            expect(publishProposalDialogUtils.getProposalId(transactionReceipt)).toEqual('2');
+            const proposalId = '16';
+            const firstLog = { topics: ['12803258c575c263c24d87e4958ca7b440046a9b5898738a03189f3138e11ce7'] };
+            const secondLog = { topics: ['000000000000000000000000000000000000000000000000000000006718d220'] };
+            const logs = [firstLog, secondLog];
+
+            const decodedLogs = [{ args: { proposalId: BigInt(proposalId) } }];
+            parseEventLogsSpy.mockReturnValue(decodedLogs as unknown as viem.ParseEventLogsReturnType);
+
+            const result = publishProposalDialogUtils.getProposalId({ logs } as TransactionReceipt);
+            expect(parseEventLogsSpy).toHaveBeenCalledWith({ abi: proposalAbi, eventName: 'ProposalCreated', logs });
+            expect(result).toEqual(proposalId);
         });
     });
 

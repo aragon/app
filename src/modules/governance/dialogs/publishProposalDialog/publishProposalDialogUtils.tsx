@@ -2,7 +2,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { decodeAbiParameters, type Hex, type TransactionReceipt } from 'viem';
+import { parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
 import type {
     ICreateProposalFormData,
@@ -11,6 +11,7 @@ import type {
 } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
+import { proposalAbi } from './proposalAbi';
 
 export interface IBuildTransactionParams {
     /**
@@ -68,13 +69,10 @@ class PublishProposalDialogUtils {
     };
 
     getProposalId = (receipt: TransactionReceipt) => {
-        const proposalIdTopic = receipt.logs[0].topics[1]!;
-        const decodedParams = decodeAbiParameters(
-            [{ name: 'proposalId', internalType: 'uint256', type: 'uint256', indexed: true }],
-            proposalIdTopic,
-        );
+        const { logs } = receipt;
 
-        const decodedProposalId = decodedParams[0].toString();
+        const [proposalCreatedLog] = parseEventLogs({ abi: proposalAbi, eventName: 'ProposalCreated', logs });
+        const decodedProposalId = proposalCreatedLog.args.proposalId.toString();
 
         return decodedProposalId;
     };
