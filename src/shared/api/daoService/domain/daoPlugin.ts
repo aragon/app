@@ -13,7 +13,7 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
     /**
      * Links of the plugin.
      */
-    resources?: IResource[];
+    links?: IResource[];
     /**
      * Key of the plugin used to prefix the incremental proposal IDs in a process.
      */
@@ -58,4 +58,8 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      * Block timestamp when the plugin was created.
      */
     blockTimestamp: number;
+    /**
+     * Transaction hash of the plugin creation.
+     */
+    transactionHash: string;
 }

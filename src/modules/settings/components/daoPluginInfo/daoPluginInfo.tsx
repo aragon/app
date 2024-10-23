@@ -48,25 +48,28 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const pluginLaunchedAt = formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
     });
-    const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: plugin.address, chainId });
+
+    const pluginCreationLink = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: plugin.transactionHash,
+        chainId,
+    });
 
     return (
-        <>
-            <div className="gap-y-4">
-                {plugin.description && <p className="text-neutral-500">{plugin.description}</p>}
-                {plugin.resources?.map((resource: IResource, index: number) => (
-                    <div key={index}>
-                        <Link
-                            description={resource.url}
-                            href={resource.url}
-                            target="_blank"
-                            iconRight={IconType.LINK_EXTERNAL}
-                        >
-                            {resource.name}
-                        </Link>
-                    </div>
-                ))}
-            </div>
+        <div className="flex flex-col gap-y-6">
+            {plugin.description && <p className="text-neutral-500">{plugin.description}</p>}
+            {plugin.links?.map((resource: IResource, index: number) => (
+                <div className="flex flex-col gap-y-3" key={index}>
+                    <Link
+                        description={resource.url}
+                        href={resource.url}
+                        target="_blank"
+                        iconRight={IconType.LINK_EXTERNAL}
+                    >
+                        {resource.name}
+                    </Link>
+                </div>
+            ))}
             <DefinitionList.Container>
                 {plugin.name && (
                     <DefinitionList.Item
@@ -79,7 +82,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                         <p className="text-neutral-500">{daoUtils.getPluginName(plugin)}</p>
                     </DefinitionList.Item>
                 )}
-                {type === PluginType.PROCESS && plugin.processKey && (
+                {plugin.processKey && type === PluginType.PROCESS && (
                     <DefinitionList.Item term={t('app.settings.daoPluginInfo.processKey')} className="text-neutral-500">
                         <p className="text-neutral-500"> {plugin.processKey}</p>
                     </DefinitionList.Item>
@@ -104,6 +107,6 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                     </Link>
                 </DefinitionList.Item>
             </DefinitionList.Container>
-        </>
+        </div>
     );
 };
