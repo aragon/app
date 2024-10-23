@@ -64,9 +64,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                         daoId={initialParams.queryParams.daoId}
                     />
                 </Page.Section>
-                <Page.Section title={t('app.governance.daoProposalsPage.aside.settings.title')} inset={false}>
-                    <DaoGovernanceInfo daoId={daoId} plugin={selectedPlugin.meta} />
-                </Page.Section>
+
+                <DaoGovernanceInfo daoId={daoId} plugin={selectedPlugin.meta} />
             </Page.Aside>
         </>
     );

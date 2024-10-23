@@ -13,7 +13,7 @@ export const PageAside: React.FC<IPageAsideProps> = (props) => {
 
     return (
         <PageContextProvider value={asideContextValues}>
-            <aside className={classNames('flex flex-col gap-20 lg:w-1/3', className)} {...otherProps}>
+            <aside className={classNames('flex flex-col gap-10 lg:w-1/3', className)} {...otherProps}>
                 {children}
             </aside>
         </PageContextProvider>

@@ -2,6 +2,7 @@
 
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -49,40 +50,42 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     });
 
     return (
-        <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.eligibleVoters')}>
-                <p className="text-neutral-500">{t('app.plugins.token.tokenMemberInfo.tokenHolders')}</p>
-            </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.tokenLabel')}>
-                <Link
-                    description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address })}
-                    target="_blank"
-                >
-                    {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
-                        tokenName: token.name,
-                        tokenSymbol: token.symbol,
-                    })}
-                </Link>
-            </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.distribution')}>
-                <Link
-                    description={addressUtils.truncateAddress(token.address)}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={`/dao/${daoId}/members`}
-                >
-                    {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
-                </Link>
-            </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.supply')}>
-                <p className="text-neutral-500">
-                    {t('app.plugins.token.tokenMemberInfo.tokenSupply', {
-                        supply: formattedTotalSupply,
-                        symbol: token.symbol,
-                    })}
-                </p>
-            </DefinitionList.Item>
-        </DefinitionList.Container>
+        <Page.Section title={t('app.governance.daoMembersPage.aside.settings.title')} inset={false}>
+            <DefinitionList.Container>
+                <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.eligibleVoters')}>
+                    <p className="text-neutral-500">{t('app.plugins.token.tokenMemberInfo.tokenHolders')}</p>
+                </DefinitionList.Item>
+                <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.tokenLabel')}>
+                    <Link
+                        description={t('app.plugins.token.tokenMemberInfo.tokenLinkDescription')}
+                        iconRight={IconType.LINK_EXTERNAL}
+                        href={buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address })}
+                        target="_blank"
+                    >
+                        {t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
+                            tokenName: token.name,
+                            tokenSymbol: token.symbol,
+                        })}
+                    </Link>
+                </DefinitionList.Item>
+                <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.distribution')}>
+                    <Link
+                        description={addressUtils.truncateAddress(token.address)}
+                        iconRight={IconType.LINK_EXTERNAL}
+                        href={`/dao/${daoId}/members`}
+                    >
+                        {t('app.plugins.token.tokenMemberInfo.tokenDistribution', { count: distribution })}
+                    </Link>
+                </DefinitionList.Item>
+                <DefinitionList.Item term={t('app.plugins.token.tokenMemberInfo.supply')}>
+                    <p className="text-neutral-500">
+                        {t('app.plugins.token.tokenMemberInfo.tokenSupply', {
+                            supply: formattedTotalSupply,
+                            symbol: token.symbol,
+                        })}
+                    </p>
+                </DefinitionList.Item>
+            </DefinitionList.Container>
+        </Page.Section>
     );
 };

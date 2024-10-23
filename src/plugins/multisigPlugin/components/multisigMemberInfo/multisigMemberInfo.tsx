@@ -1,6 +1,7 @@
 'use client';
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, IconType, Link } from '@aragon/gov-ui-kit';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
@@ -27,19 +28,21 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
     const memberCount = memberList?.pages[0].metadata.totalRecords;
 
     return (
-        <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.eligibleVoters')}>
-                <p className="text-neutral-500">{t('app.plugins.multisig.multisigMembersInfo.multisigMembers')}</p>
-            </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}>
-                <Link
-                    description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href={`/dao/${daoId}/members`}
-                >
-                    {t('app.plugins.multisig.multisigMembersInfo.membersCount', { count: memberCount })}
-                </Link>
-            </DefinitionList.Item>
-        </DefinitionList.Container>
+        <Page.Section title={t('app.governance.daoMembersPage.aside.settings.title')} inset={false}>
+            <DefinitionList.Container>
+                <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.eligibleVoters')}>
+                    <p className="text-neutral-500">{t('app.plugins.multisig.multisigMembersInfo.multisigMembers')}</p>
+                </DefinitionList.Item>
+                <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}>
+                    <Link
+                        description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
+                        iconRight={IconType.LINK_EXTERNAL}
+                        href={`/dao/${daoId}/members`}
+                    >
+                        {t('app.plugins.multisig.multisigMembersInfo.membersCount', { count: memberCount })}
+                    </Link>
+                </DefinitionList.Item>
+            </DefinitionList.Container>
+        </Page.Section>
     );
 };

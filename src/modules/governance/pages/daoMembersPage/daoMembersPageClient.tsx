@@ -46,9 +46,8 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
                         daoId={initialParams.queryParams.daoId}
                     />
                 </Page.Section>
-                <Page.Section title={t('app.governance.daoMembersPage.aside.settings.title')} inset={false}>
-                    <DaoMembersInfo daoId={initialParams.queryParams.daoId} plugin={selectedPlugin.meta} />
-                </Page.Section>
+
+                <DaoMembersInfo daoId={initialParams.queryParams.daoId} plugin={selectedPlugin.meta} />
             </Page.Aside>
         </>
     );
