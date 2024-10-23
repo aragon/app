@@ -20,7 +20,7 @@ describe('SppStageUtils', () => {
         it('returns startDate for the first stage', () => {
             const now = '2022-02-10T07:55:55.868Z';
             const startDate = DateTime.fromISO(now).minus({ days: 1 }).toSeconds();
-            const proposal = generateSppProposal({ startDate, currentStageIndex: 0 });
+            const proposal = generateSppProposal({ startDate, stageIndex: 0 });
             const result = sppStageUtils.getStageStartDate(proposal);
             expect(result.toSeconds()).toBe(startDate);
         });
@@ -28,7 +28,7 @@ describe('SppStageUtils', () => {
         it('returns lastStageTransition for subsequent stages', () => {
             const now = '2022-02-10T07:55:55.868Z';
             const lastStageTransition = DateTime.fromISO(now).minus({ hours: 2 }).toSeconds();
-            const proposal = generateSppProposal({ lastStageTransition, currentStageIndex: 1 });
+            const proposal = generateSppProposal({ lastStageTransition, stageIndex: 1 });
             const result = sppStageUtils.getStageStartDate(proposal);
             expect(result.toSeconds()).toBe(lastStageTransition);
         });
@@ -362,7 +362,7 @@ describe('SppStageUtils', () => {
             });
             const proposal = generateSppProposal({
                 startDate: DateTime.fromISO(now).minus({ minutes: 30 }).toSeconds(),
-                currentStageIndex: 0,
+                stageIndex: 0,
                 settings: { stages: [stage1, stage2] },
                 subProposals: [
                     generateSppSubProposal({
@@ -477,7 +477,7 @@ describe('SppStageUtils', () => {
 
             const proposal = generateSppProposal({
                 startDate: DateTime.fromISO(now).minus({ hours: 2 }).toSeconds(),
-                currentStageIndex: 0,
+                stageIndex: 0,
                 settings: { stages: [stage1, stage2] },
                 subProposals: [
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: false }),

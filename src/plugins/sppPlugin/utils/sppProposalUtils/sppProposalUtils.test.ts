@@ -60,7 +60,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
             });
 
@@ -87,7 +87,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
             });
@@ -115,7 +115,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
             });
 
@@ -140,7 +140,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
             });
 
@@ -168,7 +168,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
                 executed: { status: false },
@@ -201,7 +201,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
             });
@@ -235,7 +235,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
                 actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues) }],
             });
@@ -264,7 +264,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
-                currentStageIndex: 0,
+                stageIndex: 0,
             });
 
             const result = sppProposalUtils.endsInFuture(proposal);
@@ -280,7 +280,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
             });
 
@@ -305,7 +305,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                currentStageIndex: 0,
+                stageIndex: 0,
                 startDate,
             });
 
@@ -368,7 +368,7 @@ describe('SppProposalUtils', () => {
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
-                currentStageIndex: 1,
+                stageIndex: 1,
             });
 
             const result = sppProposalUtils.getCurrentStage(proposal);
@@ -426,7 +426,7 @@ describe('SppProposalUtils', () => {
             const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
-                currentStageIndex: 1,
+                stageIndex: 1,
                 startDate: DateTime.fromISO(now).minus({ hours: 3 }).toSeconds(),
             });
 
@@ -446,7 +446,7 @@ describe('SppProposalUtils', () => {
             const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
-                currentStageIndex: 1,
+                stageIndex: 1,
                 startDate: DateTime.fromISO(now).minus({ hours: 5 }).toSeconds(),
             });
 
@@ -472,7 +472,7 @@ describe('SppProposalUtils', () => {
             const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
-                currentStageIndex: 1,
+                stageIndex: 1,
                 startDate: DateTime.fromISO(now).minus({ hours: 1 }).toSeconds(),
             });
 

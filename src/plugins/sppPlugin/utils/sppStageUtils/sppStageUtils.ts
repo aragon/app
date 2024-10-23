@@ -26,7 +26,7 @@ class SppStageUtils {
             return ProposalVotingStatus.UNREACHED;
         }
 
-        if (stageStartDate > now || stageIndex > proposal.currentStageIndex) {
+        if (stageStartDate > now || stageIndex > proposal.stageIndex) {
             return ProposalStatus.PENDING;
         }
 
@@ -57,7 +57,7 @@ class SppStageUtils {
     };
 
     getStageStartDate = (proposal: ISppProposal): DateTime => {
-        if (proposal.currentStageIndex === 0) {
+        if (proposal.stageIndex === 0) {
             return DateTime.fromSeconds(proposal.startDate);
         }
         return DateTime.fromSeconds(proposal.lastStageTransition);

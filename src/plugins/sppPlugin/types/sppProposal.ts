@@ -6,7 +6,7 @@ export interface ISppProposal extends Omit<IProposal<ISppPluginSettings>, 'endDa
     /**
      * Index of the current active stage.
      */
-    currentStageIndex: number;
+    stageIndex: number;
     /**
      * Timestamp of the last stage transition to help calculate start and end times of the stages.
      */

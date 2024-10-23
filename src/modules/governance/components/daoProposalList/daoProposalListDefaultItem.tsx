@@ -23,6 +23,7 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
     const proposalStatus = useSlotSingleFunction<ProposalStatus>({ params: proposal, slotId, pluginId })!;
 
     const proposalDate = (executed.blockTimestamp ? executed.blockTimestamp : endDate) * 1000;
+    const processedEndDate = proposalDate === 0 ? undefined : proposalDate;
     const proposalHref = `/dao/${daoId}/proposals/${id}`;
 
     const publisherHref = `/dao/${daoId}/members/${creator.address}`;
@@ -35,7 +36,7 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
             key={id}
             title={title}
             summary={summary}
-            date={proposalDate}
+            date={processedEndDate}
             href={proposalHref}
             publisher={{ address: creator.address, link: publisherHref, name: publisherName }}
         />
