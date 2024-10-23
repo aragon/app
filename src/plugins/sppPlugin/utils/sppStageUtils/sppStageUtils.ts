@@ -65,12 +65,12 @@ class SppStageUtils {
 
     getStageEndDate = (proposal: ISppProposal, stage: ISppStage): DateTime => {
         const startDate = this.getStageStartDate(proposal);
-        return startDate.plus({ seconds: stage.votingPeriod });
+        return startDate.plus({ seconds: stage.voteDuration });
     };
 
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
         const vetoCount = this.getCount(proposal, stage, SppProposalType.VETO);
-        return vetoCount >= stage.vetoThreshold;
+        return stage.vetoThreshold > 0 && vetoCount >= stage.vetoThreshold;
     };
 
     isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {

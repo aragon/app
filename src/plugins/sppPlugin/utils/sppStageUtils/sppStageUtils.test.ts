@@ -35,11 +35,11 @@ describe('SppStageUtils', () => {
     });
 
     describe('getStageEndDate', () => {
-        it('returns correct end date based on votingPeriod', () => {
+        it('returns correct end date based on voteDuration', () => {
             const now = '2022-02-10T07:55:55.868Z';
             const startDate = DateTime.fromISO(now).toSeconds();
             const proposal = generateSppProposal({ startDate });
-            const stage = generateSppStage({ votingPeriod: 86400 });
+            const stage = generateSppStage({ voteDuration: 86400 });
             const result = sppStageUtils.getStageEndDate(proposal, stage);
             expect(result.toSeconds()).toBe(startDate + 86400);
         });
@@ -80,6 +80,19 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin2', result: false }),
                 ],
+            });
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false when veto threshold is set to 0', () => {
+            const stage = generateSppStage({
+                id: 'stage-1',
+                vetoThreshold: 0,
+                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO })],
+            });
+            const proposal = generateSppProposal({
+                settings: { stages: [stage] },
+                subProposals: [generateSppSubProposal({ stageId: 'stage-1', pluginAddress: 'plugin1', result: false })],
             });
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
@@ -340,12 +353,12 @@ describe('SppStageUtils', () => {
         it('returns pending when current stage index is less than the stage index', () => {
             const stage1 = generateSppStage({
                 id: 'stage-1',
-                votingPeriod: 3600,
+                voteDuration: 3600,
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
             });
             const stage2 = generateSppStage({
                 id: 'stage-2',
-                votingPeriod: 3600,
+                voteDuration: 3600,
             });
             const proposal = generateSppProposal({
                 startDate: DateTime.fromISO(now).minus({ minutes: 30 }).toSeconds(),
@@ -367,7 +380,7 @@ describe('SppStageUtils', () => {
         it('returns rejected when approval threshold is not met and stage end date has passed', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
-                votingPeriod: 3600,
+                voteDuration: 3600,
                 approvalThreshold: 2,
                 plugins: [
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
@@ -388,7 +401,7 @@ describe('SppStageUtils', () => {
         it('returns active when approval is reached but min advance is in the future', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
-                votingPeriod: 3600,
+                voteDuration: 3600,
                 minAdvance: 3600,
                 maxAdvance: 7200,
                 approvalThreshold: 1,
@@ -406,7 +419,7 @@ describe('SppStageUtils', () => {
         it('returns accepted when approval is reached and stage can advance', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
-                votingPeriod: 3600,
+                voteDuration: 3600,
                 minAdvance: 1800,
                 maxAdvance: 7200,
                 approvalThreshold: 1,
@@ -425,7 +438,7 @@ describe('SppStageUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 6 }).toSeconds();
             const stage = generateSppStage({
-                votingPeriod: 3600,
+                voteDuration: 3600,
                 maxAdvance: 7200,
                 approvalThreshold: 0,
                 plugins: [
@@ -448,7 +461,7 @@ describe('SppStageUtils', () => {
         it('returns inactive for an unreached stage when the previous stage is rejected', () => {
             const stage1 = generateSppStage({
                 id: 'stage-1',
-                votingPeriod: 3600,
+                voteDuration: 3600,
                 approvalThreshold: 2,
                 plugins: [
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
@@ -458,7 +471,7 @@ describe('SppStageUtils', () => {
 
             const stage2 = generateSppStage({
                 id: 'stage-2',
-                votingPeriod: 3600,
+                voteDuration: 3600,
                 plugins: [generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.APPROVAL })],
             });
 
@@ -478,7 +491,7 @@ describe('SppStageUtils', () => {
         it('returns active when stage has started but not ended and approval not reached', () => {
             const stage = generateSppStage({
                 id: 'stage-1',
-                votingPeriod: 3600,
+                voteDuration: 3600,
                 approvalThreshold: 2,
                 plugins: [
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
