@@ -1,4 +1,4 @@
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigProposal } from '../../testUtils';
 import { type IMultisigProposalListItemProps, MultisigProposalListItem } from './multisigProposalListItem';
@@ -12,9 +12,9 @@ describe('<MultisigProposalListItem /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <MultisigProposalListItem {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

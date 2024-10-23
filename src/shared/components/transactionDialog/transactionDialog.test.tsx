@@ -1,6 +1,6 @@
 import { generateStepperResult } from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { IconType, OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import * as ReactQuery from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { polygon } from 'viem/chains';
@@ -47,9 +47,9 @@ describe('<TransactionDialog /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <TransactionDialog {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

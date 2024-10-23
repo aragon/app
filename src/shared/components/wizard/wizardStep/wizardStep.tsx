@@ -1,4 +1,4 @@
-import { AlertCard, Button, Heading, IconType } from '@aragon/ods';
+import { AlertCard, Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useEffect, type ComponentProps } from 'react';
 import { useFormContext, type FieldErrors, type FieldValues } from 'react-hook-form';

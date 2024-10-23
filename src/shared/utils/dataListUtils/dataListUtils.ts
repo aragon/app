@@ -1,4 +1,4 @@
-import type { DataListState } from '@aragon/ods';
+import type { DataListState } from '@aragon/gov-ui-kit';
 
 export interface IQueryToDataListStateParams {
     /**

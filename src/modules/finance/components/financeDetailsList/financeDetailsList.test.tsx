@@ -3,7 +3,7 @@ import { Page } from '@/shared/components/page';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { FinanceDetailsList, type IFinanceDetailsListProps } from './financeDetailsList';
 
@@ -15,11 +15,11 @@ describe('<FinanceDetailsList /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <Page.Main>
                     <FinanceDetailsList {...completeProps} />
                 </Page.Main>
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

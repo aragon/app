@@ -1,4 +1,4 @@
-import { ProposalStatus } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';

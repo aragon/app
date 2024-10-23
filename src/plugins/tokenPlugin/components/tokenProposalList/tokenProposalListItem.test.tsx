@@ -1,6 +1,6 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
-import { OdsModulesProvider, ProposalStatus } from '@aragon/ods';
+import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
 import { VoteOption } from '../../types';
@@ -32,9 +32,9 @@ describe('<TokenProposalListItem /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <TokenProposalListItem {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

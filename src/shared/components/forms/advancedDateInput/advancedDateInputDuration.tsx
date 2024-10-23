@@ -1,6 +1,6 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
-import { AlertCard, Card, InputNumber } from '@aragon/ods';
+import { AlertCard, Card, InputNumber } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';

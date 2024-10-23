@@ -13,7 +13,7 @@ import {
     IconType,
     Link,
     useBlockExplorer,
-} from '@aragon/ods';
+} from '@aragon/gov-ui-kit';
 
 export interface IDaoPlugInfoProps {
     /**

@@ -1,5 +1,5 @@
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { Tabs } from '@aragon/ods';
+import { Tabs } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { PluginSingleComponent } from '../pluginSingleComponent';
 import type { IPluginTabComponentProps, ITabComponentPlugin } from './pluginTabComponent.api';

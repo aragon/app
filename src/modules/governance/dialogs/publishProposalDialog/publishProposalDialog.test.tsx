@@ -9,7 +9,7 @@ import {
     generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
-import { modulesCopy, OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
@@ -72,9 +72,9 @@ describe('<PublishProposalDialog /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <PublishProposalDialog {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

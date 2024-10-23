@@ -1,7 +1,7 @@
 import * as DaoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
 
@@ -32,9 +32,9 @@ describe('<DaoSettingsPageClient /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <DaoSettingsPageClient {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

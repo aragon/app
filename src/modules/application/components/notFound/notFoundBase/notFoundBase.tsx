@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { EmptyState } from '@aragon/ods';
+import { EmptyState } from '@aragon/gov-ui-kit';
 
 export interface INotFoundBaseProps {}
 

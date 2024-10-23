@@ -1,6 +1,6 @@
 import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, ProposalActions } from '@aragon/ods';
+import { Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';

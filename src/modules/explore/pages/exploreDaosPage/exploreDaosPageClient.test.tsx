@@ -1,5 +1,5 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as Wagmi from 'wagmi';
 import { ExploreDaosPageClient, type IExploreDaosPageClientProps } from './exploreDaosPageClient';
@@ -27,9 +27,9 @@ describe('<ExploreDaosPageClient /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <ExploreDaosPageClient {...completeProps} />;
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

@@ -1,6 +1,6 @@
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { AssetDataListItemStructure, ChainEntityType, useBlockExplorer } from '@aragon/ods';
+import { AssetDataListItemStructure, ChainEntityType, useBlockExplorer } from '@aragon/gov-ui-kit';
 
 export interface IAssetListItemProps {
     /**

@@ -1,5 +1,5 @@
 import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
-import { ProposalDataListItem } from '@aragon/ods';
+import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 

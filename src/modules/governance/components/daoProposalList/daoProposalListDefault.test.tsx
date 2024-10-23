@@ -1,6 +1,6 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import { generateDaoPlugin } from '@/shared/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateProposal } from '../../testUtils';
 import { DaoProposalListDefault, type IDaoProposalListDefaultProps } from './daoProposalListDefault';
@@ -32,9 +32,9 @@ describe('<DaoProposalListDefault /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <DaoProposalListDefault {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

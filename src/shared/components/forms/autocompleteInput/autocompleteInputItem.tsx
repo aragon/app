@@ -1,4 +1,4 @@
-import { Icon } from '@aragon/ods';
+import { Icon } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ComponentProps, forwardRef } from 'react';
 import type { IAutocompleteInputItem } from './autocompleteInput.api';

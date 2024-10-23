@@ -1,5 +1,5 @@
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
-import { OdsModulesProvider, ProposalStatus } from '@aragon/ods';
+import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateProposal } from '../../testUtils';
 import { DaoProposalListDefaultItem, type IDaoProposalListDefaultItemProps } from './daoProposalListDefaultItem';
@@ -19,9 +19,9 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <DaoProposalListDefaultItem {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

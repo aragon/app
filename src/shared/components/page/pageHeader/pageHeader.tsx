@@ -1,4 +1,4 @@
-import { Breadcrumbs, Collapsible, Heading, type IBreadcrumbsProps } from '@aragon/ods';
+import { Breadcrumbs, Collapsible, Heading, type IBreadcrumbsProps } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps, ReactNode } from 'react';
 import { Container } from '../../container';

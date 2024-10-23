@@ -1,6 +1,6 @@
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { translations } from '@/shared/constants/translations';
-import '@aragon/ods/index.css';
+import '@aragon/gov-ui-kit/index.css';
 import { headers } from 'next/headers';
 import type { ReactNode } from 'react';
 import { cookieToInitialState } from 'wagmi';

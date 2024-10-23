@@ -2,7 +2,7 @@ import { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { addressUtils, InputText, RadioCard, RadioGroup } from '@aragon/ods';
+import { addressUtils, InputText, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormDebugProps {}

@@ -1,6 +1,6 @@
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
 import { generateDaoPlugin } from '@/shared/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenMember } from '../../testUtils';
 import type { ITokenMember } from '../../types';
@@ -39,9 +39,9 @@ describe('<TokenMemberList /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <TokenMemberList {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

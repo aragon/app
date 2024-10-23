@@ -1,7 +1,7 @@
 import type { IDaoProposalListDefaultProps } from '@/modules/governance/components/daoProposalList';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/ods';
+import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { ITokenProposal } from '../../types';
 import { TokenProposalListItem } from './tokenProposalListItem';
 

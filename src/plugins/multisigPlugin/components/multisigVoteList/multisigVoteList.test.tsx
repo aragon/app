@@ -1,7 +1,7 @@
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { generateAddressInfo } from '@/shared/testUtils';
-import { addressUtils, OdsModulesProvider } from '@aragon/ods';
+import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigVote } from '../../testUtils';
 import { type IMultisigVoteListProps, MultisigVoteList } from './multisigVoteList';
@@ -21,9 +21,9 @@ describe('<MultisigVoteList /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <MultisigVoteList {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

@@ -1,4 +1,4 @@
-import { ProposalVoting } from '@aragon/ods';
+import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal } from '../../types';
 
 export interface IMultisigProposalVotingBreakdownProps {

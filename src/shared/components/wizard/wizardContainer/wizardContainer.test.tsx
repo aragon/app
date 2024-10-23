@@ -1,6 +1,6 @@
 import * as useStepper from '@/shared/hooks/useStepper';
 import { generateStepperResult } from '@/shared/testUtils';
-import { Button } from '@aragon/ods';
+import { Button } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type IWizardContainerProps, WizardContainer } from './wizardContainer';

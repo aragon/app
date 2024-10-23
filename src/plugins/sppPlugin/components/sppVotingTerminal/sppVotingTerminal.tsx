@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { ProposalVoting } from '@aragon/ods';
+import { ProposalVoting } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
 import { SppVotingTerminalStage } from './sppVotingTerminalStage';
 

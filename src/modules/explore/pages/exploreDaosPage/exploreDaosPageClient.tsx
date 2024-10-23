@@ -2,7 +2,7 @@
 
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import { Button, IconType, Toggle, ToggleGroup, Wallet } from '@aragon/ods';
+import { Button, IconType, Toggle, ToggleGroup, Wallet } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';

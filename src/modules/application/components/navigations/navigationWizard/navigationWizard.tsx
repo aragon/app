@@ -7,7 +7,7 @@ import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
-import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/ods';
+import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type Route } from 'next';
 import { mainnet } from 'viem/chains';

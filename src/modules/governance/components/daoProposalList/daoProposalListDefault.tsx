@@ -2,7 +2,7 @@ import type { IGetProposalListParams } from '@/modules/governance/api/governance
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/ods';
+import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { DaoProposalListDefaultItem } from './daoProposalListDefaultItem';
 

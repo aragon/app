@@ -11,7 +11,7 @@ import {
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { clipboardUtils, OdsModulesProvider, ProposalStatus } from '@aragon/ods';
+import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
@@ -50,9 +50,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <DaoProposalDetailsPageClient {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

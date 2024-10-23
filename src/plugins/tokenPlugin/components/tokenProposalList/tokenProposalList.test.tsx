@@ -1,7 +1,7 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
 import { generateDaoPlugin } from '@/shared/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
 import { TokenProposalList, type ITokenProposalListProps } from './tokenProposalList';
@@ -35,9 +35,9 @@ describe('<TokenProposalList /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <TokenProposalList {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

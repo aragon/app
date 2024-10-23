@@ -2,7 +2,7 @@ import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/financ
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { addressUtils, type IProposalActionComponentProps } from '@aragon/ods';
+import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, formatUnits, parseUnits, zeroAddress } from 'viem';

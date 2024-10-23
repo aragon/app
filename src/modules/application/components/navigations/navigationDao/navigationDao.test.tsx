@@ -4,7 +4,7 @@ import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { IconType, OdsModulesProvider, addressUtils, clipboardUtils, type ICompositeAddress } from '@aragon/ods';
+import { GukModulesProvider, IconType, addressUtils, clipboardUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
@@ -12,8 +12,8 @@ import * as wagmi from 'wagmi';
 import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
-jest.mock('@aragon/ods', () => ({
-    ...jest.requireActual('@aragon/ods'),
+jest.mock('@aragon/gov-ui-kit', () => ({
+    ...jest.requireActual('@aragon/gov-ui-kit'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
     Wallet: (props: { user: ICompositeAddress; onClick: () => void }) => (
         <button onClick={props.onClick}>{props?.user ? props.user.address : 'connect-mock'}</button>
@@ -57,9 +57,9 @@ describe('<NavigationDao /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <NavigationDao {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

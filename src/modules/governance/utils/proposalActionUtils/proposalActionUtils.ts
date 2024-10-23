@@ -13,15 +13,15 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import type { IResource } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
-    ProposalActionType as OdsProposalActionType,
-    type IProposalAction as IOdsProposalAction,
-    type IProposalActionChangeMembers as IOdsProposalActionChangeMembers,
-    type IProposalActionChangeSettings as IOdsProposalActionChangeSettings,
-    type IProposalActionTokenMint as IOdsProposalActionTokenMint,
-    type IProposalActionUpdateMetadata as IOdsProposalActionUpdateMetadata,
-    type IProposalActionWithdrawToken as IOdsProposalActionWithdrawToken,
+    ProposalActionType as GukProposalActionType,
+    type IProposalAction as IGukProposalAction,
+    type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
+    type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
+    type IProposalActionTokenMint as IGukProposalActionTokenMint,
+    type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
+    type IProposalActionWithdrawToken as IGukProposalActionWithdrawToken,
     type IProposalActionUpdateMetadataDaoMetadataLink,
-} from '@aragon/ods';
+} from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 
 export interface INormalizeActionsParams {
@@ -37,16 +37,16 @@ export interface INormalizeActionsParams {
 
 class ProposalActionUtils {
     actionTypeMapping = {
-        [ProposalActionType.TRANSFER]: OdsProposalActionType.WITHDRAW_TOKEN,
-        [ProposalActionType.MINT]: OdsProposalActionType.TOKEN_MINT,
-        [ProposalActionType.MULTISIG_ADD_MEMBERS]: OdsProposalActionType.ADD_MEMBERS,
-        [ProposalActionType.MULTISIG_REMOVE_MEMBERS]: OdsProposalActionType.REMOVE_MEMBERS,
-        [ProposalActionType.METADATA_UPDATE]: OdsProposalActionType.UPDATE_METADATA,
-        [ProposalActionType.UPDATE_MULTISIG_SETTINGS]: OdsProposalActionType.CHANGE_SETTINGS_MULTISIG,
-        [ProposalActionType.UPDATE_VOTE_SETTINGS]: OdsProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
+        [ProposalActionType.TRANSFER]: GukProposalActionType.WITHDRAW_TOKEN,
+        [ProposalActionType.MINT]: GukProposalActionType.TOKEN_MINT,
+        [ProposalActionType.MULTISIG_ADD_MEMBERS]: GukProposalActionType.ADD_MEMBERS,
+        [ProposalActionType.MULTISIG_REMOVE_MEMBERS]: GukProposalActionType.REMOVE_MEMBERS,
+        [ProposalActionType.METADATA_UPDATE]: GukProposalActionType.UPDATE_METADATA,
+        [ProposalActionType.UPDATE_MULTISIG_SETTINGS]: GukProposalActionType.CHANGE_SETTINGS_MULTISIG,
+        [ProposalActionType.UPDATE_VOTE_SETTINGS]: GukProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
     } as const;
 
-    normalizeActions = (params: INormalizeActionsParams): IOdsProposalAction[] => {
+    normalizeActions = (params: INormalizeActionsParams): IGukProposalAction[] => {
         const { proposal, daoId } = params;
 
         return proposal.actions.map((action) => {
@@ -70,7 +70,7 @@ class ProposalActionUtils {
         });
     };
 
-    normalizeTransferAction = (action: IProposalActionWithdrawToken): IOdsProposalActionWithdrawToken => {
+    normalizeTransferAction = (action: IProposalActionWithdrawToken): IGukProposalActionWithdrawToken => {
         const { amount, token, ...otherValues } = action;
 
         return {
@@ -85,7 +85,7 @@ class ProposalActionUtils {
         action: IProposalActionChangeSettings,
         proposal: IProposal,
         daoId: string,
-    ): IOdsProposalActionChangeSettings => {
+    ): IGukProposalActionChangeSettings => {
         const { type, proposedSettings, ...otherValues } = action;
         const { settings: existingSettings, pluginAddress, pluginSubdomain } = proposal;
 
@@ -110,7 +110,7 @@ class ProposalActionUtils {
         };
     };
 
-    normalizeChangeMembersAction = (action: IProposalActionChangeMembers): IOdsProposalActionChangeMembers => {
+    normalizeChangeMembersAction = (action: IProposalActionChangeMembers): IGukProposalActionChangeMembers => {
         const { type, currentMembers, ...otherValues } = action;
 
         return {
@@ -120,7 +120,7 @@ class ProposalActionUtils {
         };
     };
 
-    normalizeUpdateMetaDataAction = (action: IProposalActionUpdateMetadata): IOdsProposalActionUpdateMetadata => {
+    normalizeUpdateMetaDataAction = (action: IProposalActionUpdateMetadata): IGukProposalActionUpdateMetadata => {
         const { type, proposedMetadata, existingMetadata, ...otherValues } = action;
 
         const normalizeLinks = (links: IResource[]): IProposalActionUpdateMetadataDaoMetadataLink[] =>
@@ -142,7 +142,7 @@ class ProposalActionUtils {
         };
     };
 
-    normalizeTokenMintAction = (action: IProposalActionTokenMint): IOdsProposalActionTokenMint => {
+    normalizeTokenMintAction = (action: IProposalActionTokenMint): IGukProposalActionTokenMint => {
         const { token, receivers, ...otherValues } = action;
         const { currentBalance, newBalance, ...otherReceiverValues } = receivers;
 

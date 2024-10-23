@@ -2,7 +2,7 @@ import { generateToken } from '@/modules/finance/testUtils';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { generateAddressInfo } from '@/shared/testUtils';
-import { addressUtils, OdsModulesProvider } from '@aragon/ods';
+import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenVote } from '../../testUtils';
 import { VoteOption } from '../../types';
@@ -23,9 +23,9 @@ describe('<TokenVoteList /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <TokenVoteList {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

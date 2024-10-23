@@ -9,7 +9,7 @@ import {
     VoteDataListItem,
     type VoteIndicator,
     VoteProposalDataListItem,
-} from '@aragon/ods';
+} from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { type ITokenVote, VoteOption } from '../../types';
 

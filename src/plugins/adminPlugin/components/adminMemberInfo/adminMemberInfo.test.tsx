@@ -4,7 +4,7 @@ import {
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { generateMember } from '../../../../modules/governance/testUtils';
@@ -31,9 +31,9 @@ describe('<AdminMemberInfo /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <AdminMemberInfo {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

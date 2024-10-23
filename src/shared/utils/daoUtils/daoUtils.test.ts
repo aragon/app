@@ -1,7 +1,7 @@
 import { daoService } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
-import { addressUtils } from '@aragon/ods';
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { daoUtils } from './daoUtils';

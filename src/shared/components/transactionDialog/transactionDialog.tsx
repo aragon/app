@@ -1,4 +1,4 @@
-import { ChainEntityType, DialogContent, Heading, IconType, useBlockExplorer } from '@aragon/ods';
+import { ChainEntityType, DialogContent, Heading, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useChainId, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';

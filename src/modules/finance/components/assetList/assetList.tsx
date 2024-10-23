@@ -3,7 +3,13 @@
 import type { IAsset, IGetAssetListParams } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { AssetDataListItem, DataListContainer, DataListFilter, DataListPagination, DataListRoot } from '@aragon/ods';
+import {
+    AssetDataListItem,
+    DataListContainer,
+    DataListFilter,
+    DataListPagination,
+    DataListRoot,
+} from '@aragon/gov-ui-kit';
 import { useMemo, useState, type ComponentProps } from 'react';
 import { AssetListItem } from './assetListItem';
 

@@ -5,7 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DataList, Dialog, invariant } from '@aragon/ods';
+import { DataList, Dialog, invariant } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useState } from 'react';
 

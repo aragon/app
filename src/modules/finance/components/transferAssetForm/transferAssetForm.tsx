@@ -2,7 +2,7 @@ import { AssetInput } from '@/modules/finance/components/assetInput';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils } from '@aragon/ods';
+import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
 

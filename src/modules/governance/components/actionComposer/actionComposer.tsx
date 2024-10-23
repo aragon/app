@@ -1,7 +1,7 @@
 import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, IconType } from '@aragon/ods';
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { forwardRef, useMemo } from 'react';
 import { type IProposalAction, ProposalActionType } from '../../api/governanceService';
 import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';

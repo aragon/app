@@ -1,4 +1,4 @@
-import type { IconType } from '@aragon/ods';
+import type { IconType } from '@aragon/gov-ui-kit';
 import type { Route } from 'next';
 
 export type NavigationLinksVariant = 'columns' | 'rows';

@@ -10,7 +10,7 @@ import {
     TransactionType as DataListTransactionType,
     TransactionDataListItem,
     TransactionStatus,
-} from '@aragon/ods';
+} from '@aragon/gov-ui-kit';
 import type { IGetTransactionListParams, TransactionType } from '../../api/financeService';
 
 export interface ITransactionListProps {

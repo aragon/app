@@ -7,7 +7,7 @@ import { Link } from '@/shared/components/link';
 import { NavigationBlockerProvider } from '@/shared/components/navigationBlockerProvider';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { type State } from 'wagmi';
 import { initialisePlugins } from '../../../../plugins';
@@ -41,7 +41,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
     return (
         <TranslationsProvider translations={translations}>
             <NavigationBlockerProvider>
-                <OdsModulesProvider
+                <GukModulesProvider
                     wagmiConfig={wagmiConfig}
                     wagmiInitialState={wagmiInitialState}
                     queryClient={queryClient}
@@ -51,7 +51,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                         {children}
                         <DialogRoot dialogs={providersDialogs} />
                     </DialogProvider>
-                </OdsModulesProvider>
+                </GukModulesProvider>
             </NavigationBlockerProvider>
         </TranslationsProvider>
     );

@@ -25,8 +25,8 @@ import {
     proposalStatusToTagVariant,
     Tag,
     useBlockExplorer,
-    useOdsModulesContext,
-} from '@aragon/ods';
+    useGukModulesContext,
+} from '@aragon/gov-ui-kit';
 import { useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -47,7 +47,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
-    const { copy } = useOdsModulesContext();
+    const { copy } = useGukModulesContext();
     const pageUrl = useCurrentUrl();
 
     const proposalUrlParams = { id: proposalId };

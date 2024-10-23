@@ -1,6 +1,6 @@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { AvatarIcon, Dialog, IconType, Link } from '@aragon/ods';
+import { AvatarIcon, Dialog, IconType, Link } from '@aragon/gov-ui-kit';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { AragonLogo } from '../../components/aragonLogo';
 

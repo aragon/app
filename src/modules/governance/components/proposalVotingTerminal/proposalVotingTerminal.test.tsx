@@ -1,6 +1,6 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
-import { ProposalStatus } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { GovernanceSlotId } from '../../constants/moduleSlots';

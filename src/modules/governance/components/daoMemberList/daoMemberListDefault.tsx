@@ -2,7 +2,7 @@ import type { IGetMemberListParams } from '@/modules/governance/api/governanceSe
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/ods';
+import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 
 export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = IPluginSettings> {

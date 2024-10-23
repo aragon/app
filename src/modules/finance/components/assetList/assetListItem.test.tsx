@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateAsset, generateToken } from '../../testUtils';
 import { AssetListItem, type IAssetListItemProps } from './assetListItem';
@@ -12,9 +12,9 @@ describe('<AssetListItem /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <AssetListItem {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

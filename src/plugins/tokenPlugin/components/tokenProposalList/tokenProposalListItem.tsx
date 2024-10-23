@@ -1,6 +1,6 @@
 import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { formatterUtils, NumberFormat, ProposalDataListItem } from '@aragon/ods';
+import { formatterUtils, NumberFormat, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { VoteOption, type ITokenProposal } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
