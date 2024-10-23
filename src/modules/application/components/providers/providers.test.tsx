@@ -17,10 +17,10 @@ jest.mock('@/shared/components/dialogProvider', () => ({
 
 jest.mock('@/shared/components/dialogRoot', () => ({ DialogRoot: () => <div data-testid="dialog-root-mock" /> }));
 
-jest.mock('@aragon/ods', () => ({
-    ...jest.requireActual('@aragon/ods'),
-    OdsModulesProvider: (props: { children: ReactNode }) => (
-        <div data-testid="ods-modules-context">{props.children}</div>
+jest.mock('@aragon/gov-ui-kit', () => ({
+    ...jest.requireActual('@aragon/gov-ui-kit'),
+    GukModulesProvider: (props: { children: ReactNode }) => (
+        <div data-testid="guk-modules-context">{props.children}</div>
     ),
 }));
 
@@ -42,9 +42,9 @@ describe('<Providers /> component', () => {
         expect(contextElement.dataset.translations).toEqual(JSON.stringify(translations));
     });
 
-    it('renders the OdsModules provider', () => {
+    it('renders the GukModules provider', () => {
         render(createTestComponent());
-        expect(screen.getByTestId('ods-modules-context')).toBeInTheDocument();
+        expect(screen.getByTestId('guk-modules-context')).toBeInTheDocument();
     });
 
     it('correctly renders the children property', () => {

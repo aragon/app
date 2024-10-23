@@ -2,7 +2,7 @@
 
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IDaoPageParams } from '@/shared/types';
-import { EmptyState } from '@aragon/ods';
+import { EmptyState } from '@aragon/gov-ui-kit';
 
 export interface INotFoundDaoProps {
     /**

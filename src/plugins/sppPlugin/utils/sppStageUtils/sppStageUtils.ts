@@ -1,6 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
+import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import {
     type ISppProposal,

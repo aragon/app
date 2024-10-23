@@ -1,4 +1,4 @@
-import { ProposalVoting } from '@aragon/ods';
+import { ProposalVoting } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import type { ITokenProposal } from '../../types';
 import { VoteOption } from '../../types/enum/voteOption';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Heading } from '@aragon/ods';
+import { Heading } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { usePageContext } from '../pageContext';

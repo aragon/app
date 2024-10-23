@@ -1,7 +1,7 @@
 import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDao, generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';
 
@@ -25,9 +25,9 @@ describe('<DaoVersionInfo /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <DaoVersionInfo {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

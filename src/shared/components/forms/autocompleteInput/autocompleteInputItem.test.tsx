@@ -1,4 +1,4 @@
-import { IconType } from '@aragon/ods';
+import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { AutocompleteInputItem, type IAutocompleteInputItemProps } from './autocompleteInputItem';
 

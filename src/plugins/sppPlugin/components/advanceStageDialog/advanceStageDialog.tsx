@@ -5,7 +5,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { Dialog, ProposalDataListItem, ProposalStatus, type IDialogRootProps } from '@aragon/ods';
+import { Dialog, ProposalDataListItem, ProposalStatus, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import type { ISppProposal } from '../../types';
 import { advanceStageDialogUtils } from './advanceStageDialogUtils';

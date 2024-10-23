@@ -1,7 +1,7 @@
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { DaoTokenVotingMode, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
-import { formatterUtils, NumberFormat } from '@aragon/ods';
+import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
 import { formatUnits } from 'viem';
 

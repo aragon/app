@@ -42,9 +42,9 @@ createWeb3Modal({
         '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1', // Rabby
     ],
     themeVariables: {
-        '--w3m-font-family': 'var(--ods-font-family)',
-        '--w3m-accent': 'var(--ods-color-primary-400)',
-        '--w3m-color-mix': 'var(--ods-color-neutral-100)',
+        '--w3m-font-family': 'var(--guk-font-family)',
+        '--w3m-accent': 'var(--guk-color-primary-400)',
+        '--w3m-color-mix': 'var(--guk-color-neutral-100)',
         '--w3m-border-radius-master': '1.3px',
     },
 });

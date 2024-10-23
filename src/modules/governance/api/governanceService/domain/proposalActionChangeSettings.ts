@@ -1,9 +1,9 @@
 import { type IPluginSettings } from '@/shared/api/daoService';
-import { type IProposalActionChangeSettings as IOdsProposalActionChangeSettings } from '@aragon/ods';
+import { type IProposalActionChangeSettings as IGukProposalActionChangeSettings } from '@aragon/gov-ui-kit';
 import { type ProposalActionType } from './enum';
 
 export interface IProposalActionChangeSettings<TSettings extends IPluginSettings = IPluginSettings>
-    extends Omit<IOdsProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
+    extends Omit<IGukProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
     /**
      * The type of the proposal action.
      */

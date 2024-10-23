@@ -1,4 +1,4 @@
-import { DefinitionList } from '@aragon/ods';
+import { DefinitionList } from '@aragon/gov-ui-kit';
 import { useAdminGovernanceSettings } from '../../hooks/useAdminGovernanceSettings';
 
 export interface IAdminGovernanceInfoProps {}

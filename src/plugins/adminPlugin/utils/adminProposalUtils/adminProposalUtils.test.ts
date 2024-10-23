@@ -1,4 +1,4 @@
-import { ProposalStatus } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { adminProposalUtils } from './adminProposalUtils';
 
 describe('adminProposal utils', () => {

@@ -1,4 +1,4 @@
-import type { IconType, IInputTextProps } from '@aragon/ods';
+import type { IconType, IInputTextProps } from '@aragon/gov-ui-kit';
 
 export interface IAutocompleteInputGroup {
     /**

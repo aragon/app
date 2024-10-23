@@ -1,4 +1,4 @@
-import { IconType } from '@aragon/ods';
+import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
 import { NavigationLinksItem, type INavigationLinksItemProps } from './navigationLinksItem';

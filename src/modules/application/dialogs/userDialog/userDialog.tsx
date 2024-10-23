@@ -1,5 +1,5 @@
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
-import { addressUtils, Button, clipboardUtils, Dialog, IconType, MemberAvatar } from '@aragon/ods';
+import { addressUtils, Button, clipboardUtils, Dialog, IconType, MemberAvatar } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount, useDisconnect, useEnsName } from 'wagmi';

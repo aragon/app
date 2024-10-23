@@ -1,5 +1,5 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { MemberDataListItem } from '@aragon/ods';
+import { MemberDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 

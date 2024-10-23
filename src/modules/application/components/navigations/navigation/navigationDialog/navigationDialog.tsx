@@ -1,4 +1,4 @@
-import { Dialog, type IDialogRootProps } from '@aragon/ods';
+import { Dialog, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { ApplicationTags } from '../../../applicationTags';
 import { AragonLogo } from '../../../aragonLogo';
 import { NavigationLinks, type INavigationLink } from '../navigationLinks';

@@ -1,7 +1,7 @@
-import type { IProposalAction as IOdsProposalAction } from '@aragon/ods';
+import type { IProposalAction as IGukProposalAction } from '@aragon/gov-ui-kit';
 import type { ProposalActionType } from './enum';
 
-export interface IProposalAction extends Omit<IOdsProposalAction, 'type'> {
+export interface IProposalAction extends Omit<IGukProposalAction, 'type'> {
     /**
      * Type of the proposal action.
      */

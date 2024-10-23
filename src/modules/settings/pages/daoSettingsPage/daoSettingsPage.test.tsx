@@ -1,4 +1,4 @@
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsPage, type IDaoSettingsPageProps } from './daoSettingsPage';
 import { DaoSettingsPageClient } from './daoSettingsPageClient';
@@ -15,7 +15,7 @@ describe('<DaoSettingsPage /> component', () => {
         };
         const Component = await DaoSettingsPage(completeProps);
 
-        return <OdsModulesProvider>{Component}</OdsModulesProvider>;
+        return <GukModulesProvider>{Component}</GukModulesProvider>;
     };
 
     it('renders and passes the correct daoId to DaoSettingsPageClient', async () => {

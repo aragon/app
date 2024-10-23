@@ -1,4 +1,4 @@
-import { mergeRefs } from '@aragon/ods';
+import { mergeRefs } from '@aragon/gov-ui-kit';
 import {
     autoUpdate,
     flip,

@@ -2,7 +2,7 @@
 
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DefinitionList } from '@aragon/ods';
+import { DefinitionList } from '@aragon/gov-ui-kit';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
 
 export interface IAdminMemberInfoProps {

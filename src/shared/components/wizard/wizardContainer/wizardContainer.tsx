@@ -1,6 +1,6 @@
 import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { Progress } from '@aragon/ods';
+import { Progress } from '@aragon/gov-ui-kit';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, type ComponentProps, type ElementType } from 'react';
 import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';

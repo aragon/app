@@ -5,7 +5,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot, invariant } from '@aragon/ods';
+import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot, invariant } from '@aragon/gov-ui-kit';
 import {
     useDaoList,
     useDaoListByMemberAddress,

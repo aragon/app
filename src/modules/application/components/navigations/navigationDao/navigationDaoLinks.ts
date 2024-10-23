@@ -1,6 +1,6 @@
 import type { IDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { IconType } from '@aragon/ods';
+import { IconType } from '@aragon/gov-ui-kit';
 import type { INavigationLink } from '../navigation';
 
 type DaoRoutes = INavigationLink<__next_route_internal_types__.DynamicRoutes<string>>;

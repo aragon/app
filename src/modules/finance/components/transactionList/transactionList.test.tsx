@@ -1,5 +1,5 @@
 import { generateToken, generateTransaction } from '@/modules/finance/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as useTransactionListData from '../../hooks/useTransactionListData';
 import { TransactionList, type ITransactionListProps } from './transactionList';
@@ -22,9 +22,9 @@ describe('<TransactionList /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <TransactionList {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

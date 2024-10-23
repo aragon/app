@@ -1,6 +1,6 @@
 import * as useFormField from '@/shared/hooks/useFormField';
 import { FormWrapper } from '@/shared/testUtils';
-import { IconType } from '@aragon/ods';
+import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type IResourcesInputItemProps, ResourcesInputItem } from './resourcesInputItem';

@@ -1,10 +1,10 @@
 'use client';
 
-import { Dialog, type IDialogRootProps as IOdsDialogRootProps } from '@aragon/ods';
+import { Dialog, type IDialogRootProps as IGukDialogRootProps } from '@aragon/gov-ui-kit';
 import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
 import { DialogRootHiddenElement } from './dialogRootHiddenElement';
 
-export interface IDialogRootProps extends IOdsDialogRootProps {
+export interface IDialogRootProps extends IGukDialogRootProps {
     /**
      * Dialogs of the application.
      */

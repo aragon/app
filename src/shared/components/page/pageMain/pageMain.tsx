@@ -1,4 +1,4 @@
-import { Button, Heading, IconType } from '@aragon/ods';
+import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ComponentProps } from 'react';
 import { PageContextProvider } from '../pageContext';

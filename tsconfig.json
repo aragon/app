@@ -11,8 +11,8 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@aragon/ods": ["./src/shared/lib/@aragon/ods"],
-      "@aragon/ods-original": ["./node_modules/@aragon/ods"]
+      "@aragon/gov-ui-kit": ["./src/shared/lib/@aragon/gov-ui-kit"],
+      "@aragon/gov-ui-kit-original": ["./node_modules/@aragon/gov-ui-kit"]
     },
     "plugins": [
       {

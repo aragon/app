@@ -1,4 +1,4 @@
-import type { IInputContainerProps } from '@aragon/ods';
+import type { IInputContainerProps } from '@aragon/gov-ui-kit';
 import {
     type FieldPath,
     type FieldPathValue,

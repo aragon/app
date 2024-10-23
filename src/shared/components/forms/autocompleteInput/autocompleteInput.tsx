@@ -1,4 +1,4 @@
-import { InputText } from '@aragon/ods';
+import { InputText } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ChangeEvent, type FocusEvent, forwardRef, type KeyboardEvent, useState } from 'react';
 import type {

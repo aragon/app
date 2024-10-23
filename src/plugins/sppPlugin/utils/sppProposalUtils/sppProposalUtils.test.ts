@@ -1,6 +1,6 @@
 import { generateProposalActionUpdateMetadata } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
-import { ProposalStatus, ProposalVotingStatus } from '@aragon/ods';
+import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { generateSppProposal, generateSppStage } from '../../testUtils';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';

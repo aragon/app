@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, Card, Dropdown, IconType, InputText } from '@aragon/ods';
+import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
 
 export interface IResourcesInputItemProps {
     /**

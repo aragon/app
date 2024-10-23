@@ -1,7 +1,7 @@
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
 import { generateMember } from '@/modules/governance/testUtils';
 import { generateDaoPlugin } from '@/shared/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoMemberListDefault, type IDaoMemberListDefaultProps } from './daoMemberListDefault';
 
@@ -32,9 +32,9 @@ describe('<DaoMemberListDefault /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <DaoMemberListDefault {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

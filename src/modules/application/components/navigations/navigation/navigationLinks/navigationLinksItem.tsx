@@ -1,7 +1,7 @@
 'use client';
 
 import { Link, type ILinkProps } from '@/shared/components/link';
-import { Icon, type IconType } from '@aragon/ods';
+import { Icon, type IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';

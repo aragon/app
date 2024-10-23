@@ -1,10 +1,10 @@
 import { type ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum';
 import {
     type ICompositeAddress,
-    type IProposalActionChangeMembers as IOdsProposalActionChangeMembers,
-} from '@aragon/ods';
+    type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
+} from '@aragon/gov-ui-kit';
 
-export interface IProposalActionChangeMembers extends Omit<IOdsProposalActionChangeMembers, 'type' | 'currentMembers'> {
+export interface IProposalActionChangeMembers extends Omit<IGukProposalActionChangeMembers, 'type' | 'currentMembers'> {
     /**
      * The type of the proposal action.
      */

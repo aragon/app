@@ -1,6 +1,6 @@
 import { generateToken } from '@/modules/finance/testUtils';
 import { generateDaoPlugin } from '@/shared/testUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenMember, generateTokenMemberMetrics, generateTokenPluginSettings } from '../../testUtils';
 import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
@@ -15,9 +15,9 @@ describe('<TokenMemberListItem /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <TokenMemberListItem {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

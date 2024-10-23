@@ -1,7 +1,7 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
-import { AlertCard, Card, InputDate, InputText, InputTime } from '@aragon/ods';
+import { AlertCard, Card, InputDate, InputText, InputTime } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import type { ComponentProps } from 'react';

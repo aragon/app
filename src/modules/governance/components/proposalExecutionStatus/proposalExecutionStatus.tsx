@@ -4,7 +4,14 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { Button, ChainEntityType, type IButtonProps, IconType, ProposalStatus, useBlockExplorer } from '@aragon/ods';
+import {
+    Button,
+    ChainEntityType,
+    type IButtonProps,
+    IconType,
+    ProposalStatus,
+    useBlockExplorer,
+} from '@aragon/gov-ui-kit';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 

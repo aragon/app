@@ -1,6 +1,6 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { ProposalDataListItem, type ProposalStatus } from '@aragon/ods';
+import { ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoProposalListDefaultItemProps {

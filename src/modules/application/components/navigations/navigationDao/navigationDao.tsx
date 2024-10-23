@@ -5,7 +5,7 @@ import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { Button, DaoAvatar, IconType, Wallet, addressUtils, clipboardUtils } from '@aragon/ods';
+import { Button, DaoAvatar, IconType, Wallet, addressUtils, clipboardUtils } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { mainnet } from 'viem/chains';

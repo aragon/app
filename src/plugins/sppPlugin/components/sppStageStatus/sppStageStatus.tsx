@@ -1,7 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, DateFormat, formatterUtils, ProposalStatus } from '@aragon/ods';
+import { Button, DateFormat, formatterUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';

@@ -24,7 +24,7 @@ import {
     clipboardUtils,
     formatterUtils,
     useBlockExplorer,
-} from '@aragon/ods';
+} from '@aragon/gov-ui-kit';
 
 export interface IDaoDashboardPageClientProps {
     /**

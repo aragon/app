@@ -1,5 +1,5 @@
 import { testLogger } from '@/test/utils';
-import { IconType } from '@aragon/ods';
+import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { Route } from 'next';

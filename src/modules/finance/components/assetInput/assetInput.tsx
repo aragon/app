@@ -3,7 +3,7 @@ import { type Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IUseFormFieldReturn } from '@/shared/hooks/useFormField';
-import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/ods';
+import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { FinanceDialogs } from '../../constants/moduleDialogs';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';

@@ -2,7 +2,7 @@
 
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, Icon, IconType } from '@aragon/ods';
+import { Button, Icon, IconType } from '@aragon/gov-ui-kit';
 import { useBannerContent } from './useBannerContent';
 
 export interface IBannerProps {

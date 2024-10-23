@@ -7,7 +7,7 @@ import {
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import type { IProposalActionComponentProps } from '@aragon/ods';
+import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';

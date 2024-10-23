@@ -1,4 +1,4 @@
-import type { ICompositeAddress } from '@aragon/ods';
+import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { IAsset } from '../../api/financeService';
 
 export interface ITransferAssetFormData {

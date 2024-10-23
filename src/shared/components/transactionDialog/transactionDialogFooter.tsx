@@ -1,4 +1,4 @@
-import { DialogFooter, IconType } from '@aragon/ods';
+import { DialogFooter, IconType } from '@aragon/gov-ui-kit';
 import type { TransactionReceipt } from 'viem';
 import { useDialogContext } from '../dialogProvider';
 import { type TransactionStatusState } from '../transactionStatus';

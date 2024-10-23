@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    presets: [require('@aragon/ods/tailwind.config')],
-    content: ['./src/**/*.{tsx,html}', './node_modules/@aragon/ods/**/*.js'],
+    presets: [require('@aragon/gov-ui-kit/tailwind.config')],
+    content: ['./src/**/*.{tsx,html}', './node_modules/@aragon/gov-ui-kit/**/*.js'],
     plugins: [
         require('tailwindcss-fluid-type')({
             settings: {

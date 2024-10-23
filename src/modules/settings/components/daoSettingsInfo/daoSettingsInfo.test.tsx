@@ -1,12 +1,12 @@
 import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsInfo, type IDaoSettingsInfoProps } from './daoSettingsInfo';
 
-jest.mock('@aragon/ods', () => ({
-    ...jest.requireActual('@aragon/ods'),
+jest.mock('@aragon/gov-ui-kit', () => ({
+    ...jest.requireActual('@aragon/gov-ui-kit'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
 }));
 
@@ -18,9 +18,9 @@ describe('<DaoSettingsInfo /> component', () => {
         };
 
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <DaoSettingsInfo {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

@@ -4,7 +4,7 @@ import * as useDialogContext from '@/shared/components/dialogProvider';
 import * as navigationBlockerProvider from '@/shared/components/navigationBlockerProvider/navigationBlockerProvider';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { OdsModulesProvider } from '@aragon/ods';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
@@ -12,8 +12,8 @@ import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import { NavigationWizard, type INavigationWizardProps } from './navigationWizard';
 
-jest.mock('@aragon/ods', () => ({
-    ...jest.requireActual('@aragon/ods'),
+jest.mock('@aragon/gov-ui-kit', () => ({
+    ...jest.requireActual('@aragon/gov-ui-kit'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
     Wallet: (props: { user: { address: string } | undefined; onClick: () => void }) => (
         <button onClick={props.onClick}>{props?.user ? props.user.address : 'connect-mock'}</button>
@@ -62,9 +62,9 @@ describe('<NavigationWizard /> component', () => {
             ...props,
         };
         return (
-            <OdsModulesProvider>
+            <GukModulesProvider>
                 <NavigationWizard {...completeProps} />
-            </OdsModulesProvider>
+            </GukModulesProvider>
         );
     };
 

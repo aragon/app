@@ -11,7 +11,7 @@ import {
     addressUtils,
     useBlockExplorer,
     type IDefinitionListContainerProps,
-} from '@aragon/ods';
+} from '@aragon/gov-ui-kit';
 
 export interface IFinanceDetailsListProps extends IDefinitionListContainerProps {
     /**

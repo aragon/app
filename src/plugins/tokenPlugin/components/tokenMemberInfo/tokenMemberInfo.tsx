@@ -13,7 +13,7 @@ import {
     Link,
     NumberFormat,
     useBlockExplorer,
-} from '@aragon/ods';
+} from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
 

@@ -20,7 +20,7 @@ import {
     Link,
     MemberAvatar,
     useBlockExplorer,
-} from '@aragon/ods';
+} from '@aragon/gov-ui-kit';
 import { useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { VoteList } from '../../components/voteList';

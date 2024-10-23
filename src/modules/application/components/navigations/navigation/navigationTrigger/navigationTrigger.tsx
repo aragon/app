@@ -1,4 +1,4 @@
-import { AvatarIcon, IconType } from '@aragon/ods';
+import { AvatarIcon, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 

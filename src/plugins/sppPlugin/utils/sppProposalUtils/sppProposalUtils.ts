@@ -1,4 +1,4 @@
-import { ProposalStatus } from '@aragon/ods';
+import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';

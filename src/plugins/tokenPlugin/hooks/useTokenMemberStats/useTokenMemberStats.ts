@@ -2,7 +2,7 @@ import { useMember, type IMember } from '@/modules/governance/api/governanceServ
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { formatterUtils, NumberFormat } from '@aragon/ods';
+import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 

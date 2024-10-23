@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, InputContainer } from '@aragon/ods';
+import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
 import type { IResourcesInputProps, IResourcesInputResource } from './resourcesInput.api';
 import { ResourcesInputItem } from './resourcesInputItem';
