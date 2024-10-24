@@ -99,7 +99,7 @@ class SppStageUtils {
     };
 
     getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
-        const test = proposal.subProposals.reduce((count, subProposal) => {
+        return proposal.subProposals.reduce((count, subProposal) => {
             const plugin = stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress);
 
             if (plugin?.proposalType !== proposalType) {
@@ -119,15 +119,11 @@ class SppStageUtils {
                     ProposalStatus.EXECUTED,
                 ].includes(subProposalStatus);
 
-                console.log({ isApprovalReached });
-
                 return isApprovalReached ? count + 1 : count;
             }
 
             return subProposal.result ? count + 1 : count;
         }, 0);
-        console.log({ test });
-        return test;
     };
 }
 
