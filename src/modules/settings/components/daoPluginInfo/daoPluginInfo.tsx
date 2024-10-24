@@ -14,7 +14,6 @@ import {
     Link,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
 
 export interface IDaoPlugInfoProps {
     /**
@@ -56,12 +55,8 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
         chainId,
     });
 
-    const metadataClassName = classNames('flex flex-col gap-y-6', {
-        '-mt-4': !plugin.description && plugin.links?.length === 0,
-    });
-
     return (
-        <div className={metadataClassName}>
+        <div className="flex flex-col gap-y-6">
             {plugin.description && <p className="text-neutral-500">{plugin.description}</p>}
             {plugin.links?.map((resource: IResource, index: number) => (
                 <div className="flex flex-col gap-y-3" key={index}>
