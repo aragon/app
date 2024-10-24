@@ -15,18 +15,17 @@ class SppStageUtils {
         const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal);
         const stageEndDate = this.getStageEndDate(proposal, stage);
-        const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
-        const stageIndex = stage.stageIndex;
+        const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalStatus.VETOED;
         }
 
-        if (this.isStagedUnreached(proposal, stageIndex)) {
+        if (this.isStagedUnreached(proposal, stage.stageIndex)) {
             return ProposalVotingStatus.UNREACHED;
         }
 
-        if (stageStartDate > now || stageIndex > proposal.stageIndex) {
+        if (stageStartDate > now || stage.stageIndex > proposal.stageIndex) {
             return ProposalStatus.PENDING;
         }
 
@@ -68,6 +67,11 @@ class SppStageUtils {
         return startDate.plus({ seconds: stage.voteDuration });
     };
 
+    getStageMaxAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime => {
+        const stageEndDate = this.getStageEndDate(proposal, stage);
+        return stageEndDate.plus({ seconds: stage.maxAdvance });
+    };
+
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
         const vetoCount = this.getCount(proposal, stage, SppProposalType.VETO);
         return stage.vetoThreshold > 0 && vetoCount >= stage.vetoThreshold;
@@ -95,7 +99,7 @@ class SppStageUtils {
     };
 
     getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
-        return proposal.subProposals.reduce((count, subProposal) => {
+        const test = proposal.subProposals.reduce((count, subProposal) => {
             const plugin = stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress);
 
             if (plugin?.proposalType !== proposalType) {
@@ -115,11 +119,15 @@ class SppStageUtils {
                     ProposalStatus.EXECUTED,
                 ].includes(subProposalStatus);
 
+                console.log({ isApprovalReached });
+
                 return isApprovalReached ? count + 1 : count;
             }
 
             return subProposal.result ? count + 1 : count;
         }, 0);
+        console.log({ test });
+        return test;
     };
 }
 
