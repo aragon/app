@@ -22,7 +22,7 @@ jobs:
         with:
           export-env: false
         env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION_BACKUPS }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION_BACKUPS_TEMP }}
           GH_APP_QA: op://apikeys_production/gh-app-qa/credential
           
       - name: Trigger E2E Tests in App QA Repository #test
