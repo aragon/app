@@ -12,11 +12,22 @@ on:
 jobs:
   dispatch:
     runs-on: ubuntu-latest
+    
 
     steps:
+      ## SET UP CREDENTIALS
+      - name: Load secrets from OP
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION_BACKUPS }}
+          GH_APP_QA: op://apikeys_production/gh-app-qa/credential
+          
       - name: Trigger E2E Tests in App QA Repository #test
         run: |
           curl -X POST -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.E2E_TESTS_REPO_TOKEN }}" \
+            -H "Authorization: token ${{ steps.op-load-secret.outputs.GH_APP_QA }}" \
             https://api.github.com/repos/aragon/app-qa/dispatches \
             -d '{"event_type": "E2E_Tests_App_Next_Dispatch"}'
