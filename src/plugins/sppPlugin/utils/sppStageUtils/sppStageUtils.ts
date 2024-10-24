@@ -16,7 +16,7 @@ class SppStageUtils {
         const stageStartDate = this.getStageStartDate(proposal);
         const stageEndDate = this.getStageEndDate(proposal, stage);
         const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
-        const stageIndex = proposal.settings.stages.findIndex((s) => s.id === stage.id);
+        const stageIndex = proposal.settings.stages.findIndex((s) => s.stageIndex === stage.stageIndex);
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalStatus.VETOED;

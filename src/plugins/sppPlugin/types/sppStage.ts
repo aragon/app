@@ -2,9 +2,9 @@ import type { ISppStagePlugin } from './sppStagePlugin';
 
 export interface ISppStage {
     /**
-     * ID of the stage.
+     * Index of the stage.
      */
-    id: string;
+    stageIndex: number;
     /**
      * Name of the stage.
      */
