@@ -15,18 +15,17 @@ class SppStageUtils {
         const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal);
         const stageEndDate = this.getStageEndDate(proposal, stage);
-        const maxAdvanceDate = stageEndDate.plus({ seconds: stage.maxAdvance });
-        const stageIndex = proposal.settings.stages.findIndex((s) => s.id === stage.id);
+        const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalStatus.VETOED;
         }
 
-        if (this.isStagedUnreached(proposal, stageIndex)) {
+        if (this.isStagedUnreached(proposal, stage.stageIndex)) {
             return ProposalVotingStatus.UNREACHED;
         }
 
-        if (stageStartDate > now || stageIndex > proposal.stageIndex) {
+        if (stageStartDate > now || stage.stageIndex > proposal.stageIndex) {
             return ProposalStatus.PENDING;
         }
 
@@ -66,6 +65,11 @@ class SppStageUtils {
     getStageEndDate = (proposal: ISppProposal, stage: ISppStage): DateTime => {
         const startDate = this.getStageStartDate(proposal);
         return startDate.plus({ seconds: stage.voteDuration });
+    };
+
+    getStageMaxAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime => {
+        const stageEndDate = this.getStageEndDate(proposal, stage);
+        return stageEndDate.plus({ seconds: stage.maxAdvance });
     };
 
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {

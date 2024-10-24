@@ -21,7 +21,7 @@ export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
 
     const processedStages = proposal.settings.stages.map((stage, index) => ({
         stage,
-        subProposals: proposal.subProposals.filter((proposal) => proposal.stageId === stage.id),
+        subProposals: proposal.subProposals.filter((proposal) => proposal.stageIndex === stage.stageIndex),
         index,
     }));
 
@@ -33,7 +33,7 @@ export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
         >
             {processedStages?.map(({ stage, subProposals, index }) => (
                 <SppVotingTerminalStage
-                    key={stage.id}
+                    key={stage.stageIndex}
                     daoId={daoId}
                     subProposals={subProposals}
                     stage={stage}

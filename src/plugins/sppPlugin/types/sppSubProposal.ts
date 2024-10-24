@@ -2,9 +2,9 @@ import type { IProposal } from '@/modules/governance/api/governanceService';
 
 export interface ISppSubProposal extends IProposal {
     /**
-     * ID of the stage the sub proposal is created on.
+     * Index of the stage the sub proposal is created on.
      */
-    stageId: string;
+    stageIndex: number;
     /**
      * Timestamp of the creation date in seconds.
      */
