@@ -19,8 +19,8 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns vetoed when any stage is vetoed', () => {
-            const stage1 = generateSppStage({ id: 'stage-1' });
-            const stage2 = generateSppStage({ id: 'stage-2' });
+            const stage1 = generateSppStage({ stageIndex: 1 });
+            const stage2 = generateSppStage({ stageIndex: 2 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
@@ -28,7 +28,7 @@ describe('SppProposalUtils', () => {
 
             const isVetoReachedSpy = jest
                 .spyOn(sppStageUtils, 'isVetoReached')
-                .mockImplementation((_, stage) => stage.id === 'stage-2');
+                .mockImplementation((_, stage) => stage.stageIndex === 2);
 
             const result = sppProposalUtils.getProposalStatus(proposal);
 
@@ -56,7 +56,7 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ stageIndex: 1 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -83,7 +83,7 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
-            const stage = generateSppStage({ id: 'stage-1', maxAdvance: 36000 });
+            const stage = generateSppStage({ stageIndex: 1, maxAdvance: 36000 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -111,7 +111,7 @@ describe('SppProposalUtils', () => {
         it('returns rejected when current stage is rejected', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ stageIndex: 1 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -136,7 +136,7 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ stageIndex: 1 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -164,7 +164,7 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ stageIndex: 1 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -197,7 +197,7 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ stageIndex: 1 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -231,7 +231,7 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ stageIndex: 1 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -259,8 +259,8 @@ describe('SppProposalUtils', () => {
 
     describe('endsInFuture', () => {
         it('returns true when proposal is not in the last stage', () => {
-            const stage1 = generateSppStage({ id: 'stage-1' });
-            const stage2 = generateSppStage({ id: 'stage-2' });
+            const stage1 = generateSppStage({ stageIndex: 1 });
+            const stage2 = generateSppStage({ stageIndex: 2 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
@@ -276,7 +276,7 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ stageIndex: 1 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -301,7 +301,7 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
 
-            const stage = generateSppStage({ id: 'stage-1' });
+            const stage = generateSppStage({ stageIndex: 1 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
@@ -325,8 +325,8 @@ describe('SppProposalUtils', () => {
 
     describe('hasAnyStageVetoed', () => {
         it('returns true when any stage is vetoed', () => {
-            const stage1 = generateSppStage({ id: 'stage-1' });
-            const stage2 = generateSppStage({ id: 'stage-2' });
+            const stage1 = generateSppStage({ stageIndex: 1 });
+            const stage2 = generateSppStage({ stageIndex: 2 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
@@ -334,7 +334,7 @@ describe('SppProposalUtils', () => {
 
             const isVetoReachedSpy = jest
                 .spyOn(sppStageUtils, 'isVetoReached')
-                .mockImplementation((_, stage) => stage.id === 'stage-2');
+                .mockImplementation((_, stage) => stage.stageIndex === 2);
 
             const result = sppProposalUtils.hasAnyStageStatus(proposal, ProposalStatus.VETOED);
 
@@ -344,8 +344,8 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns false when no stages are vetoed', () => {
-            const stage1 = generateSppStage({ id: 'stage-1' });
-            const stage2 = generateSppStage({ id: 'stage-2' });
+            const stage1 = generateSppStage({ stageIndex: 1 });
+            const stage2 = generateSppStage({ stageIndex: 2 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
@@ -363,8 +363,8 @@ describe('SppProposalUtils', () => {
 
     describe('getCurrentStage', () => {
         it('returns the current stage', () => {
-            const stage1 = generateSppStage({ id: 'stage-1' });
-            const stage2 = generateSppStage({ id: 'stage-2' });
+            const stage1 = generateSppStage({ stageIndex: 1 });
+            const stage2 = generateSppStage({ stageIndex: 2 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
@@ -379,8 +379,8 @@ describe('SppProposalUtils', () => {
 
     describe('areAllStagesAccepted', () => {
         it('returns true when all stages are accepted', () => {
-            const stage1 = generateSppStage({ id: 'stage-1' });
-            const stage2 = generateSppStage({ id: 'stage-2' });
+            const stage1 = generateSppStage({ stageIndex: 1 });
+            const stage2 = generateSppStage({ stageIndex: 2 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
@@ -398,8 +398,8 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns false when any stage is not accepted', () => {
-            const stage1 = generateSppStage({ id: 'stage-1' });
-            const stage2 = generateSppStage({ id: 'stage-2' });
+            const stage1 = generateSppStage({ stageIndex: 1 });
+            const stage2 = generateSppStage({ stageIndex: 2 });
 
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
@@ -408,7 +408,7 @@ describe('SppProposalUtils', () => {
             const getStageStatusSpy = jest
                 .spyOn(sppStageUtils, 'getStageStatus')
                 .mockImplementation((_, stage) =>
-                    stage.id === 'stage-1' ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED,
+                    stage.stageIndex === 1 ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED,
                 );
 
             const result = sppProposalUtils.areAllStagesAccepted(proposal);
@@ -422,8 +422,8 @@ describe('SppProposalUtils', () => {
     describe('hasAnyStageExpired', () => {
         const now = '2023-01-01T12:00:00.000Z';
         it('returns false when not all stages are accepted', () => {
-            const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
-            const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
+            const stage1 = generateSppStage({ stageIndex: 1, maxAdvance: 3600 });
+            const stage2 = generateSppStage({ stageIndex: 2, maxAdvance: 3600 });
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
                 stageIndex: 1,
@@ -442,8 +442,8 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns true when all stages are accepted and last stage execution window has passed', () => {
-            const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
-            const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
+            const stage1 = generateSppStage({ stageIndex: 1, maxAdvance: 3600 });
+            const stage2 = generateSppStage({ stageIndex: 2, maxAdvance: 3600 });
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
                 stageIndex: 1,
@@ -453,7 +453,7 @@ describe('SppProposalUtils', () => {
             timeUtils.setTime(now);
 
             const stageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus').mockImplementation((_, stage) => {
-                if (stage.id === 'stage-2') {
+                if (stage.stageIndex === 2) {
                     return ProposalStatus.EXPIRED;
                 }
 
@@ -468,8 +468,8 @@ describe('SppProposalUtils', () => {
         });
 
         it('returns false when all stages are accepted and last stage execution window has not passed', () => {
-            const stage1 = generateSppStage({ id: 'stage-1', maxAdvance: 3600 });
-            const stage2 = generateSppStage({ id: 'stage-2', maxAdvance: 3600 });
+            const stage1 = generateSppStage({ stageIndex: 1, maxAdvance: 3600 });
+            const stage2 = generateSppStage({ stageIndex: 2, maxAdvance: 3600 });
             const proposal = generateSppProposal({
                 settings: { stages: [stage1, stage2] },
                 stageIndex: 1,
@@ -479,7 +479,7 @@ describe('SppProposalUtils', () => {
             timeUtils.setTime(now);
 
             const stageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus').mockImplementation((_, stage) => {
-                if (stage.id === 'stage-2') {
+                if (stage.stageIndex === 2) {
                     return ProposalStatus.ACTIVE;
                 }
 
