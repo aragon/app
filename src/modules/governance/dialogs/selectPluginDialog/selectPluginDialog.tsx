@@ -66,7 +66,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                             <div className="flex gap-x-4">
                                 <p className="line-clamp-1">{daoUtils.getPluginName(plugin.meta)}</p>
                                 {plugin.meta.processKey && (
-                                    <p className="text-right text-neutral-500">{plugin.meta.processKey}</p>
+                                    <p className="text-right uppercase text-neutral-500">{plugin.meta.processKey}</p>
                                 )}
                             </div>
                             {plugin.meta.description && (

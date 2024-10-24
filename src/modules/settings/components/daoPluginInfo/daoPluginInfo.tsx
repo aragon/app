@@ -84,7 +84,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 )}
                 {plugin.processKey && type === PluginType.PROCESS && (
                     <DefinitionList.Item term={t('app.settings.daoPluginInfo.processKey')} className="text-neutral-500">
-                        <p className="text-neutral-500"> {plugin.processKey}</p>
+                        <p className="uppercase text-neutral-500"> {plugin.processKey}</p>
                     </DefinitionList.Item>
                 )}
                 <DefinitionList.Item term={t('app.settings.daoPluginInfo.plugin')}>
