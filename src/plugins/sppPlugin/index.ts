@@ -1,13 +1,13 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SppCreateProposalSettingsForm } from './components/sppCreateProposalSettingsForm';
+import { SppGovernanceInfo } from './components/sppGovernanceInfo';
 import { SppVotingTerminal } from './components/sppVotingTerminal';
 import { plugin } from './constants/plugin';
+import { useSppGovernanceSettings } from './hooks/useSppGovernanceSettings';
 import { sppProposalUtils } from './utils/sppProposalUtils';
 import { sppTransactionUtils } from './utils/sppTransactionUtils';
-import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { useSppGovernanceSettings } from './hooks/useSppGovernanceSettings';
-import { SppGovernanceInfo } from './components/sppGovernanceInfo';
 
 export const initialiseSppPlugin = () => {
     pluginRegistryUtils
