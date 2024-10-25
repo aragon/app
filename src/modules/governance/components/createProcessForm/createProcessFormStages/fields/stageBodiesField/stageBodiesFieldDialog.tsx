@@ -1,13 +1,13 @@
-import { Dialog } from '@aragon/gov-ui-kit';
+import { Button, Dialog } from '@aragon/gov-ui-kit';
 import { useEffect, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import type { ICreateProcessFormBody } from '../../../createProcessFormDefinitions';
 import {
     BodyCreationDialogSteps,
-    CreateProcessFormBodyDialogStepper,
+    CreateProcessFormBodyDialogSteps,
     orderedBodyCreationDialogSteps,
-} from '../../../createProcessFormBodyDialogStepper/createProcessFormBodyDialogStepper';
-import type { ICreateProcessFormBody } from '../../../createProcessFormDefinitions';
-import { CreateProcessFormBodyDialogSteps, validationMap } from './stageBodiesFieldDefinitions';
+    validationMap,
+} from './stageBodiesFieldDefinitions';
 
 export interface IStageBodiesFieldDialogProps {
     /**
@@ -42,7 +42,7 @@ export interface IStageBodiesFieldDialogProps {
 
 export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (props) => {
     const { stageFieldName, removeBody, updateBody, isOpen, bodyIndex, isNewBody, onClose } = props;
-    const { getValues, setError, trigger } = useFormContext();
+    const { getValues, setError, trigger, formState } = useFormContext();
     const [currentStep, setCurrentStep] = useState<BodyCreationDialogSteps>(
         isNewBody ? BodyCreationDialogSteps.PLUGIN_SELECT : BodyCreationDialogSteps.PLUGIN_METADATA,
     );
@@ -78,7 +78,6 @@ export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (p
 
     const stepComponentProps = { fieldPrefix, bodyGovernanceType };
     const currentStepComponent = CreateProcessFormBodyDialogSteps[currentStep](stepComponentProps);
-    const totalSteps = orderedBodyCreationDialogSteps.length;
 
     const handleValidateStep = async (step: BodyCreationDialogSteps): Promise<boolean> => {
         const validationFunction = validationMap[step];
@@ -98,7 +97,20 @@ export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (p
         return false;
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
+        const isValid = await handleValidateStep(currentStep);
+
+        if (isValid) {
+            if (currentStep !== BodyCreationDialogSteps.GOVERNANCE_PARAMS) {
+                const currentIndex = orderedBodyCreationDialogSteps.indexOf(currentStep);
+                if (currentIndex < orderedBodyCreationDialogSteps.length - 1) {
+                    setCurrentStep(orderedBodyCreationDialogSteps[currentIndex + 1]);
+                }
+            } else {
+                handleSave();
+            }
+        }
+
         const currentIndex = orderedBodyCreationDialogSteps.indexOf(currentStep);
         if (currentIndex < orderedBodyCreationDialogSteps.length - 1) {
             setCurrentStep(orderedBodyCreationDialogSteps[currentIndex + 1]);
@@ -106,9 +118,11 @@ export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (p
     };
 
     const handleBack = () => {
-        const currentIndex = orderedBodyCreationDialogSteps.indexOf(currentStep);
-        if (currentIndex > 0) {
-            setCurrentStep(orderedBodyCreationDialogSteps[currentIndex - 1]);
+        if (currentStep !== BodyCreationDialogSteps.PLUGIN_SELECT) {
+            const currentIndex = orderedBodyCreationDialogSteps.indexOf(currentStep);
+            if (currentIndex > 0) {
+                setCurrentStep(orderedBodyCreationDialogSteps[currentIndex - 1]);
+            }
         }
     };
 
@@ -123,18 +137,21 @@ export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (p
         >
             <Dialog.Header id="dialog-title" title="Add voting body" onCloseClick={handleCancel} />
             <Dialog.Content>
-                <CreateProcessFormBodyDialogStepper
-                    currentStep={currentStep}
-                    totalSteps={totalSteps}
-                    onNext={handleNext}
-                    onBack={handleBack}
-                    onCancel={handleCancel}
-                    onSave={handleSave}
-                    editMode={!isNewBody}
-                    validateStep={handleValidateStep}
-                >
+                <div className="flex flex-col gap-6 pb-1.5 pt-6">
                     {currentStepComponent}
-                </CreateProcessFormBodyDialogStepper>
+                    <div className="flex w-full justify-between">
+                        <Button
+                            variant="tertiary"
+                            disabled={currentStep === BodyCreationDialogSteps.PLUGIN_METADATA && !isNewBody}
+                            onClick={currentStep === BodyCreationDialogSteps.PLUGIN_SELECT ? handleCancel : handleBack}
+                        >
+                            {currentStep === BodyCreationDialogSteps.PLUGIN_SELECT ? 'Cancel' : 'Back'}
+                        </Button>
+                        <Button type="button" onClick={handleNext} disabled={formState.isSubmitting}>
+                            {currentStep === BodyCreationDialogSteps.GOVERNANCE_PARAMS ? 'Save' : 'Next'}
+                        </Button>
+                    </div>
+                </div>
             </Dialog.Content>
             <Dialog.Footer />
         </Dialog.Root>
