@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BodyCreationDialogSteps } from '@/modules/governance/components/createProcessForm/createProcessFormBodyDialogStepper/createProcessFormBodyDialogStepper';
 import {
     CreateProcessFormMultisigDistro,
     CreateProcessFormMultisigParams,
@@ -14,6 +13,20 @@ export interface ICreateProcessFormBodyDialogStepsProps {
     fieldPrefix: string;
     bodyGovernanceType: string;
 }
+
+export enum BodyCreationDialogSteps {
+    PLUGIN_SELECT = 'PLUGIN_SELECT',
+    PLUGIN_METADATA = 'PLUGIN_METADATA',
+    GOVERNANCE_DISTRO = 'GOVERNANCE_DISTRO',
+    GOVERNANCE_PARAMS = 'GOVERNANCE_PARAMS',
+}
+
+export const orderedBodyCreationDialogSteps: BodyCreationDialogSteps[] = [
+    BodyCreationDialogSteps.PLUGIN_SELECT,
+    BodyCreationDialogSteps.PLUGIN_METADATA,
+    BodyCreationDialogSteps.GOVERNANCE_DISTRO,
+    BodyCreationDialogSteps.GOVERNANCE_PARAMS,
+];
 
 export const CreateProcessFormBodyDialogSteps: Record<
     BodyCreationDialogSteps,
