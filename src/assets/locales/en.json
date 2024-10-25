@@ -347,6 +347,153 @@
         "rawCalldataFunction": "Unknown",
         "selectItem": "Add action"
       },
+
+      "createProcessForm": {
+        "metadata": {
+          "description": {
+            "helpText": "Summarize your governance process and its role in your organization in 2-3 sentences. This summary will be shown on the Proposals page, transparently describing how proposals of this type are governed.",
+            "label": "Summary",
+            "placeholder": "Type a summary"
+          },
+          "key": {
+            "helpText": "Define a unique and recognizable prefix for this governance process so that each proposal has a unique ID. For example, CORE would be identifiable as CORE-1, CORE-2, etc.",
+            "label": "Key",
+            "placeholder": "Type an key"
+          },
+          "name": {
+            "helpText": "Give your governance process a short and easily identifiable name. Examples: Protocol Upgrades, Grants, Metagovernance, etc.",
+            "label": "Name",
+            "placeholder": "Type a name"
+          },
+          "resources": {
+            "helpText": "You can add additional external resources that helps give extra context about this type of proposal and its governance process."
+          }
+        },
+        "permissions": {
+          "eligibleVoters": {
+            "anyDescription": "Any address can create proposals",
+            "anyLabel": "Anyone",
+            "bodiesDescription": "Select which governing bodies are able to create proposals",
+            "bodiesLabel": "Only members of governing bodies",
+            "label": "Who is eligible to create this type of proposal?"
+          },
+          "tokenMinRequirementInput": {
+            "helpText": "The voting power or token balance needed to create proposals.",
+            "label": "Minimum requirement",
+            "placeholder": "≥ 1"
+          },
+          "votingBodies": {
+            "error": "You must select at least one governing body.",
+            "label": "Governing Bodies"
+          }
+        },
+        "stage": {
+          "add": "Add stage",
+          "bodies": {
+            "add": "Add",
+            "helpText": "Add the governing bodies that get to determine whether or not this stage passes.",
+            "label": {
+              "vetoing": "Vetoing bodies",
+              "voting": "Voting bodies"
+            },
+            "more": "More",
+            "remove": "Remove stage",
+            "summary": {
+              "edit": "Edit",
+              "more": "More",
+              "multisig": {
+                "members": "Members",
+                "plural": "members",
+                "single": "member",
+                "threshold": "Multisig threshold"
+              },
+              "no": "No",
+              "tokenVoting": {
+                "distribution": "Distribution",
+                "minimum": "Minimum participation",
+                "plural": "token holders",
+                "single": "token holder",
+                "supply": "Supply",
+                "support": "Support threshold",
+                "token": "Token",
+                "voteChange": "Vote change"
+              },
+              "yes": "Yes"
+            },
+            "threshold": {
+              "bodies": "bodies",
+              "helpText": {
+                "vetoing": "The amount of bodies that must veto this proposal in order to prevent the proposal from advancing to the next stage.",
+                "voting": "The amount of bodies that must approve the proposal in order for it to advance to the next stage."
+              },
+              "label": {
+                "vetoing": "Veto threshold",
+                "voting": "Approval threshold"
+              }
+            }
+          },
+          "name": {
+            "helpText": "Give the stage a name that describes its role in the process. Examples: Community Review, Guardian Veto, Founder Signoff, etc.",
+            "label": "Name",
+            "placeholder": "Type a name"
+          },
+          "timing": {
+            "dialog": {
+              "earlyAdvance": {
+                "helpText": "Should the proposal be advanceable to subsequent stages early if it is approved prior to the end of the voting period?",
+                "label": "Early stage advance"
+              },
+              "expiration": {
+                "helpText": "Should there be a limited amount of time in which the proposal is eligible to be advanced to the next stage?",
+                "label": "Stage expiration"
+              },
+              "helpInfo": "Recommended minimum expiration time is 7 days.",
+              "no": "No",
+              "title": "Edit timing",
+              "votingPeriod": {
+                "helpText": "The amount of time that the bodies in this stage have to vote on proposals.",
+                "label": "Voting period"
+              },
+              "yes": "Yes"
+            },
+            "helpText": "Configure the stage's timing settings, such as the amount of time available to vote.",
+            "label": "Timing",
+            "summary": {
+              "earlyAdvance": "Early stage advance",
+              "edit": "Edit timing",
+              "expiration": "Stage expiration",
+              "votingPeriod": "Voting period"
+            }
+          },
+          "type": {
+            "helpText": "Specify the role that governance plays. In a normal stage, a proposal will only pass if it approved. However, an optimistic stage reverses it this - it will pass unless vetoed.",
+            "label": "What kind of stage is this?",
+            "normal": "Normal: vote to approve",
+            "optimistic": "Optimistic: vote to veto"
+          }
+        }
+      },
+      "createProcessPage": {
+        "finalStep": "Publish process",
+        "steps": {
+          "METADATA": {
+            "description": "The information you provide on this page will be displayed alongside proposals of this type. It is purely informational, used to help voters understand the governance process and make a more informed decision.",
+            "name": "Process description",
+            "title": "Describe new proposal type"
+          },
+          "PERMISSIONS": {
+            "description": "Define who is eligible to create proposals of this type.",
+            "name": "Proposal creation rules",
+            "title": "Set proposal creation rules"
+          },
+          "STAGES": {
+            "description": "Design the process for deciding whether or not a proposal of this type passes and its actions executed. The proposals can go through any number of sequential stages. Within each stage, governing bodies can either approve or veto the proposal.",
+            "name": "Governance design",
+            "title": "Design the governance process"
+          }
+        },
+        "submitLabel": "Publish process"
+      },
       "createProposalForm": {
         "actions": {
           "addAction": {
@@ -544,6 +691,9 @@
       "layoutWizardCreateDao": {
         "name": "Create DAO"
       },
+      "layoutWizardCreateProcess": {
+        "name": "Create process"
+      },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
@@ -565,6 +715,20 @@
           "title": "Not eligible to vote"
         }
       },
+      "prepareProcessDialog": {
+        "button": {
+          "submit": "Prepare installation",
+          "success": "Finalize installation"
+        },
+        "description": "To prepare your process you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Prepare governance process"
+      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",
@@ -573,6 +737,20 @@
           "tryAgain": "Try again"
         },
         "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
+      },
+      "publishProcessDialog": {
+        "button": {
+          "submit": "Finalize installation",
+          "success": "View proposal"
+        },
+        "description": "To finalize your process you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Finalize governance process"
       },
       "publishProposalDialog": {
         "button": {
