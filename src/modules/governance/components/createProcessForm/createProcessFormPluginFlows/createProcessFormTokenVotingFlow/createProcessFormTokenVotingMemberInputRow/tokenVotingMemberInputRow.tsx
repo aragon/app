@@ -25,9 +25,9 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
         onChange: onMemberChange,
         value,
         ...memberField
-    } = useFormField<ICreateProcessFormBody, `members.${number}`>(`members.${index}`, {
+    } = useFormField<ICreateProcessFormBody, `members.${number}.address`>(`members.${index}.address`, {
         label: 'Address',
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
+        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
         fieldPrefix: fieldNamePrefix,
     });
 
@@ -35,20 +35,13 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
         `members.${index}.tokenAmount`,
         {
             label: 'Tokens',
-            rules: {
-                required: 'Token amount is required',
-                validate: (value) => (Number(value) > 0 ? true : 'Amount must be greater than 0'),
-                min: 0,
-            },
+            rules: { required: true, validate: (value) => Number(value) > 0, min: 0 },
             fieldPrefix: fieldNamePrefix,
         },
     );
 
     const handleAddressAccept = useCallback(
-        (value: IAddressResolvedValue | undefined) => {
-            const newValue = { address: value?.address ?? '', name: value?.name };
-            onMemberChange(newValue);
-        },
+        (value: IAddressResolvedValue | undefined) => onMemberChange(value?.address ?? ''),
         [onMemberChange],
     );
 
@@ -61,10 +54,10 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
                     value={memberInput}
                     onChange={setMemberInput}
                     onAccept={handleAddressAccept}
-                    className="grow"
+                    className="basis-[65%]"
                     {...memberField}
                 />
-                <InputNumber className="w-1/2" min={0} {...tokenAmountField} />
+                <InputNumber className="basis-[35%]" min={0} {...tokenAmountField} />
             </div>
 
             {canRemove && (

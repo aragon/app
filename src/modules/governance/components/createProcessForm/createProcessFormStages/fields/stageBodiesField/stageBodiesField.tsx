@@ -68,7 +68,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
             id: (bodyId++).toString(),
             governanceType: 'tokenVoting',
             resources: [],
-            members: [{ address: address ?? '' }],
+            members: [{ address: address ?? '', tokenAmount: 1 }],
             tokenName: '',
             tokenSymbol: '',
             supportThreshold: 50,
