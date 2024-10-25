@@ -1,7 +1,7 @@
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ISppPluginSettings } from '../../types';
-import { sppSettingsUtils } from '../../utils/sppSettingsUtils/sppSettingsUtils';
+import { sppSettingsUtils } from '../../utils/sppSettingsUtils';
 
 export interface IUseSppGovernanceSettingsParams extends IUseGovernanceSettingsParams<ISppPluginSettings> {}
 
