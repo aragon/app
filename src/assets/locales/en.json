@@ -584,6 +584,9 @@
             "label": "Start time"
           }
         },
+        "sppGovernanceSettings": {
+          "numberOfStages": "Number of stages"
+        },
         "sppStageStatus": {
           "advanceInfo": "left to advance",
           "button": {
