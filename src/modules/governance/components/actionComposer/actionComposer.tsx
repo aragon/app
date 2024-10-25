@@ -1,10 +1,8 @@
-import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { forwardRef, useMemo } from 'react';
-import { type IProposalAction, ProposalActionType } from '../../api/governanceService';
-import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
+import { type IconType } from '@aragon/gov-ui-kit';
+import { forwardRef } from 'react';
+import { type IProposalAction } from '../../api/governanceService';
 
 export interface IActionComposerProps
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
@@ -13,16 +11,17 @@ export interface IActionComposerProps
      */
     onActionSelected: (action: IProposalAction) => void;
     /**
-     * ID of the DAO.
+     * All action items, both plugin specific and plugin agnostic.
      */
-    daoId: string;
+    items: Array<{ id: string; name: string; icon: IconType; defaultValue: IProposalAction }>;
+    /**
+     * All action groups, both plugin specific and plugin agnostic.
+     */
+    groups: Array<{ id: string; name: string; info: string; indexData: string[] }>;
 }
 
 export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {
-    const { daoId, onActionSelected, ...otherProps } = props;
-
-    const daoUrlParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
+    const { onActionSelected, items, groups, ...otherProps } = props;
 
     const { t } = useTranslations();
 
@@ -30,43 +29,6 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
         const action = items.find((item) => item.id === itemId)!;
         onActionSelected?.(action.defaultValue);
     };
-
-    const defaultMetadaAction = useMemo(() => {
-        const { avatar, address, name, description, links } = dao!;
-        const existingMetadata = { logo: avatar, name, description, links };
-
-        return {
-            to: address,
-            existingMetadata,
-            proposedMetadata: existingMetadata,
-            ...defaultMetadataAction,
-        };
-    }, [dao]);
-
-    const groups = [
-        {
-            id: ActionGroupId.OSX,
-            name: t(`app.governance.actionComposer.group.${ActionGroupId.OSX}`),
-            info: addressUtils.truncateAddress(dao?.address),
-            indexData: [dao!.address],
-        },
-    ];
-
-    const items = [
-        {
-            id: ProposalActionType.TRANSFER,
-            name: t(`app.governance.actionComposer.action.${ProposalActionType.TRANSFER}`),
-            icon: IconType.APP_TRANSACTIONS,
-            defaultValue: defaultTransferAction,
-        },
-        {
-            id: ProposalActionType.METADATA_UPDATE,
-            name: t(`app.governance.actionComposer.action.${ProposalActionType.METADATA_UPDATE}`),
-            icon: IconType.SETTINGS,
-            groupId: ActionGroupId.OSX,
-            defaultValue: defaultMetadaAction,
-        },
-    ];
 
     return (
         <AutocompleteInput

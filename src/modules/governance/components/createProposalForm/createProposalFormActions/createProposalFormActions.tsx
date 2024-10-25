@@ -1,13 +1,19 @@
 import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
+import { addressUtils, Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { ActionComposer } from '../../actionComposer';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
+import { useDao } from '@/shared/api/daoService';
+import {
+    ActionGroupId,
+    defaultMetadataAction,
+    defaultTransferAction,
+} from '../../actionComposer/actionComposerDefinitions';
 
 export interface ICreateProposalFormActionsProps {
     /**
@@ -16,7 +22,7 @@ export interface ICreateProposalFormActionsProps {
     daoId: string;
 }
 
-const customActionComponents = {
+const coreActionComponents = {
     [ProposalActionType.TRANSFER]: TransferAssetAction,
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
 };
@@ -24,7 +30,48 @@ const customActionComponents = {
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
     const { daoId } = props;
 
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
+
     const { t } = useTranslations();
+
+    // Core groups and items that are plugin agnostic
+    const defaultMetadaAction = useMemo(() => {
+        const { avatar, address, name, description, links } = dao!;
+        const existingMetadata = { logo: avatar, name, description, links };
+
+        return {
+            to: address,
+            existingMetadata,
+            proposedMetadata: existingMetadata,
+            ...defaultMetadataAction,
+        };
+    }, [dao]);
+
+    const coreGroups = [
+        {
+            id: ActionGroupId.OSX,
+            name: t(`app.governance.actionComposer.group.${ActionGroupId.OSX}`),
+            info: addressUtils.truncateAddress(dao?.address),
+            indexData: [dao!.address],
+        },
+    ];
+
+    const coreItems = [
+        {
+            id: ProposalActionType.TRANSFER,
+            name: t(`app.governance.actionComposer.action.${ProposalActionType.TRANSFER}`),
+            icon: IconType.APP_TRANSACTIONS,
+            defaultValue: defaultTransferAction,
+        },
+        {
+            id: ProposalActionType.METADATA_UPDATE,
+            name: t(`app.governance.actionComposer.action.${ProposalActionType.METADATA_UPDATE}`),
+            icon: IconType.SETTINGS,
+            groupId: ActionGroupId.OSX,
+            defaultValue: defaultMetadaAction,
+        },
+    ];
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -58,7 +105,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             <ProposalActions
                 actions={controlledActions}
                 actionKey="id"
-                customActionComponents={customActionComponents}
+                customActionComponents={coreActionComponents}
                 emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
                 dropdownItems={[
                     {
@@ -92,7 +139,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                daoId={daoId}
+                items={coreItems}
+                groups={coreGroups}
             />
         </div>
     );
