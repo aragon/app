@@ -269,6 +269,153 @@
         "placeholder": "Filter by action, contract name or address",
         "selectItem": "Add action"
       },
+
+      "createProcessForm": {
+        "metadata": {
+          "description": {
+            "helpText": "Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
+            "label": "Summary",
+            "placeholder": "Type a summary"
+          },
+          "key": {
+            "helpText": "Define a prefix for this governance process to have an unique ID. Something like PDF, which leads to PDF-01 and counting up for each proposal.",
+            "label": "Key",
+            "placeholder": "Type a key"
+          },
+          "name": {
+            "helpText": "Give your governance process a name, so members can differentiate it.",
+            "label": "Name",
+            "placeholder": "Type a name"
+          },
+          "resources": {
+            "helpText": "Add any additional external resources that help members understand the governance process."
+          }
+        },
+        "permissions": {
+          "eligibleVoters": {
+            "anyDescription": "Any address can create proposals",
+            "anyLabel": "Any address",
+            "bodiesDescription": "Select voting bodies and define requirements",
+            "bodiesLabel": "Voting bodies",
+            "label": "Who is eligible?"
+          },
+          "tokenMinRequirementInput": {
+            "helpText": "Only token holders with at least the minimum required balance or delegates minimum required voting power can create proposals.",
+            "label": "Minimum requirement",
+            "placeholder": "≥ 1"
+          },
+          "votingBodies": {
+            "error": "You must select at least one voting body",
+            "label": "Voting Bodies"
+          }
+        },
+        "stage": {
+          "add": "Add stage",
+          "bodies": {
+            "add": "Add",
+            "helpText": "Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage.",
+            "label": {
+              "vetoing": "Vetoing bodies",
+              "voting": "Voting bodies"
+            },
+            "more": "More",
+            "remove": "Remove stage",
+            "summary": {
+              "edit": "Edit",
+              "more": "More",
+              "multisig": {
+                "members": "Members",
+                "plural": "members",
+                "single": "member",
+                "threshold": "Multisig threshold"
+              },
+              "no": "No",
+              "tokenVoting": {
+                "distribution": "Distribution",
+                "minimum": "Minimum participation",
+                "plural": "token holders",
+                "single": "token holder",
+                "supply": "Supply",
+                "support": "Support threshold",
+                "token": "Token",
+                "voteChange": "Vote change"
+              },
+              "yes": "Yes"
+            },
+            "threshold": {
+              "bodies": "bodies",
+              "helpText": {
+                "vetoing": "The amount of bodies that must veto this proposal in order to block the proposal from advancing or becoming executable.",
+                "voting": "The amount of bodies that must approve the proposal in order for it to advance to the next stage or become executable."
+              },
+              "label": {
+                "vetoing": "Bodies required to veto",
+                "voting": "Bodies required to approve"
+              }
+            }
+          },
+          "name": {
+            "helpText": "Name the stage, so members are able to recognize it.",
+            "label": "Name",
+            "placeholder": "Type a name"
+          },
+          "timing": {
+            "dialog": {
+              "earlyAdvance": {
+                "helpText": "Should the proposal be advanceable to subsequent stages early if it is approved prior to the end of the voting period?",
+                "label": "Early stage advance"
+              },
+              "expiration": {
+                "helpText": "The amount of additional time after the voting period in which the proposal will be eligible to be advanced to the next stage.",
+                "label": "Stage expiration"
+              },
+              "helpInfo": "Recommended minimum expiration time is 7 days.",
+              "no": "No",
+              "title": "Edit timing",
+              "votingPeriod": {
+                "helpText": "The amount of time that the bodies in this stage have to vote on proposals.",
+                "label": "Voting period"
+              },
+              "yes": "Yes"
+            },
+            "helpText": "Define the timing of this stage so that the bodies have enough time to vote on proposals and advance them to subsequent stages.",
+            "label": "Timing",
+            "summary": {
+              "earlyAdvance": "Early stage advance",
+              "edit": "Edit timing",
+              "expiration": "Stage expiration",
+              "votingPeriod": "Voting period"
+            }
+          },
+          "type": {
+            "helpText": "Specify what kind of stage.",
+            "label": "Type",
+            "normal": "Normal",
+            "optimistic": "Optimistic"
+          }
+        }
+      },
+      "createProcessPage": {
+        "finalStep": "Publish process",
+        "steps": {
+          "METADATA": {
+            "description": "This metadata will define the process so voters can make an informed decision.",
+            "name": "Process metadata",
+            "title": "Define content"
+          },
+          "PERMISSIONS": {
+            "description": "Define who is eligible to create proposals within this governance process.",
+            "name": "Define permissions",
+            "title": "Define permissions"
+          },
+          "STAGES": {
+            "description": "Compose your process flow here.",
+            "name": "Define the stages",
+            "title": "Define the stages"
+          }
+        },
+        "submitLabel": "Publish process"
+      },
       "createProposalForm": {
         "actions": {
           "action": "Action",
@@ -459,9 +606,26 @@
       "layoutWizardCreateDao": {
         "name": "Create DAO"
       },
+      "layoutWizardCreateProcess": {
+        "name": "Create process"
+      },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
+      },
+      "prepareProcessDialog": {
+        "button": {
+          "submit": "Prepare installation",
+          "success": "Finalize installation"
+        },
+        "description": "To prepare your process you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Prepare governance process"
       },
       "proposalExecutionStatus": {
         "buttons": {
@@ -475,6 +639,20 @@
       "proposalVotingTerminal": {
         "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
         "title": "Voting"
+      },
+      "publishProcessDialog": {
+        "button": {
+          "submit": "Finalize installation",
+          "success": "View proposal"
+        },
+        "description": "To finalize your process you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Finalize governance process"
       },
       "publishProposalDialog": {
         "button": {
