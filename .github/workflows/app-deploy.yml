@@ -103,7 +103,9 @@ jobs:
             ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
       - name: Prepare secrets
-        run: echo "NEXT_SECRET_IPFS_JWT=${{secrets.NEXT_SECRET_IPFS_JWT}}" >> .env
+        run: |
+          echo "NEXT_SECRET_IPFS_JWT=${{secrets.NEXT_SECRET_IPFS_JWT}}" >> .env
+          echo "NEXT_PUBLIC_RPC_KEY=${{secrets.NEXT_PUBLIC_RPC_KEY}}" >> .env
       - name: Bundle Vercel application
         run: yarn vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Vercel deployment
