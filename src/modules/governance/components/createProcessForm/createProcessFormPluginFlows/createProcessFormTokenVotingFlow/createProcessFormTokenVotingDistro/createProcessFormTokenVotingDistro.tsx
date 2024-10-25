@@ -31,6 +31,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
         label: 'Token Symbol',
         defaultValue: '',
         trimOnBlur: true,
+        fieldPrefix,
         rules: {
             maxLength: { value: 10, message: 'Symbol cannot exceed 10 characters' },
             required: 'Token symbol is required',
