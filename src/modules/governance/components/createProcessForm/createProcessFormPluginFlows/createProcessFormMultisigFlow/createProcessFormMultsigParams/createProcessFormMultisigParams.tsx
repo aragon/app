@@ -15,6 +15,7 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
     const multisigThresholdField = useFormField<ICreateProcessFormBody, 'multisigThreshold'>('multisigThreshold', {
         label: 'Approval Threshold',
         defaultValue: 1,
+        fieldPrefix,
         rules: {
             required: 'Threshold must be at least 1',
             min: { value: 1, message: 'Threshold must be at least 1' },
