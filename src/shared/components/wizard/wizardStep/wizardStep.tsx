@@ -60,6 +60,12 @@ export const WizardStep = (props: IWizardStepProps) => {
         }
     }, [hidden, unregisterStep, registerStep, id, order, meta]);
 
+    useEffect(() => {
+        if (activeStep === id) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [activeStep, id]);
+
     if (activeStep !== id) {
         return null;
     }
