@@ -43,6 +43,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
     const { t } = useTranslations();
 
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
+
     const { formState, reset, handleSubmit, control } = formMethods;
 
     const wizardStepper = useStepper({ initialSteps });
@@ -65,7 +66,7 @@ export const WizardContainer = <TFormData extends FieldValues = FieldValues>(
 
     const wizardContextValues = useMemo(() => ({ ...wizardStepper, submitLabel }), [wizardStepper, submitLabel]);
 
-    const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
+    const nextStepName = hasNext ? steps[activeStepIndex + 1]?.meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
 
     useConfirmWizardExit(formState.isDirty);
