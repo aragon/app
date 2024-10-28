@@ -26,8 +26,8 @@ export interface ICreateProposalFormActionsProps {
 
 export interface IPluginActionData {
     groups: Array<{ id: string; name: string; info: string; indexData: string[] }>;
-    items: Array<{ id: string; name: string; icon: IconType; defaultValue: IProposalAction }>;
-    components: Record<string, React.ComponentType>;
+    items: Array<{ id: string; groupId: string; name: string; icon: IconType; defaultValue: IProposalAction }>;
+    components: Record<string, React.ComponentType<any>>;
 }
 
 const coreActionComponents = {
@@ -123,6 +123,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const allItems = [...coreItems, ...pluginItems];
     const allGroups = [...coreGroups, ...pluginGroups];
     const allComponents = { ...coreActionComponents, ...pluginComponents };
+
+    console.log('FIRED FORM ACTIONS', pluginActionDataArray);
 
     return (
         <div className="flex flex-col gap-y-10">

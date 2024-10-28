@@ -36,3 +36,4 @@ export interface IProposalActionUpdateMetadata
      */
     existingMetadata: IProposalActionUpdateMetadataObject;
 }
+

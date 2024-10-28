@@ -1,6 +1,6 @@
 export enum ProposalActionType {
     TRANSFER = 'Transfer',
-    MINT = 'Mint',
+    TOKEN_MINT = 'Token Mint',
     MULTISIG_ADD_MEMBERS = 'MultisigAddMembers',
     MULTISIG_REMOVE_MEMBERS = 'MultisigRemoveMembers',
     METADATA_UPDATE = 'MetadataUpdate',

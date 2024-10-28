@@ -12,9 +12,9 @@ import { TokenVoteList } from './components/tokenVoteList';
 import { plugin } from './constants/plugin';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
+import { tokenActionUtils } from './utils/tokenActionUtils/tokenActionUtils';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
-import { tokenActionUtils } from './utils/tokenActionUtils';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
