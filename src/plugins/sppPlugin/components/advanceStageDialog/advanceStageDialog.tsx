@@ -18,7 +18,7 @@ export interface IAdvanceStageDialogProps extends IDialogRootProps {
 }
 
 export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) => {
-    const { proposal } = props;
+    const { proposal, onOpenChange, ...otherProps } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -28,10 +28,15 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
 
     const handlePrepareTransaction = () => advanceStageDialogUtils.buildTransaction(proposal);
 
+    const onSuccessClick = () => {
+        router.refresh();
+        onOpenChange?.(false);
+    };
+
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
 
     return (
-        <Dialog.Root {...props}>
+        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
             <TransactionDialog
                 title={t('app.plugins.spp.advanceStageDialog.title')}
                 description={t('app.plugins.spp.advanceStageDialog.description')}
@@ -40,7 +45,7 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                 prepareTransaction={handlePrepareTransaction}
                 successLink={{
                     label: t('app.plugins.spp.advanceStageDialog.button.success'),
-                    action: router.refresh,
+                    action: onSuccessClick,
                 }}
             >
                 <ProposalDataListItem.Structure
