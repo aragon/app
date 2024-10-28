@@ -68,11 +68,14 @@ class PublishProposalDialogUtils {
         return transaction;
     };
 
-    getProposalId = (receipt: TransactionReceipt) => {
+    getProposalId = (receipt: TransactionReceipt, creator: string) => {
         const { logs } = receipt;
 
-        const [proposalCreatedLog] = parseEventLogs({ abi: proposalAbi, eventName: 'ProposalCreated', logs });
-        const decodedProposalId = proposalCreatedLog.args.proposalId.toString();
+        const proposalCreatedLogs = parseEventLogs({ abi: proposalAbi, eventName: 'ProposalCreated', logs });
+
+        // Make sure to retrieve the main-proposal creation log as plugins might create sub-proposals
+        const mainProposalLog = proposalCreatedLogs.find((log) => log.args.creator === creator);
+        const decodedProposalId = mainProposalLog?.args.proposalId.toString();
 
         return decodedProposalId;
     };
