@@ -124,8 +124,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const allGroups = [...coreGroups, ...pluginGroups];
     const allComponents = { ...coreActionComponents, ...pluginComponents };
 
-    console.log('FIRED FORM ACTIONS', pluginActionDataArray);
-
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions

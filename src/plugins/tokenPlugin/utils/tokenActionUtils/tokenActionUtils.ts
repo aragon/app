@@ -2,15 +2,22 @@ import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { defaultMintAction } from '@/modules/governance/components/actionComposer/actionComposerDefinitions';
 import { type IPluginActionData } from '@/modules/governance/components/createProposalForm/createProposalFormActions/createProposalFormActions';
 import { MintAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/mintAction';
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
 
-export interface IUseTokenActionParams {
+interface IGetTokenActionsProps {
     /**
-     * The DAO.
+     * Name of the plugin.
      */
-    dao: IDao;
+    name?: string;
+    /**
+     * Subdomain of the plugin.
+     */
+    subdomain: string;
+    /**
+     * Address of the plugin.
+     */
+    address: string;
     /**
      * The translation function for internationalization.
      */
@@ -18,11 +25,11 @@ export interface IUseTokenActionParams {
 }
 
 class TokenActionUtils {
-    getTokenActions = ({ address, name, subdomain }: IDaoPlugin): IPluginActionData => {
+    getTokenActions = ({ name, subdomain, address, t }: IGetTokenActionsProps): IPluginActionData => {
         return {
             groups: [
                 {
-                    id: 'token plugin',
+                    id: subdomain,
                     name: name ?? subdomain,
                     info: addressUtils.truncateAddress(address),
                     indexData: [address],
@@ -31,7 +38,7 @@ class TokenActionUtils {
             items: [
                 {
                     id: ProposalActionType.TOKEN_MINT,
-                    name: 'MINT',
+                    name: t(`app.governance.actionComposer.action.${ProposalActionType.TOKEN_MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: name ?? subdomain,
                     defaultValue: defaultMintAction,

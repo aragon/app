@@ -261,12 +261,11 @@
       "actionComposer": {
         "action": {
           "MetadataUpdate": "Set metadata",
-          "Mint": "Mint",
+          "Token Mint": "Mint",
           "Transfer": "Transfer"
         },
         "group": {
-          "OSX": "DAO",
-          "label": "{{label}}"
+          "OSX": "DAO"
         },
         "placeholder": "Filter by action, contract name or address",
         "selectItem": "Add action"
