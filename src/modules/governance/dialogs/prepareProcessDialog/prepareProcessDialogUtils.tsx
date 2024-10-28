@@ -174,7 +174,7 @@ class PrepareProcessDialogUtils {
         const sppMetadata = transactionUtils.cidToHex(processMetadata.spp);
         const pluginsMetadata = processMetadata.plugins.map((cid) => transactionUtils.cidToHex(cid));
 
-        const sppInstallData = this.buildPrepareSppInstallData(values, sppMetadata, daoAddress);
+        const sppInstallData = this.buildPrepareSppInstallData(sppMetadata, daoAddress);
         const pluginsInstallData = values.stages
             .flatMap((stage) => stage.bodies)
             .map((body, index) =>
@@ -188,7 +188,7 @@ class PrepareProcessDialogUtils {
         return installActions;
     };
 
-    private buildPrepareSppInstallData = (values: ICreateProcessFormData, metadataCid: string, daoAddress: Hex) => {
+    private buildPrepareSppInstallData = (metadataCid: string, daoAddress: Hex) => {
         const sppTarget = { target: daoAddress, operation: 0 };
         const pluginSettingsData = encodeAbiParameters(sppPluginSetupAbi, [[], metadataCid as Hex, sppTarget]);
 

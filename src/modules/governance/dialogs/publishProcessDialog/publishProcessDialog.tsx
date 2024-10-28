@@ -2,6 +2,7 @@ import { type ICreateProcessFormData } from '@/modules/governance/components/cre
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
 import {
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
@@ -50,6 +51,8 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
 
     const { t } = useTranslations();
 
+    const setIsBlocked = useSetIsBlocked();
+
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
 
@@ -72,6 +75,8 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
             plugin: adminPlugin.meta,
             metadataCid,
         });
+
+        setIsBlocked(false);
 
         return transaction;
     };

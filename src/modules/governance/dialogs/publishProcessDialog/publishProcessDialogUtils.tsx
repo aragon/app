@@ -135,7 +135,13 @@ class PublishProcessDialogUtils {
             })
             .filter((action) => action != null);
 
-        const revokeMultiTargetPermissionAction = this.buildGrantPermissionTransaction({
+        const grantCreateProposalActions = this.buildCreateProposalPermissionActions(
+            values,
+            pluginAddresses,
+            daoAddress,
+        );
+
+        const revokeMultiTargetPermissionAction = this.buildRevokePermissionTransaction({
             where: daoAddress,
             who: prepareProcessDialogUtils.pspRepoAddress,
             what: this.permissionIds.applyMultiTargetPermission,
@@ -147,6 +153,7 @@ class PublishProcessDialogUtils {
             ...applyInstallationActions,
             updateStagesAction,
             ...multisigPermissionActions.flat(),
+            ...grantCreateProposalActions,
             revokeMultiTargetPermissionAction,
         ];
     };
@@ -198,9 +205,9 @@ class PublishProcessDialogUtils {
         return installactionActions;
     };
 
-    private buildUpdateStagesTransaction = (values: ICreateProcessFormData, pluginIds: Hex[]) => {
+    private buildUpdateStagesTransaction = (values: ICreateProcessFormData, pluginAddresses: Hex[]) => {
         const { stages } = values;
-        const [sppAddress, ...bodyAddresses] = pluginIds;
+        const [sppAddress, ...bodyAddresses] = pluginAddresses;
 
         const processedStages = stages.map((stage) => {
             const plugins = stage.bodies.map((body, index) => ({
@@ -227,6 +234,30 @@ class PublishProcessDialogUtils {
         });
 
         return { to: sppAddress, data: transactionData, value: '0' };
+    };
+
+    private buildCreateProposalPermissionActions = (
+        values: ICreateProcessFormData,
+        pluginAddresses: Hex[],
+        daoAddress: Hex,
+    ) => {
+        const memberAddresses = values.stages
+            .flatMap((stage) => stage.bodies)
+            .flatMap((body) => body.members)
+            .map((member) => member.address as Hex);
+
+        const grantCreateProposalPermissions = memberAddresses.map((memberAddress) => {
+            const grantCreateProposalAction = this.buildGrantPermissionTransaction({
+                where: pluginAddresses[0], // SPP address
+                who: memberAddress,
+                what: this.permissionIds.createProposalPermission,
+                to: daoAddress,
+            });
+
+            return grantCreateProposalAction;
+        });
+
+        return grantCreateProposalPermissions;
     };
 
     private hashHelpers = (helpers: readonly Hex[]): Hex =>
