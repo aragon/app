@@ -23,13 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.1
-      - uses: actions/setup-node@v4.0.4
+        uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.NODE_CACHE }}
       - name: Restore NextJs cache
-        uses: actions/cache@v4.1.1
+        uses: actions/cache@v4.1.2
         with:
           path: ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.[jt]sx?') }}
@@ -42,7 +42,7 @@ jobs:
           yarn setup ${{ env.APP_ENV }}
           yarn build
       - name: Cache NextJs build
-        uses: actions/cache@v4.1.1
+        uses: actions/cache@v4.1.2
         with:
           path: |
             ${{ github.workspace }}/.next
@@ -55,16 +55,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.1
+        uses: actions/checkout@v4.2.2
       - name: Setup Node
-        uses: actions/setup-node@v4.0.4
+        uses: actions/setup-node@v4.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.NODE_CACHE }}
       - name: Install dependencies
         run: yarn install --immutable
       - name: Restore cached NextJs build
-        uses: actions/cache@v4.1.1
+        uses: actions/cache@v4.1.2
         with:
           path: |
             ${{ github.workspace }}/.next
@@ -87,15 +87,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.1
-      - uses: actions/setup-node@v4.0.4
+        uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.NODE_CACHE }}
       - name: Install dependencies
         run: yarn install --immutable
       - name: Restore cached NextJs build
-        uses: actions/cache@v4.1.1
+        uses: actions/cache@v4.1.2
         with:
           path: |
             ${{ github.workspace }}/.next
