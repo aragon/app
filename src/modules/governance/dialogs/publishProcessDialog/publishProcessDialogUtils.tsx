@@ -210,17 +210,21 @@ class PublishProcessDialogUtils {
         const [sppAddress, ...bodyAddresses] = pluginAddresses;
 
         const processedStages = stages.map((stage) => {
-            const plugins = stage.bodies.map((body, index) => ({
-                pluginAddress: bodyAddresses[index],
-                isManual: false,
-                allowedBody: bodyAddresses[index],
-                resultType: stage.type === 'normal' ? SppProposalType.APPROVAL : SppProposalType.VETO,
-            }));
+            const plugins = stage.bodies.map(() => {
+                const pluginAddress = bodyAddresses.shift()!;
+
+                return {
+                    pluginAddress,
+                    isManual: false,
+                    allowedBody: pluginAddress,
+                    resultType: stage.type === 'normal' ? SppProposalType.APPROVAL : SppProposalType.VETO,
+                };
+            });
 
             return {
                 plugins,
-                minAdvance: BigInt(0),
-                maxAdvance: this.durationToSeconds(stage.stageExpiration ?? { days: 1, hours: 0, minutes: 0 }),
+                minAdvance: stage.earlyStageAdvance ? BigInt(0) : this.durationToSeconds(stage.votingPeriod),
+                maxAdvance: this.durationToSeconds(stage.stageExpiration ?? { days: 36500, hours: 0, minutes: 0 }),
                 voteDuration: this.durationToSeconds(stage.votingPeriod),
                 approvalThreshold: stage.type === 'normal' ? stage.requiredApprovals : 0,
                 vetoThreshold: stage.type === 'normal' ? 0 : stage.requiredApprovals,
