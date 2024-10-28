@@ -1,10 +1,9 @@
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
-import type { IDateDuration } from '@/shared/utils/dateUtils';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { Duration } from 'luxon';
 import { encodeAbiParameters, encodeFunctionData, type Hex, keccak256, toBytes } from 'viem';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -226,9 +225,9 @@ class PublishProcessDialogUtils {
 
             return {
                 plugins,
-                minAdvance: stage.earlyStageAdvance ? BigInt(0) : this.durationToSeconds(stage.votingPeriod),
-                maxAdvance: this.durationToSeconds(stage.stageExpiration ?? { days: 36500, hours: 0, minutes: 0 }),
-                voteDuration: this.durationToSeconds(stage.votingPeriod),
+                minAdvance: stage.earlyStageAdvance ? BigInt(0) : dateUtils.durationToSeconds(stage.votingPeriod),
+                maxAdvance: dateUtils.durationToSeconds(stage.stageExpiration ?? { days: 36500, hours: 0, minutes: 0 }),
+                voteDuration: dateUtils.durationToSeconds(stage.votingPeriod),
                 approvalThreshold: stage.type === 'normal' ? stage.requiredApprovals : 0,
                 vetoThreshold: stage.type === 'normal' ? 0 : stage.requiredApprovals,
             };
@@ -269,14 +268,6 @@ class PublishProcessDialogUtils {
 
     private hashHelpers = (helpers: readonly Hex[]): Hex =>
         keccak256(encodeAbiParameters([{ type: 'address[]' }], [helpers]));
-
-    private durationToSeconds = (duration: IDateDuration) => {
-        const { days, hours, minutes } = duration;
-        const durationMillis = Duration.fromObject({ days, hours, minutes }).toMillis();
-        const durationSeconds = BigInt(Math.round(durationMillis / 1000));
-
-        return durationSeconds;
-    };
 }
 
 export const publishProcessDialogUtils = new PublishProcessDialogUtils();
