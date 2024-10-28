@@ -6,13 +6,7 @@ const advanceStageAbi = [
     {
         type: 'function',
         name: 'advanceProposal',
-        inputs: [
-            {
-                name: '_proposalId',
-                type: 'uint256',
-                internalType: 'uint256',
-            },
-        ],
+        inputs: [{ name: '_proposalId', type: 'uint256', internalType: 'uint256' }],
         outputs: [],
         stateMutability: 'nonpayable',
     },
