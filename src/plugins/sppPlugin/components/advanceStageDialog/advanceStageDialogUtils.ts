@@ -5,8 +5,8 @@ import type { ISppProposal } from '../../types';
 const advanceStageAbi = [
     {
         type: 'function',
-        inputs: [{ name: '_proposalId', internalType: 'bytes32', type: 'bytes32' }],
         name: 'advanceProposal',
+        inputs: [{ name: '_proposalId', type: 'uint256', internalType: 'uint256' }],
         outputs: [],
         stateMutability: 'nonpayable',
     },
