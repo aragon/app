@@ -8,18 +8,26 @@ import { ActionComposer } from '../../actionComposer';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
-import { useDao } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import {
     ActionGroupId,
     defaultMetadataAction,
     defaultTransferAction,
 } from '../../actionComposer/actionComposerDefinitions';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 
 export interface ICreateProposalFormActionsProps {
     /**
      * ID of the DAO.
      */
     daoId: string;
+}
+
+export interface IPluginActionData {
+    groups: Array<{ id: string; name: string; info: string; indexData: string[] }>;
+    items: Array<{ id: string; name: string; icon: IconType; defaultValue: IProposalAction }>;
+    components: Record<string, React.ComponentType>;
 }
 
 const coreActionComponents = {
@@ -100,12 +108,28 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         }
     };
 
+    const pluginActionDataArray =
+        dao?.plugins?.map((plugin) =>
+            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionData>({
+                pluginId: plugin.subdomain,
+                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+            })?.(plugin),
+        ) ?? [];
+
+    const pluginItems = pluginActionDataArray.flatMap((data) => data?.items ?? []);
+    const pluginGroups = pluginActionDataArray.flatMap((data) => data?.groups ?? []);
+    const pluginComponents = pluginActionDataArray.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
+
+    const allItems = [...coreItems, ...pluginItems];
+    const allGroups = [...coreGroups, ...pluginGroups];
+    const allComponents = { ...coreActionComponents, ...pluginComponents };
+
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions
                 actions={controlledActions}
                 actionKey="id"
-                customActionComponents={coreActionComponents}
+                customActionComponents={allComponents}
                 emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
                 dropdownItems={[
                     {
@@ -139,8 +163,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                items={coreItems}
-                groups={coreGroups}
+                items={allItems}
+                groups={allGroups}
             />
         </div>
     );
