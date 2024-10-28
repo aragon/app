@@ -41,7 +41,7 @@ export const defaultMetadataAction: Omit<
 };
 
 export const defaultMintAction: IProposalAction = {
-    type: ProposalActionType.TOKEN_MINT,
+    type: ProposalActionType.MINT,
     from: '',
     to: '',
     data: '0x',

@@ -37,15 +37,15 @@ class TokenActionUtils {
             ],
             items: [
                 {
-                    id: ProposalActionType.TOKEN_MINT,
-                    name: t(`app.governance.actionComposer.action.${ProposalActionType.TOKEN_MINT}`),
+                    id: ProposalActionType.MINT,
+                    name: t(`app.governance.actionComposer.action.${ProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: name ?? subdomain,
                     defaultValue: defaultMintAction,
                 },
             ],
             components: {
-                [ProposalActionType.TOKEN_MINT]: MintAction,
+                [ProposalActionType.MINT]: MintAction,
             },
         };
     };

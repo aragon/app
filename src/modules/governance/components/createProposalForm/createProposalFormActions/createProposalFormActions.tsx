@@ -22,6 +22,10 @@ export interface ICreateProposalFormActionsProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Address of the plugin.
+     */
+    pluginAddress: string;
 }
 
 export interface IPluginActionData {
@@ -36,7 +40,7 @@ const coreActionComponents = {
 };
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, pluginAddress } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -100,7 +104,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
-    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, daoId });
+    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, daoId, pluginAddress });
 
     const handleMoveAction = (index: number, newIndex: number) => {
         if (newIndex >= 0 && newIndex < actions.length) {

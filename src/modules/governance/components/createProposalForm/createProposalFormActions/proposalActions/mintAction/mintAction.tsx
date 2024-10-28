@@ -9,9 +9,10 @@ import {
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useEffect, useState } from 'react';
-import { encodeFunctionData, parseUnits } from 'viem';
+import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
 import { useFormContext } from 'react-hook-form';
 import { useDao } from '@/shared/api/daoService';
+import { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 
 export interface IMintActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
@@ -39,8 +40,7 @@ const mintAbi = {
 
 export const MintAction: React.FC<IMintActionProps> = (props) => {
     const { index, action } = props;
-
-    const { setValue } = useFormContext();
+    const { setValue, watch } = useFormContext();
 
     const fieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
@@ -55,24 +55,35 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
         fieldPrefix: fieldName,
     });
 
-    const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
+    const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address ?? '0');
 
     const amountField = useFormField<IMintFormData, 'amount'>('amount', {
         label: 'Tokens',
-        defaultValue: '0',
-        rules: { required: true, min: 0, max: 1000000000 },
+        rules: { required: true },
         fieldPrefix: fieldName,
     });
 
-    const amount = parseUnits(amountField?.value ?? '0', 18);
+    const daoUrlParams = { id: action.daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const plugin = dao?.plugins.find((plugin) => plugin.address === action.pluginAddress);
+
+    const settings = plugin?.settings as ITokenPluginSettings;
+    const maxSupply = Number(settings?.token.totalSupply);
+    const tokenSymbol = settings?.token.symbol;
+    const tokenDecimals = settings?.token.decimals ?? 18;
+    const amount = parseUnits(amountField?.value ?? '0', tokenDecimals);
+
+    const receiverAddress = addressUtils.isAddress(receiverInput) ? receiverInput : zeroAddress;
 
     useEffect(() => {
-        const mintParams = [receiverInput, amount];
+        const mintParams = [receiverAddress, '1'];
         const newData = encodeFunctionData({ abi: [mintAbi], args: mintParams });
-
+        console.log('newData', newData);
         setValue(`${fieldName}.data`, newData);
     }, [setValue, fieldName, receiverInput, amount]);
 
+    console.log('watch', watch());
     return (
         <div className="flex w-full flex-col gap-6">
             <AddressInput
@@ -82,7 +93,13 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
                 onAccept={onReceiverChange}
                 {...receiverField}
             />
-            <InputNumber min={0} max={1000000} {...amountField} />
+            <InputNumber
+                placeholder={`0 ${tokenSymbol}`}
+                min={0}
+                max={maxSupply}
+                suffix={tokenSymbol}
+                {...amountField}
+            />
         </div>
     );
 };
