@@ -93,7 +93,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
         setIsBlocked(false);
 
-        const proposalId = publishProposalDialogUtils.getProposalId(txReceipt);
+        const proposalId = publishProposalDialogUtils.getProposalId(txReceipt, address);
         const extendedProposalId = `${transactionHash}-${pluginAddress}-${proposalId}`;
 
         return `/dao/${daoId}/proposals/${extendedProposalId}`;
