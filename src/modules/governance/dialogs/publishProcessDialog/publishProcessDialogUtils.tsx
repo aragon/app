@@ -107,9 +107,12 @@ class PublishProcessDialogUtils {
                     return undefined;
                 }
 
+                // Add one to index as the setupData on first index is the SPP one
+                const { pluginAddress: bodyAddress } = setupData[index + 1];
+
                 // No one should be able to create proposals directly to multisig
                 const revokeMultisigCreateProposalAction = this.buildRevokePermissionTransaction({
-                    where: setupData[index].pluginAddress,
+                    where: bodyAddress,
                     who: this.anyAddress,
                     what: this.permissionIds.createProposalPermission,
                     to: daoAddress,
@@ -117,7 +120,7 @@ class PublishProcessDialogUtils {
 
                 // Allow SPP to create proposals to multisig
                 const grantSppCreateProposalAction = this.buildGrantPermissionTransaction({
-                    where: setupData[index].pluginAddress,
+                    where: bodyAddress,
                     who: pluginAddresses[0], // SPP address
                     what: this.permissionIds.createProposalPermission,
                     to: daoAddress,
@@ -126,7 +129,7 @@ class PublishProcessDialogUtils {
                 // Multisig shouldn't have execute permission as SPP will already have it
                 const revokeExecutePermission = this.buildRevokePermissionTransaction({
                     where: daoAddress,
-                    who: setupData[index].pluginAddress,
+                    who: bodyAddress,
                     what: this.permissionIds.executePermission,
                     to: daoAddress,
                 });
