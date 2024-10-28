@@ -37,7 +37,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
-    const canAdvanceStage = stageStatus === ProposalStatus.ACCEPTED;
+    const canAdvanceStage = stageStatus === ProposalStatus.ACCEPTED && proposal.stageIndex === stage.stageIndex;
     const canVote = stageStatus === ProposalStatus.ACTIVE;
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
@@ -45,7 +45,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const displayAdvanceTime = maxAdvanceTime.diffNow().days < 90;
 
-    if ((!canAdvanceStage && !canVote) || proposal.stageIndex !== stage.stageIndex) {
+    if (!canAdvanceStage && !canVote) {
         return null;
     }
 
