@@ -1,11 +1,13 @@
 import type {
     ICreateProcessFormBody,
     ICreateProcessFormData,
+    ICreateProcessFormStage,
     ITokenVotingMember,
 } from '@/modules/governance/components/createProcessForm';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import {
@@ -175,15 +177,21 @@ class PrepareProcessDialogUtils {
         const pluginsMetadata = processMetadata.plugins.map((cid) => transactionUtils.cidToHex(cid));
 
         const sppInstallData = this.buildPrepareSppInstallData(sppMetadata, daoAddress);
-        const pluginsInstallData = values.stages
-            .flatMap((stage) => stage.bodies)
-            .map((body, index) =>
-                body.governanceType === 'multisig'
-                    ? this.buildPrepareMultisigInstallData(body, pluginsMetadata[index], daoAddress)
-                    : this.buildPrepareTokenInstallData(body, pluginsMetadata[index], daoAddress),
-            );
+        const pluginsInstallData = values.stages.map((stage) => {
+            const installData = stage.bodies.map((body) => {
+                const pluginMetadata = pluginsMetadata.shift()!;
 
-        const installActions = [sppInstallData, ...pluginsInstallData].map((data) => this.installDataToAction(data));
+                return body.governanceType === 'multisig'
+                    ? this.buildPrepareMultisigInstallData(body, pluginMetadata, daoAddress)
+                    : this.buildPrepareTokenInstallData(body, pluginMetadata, daoAddress, stage);
+            });
+
+            return installData;
+        });
+
+        const installActions = [sppInstallData, ...pluginsInstallData.flat()].map((data) =>
+            this.installDataToAction(data),
+        );
 
         return installActions;
     };
@@ -216,14 +224,19 @@ class PrepareProcessDialogUtils {
         return transactionData;
     };
 
-    private buildPrepareTokenInstallData = (body: ICreateProcessFormBody, metadataCid: string, daoAddress: Hex) => {
+    private buildPrepareTokenInstallData = (
+        body: ICreateProcessFormBody,
+        metadataCid: string,
+        daoAddress: Hex,
+        stage: ICreateProcessFormStage,
+    ) => {
         const { voteChange, supportThreshold, minimumParticipation, tokenName, tokenSymbol, members } = body;
 
         const votingSettings = {
             votingMode: voteChange ? DaoTokenVotingMode.VOTE_REPLACEMENT : DaoTokenVotingMode.STANDARD,
             supportThreshold,
             minParticipation: minimumParticipation,
-            minDuration: BigInt(86400),
+            minDuration: dateUtils.durationToSeconds(stage.votingPeriod),
             minProposerVotingPower: BigInt(0),
         };
 
