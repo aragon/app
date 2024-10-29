@@ -6,7 +6,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { encodeFunctionData, parseUnits } from 'viem';
+import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import type { IMintFormData } from './mintActionFormDefinitions';
 
@@ -63,13 +63,15 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
 
     const amount = parseUnits(amountField?.value ?? '0', tokenDecimals);
 
+    const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
+
     useEffect(() => {
-        const mintParams = [tokenAddress, amount];
+        const mintParams = [receiverAddress, amount];
         const newData = encodeFunctionData({ abi: [mintAbi], args: mintParams });
 
         setValue(`${fieldName}.data`, newData);
         setValue(`${fieldName}.to`, tokenAddress);
-    }, [setValue, fieldName, tokenAddress, amount]);
+    }, [setValue, fieldName, tokenAddress, receiverAddress, amount]);
 
     return (
         <div className="flex w-full flex-col gap-6">
