@@ -107,21 +107,35 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         }
     };
 
-    const pluginActionDataArray =
-        dao?.plugins?.map((plugin) =>
-            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionData>({
-                pluginId: plugin.subdomain,
-                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
-            })?.(plugin),
-        ) ?? [];
+    const initialAccumulator: IPluginActionData = {
+        items: [],
+        groups: [],
+        components: {},
+    };
 
-    const pluginItems = pluginActionDataArray.flatMap((data) => data?.items ?? []);
-    const pluginGroups = pluginActionDataArray.flatMap((data) => data?.groups ?? []);
-    const pluginComponents = pluginActionDataArray.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
+    const { items, groups, components } = (dao?.plugins ?? []).reduce((acc, plugin) => {
+        const slotFunction = pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionData>({
+            pluginId: plugin.subdomain,
+            slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+        });
+        if (slotFunction) {
+            const data = slotFunction(plugin);
+            if (data.items) {
+                acc.items.push(...data.items);
+            }
+            if (data.groups) {
+                acc.groups.push(...data.groups);
+            }
+            if (data.components) {
+                acc.components = { ...acc.components, ...data.components };
+            }
+        }
+        return acc;
+    }, initialAccumulator);
 
-    const allItems = [...coreItems, ...pluginItems];
-    const allGroups = [...coreGroups, ...pluginGroups];
-    const allCustomActionComponents = { ...coreCustomActionComponents, ...pluginComponents };
+    const allItems = [...coreItems, ...items];
+    const allGroups = [...coreGroups, ...groups];
+    const allCustomActionComponents = { ...coreCustomActionComponents, ...components };
 
     return (
         <div className="flex flex-col gap-y-10">
