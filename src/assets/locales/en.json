@@ -261,7 +261,7 @@
       "actionComposer": {
         "action": {
           "MetadataUpdate": "Set metadata",
-          "Token Mint": "Mint",
+          "Mint": "Mint",
           "Transfer": "Transfer"
         },
         "group": {

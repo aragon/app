@@ -55,7 +55,7 @@ describe('proposalActionUtils', () => {
 
         expect(result).toEqual({
             ...otherValues,
-            type: 'MINT',
+            type: 'TOKEN_MINT',
             receiver: { address: receivers.address, currentBalance: '1.0', newBalance: '2.0' },
             tokenSymbol: token.symbol,
         });

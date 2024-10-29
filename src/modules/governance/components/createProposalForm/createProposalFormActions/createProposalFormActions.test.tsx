@@ -1,4 +1,6 @@
-import { FormWrapper } from '@/shared/testUtils';
+import * as daoService from '@/shared/api/daoService';
+import { FormWrapper, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { forwardRef } from 'react';
 import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
@@ -9,16 +11,29 @@ jest.mock('../../actionComposer', () => ({
 }));
 
 describe('<CreateProposalFormActions /> component', () => {
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+
+        beforeEach(() => {
+            useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        });
+
+        afterEach(() => {
+            useDaoSpy.mockReset();
+        });
+
     const createTestComponent = (props?: Partial<ICreateProposalFormActionsProps>) => {
         const completeProps: ICreateProposalFormActionsProps = {
             daoId: 'test',
+            pluginAddress: 'test-plugin',
             ...props,
         };
 
         return (
-            <FormWrapper>
-                <CreateProposalFormActions {...completeProps} />
-            </FormWrapper>
+            <GukModulesProvider>
+                <FormWrapper>
+                    <CreateProposalFormActions {...completeProps} />
+                </FormWrapper>
+            </GukModulesProvider>
         );
     };
 
