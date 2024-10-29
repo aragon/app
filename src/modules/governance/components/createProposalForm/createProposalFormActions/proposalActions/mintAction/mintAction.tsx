@@ -1,31 +1,15 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import {
-    AddressInput,
-    addressUtils,
-    type ICompositeAddress,
-    InputNumber,
-    type IProposalActionComponentProps,
-} from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useEffect, useState } from 'react';
 import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
 import { useFormContext } from 'react-hook-form';
 import { useDao } from '@/shared/api/daoService';
-import { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import type { IMintFormData } from './mintActionFormDefinitions';
 
 export interface IMintActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
-
-export interface IMintFormData {
-    /**
-     * The address receiving the tokens.
-     */
-    receiver?: ICompositeAddress;
-    /**
-     * The amount of tokens to be sent.
-     */
-    amount?: string;
-}
 
 const mintAbi = {
     type: 'function',
@@ -40,7 +24,7 @@ const mintAbi = {
 
 export const MintAction: React.FC<IMintActionProps> = (props) => {
     const { index, action } = props;
-    const { setValue, watch } = useFormContext();
+    const { setValue } = useFormContext();
 
     const fieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
@@ -79,11 +63,9 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
     useEffect(() => {
         const mintParams = [receiverAddress, '1'];
         const newData = encodeFunctionData({ abi: [mintAbi], args: mintParams });
-        console.log('newData', newData);
-        setValue(`${fieldName}.data`, newData);
-    }, [setValue, fieldName, receiverInput, amount]);
 
-    console.log('watch', watch());
+        setValue(`${fieldName}.data`, newData);
+    }, [setValue, fieldName, receiverAddress, amount]);
     return (
         <div className="flex w-full flex-col gap-6">
             <AddressInput

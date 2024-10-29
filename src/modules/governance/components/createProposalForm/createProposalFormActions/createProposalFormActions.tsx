@@ -16,6 +16,7 @@ import {
 } from '../../actionComposer/actionComposerDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { IPluginActionData } from './createProposalFormActions.abi';
 
 export interface ICreateProposalFormActionsProps {
     /**
@@ -26,12 +27,6 @@ export interface ICreateProposalFormActionsProps {
      * Address of the plugin.
      */
     pluginAddress: string;
-}
-
-export interface IPluginActionData {
-    groups: Array<{ id: string; name: string; info: string; indexData: string[] }>;
-    items: Array<{ id: string; groupId: string; name: string; icon: IconType; defaultValue: IProposalAction }>;
-    components: Record<string, React.ComponentType<any>>;
 }
 
 const coreActionComponents = {
