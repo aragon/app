@@ -102,6 +102,8 @@ class PrepareProcessDialogUtils {
         version: { release: 1, build: 4 },
     };
 
+    private globalExecutor: Hex = '0xd482fA5e2eEF058E84f46DD3526370FECaA3edfe';
+
     pspRepoAddress: Hex = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
 
     prepareProposalMetadata = () => {
@@ -210,7 +212,7 @@ class PrepareProcessDialogUtils {
         const { members, multisigThreshold } = body;
 
         const memberAddresses = members.map((member) => member.address as Hex);
-        const multisigTarget = { target: daoAddress, operation: 0 }; // TODO: update target to to executor address
+        const multisigTarget = { target: this.globalExecutor, operation: 0 };
         const pluginSettings = { onlyListed: true, minApprovals: multisigThreshold };
 
         const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [
@@ -235,8 +237,8 @@ class PrepareProcessDialogUtils {
 
         const votingSettings = {
             votingMode: voteChange ? DaoTokenVotingMode.VOTE_REPLACEMENT : DaoTokenVotingMode.STANDARD,
-            supportThreshold,
-            minParticipation: minimumParticipation,
+            supportThreshold: supportThreshold * 10 ** 4,
+            minParticipation: minimumParticipation * 10 ** 4,
             minDuration: dateUtils.durationToSeconds(stage.votingPeriod),
             minProposerVotingPower: BigInt(0),
         };
@@ -250,7 +252,7 @@ class PrepareProcessDialogUtils {
             { receivers: [], amounts: [] },
         );
 
-        const tokenTarget = { target: daoAddress, operation: 0 }; // TODO: update target to to executor address
+        const tokenTarget = { target: this.globalExecutor, operation: 0 };
         const pluginSettingsData = encodeAbiParameters(tokenPluginSetupAbi, [
             votingSettings,
             tokenSettings,
