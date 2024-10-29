@@ -1,12 +1,12 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import type { IProposalActionData } from '../../../createProposalFormDefinitions';
-import { useFormField } from '@/shared/hooks/useFormField';
-import { useEffect, useState } from 'react';
-import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
-import { useFormContext } from 'react-hook-form';
-import { useDao } from '@/shared/api/daoService';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { useDao } from '@/shared/api/daoService';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
+import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import type { IMintFormData } from './mintActionFormDefinitions';
 
 export interface IMintActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
@@ -39,7 +39,7 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
         fieldPrefix: fieldName,
     });
 
-    const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address ?? '0');
+    const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
 
     const amountField = useFormField<IMintFormData, 'amount'>('amount', {
         label: 'Tokens',
@@ -66,6 +66,7 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
 
         setValue(`${fieldName}.data`, newData);
     }, [setValue, fieldName, receiverAddress, amount]);
+
     return (
         <div className="flex w-full flex-col gap-6">
             <AddressInput

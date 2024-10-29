@@ -10,12 +10,11 @@ import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBr
 import { TokenSubmitVote } from './components/tokenSubmitVote';
 import { TokenVoteList } from './components/tokenVoteList';
 import { plugin } from './constants/plugin';
+import { useTokenActions } from './hooks/useTokenActions';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
-import { tokenActionUtils } from './utils/tokenActionUtils';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
-import { useTokenActions } from './hooks/useTokenActions';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils

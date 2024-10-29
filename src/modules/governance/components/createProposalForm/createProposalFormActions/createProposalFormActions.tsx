@@ -1,22 +1,22 @@
 import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useMemo, useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { ActionComposer } from '../../actionComposer';
-import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
-import { TransferAssetAction } from './proposalActions/transferAssetAction';
-import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import {
     ActionGroupId,
     defaultMetadataAction,
     defaultTransferAction,
 } from '../../actionComposer/actionComposerDefinitions';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 import type { IPluginActionData } from './createProposalFormActions.abi';
+import { TransferAssetAction } from './proposalActions/transferAssetAction';
+import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 
 export interface ICreateProposalFormActionsProps {
     /**
