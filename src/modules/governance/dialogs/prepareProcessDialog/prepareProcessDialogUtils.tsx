@@ -14,6 +14,7 @@ import {
     encodeAbiParameters,
     encodeFunctionData,
     parseEventLogs,
+    parseUnits,
     zeroAddress,
     type Hex,
     type TransactionReceipt,
@@ -244,7 +245,7 @@ class PrepareProcessDialogUtils {
         const mintSettings = members.reduce<{ receivers: Hex[]; amounts: bigint[] }>(
             (current, member) => ({
                 receivers: current.receivers.concat(member.address as Hex),
-                amounts: current.amounts.concat(BigInt((member as ITokenVotingMember).tokenAmount)),
+                amounts: current.amounts.concat(parseUnits((member as ITokenVotingMember).tokenAmount.toString(), 18)),
             }),
             { receivers: [], amounts: [] },
         );
