@@ -32,6 +32,10 @@ export interface ITransactionDialogFooterProps<TCustomStepId extends string = st
      * Callback to be called on transaction error.
      */
     onError: ITransactionDialogActionParams['onError'];
+    /**
+     * Callback called on cancel button click.
+     */
+    onCancelClick?: ITransactionDialogProps['onCancelClick'];
 }
 
 const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record<TransactionStatusState, string>>>> = {
@@ -53,9 +57,9 @@ const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, txRecei
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
-    const { submitLabel, successLink, txReceipt, activeStep, onError } = props;
+    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick } = props;
 
-    const { label: successLabel, href: successHref, action: successAction } = successLink;
+    const { label: successLabel, href: successHref, onClick: successOnClick } = successLink;
     const { id: stepId, meta } = activeStep ?? {};
     const { state, action } = meta ?? {};
 
@@ -78,15 +82,20 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const processedSubmitLabel = customSubmitLabel != null ? t(customSubmitLabel) : defaultSubmitLabel;
 
-    const processedAction =
-        displaySuccessLink && successHref
-            ? close
-            : displaySuccessLink && successAction
-              ? () => {
-                    successAction();
-                    close();
-                }
-              : () => action?.({ onError });
+    const handlePrimaryActionClick = () => {
+        if (displaySuccessLink) {
+            close();
+            successOnClick?.(txReceipt!);
+        } else {
+            action?.({ onError });
+        }
+    };
+
+    const handleCancelClick = () => {
+        close();
+        onCancelClick?.();
+    };
+
     const processedSuccessLink =
         displaySuccessLink && successHref ? buildSuccessLink(successHref, txReceipt) : undefined;
 
@@ -94,14 +103,14 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         <DialogFooter
             primaryAction={{
                 label: processedSubmitLabel,
-                onClick: processedAction,
+                onClick: handlePrimaryActionClick,
                 iconLeft: isErrorState ? IconType.RELOAD : undefined,
                 isLoading: isPendingState,
                 href: processedSuccessLink,
             }}
             secondaryAction={{
                 label: t('app.shared.transactionDialog.footer.cancel'),
-                onClick: close,
+                onClick: handleCancelClick,
                 disabled: isCancelDisabled,
             }}
         />
