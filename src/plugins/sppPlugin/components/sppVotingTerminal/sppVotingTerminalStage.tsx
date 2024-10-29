@@ -61,6 +61,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedStageStatus =
         stageStatus === ProposalVotingStatus.UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
 
+    const isMultiStage = proposal.settings.stages.length > 1;
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
@@ -68,7 +70,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             startDate={processedStartDate}
             endDate={processedEndDate}
             index={index}
-            isMultiStage={true}
+            isMultiStage={isMultiStage}
             forceMount={true}
         >
             {subProposal && (
