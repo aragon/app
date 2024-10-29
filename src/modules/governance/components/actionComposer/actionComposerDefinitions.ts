@@ -49,9 +49,6 @@ export const defaultMintAction: IProposalAction = {
     inputData: {
         function: 'mint',
         contract: 'GovernanceERC20',
-        parameters: [
-            { name: 'address', type: 'string', value: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE' },
-            { name: 'tokenAmount', type: 'string', value: '2000000000000000000' },
-        ],
+        parameters: [],
     },
 };
