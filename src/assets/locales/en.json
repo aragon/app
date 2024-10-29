@@ -574,7 +574,7 @@
         "advanceStageDialog": {
           "button": {
             "submit": "Advance",
-            "success": "Proposal advanced"
+            "success": "View proposal"
           },
           "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
           "title": "Advance proposal"

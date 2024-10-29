@@ -59,7 +59,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             submitLabel={t('app.governance.executeDialog.buttons.submit')}
             successLink={{
                 label: t('app.governance.executeDialog.buttons.success'),
-                action: () => router.refresh(),
+                onClick: router.refresh,
             }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}

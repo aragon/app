@@ -18,7 +18,17 @@ const queryToStepState = (
 ): TransactionStatusState => (status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status);
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
-    const { title, description, customSteps, stepper, submitLabel, successLink, children, prepareTransaction } = props;
+    const {
+        title,
+        description,
+        customSteps,
+        stepper,
+        submitLabel,
+        successLink,
+        children,
+        prepareTransaction,
+        onCancelClick,
+    } = props;
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
@@ -155,6 +165,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 txReceipt={txReceipt}
                 activeStep={activeStepInfo}
                 onError={handleTransactionError}
+                onCancelClick={onCancelClick}
             />
         </>
     );

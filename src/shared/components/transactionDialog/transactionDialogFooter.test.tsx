@@ -33,12 +33,14 @@ describe('<TransactionDialogFooter /> component', () => {
         expect(cancelButton).not.toBeDisabled();
     });
 
-    it('closes the dialog on cancel button click', async () => {
+    it('closes the dialog on cancel button click and calls the onCancelClick property', async () => {
         const close = jest.fn();
+        const onCancelClick = jest.fn();
         useDialogContextSpy.mockReturnValue({ open: jest.fn(), close });
-        render(createTestComponent());
+        render(createTestComponent({ onCancelClick }));
         await userEvent.click(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ }));
         expect(close).toHaveBeenCalled();
+        expect(onCancelClick).toHaveBeenCalled();
     });
 
     it('disables the cancel button when the active step is confirm and its state is pending', () => {
