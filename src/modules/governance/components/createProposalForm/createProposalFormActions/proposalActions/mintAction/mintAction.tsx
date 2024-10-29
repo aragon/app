@@ -57,7 +57,6 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
     const plugin = dao?.plugins.find((plugin) => plugin.address === action.pluginAddress);
 
     const settings = plugin?.settings as ITokenPluginSettings;
-    const maxSupply = Number(settings?.token.totalSupply);
     const tokenSymbol = settings?.token.symbol;
     const tokenDecimals = settings?.token.decimals ?? 18;
     const amount = parseUnits(amountField?.value ?? '0', tokenDecimals);
@@ -69,6 +68,7 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
         const newData = encodeFunctionData({ abi: [mintAbi], args: mintParams });
 
         setValue(`${fieldName}.data`, newData);
+        setValue(`${fieldName}.to`, receiverAddress);
     }, [setValue, fieldName, receiverAddress, amount]);
 
     return (
@@ -84,7 +84,6 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
             <InputNumber
                 placeholder={t('app.plugins.token.mintActionForm.amount.placeholder', { symbol: tokenSymbol })}
                 min={0}
-                max={maxSupply}
                 suffix={tokenSymbol}
                 {...amountField}
             />
