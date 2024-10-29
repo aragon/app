@@ -33,19 +33,22 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
         onOpenChange?.(false);
     };
 
-    const onCancelClick = () => onOpenChange?.(false);
+    const handleCloseDialog = () => {
+        onOpenChange?.(false);
+        stepper.updateActiveStep(initialActiveStep);
+    };
 
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
 
     return (
-        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
+        <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
             <TransactionDialog
                 title={t('app.plugins.spp.advanceStageDialog.title')}
                 description={t('app.plugins.spp.advanceStageDialog.description')}
                 submitLabel={t('app.plugins.spp.advanceStageDialog.button.submit')}
                 stepper={stepper}
                 prepareTransaction={handlePrepareTransaction}
-                onCancelClick={onCancelClick}
+                onCancelClick={handleCloseDialog}
                 successLink={{
                     label: t('app.plugins.spp.advanceStageDialog.button.success'),
                     onClick: onSuccessClick,
