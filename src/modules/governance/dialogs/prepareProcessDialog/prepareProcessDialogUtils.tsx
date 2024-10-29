@@ -235,8 +235,14 @@ class PrepareProcessDialogUtils {
     ) => {
         const { voteChange, supportThreshold, minimumParticipation, tokenName, tokenSymbol, members } = body;
 
+        const votingMode = voteChange
+            ? DaoTokenVotingMode.VOTE_REPLACEMENT
+            : stage.earlyStageAdvance
+              ? DaoTokenVotingMode.EARLY_EXECUTION
+              : DaoTokenVotingMode.STANDARD;
+
         const votingSettings = {
-            votingMode: voteChange ? DaoTokenVotingMode.VOTE_REPLACEMENT : DaoTokenVotingMode.STANDARD,
+            votingMode,
             supportThreshold: supportThreshold * 10 ** 4,
             minParticipation: minimumParticipation * 10 ** 4,
             minDuration: dateUtils.durationToSeconds(stage.votingPeriod),
