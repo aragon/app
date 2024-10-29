@@ -49,9 +49,9 @@ export interface ITransactionDialogSuccessLink {
      */
     href?: TransactionDialogSuccessLinkHref;
     /**
-     *   Action to be triggered when the success link is clicked.
+     * Callback triggered on success link click.
      */
-    action?: () => void;
+    onClick?: (receipt: TransactionReceipt) => void;
 }
 
 export interface ITransactionDialogProps<TCustomStepId extends string = string> {
@@ -83,6 +83,10 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      * Callback to be used for preparing the transaction to send to the wallet.
      */
     prepareTransaction: () => Promise<TransactionDialogPrepareReturn>;
+    /**
+     * Callback called on cancel button click.
+     */
+    onCancelClick?: () => void;
     /**
      * Children of the component.
      */

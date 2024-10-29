@@ -33,6 +33,8 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
         onOpenChange?.(false);
     };
 
+    const onCancelClick = () => onOpenChange?.(false);
+
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
 
     return (
@@ -43,9 +45,10 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                 submitLabel={t('app.plugins.spp.advanceStageDialog.button.submit')}
                 stepper={stepper}
                 prepareTransaction={handlePrepareTransaction}
+                onCancelClick={onCancelClick}
                 successLink={{
                     label: t('app.plugins.spp.advanceStageDialog.button.success'),
-                    action: onSuccessClick,
+                    onClick: onSuccessClick,
                 }}
             >
                 <ProposalDataListItem.Structure
