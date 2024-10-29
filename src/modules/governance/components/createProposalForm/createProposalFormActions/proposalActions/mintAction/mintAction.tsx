@@ -59,12 +59,13 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
     const settings = plugin?.settings as ITokenPluginSettings;
     const tokenSymbol = settings?.token.symbol;
     const tokenDecimals = settings?.token.decimals ?? 18;
+
     const amount = parseUnits(amountField?.value ?? '0', tokenDecimals);
 
     const receiverAddress = addressUtils.isAddress(receiverInput) ? receiverInput : zeroAddress;
 
     useEffect(() => {
-        const mintParams = [receiverAddress, '1'];
+        const mintParams = [receiverAddress, amount];
         const newData = encodeFunctionData({ abi: [mintAbi], args: mintParams });
 
         setValue(`${fieldName}.data`, newData);
