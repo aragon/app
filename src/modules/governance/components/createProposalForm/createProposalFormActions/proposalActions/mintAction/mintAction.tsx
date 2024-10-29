@@ -35,7 +35,7 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
 
     const {
         onChange: onReceiverChange,
-        value,
+        value: receiver,
         ...receiverField
     } = useFormField<IMintFormData, 'receiver'>('receiver', {
         label: t('app.plugins.token.mintActionForm.address.label'),
@@ -43,7 +43,7 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
         fieldPrefix: fieldName,
     });
 
-    const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
+    const [receiverInput, setReceiverInput] = useState<string | undefined>(receiver?.address);
 
     const amountField = useFormField<IMintFormData, 'amount'>('amount', {
         label: t('app.plugins.token.mintActionForm.amount.label'),
