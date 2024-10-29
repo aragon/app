@@ -29,7 +29,7 @@ export interface ICreateProposalFormActionsProps {
     pluginAddress: string;
 }
 
-const coreActionComponents = {
+const coreCustomActionComponents = {
     [ProposalActionType.TRANSFER]: TransferAssetAction,
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
 };
@@ -121,14 +121,14 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const allItems = [...coreItems, ...pluginItems];
     const allGroups = [...coreGroups, ...pluginGroups];
-    const allComponents = { ...coreActionComponents, ...pluginComponents };
+    const allCustomActionComponents = { ...coreCustomActionComponents, ...pluginComponents };
 
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions
                 actions={controlledActions}
                 actionKey="id"
-                customActionComponents={allComponents}
+                customActionComponents={allCustomActionComponents}
                 emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
                 dropdownItems={[
                     {

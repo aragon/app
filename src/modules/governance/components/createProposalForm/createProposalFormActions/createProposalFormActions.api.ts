@@ -11,7 +11,7 @@ export type Group = {
 
 export type Item = {
     id: string;
-    groupId: string;
+    groupId?: string;
     name: string;
     icon: IconType;
     defaultValue: IProposalAction;
