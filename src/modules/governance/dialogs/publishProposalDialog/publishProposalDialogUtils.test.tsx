@@ -50,7 +50,13 @@ describe('publishProposalDialog utils', () => {
 
             const actionBaseValues = { data: '0x123456', to: '0x000', value: '0' };
             const values = generateCreateProposalFormData({
-                actions: [{ ...generateProposalActionUpdateMetadata(actionBaseValues), daoId: 'test' }],
+                actions: [
+                    {
+                        ...generateProposalActionUpdateMetadata(actionBaseValues),
+                        daoId: 'test',
+                        pluginAddress: '0x123',
+                    },
+                ],
             });
             const metadataCid = 'test-cid';
             const plugin = generateDaoPlugin({
@@ -103,8 +109,8 @@ describe('publishProposalDialog utils', () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const transferActionData = 'transfer-async-data';
             const actions = [
-                { ...updateMetadataAction, daoId: 'test' },
-                { ...transferAction, daoId: 'test' },
+                { ...updateMetadataAction, daoId: 'test', pluginAddress: '0x123' },
+                { ...transferAction, daoId: 'test', pluginAddress: '0x123' },
             ];
             const prepareActions = {
                 [ProposalActionType.METADATA_UPDATE]: () => Promise.resolve(updateMetadataActionData),
@@ -123,8 +129,8 @@ describe('publishProposalDialog utils', () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const updateAction = generateProposalActionUpdateMetadata({ data: '0x456' });
             const actions = [
-                { ...transferAction, daoId: 'test' },
-                { ...updateAction, daoId: 'test' },
+                { ...transferAction, daoId: 'test', pluginAddress: '0x123' },
+                { ...updateAction, daoId: 'test', pluginAddress: '0x123' },
             ];
 
             const result = await publishProposalDialogUtils.prepareActions({ actions });
