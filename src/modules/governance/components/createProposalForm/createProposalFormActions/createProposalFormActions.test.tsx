@@ -13,13 +13,13 @@ jest.mock('../../actionComposer', () => ({
 describe('<CreateProposalFormActions /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
-        beforeEach(() => {
-            useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        });
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+    });
 
-        afterEach(() => {
-            useDaoSpy.mockReset();
-        });
+    afterEach(() => {
+        useDaoSpy.mockReset();
+    });
 
     const createTestComponent = (props?: Partial<ICreateProposalFormActionsProps>) => {
         const completeProps: ICreateProposalFormActionsProps = {

@@ -1,6 +1,7 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
@@ -8,7 +9,6 @@ import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import type { IMintFormData } from './mintActionFormDefinitions';
-import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface IMintActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
