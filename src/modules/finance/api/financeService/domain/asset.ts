@@ -6,10 +6,6 @@ export interface IAsset {
      */
     amount: string;
     /**
-     * Amount of the asset in USD.
-     */
-    amountUsd: string;
-    /**
      * Token involved in the balance.
      */
     token: IToken;
