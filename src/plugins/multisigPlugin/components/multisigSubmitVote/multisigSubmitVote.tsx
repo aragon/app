@@ -34,7 +34,11 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     return (
         <div className="pt-4">
             <Button onClick={openTransactionDialog} size="md" variant="primary">
-                {t('app.plugins.multisig.multisigSubmitVote.button')}
+                {t('app.plugins.multisig.multisigSubmitVote.voteLabel', {
+                    label: isVeto
+                        ? t('app.plugins.multisig.multisigSubmitVote.vetoLabel')
+                        : t('app.plugins.multisig.multisigSubmitVote.approveLabel'),
+                })}
             </Button>
         </div>
     );
