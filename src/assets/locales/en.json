@@ -740,9 +740,8 @@
           "entity": "Proposals"
         },
         "multisigSubmitVote": {
-          "approveLabel": "Approve",
-          "vetoLabel": "Veto",
-          "voteLabel": "{{label}} proposal"
+          "approveLabel": "Approve proposal",
+          "vetoLabel": "Veto proposal"
         },
         "multisigVoteList": {
           "entity": "Votes"
