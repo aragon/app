@@ -1,6 +1,6 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { defaultMintAction } from '@/modules/governance/components/actionComposer/actionComposerDefinitions';
-import type { IPluginActionData } from '@/modules/governance/components/createProposalForm/createProposalFormActions/createProposalFormActions.abi';
+import type { IPluginActionData } from '@/modules/governance/components/createProposalForm/createProposalFormActions/createProposalFormActions.api';
 import { MintAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/mintAction';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';

@@ -1,8 +1,8 @@
 import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type IconType } from '@aragon/gov-ui-kit';
 import { forwardRef } from 'react';
 import { type IProposalAction } from '../../api/governanceService';
+import type { IPluginActionData } from '../createProposalForm/createProposalFormActions/createProposalFormActions.api';
 
 export interface IActionComposerProps
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
@@ -13,11 +13,11 @@ export interface IActionComposerProps
     /**
      * All action items, both plugin specific and plugin agnostic.
      */
-    items: Array<{ id: string; name: string; icon: IconType; defaultValue: IProposalAction }>;
+    items: IPluginActionData['items'];
     /**
      * All action groups, both plugin specific and plugin agnostic.
      */
-    groups: Array<{ id: string; name: string; info: string; indexData: string[] }>;
+    groups: IPluginActionData['groups'];
 }
 
 export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {

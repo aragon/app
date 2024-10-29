@@ -14,7 +14,7 @@ import {
     defaultTransferAction,
 } from '../../actionComposer/actionComposerDefinitions';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
-import type { IPluginActionData } from './createProposalFormActions.abi';
+import type { IPluginActionData } from './createProposalFormActions.api';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 
