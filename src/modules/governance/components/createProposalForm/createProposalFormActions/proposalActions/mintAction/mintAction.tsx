@@ -8,6 +8,7 @@ import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import type { IMintFormData } from './mintActionFormDefinitions';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface IMintActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
@@ -24,6 +25,9 @@ const mintAbi = {
 
 export const MintAction: React.FC<IMintActionProps> = (props) => {
     const { index, action } = props;
+
+    const { t } = useTranslations();
+
     const { setValue } = useFormContext();
 
     const fieldName = `actions.[${index}]`;
@@ -34,7 +38,7 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
         value,
         ...receiverField
     } = useFormField<IMintFormData, 'receiver'>('receiver', {
-        label: 'Address',
+        label: t('app.plugins.token.mintActionForm.address.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix: fieldName,
     });
@@ -42,7 +46,7 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
     const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
 
     const amountField = useFormField<IMintFormData, 'amount'>('amount', {
-        label: 'Tokens',
+        label: t('app.plugins.token.mintActionForm.amount.label'),
         rules: { required: true },
         fieldPrefix: fieldName,
     });
@@ -71,13 +75,14 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
         <div className="flex w-full flex-col gap-6">
             <AddressInput
                 chainId={1}
+                placeholder={t('app.plugins.token.mintActionForm.address.placeholder')}
                 value={receiverInput}
                 onChange={setReceiverInput}
                 onAccept={onReceiverChange}
                 {...receiverField}
             />
             <InputNumber
-                placeholder={`0 ${tokenSymbol}`}
+                placeholder={t('app.plugins.token.mintActionForm.amount.placeholder', { symbol: tokenSymbol })}
                 min={0}
                 max={maxSupply}
                 suffix={tokenSymbol}
