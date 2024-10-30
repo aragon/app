@@ -13,7 +13,7 @@ import {
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): SppStageStatus => {
         const now = DateTime.now();
-        const stageStartDate = this.getStageStartDate(proposal);
+        const stageStartDate = this.getStageStartDate(proposal, stage);
         const stageEndDate = this.getStageEndDate(proposal, stage);
         const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
 
@@ -25,19 +25,19 @@ class SppStageUtils {
             return ProposalVotingStatus.UNREACHED;
         }
 
-        if (stageStartDate > now || stage.stageIndex > proposal.stageIndex) {
+        if ((stageStartDate && stageStartDate > now) || stage.stageIndex > proposal.stageIndex) {
             return ProposalStatus.PENDING;
         }
 
         if (this.isApprovalReached(proposal, stage)) {
-            if (now > maxAdvanceDate) {
+            if (maxAdvanceDate && now > maxAdvanceDate) {
                 return ProposalStatus.EXPIRED;
             }
 
             return this.canStageAdvance(proposal, stage) ? ProposalStatus.ACCEPTED : ProposalStatus.ACTIVE;
         }
 
-        if (now > stageEndDate) {
+        if (stageEndDate && now > stageEndDate) {
             return ProposalStatus.REJECTED;
         }
 
@@ -55,21 +55,24 @@ class SppStageUtils {
         });
     };
 
-    getStageStartDate = (proposal: ISppProposal): DateTime => {
+    getStageStartDate = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         if (proposal.stageIndex === 0) {
             return DateTime.fromSeconds(proposal.startDate);
         }
-        return DateTime.fromSeconds(proposal.lastStageTransition);
+        if (proposal.stageIndex === stage.stageIndex) {
+            return DateTime.fromSeconds(proposal.lastStageTransition);
+        }
+        return undefined;
     };
 
-    getStageEndDate = (proposal: ISppProposal, stage: ISppStage): DateTime => {
-        const startDate = this.getStageStartDate(proposal);
-        return startDate.plus({ seconds: stage.voteDuration });
+    getStageEndDate = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
+        const startDate = this.getStageStartDate(proposal, stage);
+        return startDate?.plus({ seconds: stage.voteDuration });
     };
 
-    getStageMaxAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime => {
+    getStageMaxAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         const stageEndDate = this.getStageEndDate(proposal, stage);
-        return stageEndDate.plus({ seconds: stage.maxAdvance });
+        return stageEndDate?.plus({ seconds: stage.maxAdvance });
     };
 
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
@@ -84,9 +87,13 @@ class SppStageUtils {
 
     canStageAdvance = (proposal: ISppProposal, stage: ISppStage): boolean => {
         const now = DateTime.now();
-        const stageStartDate = this.getStageStartDate(proposal);
-        const minAdvanceDate = stageStartDate.plus({ seconds: stage.minAdvance });
-        const maxAdvanceDate = stageStartDate.plus({ seconds: stage.maxAdvance });
+        const stageStartDate = this.getStageStartDate(proposal, stage);
+        const minAdvanceDate = stageStartDate?.plus({ seconds: stage.minAdvance });
+        const maxAdvanceDate = stageStartDate?.plus({ seconds: stage.maxAdvance });
+
+        if (!stageStartDate || !minAdvanceDate || !maxAdvanceDate) {
+            return false;
+        }
 
         // Check if we're within the min and max advance period
         const isWithinMinAndMaxAdvance = now >= minAdvanceDate && now <= maxAdvanceDate;
