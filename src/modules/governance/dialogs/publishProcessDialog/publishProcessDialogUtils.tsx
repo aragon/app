@@ -43,6 +43,10 @@ export interface IUpdatePermissionParams {
     to: Hex;
 }
 
+export interface IUpdatePermissionWithConditionParams extends IUpdatePermissionParams {
+    condition: Hex;
+}
+
 class PublishProcessDialogUtils {
     private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 
@@ -51,6 +55,8 @@ class PublishProcessDialogUtils {
         createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
         executePermission: 'EXECUTE_PERMISSION',
     };
+
+    private alwaysTrueCondition: Hex = '0xCC8200adC6EF4d2E8746cdCB2B16b6d3ddeab18a';
 
     prepareProposalMetadata = () => {
         const title = 'Apply plugin installation';
@@ -137,11 +143,13 @@ class PublishProcessDialogUtils {
             })
             .filter((action) => action != null);
 
-        const grantCreateProposalActions = this.buildCreateProposalPermissionActions(
-            values,
-            pluginAddresses,
-            daoAddress,
-        );
+        const grantCreateProposalAction = this.buildGrantWithConditionPermissionTransaction({
+            where: pluginAddresses[0], // SPP address
+            who: this.anyAddress,
+            what: this.permissionIds.createProposalPermission,
+            condition: this.alwaysTrueCondition,
+            to: daoAddress,
+        });
 
         const revokeMultiTargetPermissionAction = this.buildRevokePermissionTransaction({
             where: daoAddress,
@@ -155,7 +163,7 @@ class PublishProcessDialogUtils {
             ...applyInstallationActions,
             updateStagesAction,
             ...multisigPermissionActions.flat(),
-            ...grantCreateProposalActions,
+            grantCreateProposalAction,
             revokeMultiTargetPermissionAction,
         ];
     };
@@ -166,6 +174,17 @@ class PublishProcessDialogUtils {
             abi: daoAbi,
             functionName: 'grant',
             args: [where, who, keccak256(toBytes(what))],
+        });
+
+        return { to, data: transactionData, value: '0' };
+    };
+
+    private buildGrantWithConditionPermissionTransaction = (params: IUpdatePermissionWithConditionParams) => {
+        const { where, who, what, to, condition } = params;
+        const transactionData = encodeFunctionData({
+            abi: daoAbi,
+            functionName: 'grantWithCondition',
+            args: [where, who, keccak256(toBytes(what)), condition],
         });
 
         return { to, data: transactionData, value: '0' };
