@@ -1,6 +1,6 @@
 import { ProposalVoting } from '@aragon/gov-ui-kit';
-import type { IMultisigProposal } from '../../types';
 import type { ReactNode } from 'react';
+import type { IMultisigProposal } from '../../types';
 
 export interface IMultisigProposalVotingBreakdownProps {
     /**

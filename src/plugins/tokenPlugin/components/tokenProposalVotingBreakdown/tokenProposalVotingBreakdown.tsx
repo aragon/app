@@ -1,9 +1,9 @@
 import { ProposalVoting } from '@aragon/gov-ui-kit';
+import type { ReactNode } from 'react';
 import { formatUnits } from 'viem';
 import type { ITokenProposal } from '../../types';
 import { VoteOption } from '../../types/enum/voteOption';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
-import type { ReactNode } from 'react';
 
 export interface ITokenProposalVotingBreakdownProps {
     /**
