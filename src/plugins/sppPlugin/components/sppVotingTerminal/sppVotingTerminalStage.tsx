@@ -50,7 +50,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         pluginId: plugin.subdomain,
     });
 
-    // If the stage is not reached, do not show the start and end date
     const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
     const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
 
