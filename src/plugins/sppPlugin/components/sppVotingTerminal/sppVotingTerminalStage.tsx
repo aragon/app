@@ -4,7 +4,7 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { ProposalStatus, proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage, ISppSubProposal, SppStageStatus as SppStageStatusType } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppStageStatus } from '../sppStageStatus';
@@ -65,15 +65,14 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             const updatedStatus = sppStageUtils.getStageStatus(proposal, stage);
             setStageStatus((prevStatus) => (prevStatus !== updatedStatus ? updatedStatus : prevStatus));
         },
-        delay: 1000, // Update every second.
+        delay: 1000,
+        enabled: stageStatus === ProposalStatus.ACTIVE,
     });
 
     const processedStageStatus =
         stageStatus === ProposalVotingStatus.UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
 
     const isMultiStage = proposal.settings.stages.length > 1;
-
-    console.log('status', processedStageStatus);
 
     return (
         <ProposalVoting.Stage

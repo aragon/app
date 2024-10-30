@@ -9,10 +9,14 @@ export interface IUseIntervalParams {
      * Delay between each execution (number in ms).
      */
     delay: number;
+    /**
+     * Boolean to determine if the interval should be enabled
+     */
+    enabled?: boolean;
 }
 
 export const useInterval = (params: IUseIntervalParams) => {
-    const { callback, delay } = params;
+    const { callback, delay, enabled = true } = params;
 
     const savedCallback = useRef<() => void>();
 
@@ -21,6 +25,9 @@ export const useInterval = (params: IUseIntervalParams) => {
     }, [callback]);
 
     useEffect(() => {
+        if (!enabled) {
+            return;
+        }
         const tick = () => {
             savedCallback.current?.();
         };
@@ -28,5 +35,5 @@ export const useInterval = (params: IUseIntervalParams) => {
         const interval = setInterval(tick, delay);
 
         return () => clearInterval(interval);
-    }, [delay]);
+    }, [delay, enabled]);
 };
