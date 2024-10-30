@@ -8,20 +8,20 @@ export interface IMultisigProposalVotingBreakdownProps {
      */
     proposal: IMultisigProposal;
     /**
-     * Vote or advance component to render.
+     * Additional children to render.
      */
-    voteOrAdvanceComponent?: ReactNode;
+    children?: ReactNode;
 }
 
 export const MultisigProposalVotingBreakdown: React.FC<IMultisigProposalVotingBreakdownProps> = (props) => {
-    const { proposal, voteOrAdvanceComponent } = props;
+    const { proposal, children } = props;
 
     return (
         <ProposalVoting.BreakdownMultisig
             approvalsAmount={proposal.metrics.totalVotes}
             minApprovals={proposal.settings.minApprovals}
         >
-            {voteOrAdvanceComponent}
+            {children}
         </ProposalVoting.BreakdownMultisig>
     );
 };

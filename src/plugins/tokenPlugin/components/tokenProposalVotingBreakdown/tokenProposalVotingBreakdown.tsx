@@ -11,9 +11,9 @@ export interface ITokenProposalVotingBreakdownProps {
      */
     proposal: ITokenProposal;
     /**
-     * Vote or advance component to render.
+     * Additional children to render.
      */
-    voteOrAdvanceComponent?: ReactNode;
+    children?: ReactNode;
 }
 
 const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
@@ -24,7 +24,7 @@ const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
 };
 
 export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdownProps> = (props) => {
-    const { proposal, voteOrAdvanceComponent } = props;
+    const { proposal, children } = props;
 
     const { symbol, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold, historicalTotalSupply } = proposal.settings;
@@ -43,7 +43,7 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
             tokenSymbol={symbol}
             tokenTotalSupply={formatUnits(BigInt(historicalTotalSupply!), decimals)}
         >
-            {voteOrAdvanceComponent}
+            {children}
         </ProposalVoting.BreakdownToken>
     );
 };

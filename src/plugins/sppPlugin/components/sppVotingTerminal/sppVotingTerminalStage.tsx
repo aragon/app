@@ -81,17 +81,16 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={subProposal.pluginSubdomain}
                         proposal={subProposal}
-                        voteOrAdvanceComponent={
-                            processedSubProposal ? (
-                                <SppStageStatus
-                                    proposal={proposal}
-                                    subProposal={processedSubProposal}
-                                    daoId={daoId}
-                                    stage={stage}
-                                />
-                            ) : undefined
-                        }
-                    />
+                    >
+                        {processedSubProposal && (
+                            <SppStageStatus
+                                proposal={proposal}
+                                subProposal={processedSubProposal}
+                                daoId={daoId}
+                                stage={stage}
+                            />
+                        )}
+                    </PluginSingleComponent>
                     <ProposalVoting.Votes>
                         <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={pluginAddress} />
                     </ProposalVoting.Votes>
