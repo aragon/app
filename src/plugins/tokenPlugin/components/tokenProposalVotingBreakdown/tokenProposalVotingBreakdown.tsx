@@ -13,7 +13,7 @@ export interface ITokenProposalVotingBreakdownProps {
     /**
      * Vote or advance component to render.
      */
-    voteOrAdvanceComponent: ReactNode;
+    voteOrAdvanceComponent?: ReactNode;
 }
 
 const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
