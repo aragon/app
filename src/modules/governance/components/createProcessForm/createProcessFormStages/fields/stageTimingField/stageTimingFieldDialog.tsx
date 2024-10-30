@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/gov-ui-kit';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 
 export interface IStageTimingFieldDialogProps {
@@ -39,10 +39,20 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
         fieldPrefix: stageFieldName,
     });
 
-    const stageExpirationField = useFormField<ICreateProcessFormStage, 'stageExpiration'>('stageExpiration', {
-        label: t('app.governance.createProcessForm.stage.timing.dialog.expiration.label'),
-        fieldPrefix: stageFieldName,
+    const { onChange: onStageExpirationChange } = useFormField<ICreateProcessFormStage, 'stageExpiration'>(
+        'stageExpiration',
+        { fieldPrefix: stageFieldName },
+    );
+
+    const stageExpirationName = `${stageFieldName}.stageExpiration`;
+    const stageExpiration = useWatch<Record<string, ICreateProcessFormStage['stageExpiration']>>({
+        name: stageExpirationName,
     });
+
+    const handleExpirationCheckChange = (checked: boolean) => {
+        const newValue = checked ? { days: 7, minutes: 0, hours: 0 } : undefined;
+        onStageExpirationChange(newValue);
+    };
 
     return (
         <Dialog.Root
@@ -112,21 +122,16 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                     />
                 )}
                 <Switch
+                    label={t('app.governance.createProcessForm.stage.timing.dialog.expiration.label')}
                     helpText={t('app.governance.createProcessForm.stage.timing.dialog.expiration.helpText')}
-                    inlineLabel={
-                        stageExpirationField.value
-                            ? t('app.governance.createProcessForm.stage.timing.dialog.yes')
-                            : t('app.governance.createProcessForm.stage.timing.dialog.no')
-                    }
-                    onCheckedChanged={(checked) => {
-                        const newValue = checked ? { days: 7, minutes: 0, hours: 0 } : undefined;
-                        setValue(stageExpirationField.name, newValue);
-                    }}
-                    checked={stageExpirationField.value != null}
-                    {...stageExpirationField}
+                    inlineLabel={t(
+                        `app.governance.createProcessForm.stage.timing.dialog.${stageExpiration ? 'yes' : 'no'}`,
+                    )}
+                    onCheckedChanged={handleExpirationCheckChange}
+                    checked={stageExpiration != null}
                 />
 
-                {stageExpirationField.value != null && (
+                {stageExpiration != null && (
                     <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
                         <div className="flex flex-col justify-between gap-4 md:flex-row">
                             <InputNumber
@@ -134,14 +139,11 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                                 min={0}
                                 max={59}
                                 className="w-full md:w-1/3"
-                                value={stageExpirationField.value.minutes}
+                                value={stageExpiration.minutes}
                                 placeholder="0 m"
                                 suffix="m"
                                 onChange={(e) =>
-                                    setValue(stageExpirationField.name, {
-                                        ...stageExpirationField.value,
-                                        minutes: Number(e),
-                                    })
+                                    setValue(stageExpirationName, { ...stageExpiration, minutes: Number(e) })
                                 }
                             />
                             <InputNumber
@@ -149,29 +151,21 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                                 min={0}
                                 max={23}
                                 className="w-full md:w-1/3"
-                                value={stageExpirationField.value.hours}
+                                value={stageExpiration.hours}
                                 placeholder="0 h"
                                 suffix="h"
                                 onChange={(e) =>
-                                    setValue(stageExpirationField.name, {
-                                        ...stageExpirationField.value,
-                                        hours: Number(e),
-                                    })
+                                    setValue(stageExpirationName, { ...stageExpiration, hours: Number(e) })
                                 }
                             />
                             <InputNumber
                                 label={t('app.shared.advancedDateInput.duration.days')}
                                 min={0}
                                 className="w-full md:w-1/3"
-                                value={stageExpirationField.value.days}
+                                value={stageExpiration.days}
                                 placeholder="0 d"
                                 suffix="d"
-                                onChange={(e) =>
-                                    setValue(stageExpirationField.name, {
-                                        ...stageExpirationField.value,
-                                        days: Number(e),
-                                    })
-                                }
+                                onChange={(e) => setValue(stageExpirationName, { ...stageExpiration, days: Number(e) })}
                             />
                         </div>
                         <AlertInline message={t('app.governance.createProcessForm.stage.timing.dialog.helpInfo')} />
