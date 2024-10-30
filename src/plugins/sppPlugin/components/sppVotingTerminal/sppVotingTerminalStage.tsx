@@ -3,13 +3,13 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useInterval } from '@/shared/hooks/useInterval';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalStatus, proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import type { ISppProposal, ISppStage, ISppSubProposal, SppStageStatus as SppStageStatusType } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppStageStatus } from '../sppStageStatus';
-import { useState } from 'react';
-import { useInterval } from '@/shared/hooks/useInterval';
 
 export interface IProposalVotingTerminalStageProps {
     /**
