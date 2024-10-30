@@ -8,7 +8,7 @@ export interface IMultisigProposalVotingBreakdownProps {
      */
     proposal: IMultisigProposal;
     /**
-     * Vote or approve component to render.
+     * Vote or advance component to render.
      */
     voteOrAdvanceComponent?: ReactNode;
 }

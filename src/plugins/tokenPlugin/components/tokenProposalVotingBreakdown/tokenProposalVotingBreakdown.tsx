@@ -11,7 +11,7 @@ export interface ITokenProposalVotingBreakdownProps {
      */
     proposal: ITokenProposal;
     /**
-     * Vote or approve component to render.
+     * Vote or advance component to render.
      */
     voteOrAdvanceComponent: ReactNode;
 }
