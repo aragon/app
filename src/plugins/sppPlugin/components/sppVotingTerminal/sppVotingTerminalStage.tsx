@@ -51,10 +51,9 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     });
 
     // If the stage is not reached, do not show the start and end date
-    const processedStartDate =
-        proposal.stageIndex < stage.stageIndex ? undefined : sppStageUtils.getStageStartDate(proposal).toMillis();
-    const processedEndDate =
-        proposal.stageIndex < stage.stageIndex ? undefined : sppStageUtils.getStageEndDate(proposal, stage).toMillis();
+    const isFutureStage = proposal.stageIndex < stage.stageIndex;
+    const processedStartDate = !isFutureStage ? sppStageUtils.getStageStartDate(proposal).toMillis() : undefined;
+    const processedEndDate = !isFutureStage ? sppStageUtils.getStageEndDate(proposal, stage).toMillis() : undefined;
 
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
     const processedSubProposal =
