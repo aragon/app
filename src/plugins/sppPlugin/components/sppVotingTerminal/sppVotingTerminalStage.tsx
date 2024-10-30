@@ -5,9 +5,11 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage, ISppSubProposal, SppStageStatus as SppStageStatusType } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppStageStatus } from '../sppStageStatus';
+import { useState } from 'react';
+import { useInterval } from '@/shared/hooks/useInterval';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -36,6 +38,7 @@ const votesPerPage = 6;
 
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
     const { stage, daoId, subProposals, index, proposal } = props;
+    const [stageStatus, setStageStatus] = useState<SppStageStatusType>(sppStageUtils.getStageStatus(proposal, stage));
 
     // TODO: Support multiple proposals within a stage (APP-3659)
     const subProposal = subProposals?.[0];
@@ -57,11 +60,20 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
-    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    useInterval({
+        callback: () => {
+            const updatedStatus = sppStageUtils.getStageStatus(proposal, stage);
+            setStageStatus((prevStatus) => (prevStatus !== updatedStatus ? updatedStatus : prevStatus));
+        },
+        delay: 1000, // Update every second.
+    });
+
     const processedStageStatus =
         stageStatus === ProposalVotingStatus.UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
 
     const isMultiStage = proposal.settings.stages.length > 1;
+
+    console.log('status', processedStageStatus);
 
     return (
         <ProposalVoting.Stage
