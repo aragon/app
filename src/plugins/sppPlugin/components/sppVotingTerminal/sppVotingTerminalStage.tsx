@@ -50,8 +50,11 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         pluginId: plugin.subdomain,
     });
 
-    const processedStartDate = sppStageUtils.getStageStartDate(proposal).toMillis();
-    const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage).toMillis();
+    // If the stage is not reached, do not show the start and end date
+    const processedStartDate =
+        proposal.stageIndex < stage.stageIndex ? '-' : sppStageUtils.getStageStartDate(proposal).toMillis();
+    const processedEndDate =
+        proposal.stageIndex < stage.stageIndex ? '-' : sppStageUtils.getStageEndDate(proposal, stage).toMillis();
 
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
     const processedSubProposal =
@@ -79,6 +82,16 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={subProposal.pluginSubdomain}
                         proposal={subProposal}
+                        voteOrAdvanceComponent={
+                            processedSubProposal ? (
+                                <SppStageStatus
+                                    proposal={proposal}
+                                    subProposal={processedSubProposal}
+                                    daoId={daoId}
+                                    stage={stage}
+                                />
+                            ) : undefined
+                        }
                     />
                     <ProposalVoting.Votes>
                         <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={pluginAddress} />
@@ -86,9 +99,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                 </>
             )}
             <ProposalVoting.Details settings={proposalSettings} />
-            {processedSubProposal && (
-                <SppStageStatus proposal={proposal} subProposal={processedSubProposal} daoId={daoId} stage={stage} />
-            )}
         </ProposalVoting.Stage>
     );
 };
