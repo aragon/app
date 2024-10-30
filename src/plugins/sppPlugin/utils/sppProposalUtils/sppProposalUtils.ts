@@ -53,6 +53,9 @@ class SppProposalUtils {
             return true; // If not in the last stage, and is not executed/rejected it  essentially ends in future
         }
 
+        if (!stageEndDate) {
+            return false;
+        }
         return stageEndDate > now;
     };
 
