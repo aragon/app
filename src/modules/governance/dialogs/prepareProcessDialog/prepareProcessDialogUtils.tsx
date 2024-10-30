@@ -102,7 +102,7 @@ class PrepareProcessDialogUtils {
         version: { release: 1, build: 4 },
     };
 
-    private globalExecutor: Hex = '0xd482fA5e2eEF058E84f46DD3526370FECaA3edfe';
+    private globalExecutor: Hex = '0x67744773b8C29aaDc8a11010C09306c0029219Ff';
 
     pspRepoAddress: Hex = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
 
