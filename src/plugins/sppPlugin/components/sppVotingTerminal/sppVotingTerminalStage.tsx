@@ -3,6 +3,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
@@ -57,7 +58,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
-    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const initialStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const stageStatus = useDynamicValue({
+        callback: () => sppStageUtils.getStageStatus(proposal, stage),
+        enabled: initialStatus === ProposalVotingStatus.ACTIVE,
+    });
+
     const processedStageStatus =
         stageStatus === ProposalVotingStatus.UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
 
