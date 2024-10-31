@@ -5,7 +5,7 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useRerender } from '@/shared/hooks/useRerender';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { ProposalStatus, proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppStageStatus } from '../sppStageStatus';
@@ -65,7 +65,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
         delay: 1000,
         initialValue: initialStatus,
-        enabled: initialStatus === ProposalStatus.ACTIVE,
+        enabled: initialStatus === ProposalVotingStatus.ACTIVE,
     });
 
     const processedStageStatus =
