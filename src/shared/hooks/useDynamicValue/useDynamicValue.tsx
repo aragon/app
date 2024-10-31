@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface IUseDynamicValueParams<TResult> {
     /**
@@ -22,30 +22,19 @@ export const useDynamicValue = <TResult,>(params: IUseDynamicValueParams<TResult
 
     const [value, setValue] = useState<TResult>(callback());
 
-    // Use ref to store the callback function to avoid unnecessary re-renders.
-    // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
-    const savedCallback = useRef<() => TResult>();
-
-    useEffect(() => {
-        savedCallback.current = callback;
-    }, [callback]);
-
     useEffect(() => {
         if (!enabled) {
             return;
         }
         const tick = () => {
-            const result = savedCallback.current?.();
-
-            if (result !== undefined) {
-                setValue(result);
-            }
+            const result = callback();
+            setValue(result);
         };
 
         const interval = setInterval(tick, delay);
 
         return () => clearInterval(interval);
-    }, [delay, enabled]);
+    }, [delay, enabled, callback]);
 
     return value;
 };
