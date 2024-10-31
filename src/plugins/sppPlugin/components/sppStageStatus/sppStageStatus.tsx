@@ -100,7 +100,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
                 {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
             </Button>
             {displayAdvanceTime && (
-                <div className="flex flex-row justify-center gap-0.5">
+                <div className="flex flex-row justify-center gap-1">
                     <span className="text-neutral-800">{formattedMaxAdvance}</span>
                     <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceInfo')}</span>
                 </div>
