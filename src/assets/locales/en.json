@@ -362,7 +362,7 @@
           "timing": {
             "dialog": {
               "earlyAdvance": {
-                "helpText": "Should the proposal be able to advance this stage early, if it's successful?",
+                "helpText": "Should the proposal be advanceable to subsequent stages early if it is approved prior to the end of the voting period?",
                 "label": "Early stage advance"
               },
               "expiration": {
@@ -373,12 +373,12 @@
               "no": "No",
               "title": "Edit timing",
               "votingPeriod": {
-                "helpText": "The shortest period of time a process is open for voting.",
+                "helpText": "The amount of time that the bodies in this stage have to vote on proposals.",
                 "label": "Voting period"
               },
               "yes": "Yes"
             },
-            "helpText": "Define the timing of the stage, so all bodies have enough time to execute and advance the proposals.",
+            "helpText": "Define the timing of this stage so that the bodies have enough time to vote on proposals and advance them to subsequent stages.",
             "label": "Timing",
             "summary": {
               "earlyAdvance": "Early stage advance",
