@@ -261,30 +261,6 @@ class PublishProcessDialogUtils {
         return { to: sppAddress, data: transactionData, value: '0' };
     };
 
-    private buildCreateProposalPermissionActions = (
-        values: ICreateProcessFormData,
-        pluginAddresses: Hex[],
-        daoAddress: Hex,
-    ) => {
-        const memberAddresses = values.stages
-            .flatMap((stage) => stage.bodies)
-            .flatMap((body) => body.members)
-            .map((member) => member.address as Hex);
-
-        const grantCreateProposalPermissions = memberAddresses.map((memberAddress) => {
-            const grantCreateProposalAction = this.buildGrantPermissionTransaction({
-                where: pluginAddresses[0], // SPP address
-                who: memberAddress,
-                what: this.permissionIds.createProposalPermission,
-                to: daoAddress,
-            });
-
-            return grantCreateProposalAction;
-        });
-
-        return grantCreateProposalPermissions;
-    };
-
     private hashHelpers = (helpers: readonly Hex[]): Hex =>
         keccak256(encodeAbiParameters([{ type: 'address[]' }], [helpers]));
 }
