@@ -1,7 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, DateFormat, formatterUtils, ProposalStatus } from '@aragon/gov-ui-kit';
+import { Button, DateFormat, formatterUtils, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
@@ -37,13 +37,13 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
-    const canAdvanceStage = stageStatus === ProposalStatus.ACCEPTED && proposal.stageIndex === stage.stageIndex;
-    const canVote = stageStatus === ProposalStatus.ACTIVE;
+    const canAdvanceStage = stageStatus === ProposalVotingStatus.ACCEPTED && proposal.stageIndex === stage.stageIndex;
+    const canVote = stageStatus === ProposalVotingStatus.ACTIVE;
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const formattedMaxAdvance = formatterUtils.formatDate(maxAdvanceTime, { format: DateFormat.DURATION });
 
-    const displayAdvanceTime = maxAdvanceTime.diffNow('days').days < 90;
+    const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90;
 
     if (!canAdvanceStage && !canVote) {
         return null;
