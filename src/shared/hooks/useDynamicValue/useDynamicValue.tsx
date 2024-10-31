@@ -7,7 +7,7 @@ export interface IUseDynamicValueParams<TResult> {
     callback: () => TResult;
     /**
      * Delay between each execution (number in ms).
-     * @default  1000
+     * @default 1000
      */
     delay?: number;
     /**
@@ -26,11 +26,8 @@ export const useDynamicValue = <TResult,>(params: IUseDynamicValueParams<TResult
         if (!enabled) {
             return;
         }
-        const tick = () => {
-            const result = callback();
-            setValue(result);
-        };
 
+        const tick = () => setValue(callback());
         const interval = setInterval(tick, delay);
 
         return () => clearInterval(interval);
