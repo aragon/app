@@ -591,6 +591,7 @@
           "advanceInfo": "left to advance",
           "button": {
             "advance": "Advance proposal",
+            "advanced": "Proposal advanced",
             "vote": "Vote on proposal"
           }
         },
