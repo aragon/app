@@ -1,30 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 
-export interface IUseDynamicValueParams<T> {
+export interface IUseDynamicValueParams<TResult> {
     /**
      * Callback to be executed on delay that returns a value of type T.
      */
-    callback: () => T;
+    callback: () => TResult;
     /**
      * Delay between each execution (number in ms).
+     * @default  1000
      */
-    delay: number;
+    delay?: number;
     /**
-     * Initial value of type T
-     */
-    initialValue: T;
-    /**
-     * Boolean to determine if the interval should be enabled
+     * Boolean to determine if the interval should be enabled.
+     * @default true
      */
     enabled?: boolean;
 }
 
-export const useDynamicValue = <T,>(params: IUseDynamicValueParams<T>): T => {
-    const { callback, delay, initialValue, enabled = true } = params;
+export const useDynamicValue = <TResult,>(params: IUseDynamicValueParams<TResult>): TResult => {
+    const { callback, delay = 1000, enabled = true } = params;
 
-    const [value, setValue] = useState<T>(initialValue);
+    const [value, setValue] = useState<TResult>(callback());
 
-    const savedCallback = useRef<() => T>();
+    // Use ref to store the callback function to avoid unnecessary re-renders.
+    // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+    const savedCallback = useRef<() => TResult>();
 
     useEffect(() => {
         savedCallback.current = callback;

@@ -61,8 +61,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const initialStatus = sppStageUtils.getStageStatus(proposal, stage);
     const stageStatus = useDynamicValue({
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
-        delay: 1000,
-        initialValue: initialStatus,
         enabled: initialStatus === ProposalVotingStatus.ACTIVE,
     });
 
