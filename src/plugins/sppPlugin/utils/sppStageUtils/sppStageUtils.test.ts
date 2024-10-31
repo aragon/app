@@ -18,19 +18,39 @@ describe('SppStageUtils', () => {
 
     describe('getStageStartDate', () => {
         it('returns startDate for the first stage', () => {
-            const now = '2022-02-10T07:55:55.868Z';
-            const startDate = DateTime.fromISO(now).minus({ days: 1 }).toSeconds();
+            const startDate = DateTime.fromISO('2022-02-10T07:55:55.868Z').toSeconds();
             const proposal = generateSppProposal({ startDate, stageIndex: 0 });
-            const result = sppStageUtils.getStageStartDate(proposal);
-            expect(result.toSeconds()).toBe(startDate);
+            const stage = generateSppStage();
+            const result = sppStageUtils.getStageStartDate(proposal, stage);
+            expect(result?.toSeconds()).toBe(startDate);
         });
 
-        it('returns lastStageTransition for subsequent stages', () => {
+        it('returns lastStageTransition for current stage', () => {
+            const lastStageTransition = DateTime.fromISO('2022-02-10T07:55:55.868Z').toSeconds();
+            const proposal = generateSppProposal({ lastStageTransition, stageIndex: 1 });
+            const stage = generateSppStage({ stageIndex: 1 });
+            const result = sppStageUtils.getStageStartDate(proposal, stage);
+            expect(result?.toSeconds()).toBe(lastStageTransition);
+        });
+
+        it('returns the linked subProposal startDate for previous stages', () => {
+            const subProposalStartDate = DateTime.fromISO('2016-05-25T09:08:34.123').toSeconds();
+            const proposal = generateSppProposal({
+                stageIndex: 2,
+                subProposals: [generateSppSubProposal({ stageIndex: 1, startDate: subProposalStartDate })],
+            });
+            const stage = generateSppStage({ stageIndex: 1 });
+            const result = sppStageUtils.getStageStartDate(proposal, stage);
+            expect(result?.toSeconds()).toBe(subProposalStartDate);
+        });
+
+        it('returns undefined for other stages', () => {
             const now = '2022-02-10T07:55:55.868Z';
             const lastStageTransition = DateTime.fromISO(now).minus({ hours: 2 }).toSeconds();
             const proposal = generateSppProposal({ lastStageTransition, stageIndex: 1 });
-            const result = sppStageUtils.getStageStartDate(proposal);
-            expect(result.toSeconds()).toBe(lastStageTransition);
+            const stage = generateSppStage({ stageIndex: 0 });
+            const result = sppStageUtils.getStageStartDate(proposal, stage);
+            expect(result).toBe(undefined);
         });
     });
 
@@ -41,7 +61,7 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({ startDate });
             const stage = generateSppStage({ voteDuration: 86400 });
             const result = sppStageUtils.getStageEndDate(proposal, stage);
-            expect(result.toSeconds()).toBe(startDate + 86400);
+            expect(result?.toSeconds()).toBe(startDate + 86400);
         });
     });
 
