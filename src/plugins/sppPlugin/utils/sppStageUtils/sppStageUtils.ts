@@ -119,12 +119,16 @@ class SppStageUtils {
 
             if (getStatusFunction) {
                 const subProposalStatus = getStatusFunction(subProposal);
+                const { ACCEPTED, EXECUTABLE, EXECUTED } = ProposalStatus;
 
-                const isApprovalReached = [
-                    ProposalStatus.ACCEPTED,
-                    ProposalStatus.EXECUTABLE,
-                    ProposalStatus.EXECUTED,
-                ].includes(subProposalStatus);
+                // Do not include EXECUTED as approved status for Veto proposal-type as a sub-proposal will have
+                // EXECUTED status when the stage has been advanced, therefore the proposal has not been vetoed.
+                const approvedStatuses =
+                    proposalType === SppProposalType.APPROVAL
+                        ? [ACCEPTED, EXECUTABLE, EXECUTED]
+                        : [ACCEPTED, EXECUTABLE];
+
+                const isApprovalReached = approvedStatuses.includes(subProposalStatus);
 
                 return isApprovalReached ? count + 1 : count;
             }

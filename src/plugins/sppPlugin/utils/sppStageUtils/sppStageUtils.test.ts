@@ -1,4 +1,3 @@
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
@@ -8,12 +7,10 @@ import { SppProposalType } from '../../types';
 import { sppStageUtils } from './sppStageUtils';
 
 describe('SppStageUtils', () => {
-    // Add the spy at the beginning of the test file
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 
-    beforeEach(() => {
-        // Clear all mocks before each test
-        jest.clearAllMocks();
+    afterEach(() => {
+        getSlotFunctionSpy.mockReset();
     });
 
     describe('getStageStartDate', () => {
@@ -206,9 +203,8 @@ describe('SppStageUtils', () => {
     });
 
     describe('getCount', () => {
-        it('returns correct veto and approval counts', () => {
+        it('returns correct veto and approval counts based on sub-proposal result', () => {
             const stage = generateSppStage({
-                stageIndex: 0,
                 plugins: [
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
                     generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
@@ -219,10 +215,10 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin3', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin4', result: true }),
+                    generateSppSubProposal({ pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ pluginAddress: 'plugin2', result: false }),
+                    generateSppSubProposal({ pluginAddress: 'plugin3', result: true }),
+                    generateSppSubProposal({ pluginAddress: 'plugin4', result: true }),
                 ],
             });
             expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(1);
@@ -231,7 +227,6 @@ describe('SppStageUtils', () => {
 
         it('returns 0 when no matching subProposals are found', () => {
             const stage = generateSppStage({
-                stageIndex: 0,
                 plugins: [
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
                     generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
@@ -239,68 +234,30 @@ describe('SppStageUtils', () => {
             });
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin3', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin4', result: true }),
-                ],
+                subProposals: [generateSppSubProposal({ pluginAddress: 'plugin3', result: true })],
             });
             expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(0);
             expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(0);
         });
 
-        it('uses slot function when available', () => {
+        it('uses the plugin-specific proposal status processor when available', () => {
             const stage = generateSppStage({
-                stageIndex: 1,
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
             });
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
-                subProposals: [
-                    generateSppSubProposal({
-                        stageIndex: 1,
-                        pluginAddress: 'plugin1',
-                        pluginSubdomain: 'test-plugin',
-                        result: false,
-                    }),
-                ],
+                subProposals: [generateSppSubProposal({ pluginAddress: 'plugin1' })],
             });
 
             const mockStatusFunction = jest.fn(() => ProposalStatus.ACCEPTED);
             getSlotFunctionSpy.mockReturnValue(mockStatusFunction);
 
-            const count = sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL);
-
-            expect(
-                pluginRegistryUtils.getSlotFunction({
-                    slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-                    pluginId: 'test-plugin',
-                }),
-            ).toEqual(mockStatusFunction);
-
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toEqual(1);
             expect(mockStatusFunction).toHaveBeenCalledWith(proposal.subProposals[0]);
-            expect(count).toBe(1);
-        });
-
-        it('uses result as a fallback when no slot is available', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
-            });
-            const proposal = generateSppProposal({
-                settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true })],
-            });
-
-            getSlotFunctionSpy.mockReturnValue(undefined);
-
-            const count = sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL);
-
-            expect(count).toBe(1);
         });
 
         it('does not count sub-proposals with REJECTED or PENDING status even when result is true', () => {
             const stage = generateSppStage({
-                stageIndex: 0,
                 plugins: [
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
                     generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
@@ -309,33 +266,69 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 settings: { stages: [stage] },
                 subProposals: [
-                    generateSppSubProposal({
-                        stageIndex: 0,
-                        pluginAddress: 'plugin1',
-                        pluginSubdomain: 'test-plugin1',
-                        result: true,
-                    }),
-                    generateSppSubProposal({
-                        stageIndex: 1,
-                        pluginAddress: 'plugin2',
-                        pluginSubdomain: 'test-plugin2',
-                        result: true,
-                    }),
+                    generateSppSubProposal({ pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ pluginAddress: 'plugin2', result: true }),
                 ],
             });
 
-            const mockRejectedStatusFunction = jest.fn().mockReturnValue(ProposalStatus.REJECTED);
-            const mockPendingStatusFunction = jest.fn().mockReturnValue(ProposalStatus.PENDING);
+            getSlotFunctionSpy
+                .mockImplementationOnce(() => () => ProposalStatus.REJECTED)
+                .mockImplementationOnce(() => () => ProposalStatus.PENDING);
+
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(0);
+        });
+
+        it('uses correct proposal-status subset for approve proposal type', () => {
+            const stage = generateSppStage({
+                plugins: [
+                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
+                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
+                    generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.APPROVAL }),
+                    generateSppStagePlugin({ address: 'plugin4', proposalType: SppProposalType.APPROVAL }),
+                ],
+            });
+            const proposal = generateSppProposal({
+                settings: { stages: [stage] },
+                subProposals: [
+                    generateSppSubProposal({ pluginAddress: 'plugin1' }),
+                    generateSppSubProposal({ pluginAddress: 'plugin2' }),
+                    generateSppSubProposal({ pluginAddress: 'plugin3' }),
+                    generateSppSubProposal({ pluginAddress: 'plugin4' }),
+                ],
+            });
 
             getSlotFunctionSpy
-                .mockReturnValueOnce(mockRejectedStatusFunction)
-                .mockReturnValueOnce(mockPendingStatusFunction);
+                .mockImplementationOnce(() => () => ProposalStatus.ACCEPTED)
+                .mockImplementationOnce(() => () => ProposalStatus.EXECUTABLE)
+                .mockImplementationOnce(() => () => ProposalStatus.EXECUTED)
+                .mockImplementationOnce(() => () => ProposalStatus.REJECTED);
 
-            const count = sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL);
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(3);
+        });
 
-            expect(count).toBe(0);
-            expect(mockRejectedStatusFunction).toHaveBeenCalledWith(proposal.subProposals[0]);
-            expect(mockPendingStatusFunction).toHaveBeenCalledWith(proposal.subProposals[1]);
+        it('uses correct proposal-status subset for veto proposal type', () => {
+            const stage = generateSppStage({
+                plugins: [
+                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
+                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
+                    generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.VETO }),
+                ],
+            });
+            const proposal = generateSppProposal({
+                settings: { stages: [stage] },
+                subProposals: [
+                    generateSppSubProposal({ pluginAddress: 'plugin1' }),
+                    generateSppSubProposal({ pluginAddress: 'plugin2' }),
+                    generateSppSubProposal({ pluginAddress: 'plugin3' }),
+                ],
+            });
+
+            getSlotFunctionSpy
+                .mockImplementationOnce(() => () => ProposalStatus.ACCEPTED)
+                .mockImplementationOnce(() => () => ProposalStatus.EXECUTABLE)
+                .mockImplementationOnce(() => () => ProposalStatus.EXECUTED);
+
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(2);
         });
     });
 
@@ -415,6 +408,7 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
                 ],
             });
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.REJECTED);
         });
 
