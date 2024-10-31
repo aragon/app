@@ -116,19 +116,14 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             </CardCollapsible>
                         </Page.Section>
                     )}
-                    <Page.Section
-                        title={t('app.governance.daoProposalDetailsPage.main.voting.header')}
-                        description={t('app.governance.daoProposalDetailsPage.main.voting.description')}
-                    >
-                        <PluginSingleComponent
-                            slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
-                            pluginId={proposal.pluginSubdomain}
-                            proposal={proposal}
-                            status={proposalStatus}
-                            daoId={daoId}
-                            Fallback={ProposalVotingTerminal}
-                        />
-                    </Page.Section>
+                    <PluginSingleComponent
+                        slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
+                        pluginId={proposal.pluginSubdomain}
+                        proposal={proposal}
+                        status={proposalStatus}
+                        daoId={daoId}
+                        Fallback={ProposalVotingTerminal}
+                    />
                     <Page.Section
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}

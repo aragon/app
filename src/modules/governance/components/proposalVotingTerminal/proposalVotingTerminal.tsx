@@ -1,5 +1,6 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
@@ -41,33 +42,38 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     });
 
     return (
-        <ProposalVoting.Container
-            title={t('app.governance.proposalVotingTerminal.title')}
-            description={t('app.governance.proposalVotingTerminal.description')}
+        <Page.Section
+            title={t('app.governance.daoProposalDetailsPage.main.voting.header')}
+            description={t('app.governance.daoProposalDetailsPage.main.voting.description')}
         >
-            <ProposalVoting.Stage
-                status={proposalStatusToVotingStatus[status]}
-                startDate={proposal.startDate * 1000}
-                endDate={proposal.endDate * 1000}
+            <ProposalVoting.Container
+                title={t('app.governance.proposalVotingTerminal.title')}
+                description={t('app.governance.proposalVotingTerminal.description')}
             >
-                <PluginSingleComponent
-                    slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
-                    pluginId={proposal.pluginSubdomain}
-                    proposal={proposal}
-                />
-                <ProposalVoting.Votes>
-                    <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
-                </ProposalVoting.Votes>
-                <ProposalVoting.Details settings={proposalSettings} />
-                {status === ProposalStatus.ACTIVE && (
+                <ProposalVoting.Stage
+                    status={proposalStatusToVotingStatus[status]}
+                    startDate={proposal.startDate * 1000}
+                    endDate={proposal.endDate * 1000}
+                >
                     <PluginSingleComponent
-                        slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                        slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={proposal.pluginSubdomain}
                         proposal={proposal}
-                        daoId={daoId}
                     />
-                )}
-            </ProposalVoting.Stage>
-        </ProposalVoting.Container>
+                    <ProposalVoting.Votes>
+                        <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
+                    </ProposalVoting.Votes>
+                    <ProposalVoting.Details settings={proposalSettings} />
+                    {status === ProposalStatus.ACTIVE && (
+                        <PluginSingleComponent
+                            slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                            pluginId={proposal.pluginSubdomain}
+                            proposal={proposal}
+                            daoId={daoId}
+                        />
+                    )}
+                </ProposalVoting.Stage>
+            </ProposalVoting.Container>
+        </Page.Section>
     );
 };
