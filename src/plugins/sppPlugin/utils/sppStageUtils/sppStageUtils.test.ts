@@ -14,10 +14,10 @@ describe('SppStageUtils', () => {
     });
 
     describe('getStageStartDate', () => {
-        it('returns startDate for the first stage', () => {
+        it('returns main-proposal startDate for the first stage', () => {
             const startDate = DateTime.fromISO('2022-02-10T07:55:55.868Z').toSeconds();
-            const proposal = generateSppProposal({ startDate, stageIndex: 0 });
-            const stage = generateSppStage();
+            const proposal = generateSppProposal({ startDate, stageIndex: 1 });
+            const stage = generateSppStage({ stageIndex: 0 });
             const result = sppStageUtils.getStageStartDate(proposal, stage);
             expect(result?.toSeconds()).toBe(startDate);
         });
@@ -45,7 +45,7 @@ describe('SppStageUtils', () => {
             const now = '2022-02-10T07:55:55.868Z';
             const lastStageTransition = DateTime.fromISO(now).minus({ hours: 2 }).toSeconds();
             const proposal = generateSppProposal({ lastStageTransition, stageIndex: 1 });
-            const stage = generateSppStage({ stageIndex: 0 });
+            const stage = generateSppStage({ stageIndex: 2 });
             const result = sppStageUtils.getStageStartDate(proposal, stage);
             expect(result).toBe(undefined);
         });

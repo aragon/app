@@ -52,7 +52,7 @@ class SppStageUtils {
         const { startDate, stageIndex: currentStageIndex, lastStageTransition, subProposals } = proposal;
         const { stageIndex } = stage;
 
-        if (currentStageIndex === 0) {
+        if (stageIndex === 0) {
             return DateTime.fromSeconds(startDate);
         }
 
