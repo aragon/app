@@ -3,11 +3,10 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { useInterval } from '@/shared/hooks/useInterval';
+import { useRerender } from '@/shared/hooks/useRerender';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalStatus, proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
-import type { ISppProposal, ISppStage, ISppSubProposal, SppStageStatus as SppStageStatusType } from '../../types';
+import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppStageStatus } from '../sppStageStatus';
 
@@ -38,7 +37,6 @@ const votesPerPage = 6;
 
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
     const { stage, daoId, subProposals, index, proposal } = props;
-    const [stageStatus, setStageStatus] = useState<SppStageStatusType>(sppStageUtils.getStageStatus(proposal, stage));
 
     // TODO: Support multiple proposals within a stage (APP-3659)
     const subProposal = subProposals?.[0];
@@ -60,13 +58,14 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
-    useInterval({
-        callback: () => {
-            const updatedStatus = sppStageUtils.getStageStatus(proposal, stage);
-            setStageStatus((prevStatus) => (prevStatus !== updatedStatus ? updatedStatus : prevStatus));
-        },
+    const initialStatus = sppStageUtils.getStageStatus(proposal, stage);
+    // Hook naming causes testing lib error here
+    // eslint-disable-next-line testing-library/render-result-naming-convention
+    const stageStatus = useRerender({
+        callback: () => sppStageUtils.getStageStatus(proposal, stage),
         delay: 1000,
-        enabled: stageStatus === ProposalStatus.ACTIVE,
+        initialValue: initialStatus,
+        enabled: initialStatus === ProposalStatus.ACTIVE,
     });
 
     const processedStageStatus =
