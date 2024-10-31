@@ -366,7 +366,7 @@
                 "label": "Early stage advance"
               },
               "expiration": {
-                "helpText": "The amount of time that the proposal will be eligible to be advanced to the next stage.",
+                "helpText": "The amount of additional time after the voting period in which the proposal will be eligible to be advanced to the next stage.",
                 "label": "Stage expiration"
               },
               "helpInfo": "Recommended minimum expiration time is 7 days.",
