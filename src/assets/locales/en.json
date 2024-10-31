@@ -415,7 +415,11 @@
           },
           "proposal": "Proposal",
           "readLess": "Read less",
-          "readMore": "Read more"
+          "readMore": "Read more",
+          "voting": {
+            "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
+            "header": "Voting"
+          }
         },
         "notFound": {
           "action": "Explore proposals",
