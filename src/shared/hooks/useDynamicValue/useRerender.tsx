@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export interface IUseRerenderParams<T> {
+export interface IUseDynamicValueParams<T> {
     /**
      * Callback to be executed on delay that returns a value of type T.
      */
@@ -19,7 +19,7 @@ export interface IUseRerenderParams<T> {
     enabled?: boolean;
 }
 
-export const useRerender = <T,>(params: IUseRerenderParams<T>): T => {
+export const useDynamicValue = <T,>(params: IUseDynamicValueParams<T>): T => {
     const { callback, delay, initialValue, enabled = true } = params;
 
     const [value, setValue] = useState<T>(initialValue);

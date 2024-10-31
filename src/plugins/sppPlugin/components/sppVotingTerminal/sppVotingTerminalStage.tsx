@@ -3,7 +3,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { useRerender } from '@/shared/hooks/useRerender';
+import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
@@ -59,9 +59,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
     const initialStatus = sppStageUtils.getStageStatus(proposal, stage);
-    // Hook naming causes testing lib error here
-    // eslint-disable-next-line testing-library/render-result-naming-convention
-    const stageStatus = useRerender({
+    const stageStatus = useDynamicValue({
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
         delay: 1000,
         initialValue: initialStatus,
