@@ -1,18 +1,18 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
-import type { IProposalActionData } from '../../../createProposalFormDefinitions';
-import type { IMintFormData } from './mintActionFormDefinitions';
+import type { IMintFormData } from './mintTokensActionFormDefinitions';
 
-export interface IMintActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IMintTokensActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
-const mintAbi = {
+const mintTokensAbi = {
     type: 'function',
     inputs: [
         { name: 'to', internalType: 'address', type: 'address' },
@@ -23,7 +23,7 @@ const mintAbi = {
     stateMutability: 'nonpayable',
 };
 
-export const MintAction: React.FC<IMintActionProps> = (props) => {
+export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
     const { index, action } = props;
 
     const { t } = useTranslations();
@@ -51,27 +51,24 @@ export const MintAction: React.FC<IMintActionProps> = (props) => {
         fieldPrefix: fieldName,
     });
 
-    const daoUrlParams = { id: action.daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
+    const daoPluginParams = { daoId: action.daoId, pluginAddress: action.pluginAddress };
 
-    const plugin = dao?.plugins.find((plugin) => plugin.address === action.pluginAddress);
+    const plugin = useDaoPlugins(daoPluginParams)![0];
 
-    const settings = plugin?.settings as ITokenPluginSettings;
+    const settings = plugin?.meta.settings as ITokenPluginSettings;
     const tokenSymbol = settings?.token.symbol;
-    const tokenDecimals = settings?.token.decimals ?? 18;
     const tokenAddress = settings?.token.address;
 
-    const amount = parseUnits(amountField?.value ?? '0', tokenDecimals);
-
-    const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
-
     useEffect(() => {
+        const tokenDecimals = settings?.token.decimals ?? 18;
+        const amount = parseUnits(amountField?.value ?? '0', tokenDecimals);
+        const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
         const mintParams = [receiverAddress, amount];
-        const newData = encodeFunctionData({ abi: [mintAbi], args: mintParams });
+        const newData = encodeFunctionData({ abi: [mintTokensAbi], args: mintParams });
 
         setValue(`${fieldName}.data`, newData);
         setValue(`${fieldName}.to`, tokenAddress);
-    }, [setValue, fieldName, tokenAddress, receiverAddress, amount]);
+    }, [setValue, fieldName, tokenAddress, settings?.token.decimals, amountField?.value, receiver?.address]);
 
     return (
         <div className="flex w-full flex-col gap-6">

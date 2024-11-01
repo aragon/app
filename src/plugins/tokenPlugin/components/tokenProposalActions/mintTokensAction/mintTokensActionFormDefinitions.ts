@@ -6,7 +6,7 @@ export interface IMintFormData {
      */
     receiver?: ICompositeAddress;
     /**
-     * The amount of tokens to be sent.
+     * The amount of tokens to be minted.
      */
     amount?: string;
 }

@@ -39,16 +39,3 @@ export const defaultMetadataAction: Omit<
         ],
     },
 };
-
-export const defaultMintAction: IProposalAction = {
-    type: ProposalActionType.MINT,
-    from: '',
-    to: '',
-    data: '0x',
-    value: '0',
-    inputData: {
-        function: 'mint',
-        contract: 'GovernanceERC20',
-        parameters: [],
-    },
-};

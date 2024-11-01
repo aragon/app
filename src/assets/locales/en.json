@@ -601,6 +601,11 @@
         }
       },
       "token": {
+        "actionComposer": {
+          "action": {
+            "Mint": "Mint"
+          }
+        },
         "mintActionForm": {
           "address": {
             "label": "Address",

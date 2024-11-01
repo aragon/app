@@ -1,23 +1,18 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { defaultMintAction } from '@/modules/governance/components/actionComposer/actionComposerDefinitions';
 import type { IPluginActionData } from '@/modules/governance/components/createProposalForm/createProposalFormActions/createProposalFormActions.api';
-import { MintAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/mintAction';
+import { MintTokensAction } from '@/plugins/tokenPlugin/components/tokenProposalActions/mintTokensAction';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { defaultMintAction } from '../../constants/tokenActionComposerDefinitions';
+import type { ITokenPluginSettings } from '../../types';
 
 interface IGetTokenActionsProps {
     /**
-     * Name of the plugin.
+     * DAO plugin data.
      */
-    name?: string;
-    /**
-     * Subdomain of the plugin.
-     */
-    subdomain: string;
-    /**
-     * Address of the plugin.
-     */
-    address: string;
+    plugin: IDaoPlugin<ITokenPluginSettings>;
     /**
      * The translation function for internationalization.
      */
@@ -25,12 +20,14 @@ interface IGetTokenActionsProps {
 }
 
 class TokenActionUtils {
-    getTokenActions = ({ name, subdomain, address, t }: IGetTokenActionsProps): IPluginActionData => {
+    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IPluginActionData => {
+        const { address, name, subdomain } = plugin;
+
         return {
             groups: [
                 {
-                    id: subdomain,
-                    name: name ?? subdomain,
+                    id: 'address',
+                    name: daoUtils.getPluginName(plugin),
                     info: addressUtils.truncateAddress(address),
                     indexData: [address],
                 },
@@ -38,14 +35,14 @@ class TokenActionUtils {
             items: [
                 {
                     id: ProposalActionType.MINT,
-                    name: t(`app.governance.actionComposer.action.${ProposalActionType.MINT}`),
+                    name: t(`app.plugins.token.actionComposer.action.${ProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: name ?? subdomain,
                     defaultValue: defaultMintAction,
                 },
             ],
             components: {
-                [ProposalActionType.MINT]: MintAction,
+                [ProposalActionType.MINT]: MintTokensAction,
             },
         };
     };
