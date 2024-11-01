@@ -32,9 +32,9 @@ export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     useEffect(() => {
-        const addresses = fields.map((field) => field.address).filter(Boolean);
+        const addresses = fields.map((field) => field.address);
         const newData = encodeFunctionData({ abi: [addMembersAbi], args: [addresses] });
-        console.log('FIELDS', newData, addresses, action.pluginAddress);
+
         setValue(`${fieldName}.data`, newData);
         setValue(`${fieldName}.to`, action.pluginAddress);
     }, [fieldName, fields, setValue, action.pluginAddress]);

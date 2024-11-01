@@ -33,9 +33,9 @@ export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) 
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     useEffect(() => {
-        console.log('FIELDS', fields);
-        const addresses = fields.map((field) => field.address).filter(Boolean);
+        const addresses = fields.map((field) => field.address);
         const newData = encodeFunctionData({ abi: [removeMembersAbi], args: [addresses] });
+
         setValue(`${fieldName}.data`, newData);
         setValue(`${fieldName}.to`, action.pluginAddress);
     }, [fieldName, fields, setValue, action.pluginAddress]);
