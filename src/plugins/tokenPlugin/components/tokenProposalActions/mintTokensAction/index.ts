@@ -1,1 +1,5 @@
-export { MintTokensAction, type IMintTokensActionProps } from './mintTokensAction';
+import dynamic from 'next/dynamic';
+
+export const MintTokensAction = dynamic(() => import('./mintTokensAction').then((mod) => mod.MintTokensAction));
+
+export type { IMintTokensActionProps } from './mintTokensAction';
