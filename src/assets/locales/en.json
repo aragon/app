@@ -534,6 +534,11 @@
         }
       },
       "multisig": {
+        "actionComposer": {
+          "action": {
+            "Add Member": "Add Member"
+          }
+        },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
