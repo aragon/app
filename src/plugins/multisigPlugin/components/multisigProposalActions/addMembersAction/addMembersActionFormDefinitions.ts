@@ -1,6 +1,6 @@
-export interface IAddMembersActionFormData {
+export interface IAddOrRemoveMembersActionFormData {
     /**
      * The address to be added to the members/
      */
-    members: { address: string }[];
+    members: Array<{ address: string }>;
 }

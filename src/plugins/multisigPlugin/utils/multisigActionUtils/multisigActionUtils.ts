@@ -5,8 +5,9 @@ import type { TranslationFunction } from '@/shared/components/translationsProvid
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { AddMembersAction } from '../../components/multisigProposalActions/addMembersAction';
-import { defaultAddMembers } from '../../constants/multisigActionComposerDefinitions';
+import { defaultAddMembers, defaultRemoveMembers } from '../../constants/multisigActionComposerDefinitions';
 import type { IMultisigPluginSettings } from '../../types';
+import { RemoveMembersAction } from '../../components/multisigProposalActions/removeMembersAction';
 
 interface IGetMultisigActionsProps {
     /**
@@ -26,7 +27,7 @@ class MultisigActionUtils {
         return {
             groups: [
                 {
-                    id: 'address',
+                    id: address,
                     name: daoUtils.getPluginName(plugin),
                     info: addressUtils.truncateAddress(address),
                     indexData: [address],
@@ -35,21 +36,26 @@ class MultisigActionUtils {
             items: [
                 {
                     id: ProposalActionType.MULTISIG_ADD_MEMBERS,
-                    name: t(`app.plugins.multisig.actionComposer.action.${ProposalActionType.MULTISIG_ADD_MEMBERS}`),
-                    icon: IconType.SETTINGS,
+                    name: t(
+                        `app.plugins.multisig.multisigActionComposer.action.${ProposalActionType.MULTISIG_ADD_MEMBERS}`,
+                    ),
+                    icon: IconType.PLUS,
                     groupId: name ?? subdomain,
                     defaultValue: defaultAddMembers,
                 },
-                // {
-                //     id: ProposalActionType.MULTISIG_REMOVE_MEMBERS,
-                //     name: t(`app.plugins.token.actionComposer.action.${ProposalActionType.MINT}`),
-                //     icon: IconType.SETTINGS,
-                //     groupId: name ?? subdomain,
-                //     defaultValue: defaultMintAction,
-                // },
+                {
+                    id: ProposalActionType.MULTISIG_REMOVE_MEMBERS,
+                    name: t(
+                        `app.plugins.multisig.multisigActionComposer.action.${ProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
+                    ),
+                    icon: IconType.MINUS,
+                    groupId: name ?? subdomain,
+                    defaultValue: defaultRemoveMembers,
+                },
             ],
             components: {
                 [ProposalActionType.MULTISIG_ADD_MEMBERS]: AddMembersAction,
+                [ProposalActionType.MULTISIG_REMOVE_MEMBERS]: RemoveMembersAction,
             },
         };
     };

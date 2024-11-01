@@ -1,4 +1,5 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { RemoveMembersDialog } from '../dialogs/removeMemberDialog';
 
 export enum MultisigDialogs {
     MULTISIG_REMOVE_MEMBERS = 'MULTISIG_REMOVE_MEMBERS',
@@ -6,7 +7,7 @@ export enum MultisigDialogs {
 
 export const multisigDialogs: Record<MultisigDialogs, IDialogComponentDefinitions> = {
     [MultisigDialogs.MULTISIG_REMOVE_MEMBERS]: {
-        Component: TODO,
-        description: 'app.plugins.multisig.addMembersDialog.description',
+        Component: RemoveMembersDialog,
+        description: 'app.plugins.multisig.multisigRemoveMembersDialog.description',
     },
 };

@@ -26,7 +26,7 @@ class TokenActionUtils {
         return {
             groups: [
                 {
-                    id: 'address',
+                    id: address,
                     name: daoUtils.getPluginName(plugin),
                     info: addressUtils.truncateAddress(address),
                     indexData: [address],

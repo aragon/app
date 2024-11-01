@@ -1,12 +1,15 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { MultisigDialogs } from '@/plugins/multisigPlugin/constants/multisigDialogs';
+import type { IRemoveMemberDialogParams } from '@/plugins/multisigPlugin/dialogs/removeMemberDialog/removeMemberDialog';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils, Button, Card, Dropdown, IconType } from '@aragon/gov-ui-kit';
-import type { IAddOrRemoveMembersActionFormData } from './addMembersActionFormDefinitions';
+import { AddressInput, addressUtils, Button, Card, Dropdown, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import type { IAddOrRemoveMembersActionFormData } from '../addMembersAction/addMembersActionFormDefinitions';
 
-export interface IAddMemberItemProps {
+export interface IRemoveMemberItemProps {
     /**
      * The index of the resource item in the list.
      */
@@ -21,32 +24,54 @@ export interface IAddMemberItemProps {
     action: IProposalActionData<IProposalAction>;
 }
 
-export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
+export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
     const { index, remove, action } = props;
 
     const { t } = useTranslations();
+
+    const { open, close } = useDialogContext();
 
     const addressFieldName = `members.${index}.address` as const;
     const addressField = useFormField<IAddOrRemoveMembersActionFormData, typeof addressFieldName>(addressFieldName, {
         rules: {
             required: true,
-            validate: (value) => addressUtils.isAddress(value) && !isMember,
+            validate: (value) => addressUtils.isAddress(value) && isMember,
         },
         defaultValue: '',
     });
-
     const memberExistsParams = { memberAddress: addressField?.value, pluginAddress: action.pluginAddress };
     const { data: isMember } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: action.pluginAddress != null },
     );
 
+    const initialParams = {
+        queryParams: { daoId: action.daoId, pluginAddress: action.pluginAddress },
+    };
+    const params: IRemoveMemberDialogParams = { initialParams, onMemberClick: addressField.onChange, close };
+
+    const handleOpenDialog = () => {
+        open(MultisigDialogs.MULTISIG_REMOVE_MEMBERS, { params });
+    };
+
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <AddressInput
-                placeholder={t('app.plugins.multisig.multisigAddMembersAction.addressInput.placeholder')}
-                {...addressField}
-            />
+            <InputContainer id="" wrapperClassName="gap-2 pl-1.5 items-center" {...addressField}>
+                <Button
+                    variant="tertiary"
+                    size="sm"
+                    iconRight={IconType.CHEVRON_DOWN}
+                    onClick={handleOpenDialog}
+                    className="shrink-0"
+                >
+                    select
+                </Button>
+                <AddressInput
+                    placeholder={t('app.plugins.multisig.multisigAddMembersAction.addressInput.placeholder')}
+                    value={addressField.value}
+                    onChange={addressField.onChange}
+                />
+            </InputContainer>
             <Dropdown.Container
                 constrainContentWidth={false}
                 size="md"

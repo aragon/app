@@ -3,23 +3,24 @@ import type { IProposalActionData } from '@/modules/governance/components/create
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import type { IAddOrRemoveMembersActionFormData } from './addMembersActionFormDefinitions';
 import { useEffect } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
-import { AddMemberItem } from './addMemberItem';
+import type { IAddOrRemoveMembersActionFormData } from '../addMembersAction/addMembersActionFormDefinitions';
+import { RemoveMemberItem } from './removeMemberItem';
 
-export interface IAddMembersActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IRemoveMembersActionProps
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
-const addMembersAbi = {
+const removeMembersAbi = {
     type: 'function',
     inputs: [{ name: '_members', internalType: 'address[]', type: 'address[]' }],
-    name: 'addAddresses',
+    name: 'removeAddresses',
     outputs: [],
     stateMutability: 'nonpayable',
 };
 
-export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
+export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) => {
     const { index, action } = props;
 
     const { t } = useTranslations();
@@ -32,9 +33,9 @@ export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     useEffect(() => {
+        console.log('FIELDS', fields);
         const addresses = fields.map((field) => field.address).filter(Boolean);
-        const newData = encodeFunctionData({ abi: [addMembersAbi], args: [addresses] });
-        console.log('FIELDS', newData, addresses, action.pluginAddress);
+        const newData = encodeFunctionData({ abi: [removeMembersAbi], args: [addresses] });
         setValue(`${fieldName}.data`, newData);
         setValue(`${fieldName}.to`, action.pluginAddress);
     }, [fieldName, fields, setValue, action.pluginAddress]);
@@ -44,7 +45,7 @@ export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
             {fields.length > 0 && (
                 <div className="flex w-full flex-col gap-3 md:gap-2">
                     {fields.map((field, index) => (
-                        <AddMemberItem key={field.id} index={index} remove={remove} action={action} />
+                        <RemoveMemberItem key={field.id} index={index} remove={remove} action={action} />
                     ))}
                 </div>
             )}
@@ -55,7 +56,7 @@ export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
                 iconLeft={IconType.PLUS}
                 onClick={() => append({ address: '' })}
             >
-                {t('app.plugins.multisig.multisigAddMembersAction.add')}
+                {t('app.plugins.multisig.multisigRemoveMembersAction.add')}
             </Button>
         </>
     );
