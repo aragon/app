@@ -7,21 +7,15 @@ export const defaultAddMembers: IProposalAction = {
     data: '0x',
     value: '0',
     inputData: {
-        function: '',
+        function: 'addAddresses',
         contract: '',
         parameters: [
-            // {
-            //     name: 'to',
-            //     type: 'address',
-            //     value: '',
-            //     notice: 'The address to mint tokens to',
-            // },
-            // {
-            //     name: 'amount',
-            //     type: 'uint256',
-            //     value: '',
-            //     notice: 'The amount of tokens to mint',
-            // },
+            {
+                name: '_members',
+                type: 'address[]',
+                value: '',
+                notice: 'The addresses to be added',
+            },
         ],
     },
 };

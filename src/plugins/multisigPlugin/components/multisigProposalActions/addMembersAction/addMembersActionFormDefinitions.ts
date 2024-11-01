@@ -1,8 +1,6 @@
-import type { ICompositeAddress } from '@aragon/gov-ui-kit';
-
 export interface IAddMembersActionFormData {
     /**
-     * The address to be added
+     * The address to be added to the members/
      */
-    address: ICompositeAddress;
+    members: { address: string }[];
 }

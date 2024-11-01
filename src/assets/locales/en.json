@@ -536,8 +536,15 @@
       "multisig": {
         "actionComposer": {
           "action": {
-            "Add Member": "Add Member"
+            "MultisigAddMembers": "Add Member"
           }
+        },
+        "addMembersAction": {
+          "add": "Add",
+          "addressInput": {
+            "placeholder": "ENS or 0x …"
+          },
+          "removeMember": "Remove member"
         },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
