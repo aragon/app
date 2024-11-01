@@ -4,7 +4,6 @@ import type { IProposalActionData } from '@/modules/governance/components/create
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, Button, Card, Dropdown, IconType } from '@aragon/gov-ui-kit';
-import type { IAddOrRemoveMembersActionFormData } from './addMembersActionFormDefinitions';
 
 export interface IAddMemberItemProps {
     /**
@@ -19,15 +18,19 @@ export interface IAddMemberItemProps {
      * Action data.
      */
     action: IProposalActionData<IProposalAction>;
+    /**
+     * Field name of the main form.
+     */
+    fieldName: string;
 }
 
 export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
-    const { index, remove, action } = props;
+    const { index, remove, action, fieldName } = props;
 
     const { t } = useTranslations();
 
-    const addressFieldName = `members.${index}.address` as const;
-    const addressField = useFormField<IAddOrRemoveMembersActionFormData, typeof addressFieldName>(addressFieldName, {
+    const addressFieldName = `${fieldName}.[${index}].address`;
+    const addressField = useFormField<Record<string, string>, string>(addressFieldName, {
         rules: {
             required: true,
             validate: (value) => addressUtils.isAddress(value) && !isMember,

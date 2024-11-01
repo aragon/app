@@ -7,7 +7,6 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, Button, Card, Dropdown, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import type { IAddOrRemoveMembersActionFormData } from '../addMembersAction/addMembersActionFormDefinitions';
 
 export interface IRemoveMemberItemProps {
     /**
@@ -22,17 +21,21 @@ export interface IRemoveMemberItemProps {
      * Action data.
      */
     action: IProposalActionData<IProposalAction>;
+    /**
+     * Field name of the main form.
+     */
+    fieldName: string;
 }
 
 export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
-    const { index, remove, action } = props;
+    const { index, remove, action, fieldName } = props;
 
     const { t } = useTranslations();
 
     const { open, close } = useDialogContext();
 
-    const addressFieldName = `members.${index}.address` as const;
-    const addressField = useFormField<IAddOrRemoveMembersActionFormData, typeof addressFieldName>(addressFieldName, {
+    const addressFieldName = `${fieldName}.[${index}].address`;
+    const addressField = useFormField<Record<string, string>, string>(addressFieldName, {
         rules: {
             required: true,
             validate: (value) => addressUtils.isAddress(value) && isMember,
