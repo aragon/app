@@ -113,12 +113,16 @@ class SppStageUtils {
             }
 
             const subProposalStatus = getStatusFunction(subProposal);
-            const { ACCEPTED, EXECUTABLE, EXECUTED } = ProposalStatus;
+            const { ACCEPTED, EXECUTABLE, EXECUTED, EXPIRED } = ProposalStatus;
 
-            // Do not include EXECUTED as approved status for Veto proposal-type as a sub-proposal will have
-            // EXECUTED status when the stage has been advanced, therefore the proposal has not been vetoed.
+            // Do not include EXECUTED as approved status for veto proposals as a sub-proposal will have EXECUTED status
+            // when the stage has been advanced, therefore the proposal has not been vetoed. Include instead the EXPIRED
+            // status for veto proposals as plugins might set an expiry execution (e.g. multisig) and, if a sub-proposal
+            // has been accepted but not executed, the sub-proposal still counts as vetoed.
             const approvedStatuses =
-                proposalType === SppProposalType.APPROVAL ? [ACCEPTED, EXECUTABLE, EXECUTED] : [ACCEPTED, EXECUTABLE];
+                proposalType === SppProposalType.APPROVAL
+                    ? [ACCEPTED, EXECUTABLE, EXECUTED]
+                    : [ACCEPTED, EXECUTABLE, EXPIRED];
 
             const isApprovalReached = approvedStatuses.includes(subProposalStatus);
 

@@ -266,6 +266,7 @@ describe('SppStageUtils', () => {
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
                     generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
                     generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.VETO }),
+                    generateSppStagePlugin({ address: 'plugin4', proposalType: SppProposalType.VETO }),
                 ],
             });
             const proposal = generateSppProposal({
@@ -274,15 +275,17 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ pluginAddress: 'plugin1' }),
                     generateSppSubProposal({ pluginAddress: 'plugin2' }),
                     generateSppSubProposal({ pluginAddress: 'plugin3' }),
+                    generateSppSubProposal({ pluginAddress: 'plugin4' }),
                 ],
             });
 
             getSlotFunctionSpy
                 .mockImplementationOnce(() => () => ProposalStatus.ACCEPTED)
                 .mockImplementationOnce(() => () => ProposalStatus.EXECUTABLE)
-                .mockImplementationOnce(() => () => ProposalStatus.EXECUTED);
+                .mockImplementationOnce(() => () => ProposalStatus.EXECUTED)
+                .mockImplementationOnce(() => () => ProposalStatus.EXPIRED);
 
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(2);
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(3);
         });
     });
 
