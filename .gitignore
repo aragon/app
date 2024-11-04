@@ -40,3 +40,5 @@ deployment-url.txt
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+./src/modules/application/constants/wagmi

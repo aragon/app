@@ -58,7 +58,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 {...bodyField}
             />
             <ResourcesInput
-                name="resources"
+                name="proposalResources"
                 helpText={t('app.governance.createProposalForm.metadata.resources.helpText')}
             />
             <Switch
