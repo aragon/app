@@ -401,6 +401,19 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.EXPIRED);
         });
 
+        it('returns accepted when stage has ended, approval is reached, max advance date has passed and stage has already been advanced', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).minus({ days: 3 });
+            const maxAdvance = DateTime.fromISO(now).minus({ days: 1 });
+            const stage = generateSppStage({ stageIndex: 1 });
+            const proposal = generateSppProposal({ stageIndex: 2, settings: { stages: [stage] } });
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            isApprovalReachedSpy.mockReturnValue(true);
+            timeUtils.setTime(now);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
+        });
+
         it('returns accepted when stage has ended, approval is reached, max advance date has passed but proposal has no actions and stage is last stage', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const endDate = DateTime.fromISO(now).minus({ days: 3 });

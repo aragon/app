@@ -40,13 +40,14 @@ class SppStageUtils {
             return canAdvance ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
         }
 
-        if (approvalReached) {
-            const isExpired = maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal;
-
-            return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
+        if (!approvalReached) {
+            return ProposalVotingStatus.REJECTED;
         }
 
-        return ProposalVotingStatus.REJECTED;
+        const isExpired =
+            maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal && stageIndex === currentStageIndex;
+
+        return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
     };
 
     isStagedUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
