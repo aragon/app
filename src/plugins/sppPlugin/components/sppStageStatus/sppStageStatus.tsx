@@ -53,7 +53,12 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const isStageAdvanced = subProposal.executed.status || proposal.executed.status;
     const transactionHash = subProposal.executed.transactionHash ?? proposal.executed.transactionHash;
 
-    const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED;
+    const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
+    const isSignalingProposal = proposal.actions.length === 0;
+
+    // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
+    // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
+    const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
     const canVote = stageStatus === ProposalVotingStatus.ACTIVE;
 
     const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });

@@ -6,37 +6,47 @@ import { type ISppProposal, type ISppStage, type ISppSubProposal, SppProposalTyp
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): ProposalVotingStatus => {
-        const now = DateTime.now();
+        const { stageIndex: currentStageIndex, actions, settings } = proposal;
+        const { stageIndex, minAdvance } = stage;
 
+        const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal, stage);
         const stageEndDate = this.getStageEndDate(proposal, stage);
+
+        const minAdvanceDate = stageStartDate?.plus({ seconds: minAdvance });
         const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
+
+        const approvalReached = this.isApprovalReached(proposal, stage);
+
+        // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
+        const isSignalingProposal = actions.length === 0 && stageIndex === settings.stages.length - 1;
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalVotingStatus.VETOED;
         }
 
-        if (this.isStagedUnreached(proposal, stage.stageIndex)) {
+        if (this.isStagedUnreached(proposal, stageIndex)) {
             return ProposalVotingStatus.UNREACHED;
         }
 
-        if ((stageStartDate != null && stageStartDate > now) || stage.stageIndex > proposal.stageIndex) {
+        if ((stageStartDate != null && stageStartDate > now) || stageIndex > currentStageIndex) {
             return ProposalVotingStatus.PENDING;
         }
 
-        if (this.isApprovalReached(proposal, stage)) {
-            if (maxAdvanceDate != null && now > maxAdvanceDate) {
-                return ProposalVotingStatus.EXPIRED;
-            }
+        if (stageEndDate != null && now < stageEndDate) {
+            const canAdvance =
+                approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal;
 
-            return this.canStageAdvance(proposal, stage) ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
+            return canAdvance ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
         }
 
-        if (stageEndDate != null && now > stageEndDate) {
-            return ProposalVotingStatus.REJECTED;
+        if (approvalReached) {
+            const isExpired = maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal;
+
+            return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
         }
 
-        return ProposalVotingStatus.ACTIVE;
+        return ProposalVotingStatus.REJECTED;
     };
 
     isStagedUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
@@ -85,25 +95,6 @@ class SppStageUtils {
         return approvalCount >= stage.approvalThreshold;
     };
 
-    canStageAdvance = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const now = DateTime.now();
-        const stageStartDate = this.getStageStartDate(proposal, stage);
-        const minAdvanceDate = stageStartDate?.plus({ seconds: stage.minAdvance });
-        const maxAdvanceDate = stageStartDate?.plus({ seconds: stage.maxAdvance });
-
-        if (!stageStartDate || !minAdvanceDate || !maxAdvanceDate) {
-            return false;
-        }
-
-        // Check if we're within the min and max advance period
-        const isWithinMinAndMaxAdvance = now >= minAdvanceDate && now <= maxAdvanceDate;
-
-        const isApproved = this.isApprovalReached(proposal, stage);
-        const isVetoed = this.isVetoReached(proposal, stage);
-
-        return isWithinMinAndMaxAdvance && isApproved && !isVetoed;
-    };
-
     getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
         return proposal.subProposals.reduce((count, subProposal) => {
             const plugin = stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress);
@@ -117,23 +108,25 @@ class SppStageUtils {
                 pluginId: subProposal.pluginSubdomain,
             });
 
-            if (getStatusFunction) {
-                const subProposalStatus = getStatusFunction(subProposal);
-                const { ACCEPTED, EXECUTABLE, EXECUTED } = ProposalStatus;
-
-                // Do not include EXECUTED as approved status for Veto proposal-type as a sub-proposal will have
-                // EXECUTED status when the stage has been advanced, therefore the proposal has not been vetoed.
-                const approvedStatuses =
-                    proposalType === SppProposalType.APPROVAL
-                        ? [ACCEPTED, EXECUTABLE, EXECUTED]
-                        : [ACCEPTED, EXECUTABLE];
-
-                const isApprovalReached = approvedStatuses.includes(subProposalStatus);
-
-                return isApprovalReached ? count + 1 : count;
+            if (getStatusFunction == null) {
+                return subProposal.result ? count + 1 : count;
             }
 
-            return subProposal.result ? count + 1 : count;
+            const subProposalStatus = getStatusFunction(subProposal);
+            const { ACCEPTED, EXECUTABLE, EXECUTED, EXPIRED } = ProposalStatus;
+
+            // Do not include EXECUTED as approved status for veto proposals as a sub-proposal will have EXECUTED status
+            // when the stage has been advanced, therefore the proposal has not been vetoed. Include instead the EXPIRED
+            // status for veto proposals as plugins might set an expiry execution (e.g. multisig) and, if a sub-proposal
+            // has been accepted but not executed, the sub-proposal still counts as vetoed.
+            const approvedStatuses =
+                proposalType === SppProposalType.APPROVAL
+                    ? [ACCEPTED, EXECUTABLE, EXECUTED]
+                    : [ACCEPTED, EXECUTABLE, EXPIRED];
+
+            const isApprovalReached = approvedStatuses.includes(subProposalStatus);
+
+            return isApprovalReached ? count + 1 : count;
         }, 0);
     };
 }

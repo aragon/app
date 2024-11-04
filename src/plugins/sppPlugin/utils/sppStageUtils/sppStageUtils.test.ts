@@ -1,3 +1,4 @@
+import { generateProposalAction } from '@/modules/governance/testUtils/generators/proposalAction';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
@@ -155,53 +156,6 @@ describe('SppStageUtils', () => {
         });
     });
 
-    describe('canStageAdvance', () => {
-        it('returns true when all conditions are met', () => {
-            const now = '2023-01-01T12:00:00.000Z';
-            const startDate = DateTime.fromISO(now).minus({ hours: 2 }).toSeconds();
-            const stage = generateSppStage({
-                stageIndex: 0,
-                minAdvance: 3600,
-                maxAdvance: 86400,
-                approvalThreshold: 1,
-                vetoThreshold: 1,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                startDate,
-                settings: { stages: [stage] },
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                ],
-            });
-            timeUtils.setTime(now);
-            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeTruthy();
-        });
-
-        it('returns false when outside time window', () => {
-            const now = '2023-01-01T12:00:00.000Z';
-            const startDate = DateTime.fromISO(now).minus({ hours: 3 }).toSeconds();
-            const stage = generateSppStage({
-                stageIndex: 0,
-                minAdvance: 3600,
-                maxAdvance: 7200,
-                approvalThreshold: 1,
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
-            });
-            const proposal = generateSppProposal({
-                startDate,
-                settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true })],
-            });
-            timeUtils.setTime(now);
-            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
-        });
-    });
-
     describe('getCount', () => {
         it('returns correct veto and approval counts based on sub-proposal result', () => {
             const stage = generateSppStage({
@@ -312,6 +266,7 @@ describe('SppStageUtils', () => {
                     generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
                     generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
                     generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.VETO }),
+                    generateSppStagePlugin({ address: 'plugin4', proposalType: SppProposalType.VETO }),
                 ],
             });
             const proposal = generateSppProposal({
@@ -320,208 +275,133 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ pluginAddress: 'plugin1' }),
                     generateSppSubProposal({ pluginAddress: 'plugin2' }),
                     generateSppSubProposal({ pluginAddress: 'plugin3' }),
+                    generateSppSubProposal({ pluginAddress: 'plugin4' }),
                 ],
             });
 
             getSlotFunctionSpy
                 .mockImplementationOnce(() => () => ProposalStatus.ACCEPTED)
                 .mockImplementationOnce(() => () => ProposalStatus.EXECUTABLE)
-                .mockImplementationOnce(() => () => ProposalStatus.EXECUTED);
+                .mockImplementationOnce(() => () => ProposalStatus.EXECUTED)
+                .mockImplementationOnce(() => () => ProposalStatus.EXPIRED);
 
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(2);
+            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(3);
         });
     });
 
     describe('getStageStatus', () => {
-        const now = '2023-01-01T12:00:00.000Z';
-        it('returns vetoed when stage is vetoed', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                vetoThreshold: 1,
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO })],
-            });
-            const proposal = generateSppProposal({
-                startDate: DateTime.fromISO(now).minus({ hours: 1 }).toSeconds(),
-                settings: { stages: [stage] },
-            });
+        const isVetoReachedSpy = jest.spyOn(sppStageUtils, 'isVetoReached');
+        const isStageUnreachedSpy = jest.spyOn(sppStageUtils, 'isStagedUnreached');
+        const getStageStartDateSpy = jest.spyOn(sppStageUtils, 'getStageStartDate');
+        const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
+        const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
 
-            const isVetoReachedSpy = jest.spyOn(sppStageUtils, 'isVetoReached');
+        afterEach(() => {
+            isVetoReachedSpy.mockReset();
+            isStageUnreachedSpy.mockReset();
+            getStageStartDateSpy.mockReset();
+            getStageEndDateSpy.mockReset();
+            isApprovalReachedSpy.mockReset();
+        });
 
+        it('returns vetoed when one of the stage has been vetoed', () => {
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
             isVetoReachedSpy.mockReturnValue(true);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toEqual(ProposalVotingStatus.VETOED);
+        });
 
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.VETOED);
-
-            isVetoReachedSpy.mockRestore();
+        it('returns unreached is current stage cannot be reached', () => {
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
+            isStageUnreachedSpy.mockReturnValue(true);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toEqual(ProposalVotingStatus.UNREACHED);
         });
 
         it('returns pending when stage start date is in the future', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).plus({ hours: 1 });
             const stage = generateSppStage();
-            const proposal = generateSppProposal({
-                startDate: DateTime.fromISO(now).plus({ hours: 1 }).toSeconds(),
-            });
+            const proposal = generateSppProposal();
+            getStageStartDateSpy.mockReturnValue(startDate);
             timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.PENDING);
         });
 
-        it('returns pending when current stage index is less than the stage index', () => {
-            const stage1 = generateSppStage({
-                stageIndex: 0,
-                voteDuration: 3600,
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
-            });
-            const stage2 = generateSppStage({
-                stageIndex: 1,
-                voteDuration: 3600,
-            });
-            const proposal = generateSppProposal({
-                startDate: DateTime.fromISO(now).minus({ minutes: 30 }).toSeconds(),
-                stageIndex: 0,
-                settings: { stages: [stage1, stage2] },
-                subProposals: [
-                    generateSppSubProposal({
-                        stageIndex: 1,
-                        pluginAddress: 'plugin1',
-                        result: false,
-                    }),
-                ],
-            });
-            timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage1)).toBe(ProposalStatus.ACTIVE);
-            expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(ProposalStatus.PENDING);
+        it('returns pending when stage index is greater than current stage index and start-date cannot be processed', () => {
+            const stage = generateSppStage({ stageIndex: 2 });
+            const proposal = generateSppProposal({ stageIndex: 0 });
+            getStageStartDateSpy.mockReturnValue(undefined);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.PENDING);
         });
 
-        it('returns rejected when approval threshold is not met and stage end date has passed', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                voteDuration: 3600,
-                approvalThreshold: 2,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                startDate: DateTime.fromISO(now).minus({ hours: 2 }).toSeconds(),
-                settings: { stages: [stage] },
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                ],
-            });
-            timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.REJECTED);
-        });
-
-        it('returns active when approval is reached but min advance is in the future', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                voteDuration: 3600,
-                minAdvance: 3600,
-                maxAdvance: 7200,
-                approvalThreshold: 1,
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
-            });
-            const proposal = generateSppProposal({
-                startDate: DateTime.fromISO(now).minus({ minutes: 30 }).toSeconds(),
-                settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
-            });
+        it('returns active when stage has not ended yet', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).plus({ hours: 1 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
+            getStageEndDateSpy.mockReturnValue(endDate);
             timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
         });
 
-        it('returns accepted when approval is reached and stage can advance', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                voteDuration: 3600,
-                minAdvance: 1800,
-                maxAdvance: 7200,
-                approvalThreshold: 1,
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
-            });
-            const proposal = generateSppProposal({
-                startDate: DateTime.fromISO(now).minus({ minutes: 45 }).toSeconds(),
-                settings: { stages: [stage] },
-                subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true })],
-            });
+        it('returns active when stage has not ended yet, approval has been reached and proposal has no actions', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).plus({ days: 7 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal({ actions: [], settings: { stages: [stage] } });
+            getStageEndDateSpy.mockReturnValue(endDate);
+            isApprovalReachedSpy.mockReturnValue(true);
+            timeUtils.setTime(now);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
+        });
+
+        it('returns accepted when stage has not ended yet, approval has been reached, proposal has actions and can be advanced', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 });
+            const minAdvance = 5 * 60 * 60; // 5 hours
+            const endDate = DateTime.fromISO(now).plus({ days: 7 });
+            const stage = generateSppStage({ minAdvance });
+            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+            getStageStartDateSpy.mockReturnValue(startDate);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
         });
 
-        it('returns expired when past max advance date and approved', () => {
+        it('returns expired when stage has ended, approval is reached, max advance date has passed and proposal has actions', () => {
             const now = '2023-01-01T12:00:00.000Z';
-            const startDate = DateTime.fromISO(now).minus({ hours: 6 }).toSeconds();
-            const stage = generateSppStage({
-                voteDuration: 3600,
-                maxAdvance: 7200,
-                approvalThreshold: 0,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                startDate,
-                settings: { stages: [stage] },
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: true }),
-                ],
-            });
-            timeUtils.setTime(now);
+            const endDate = DateTime.fromISO(now).minus({ days: 3 });
+            const maxAdvance = 12 * 60 * 60; // 12 hours
+            const stage = generateSppStage({ maxAdvance });
+            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+            getStageEndDateSpy.mockReturnValue(endDate);
+            isApprovalReachedSpy.mockReturnValue(true);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.EXPIRED);
         });
 
-        it('returns inactive for an unreached stage when the previous stage is rejected', () => {
-            const stage1 = generateSppStage({
-                stageIndex: 0,
-                voteDuration: 3600,
-                approvalThreshold: 2,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
-
-            const stage2 = generateSppStage({
-                stageIndex: 1,
-                voteDuration: 3600,
-                plugins: [generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.APPROVAL })],
-            });
-
-            const proposal = generateSppProposal({
-                startDate: DateTime.fromISO(now).minus({ hours: 2 }).toSeconds(),
-                stageIndex: 0,
-                settings: { stages: [stage1, stage2] },
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: false }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                ],
-            });
+        it('returns accepted when stage has ended, approval is reached, max advance date has passed but proposal has no actions and stage is last stage', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).minus({ days: 3 });
+            const maxAdvance = 12 * 60 * 60; // 12 hours
+            const stage = generateSppStage({ maxAdvance });
+            const proposal = generateSppProposal({ actions: [], settings: { stages: [stage] } });
+            getStageEndDateSpy.mockReturnValue(endDate);
+            isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage2)).toBe(ProposalVotingStatus.UNREACHED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
         });
 
-        it('returns active when stage has started but not ended and approval not reached', () => {
-            const stage = generateSppStage({
-                stageIndex: 0,
-                voteDuration: 3600,
-                approvalThreshold: 2,
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                startDate: DateTime.fromISO(now).minus({ minutes: 30 }).toSeconds(),
-                settings: { stages: [stage] },
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
-                ],
-            });
+        it('returns rejected when stage has ended and approval is not reached', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).minus({ days: 3 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
+            isApprovalReachedSpy.mockReturnValue(false);
+            getStageEndDateSpy.mockReturnValue(endDate);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.REJECTED);
         });
     });
 });
