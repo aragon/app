@@ -386,7 +386,19 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({ actions: [], settings: { stages: [stage] } });
             getStageEndDateSpy.mockReturnValue(endDate);
             isApprovalReachedSpy.mockReturnValue(true);
+            timeUtils.setTime(now);
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
+        });
+
+        it('returns rejected when stage has ended and approval is not reached', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).minus({ days: 3 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
+            isApprovalReachedSpy.mockReturnValue(false);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            timeUtils.setTime(now);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.REJECTED);
         });
     });
 });
