@@ -58,6 +58,8 @@ class PublishProcessDialogUtils {
 
     private alwaysTrueCondition: Hex = '0xCC8200adC6EF4d2E8746cdCB2B16b6d3ddeab18a';
 
+    private defaultMaxAdvance = dateUtils.durationToSeconds({ days: 36500, hours: 0, minutes: 0 }); // 10 years
+
     prepareProposalMetadata = () => {
         const title = 'Apply plugin installation';
         const summary = 'This proposal applies the plugin installation to create the new process';
@@ -242,11 +244,18 @@ class PublishProcessDialogUtils {
                 };
             });
 
+            const voteDuration = dateUtils.durationToSeconds(stage.votingPeriod);
+
+            const maxAdvance =
+                stage.stageExpiration != null
+                    ? dateUtils.durationToSeconds(stage.stageExpiration) + voteDuration
+                    : undefined;
+
             return {
                 plugins,
                 minAdvance: stage.earlyStageAdvance ? BigInt(0) : dateUtils.durationToSeconds(stage.votingPeriod),
-                maxAdvance: dateUtils.durationToSeconds(stage.stageExpiration ?? { days: 36500, hours: 0, minutes: 0 }),
-                voteDuration: dateUtils.durationToSeconds(stage.votingPeriod),
+                maxAdvance: maxAdvance ?? this.defaultMaxAdvance,
+                voteDuration,
                 approvalThreshold: stage.type === 'normal' ? stage.requiredApprovals : 0,
                 vetoThreshold: stage.type === 'normal' ? 0 : stage.requiredApprovals,
             };
