@@ -1,7 +1,9 @@
+import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { type Chain, createClient } from 'viem';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
-import { arbitrum, base, mainnet, polygon, sepolia, zkSync, zkSyncSepoliaTestnet } from 'wagmi/chains';
+import { arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
 import { coinbaseWallet, walletConnect } from 'wagmi/connectors';
 
 // Metadata used during wallet connection process.
@@ -13,7 +15,7 @@ const appMetadata = {
 };
 
 // Supported chains by the Application.
-const chains: [Chain, ...Chain[]] = [arbitrum, base, mainnet, polygon, sepolia, zkSync, zkSyncSepoliaTestnet];
+const chains: [Chain, ...Chain[]] = [arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet];
 
 // WalletConnect project ID.
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!;
@@ -21,7 +23,14 @@ const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!;
 // Wagmi configuration for the Application.
 export const wagmiConfig = createConfig({
     chains,
-    client: ({ chain }) => createClient({ chain, transport: http() }),
+    client: ({ chain }) => {
+        const network = Object.values(Network).find(
+            (network) => networkDefinitions[network as Network].chainId === chain.id,
+        ) as Network;
+        const rpcEndpoint = `${networkDefinitions[network].rpc}${process.env.NEXT_PUBLIC_RPC_KEY}`;
+
+        return createClient({ chain, transport: http(rpcEndpoint) });
+    },
     ssr: true,
     connectors: [
         walletConnect({ projectId, metadata: appMetadata, showQrModal: false }),
