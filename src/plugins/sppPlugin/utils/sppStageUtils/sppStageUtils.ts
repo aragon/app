@@ -81,8 +81,8 @@ class SppStageUtils {
     };
 
     getStageMaxAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
-        const stageEndDate = this.getStageEndDate(proposal, stage);
-        return stageEndDate?.plus({ seconds: stage.maxAdvance });
+        const stageStartDate = this.getStageStartDate(proposal, stage);
+        return stageStartDate?.plus({ seconds: stage.maxAdvance });
     };
 
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
