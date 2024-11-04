@@ -24,6 +24,8 @@ export const useDynamicValue = <TResult,>(params: IUseDynamicValueParams<TResult
 
     useEffect(() => {
         if (!enabled) {
+            // Make sure to update the internal value when the enabled property changes to keep the value updated
+            setValue(callback());
             return;
         }
 

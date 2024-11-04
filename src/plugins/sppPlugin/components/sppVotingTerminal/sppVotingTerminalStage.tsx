@@ -58,10 +58,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
-    const initialStatus = sppStageUtils.getStageStatus(proposal, stage);
+    // Keep stage status updated for statuses that are time dependent
+    const { ACTIVE, PENDING, ACCEPTED } = ProposalVotingStatus;
+    const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED].includes(sppStageUtils.getStageStatus(proposal, stage));
     const stageStatus = useDynamicValue({
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
-        enabled: initialStatus === ProposalVotingStatus.ACTIVE,
+        enabled: enableDynamicValue,
     });
 
     const processedStageStatus =

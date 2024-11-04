@@ -9,6 +9,7 @@ import {
     formatterUtils,
     IconType,
     ProposalVotingStatus,
+    Rerender,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
@@ -64,8 +65,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
-    const formattedMaxAdvance = formatterUtils.formatDate(maxAdvanceTime, { format: DateFormat.DURATION });
-
     const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
 
     if (!displayAdvanceStatus && !canVote) {
@@ -106,7 +105,13 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
             </Button>
             {displayAdvanceTime && (
                 <div className="flex flex-row justify-center gap-1">
-                    <span className="text-neutral-800">{formattedMaxAdvance}</span>
+                    <Rerender>
+                        {() => (
+                            <span className="text-neutral-800">
+                                {formatterUtils.formatDate(maxAdvanceTime, { format: DateFormat.DURATION })}
+                            </span>
+                        )}
+                    </Rerender>
                     <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceInfo')}</span>
                 </div>
             )}
