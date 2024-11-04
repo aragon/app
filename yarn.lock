@@ -50,7 +50,7 @@ __metadata:
     "@aragon/gov-ui-kit": "npm:^1.0.52"
     "@floating-ui/react": "npm:^0.26.25"
     "@hookform/devtools": "npm:^4.3.1"
-    "@next/bundle-analyzer": "npm:^14.2.15"
+    "@next/bundle-analyzer": "npm:^15.0.2"
     "@tailwindcss/typography": "npm:^0.5.15"
     "@tanstack/react-query": "npm:^5.59.16"
     "@testing-library/dom": "npm:^10.4.0"
@@ -1618,12 +1618,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:^14.2.15":
-  version: 14.2.15
-  resolution: "@next/bundle-analyzer@npm:14.2.15"
+"@next/bundle-analyzer@npm:^15.0.2":
+  version: 15.0.2
+  resolution: "@next/bundle-analyzer@npm:15.0.2"
   dependencies:
     webpack-bundle-analyzer: "npm:4.10.1"
-  checksum: 10c0/50c9ce8ae967e6bbf0f82d17434658f3acb50eebf50bb286e7b072db850da23f96d22b853fe88f4a589f337e9fa35dc5cfa9a6bb6203cf8645a8ab598f1d212b
+  checksum: 10c0/bc61db38b682a994496dcef4f81f0318f6fe3a8130a580a0dde9353609c4b3b573d66d996ef1bbf5089ef5ea817c4be3fae3db83fceca29558542ed48415c515
   languageName: node
   linkType: hard
 
