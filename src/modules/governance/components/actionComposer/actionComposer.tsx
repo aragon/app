@@ -1,22 +1,22 @@
+import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { forwardRef, useMemo } from 'react';
 import { ProposalActionType, type IProposalAction } from '../../api/governanceService';
 import type { IPluginActionData } from '../createProposalForm/createProposalFormActions/createProposalFormActions.api';
 import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { useDao } from '@/shared/api/daoService';
 
 export interface IActionComposerProps
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
     /**
-     * ID of the DAO.
-     */
-    daoId: string;
-    /**
      * Callback called on action selected.
      */
     onActionSelected: (action: IProposalAction) => void;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
     /**
      * Plugin specific items.
      */
