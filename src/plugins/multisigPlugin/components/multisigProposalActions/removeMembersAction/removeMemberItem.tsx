@@ -6,7 +6,17 @@ import type { IRemoveMemberDialogParams } from '@/plugins/multisigPlugin/dialogs
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils, Button, Card, Dropdown, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    Button,
+    Card,
+    Dropdown,
+    type ICompositeAddress,
+    IconType,
+    InputContainer,
+} from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 
 export interface IRemoveMemberItemProps {
     /**
@@ -34,15 +44,21 @@ export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
 
     const { open, close } = useDialogContext();
 
-    const addressFieldName = `${fieldName}.[${index}].address`;
-    const addressField = useFormField<Record<string, string>, string>(addressFieldName, {
+    const addressFieldName = `${fieldName}.[${index}]`;
+    const {
+        value,
+        onChange: onAddressChange,
+        ...addressField
+    } = useFormField<Record<string, ICompositeAddress>, string>(addressFieldName, {
         rules: {
             required: true,
-            validate: (value) => addressUtils.isAddress(value) && isMember,
+            validate: (value) => addressUtils.isAddress(value?.address) && isMember,
         },
-        defaultValue: '',
     });
-    const memberExistsParams = { memberAddress: addressField?.value, pluginAddress: action.pluginAddress };
+
+    const [addressInput, setAddressInput] = useState<string | undefined>(value?.address);
+
+    const memberExistsParams = { memberAddress: addressInput ?? '', pluginAddress: action.pluginAddress };
     const { data: isMember } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: action.pluginAddress != null },
@@ -51,7 +67,13 @@ export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
     const initialParams = {
         queryParams: { daoId: action.daoId, pluginAddress: action.pluginAddress },
     };
-    const params: IRemoveMemberDialogParams = { initialParams, onMemberClick: addressField.onChange, close };
+
+    const onMemberClick = (address: string) => {
+        setAddressInput(address);
+        onAddressChange(address);
+    };
+
+    const params: IRemoveMemberDialogParams = { initialParams, onMemberClick, close };
 
     const handleOpenDialog = () => {
         open(MultisigDialogs.MULTISIG_REMOVE_MEMBERS, { params });
@@ -71,8 +93,9 @@ export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
                 </Button>
                 <AddressInput
                     placeholder={t('app.plugins.multisig.addMembersAction.addressInput.placeholder')}
-                    value={addressField.value}
-                    onChange={addressField.onChange}
+                    value={addressInput}
+                    onChange={setAddressInput}
+                    onAccept={onAddressChange}
                 />
             </InputContainer>
             <Dropdown.Container

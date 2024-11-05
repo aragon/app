@@ -36,7 +36,7 @@ export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) 
 
     // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
     const watchFieldArray = useWatch({ name: `${fieldName}.members` });
-    const controlledFields = fields.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
+    const controlledFields = fields.map((field, index) => ({ ...field, ...watchFieldArray?.[index] }));
 
     useEffect(() => {
         if (fields.length === 0) {
@@ -61,9 +61,9 @@ export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) 
 
     return (
         <>
-            {controlledFields.length > 0 && (
+            {fields.length > 0 && (
                 <div className="flex w-full flex-col gap-3 md:gap-2">
-                    {controlledFields.map((field, index) => (
+                    {fields.map((field, index) => (
                         <RemoveMemberItem
                             key={field.id}
                             index={index}
