@@ -38,7 +38,7 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
         value: receiver,
         ...receiverField
     } = useFormField<IMintFormData, 'receiver'>('receiver', {
-        label: t('app.plugins.token.mintActionForm.address.label'),
+        label: t('app.plugins.token.mintTokensAction.address.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix: fieldName,
     });
@@ -46,7 +46,7 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
     const [receiverInput, setReceiverInput] = useState<string | undefined>(receiver?.address);
 
     const amountField = useFormField<IMintFormData, 'amount'>('amount', {
-        label: t('app.plugins.token.mintActionForm.amount.label'),
+        label: t('app.plugins.token.mintTokensAction.amount.label'),
         rules: { required: true },
         fieldPrefix: fieldName,
     });
@@ -74,14 +74,14 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
         <div className="flex w-full flex-col gap-6">
             <AddressInput
                 chainId={1}
-                placeholder={t('app.plugins.token.mintActionForm.address.placeholder')}
+                placeholder={t('app.plugins.token.mintTokensAction.address.placeholder')}
                 value={receiverInput}
                 onChange={setReceiverInput}
                 onAccept={onReceiverChange}
                 {...receiverField}
             />
             <InputNumber
-                placeholder={t('app.plugins.token.mintActionForm.amount.placeholder', { symbol: tokenSymbol })}
+                placeholder={t('app.plugins.token.mintTokensAction.amount.placeholder', { symbol: tokenSymbol })}
                 min={0}
                 suffix={tokenSymbol}
                 {...amountField}

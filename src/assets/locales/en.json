@@ -261,7 +261,6 @@
       "actionComposer": {
         "action": {
           "MetadataUpdate": "Set metadata",
-          "Mint": "Mint",
           "Transfer": "Transfer"
         },
         "group": {
@@ -601,12 +600,7 @@
         }
       },
       "token": {
-        "actionComposer": {
-          "action": {
-            "Mint": "Mint"
-          }
-        },
-        "mintActionForm": {
+        "mintTokensAction": {
           "address": {
             "label": "Address",
             "placeholder": "ENS or 0x …"
@@ -615,6 +609,9 @@
             "label": "Amount",
             "placeholder": "0 {{symbol}}"
           }
+        },
+        "tokenActions": {
+          "Mint": "Mint"
         },
         "tokenCreateProposalSettingsForm": {
           "endTime": {

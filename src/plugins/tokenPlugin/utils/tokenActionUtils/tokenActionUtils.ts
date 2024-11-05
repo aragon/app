@@ -35,7 +35,7 @@ class TokenActionUtils {
             items: [
                 {
                     id: ProposalActionType.MINT,
-                    name: t(`app.plugins.token.actionComposer.action.${ProposalActionType.MINT}`),
+                    name: t(`app.plugins.token.tokenActions.${ProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: name ?? subdomain,
                     defaultValue: defaultMintAction,
