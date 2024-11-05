@@ -8,7 +8,7 @@ import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentP
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
-import type { IMintFormData } from './mintTokensActionFormDefinitions';
+import type { IMintTokensFormData } from './mintTokensActionFormDefinitions';
 
 export interface IMintTokensActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
@@ -37,7 +37,7 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
         onChange: onReceiverChange,
         value: receiver,
         ...receiverField
-    } = useFormField<IMintFormData, 'receiver'>('receiver', {
+    } = useFormField<IMintTokensFormData, 'receiver'>('receiver', {
         label: t('app.plugins.token.mintTokensAction.address.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix: fieldName,
@@ -45,7 +45,7 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
 
     const [receiverInput, setReceiverInput] = useState<string | undefined>(receiver?.address);
 
-    const amountField = useFormField<IMintFormData, 'amount'>('amount', {
+    const amountField = useFormField<IMintTokensFormData, 'amount'>('amount', {
         label: t('app.plugins.token.mintTokensAction.amount.label'),
         rules: { required: true },
         fieldPrefix: fieldName,
