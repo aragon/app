@@ -3,8 +3,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ITokenPluginSettings } from '../../types';
 import { tokenActionUtils } from '../../utils/tokenActionUtils';
 
-export const useTokenActions = (props: IDaoPlugin<ITokenPluginSettings>) => {
+export const useTokenActions = (plugin: IDaoPlugin<ITokenPluginSettings>) => {
     const { t } = useTranslations();
 
-    return tokenActionUtils.getTokenActions({ plugin: props, t });
+    return tokenActionUtils.getTokenActions({ plugin, t });
 };

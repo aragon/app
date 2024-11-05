@@ -3,18 +3,12 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { addressUtils, Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
+import { Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { ActionComposer } from '../../actionComposer';
-import {
-    ActionGroupId,
-    defaultMetadataAction,
-    defaultTransferAction,
-} from '../../actionComposer/actionComposerDefinitions';
+import { ActionComposer, type IPluginActionComposerData } from '../../actionComposer';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
-import type { IPluginActionData } from './createProposalFormActions.api';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 
@@ -41,44 +35,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
-
-    // Core groups and items that are plugin agnostic
-    const defaultMetadaAction = useMemo(() => {
-        const { avatar, address, name, description, links } = dao!;
-        const existingMetadata = { logo: avatar, name, description, links };
-
-        return {
-            to: address,
-            existingMetadata,
-            proposedMetadata: existingMetadata,
-            ...defaultMetadataAction,
-        };
-    }, [dao]);
-
-    const coreGroups = [
-        {
-            id: ActionGroupId.OSX,
-            name: t(`app.governance.actionComposer.group.${ActionGroupId.OSX}`),
-            info: addressUtils.truncateAddress(dao?.address),
-            indexData: [dao!.address],
-        },
-    ];
-
-    const coreItems = [
-        {
-            id: ProposalActionType.TRANSFER,
-            name: t(`app.governance.actionComposer.action.${ProposalActionType.TRANSFER}`),
-            icon: IconType.APP_TRANSACTIONS,
-            defaultValue: defaultTransferAction,
-        },
-        {
-            id: ProposalActionType.METADATA_UPDATE,
-            name: t(`app.governance.actionComposer.action.${ProposalActionType.METADATA_UPDATE}`),
-            icon: IconType.SETTINGS,
-            groupId: ActionGroupId.OSX,
-            defaultValue: defaultMetadaAction,
-        },
-    ];
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -107,35 +63,19 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         }
     };
 
-    const initialAccumulator: IPluginActionData = {
-        items: [],
-        groups: [],
-        components: {},
-    };
+    const pluginActions =
+        dao?.plugins?.map((plugin) =>
+            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionComposerData>({
+                pluginId: plugin.subdomain,
+                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+            })?.(plugin),
+        ) ?? [];
 
-    const { items, groups, components } = (dao?.plugins ?? []).reduce((acc, plugin) => {
-        const slotFunction = pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionData>({
-            pluginId: plugin.subdomain,
-            slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
-        });
-        if (slotFunction) {
-            const data = slotFunction(plugin);
-            if (data.items) {
-                acc.items.push(...data.items);
-            }
-            if (data.groups) {
-                acc.groups.push(...data.groups);
-            }
-            if (data.components) {
-                acc.components = { ...acc.components, ...data.components };
-            }
-        }
-        return acc;
-    }, initialAccumulator);
+    const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
+    const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
+    const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
 
-    const allItems = [...coreItems, ...items];
-    const allGroups = [...coreGroups, ...groups];
-    const allCustomActionComponents = { ...coreCustomActionComponents, ...components };
+    const allCustomActionComponents = { ...coreCustomActionComponents, ...pluginComponents };
 
     return (
         <div className="flex flex-col gap-y-10">
@@ -176,8 +116,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                items={allItems}
-                groups={allGroups}
+                pluginItems={pluginItems}
+                pluginGroups={pluginGroups}
+                daoId={daoId}
             />
         </div>
     );

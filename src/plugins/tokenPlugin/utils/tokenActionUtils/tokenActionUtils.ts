@@ -1,12 +1,12 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import type { IPluginActionData } from '@/modules/governance/components/createProposalForm/createProposalFormActions/createProposalFormActions.api';
+import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
 import { MintTokensAction } from '@/plugins/tokenPlugin/components/tokenProposalActions/mintTokensAction';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { defaultMintAction } from '../../constants/tokenActionComposerDefinitions';
 import type { ITokenPluginSettings } from '../../types';
+import { defaultMintAction } from './tokenActionDefinitions';
 
 interface IGetTokenActionsProps {
     /**
@@ -20,8 +20,8 @@ interface IGetTokenActionsProps {
 }
 
 class TokenActionUtils {
-    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IPluginActionData => {
-        const { address, name, subdomain } = plugin;
+    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IPluginActionComposerData => {
+        const { address } = plugin;
 
         return {
             groups: [
@@ -35,9 +35,9 @@ class TokenActionUtils {
             items: [
                 {
                     id: ProposalActionType.MINT,
-                    name: t(`app.plugins.token.actionComposer.action.${ProposalActionType.MINT}`),
+                    name: t(`app.plugins.token.tokenActions.${ProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
-                    groupId: name ?? subdomain,
+                    groupId: address,
                     defaultValue: defaultMintAction,
                 },
             ],

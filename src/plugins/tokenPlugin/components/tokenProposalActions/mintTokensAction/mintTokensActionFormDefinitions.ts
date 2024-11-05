@@ -1,6 +1,6 @@
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
-export interface IMintFormData {
+export interface IMintTokensFormData {
     /**
      * The address receiving the tokens.
      */

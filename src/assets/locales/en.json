@@ -588,8 +588,8 @@
           "heading": "Remove members"
         },
         "multisigSubmitVote": {
-          "button": "Approve",
-          "voteLabel": "Approve"
+          "approveLabel": "Approve proposal",
+          "vetoLabel": "Veto proposal"
         },
         "multisigVoteList": {
           "entity": "Votes"
@@ -617,6 +617,7 @@
           "advanceInfo": "left to advance",
           "button": {
             "advance": "Advance proposal",
+            "advanced": "Proposal advanced",
             "vote": "Vote on proposal"
           }
         },
@@ -626,12 +627,7 @@
         }
       },
       "token": {
-        "actionComposer": {
-          "action": {
-            "Mint": "Mint"
-          }
-        },
-        "mintActionForm": {
+        "mintTokensAction": {
           "address": {
             "label": "Address",
             "placeholder": "ENS or 0x …"
@@ -640,6 +636,9 @@
             "label": "Amount",
             "placeholder": "0 {{symbol}}"
           }
+        },
+        "tokenActions": {
+          "Mint": "Mint"
         },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
