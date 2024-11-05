@@ -534,18 +534,16 @@
         }
       },
       "multisig": {
-        "multisigActionComposer": {
-          "action": {
-            "MultisigAddMembers": "Add Members",
-            "MultisigRemoveMembers": "Remove Members"
-          }
-        },
-        "multisigAddMembersAction": {
+        "addMembersAction": {
           "add": "Add",
           "addressInput": {
             "placeholder": "ENS or 0x …"
           },
           "removeMember": "Remove member"
+        },
+        "multisigActions": {
+          "MultisigAddMembers": "Add Members",
+          "MultisigRemoveMembers": "Remove Members"
         },
         "multisigCreateProposalSettingsForm": {
           "endTime": {

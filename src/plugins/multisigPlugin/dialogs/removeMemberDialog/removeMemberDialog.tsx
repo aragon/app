@@ -2,15 +2,7 @@ import { type IGetMemberListParams } from '@/modules/governance/api/governanceSe
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    DataListContainer,
-    DataListRoot,
-    Dialog,
-    invariant,
-    MemberAvatar,
-    MemberDataListItem,
-} from '@aragon/gov-ui-kit';
-import { mainnet } from 'viem/chains';
+import { DataListContainer, DataListRoot, Dialog, invariant, MemberDataListItem } from '@aragon/gov-ui-kit';
 
 export interface IRemoveMemberDialogParams {
     /**
@@ -65,26 +57,17 @@ export const RemoveMembersDialog: React.FC<IRemoveMemberDialogProps> = (props) =
                         SkeletonElement={MemberDataListItem.Skeleton}
                         emptyState={emptyState}
                         errorState={errorState}
-                        layoutClassName="flex flex-col gap-2"
+                        layoutClassName="grid grid-cols-2 gap-2"
                     >
                         {memberList?.map((member) => (
-                            <div
+                            <MemberDataListItem.Structure
                                 key={member.address}
+                                className="w-1/2 cursor-pointer"
+                                address={member.address}
+                                ensName={member.ens ?? undefined}
+                                hideLabelTokenVoting={true}
                                 onClick={() => handleMemberClicked(member.address)}
-                                className="cursor-pointer"
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        handleMemberClicked(member.address);
-                                    }
-                                }}
-                            >
-                                <div className="flex w-full items-center gap-2">
-                                    <MemberAvatar address={member.address} chainId={mainnet.id} size="md" />
-                                    <p className="truncate text-sm text-neutral-500">{member.ens ?? member.address}</p>
-                                </div>
-                            </div>
+                            />
                         ))}
                     </DataListContainer>
                 </DataListRoot>

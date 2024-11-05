@@ -70,7 +70,7 @@ export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
                     select
                 </Button>
                 <AddressInput
-                    placeholder={t('app.plugins.multisig.multisigAddMembersAction.addressInput.placeholder')}
+                    placeholder={t('app.plugins.multisig.addMembersAction.addressInput.placeholder')}
                     value={addressField.value}
                     onChange={addressField.onChange}
                 />
@@ -81,7 +81,7 @@ export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
                 customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
             >
                 <Dropdown.Item onClick={() => remove(index)}>
-                    {t('app.plugins.multisig.multisigAddMembersAction.removeMember')}
+                    {t('app.plugins.multisig.addMembersAction.removeMember')}
                 </Dropdown.Item>
             </Dropdown.Container>
         </Card>

@@ -2,13 +2,12 @@ import type { IProposalAction } from '@/modules/governance/api/governanceService
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Button, IconType, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
+import { addressUtils, Button, IconType, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useEffect, useRef } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData } from 'viem';
+import { encodeFunctionData, zeroAddress } from 'viem';
 import type { IAddOrRemoveMembersActionFormData } from '../addMembersAction/addMembersActionFormDefinitions';
 import { RemoveMemberItem } from './removeMemberItem';
-import { useAccount } from 'wagmi';
 
 export interface IRemoveMembersActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
@@ -23,8 +22,6 @@ const removeMembersAbi = {
 
 export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) => {
     const { index, action } = props;
-
-    const { address } = useAccount();
 
     const { t } = useTranslations();
 
@@ -42,16 +39,25 @@ export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) 
     const controlledFields = fields.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
 
     useEffect(() => {
-        const addresses = controlledFields.map((field) => field.address).filter(Boolean);
-        const newData = encodeFunctionData({ abi: [removeMembersAbi], args: [addresses] });
-
-        setValue(`${fieldName}.data`, newData);
+        if (fields.length === 0) {
+            append({ address: '' });
+        }
         setValue(`${fieldName}.to`, action.pluginAddress);
-        setValue(`${fieldName}.from`, address);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fieldName, fields, setValue, action.pluginAddress, address]);
+    }, [fields.length, append, fieldName, setValue, action.pluginAddress]);
 
-    console.log(controlledFields);
+    // Ref to prevent infinite loop when using controlled fields
+    const prevDataRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        const addresses = controlledFields
+            .map((field) => (addressUtils.isAddress(field.address) ? field.address : zeroAddress))
+            .filter(Boolean);
+        const newData = encodeFunctionData({ abi: [removeMembersAbi], args: [addresses] });
+        if (prevDataRef.current !== newData) {
+            setValue(`${fieldName}.data`, newData);
+            prevDataRef.current = newData;
+        }
+    }, [fieldName, controlledFields, setValue, action.pluginAddress]);
 
     return (
         <>

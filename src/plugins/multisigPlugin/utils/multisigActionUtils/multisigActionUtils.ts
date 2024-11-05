@@ -36,18 +36,14 @@ class MultisigActionUtils {
             items: [
                 {
                     id: ProposalActionType.MULTISIG_ADD_MEMBERS,
-                    name: t(
-                        `app.plugins.multisig.multisigActionComposer.action.${ProposalActionType.MULTISIG_ADD_MEMBERS}`,
-                    ),
+                    name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.MULTISIG_ADD_MEMBERS}`),
                     icon: IconType.PLUS,
                     groupId: name ?? subdomain,
                     defaultValue: defaultAddMembers,
                 },
                 {
                     id: ProposalActionType.MULTISIG_REMOVE_MEMBERS,
-                    name: t(
-                        `app.plugins.multisig.multisigActionComposer.action.${ProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
-                    ),
+                    name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.MULTISIG_REMOVE_MEMBERS}`),
                     icon: IconType.MINUS,
                     groupId: name ?? subdomain,
                     defaultValue: defaultRemoveMembers,

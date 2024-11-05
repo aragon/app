@@ -8,7 +8,6 @@ import type { IAddOrRemoveMembersActionFormData } from './addMembersActionFormDe
 import { useEffect, useRef } from 'react';
 import { encodeFunctionData, zeroAddress } from 'viem';
 import { AddMemberItem } from './addMemberItem';
-import { useAccount } from 'wagmi';
 
 export interface IAddMembersActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
@@ -22,8 +21,6 @@ const addMembersAbi = {
 
 export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
     const { index, action } = props;
-
-    const { address } = useAccount();
 
     const { t } = useTranslations();
 
@@ -47,8 +44,7 @@ export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
             append({ address: '' });
         }
         setValue(`${fieldName}.to`, action.pluginAddress);
-        setValue(`${fieldName}.from`, address);
-    }, [fields.length, append, fieldName, setValue, action.pluginAddress, address]);
+    }, [fields.length, append, fieldName, setValue, action.pluginAddress]);
 
     // Ref to prevent infinite loop when using controlled fields
     const prevDataRef = useRef<string | null>(null);
@@ -62,7 +58,7 @@ export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
             setValue(`${fieldName}.data`, newData);
             prevDataRef.current = newData;
         }
-    }, [fieldName, controlledFields, setValue, action.pluginAddress, address]);
+    }, [fieldName, controlledFields, setValue, action.pluginAddress]);
 
     return (
         <>
@@ -86,7 +82,7 @@ export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
                 iconLeft={IconType.PLUS}
                 onClick={() => append({ address: '' })}
             >
-                {t('app.plugins.multisig.multisigAddMembersAction.add')}
+                {t('app.plugins.multisig.addMembersAction.add')}
             </Button>
         </>
     );
