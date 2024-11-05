@@ -7,9 +7,8 @@ import { Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { ActionComposer } from '../../actionComposer';
+import { ActionComposer, type IPluginActionComposerData } from '../../actionComposer';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
-import type { IPluginActionData } from './createProposalFormActions.api';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 
@@ -66,7 +65,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const pluginActions =
         dao?.plugins?.map((plugin) =>
-            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionData>({
+            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionComposerData>({
                 pluginId: plugin.subdomain,
                 slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             })?.(plugin),
