@@ -42,7 +42,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const subProposal = subProposals?.[0];
     const { address: pluginAddress, ...plugin } = stage.plugins[0];
 
-    // Vote list for subproposal TODO: Support multiple proposals within a stage (APP-3659)
     const voteListParams = { queryParams: { proposalId: subProposal?.id, pluginAddress, pageSize: votesPerPage } };
 
     const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({

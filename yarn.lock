@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:^1.0.52"
+    "@aragon/gov-ui-kit": "npm:^1.0.53"
     "@floating-ui/react": "npm:^0.26.27"
     "@hookform/devtools": "npm:^4.3.1"
     "@next/bundle-analyzer": "npm:^14.2.15"
@@ -102,9 +102,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:^1.0.52":
-  version: 1.0.52
-  resolution: "@aragon/gov-ui-kit@npm:1.0.52"
+"@aragon/gov-ui-kit@npm:^1.0.53":
+  version: 1.0.53
+  resolution: "@aragon/gov-ui-kit@npm:1.0.53"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -132,7 +132,7 @@ __metadata:
     classnames: "npm:^2.0.0"
     framer-motion: "npm:^11.11.0"
     luxon: "npm:^3.5.0"
-    react-dropzone: "npm:^14.2.0"
+    react-dropzone: "npm:^14.3.0"
     react-imask: "npm:^7.6.1"
     sanitize-html: "npm:^2.13.0"
     tiptap-markdown: "npm:^0.8.10"
@@ -144,7 +144,7 @@ __metadata:
     tailwindcss: ^3.4.0
     viem: ^2.21.0
     wagmi: ^2.12.0
-  checksum: 10c0/6377c07dbf8bb9fb0f8bebc0cdee33dd3493d5d86d7f59840e15fe7a9e3268c3e7996cd27f6c995afe77106a5265cbc32b4c8a721172b41de114d0fbfbbafcf9
+  checksum: 10c0/bad6bee969c30e4cfc0c66ce205517f80dc689600e9f24ed3e866f96b1dd4242ce907dec5869b8b12b7e517b9a8e7a93f0cf066d1e99184931e8b847e68e1707
   languageName: node
   linkType: hard
 
@@ -5607,7 +5607,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"attr-accept@npm:^2.2.2":
+"attr-accept@npm:^2.2.4":
   version: 2.2.4
   resolution: "attr-accept@npm:2.2.4"
   checksum: 10c0/602d88b40cb039f1159b86e389ca4f908c13dba513753f7c511e69499ba6216c153519f31a484bac9c9efa633f8f6a4ec25b4f777bd55198f8cb2514cef04618
@@ -8220,12 +8220,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"file-selector@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "file-selector@npm:0.6.0"
+"file-selector@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "file-selector@npm:2.1.0"
   dependencies:
-    tslib: "npm:^2.4.0"
-  checksum: 10c0/477ca1b56274db9fee1a8a623c4bfef580389726a5fef843af8c1f2f17f70ec2d1e41b29115777c92e120a15f1cca734c6ef36bb48bfa2ee027c68da16cd0d28
+    tslib: "npm:^2.7.0"
+  checksum: 10c0/6eccfba9e0ac9f2d91fd43678ce120661088bc5cee23a679f67101f979afff71171fc10f35d39916ce244edf1e151451091cee1692a8826d3a33eb4c81cdd4b8
   languageName: node
   linkType: hard
 
@@ -12721,16 +12721,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dropzone@npm:^14.2.0":
-  version: 14.2.10
-  resolution: "react-dropzone@npm:14.2.10"
+"react-dropzone@npm:^14.3.0":
+  version: 14.3.5
+  resolution: "react-dropzone@npm:14.3.5"
   dependencies:
-    attr-accept: "npm:^2.2.2"
-    file-selector: "npm:^0.6.0"
+    attr-accept: "npm:^2.2.4"
+    file-selector: "npm:^2.1.0"
     prop-types: "npm:^15.8.1"
   peerDependencies:
     react: ">= 16.8 || 18.0.0"
-  checksum: 10c0/07f24b77cae951f8bdbcaeabfca1eacf8699ed79e5924c534d81c0da23bf98a83dae19d5e04419f2010b527233830f69159caabf0cdaedb1aaaaa4fe7efa99f0
+  checksum: 10c0/e3e5dddd3bead7c6410bd3fccc3a87e93086ceac47526a2d35421ef7e11a9e59f47c8af8da5c4600a58ef238a5af87c751a71b6391d5c6f77f1f2857946c07cc
   languageName: node
   linkType: hard
 
@@ -14369,10 +14369,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0":
-  version: 2.8.0
-  resolution: "tslib@npm:2.8.0"
-  checksum: 10c0/31e4d14dc1355e9b89e4d3c893a18abb7f90b6886b089c2da91224d0a7752c79f3ddc41bc1aa0a588ac895bd97bb99c5bc2bfdb2f86de849f31caeb3ba79bbe5
+"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.7.0":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
   languageName: node
   linkType: hard
 
