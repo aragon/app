@@ -55,12 +55,12 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
 
     const plugin = useDaoPlugins(daoPluginParams)![0];
 
-    const settings = plugin?.meta.settings as ITokenPluginSettings;
-    const tokenSymbol = settings?.token.symbol;
-    const tokenAddress = settings?.token.address;
+    const settings = plugin.meta.settings as ITokenPluginSettings;
+    const tokenSymbol = settings.token.symbol;
+    const tokenAddress = settings.token.address;
 
     useEffect(() => {
-        const tokenDecimals = settings?.token.decimals ?? 18;
+        const tokenDecimals = settings.token.decimals ?? 18;
         const amount = parseUnits(amountField?.value ?? '0', tokenDecimals);
         const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
         const mintParams = [receiverAddress, amount];

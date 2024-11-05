@@ -1,5 +1,5 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import type { IPluginActionData } from '@/modules/governance/components/createProposalForm/createProposalFormActions/createProposalFormActions.api';
+import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
 import { MintTokensAction } from '@/plugins/tokenPlugin/components/tokenProposalActions/mintTokensAction';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
@@ -20,7 +20,7 @@ interface IGetTokenActionsProps {
 }
 
 class TokenActionUtils {
-    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IPluginActionData => {
+    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IPluginActionComposerData => {
         const { address } = plugin;
 
         return {

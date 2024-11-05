@@ -4,8 +4,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { forwardRef, useMemo } from 'react';
 import { ProposalActionType, type IProposalAction } from '../../api/governanceService';
-import type { IPluginActionData } from '../createProposalForm/createProposalFormActions/createProposalFormActions.api';
 import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
+import type { IPluginActionComposerData } from './actionComposer.api';
 
 export interface IActionComposerProps
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
@@ -20,11 +20,11 @@ export interface IActionComposerProps
     /**
      * Plugin specific items.
      */
-    pluginItems: IPluginActionData['items'];
+    pluginItems: IPluginActionComposerData['items'];
     /**
      * Plugin specific groups.
      */
-    pluginGroups: IPluginActionData['groups'];
+    pluginGroups: IPluginActionComposerData['groups'];
 }
 
 export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {
@@ -47,16 +47,17 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
         };
     }, [dao]);
 
-    const coreGroups = [
+    const groups = [
         {
             id: ActionGroupId.OSX,
             name: t(`app.governance.actionComposer.group.${ActionGroupId.OSX}`),
             info: addressUtils.truncateAddress(dao?.address),
             indexData: [dao!.address],
         },
+        ...pluginGroups,
     ];
 
-    const coreItems = [
+    const items = [
         {
             id: ProposalActionType.TRANSFER,
             name: t(`app.governance.actionComposer.action.${ProposalActionType.TRANSFER}`),
@@ -70,10 +71,8 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
             groupId: ActionGroupId.OSX,
             defaultValue: defaultMetadaAction,
         },
+        ...pluginItems,
     ];
-
-    const items = [...coreItems, ...pluginItems];
-    const groups = [...coreGroups, ...pluginGroups];
 
     const handleActionSelected = (itemId: string) => {
         const action = items.find((item) => item.id === itemId)!;

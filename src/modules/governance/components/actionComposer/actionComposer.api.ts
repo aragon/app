@@ -1,15 +1,27 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IAutocompleteInputGroup, IAutocompleteInputItem } from '@/shared/components/forms/autocompleteInput';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import type { IProposalActionData } from '../createProposalFormDefinitions';
+import type { IProposalActionData } from '../createProposalForm';
 
-export interface IPluginActionItem extends IAutocompleteInputItem {
+interface IPluginActionComposerItem extends IAutocompleteInputItem {
+    /**
+     * Default value for the action.
+     */
     defaultValue: IProposalAction;
 }
 
-export interface IPluginActionData {
+export interface IPluginActionComposerData {
+    /**
+     * Autocomplete groups for the actions.
+     */
     groups: IAutocompleteInputGroup[];
-    items: IPluginActionItem[];
+    /**
+     * Autocomplete action item.
+     */
+    items: IPluginActionComposerItem[];
+    /**
+     * Custom action components.
+     */
     components: Record<
         string,
         React.ComponentType<IProposalActionComponentProps<IProposalActionData<IProposalAction>>>
