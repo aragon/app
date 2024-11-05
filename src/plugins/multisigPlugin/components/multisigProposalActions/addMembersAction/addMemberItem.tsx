@@ -4,6 +4,7 @@ import type { IProposalActionData } from '@/modules/governance/components/create
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, Button, Card, Dropdown, IconType } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 
 export interface IAddMemberItemProps {
     /**
@@ -29,8 +30,12 @@ export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const addressFieldName = `${fieldName}.[${index}].address`;
-    const addressField = useFormField<Record<string, string>, string>(addressFieldName, {
+    const addressFieldName = `${fieldName}.[${index}]`;
+    const {
+        value: addressField,
+        onChange: onAddressChange,
+        ...addressFieldProps
+    } = useFormField<Record<string, string>, string>(addressFieldName, {
         rules: {
             required: true,
             validate: (value) => addressUtils.isAddress(value) && !isMember,
@@ -38,17 +43,21 @@ export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
         defaultValue: '',
     });
 
-    const memberExistsParams = { memberAddress: addressField?.value, pluginAddress: action.pluginAddress };
+    const [addressInput, setAddressInput] = useState<string | undefined>();
+
+    const memberExistsParams = { memberAddress: addressField, pluginAddress: action.pluginAddress };
     const { data: isMember } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: action.pluginAddress != null },
     );
-
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <AddressInput
                 placeholder={t('app.plugins.multisig.multisigAddMembersAction.addressInput.placeholder')}
-                {...addressField}
+                onChange={setAddressInput}
+                value={addressInput}
+                onAccept={onAddressChange}
+                {...addressFieldProps}
             />
             <Dropdown.Container
                 constrainContentWidth={false}
