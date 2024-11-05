@@ -4,8 +4,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { forwardRef, useMemo } from 'react';
 import { ProposalActionType, type IProposalAction } from '../../api/governanceService';
-import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
 import type { IPluginActionComposerData } from './actionComposer.api';
+import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
 
 export interface IActionComposerProps
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
