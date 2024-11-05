@@ -5,7 +5,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { addressUtils, Button, IconType, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import type { IAddOrRemoveMembersActionFormData } from './addMembersActionFormDefinitions';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { encodeFunctionData, zeroAddress } from 'viem';
 import { AddMemberItem } from './addMemberItem';
 import { useAccount } from 'wagmi';
@@ -36,23 +36,33 @@ export const AddMembersAction: React.FC<IAddMembersActionProps> = (props) => {
         name: `${fieldName}.members`,
     });
 
-    // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
     const watchFieldArray = useWatch({ name: `${fieldName}.members` });
-    const controlledFields = fields.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
+    const controlledFields = fields.map((field, index) => ({
+        ...field,
+        ...watchFieldArray?.[index],
+    }));
 
     useEffect(() => {
-        const addresses = fields
+        if (fields.length === 0) {
+            append({ address: '' });
+        }
+        setValue(`${fieldName}.to`, action.pluginAddress);
+        setValue(`${fieldName}.from`, address);
+    }, [fields.length, append, fieldName, setValue, action.pluginAddress, address]);
+
+    // Ref to prevent infinite loop when using controlled fields
+    const prevDataRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        const addresses = controlledFields
             .map((field) => (addressUtils.isAddress(field.address) ? field.address : zeroAddress))
             .filter(Boolean);
         const newData = encodeFunctionData({ abi: [addMembersAbi], args: [addresses] });
-
-        setValue(`${fieldName}.data`, newData);
-        setValue(`${fieldName}.to`, action.pluginAddress);
-        setValue(`${fieldName}.from`, address);
-    }, [fieldName, fields, setValue, action.pluginAddress, address]);
-
-    console.log('CONTROLLED_FIELDS =>', controlledFields);
-    console.log('FIELDS =>', fields);
+        if (prevDataRef.current !== newData) {
+            setValue(`${fieldName}.data`, newData);
+            prevDataRef.current = newData;
+        }
+    }, [fieldName, controlledFields, setValue, action.pluginAddress, address]);
 
     return (
         <>

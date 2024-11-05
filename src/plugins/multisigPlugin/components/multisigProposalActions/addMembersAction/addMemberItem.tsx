@@ -3,7 +3,15 @@ import { useMemberExists } from '@/modules/governance/api/governanceService/quer
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils, Button, Card, Dropdown, IconType } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    Button,
+    Card,
+    Dropdown,
+    type ICompositeAddress,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 
 export interface IAddMemberItemProps {
@@ -32,24 +40,24 @@ export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
 
     const addressFieldName = `${fieldName}.[${index}]`;
     const {
-        value: addressField,
+        value,
         onChange: onAddressChange,
-        ...addressFieldProps
-    } = useFormField<Record<string, string>, string>(addressFieldName, {
+        ...addressField
+    } = useFormField<Record<string, ICompositeAddress>, string>(addressFieldName, {
         rules: {
             required: true,
-            validate: (value) => addressUtils.isAddress(value) && !isMember,
+            validate: (value) => addressUtils.isAddress(value?.address) && !isMember,
         },
-        defaultValue: '',
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>();
+    const [addressInput, setAddressInput] = useState<string | undefined>(value?.address);
 
-    const memberExistsParams = { memberAddress: addressField, pluginAddress: action.pluginAddress };
+    const memberExistsParams = { memberAddress: addressInput ?? '', pluginAddress: action.pluginAddress };
     const { data: isMember } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: action.pluginAddress != null },
     );
+
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <AddressInput
@@ -57,7 +65,7 @@ export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
                 onChange={setAddressInput}
                 value={addressInput}
                 onAccept={onAddressChange}
-                {...addressFieldProps}
+                {...addressField}
             />
             <Dropdown.Container
                 constrainContentWidth={false}
