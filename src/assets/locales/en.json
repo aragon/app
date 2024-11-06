@@ -273,47 +273,47 @@
       "createProcessForm": {
         "metadata": {
           "description": {
-            "helpText": "Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
+            "helpText": "Summarize your governance process and its role in your organization in 2-3 sentences. This summary will be shown on the Proposals page, transparently describing how proposals of this type are governed.",
             "label": "Summary",
             "placeholder": "Type a summary"
           },
           "key": {
-            "helpText": "Define a prefix for this governance process to have an unique ID. Something like PDF, which leads to PDF-01 and counting up for each proposal.",
+            "helpText": "Define a unique and recognizable prefix for this governance process so that each proposal has a unique ID. For example, CORE would be identifiable as CORE-1, CORE-2, etc.",
             "label": "Key",
-            "placeholder": "Type a key"
+            "placeholder": "Type an key"
           },
           "name": {
-            "helpText": "Give your governance process a name, so members can differentiate it.",
+            "helpText": "Give your governance process a short and easily identifiable name. Examples: Protocol Upgrades, Grants, Metagovernance, etc.",
             "label": "Name",
             "placeholder": "Type a name"
           },
           "resources": {
-            "helpText": "Add any additional external resources that help members understand the governance process."
+            "helpText": "You can add additional external resources that helps give extra context about this type of proposal and its governance process."
           }
         },
         "permissions": {
           "eligibleVoters": {
             "anyDescription": "Any address can create proposals",
-            "anyLabel": "Any address",
-            "bodiesDescription": "Select voting bodies and define requirements",
-            "bodiesLabel": "Voting bodies",
-            "label": "Who is eligible?"
+            "anyLabel": "Anyone",
+            "bodiesDescription": "Select which governing bodies are able to create proposals",
+            "bodiesLabel": "Only members of governing bodies",
+            "label": "Who is eligible to create this type of proposal?"
           },
           "tokenMinRequirementInput": {
-            "helpText": "Only token holders with at least the minimum required balance or delegates minimum required voting power can create proposals.",
+            "helpText": "The voting power or token balance needed to create proposals.",
             "label": "Minimum requirement",
             "placeholder": "≥ 1"
           },
           "votingBodies": {
-            "error": "You must select at least one voting body",
-            "label": "Voting Bodies"
+            "error": "You must select at least one governing body.",
+            "label": "Governing Bodies"
           }
         },
         "stage": {
           "add": "Add stage",
           "bodies": {
             "add": "Add",
-            "helpText": "Add at least one voting body which has to participate in this stage. We recommend not to add more than 3 bodies per stage.",
+            "helpText": "Add the governing bodies that get to determine whether or not this stage passes.",
             "label": {
               "vetoing": "Vetoing bodies",
               "voting": "Voting bodies"
@@ -345,17 +345,17 @@
             "threshold": {
               "bodies": "bodies",
               "helpText": {
-                "vetoing": "The amount of bodies that must veto this proposal in order to block the proposal from advancing or becoming executable.",
-                "voting": "The amount of bodies that must approve the proposal in order for it to advance to the next stage or become executable."
+                "vetoing": "The amount of bodies that must veto this proposal in order to prevent the proposal from advancing to the next stage.",
+                "voting": "The amount of bodies that must approve the proposal in order for it to advance to the next stage."
               },
               "label": {
-                "vetoing": "Bodies required to veto",
-                "voting": "Bodies required to approve"
+                "vetoing": "Veto threshold",
+                "voting": "Approval threshold"
               }
             }
           },
           "name": {
-            "helpText": "Name the stage, so members are able to recognize it.",
+            "helpText": "Give the stage a name that describes its role in the process. Examples: Community Review, Guardian Veto, Founder Signoff, etc.",
             "label": "Name",
             "placeholder": "Type a name"
           },
@@ -378,7 +378,7 @@
               },
               "yes": "Yes"
             },
-            "helpText": "Define the timing of this stage so that the bodies have enough time to vote on proposals and advance them to subsequent stages.",
+            "helpText": "Configure the stage's timing settings, such as the amount of time available to vote.",
             "label": "Timing",
             "summary": {
               "earlyAdvance": "Early stage advance",
@@ -388,10 +388,10 @@
             }
           },
           "type": {
-            "helpText": "Specify what kind of stage.",
-            "label": "Type",
-            "normal": "Normal",
-            "optimistic": "Optimistic"
+            "helpText": "Specify the role that governance plays. In a normal stage, a proposal will only pass if it approved. However, an optimistic stage reverses it this - it will pass unless vetoed.",
+            "label": "What kind of stage is this?",
+            "normal": "Normal: vote to approve",
+            "optimistic": "Optimistic: vote to veto"
           }
         }
       },
@@ -399,19 +399,19 @@
         "finalStep": "Publish process",
         "steps": {
           "METADATA": {
-            "description": "This metadata will define the process so voters can make an informed decision.",
-            "name": "Process metadata",
-            "title": "Define content"
+            "description": "The information you provide on this page will be displayed alongside proposals of this type. It is purely informational, used to help voters understand the governance process and make a more informed decision.",
+            "name": "Process description",
+            "title": "Describe new proposal type"
           },
           "PERMISSIONS": {
-            "description": "Define who is eligible to create proposals within this governance process.",
-            "name": "Define permissions",
-            "title": "Define permissions"
+            "description": "Define who is eligible to create proposals of this type.",
+            "name": "Proposal creation rules",
+            "title": "Set proposal creation rules"
           },
           "STAGES": {
-            "description": "Compose your process flow here.",
-            "name": "Define the stages",
-            "title": "Define the stages"
+            "description": "Design the process for deciding whether or not a proposal of this type passes and its actions executed. The proposals can go through any number of sequential stages. Within each stage, governing bodies can either approve or veto the proposal.",
+            "name": "Governance design",
+            "title": "Design the governance process"
           }
         },
         "submitLabel": "Publish process"
@@ -428,9 +428,9 @@
         },
         "metadata": {
           "actions": {
-            "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
-            "label": "Binding onchain actions",
-            "title": "Would you like to add actions to this proposal?"
+            "helpText": "You may add actions to this proposal, which are onchain transactions that can only be executed if the proposal passes.",
+            "label": "Yes",
+            "title": "Would you like to add actions?"
           },
           "body": {
             "helpText": "Describe the proposal fully for voters.",
@@ -779,19 +779,6 @@
         }
       },
       "token": {
-        "mintTokensAction": {
-          "address": {
-            "label": "Address",
-            "placeholder": "ENS or 0x …"
-          },
-          "amount": {
-            "label": "Amount",
-            "placeholder": "0 {{symbol}}"
-          }
-        },
-        "tokenActions": {
-          "Mint": "Mint"
-        },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude.",
