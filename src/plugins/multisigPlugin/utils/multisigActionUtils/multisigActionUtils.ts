@@ -1,13 +1,13 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import type { IPluginActionData } from '@/modules/governance/components/createProposalForm/createProposalFormActions/createProposalFormActions.api';
+import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer/actionComposer.api';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { AddMembersAction } from '../../components/multisigProposalActions/addMembersAction';
-import { defaultAddMembers, defaultRemoveMembers } from '../../constants/multisigActionComposerDefinitions';
-import type { IMultisigPluginSettings } from '../../types';
 import { RemoveMembersAction } from '../../components/multisigProposalActions/removeMembersAction';
+import type { IMultisigPluginSettings } from '../../types';
+import { defaultAddMembers, defaultRemoveMembers } from './multisigActionDefinitions';
 
 interface IGetMultisigActionsProps {
     /**
@@ -21,8 +21,8 @@ interface IGetMultisigActionsProps {
 }
 
 class MultisigActionUtils {
-    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IPluginActionData => {
-        const { address, name, subdomain } = plugin;
+    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IPluginActionComposerData => {
+        const { address } = plugin;
 
         return {
             groups: [
@@ -38,14 +38,14 @@ class MultisigActionUtils {
                     id: ProposalActionType.MULTISIG_ADD_MEMBERS,
                     name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.MULTISIG_ADD_MEMBERS}`),
                     icon: IconType.PLUS,
-                    groupId: name ?? subdomain,
+                    groupId: address,
                     defaultValue: defaultAddMembers,
                 },
                 {
                     id: ProposalActionType.MULTISIG_REMOVE_MEMBERS,
                     name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.MULTISIG_REMOVE_MEMBERS}`),
                     icon: IconType.MINUS,
-                    groupId: name ?? subdomain,
+                    groupId: address,
                     defaultValue: defaultRemoveMembers,
                 },
             ],
