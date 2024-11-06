@@ -3,11 +3,11 @@ import type { IProposalActionData } from '@/modules/governance/components/create
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { addressUtils, Button, IconType, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import type { IAddOrRemoveMembersActionFormData } from './addMembersActionFormDefinitions';
 import { useEffect, useRef } from 'react';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, zeroAddress } from 'viem';
 import { AddMemberItem } from './addMemberItem';
+import type { IAddOrRemoveMembersActionFormData } from './addMembersActionFormDefinitions';
 
 export interface IAddMembersActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
