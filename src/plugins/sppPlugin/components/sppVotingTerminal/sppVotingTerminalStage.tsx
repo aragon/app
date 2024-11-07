@@ -42,7 +42,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const subProposal = subProposals?.[0];
     const { address: pluginAddress, ...plugin } = stage.plugins[0];
 
-    // Vote list for subproposal TODO: Support multiple proposals within a stage (APP-3659)
     const voteListParams = { queryParams: { proposalId: subProposal?.id, pluginAddress, pageSize: votesPerPage } };
 
     const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
@@ -58,10 +57,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
-    const initialStatus = sppStageUtils.getStageStatus(proposal, stage);
+    // Keep stage status updated for statuses that are time dependent
+    const { ACTIVE, PENDING, ACCEPTED } = ProposalVotingStatus;
+    const enableDynamicValue = [ACTIVE, PENDING, ACCEPTED].includes(sppStageUtils.getStageStatus(proposal, stage));
     const stageStatus = useDynamicValue({
         callback: () => sppStageUtils.getStageStatus(proposal, stage),
-        enabled: initialStatus === ProposalVotingStatus.ACTIVE,
+        enabled: enableDynamicValue,
     });
 
     const processedStageStatus =

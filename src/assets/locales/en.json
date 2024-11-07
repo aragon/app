@@ -601,6 +601,19 @@
         }
       },
       "token": {
+        "mintTokensAction": {
+          "address": {
+            "label": "Address",
+            "placeholder": "ENS or 0x …"
+          },
+          "amount": {
+            "label": "Amount",
+            "placeholder": "0 {{symbol}}"
+          }
+        },
+        "tokenActions": {
+          "Mint": "Mint"
+        },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude.",

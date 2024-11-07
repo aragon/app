@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
+import { useEffect, useState } from 'react';
 import { type ISppProposal } from '../../types';
 import { SppVotingTerminalStage } from './sppVotingTerminalStage';
 
@@ -17,7 +18,12 @@ export interface ISppVotingTerminalProps {
 export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
     const { daoId, proposal } = props;
 
+    const [activeStage, setActiveStage] = useState<string | undefined>(proposal.stageIndex.toString());
+
     const { t } = useTranslations();
+
+    // Update active stage when refetching the proposal (e.g. after advancing a stage)
+    useEffect(() => setActiveStage(proposal.stageIndex.toString()), [proposal.stageIndex]);
 
     const processedStages = proposal.settings.stages.map((stage, index) => ({
         stage,
@@ -29,7 +35,8 @@ export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
         <ProposalVoting.Container
             title={t('app.plugins.spp.sppVotingTerminal.title')}
             description={t('app.plugins.spp.sppVotingTerminal.description')}
-            activeStage={proposal.stageIndex.toString()}
+            activeStage={activeStage}
+            onStageClick={setActiveStage}
         >
             {processedStages?.map(({ stage, subProposals, index }) => (
                 <SppVotingTerminalStage

@@ -3,7 +3,8 @@ import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/compon
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { forwardRef, useMemo } from 'react';
-import { type IProposalAction, ProposalActionType } from '../../api/governanceService';
+import { ProposalActionType, type IProposalAction } from '../../api/governanceService';
+import type { IPluginActionComposerData } from './actionComposer.api';
 import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
 
 export interface IActionComposerProps
@@ -16,20 +17,23 @@ export interface IActionComposerProps
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Plugin specific items.
+     */
+    pluginItems: IPluginActionComposerData['items'];
+    /**
+     * Plugin specific groups.
+     */
+    pluginGroups: IPluginActionComposerData['groups'];
 }
 
 export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {
-    const { daoId, onActionSelected, ...otherProps } = props;
+    const { daoId, onActionSelected, pluginItems, pluginGroups, ...otherProps } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
-
-    const handleActionSelected = (itemId: string) => {
-        const action = items.find((item) => item.id === itemId)!;
-        onActionSelected?.(action.defaultValue);
-    };
 
     const defaultMetadaAction = useMemo(() => {
         const { avatar, address, name, description, links } = dao!;
@@ -50,6 +54,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
             info: addressUtils.truncateAddress(dao?.address),
             indexData: [dao!.address],
         },
+        ...pluginGroups,
     ];
 
     const items = [
@@ -66,7 +71,13 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
             groupId: ActionGroupId.OSX,
             defaultValue: defaultMetadaAction,
         },
+        ...pluginItems,
     ];
+
+    const handleActionSelected = (itemId: string) => {
+        const action = items.find((item) => item.id === itemId)!;
+        onActionSelected?.(action.defaultValue);
+    };
 
     return (
         <AutocompleteInput

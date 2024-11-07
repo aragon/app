@@ -27,8 +27,9 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
 
     const currentPrice = Number(token.priceUsd);
     const priceChangeOnDay = Number(token.priceChangeOnDayUsd);
-    const prevPrice = currentPrice - priceChangeOnDay;
-    const priceChange = prevPrice > 0 ? (priceChangeOnDay / prevPrice) * 100 : 0;
+    const historicalPrice = currentPrice - priceChangeOnDay;
+
+    const priceChange = historicalPrice > 0 ? (priceChangeOnDay / historicalPrice) * 100 : 0;
 
     return (
         <AssetDataListItemStructure

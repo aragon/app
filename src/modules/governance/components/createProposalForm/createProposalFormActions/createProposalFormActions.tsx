@@ -1,10 +1,13 @@
 import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { ActionComposer } from '../../actionComposer';
+import { ActionComposer, type IPluginActionComposerData } from '../../actionComposer';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
@@ -14,15 +17,22 @@ export interface ICreateProposalFormActionsProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Address of the plugin.
+     */
+    pluginAddress: string;
 }
 
-const customActionComponents = {
+const coreCustomActionComponents = {
     [ProposalActionType.TRANSFER]: TransferAssetAction,
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
 };
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, pluginAddress } = props;
+
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
 
@@ -45,7 +55,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
-    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, daoId });
+    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, daoId, pluginAddress });
 
     const handleMoveAction = (index: number, newIndex: number) => {
         if (newIndex >= 0 && newIndex < actions.length) {
@@ -53,12 +63,26 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         }
     };
 
+    const pluginActions =
+        dao?.plugins?.map((plugin) =>
+            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionComposerData>({
+                pluginId: plugin.subdomain,
+                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+            })?.(plugin),
+        ) ?? [];
+
+    const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);
+    const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
+    const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
+
+    const allCustomActionComponents = { ...coreCustomActionComponents, ...pluginComponents };
+
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions
                 actions={controlledActions}
                 actionKey="id"
-                customActionComponents={customActionComponents}
+                customActionComponents={allCustomActionComponents}
                 emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
                 dropdownItems={[
                     {
@@ -92,6 +116,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
+                pluginItems={pluginItems}
+                pluginGroups={pluginGroups}
                 daoId={daoId}
             />
         </div>
