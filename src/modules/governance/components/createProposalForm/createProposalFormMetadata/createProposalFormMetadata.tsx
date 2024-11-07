@@ -4,9 +4,16 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, Switch, TextArea, TextAreaRichText } from '@aragon/gov-ui-kit';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 
-export interface ICreateProposalFormMetadataProps {}
+export interface ICreateProposalFormMetadataProps {
+    /**
+     * Prefix to prepend to all the metadata form fields.
+     */
+    fieldPrefix?: string;
+}
 
-export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataProps> = () => {
+export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataProps> = (props) => {
+    const { fieldPrefix } = props;
+
     const { t } = useTranslations();
 
     const titleField = useFormField<ICreateProposalFormData, 'title'>('title', {
@@ -59,6 +66,7 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
             />
             <ResourcesInput
                 name="resources"
+                fieldPrefix={fieldPrefix}
                 helpText={t('app.governance.createProposalForm.metadata.resources.helpText')}
             />
             <Switch
