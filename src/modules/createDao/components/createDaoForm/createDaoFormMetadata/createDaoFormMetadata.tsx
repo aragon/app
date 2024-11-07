@@ -51,7 +51,8 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 {...descriptionField}
             />
             <ResourcesInput
-                name="daoResources"
+                name="resources"
+                fieldPrefix={fieldPrefix}
                 helpText={t('app.createDao.createDaoForm.metadata.resources.helpText')}
             />
         </div>

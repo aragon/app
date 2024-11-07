@@ -7,10 +7,12 @@ import { ResourcesInputItem } from './resourcesInputItem';
 export type ResourcesInputBaseForm = Record<string, IResourcesInputResource[]>;
 
 export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
-    const { name, helpText } = props;
+    const { name, helpText, fieldPrefix } = props;
+
+    const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
     const { t } = useTranslations();
-    const { fields, append, remove } = useFieldArray<ResourcesInputBaseForm>({ name });
+    const { fields, append, remove } = useFieldArray<ResourcesInputBaseForm>({ name: fieldName });
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">

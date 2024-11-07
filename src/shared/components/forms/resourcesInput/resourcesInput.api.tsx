@@ -7,6 +7,10 @@ export interface IResourcesInputProps {
      * The name of the field in the form.
      */
     helpText: string;
+    /**
+     * The prefix of the field in the form.
+     */
+    fieldPrefix?: string;
 }
 
 export interface IResourcesInputResource {
