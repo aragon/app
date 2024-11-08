@@ -1,4 +1,4 @@
-import { CreateDaoForm, ICreateDaoFormMetadataData } from '@/modules/createDao/components/createDaoForm';
+import { CreateDaoForm, type ICreateDaoFormMetadataData } from '@/modules/createDao/components/createDaoForm';
 import {
     ProposalActionType,
     type IProposalAction,
