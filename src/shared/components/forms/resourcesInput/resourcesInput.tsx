@@ -26,7 +26,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
             {fields.length > 0 && (
                 <div className="flex flex-col gap-3 md:gap-2">
                     {fields.map((field, index) => (
-                        <ResourcesInputItem key={field.id} name={name} index={index} remove={remove} />
+                        <ResourcesInputItem key={field.id} name={fieldName} index={index} remove={remove} />
                     ))}
                 </div>
             )}
