@@ -7,10 +7,12 @@ import { ResourcesInputItem } from './resourcesInputItem';
 export type ResourcesInputBaseForm = Record<string, IResourcesInputResource[]>;
 
 export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
-    const { name, helpText } = props;
+    const { name, helpText, fieldPrefix } = props;
+
+    const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
     const { t } = useTranslations();
-    const { fields, append, remove } = useFieldArray<ResourcesInputBaseForm>({ name });
+    const { fields, append, remove } = useFieldArray<ResourcesInputBaseForm>({ name: fieldName });
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
@@ -24,7 +26,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
             {fields.length > 0 && (
                 <div className="flex flex-col gap-3 md:gap-2">
                     {fields.map((field, index) => (
-                        <ResourcesInputItem key={field.id} name={name} index={index} remove={remove} />
+                        <ResourcesInputItem key={field.id} name={fieldName} index={index} remove={remove} />
                     ))}
                 </div>
             )}

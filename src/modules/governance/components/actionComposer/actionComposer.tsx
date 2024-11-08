@@ -35,9 +35,9 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
 
     const { t } = useTranslations();
 
-    const defaultMetadaAction = useMemo(() => {
-        const { avatar, address, name, description, links } = dao!;
-        const existingMetadata = { logo: avatar, name, description, links };
+    const defaultActionMetadata = useMemo(() => {
+        const { avatar, address, name, description, links: resources } = dao!;
+        const existingMetadata = { logo: avatar, name, description, resources };
 
         return {
             to: address,
@@ -69,7 +69,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
             name: t(`app.governance.actionComposer.action.${ProposalActionType.METADATA_UPDATE}`),
             icon: IconType.SETTINGS,
             groupId: ActionGroupId.OSX,
-            defaultValue: defaultMetadaAction,
+            defaultValue: defaultActionMetadata,
         },
         ...pluginItems,
     ];
