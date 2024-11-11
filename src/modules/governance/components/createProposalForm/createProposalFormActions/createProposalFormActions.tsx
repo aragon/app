@@ -24,7 +24,7 @@ const coreCustomActionComponents = {
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
 };
 
-export const CreateProposalFormActions = (props: ICreateProposalFormActionsProps) => {
+export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
     const { daoId } = props;
 
     const daoUrlParams = { id: daoId };
