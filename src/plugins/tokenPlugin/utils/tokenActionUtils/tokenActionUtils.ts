@@ -1,5 +1,5 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
+import { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
 import { MintTokensAction } from '@/plugins/tokenPlugin/components/tokenProposalActions/mintTokensAction';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
@@ -8,7 +8,7 @@ import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import type { ITokenPluginSettings } from '../../types';
 import { defaultMintAction } from './tokenActionDefinitions';
 
-interface IGetTokenActionsProps {
+export interface IGetTokenActionsProps {
     /**
      * DAO plugin data.
      */
@@ -19,8 +19,10 @@ interface IGetTokenActionsProps {
     t: TranslationFunction;
 }
 
+export type IGetTokenActionsResult = IPluginActionComposerData<IDaoPlugin<ITokenPluginSettings>>;
+
 class TokenActionUtils {
-    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IPluginActionComposerData => {
+    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
         const { address } = plugin;
 
         return {
@@ -38,6 +40,7 @@ class TokenActionUtils {
                     name: t(`app.plugins.token.tokenActions.${ProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
+                    meta: plugin,
                     defaultValue: {
                         ...defaultMintAction,
                         to: address,

@@ -24,7 +24,7 @@ const coreCustomActionComponents = {
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
 };
 
-export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
+export const CreateProposalFormActions = (props: ICreateProposalFormActionsProps) => {
     const { daoId } = props;
 
     const daoUrlParams = { id: daoId };
@@ -51,7 +51,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
 
-    const handleItemSelected = (action: IProposalAction) => addAction({ ...action, daoId });
+    const handleItemSelected = (action: IProposalAction, meta: undefined) => addAction({ ...action, daoId, meta });
 
     const handleMoveAction = (index: number, newIndex: number) => {
         if (newIndex >= 0 && newIndex < actions.length) {

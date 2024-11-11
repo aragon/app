@@ -1,8 +1,8 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
@@ -10,7 +10,8 @@ import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
 import type { IMintTokensFormData } from './mintTokensActionFormDefinitions';
 
-export interface IMintTokensActionProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IMintTokensActionProps
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
 
 const mintTokensAbi = {
     type: 'function',
@@ -54,22 +55,26 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
         fieldPrefix: fieldName,
     });
 
-    const daoPluginParams = { daoId: action.daoId, pluginAddress: action.to, includeSubPlugins: true };
-
-    const plugin = useDaoPlugins(daoPluginParams)![0];
-
-    const settings = plugin.meta.settings as ITokenPluginSettings;
-    const tokenSymbol = settings.token.symbol;
+    const { symbol: tokenSymbol, address: tokenAddress, decimals: tokenDecimals } = action.meta?.settings.token;
+    const parsedAmount = parseUnits(amountField?.value ?? '0', tokenDecimals);
 
     useEffect(() => {
-        const tokenDecimals = settings.token.decimals ?? 18;
-        const amount = parseUnits(amountField?.value ?? '0', tokenDecimals);
         const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
-        const mintParams = [receiverAddress, amount];
+        const mintParams = [receiverAddress, parsedAmount];
         const newData = encodeFunctionData({ abi: [mintTokensAbi], args: mintParams });
 
         setValue(`${fieldName}.data`, newData);
-    }, [setValue, fieldName, settings?.token.decimals, amountField?.value, receiver?.address]);
+        setValue(`${fieldName}.to`, tokenAddress);
+    }, [setValue, fieldName, parsedAmount, receiver?.address]);
+
+    useEffect(() => {
+        setValue(`${fieldName}.inputData.parameters[0].value`, receiver?.address);
+    }, [receiver]);
+
+    useEffect(() => {
+        console.log({ parsedAmount });
+        setValue(`${fieldName}.inputData.parameters[1].value`, parsedAmount.toString());
+    }, [parsedAmount]);
 
     return (
         <div className="flex w-full flex-col gap-6">

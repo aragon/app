@@ -3,14 +3,14 @@ import type { IAutocompleteInputGroup, IAutocompleteInputItem } from '@/shared/c
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import type { IProposalActionData } from '../createProposalForm';
 
-interface IPluginActionComposerItem extends IAutocompleteInputItem {
+export interface IPluginActionComposerItem<TMeta> extends IAutocompleteInputItem<TMeta> {
     /**
      * Default value for the action.
      */
     defaultValue: IProposalAction;
 }
 
-export interface IPluginActionComposerData {
+export interface IPluginActionComposerData<TMeta = undefined> {
     /**
      * Autocomplete groups for the actions.
      */
@@ -18,12 +18,12 @@ export interface IPluginActionComposerData {
     /**
      * Autocomplete action item.
      */
-    items: IPluginActionComposerItem[];
+    items: IPluginActionComposerItem<TMeta>[];
     /**
      * Custom action components.
      */
     components: Record<
         string,
-        React.ComponentType<IProposalActionComponentProps<IProposalActionData<IProposalAction>>>
+        React.ComponentType<IProposalActionComponentProps<IProposalActionData<IProposalAction, TMeta>>>
     >;
 }
