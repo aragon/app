@@ -1,22 +1,8 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import { MultisigDialogs } from '@/plugins/multisigPlugin/constants/multisigDialogs';
-import type { IRemoveMemberDialogParams } from '@/plugins/multisigPlugin/dialogs/removeMemberDialog/removeMemberDialog';
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    AddressInput,
-    addressUtils,
-    Button,
-    Card,
-    Dropdown,
-    type ICompositeAddress,
-    IconType,
-    InputContainer,
-} from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { AddressInput, Button, Card, Dropdown, type ICompositeAddress, IconType } from '@aragon/gov-ui-kit';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export interface IMultisigRemoveMembersActionItemProps {
     /**
@@ -28,76 +14,48 @@ export interface IMultisigRemoveMembersActionItemProps {
      */
     remove: (index: number) => void;
     /**
-     * Action data.
-     */
-    action: IProposalActionData<IProposalAction>;
-    /**
      * Field name of the main form.
      */
     fieldName: string;
+    /**
+     * Defines if the current field is already on the list.
+     */
+    isAlreadyInList: boolean;
 }
 
 export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersActionItemProps> = (props) => {
-    const { index, remove, action, fieldName } = props;
+    const { index, remove, fieldName, isAlreadyInList } = props;
 
     const { t } = useTranslations();
+    const { trigger } = useFormContext();
 
-    const { open, close } = useDialogContext();
-
-    const addressFieldName = `${fieldName}.[${index}]`;
+    const memberFieldName = `${fieldName}.[${index}]`;
     const {
-        value,
-        onChange: onAddressChange,
-        ...addressField
-    } = useFormField<Record<string, ICompositeAddress>, string>(addressFieldName, {
-        rules: {
-            required: true,
-            validate: (value) => addressUtils.isAddress(value?.address) && isMember,
-        },
+        value: memberValue,
+        onChange,
+        label,
+        ...memberField
+    } = useFormField<Record<string, ICompositeAddress>, string>(memberFieldName, {
+        label: 'Member',
+        rules: { validate: () => !isAlreadyInList },
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(value?.address);
+    const [addressInputValue, setAddressInputValue] = useState<string | undefined>(memberValue.address);
 
-    const memberExistsParams = { memberAddress: addressInput ?? '', pluginAddress: action.pluginAddress };
-    const { data: isMember } = useMemberExists(
-        { urlParams: memberExistsParams },
-        { enabled: action.pluginAddress != null },
-    );
-
-    const initialParams = {
-        queryParams: { daoId: action.daoId, pluginAddress: action.pluginAddress },
-    };
-
-    const onMemberClick = (address: string) => {
-        setAddressInput(address);
-        onAddressChange(address);
-    };
-
-    const params: IRemoveMemberDialogParams = { initialParams, onMemberClick, close };
-
-    const handleOpenDialog = () => {
-        open(MultisigDialogs.MULTISIG_REMOVE_MEMBERS, { params });
-    };
+    useEffect(() => {
+        trigger(memberFieldName);
+    }, [trigger, memberFieldName, isAlreadyInList]);
 
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <InputContainer id="" wrapperClassName="gap-2 pl-1.5 items-center" {...addressField}>
-                <Button
-                    variant="tertiary"
-                    size="sm"
-                    iconRight={IconType.CHEVRON_DOWN}
-                    onClick={handleOpenDialog}
-                    className="shrink-0"
-                >
-                    {t('app.plugins.multisig.multisigRemoveMembersAction.select')}
-                </Button>
-                <AddressInput
-                    placeholder={t('app.plugins.multisig.multisigRemoveMembersAction.addressInput.placeholder')}
-                    value={addressInput}
-                    onChange={setAddressInput}
-                    onAccept={onAddressChange}
-                />
-            </InputContainer>
+            <AddressInput
+                chainId={1}
+                placeholder={t('app.plugins.multisig.multisigRemoveMembersAction.addressInput.placeholder')}
+                disabled={true}
+                value={addressInputValue}
+                onChange={setAddressInputValue}
+                {...memberField}
+            />
             <Dropdown.Container
                 constrainContentWidth={false}
                 size="md"

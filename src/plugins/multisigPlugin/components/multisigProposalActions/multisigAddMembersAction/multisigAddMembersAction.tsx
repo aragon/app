@@ -9,9 +9,9 @@ import {
     IconType,
     type IProposalActionComponentProps,
 } from '@aragon/gov-ui-kit';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, zeroAddress } from 'viem';
+import { encodeFunctionData } from 'viem';
 import { MultisigAddMembersActionItem } from './multisigAddMembersActionItem';
 
 export interface IMultisigAddMembersActionProps
@@ -36,65 +36,63 @@ export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> 
     const { index, action } = props;
 
     const { t } = useTranslations();
-
     const { setValue } = useFormContext();
 
-    const fieldName = `actions.[${index}]`;
-    useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
+    const actionFieldName = `actions.[${index}]`;
+    useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
-    const { fields, append, remove } = useFieldArray<Record<string, IMultisigAddMembersActionFormData>>({
-        name: `${fieldName}.members`,
+    const membersFieldName: `${string}.members` = `${actionFieldName}.members`;
+    const {
+        fields: membersField,
+        append: addMember,
+        remove: removeMember,
+    } = useFieldArray<Record<string, IMultisigAddMembersActionFormData>>({
+        name: membersFieldName,
     });
 
-    const watchFieldArray = useWatch({ name: `${fieldName}.members` });
-    const controlledFields = fields.map((field, index) => ({
-        ...field,
-        ...watchFieldArray?.[index],
-    }));
+    const watchMembersField = useWatch<Record<string, IMultisigAddMembersActionFormData['members']>>({
+        name: membersFieldName,
+    });
+    const controlledMembersField = useMemo(
+        () => membersField.map((field, index) => ({ ...field, ...watchMembersField?.[index] })),
+        [membersField, watchMembersField],
+    );
 
     useEffect(() => {
-        if (fields.length === 0) {
-            append({ address: '' });
+        if (controlledMembersField.some((field) => !addressUtils.isAddress(field.address))) {
+            return;
         }
-        setValue(`${fieldName}.to`, action.pluginAddress);
-    }, [fields.length, append, fieldName, setValue, action.pluginAddress]);
 
-    // Ref to prevent infinite loop when using controlled fields
-    const prevDataRef = useRef<string | null>(null);
-
-    useEffect(() => {
-        const addresses = controlledFields
-            .map((field) => (addressUtils.isAddress(field.address) ? field.address : zeroAddress))
-            .filter(Boolean);
+        const addresses = controlledMembersField.map((field) => field.address);
         const newData = encodeFunctionData({ abi: [addMembersAbi], args: [addresses] });
-        if (prevDataRef.current !== newData) {
-            setValue(`${fieldName}.data`, newData);
-            prevDataRef.current = newData;
-        }
-    }, [fieldName, controlledFields, setValue, action.pluginAddress]);
+        setValue(`${actionFieldName}.data`, newData);
+        setValue(`${actionFieldName}.inputData.parameters[0].value`, addresses.toString());
+    }, [actionFieldName, controlledMembersField, setValue]);
+
+    const handleRemoveMember = (index: number) => removeMember(index);
+
+    const handleAddMember = () => addMember({ address: '' });
+
+    const checkIsAlreadyInList = (index: number) =>
+        controlledMembersField
+            .slice(0, index)
+            .some((field) => addressUtils.isAddressEqual(field.address, controlledMembersField[index].address));
 
     return (
         <>
-            {fields.length > 0 && (
-                <div className="flex w-full flex-col gap-3 md:gap-2">
-                    {fields.map((field, index) => (
-                        <MultisigAddMembersActionItem
-                            key={field.id}
-                            index={index}
-                            remove={remove}
-                            action={action}
-                            fieldName={`${fieldName}.members`}
-                        />
-                    ))}
-                </div>
-            )}
-            <Button
-                size="md"
-                variant="tertiary"
-                className="w-fit"
-                iconLeft={IconType.PLUS}
-                onClick={() => append({ address: '' })}
-            >
+            <div className="flex w-full flex-col gap-3 md:gap-2">
+                {membersField.map((field, index) => (
+                    <MultisigAddMembersActionItem
+                        key={field.id}
+                        index={index}
+                        onRemoveMember={membersField.length > 1 ? () => handleRemoveMember(index) : undefined}
+                        pluginAddress={action.to}
+                        fieldName={membersFieldName}
+                        isAlreadyInList={checkIsAlreadyInList(index)}
+                    />
+                ))}
+            </div>
+            <Button size="md" variant="tertiary" className="w-fit" iconLeft={IconType.PLUS} onClick={handleAddMember}>
                 {t('app.plugins.multisig.multisigAddMembersAction.add')}
             </Button>
         </>

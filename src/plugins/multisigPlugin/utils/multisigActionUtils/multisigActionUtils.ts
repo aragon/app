@@ -39,14 +39,14 @@ class MultisigActionUtils {
                     name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.MULTISIG_ADD_MEMBERS}`),
                     icon: IconType.PLUS,
                     groupId: address,
-                    defaultValue: defaultAddMembers,
+                    defaultValue: { ...defaultAddMembers, to: address },
                 },
                 {
                     id: ProposalActionType.MULTISIG_REMOVE_MEMBERS,
                     name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.MULTISIG_REMOVE_MEMBERS}`),
                     icon: IconType.MINUS,
                     groupId: address,
-                    defaultValue: defaultRemoveMembers,
+                    defaultValue: { ...defaultRemoveMembers, to: address },
                 },
             ],
             components: {

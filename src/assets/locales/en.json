@@ -540,6 +540,7 @@
         "multisigAddMembersAction": {
           "add": "Add",
           "addressInput": {
+            "label": "Member",
             "placeholder": "ENS or 0x …"
           },
           "removeMember": "Remove member"
@@ -577,13 +578,12 @@
           "addressInput": {
             "placeholder": "ENS or 0x …"
           },
+          "dialog": {
+            "entity": "Members",
+            "heading": "Remove members"
+          },
           "removeMember": "Remove member",
           "select": "select"
-        },
-        "multisigRemoveMembersDialog": {
-          "description": "Select the members you want to remove from the multisig.",
-          "entity": "Members",
-          "heading": "Remove members"
         },
         "multisigSubmitVote": {
           "approveLabel": "Approve proposal",

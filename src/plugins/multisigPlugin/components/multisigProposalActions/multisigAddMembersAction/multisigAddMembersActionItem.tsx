@@ -1,6 +1,4 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
@@ -12,70 +10,108 @@ import {
     type ICompositeAddress,
     IconType,
 } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export interface IMultisigAddMembersActionItemProps {
     /**
-     * The index of the resource item in the list.
+     * The index of the member.
      */
     index: number;
     /**
-     * Callback to remove the resource item.
+     * Callback triggered on remove member click.
      */
-    remove: (index: number) => void;
+    onRemoveMember?: () => void;
     /**
-     * Action data.
+     * Address of the current DAO plugin.
      */
-    action: IProposalActionData<IProposalAction>;
+    pluginAddress: string;
     /**
-     * Field name of the main form.
+     * Field name of the action form.
      */
     fieldName: string;
+    /**
+     * Defines if the current field is already on the list.
+     */
+    isAlreadyInList: boolean;
+}
+
+// TODO: remove this interface when IAddressInputResolvedValue is exported from gov-ui-kit
+export interface IAddressInputAcceptValue extends Omit<ICompositeAddress, 'address'> {
+    /**
+     * Address of the user.
+     */
+    address?: string;
 }
 
 export const MultisigAddMembersActionItem: React.FC<IMultisigAddMembersActionItemProps> = (props) => {
-    const { index, remove, action, fieldName } = props;
+    const { index, onRemoveMember, pluginAddress, fieldName, isAlreadyInList } = props;
 
     const { t } = useTranslations();
+    const { trigger } = useFormContext();
 
-    const addressFieldName = `${fieldName}.[${index}]`;
+    const memberFieldName = `${fieldName}.[${index}]`;
     const {
         value,
         onChange: onAddressChange,
+        label,
         ...addressField
-    } = useFormField<Record<string, ICompositeAddress>, string>(addressFieldName, {
+    } = useFormField<Record<string, ICompositeAddress>, string>(memberFieldName, {
+        label: t('app.plugins.multisig.multisigAddMembersAction.addressInput.label'),
         rules: {
             required: true,
-            validate: (value) => addressUtils.isAddress(value?.address) && !isMember,
+            validate: (value) => addressUtils.isAddress(value?.address) && !isMember && !isAlreadyInList,
         },
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(value?.address);
+    const [addressInput, setAddressInput] = useState<string | undefined>(value.address);
 
-    const memberExistsParams = { memberAddress: addressInput ?? '', pluginAddress: action.pluginAddress };
+    const memberExistsParams = { memberAddress: value.address, pluginAddress };
     const { data: isMember } = useMemberExists(
         { urlParams: memberExistsParams },
-        { enabled: action.pluginAddress != null },
+        { enabled: addressUtils.isAddress(value.address) },
     );
+
+    const handleAddressAccept = useCallback(
+        (value?: IAddressInputAcceptValue) => onAddressChange({ address: value?.address ?? '', name: value?.name }),
+        [onAddressChange],
+    );
+
+    // Trigger member validation to check if added user is already a member of the DAO or not.
+    useEffect(() => {
+        if (isMember != null) {
+            trigger(memberFieldName);
+        }
+    }, [trigger, memberFieldName, isMember]);
+
+    // Only trigger already-in-list validation if value is a valid address to avoid displaying an error on mount.
+    useEffect(() => {
+        if (addressUtils.isAddress(value.address)) {
+            trigger(memberFieldName);
+        }
+    }, [trigger, memberFieldName, isAlreadyInList, value.address]);
 
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <AddressInput
+                chainId={1}
                 placeholder={t('app.plugins.multisig.multisigAddMembersAction.addressInput.placeholder')}
                 onChange={setAddressInput}
                 value={addressInput}
-                onAccept={onAddressChange}
+                onAccept={handleAddressAccept}
                 {...addressField}
             />
-            <Dropdown.Container
-                constrainContentWidth={false}
-                size="md"
-                customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
-            >
-                <Dropdown.Item onClick={() => remove(index)}>
-                    {t('app.plugins.multisig.multisigAddMembersAction.removeMember')}
-                </Dropdown.Item>
-            </Dropdown.Container>
+            {onRemoveMember != null && (
+                <Dropdown.Container
+                    constrainContentWidth={false}
+                    size="md"
+                    customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
+                >
+                    <Dropdown.Item onClick={onRemoveMember}>
+                        {t('app.plugins.multisig.multisigAddMembersAction.removeMember')}
+                    </Dropdown.Item>
+                </Dropdown.Container>
+            )}
         </Card>
     );
 };

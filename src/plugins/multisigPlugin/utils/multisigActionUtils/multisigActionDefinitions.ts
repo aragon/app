@@ -1,11 +1,13 @@
-import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { type IProposalActionChangeMembers, ProposalActionType } from '@/modules/governance/api/governanceService';
 
-export const defaultAddMembers: IProposalAction = {
+export const defaultAddMembers: IProposalActionChangeMembers = {
     type: ProposalActionType.MULTISIG_ADD_MEMBERS,
     from: '',
     to: '',
     data: '0x',
     value: '0',
+    members: [{ address: '' }],
+    currentMembers: [],
     inputData: {
         function: 'addAddresses',
         contract: '',
@@ -20,12 +22,14 @@ export const defaultAddMembers: IProposalAction = {
     },
 };
 
-export const defaultRemoveMembers: IProposalAction = {
+export const defaultRemoveMembers: IProposalActionChangeMembers = {
     type: ProposalActionType.MULTISIG_REMOVE_MEMBERS,
     from: '',
     to: '',
     data: '0x',
     value: '0',
+    members: [],
+    currentMembers: [],
     inputData: {
         function: 'removeAddresses',
         contract: '',
