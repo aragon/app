@@ -8,7 +8,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
-    const { label, fieldPrefix, rules, trimOnBlur, ...otherOptions } = options ?? {};
+    const { label, fieldPrefix, rules, trimOnBlur, errorMessage, ...otherOptions } = options ?? {};
 
     const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
@@ -36,7 +36,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 
     const alert =
         error?.type != null
-            ? { message: t(alertMessageKey, alertMessageParams), variant: 'critical' as const }
+            ? { message: errorMessage ?? t(alertMessageKey, alertMessageParams), variant: 'critical' as const }
             : undefined;
 
     return {
