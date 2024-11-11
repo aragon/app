@@ -23,6 +23,9 @@ export interface IMultisigRemoveMembersActionItemProps {
     isAlreadyInList: boolean;
 }
 
+const validateMember = (isAlreadyInList: boolean) =>
+    isAlreadyInList ? 'app.plugins.multisig.multisigRemoveMembersAction.addressInput.error.alreadyInList' : true;
+
 export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersActionItemProps> = (props) => {
     const { index, remove, fieldName, isAlreadyInList } = props;
 
@@ -37,7 +40,7 @@ export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersAct
         ...memberField
     } = useFormField<Record<string, ICompositeAddress>, string>(memberFieldName, {
         label: 'Member',
-        rules: { validate: () => !isAlreadyInList },
+        rules: { validate: () => validateMember(isAlreadyInList) },
     });
 
     const [addressInputValue, setAddressInputValue] = useState<string | undefined>(memberValue.address);

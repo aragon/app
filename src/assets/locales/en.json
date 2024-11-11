@@ -540,6 +540,11 @@
         "multisigAddMembersAction": {
           "add": "Add",
           "addressInput": {
+            "error": {
+              "alreadyInList": "Address has already been added",
+              "alreadyMember": "Address is already member of the DAO",
+              "invalid": "Address is not valid"
+            },
             "label": "Member",
             "placeholder": "ENS or 0x …"
           },
@@ -576,6 +581,9 @@
         "multisigRemoveMembersAction": {
           "add": "Add",
           "addressInput": {
+            "error": {
+              "alreadyInList": "Address has already been added"
+            },
             "placeholder": "ENS or 0x …"
           },
           "dialog": {

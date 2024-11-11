@@ -44,6 +44,20 @@ export interface IAddressInputAcceptValue extends Omit<ICompositeAddress, 'addre
     address?: string;
 }
 
+const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean, isMember?: boolean) => {
+    const errorNamespace = 'app.plugins.multisig.multisigAddMembersAction.addressInput.error';
+
+    if (!addressUtils.isAddress(member?.address)) {
+        return `${errorNamespace}.invalid`;
+    } else if (isMember) {
+        return `${errorNamespace}.alreadyMember`;
+    } else if (isAlreadyInList) {
+        return `${errorNamespace}.alreadyInList`;
+    }
+
+    return true;
+};
+
 export const MultisigAddMembersActionItem: React.FC<IMultisigAddMembersActionItemProps> = (props) => {
     const { index, onRemoveMember, pluginAddress, fieldName, isAlreadyInList } = props;
 
@@ -60,7 +74,7 @@ export const MultisigAddMembersActionItem: React.FC<IMultisigAddMembersActionIte
         label: t('app.plugins.multisig.multisigAddMembersAction.addressInput.label'),
         rules: {
             required: true,
-            validate: (value) => addressUtils.isAddress(value?.address) && !isMember && !isAlreadyInList,
+            validate: (value) => validateMember(value, isAlreadyInList, isMember),
         },
     });
 
