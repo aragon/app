@@ -8,7 +8,7 @@ import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import type { ITokenPluginSettings } from '../../types';
 import { defaultMintAction } from './tokenActionDefinitions';
 
-interface IGetTokenActionsProps {
+export interface IGetTokenActionsProps {
     /**
      * DAO plugin data.
      */
@@ -19,8 +19,10 @@ interface IGetTokenActionsProps {
     t: TranslationFunction;
 }
 
+export type IGetTokenActionsResult = IPluginActionComposerData<IDaoPlugin<ITokenPluginSettings>>;
+
 class TokenActionUtils {
-    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IPluginActionComposerData => {
+    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
         const { address } = plugin;
 
         return {
@@ -38,7 +40,11 @@ class TokenActionUtils {
                     name: t(`app.plugins.token.tokenActions.${ProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
-                    defaultValue: defaultMintAction,
+                    meta: plugin,
+                    defaultValue: {
+                        ...defaultMintAction,
+                        to: address,
+                    },
                 },
             ],
             components: {

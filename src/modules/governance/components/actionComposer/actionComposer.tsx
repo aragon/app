@@ -7,12 +7,12 @@ import { ProposalActionType, type IProposalAction } from '../../api/governanceSe
 import type { IPluginActionComposerData } from './actionComposer.api';
 import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
 
-export interface IActionComposerProps
+export interface IActionComposerProps<TMeta = undefined>
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
     /**
      * Callback called on action selected.
      */
-    onActionSelected: (action: IProposalAction) => void;
+    onActionSelected: (action: IProposalAction, meta?: TMeta) => void;
     /**
      * ID of the DAO.
      */
@@ -76,7 +76,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
 
     const handleActionSelected = (itemId: string) => {
         const action = items.find((item) => item.id === itemId)!;
-        onActionSelected?.(action.defaultValue);
+        onActionSelected?.(action.defaultValue, action.meta);
     };
 
     return (

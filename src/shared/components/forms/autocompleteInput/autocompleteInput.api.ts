@@ -20,7 +20,7 @@ export interface IAutocompleteInputGroup {
     indexData?: string[];
 }
 
-export interface IAutocompleteInputItem {
+export interface IAutocompleteInputItem<TMeta = undefined> {
     /**
      * ID of the item.
      */
@@ -37,6 +37,10 @@ export interface IAutocompleteInputItem {
      * ID of the group the item belongs to.
      */
     groupId?: string;
+    /**
+     * Additional metadata of the item.
+     */
+    meta?: TMeta;
 }
 
 export interface IAutocompleteInputItemIndex extends IAutocompleteInputItem {
