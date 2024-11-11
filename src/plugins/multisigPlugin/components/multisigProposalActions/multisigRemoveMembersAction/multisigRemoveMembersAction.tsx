@@ -86,7 +86,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
                         <MultisigRemoveMembersActionItem
                             key={field.id}
                             index={index}
-                            remove={removeMember}
+                            onRemoveClick={removeMember}
                             fieldName={membersFieldName}
                             isAlreadyInList={checkIsAlreadyInList(index)}
                         />

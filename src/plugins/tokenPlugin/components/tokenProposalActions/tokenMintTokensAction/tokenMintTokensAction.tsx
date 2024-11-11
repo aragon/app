@@ -39,7 +39,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
         value: receiver,
         ...receiverField
     } = useFormField<ITokenMintTokensFormData, 'receiver'>('receiver', {
-        label: t('app.plugins.token.mintTokensAction.address.label'),
+        label: t('app.plugins.token.tokenMintTokensAction.address.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
         fieldPrefix: fieldName,
     });
@@ -47,7 +47,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
     const [receiverInput, setReceiverInput] = useState<string | undefined>(receiver?.address);
 
     const amountField = useFormField<ITokenMintTokensFormData, 'amount'>('amount', {
-        label: t('app.plugins.token.mintTokensAction.amount.label'),
+        label: t('app.plugins.token.tokenMintTokensAction.amount.label'),
         rules: {
             required: true,
             validate: (value) => parseFloat(value ?? '') > 0,
@@ -55,7 +55,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
         fieldPrefix: fieldName,
     });
 
-    const { symbol: tokenSymbol, address: tokenAddress, decimals: tokenDecimals } = action.meta.settings.token;
+    const { symbol: tokenSymbol, decimals: tokenDecimals } = action.meta.settings.token;
     const parsedAmount = parseUnits(amountField?.value ?? '0', tokenDecimals);
 
     useEffect(() => {
@@ -64,8 +64,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
         const newData = encodeFunctionData({ abi: [mintTokensAbi], args: mintParams });
 
         setValue(`${fieldName}.data`, newData);
-        setValue(`${fieldName}.to`, tokenAddress);
-    }, [setValue, fieldName, parsedAmount, tokenAddress, receiver?.address]);
+    }, [setValue, fieldName, parsedAmount, receiver?.address]);
 
     useEffect(() => {
         setValue(`${fieldName}.inputData.parameters[0].value`, receiver?.address);

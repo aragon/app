@@ -10,7 +10,7 @@ export const defaultAddMembers: IProposalActionChangeMembers = {
     currentMembers: [],
     inputData: {
         function: 'addAddresses',
-        contract: '',
+        contract: 'Multisig',
         parameters: [
             {
                 name: '_members',
@@ -32,7 +32,7 @@ export const defaultRemoveMembers: IProposalActionChangeMembers = {
     currentMembers: [],
     inputData: {
         function: 'removeAddresses',
-        contract: '',
+        contract: 'Multisig',
         parameters: [
             {
                 name: '_members',

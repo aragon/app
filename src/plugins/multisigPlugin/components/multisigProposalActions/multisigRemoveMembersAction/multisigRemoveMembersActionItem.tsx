@@ -6,19 +6,19 @@ import { useFormContext } from 'react-hook-form';
 
 export interface IMultisigRemoveMembersActionItemProps {
     /**
-     * The index of the resource item in the list.
+     * The index of the member.
      */
     index: number;
     /**
-     * Callback to remove the resource item.
+     * Callback called on remove button click.
      */
-    remove: (index: number) => void;
+    onRemoveClick: (index: number) => void;
     /**
-     * Field name of the main form.
+     * Field name of the action form.
      */
     fieldName: string;
     /**
-     * Defines if the current field is already on the list.
+     * Defines if the current member is already on the list.
      */
     isAlreadyInList: boolean;
 }
@@ -27,7 +27,7 @@ const validateMember = (isAlreadyInList: boolean) =>
     isAlreadyInList ? 'app.plugins.multisig.multisigRemoveMembersAction.addressInput.error.alreadyInList' : true;
 
 export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersActionItemProps> = (props) => {
-    const { index, remove, fieldName, isAlreadyInList } = props;
+    const { index, onRemoveClick, fieldName, isAlreadyInList } = props;
 
     const { t } = useTranslations();
     const { trigger } = useFormContext();
@@ -39,7 +39,6 @@ export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersAct
         label,
         ...memberField
     } = useFormField<Record<string, ICompositeAddress>, string>(memberFieldName, {
-        label: 'Member',
         rules: { validate: () => validateMember(isAlreadyInList) },
     });
 
@@ -64,7 +63,7 @@ export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersAct
                 size="md"
                 customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
             >
-                <Dropdown.Item onClick={() => remove(index)}>
+                <Dropdown.Item onClick={() => onRemoveClick(index)}>
                     {t('app.plugins.multisig.multisigRemoveMembersAction.removeMember')}
                 </Dropdown.Item>
             </Dropdown.Container>
