@@ -1,4 +1,4 @@
-import type { IGetMemberListParams } from '@/modules/governance/api/governanceService';
+import type { IGetMemberListParams, IMember } from '@/modules/governance/api/governanceService';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -15,6 +15,14 @@ export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = 
      */
     plugin: IDaoPlugin<TSettings>;
     /**
+     * Overrides the custom layout classes when set.
+     */
+    layoutClassNames?: string;
+    /**
+     * Callback called on member click. Replaces the default link to the member page when set.
+     */
+    onMemberClick?: (member: IMember) => void;
+    /**
      * Hides the pagination when set to true.
      */
     hidePagination?: boolean;
@@ -25,12 +33,17 @@ export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = 
 }
 
 export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props) => {
-    const { initialParams, hidePagination, children } = props;
+    const { initialParams, hidePagination, children, onMemberClick, layoutClassNames } = props;
 
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, memberList } =
         useMemberListData(initialParams);
+
+    const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-3';
+
+    const getMemberLink = (member: IMember) =>
+        onMemberClick != null ? undefined : `/dao/${initialParams.queryParams.daoId}/members/${member.address}`;
 
     return (
         <DataListRoot
@@ -42,7 +55,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props
         >
             <DataListContainer
                 SkeletonElement={MemberDataListItem.Skeleton}
-                layoutClassName="grid grid-cols-1 lg:grid-cols-3"
+                layoutClassName={processedLayoutClassNames}
                 errorState={errorState}
                 emptyState={emptyState}
             >
@@ -52,7 +65,8 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props
                         address={member.address}
                         ensName={member.ens ?? undefined}
                         className="min-w-0"
-                        href={`/dao/${initialParams.queryParams.daoId}/members/${member.address}`}
+                        href={getMemberLink(member)}
+                        onClick={() => onMemberClick?.(member)}
                     />
                 ))}
             </DataListContainer>

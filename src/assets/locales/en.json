@@ -533,6 +533,23 @@
         }
       },
       "multisig": {
+        "multisigActions": {
+          "MultisigAddMembers": "Add Members",
+          "MultisigRemoveMembers": "Remove Members"
+        },
+        "multisigAddMembersAction": {
+          "add": "Add",
+          "addressInput": {
+            "error": {
+              "alreadyInList": "Address has already been added",
+              "alreadyMember": "Address is already member of the DAO",
+              "invalid": "Address is not valid"
+            },
+            "label": "Member",
+            "placeholder": "ENS or 0x …"
+          },
+          "removeMember": "Remove member"
+        },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
@@ -560,6 +577,21 @@
         },
         "multisigProposalList": {
           "entity": "Proposals"
+        },
+        "multisigRemoveMembersAction": {
+          "add": "Add",
+          "addressInput": {
+            "error": {
+              "alreadyInList": "Address has already been added"
+            },
+            "placeholder": "ENS or 0x …"
+          },
+          "dialog": {
+            "entity": "Members",
+            "heading": "Remove members"
+          },
+          "removeMember": "Remove member",
+          "select": "select"
         },
         "multisigSubmitVote": {
           "approveLabel": "Approve proposal",
@@ -601,16 +633,6 @@
         }
       },
       "token": {
-        "mintTokensAction": {
-          "address": {
-            "label": "Address",
-            "placeholder": "ENS or 0x …"
-          },
-          "amount": {
-            "label": "Amount",
-            "placeholder": "0 {{symbol}}"
-          }
-        },
         "tokenActions": {
           "Mint": "Mint"
         },
@@ -658,6 +680,16 @@
           "delegations": "Delegations",
           "tokenBalance": "Token balance",
           "votingPower": "Voting power"
+        },
+        "tokenMintTokensAction": {
+          "address": {
+            "label": "Address",
+            "placeholder": "ENS or 0x …"
+          },
+          "amount": {
+            "label": "Amount",
+            "placeholder": "0 {{symbol}}"
+          }
         },
         "tokenProposalList": {
           "entity": "Proposals"

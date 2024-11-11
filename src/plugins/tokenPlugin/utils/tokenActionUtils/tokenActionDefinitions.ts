@@ -8,7 +8,7 @@ export const defaultMintAction: IProposalAction = {
     value: '0',
     inputData: {
         function: 'mint',
-        contract: 'GovernanceERC20',
+        contract: '',
         parameters: [
             {
                 name: 'to',
