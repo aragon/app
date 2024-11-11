@@ -7,6 +7,7 @@ import {
     Button,
     Card,
     Dropdown,
+    type IAddressInputResolvedValue,
     type ICompositeAddress,
     IconType,
 } from '@aragon/gov-ui-kit';
@@ -34,14 +35,6 @@ export interface IMultisigAddMembersActionItemProps {
      * Defines if the current field is already on the list.
      */
     isAlreadyInList: boolean;
-}
-
-// TODO: remove this interface when IAddressInputResolvedValue is exported from gov-ui-kit
-export interface IAddressInputAcceptValue extends Omit<ICompositeAddress, 'address'> {
-    /**
-     * Address of the user.
-     */
-    address?: string;
 }
 
 const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean, isMember?: boolean) => {
@@ -87,7 +80,7 @@ export const MultisigAddMembersActionItem: React.FC<IMultisigAddMembersActionIte
     );
 
     const handleAddressAccept = useCallback(
-        (value?: IAddressInputAcceptValue) => onAddressChange({ address: value?.address ?? '', name: value?.name }),
+        (value?: IAddressInputResolvedValue) => onAddressChange({ address: value?.address ?? '', name: value?.name }),
         [onAddressChange],
     );
 
