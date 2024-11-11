@@ -14,7 +14,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 
-export interface IAddMemberItemProps {
+export interface IMultisigAddMembersActionItemProps {
     /**
      * The index of the resource item in the list.
      */
@@ -33,7 +33,7 @@ export interface IAddMemberItemProps {
     fieldName: string;
 }
 
-export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
+export const MultisigAddMembersActionItem: React.FC<IMultisigAddMembersActionItemProps> = (props) => {
     const { index, remove, action, fieldName } = props;
 
     const { t } = useTranslations();
@@ -61,7 +61,7 @@ export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <AddressInput
-                placeholder={t('app.plugins.multisig.addMembersAction.addressInput.placeholder')}
+                placeholder={t('app.plugins.multisig.multisigAddMembersAction.addressInput.placeholder')}
                 onChange={setAddressInput}
                 value={addressInput}
                 onAccept={onAddressChange}
@@ -73,7 +73,7 @@ export const AddMemberItem: React.FC<IAddMemberItemProps> = (props) => {
                 customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
             >
                 <Dropdown.Item onClick={() => remove(index)}>
-                    {t('app.plugins.multisig.addMembersAction.removeMember')}
+                    {t('app.plugins.multisig.multisigAddMembersAction.removeMember')}
                 </Dropdown.Item>
             </Dropdown.Container>
         </Card>

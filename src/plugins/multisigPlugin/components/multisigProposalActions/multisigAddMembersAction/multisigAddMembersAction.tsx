@@ -2,25 +2,37 @@ import type { IProposalAction } from '@/modules/governance/api/governanceService
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { addressUtils, Button, IconType, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    Button,
+    type ICompositeAddress,
+    IconType,
+    type IProposalActionComponentProps,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, zeroAddress } from 'viem';
-import type { IAddOrRemoveMembersActionFormData } from '../addMembersAction/addMembersActionFormDefinitions';
-import { RemoveMemberItem } from './removeMemberItem';
+import { MultisigAddMembersActionItem } from './multisigAddMembersActionItem';
 
-export interface IRemoveMembersActionProps
+export interface IMultisigAddMembersActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
-const removeMembersAbi = {
+export interface IMultisigAddMembersActionFormData {
+    /**
+     * List of members to be added.
+     */
+    members: ICompositeAddress[];
+}
+
+const addMembersAbi = {
     type: 'function',
     inputs: [{ name: '_members', internalType: 'address[]', type: 'address[]' }],
-    name: 'removeAddresses',
+    name: 'addAddresses',
     outputs: [],
     stateMutability: 'nonpayable',
 };
 
-export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) => {
+export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> = (props) => {
     const { index, action } = props;
 
     const { t } = useTranslations();
@@ -30,13 +42,15 @@ export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) 
     const fieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
-    const { fields, append, remove } = useFieldArray<Record<string, IAddOrRemoveMembersActionFormData>>({
+    const { fields, append, remove } = useFieldArray<Record<string, IMultisigAddMembersActionFormData>>({
         name: `${fieldName}.members`,
     });
 
-    // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
     const watchFieldArray = useWatch({ name: `${fieldName}.members` });
-    const controlledFields = fields.map((field, index) => ({ ...field, ...watchFieldArray?.[index] }));
+    const controlledFields = fields.map((field, index) => ({
+        ...field,
+        ...watchFieldArray?.[index],
+    }));
 
     useEffect(() => {
         if (fields.length === 0) {
@@ -52,7 +66,7 @@ export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) 
         const addresses = controlledFields
             .map((field) => (addressUtils.isAddress(field.address) ? field.address : zeroAddress))
             .filter(Boolean);
-        const newData = encodeFunctionData({ abi: [removeMembersAbi], args: [addresses] });
+        const newData = encodeFunctionData({ abi: [addMembersAbi], args: [addresses] });
         if (prevDataRef.current !== newData) {
             setValue(`${fieldName}.data`, newData);
             prevDataRef.current = newData;
@@ -64,7 +78,7 @@ export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) 
             {fields.length > 0 && (
                 <div className="flex w-full flex-col gap-3 md:gap-2">
                     {fields.map((field, index) => (
-                        <RemoveMemberItem
+                        <MultisigAddMembersActionItem
                             key={field.id}
                             index={index}
                             remove={remove}
@@ -81,7 +95,7 @@ export const RemoveMembersAction: React.FC<IRemoveMembersActionProps> = (props) 
                 iconLeft={IconType.PLUS}
                 onClick={() => append({ address: '' })}
             >
-                {t('app.plugins.multisig.multisigRemoveMembersAction.add')}
+                {t('app.plugins.multisig.multisigAddMembersAction.add')}
             </Button>
         </>
     );

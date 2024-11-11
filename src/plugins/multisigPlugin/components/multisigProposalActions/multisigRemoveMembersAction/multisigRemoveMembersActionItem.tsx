@@ -18,7 +18,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 
-export interface IRemoveMemberItemProps {
+export interface IMultisigRemoveMembersActionItemProps {
     /**
      * The index of the resource item in the list.
      */
@@ -37,7 +37,7 @@ export interface IRemoveMemberItemProps {
     fieldName: string;
 }
 
-export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
+export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersActionItemProps> = (props) => {
     const { index, remove, action, fieldName } = props;
 
     const { t } = useTranslations();
@@ -89,10 +89,10 @@ export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
                     onClick={handleOpenDialog}
                     className="shrink-0"
                 >
-                    select
+                    {t('app.plugins.multisig.multisigRemoveMembersAction.select')}
                 </Button>
                 <AddressInput
-                    placeholder={t('app.plugins.multisig.addMembersAction.addressInput.placeholder')}
+                    placeholder={t('app.plugins.multisig.multisigRemoveMembersAction.addressInput.placeholder')}
                     value={addressInput}
                     onChange={setAddressInput}
                     onAccept={onAddressChange}
@@ -104,7 +104,7 @@ export const RemoveMemberItem: React.FC<IRemoveMemberItemProps> = (props) => {
                 customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
             >
                 <Dropdown.Item onClick={() => remove(index)}>
-                    {t('app.plugins.multisig.addMembersAction.removeMember')}
+                    {t('app.plugins.multisig.multisigRemoveMembersAction.removeMember')}
                 </Dropdown.Item>
             </Dropdown.Container>
         </Card>

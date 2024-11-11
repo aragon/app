@@ -4,8 +4,8 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { AddMembersAction } from '../../components/multisigProposalActions/addMembersAction';
-import { RemoveMembersAction } from '../../components/multisigProposalActions/removeMembersAction';
+import { MultisigAddMembersAction } from '../../components/multisigProposalActions/multisigAddMembersAction';
+import { MultisigRemoveMembersAction } from '../../components/multisigProposalActions/multisigRemoveMembersAction';
 import type { IMultisigPluginSettings } from '../../types';
 import { defaultAddMembers, defaultRemoveMembers } from './multisigActionDefinitions';
 
@@ -50,8 +50,8 @@ class MultisigActionUtils {
                 },
             ],
             components: {
-                [ProposalActionType.MULTISIG_ADD_MEMBERS]: AddMembersAction,
-                [ProposalActionType.MULTISIG_REMOVE_MEMBERS]: RemoveMembersAction,
+                [ProposalActionType.MULTISIG_ADD_MEMBERS]: MultisigAddMembersAction,
+                [ProposalActionType.MULTISIG_REMOVE_MEMBERS]: MultisigRemoveMembersAction,
             },
         };
     };

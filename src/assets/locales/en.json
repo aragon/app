@@ -533,16 +533,16 @@
         }
       },
       "multisig": {
-        "addMembersAction": {
+        "multisigActions": {
+          "MultisigAddMembers": "Add Members",
+          "MultisigRemoveMembers": "Remove Members"
+        },
+        "multisigAddMembersAction": {
           "add": "Add",
           "addressInput": {
             "placeholder": "ENS or 0x …"
           },
           "removeMember": "Remove member"
-        },
-        "multisigActions": {
-          "MultisigAddMembers": "Add Members",
-          "MultisigRemoveMembers": "Remove Members"
         },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
@@ -577,7 +577,8 @@
           "addressInput": {
             "placeholder": "ENS or 0x …"
           },
-          "removeMember": "Remove member"
+          "removeMember": "Remove member",
+          "select": "select"
         },
         "multisigRemoveMembersDialog": {
           "description": "Select the members you want to remove from the multisig.",
@@ -624,16 +625,6 @@
         }
       },
       "token": {
-        "mintTokensAction": {
-          "address": {
-            "label": "Address",
-            "placeholder": "ENS or 0x …"
-          },
-          "amount": {
-            "label": "Amount",
-            "placeholder": "0 {{symbol}}"
-          }
-        },
         "tokenActions": {
           "Mint": "Mint"
         },
@@ -681,6 +672,16 @@
           "delegations": "Delegations",
           "tokenBalance": "Token balance",
           "votingPower": "Voting power"
+        },
+        "tokenMintTokensAction": {
+          "address": {
+            "label": "Address",
+            "placeholder": "ENS or 0x …"
+          },
+          "amount": {
+            "label": "Amount",
+            "placeholder": "0 {{symbol}}"
+          }
         },
         "tokenProposalList": {
           "entity": "Proposals"
