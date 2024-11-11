@@ -47,17 +47,19 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
 
     const amountField = useFormField<IMintTokensFormData, 'amount'>('amount', {
         label: t('app.plugins.token.mintTokensAction.amount.label'),
-        rules: { required: true },
+        rules: {
+            required: true,
+            validate: (value) => parseFloat(value ?? '') > 0,
+        },
         fieldPrefix: fieldName,
     });
 
-    const daoPluginParams = { daoId: action.daoId, pluginAddress: action.pluginAddress };
+    const daoPluginParams = { daoId: action.daoId, pluginAddress: action.to, includeSubPlugins: true };
 
     const plugin = useDaoPlugins(daoPluginParams)![0];
 
     const settings = plugin.meta.settings as ITokenPluginSettings;
     const tokenSymbol = settings.token.symbol;
-    const tokenAddress = settings.token.address;
 
     useEffect(() => {
         const tokenDecimals = settings.token.decimals ?? 18;
@@ -67,8 +69,7 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
         const newData = encodeFunctionData({ abi: [mintTokensAbi], args: mintParams });
 
         setValue(`${fieldName}.data`, newData);
-        setValue(`${fieldName}.to`, tokenAddress);
-    }, [setValue, fieldName, tokenAddress, settings?.token.decimals, amountField?.value, receiver?.address]);
+    }, [setValue, fieldName, settings?.token.decimals, amountField?.value, receiver?.address]);
 
     return (
         <div className="flex w-full flex-col gap-6">

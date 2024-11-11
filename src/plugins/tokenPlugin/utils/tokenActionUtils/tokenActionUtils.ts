@@ -38,7 +38,10 @@ class TokenActionUtils {
                     name: t(`app.plugins.token.tokenActions.${ProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
-                    defaultValue: defaultMintAction,
+                    defaultValue: {
+                        ...defaultMintAction,
+                        to: address,
+                    },
                 },
             ],
             components: {

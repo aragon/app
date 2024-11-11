@@ -10,10 +10,6 @@ export type IProposalActionData<TAction extends IProposalAction = IProposalActio
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * Address of the plugin.
-     */
-    pluginAddress: string;
 };
 
 export interface ICreateProposalFormData {
