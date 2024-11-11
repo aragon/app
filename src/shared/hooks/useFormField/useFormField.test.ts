@@ -38,6 +38,16 @@ describe('useFormField hook', () => {
         expect(result.current.variant).toEqual('default');
     });
 
+    it('returns custom alert message when passed and field has error', () => {
+        const error = { type: 'required' };
+        const fieldState = { error };
+        const fieldValues = { field: {}, fieldState };
+        const errorMessage = 'Custom error message';
+        useControllerSpy.mockReturnValue(fieldValues as unknown as ReactHookForm.UseControllerReturn);
+        const { result } = renderHook(() => useFormField<ReactHookForm.FieldValues, string>('field', { errorMessage }));
+        expect(result.current.alert?.message).toEqual(errorMessage);
+    });
+
     it('returns correct alert message when field has error', () => {
         const error = { type: 'required' };
         const fieldState = { error };
