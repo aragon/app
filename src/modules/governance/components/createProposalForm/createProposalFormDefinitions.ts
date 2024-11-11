@@ -40,5 +40,5 @@ export interface ICreateProposalFormData<TMeta = undefined> {
     /**
      * List of actions to be executed if the proposal succeeds.
      */
-    actions: IProposalActionData<IProposalAction, TMeta>[];
+    actions: Array<IProposalActionData<IProposalAction, TMeta>>;
 }

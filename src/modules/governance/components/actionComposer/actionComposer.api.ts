@@ -18,7 +18,7 @@ export interface IPluginActionComposerData<TMeta = undefined> {
     /**
      * Autocomplete action item.
      */
-    items: IPluginActionComposerItem<TMeta>[];
+    items: Array<IPluginActionComposerItem<TMeta>>;
     /**
      * Custom action components.
      */

@@ -1,7 +1,7 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
@@ -55,7 +55,7 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
         fieldPrefix: fieldName,
     });
 
-    const { symbol: tokenSymbol, address: tokenAddress, decimals: tokenDecimals } = action.meta?.settings.token;
+    const { symbol: tokenSymbol, address: tokenAddress, decimals: tokenDecimals } = action.meta.settings.token;
     const parsedAmount = parseUnits(amountField?.value ?? '0', tokenDecimals);
 
     useEffect(() => {
@@ -65,16 +65,15 @@ export const MintTokensAction: React.FC<IMintTokensActionProps> = (props) => {
 
         setValue(`${fieldName}.data`, newData);
         setValue(`${fieldName}.to`, tokenAddress);
-    }, [setValue, fieldName, parsedAmount, receiver?.address]);
+    }, [setValue, fieldName, parsedAmount, tokenAddress, receiver?.address]);
 
     useEffect(() => {
         setValue(`${fieldName}.inputData.parameters[0].value`, receiver?.address);
-    }, [receiver]);
+    }, [receiver, fieldName, setValue]);
 
     useEffect(() => {
-        console.log({ parsedAmount });
         setValue(`${fieldName}.inputData.parameters[1].value`, parsedAmount.toString());
-    }, [parsedAmount]);
+    }, [parsedAmount, fieldName, setValue]);
 
     return (
         <div className="flex w-full flex-col gap-6">

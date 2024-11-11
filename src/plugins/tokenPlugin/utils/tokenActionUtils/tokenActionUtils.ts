@@ -1,5 +1,5 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
+import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
 import { MintTokensAction } from '@/plugins/tokenPlugin/components/tokenProposalActions/mintTokensAction';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
