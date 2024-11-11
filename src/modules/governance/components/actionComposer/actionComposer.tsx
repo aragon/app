@@ -7,12 +7,12 @@ import { ProposalActionType, type IProposalAction } from '../../api/governanceSe
 import type { IPluginActionComposerData } from './actionComposer.api';
 import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
 
-export interface IActionComposerProps
+export interface IActionComposerProps<TMeta = undefined>
     extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
     /**
      * Callback called on action selected.
      */
-    onActionSelected: (action: IProposalAction) => void;
+    onActionSelected: (action: IProposalAction, meta?: TMeta) => void;
     /**
      * ID of the DAO.
      */
@@ -35,9 +35,9 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
 
     const { t } = useTranslations();
 
-    const defaultMetadaAction = useMemo(() => {
-        const { avatar, address, name, description, links } = dao!;
-        const existingMetadata = { logo: avatar, name, description, links };
+    const defaultActionMetadata = useMemo(() => {
+        const { avatar, address, name, description, links: resources } = dao!;
+        const existingMetadata = { logo: avatar, name, description, resources };
 
         return {
             to: address,
@@ -69,14 +69,14 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
             name: t(`app.governance.actionComposer.action.${ProposalActionType.METADATA_UPDATE}`),
             icon: IconType.SETTINGS,
             groupId: ActionGroupId.OSX,
-            defaultValue: defaultMetadaAction,
+            defaultValue: defaultActionMetadata,
         },
         ...pluginItems,
     ];
 
     const handleActionSelected = (itemId: string) => {
         const action = items.find((item) => item.id === itemId)!;
-        onActionSelected?.(action.defaultValue);
+        onActionSelected?.(action.defaultValue, action.meta);
     };
 
     return (

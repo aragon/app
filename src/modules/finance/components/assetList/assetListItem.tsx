@@ -25,6 +25,12 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
     const processedEntityUrl = onAssetClick != null ? undefined : entityUrl;
     const processedTarget = onAssetClick != null ? undefined : '_blank';
 
+    const currentPrice = Number(token.priceUsd);
+    const priceChangeOnDay = Number(token.priceChangeOnDayUsd);
+    const historicalPrice = currentPrice - priceChangeOnDay;
+
+    const priceChange = historicalPrice > 0 ? (priceChangeOnDay / historicalPrice) * 100 : 0;
+
     return (
         <AssetDataListItemStructure
             key={token.address}
@@ -33,7 +39,7 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
             amount={amount}
             fiatPrice={token.priceUsd}
             logoSrc={token.logo}
-            priceChange={Number(token.priceChangeOnDayUsd)}
+            priceChange={priceChange}
             target={processedTarget}
             onClick={() => onAssetClick?.(asset)}
             href={processedEntityUrl}
