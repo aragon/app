@@ -54,6 +54,7 @@ describe('publishProposalDialog utils', () => {
                     {
                         ...generateProposalActionUpdateMetadata(actionBaseValues),
                         daoId: 'test',
+                        meta: undefined,
                     },
                 ],
             });
@@ -108,8 +109,8 @@ describe('publishProposalDialog utils', () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const transferActionData = 'transfer-async-data';
             const actions = [
-                { ...updateMetadataAction, daoId: 'test' },
-                { ...transferAction, daoId: 'test' },
+                { ...updateMetadataAction, daoId: 'test', meta: undefined },
+                { ...transferAction, daoId: 'test', meta: undefined },
             ];
             const prepareActions = {
                 [ProposalActionType.METADATA_UPDATE]: () => Promise.resolve(updateMetadataActionData),
@@ -128,8 +129,8 @@ describe('publishProposalDialog utils', () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const updateAction = generateProposalActionUpdateMetadata({ data: '0x456' });
             const actions = [
-                { ...transferAction, daoId: 'test' },
-                { ...updateAction, daoId: 'test' },
+                { ...transferAction, daoId: 'test', meta: undefined },
+                { ...updateAction, daoId: 'test', meta: undefined },
             ];
 
             const result = await publishProposalDialogUtils.prepareActions({ actions });
