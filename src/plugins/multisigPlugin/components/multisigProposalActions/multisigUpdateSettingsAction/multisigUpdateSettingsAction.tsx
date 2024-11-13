@@ -1,20 +1,24 @@
 import { useMemberList, type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 
 export interface IMultisigUpdateSettingsActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
 
 export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActionProps> = (props) => {
-    const { action } = props;
+    const { action, index } = props;
 
     const { t } = useTranslations();
-    const value = useWatch<Record<string, string>>({ name: 'test' });
+
+    const actionFieldName = `actions.[${index}]`;
+    useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
+
+    const minimumApprovalFieldName = `${actionFieldName}.proposedSettings.minApprovals`;
+    const minimumApproval = useWatch<Record<string, string>>({ name: minimumApprovalFieldName });
 
     const memberParams = { pluginAddress: action.to, daoId: action.daoId };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
@@ -22,10 +26,10 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
 
     return (
         <NumberProgressInput
-            fieldName="test"
+            fieldName={minimumApprovalFieldName}
             label={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.label')}
             helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.helpText')}
-            valueLabel={value ?? 0}
+            valueLabel={minimumApproval ?? 0}
             total={membersCount ?? 1}
             totalLabel={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.total', {
                 total: membersCount,

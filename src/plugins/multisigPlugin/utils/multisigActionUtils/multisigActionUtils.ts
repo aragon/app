@@ -54,7 +54,7 @@ class MultisigActionUtils {
                     name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.UPDATE_MULTISIG_SETTINGS}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
-                    defaultValue: { ...defaultUpdateSettings, to: address },
+                    defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
                 },
             ],
             components: {

@@ -3,6 +3,7 @@ import {
     type IProposalActionChangeSettings,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
+import type { IMultisigPluginSettings } from '../../types';
 
 export const defaultAddMembers: IProposalActionChangeMembers = {
     type: ProposalActionType.MULTISIG_ADD_MEMBERS,
@@ -48,12 +49,13 @@ export const defaultRemoveMembers: IProposalActionChangeMembers = {
     },
 };
 
-export const defaultUpdateSettings: Omit<IProposalActionChangeSettings, 'proposedSettings' | 'existingSettings'> = {
+export const defaultUpdateSettings = (settings: IMultisigPluginSettings): IProposalActionChangeSettings => ({
     type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
     from: '',
     to: '',
     data: '0x',
     value: '0',
+    proposedSettings: settings,
     inputData: {
         function: 'updateMultisigSettings',
         contract: 'Multisig',
@@ -66,4 +68,4 @@ export const defaultUpdateSettings: Omit<IProposalActionChangeSettings, 'propose
             },
         ],
     },
-};
+});
