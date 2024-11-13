@@ -89,7 +89,6 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
                 totalLabel={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.total', {
                     total: membersCount,
                 })}
-                // TODO: update ODS to support success variant on input component
                 alert={minimumApprovalNumber != null ? minApprovalAlert : undefined}
             />
             <RadioGroup

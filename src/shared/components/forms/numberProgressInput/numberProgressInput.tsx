@@ -2,6 +2,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AlertInline,
     Card,
+    type IAlertInlineProps,
     type IInputNumberProps,
     InputContainer,
     InputNumber,
@@ -10,7 +11,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useId } from 'react';
 
-export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'value'> {
+export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'value' | 'alert'> {
     /**
      * Name of the form field.
      */
@@ -27,6 +28,10 @@ export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'valu
      * Label displayed below the progress component.
      */
     totalLabel: string;
+    /**
+     * Alert displayed below the input component.
+     */
+    alert?: Pick<IAlertInlineProps, 'message' | 'variant'>;
 }
 
 export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) => {
