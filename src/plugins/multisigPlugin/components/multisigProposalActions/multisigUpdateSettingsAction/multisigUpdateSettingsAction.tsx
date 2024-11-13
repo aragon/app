@@ -43,7 +43,8 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const actionFieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
-    const value = useWatch<Record<string, string>>({ name: 'test' });
+    const minimumApprovalFieldName = `${actionFieldName}.proposedSettings.minApprovals`;
+    const minimumApproval = useWatch<Record<string, string>>({ name: minimumApprovalFieldName });
 
     const memberParams = { pluginAddress: action.to, daoId: action.daoId };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
@@ -60,10 +61,10 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     return (
         <>
             <NumberProgressInput
-                fieldName="test"
+                fieldName={minimumApprovalFieldName}
                 label={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.label')}
                 helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.helpText')}
-                valueLabel={value ?? 0}
+                valueLabel={minimumApproval ?? 0}
                 total={membersCount ?? 1}
                 totalLabel={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.total', {
                     total: membersCount,
