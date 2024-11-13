@@ -598,6 +598,13 @@
           "approveLabel": "Approve proposal",
           "vetoLabel": "Veto proposal"
         },
+        "multisigUpdateSettingsAction": {
+          "minimumApproval": {
+            "helpText": "Minimum approval is the amount of addresses in the authorized list that must approve a proposal for it to pass.",
+            "label": "Minimum approval",
+            "total": "of {{total}} addresses"
+          }
+        },
         "multisigVoteList": {
           "entity": "Votes"
         }
