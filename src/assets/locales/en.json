@@ -535,7 +535,8 @@
       "multisig": {
         "multisigActions": {
           "MultisigAddMembers": "Add Members",
-          "MultisigRemoveMembers": "Remove Members"
+          "MultisigRemoveMembers": "Remove Members",
+          "UpdateMultiSigSettings": "Update settings"
         },
         "multisigAddMembersAction": {
           "add": "Add",

@@ -6,10 +6,11 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { MultisigAddMembersAction } from '../../components/multisigProposalActions/multisigAddMembersAction';
 import { MultisigRemoveMembersAction } from '../../components/multisigProposalActions/multisigRemoveMembersAction';
+import { MultisigUpdateSettingsAction } from '../../components/multisigProposalActions/multisigUpdateSettingsAction';
 import type { IMultisigPluginSettings } from '../../types';
-import { defaultAddMembers, defaultRemoveMembers } from './multisigActionDefinitions';
+import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
 
-interface IGetMultisigActionsProps {
+export interface IGetMultisigActionsProps {
     /**
      * DAO plugin data.
      */
@@ -48,10 +49,18 @@ class MultisigActionUtils {
                     groupId: address,
                     defaultValue: { ...defaultRemoveMembers, to: address },
                 },
+                {
+                    id: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
+                    name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.UPDATE_MULTISIG_SETTINGS}`),
+                    icon: IconType.SETTINGS,
+                    groupId: address,
+                    defaultValue: { ...defaultUpdateSettings, to: address },
+                },
             ],
             components: {
                 [ProposalActionType.MULTISIG_ADD_MEMBERS]: MultisigAddMembersAction,
                 [ProposalActionType.MULTISIG_REMOVE_MEMBERS]: MultisigRemoveMembersAction,
+                [ProposalActionType.UPDATE_MULTISIG_SETTINGS]: MultisigUpdateSettingsAction,
             },
         };
     };

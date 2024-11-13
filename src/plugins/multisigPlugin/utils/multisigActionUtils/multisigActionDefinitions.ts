@@ -1,4 +1,8 @@
-import { type IProposalActionChangeMembers, ProposalActionType } from '@/modules/governance/api/governanceService';
+import {
+    type IProposalActionChangeMembers,
+    type IProposalActionChangeSettings,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 
 export const defaultAddMembers: IProposalActionChangeMembers = {
     type: ProposalActionType.MULTISIG_ADD_MEMBERS,
@@ -39,6 +43,26 @@ export const defaultRemoveMembers: IProposalActionChangeMembers = {
                 type: 'address[]',
                 value: '',
                 notice: 'The addresses to be removed',
+            },
+        ],
+    },
+};
+
+export const defaultUpdateSettings: Omit<IProposalActionChangeSettings, 'proposedSettings' | 'existingSettings'> = {
+    type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
+    from: '',
+    to: '',
+    data: '0x',
+    value: '0',
+    inputData: {
+        function: 'updateMultisigSettings',
+        contract: 'Multisig',
+        parameters: [
+            {
+                name: '_multisigSettings',
+                type: 'tuple',
+                notice: 'The new settings',
+                value: '',
             },
         ],
     },
