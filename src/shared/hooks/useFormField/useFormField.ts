@@ -1,4 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useMemo } from 'react';
 import { type FieldPath, type FieldValues, type Noop, useController } from 'react-hook-form';
 import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
 
@@ -30,14 +31,22 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 
     const inputVariant = error != null ? 'critical' : 'default';
 
-    const alertMessageKey = `app.shared.formField.error.${error?.type}`;
-    const alertValue = error?.type === 'min' ? rules?.min?.toString() : rules?.max?.toString();
-    const alertMessageParams = { name: label ?? name, value: alertValue };
+    const alert = useMemo(() => {
+        if (error?.type == null) {
+            return undefined;
+        }
 
-    const alertMessage =
-        error?.message != null && error.message.length > 0 ? t(error.message) : t(alertMessageKey, alertMessageParams);
+        const alertMessageKey = `app.shared.formField.error.${error?.type}`;
+        const alertValue = error?.type === 'min' ? rules?.min?.toString() : rules?.max?.toString();
+        const alertMessageParams = { name: label ?? name, value: alertValue };
 
-    const alert = error?.type != null ? { message: alertMessage, variant: 'critical' as const } : undefined;
+        const alertMessage =
+            error?.message != null && error.message.length > 0
+                ? t(error.message)
+                : t(alertMessageKey, alertMessageParams);
+
+        return { message: alertMessage, variant: 'critical' as const };
+    }, [error, rules, label, t, name]);
 
     return {
         ...field,
