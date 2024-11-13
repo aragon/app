@@ -18,7 +18,7 @@ export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'valu
     /**
      * Label displayed above the progress component.
      */
-    valueLabel: string;
+    valueLabel?: string;
     /**
      * Value used for normalising the value and display it on the progress.
      */
@@ -44,20 +44,23 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
 
     invariant(total > 0, 'NumberProgressInput: total property must be greater than 0');
 
+    const containerId = useId();
+
     const {
-        value,
+        value = 0,
         label: fieldLabel,
+        onChange,
         alert,
         ...numberField
-    } = useFormField<Record<string, number>, typeof fieldName>(fieldName, {
+    } = useFormField<Record<string, number | undefined>, typeof fieldName>(fieldName, {
         label,
         rules: { required: true },
     });
 
-    const containerId = useId();
-
     const progressValue = (value * 100) / total;
-    const labelLeft = Math.max(progressValue, valueLabel.length * 0.6);
+
+    const valueLabelLeft = valueLabel ? Math.max(progressValue, valueLabel.length * 0.6) : 0;
+    const valueLabelStyle = { left: `${valueLabelLeft}%`, transform: 'translateX(-50%)' };
 
     const processedAlert = alertProp ?? alert;
 
@@ -76,16 +79,19 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         className="max-w-40"
                         min={1}
                         max={total}
+                        onChange={(value) => onChange(Number(value))}
                         {...numberField}
                         {...otherProps}
                     />
                     <div className="relative flex grow flex-col gap-2 self-end">
-                        <p
-                            className="absolute -top-6 text-primary-400 transition-all duration-500 ease-in-out"
-                            style={{ left: `${labelLeft}%`, transform: 'translateX(-50%)' }}
-                        >
-                            {valueLabel}
-                        </p>
+                        {valueLabel && (
+                            <p
+                                className="absolute -top-6 text-primary-400 transition-all duration-500 ease-in-out"
+                                style={valueLabelStyle}
+                            >
+                                {valueLabel}
+                            </p>
+                        )}
                         <Progress value={progressValue} />
                         <p className="self-end text-xs font-normal leading-tight text-neutral-500">{totalLabel}</p>
                     </div>

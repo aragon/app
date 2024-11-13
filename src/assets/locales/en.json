@@ -600,6 +600,10 @@
         },
         "multisigUpdateSettingsAction": {
           "minimumApproval": {
+            "alert": {
+              "majority": "Proposal will be approved by majority",
+              "minority": "Proposals could be approved by a minority rather than a majority."
+            },
             "helpText": "Minimum approval is the amount of addresses in the authorized list that must approve a proposal for it to pass.",
             "label": "Minimum approval",
             "total": "of {{total}} addresses"

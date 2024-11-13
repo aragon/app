@@ -1,5 +1,6 @@
 import { useMemberList, type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -11,13 +12,6 @@ import { encodeFunctionData } from 'viem';
 
 export interface IMultisigUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
-
-export interface IMultisigUpdateSettingsFormData {
-    /**
-     * Who can create proposals. Members or any wallet.
-     */
-    onlyListed: string;
-}
 
 const updateMultisigSettingsAbi = {
     type: 'function',
@@ -48,42 +42,41 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     const minimumApprovalFieldName = `${actionFieldName}.proposedSettings.minApprovals`;
-    const minimumApproval = useWatch<Record<string, string>>({ name: minimumApprovalFieldName });
-    const minimumApprovalNumber = minimumApproval.length > 0 ? Number(minimumApproval) : undefined;
+    const minimumApproval = useWatch<Record<string, IMultisigPluginSettings['minApprovals'] | undefined>>({
+        name: minimumApprovalFieldName,
+    });
+    const minimumApprovalNumber = minimumApproval != null ? Number(minimumApproval) : undefined;
+
+    const {
+        value: onlyListedFieldValue,
+        onChange: onOnlyListedFieldChange,
+        ...onlyListedField
+    } = useFormField<IMultisigPluginSettings, 'onlyListed'>('onlyListed', {
+        fieldPrefix: `${actionFieldName}.proposedSettings`,
+        label: t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.label'),
+    });
 
     const memberParams = { pluginAddress: action.to, daoId: action.daoId };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 1;
 
+    const handleRadioChange = (value: string) => onOnlyListedFieldChange(value === 'members');
+
     const majorityThreshold = Math.floor(membersCount / 2);
+    const isMinApprovalsMajority = minimumApprovalNumber != null && minimumApprovalNumber > majorityThreshold;
 
-    const majorityAlert = { message: 'Proposal will be approved by majority', variant: 'success' as const };
-    const minorityAlert = {
-        message: 'Proposals could be approved by a minority rather than a majority.',
-        variant: 'warning' as const,
-    };
-
-    const alert =
-        minimumApprovalNumber == null
-            ? undefined
-            : minimumApprovalNumber > majorityThreshold
-              ? majorityAlert
-              : minorityAlert;
-
-    const onlyListedField = useFormField<Record<string, IMultisigUpdateSettingsFormData['onlyListed']>, 'onlyListed'>(
-        'onlyListed',
-        {
-            fieldPrefix: `${actionFieldName}.proposedSettings`,
-            label: t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.label'),
-        },
-    );
+    const minApprovalContext = isMinApprovalsMajority ? 'majority' : 'minority';
+    const minApprovalAlert = {
+        message: t(`app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.alert.${minApprovalContext}`),
+        variant: isMinApprovalsMajority ? 'success' : 'warning',
+    } as const;
 
     useEffect(() => {
-        const updateSettingsParams = { onlyListed: onlyListedField.value, minApprovals: minimumApproval };
+        const updateSettingsParams = { onlyListed: onlyListedFieldValue, minApprovals: minimumApproval };
         const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
 
         setValue(`${actionFieldName}.data`, newData);
-    }, [setValue, actionFieldName, onlyListedField.value, minimumApproval]);
+    }, [setValue, actionFieldName, onlyListedFieldValue, minimumApproval]);
 
     return (
         <div className="flex w-full flex-col gap-y-6">
@@ -91,24 +84,19 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
                 fieldName={minimumApprovalFieldName}
                 label={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.label')}
                 helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.helpText')}
-                valueLabel={minimumApproval}
+                valueLabel={minimumApproval?.toString()}
                 total={membersCount}
                 totalLabel={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.total', {
                     total: membersCount,
                 })}
                 // TODO: update ODS to support success variant on input component
-                alert={alert}
+                alert={minimumApprovalNumber != null ? minApprovalAlert : undefined}
             />
             <RadioGroup
-                className="flex w-full flex-col gap-4"
                 helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.helpText')}
-                onValueChange={(value) => {
-                    if (value === 'members') {
-                        onlyListedField.onChange(true);
-                    } else {
-                        onlyListedField.onChange(false);
-                    }
-                }}
+                className="w-full"
+                onValueChange={handleRadioChange}
+                value={onlyListedFieldValue === true ? 'members' : 'any'}
                 {...onlyListedField}
             >
                 <RadioCard
