@@ -603,6 +603,18 @@
             "helpText": "Minimum approval is the amount of addresses in the authorized list that must approve a proposal for it to pass.",
             "label": "Minimum approval",
             "total": "of {{total}} addresses"
+          },
+          "onlyListed": {
+            "anyWallet": {
+              "description": "Any connected address.",
+              "label": "Any wallet"
+            },
+            "helpText": "Specify who is permitted to create proposals and what the minimum requirement is.",
+            "label": "Proposal creation",
+            "members": {
+              "description": "Only approved addresses.",
+              "label": "Members"
+            }
           }
         },
         "multisigVoteList": {
