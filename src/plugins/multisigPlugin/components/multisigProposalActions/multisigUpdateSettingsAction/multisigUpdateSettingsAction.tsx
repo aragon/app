@@ -5,7 +5,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useWatch } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { encodeFunctionData } from 'viem';
 
 export interface IMultisigUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
@@ -40,6 +42,8 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
 
     const { t } = useTranslations();
 
+    const { setValue } = useFormContext();
+
     const actionFieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
@@ -58,8 +62,15 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
         },
     );
 
+    useEffect(() => {
+        const updateSettingsParams = { onlyListed: onlyListedField.value, minApprovals: minimumApproval };
+        const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
+
+        setValue(`${actionFieldName}.data`, newData);
+    }, [setValue, actionFieldName, onlyListedField.value, minimumApproval]);
+
     return (
-        <>
+        <div className="flex w-full flex-col gap-y-6">
             <NumberProgressInput
                 fieldName={minimumApprovalFieldName}
                 label={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.label')}
@@ -95,6 +106,6 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
                     value="any"
                 />
             </RadioGroup>
-        </>
+        </div>
     );
 };
