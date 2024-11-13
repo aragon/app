@@ -45,10 +45,26 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
 
     const minimumApprovalFieldName = `${actionFieldName}.proposedSettings.minApprovals`;
     const minimumApproval = useWatch<Record<string, string>>({ name: minimumApprovalFieldName });
+    const minimumApprovalNumber = minimumApproval.length > 0 ? Number(minimumApproval) : undefined;
 
     const memberParams = { pluginAddress: action.to, daoId: action.daoId };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
-    const membersCount = memberList?.pages[0].metadata.totalRecords;
+    const membersCount = memberList?.pages[0].metadata.totalRecords ?? 1;
+
+    const majorityThreshold = Math.floor(membersCount / 2);
+
+    const majorityAlert = { message: 'Proposal will be approved by majority', variant: 'success' as const };
+    const minorityAlert = {
+        message: 'Proposals could be approved by a minority rather than a majority.',
+        variant: 'warning' as const,
+    };
+
+    const alert =
+        minimumApprovalNumber == null
+            ? undefined
+            : minimumApprovalNumber > majorityThreshold
+              ? majorityAlert
+              : minorityAlert;
 
     const onlyListedField = useFormField<Record<string, IMultisigUpdateSettingsFormData['onlyListed']>, 'onlyListed'>(
         'onlyListed',
@@ -64,11 +80,13 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
                 fieldName={minimumApprovalFieldName}
                 label={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.label')}
                 helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.helpText')}
-                valueLabel={minimumApproval ?? 0}
-                total={membersCount ?? 1}
+                valueLabel={minimumApproval}
+                total={membersCount}
                 totalLabel={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.total', {
                     total: membersCount,
                 })}
+                // TODO: update ODS to support success variant on input component
+                alert={alert}
             />
             <RadioGroup
                 className="flex w-full flex-col gap-4"
