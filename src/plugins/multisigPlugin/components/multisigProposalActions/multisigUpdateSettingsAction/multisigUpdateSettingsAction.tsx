@@ -78,12 +78,12 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     }, [setValue, actionFieldName, onlyListedFieldValue, minimumApproval]);
 
     return (
-        <div className="flex w-full flex-col gap-y-6">
+        <div className="flex w-full flex-col gap-y-6 md:gap-y-10">
             <NumberProgressInput
                 fieldName={minimumApprovalFieldName}
                 label={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.label')}
                 helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.helpText')}
-                valueLabel={minimumApproval?.toString()}
+                valueLabel={minimumApproval.toString()}
                 total={membersCount}
                 totalLabel={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.total', {
                     total: membersCount,

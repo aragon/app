@@ -77,18 +77,18 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
             useCustomWrapper={true}
             className={className}
         >
-            <Card className="flex w-full flex-col gap-6 rounded-xl border border-neutral-100 p-4 md:p-6">
-                <div className="flex flex-row justify-between gap-6">
+            <Card className="flex w-full flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:gap-6 md:p-6">
+                <div className="flex flex-col-reverse justify-between gap-6 md:flex-row">
                     <InputNumber
                         value={value}
-                        className="max-w-40"
+                        className="md:max-w-40"
                         min={1}
                         max={total}
                         onChange={(value) => onChange(Number(value))}
                         {...numberField}
                         {...otherProps}
                     />
-                    <div className="relative flex grow flex-col gap-2 self-end">
+                    <div className="relative mt-4 flex grow flex-col gap-2 md:mt-0 md:self-end">
                         {valueLabel && (
                             <p
                                 className="absolute -top-6 text-primary-400 transition-all duration-500 ease-in-out"
@@ -101,7 +101,13 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         <p className="self-end text-xs font-normal leading-tight text-neutral-500">{totalLabel}</p>
                     </div>
                 </div>
-                {processedAlert && <AlertInline variant={processedAlert.variant} message={processedAlert.message} />}
+                {processedAlert && (
+                    <AlertInline
+                        variant={processedAlert.variant}
+                        message={processedAlert.message}
+                        className="self-center md:self-auto"
+                    />
+                )}
             </Card>
         </InputContainer>
     );
