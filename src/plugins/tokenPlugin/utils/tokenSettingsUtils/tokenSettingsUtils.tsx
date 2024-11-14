@@ -23,6 +23,10 @@ class TokenSettingsUtils {
      * (see https://github.com/aragon/osx-commons/blob/main/contracts/src/utils/math/Ratio.sol)
      */
     parsePercentageSetting = (percentage: number) => percentage / 10 ** 4;
+    /**
+     * Percentage values for token-based plugin in RATIO_BASE format.
+     */
+    parsePercentageToRatioBase = (percentage: number) => percentage * 10 ** 4;
 
     parseSettings = (params: IParseTokenSettingsParams): IDaoSettingTermAndDefinition[] => {
         const { settings, t } = params;

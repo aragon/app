@@ -19,8 +19,9 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { MinParticipation } from './components/minParticipation';
 import { SupportThreshold } from './components/supportThreshold';
 import { useEffect } from 'react';
-import { encodeFunctionData } from 'viem';
+import { encodeFunctionData, parseUnits } from 'viem';
 import { Duration } from 'luxon';
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 
 export interface ITokenUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
@@ -56,6 +57,8 @@ const updateTokenSettingsAbi = {
 
 export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps> = (props) => {
     const { index, action } = props;
+
+    const { symbol: tokenSymbol, decimals: tokenDecimals } = action.meta.settings.token;
 
     const { t } = useTranslations();
 
@@ -118,11 +121,11 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
 
     useEffect(() => {
         const updateSettingsParams = {
-            votingMode: votingModeField.value,
-            supportThreshold,
-            minParticipation,
+            votingMode: BigInt(votingModeField.value ?? 0),
+            supportThreshold: tokenSettingsUtils.parsePercentageToRatioBase(supportThreshold ?? 0),
+            minParticipation: tokenSettingsUtils.parsePercentageToRatioBase(minParticipation ?? 0),
             minDuration: minDurationInSeconds,
-            minProposerVotingPower: minVotingPowerValue,
+            minProposerVotingPower: parseUnits(minVotingPowerValue, tokenDecimals),
         };
         const newData = encodeFunctionData({ abi: [updateTokenSettingsAbi], args: [updateSettingsParams] });
 
@@ -139,6 +142,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         setValue,
         supportThreshold,
         votingModeField.value,
+        tokenDecimals,
     ]);
 
     return (
@@ -210,9 +214,9 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
                     <InputNumber
                         className="w-full"
                         helpText={t('app.plugins.token.tokenUpdateSettingsAction.minVotingPower.helpText')}
-                        placeholder={`≥ 1 ${action.meta.settings.token.symbol}`}
+                        placeholder={`≥ 1 ${tokenSymbol}`}
                         prefix="≥"
-                        suffix={action.meta.settings.token.symbol}
+                        suffix={tokenSymbol}
                         onChange={onMinVotingPowerChange}
                         {...minVotingPowerField}
                     />
