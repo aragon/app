@@ -48,7 +48,7 @@ class TokenActionUtils {
                     name: t(`app.plugins.token.tokenActions.${ProposalActionType.UPDATE_VOTE_SETTINGS}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
-                    defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
+                    defaultValue: { ...defaultUpdateSettings(plugin.settings), to: plugin.address },
                     meta: plugin,
                 },
             ],

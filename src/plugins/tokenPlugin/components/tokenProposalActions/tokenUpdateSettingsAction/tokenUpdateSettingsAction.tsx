@@ -121,9 +121,9 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
 
     useEffect(() => {
         const updateSettingsParams = {
-            votingMode: BigInt(votingModeField.value ?? 0),
-            supportThreshold: tokenSettingsUtils.parsePercentageToRatioBase(supportThreshold ?? 0),
-            minParticipation: tokenSettingsUtils.parsePercentageToRatioBase(minParticipation ?? 0),
+            votingMode: votingModeField.value,
+            supportThreshold: tokenSettingsUtils.parseFromPercentageToRatio(supportThreshold ?? 0),
+            minParticipation: tokenSettingsUtils.parseFromPercentageToRatio(minParticipation ?? 0),
             minDuration: minDurationInSeconds,
             minProposerVotingPower: parseUnits(minVotingPowerValue, tokenDecimals),
         };

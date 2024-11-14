@@ -22,11 +22,11 @@ class TokenSettingsUtils {
      * The function parses the value set on the blockchain and returns it as percentage value between 0 and 100.
      * (see https://github.com/aragon/osx-commons/blob/main/contracts/src/utils/math/Ratio.sol)
      */
-    parsePercentageSetting = (percentage: number) => percentage / 10 ** 4;
+    parseFromRatioToPercentage = (percentage: number) => percentage / 10 ** 4;
     /**
      * Percentage values for token-based plugin in RATIO_BASE format.
      */
-    parsePercentageToRatioBase = (percentage: number) => percentage * 10 ** 4;
+    parseFromPercentageToRatio = (percentage: number) => Math.round(percentage * 10 ** 4);
 
     parseSettings = (params: IParseTokenSettingsParams): IDaoSettingTermAndDefinition[] => {
         const { settings, t } = params;
@@ -44,12 +44,12 @@ class TokenSettingsUtils {
 
         const processedTotalSupply = historicalTotalSupply ?? totalSupply;
 
-        const parsedSupportThreshold = this.parsePercentageSetting(supportThreshold);
+        const parsedSupportThreshold = this.parseFromRatioToPercentage(supportThreshold);
         const formattedApproveThreshold = formatterUtils.formatNumber(parsedSupportThreshold / 100, {
             format: NumberFormat.PERCENTAGE_SHORT,
         });
 
-        const parsedMinParticipation = this.parsePercentageSetting(minParticipation);
+        const parsedMinParticipation = this.parseFromRatioToPercentage(minParticipation);
         const formattedMinParticipation = formatterUtils.formatNumber(parsedMinParticipation / 100, {
             format: NumberFormat.PERCENTAGE_SHORT,
         });
