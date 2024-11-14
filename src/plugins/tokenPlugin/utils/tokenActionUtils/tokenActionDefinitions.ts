@@ -1,7 +1,7 @@
-import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { type ITokenProposalAction, TokenProposalActionType } from '../../types';
 
-export const defaultMintAction: IProposalAction = {
-    type: ProposalActionType.MINT,
+export const defaultMintAction: ITokenProposalAction = {
+    type: TokenProposalActionType.MINT,
     from: '',
     to: '',
     data: '0x',

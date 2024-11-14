@@ -2,68 +2,40 @@ import {
     ProposalActionType,
     type IProposal,
     type IProposalAction,
-    type IProposalActionChangeMembers,
-    type IProposalActionChangeSettings,
-    type IProposalActionTokenMint,
     type IProposalActionUpdateMetadata,
     type IProposalActionWithdrawToken,
 } from '@/modules/governance/api/governanceService';
-import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
-import type { IResource } from '@/shared/api/daoService';
+import type { IDao, IResource } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     ProposalActionType as GukProposalActionType,
     type IProposalAction as IGukProposalAction,
-    type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
-    type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
-    type IProposalActionTokenMint as IGukProposalActionTokenMint,
     type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
     type IProposalActionWithdrawToken as IGukProposalActionWithdrawToken,
     type IProposalActionUpdateMetadataDaoMetadataLink,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-
-export interface INormalizeActionsParams {
-    /**
-     * The proposal to normalize the actions for.
-     */
-    proposal: IProposal;
-    /**
-     * The DAO ID.
-     */
-    daoId: string;
-}
+import { GovernanceSlotId } from '../../constants/moduleSlots';
+import type { INormalizeActionsParams } from '../../types';
 
 class ProposalActionUtils {
-    actionTypeMapping = {
-        [ProposalActionType.TRANSFER]: GukProposalActionType.WITHDRAW_TOKEN,
-        [ProposalActionType.MINT]: GukProposalActionType.TOKEN_MINT,
-        [ProposalActionType.MULTISIG_ADD_MEMBERS]: GukProposalActionType.ADD_MEMBERS,
-        [ProposalActionType.MULTISIG_REMOVE_MEMBERS]: GukProposalActionType.REMOVE_MEMBERS,
-        [ProposalActionType.METADATA_UPDATE]: GukProposalActionType.UPDATE_METADATA,
-        [ProposalActionType.UPDATE_MULTISIG_SETTINGS]: GukProposalActionType.CHANGE_SETTINGS_MULTISIG,
-        [ProposalActionType.UPDATE_VOTE_SETTINGS]: GukProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
-    } as const;
+    normalizeActions = (proposal: IProposal, dao: IDao): IGukProposalAction[] => {
+        const pluginNormalizedActions = dao.plugins.map((plugin) => {
+            const normalizeFunction = pluginRegistryUtils.getSlotFunction<INormalizeActionsParams, IProposalAction[]>({
+                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
+                pluginId: plugin.subdomain,
+            });
 
-    normalizeActions = (params: INormalizeActionsParams): IGukProposalAction[] => {
-        const { proposal, daoId } = params;
+            const pluginActions = normalizeFunction?.({ proposal, daoId: dao.id, plugin });
 
-        return proposal.actions.map((action) => {
+            return pluginActions ?? [];
+        });
+
+        return pluginNormalizedActions.flat().map((action) => {
             if (this.isWithdrawTokenAction(action)) {
                 return this.normalizeTransferAction(action);
-            }
-            if (this.isChangeSettingsAction(action)) {
-                return this.normalizeChangeSettingsAction(action, proposal, daoId);
-            }
-            if (this.isChangeMembersAction(action)) {
-                return this.normalizeChangeMembersAction(action);
-            }
-            if (this.isUpdateMetadataAction(action)) {
+            } else if (this.isUpdateMetadataAction(action)) {
                 return this.normalizeUpdateMetaDataAction(action);
-            }
-            if (this.isTokenMintAction(action)) {
-                return this.normalizeTokenMintAction(action);
             }
 
             return action;
@@ -75,48 +47,9 @@ class ProposalActionUtils {
 
         return {
             ...otherValues,
-            type: this.actionTypeMapping[action.type],
+            type: GukProposalActionType.WITHDRAW_TOKEN,
             token,
             amount: formatUnits(BigInt(amount), token.decimals),
-        };
-    };
-
-    normalizeChangeSettingsAction = (
-        action: IProposalActionChangeSettings,
-        proposal: IProposal,
-        daoId: string,
-    ): IGukProposalActionChangeSettings => {
-        const { type, proposedSettings, ...otherValues } = action;
-        const { settings: existingSettings, pluginAddress, pluginSubdomain } = proposal;
-
-        const parsingFunction = pluginRegistryUtils.getSlotFunction<
-            IUseGovernanceSettingsParams,
-            IDaoSettingTermAndDefinition[]
-        >({
-            pluginId: pluginSubdomain,
-            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        })!;
-
-        const completeProposedSettings = { ...existingSettings, ...proposedSettings };
-
-        const parsedExistingSettings = parsingFunction({ settings: existingSettings, daoId, pluginAddress });
-        const parsedProposedSettings = parsingFunction({ settings: completeProposedSettings, daoId, pluginAddress });
-
-        return {
-            ...otherValues,
-            type: this.actionTypeMapping[type],
-            existingSettings: parsedExistingSettings,
-            proposedSettings: parsedProposedSettings,
-        };
-    };
-
-    normalizeChangeMembersAction = (action: IProposalActionChangeMembers): IGukProposalActionChangeMembers => {
-        const { type, currentMembers, ...otherValues } = action;
-
-        return {
-            ...otherValues,
-            type: this.actionTypeMapping[type],
-            currentMembers: currentMembers.length,
         };
     };
 
@@ -128,7 +61,7 @@ class ProposalActionUtils {
 
         return {
             ...otherValues,
-            type: this.actionTypeMapping[type],
+            type: GukProposalActionType.UPDATE_METADATA,
             proposedMetadata: {
                 ...proposedMetadata,
                 logo: proposedMetadata.logo ?? '',
@@ -142,46 +75,12 @@ class ProposalActionUtils {
         };
     };
 
-    normalizeTokenMintAction = (action: IProposalActionTokenMint): IGukProposalActionTokenMint => {
-        const { token, receivers, ...otherValues } = action;
-        const { currentBalance, newBalance, ...otherReceiverValues } = receivers;
-
-        return {
-            ...otherValues,
-            type: this.actionTypeMapping[action.type],
-            tokenSymbol: token.symbol,
-            receiver: {
-                ...otherReceiverValues,
-                currentBalance: formatUnits(BigInt(currentBalance), token.decimals),
-                newBalance: formatUnits(BigInt(newBalance), token.decimals),
-            },
-        };
-    };
-
     isWithdrawTokenAction = (action: Partial<IProposalAction>): action is IProposalActionWithdrawToken => {
         return action.type === ProposalActionType.TRANSFER;
     };
 
-    isChangeMembersAction = (action: Partial<IProposalAction>): action is IProposalActionChangeMembers => {
-        return (
-            action.type === ProposalActionType.MULTISIG_ADD_MEMBERS ||
-            action.type === ProposalActionType.MULTISIG_REMOVE_MEMBERS
-        );
-    };
-
     isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata => {
         return action.type === ProposalActionType.METADATA_UPDATE;
-    };
-
-    isTokenMintAction = (action: Partial<IProposalAction>): action is IProposalActionTokenMint => {
-        return action.type === ProposalActionType.MINT;
-    };
-
-    isChangeSettingsAction = (action: Partial<IProposalAction>): action is IProposalActionChangeSettings => {
-        return (
-            action.type === ProposalActionType.UPDATE_MULTISIG_SETTINGS ||
-            action.type === ProposalActionType.UPDATE_VOTE_SETTINGS
-        );
     };
 }
 

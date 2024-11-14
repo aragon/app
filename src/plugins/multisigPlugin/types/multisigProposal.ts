@@ -1,11 +1,7 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import type { IMultisigPluginSettings } from './multisigPluginSettings';
 
-export interface IMultisigProposal extends IProposal {
-    /**
-     * Settings that were active when the proposal was created.
-     */
-    settings: IMultisigPluginSettings;
+export interface IMultisigProposal extends IProposal<IMultisigPluginSettings> {
     /**
      * Plugin-specific metrics of the proposal.
      */

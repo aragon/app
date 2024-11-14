@@ -6,7 +6,6 @@ import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
     generateCreateProposalFormData,
-    generateProposalActionChangeMembers,
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '../../testUtils';
@@ -145,7 +144,7 @@ describe('publishProposalDialog utils', () => {
                 { to: '0x456', value: '0', data: '0x' },
             ];
             const actions = [
-                generateProposalActionChangeMembers(actionsBaseData[0]),
+                generateProposalActionWithdrawToken(actionsBaseData[0]),
                 generateProposalActionUpdateMetadata(actionsBaseData[1]),
             ];
             expect(publishProposalDialogUtils['formToProposalActions'](actions)).toEqual(actionsBaseData);

@@ -1,4 +1,5 @@
-import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
+import { type IProposalAction } from '@/modules/governance/api/governanceService';
+import { generateProposalAction } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
@@ -38,10 +39,7 @@ describe('tokenProposal utils', () => {
             const now = '2022-02-01T07:55:55.868Z';
             const startDate = DateTime.fromISO('2022-01-10T08:00:00.000Z').toMillis() / 1000;
             const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
-            const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.MINT, inputData: null },
-            ];
-            const proposal = generateTokenProposal({ startDate, settings, actions });
+            const proposal = generateTokenProposal({ startDate, settings, actions: [generateProposalAction()] });
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValueOnce(false).mockReturnValueOnce(true);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
@@ -51,10 +49,7 @@ describe('tokenProposal utils', () => {
             const now = '2022-02-10T08:00:00.868Z';
             const startDate = DateTime.fromISO('2022-02-05T08:00:00.000Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2022-02-08T08:00:00.000Z').toMillis() / 1000;
-            const actions: IProposalAction[] = [
-                { from: '0', to: '1', data: '', value: '0', type: ProposalActionType.MINT, inputData: null },
-            ];
-            const proposal = generateTokenProposal({ startDate, endDate, actions });
+            const proposal = generateTokenProposal({ startDate, endDate, actions: [generateProposalAction()] });
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
