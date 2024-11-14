@@ -1,1 +1,1 @@
-export { multisigSettingsUtils } from './multisigSettingsUtils';
+export { multisigSettingsUtils, type IMultisigSettingsParseParams } from './multisigSettingsUtils';

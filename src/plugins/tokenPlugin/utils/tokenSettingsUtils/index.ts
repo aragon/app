@@ -1,1 +1,1 @@
-export { tokenSettingsUtils } from './tokenSettingsUtils';
+export { tokenSettingsUtils, type IParseTokenSettingsParams } from './tokenSettingsUtils';

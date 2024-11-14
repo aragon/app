@@ -1,12 +1,12 @@
 import {
-    type IProposalAction,
-    IProposalActionChangeSettings,
-    ProposalActionType,
-} from '@/modules/governance/api/governanceService';
-import { ITokenPluginSettings } from '../../types';
+    type ITokenActionChangeSettings,
+    type ITokenPluginSettings,
+    type ITokenProposalAction,
+    TokenProposalActionType,
+} from '../../types';
 
-export const defaultMintAction: IProposalAction = {
-    type: ProposalActionType.MINT,
+export const defaultMintAction: ITokenProposalAction = {
+    type: TokenProposalActionType.MINT,
     from: '',
     to: '',
     data: '0x',
@@ -31,8 +31,8 @@ export const defaultMintAction: IProposalAction = {
     },
 };
 
-export const defaultUpdateSettings = (settings: ITokenPluginSettings): IProposalActionChangeSettings => ({
-    type: ProposalActionType.UPDATE_VOTE_SETTINGS,
+export const defaultUpdateSettings = (settings: ITokenPluginSettings): ITokenActionChangeSettings => ({
+    type: TokenProposalActionType.UPDATE_VOTE_SETTINGS,
     from: '',
     to: '',
     data: '0x',

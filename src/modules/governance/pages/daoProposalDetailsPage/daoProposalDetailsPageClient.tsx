@@ -2,6 +2,7 @@
 
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
+import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -54,19 +55,22 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const proposalParams = { urlParams: proposalUrlParams };
     const { data: proposal } = useProposal(proposalParams);
 
+    const daoParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoParams });
+
     const proposalStatus = useSlotSingleFunction<ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginId: proposal?.pluginSubdomain ?? '',
     })!;
 
-    if (proposal == null) {
+    if (proposal == null || dao == null) {
         return null;
     }
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 
-    const normalizedProposalActions = proposalActionUtils.normalizeActions({ proposal, daoId });
+    const normalizedProposalActions = proposalActionUtils.normalizeActions(proposal, dao);
 
     const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,

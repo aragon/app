@@ -13,6 +13,7 @@ import { plugin } from './constants/plugin';
 import { useTokenActions } from './hooks/useTokenActions';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
+import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
 
@@ -76,6 +77,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: plugin.id,
             function: useTokenActions,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
+            pluginId: plugin.id,
+            function: useTokenNormalizeActions,
         })
 
         // Settings module slots
