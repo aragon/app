@@ -21,13 +21,21 @@ export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'valu
      */
     valueLabel?: string;
     /**
+     * Prefix for the input component.
+     */
+    prefix?: string;
+    /**
+     * Suffix for the input component.
+     */
+    suffix?: string;
+    /**
      * Value used for normalising the value and display it on the progress.
      */
     total: number;
     /**
      * Label displayed below the progress component.
      */
-    totalLabel: string;
+    totalLabel?: string;
     /**
      * Alert displayed below the input component.
      */
@@ -44,6 +52,8 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
         totalLabel,
         alert: alertProp,
         className,
+        prefix,
+        suffix,
         ...otherProps
     } = props;
 
@@ -85,6 +95,8 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         min={1}
                         max={total}
                         onChange={(value) => onChange(Number(value))}
+                        prefix={prefix}
+                        suffix={suffix}
                         {...numberField}
                         {...otherProps}
                     />
@@ -98,7 +110,9 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                             </p>
                         )}
                         <Progress value={progressValue} />
-                        <p className="self-end text-xs font-normal leading-tight text-neutral-500">{totalLabel}</p>
+                        {totalLabel && (
+                            <p className="self-end text-xs font-normal leading-tight text-neutral-500">{totalLabel}</p>
+                        )}
                     </div>
                 </div>
                 {processedAlert && <AlertInline variant={processedAlert.variant} message={processedAlert.message} />}

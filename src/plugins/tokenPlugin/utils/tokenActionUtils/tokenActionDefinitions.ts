@@ -1,4 +1,9 @@
-import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import {
+    type IProposalAction,
+    IProposalActionChangeSettings,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
+import { ITokenPluginSettings } from '../../types';
 
 export const defaultMintAction: IProposalAction = {
     type: ProposalActionType.MINT,
@@ -25,3 +30,24 @@ export const defaultMintAction: IProposalAction = {
         ],
     },
 };
+
+export const defaultUpdateSettings = (settings: ITokenPluginSettings): IProposalActionChangeSettings => ({
+    type: ProposalActionType.UPDATE_VOTE_SETTINGS,
+    from: '',
+    to: '',
+    data: '0x',
+    value: '0',
+    proposedSettings: settings,
+    inputData: {
+        function: 'updateVotingSettings',
+        contract: '',
+        parameters: [
+            {
+                name: '_votingSettings',
+                type: 'tuple',
+                notice: 'The new settings',
+                value: '',
+            },
+        ],
+    },
+});

@@ -5,7 +5,8 @@ import type { TranslationFunction } from '@/shared/components/translationsProvid
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { TokenMintTokensAction } from '../../components/tokenProposalActions/tokenMintTokensAction';
 import type { ITokenPluginSettings } from '../../types';
-import { defaultMintAction } from './tokenActionDefinitions';
+import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
+import { TokenUpdateSettingsAction } from '../../components/tokenProposalActions/tokenUpdateSettingsAction';
 
 export interface IGetTokenActionsProps {
     /**
@@ -42,9 +43,18 @@ class TokenActionUtils {
                     meta: plugin,
                     defaultValue: { ...defaultMintAction, to: address },
                 },
+                {
+                    id: ProposalActionType.UPDATE_VOTE_SETTINGS,
+                    name: t(`app.plugins.token.tokenActions.${ProposalActionType.UPDATE_VOTE_SETTINGS}`),
+                    icon: IconType.SETTINGS,
+                    groupId: address,
+                    defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
+                    meta: plugin,
+                },
             ],
             components: {
                 [ProposalActionType.MINT]: TokenMintTokensAction,
+                [ProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
             },
         };
     };
