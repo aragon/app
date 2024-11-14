@@ -1,5 +1,5 @@
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
-import { generateProposalAction } from '@/modules/governance/testUtils/generators/proposalAction';
+import { generateProposalAction } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';

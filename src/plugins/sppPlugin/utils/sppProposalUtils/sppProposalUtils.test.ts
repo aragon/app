@@ -1,4 +1,4 @@
-import { generateProposalAction } from '@/modules/governance/testUtils/generators/proposalAction';
+import { generateProposalAction } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
