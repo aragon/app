@@ -19,7 +19,8 @@ import {
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
-import { defaultMintAction } from './tokenActionDefinitions';
+import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
+import { TokenUpdateSettingsAction } from '../../components/tokenProposalActions/tokenUpdateSettingsAction';
 
 export interface IGetTokenActionsProps {
     /**
@@ -67,7 +68,7 @@ class TokenActionUtils {
                     defaultValue: { ...defaultMintAction, to: address },
                 },
                 {
-                    id: TokenProposalActionType.UPDATE_VOTE_SETTINGS,
+                    id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
                     name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
