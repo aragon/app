@@ -9,6 +9,7 @@ import {
     invariant,
     Progress,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useId } from 'react';
 
 export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'value' | 'alert'> {
@@ -40,6 +41,10 @@ export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'valu
      * Alert displayed below the input component.
      */
     alert?: Pick<IAlertInlineProps, 'message' | 'variant'>;
+    /**
+     * Threshold indicator for the progress component
+     */
+    thresholdIndicator?: number;
 }
 
 export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) => {
@@ -54,6 +59,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
         className,
         prefix,
         suffix,
+        thresholdIndicator,
         ...otherProps
     } = props;
 
@@ -88,7 +94,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
             className={className}
         >
             <Card className="flex w-full flex-col gap-6 rounded-xl border border-neutral-100 p-4 md:p-6">
-                <div className="flex flex-row justify-between gap-6">
+                <div className="flex flex-row items-center justify-between gap-6">
                     <InputNumber
                         value={value}
                         className="max-w-40"
@@ -100,16 +106,16 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         {...numberField}
                         {...otherProps}
                     />
-                    <div className="relative flex grow flex-col gap-2 self-end">
+                    <div className={classNames('relative flex grow flex-col gap-2', { 'self-end': totalLabel })}>
                         {valueLabel && (
                             <p
-                                className="absolute -top-6 text-primary-400 transition-all duration-500 ease-in-out"
+                                className="absolute -top-6 whitespace-nowrap text-primary-400 transition-all duration-500 ease-in-out"
                                 style={valueLabelStyle}
                             >
                                 {valueLabel}
                             </p>
                         )}
-                        <Progress value={progressValue} />
+                        <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
                         {totalLabel && (
                             <p className="self-end text-xs font-normal leading-tight text-neutral-500">{totalLabel}</p>
                         )}

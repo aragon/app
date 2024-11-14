@@ -33,11 +33,12 @@ export const SupportThreshold: React.FC<ISupportThresholdProps> = (props) => {
             fieldName={supportThresholdFieldName}
             label={t('app.plugins.token.tokenUpdateSettingsAction.supportThreshold.label')}
             helpText={t('app.plugins.token.tokenUpdateSettingsAction.supportThreshold.helpText')}
-            valueLabel={`> ${supportThreshold} %`}
+            valueLabel={`> ${supportThresholdNumber} %`}
             total={100}
             prefix=">"
             suffix="%"
             alert={supportThresholdNumber != null ? supportThresholdAlert : undefined}
+            thresholdIndicator={majorityThreshold}
         />
     );
 };
