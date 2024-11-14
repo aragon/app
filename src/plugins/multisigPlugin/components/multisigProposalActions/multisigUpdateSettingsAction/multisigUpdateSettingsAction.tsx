@@ -35,7 +35,6 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const { index, action } = props;
 
     const { t } = useTranslations();
-
     const { setValue } = useFormContext();
 
     const actionFieldName = `actions.[${index}]`;
