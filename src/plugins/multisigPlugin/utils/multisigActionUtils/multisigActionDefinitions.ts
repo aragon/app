@@ -1,12 +1,8 @@
-import {
-    type IProposalActionChangeMembers,
-    type IProposalActionChangeSettings,
-    ProposalActionType,
-} from '@/modules/governance/api/governanceService';
-import type { IMultisigPluginSettings } from '../../types';
+import type { IMultisigActionChangeMembers, IMultisigActionChangeSettings, IMultisigPluginSettings } from '../../types';
+import { MultisigProposalActionType } from '../../types/enum';
 
-export const defaultAddMembers: IProposalActionChangeMembers = {
-    type: ProposalActionType.MULTISIG_ADD_MEMBERS,
+export const defaultAddMembers: IMultisigActionChangeMembers = {
+    type: MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
     from: '',
     to: '',
     data: '0x',
@@ -27,8 +23,8 @@ export const defaultAddMembers: IProposalActionChangeMembers = {
     },
 };
 
-export const defaultRemoveMembers: IProposalActionChangeMembers = {
-    type: ProposalActionType.MULTISIG_REMOVE_MEMBERS,
+export const defaultRemoveMembers: IMultisigActionChangeMembers = {
+    type: MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
     from: '',
     to: '',
     data: '0x',
@@ -49,8 +45,8 @@ export const defaultRemoveMembers: IProposalActionChangeMembers = {
     },
 };
 
-export const defaultUpdateSettings = (settings: IMultisigPluginSettings): IProposalActionChangeSettings => ({
-    type: ProposalActionType.UPDATE_MULTISIG_SETTINGS,
+export const defaultUpdateSettings = (settings: IMultisigPluginSettings): IMultisigActionChangeSettings => ({
+    type: MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS,
     from: '',
     to: '',
     data: '0x',

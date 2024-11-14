@@ -1,16 +1,16 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import type { IAutocompleteInputGroup, IAutocompleteInputItem } from '@/shared/components/forms/autocompleteInput';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import type { IProposalActionData } from '../createProposalForm';
 
-export interface IPluginActionComposerItem<TMeta> extends IAutocompleteInputItem<TMeta> {
+export interface IPluginActionComposerItem<TMeta, TType> extends IAutocompleteInputItem<TMeta> {
     /**
      * Default value for the action.
      */
-    defaultValue: IProposalAction;
+    defaultValue: IProposalAction<TType>;
 }
 
-export interface IPluginActionComposerData<TMeta = undefined> {
+export interface IPluginActionComposerData<TMeta = undefined, TType = ProposalActionType> {
     /**
      * Autocomplete groups for the actions.
      */
@@ -18,7 +18,7 @@ export interface IPluginActionComposerData<TMeta = undefined> {
     /**
      * Autocomplete action item.
      */
-    items: Array<IPluginActionComposerItem<TMeta>>;
+    items: Array<IPluginActionComposerItem<TMeta, TType>>;
     /**
      * Custom action components.
      */

@@ -1,10 +1,25 @@
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    ProposalActionType as GukProposalActionType,
+    IconType,
+    type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
+    type IProposalActionTokenMint as IGukProposalActionTokenMint,
+} from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
 import { TokenMintTokensAction } from '../../components/tokenProposalActions/tokenMintTokensAction';
-import type { ITokenPluginSettings } from '../../types';
+import {
+    TokenProposalActionType,
+    type ITokenActionChangeSettings,
+    type ITokenActionTokenMint,
+    type ITokenPluginSettings,
+} from '../../types';
+import type { ITokenProposalAction } from '../../types/tokenProposalAction';
+import { tokenSettingsUtils } from '../tokenSettingsUtils';
+import type { IParseTokenSettingsParams } from '../tokenSettingsUtils/tokenSettingsUtils';
 import { defaultMintAction } from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
@@ -18,7 +33,17 @@ export interface IGetTokenActionsProps {
     t: TranslationFunction;
 }
 
-export type IGetTokenActionsResult = IPluginActionComposerData<IDaoPlugin<ITokenPluginSettings>>;
+export interface INormalizeChangeSettingsParams extends IParseTokenSettingsParams {
+    /**
+     * Action to be normalised.
+     */
+    action: ITokenActionChangeSettings;
+}
+
+export type IGetTokenActionsResult = IPluginActionComposerData<
+    IDaoPlugin<ITokenPluginSettings>,
+    TokenProposalActionType
+>;
 
 class TokenActionUtils {
     getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
@@ -35,8 +60,8 @@ class TokenActionUtils {
             ],
             items: [
                 {
-                    id: ProposalActionType.MINT,
-                    name: t(`app.plugins.token.tokenActions.${ProposalActionType.MINT}`),
+                    id: TokenProposalActionType.MINT,
+                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     meta: plugin,
@@ -44,8 +69,48 @@ class TokenActionUtils {
                 },
             ],
             components: {
-                [ProposalActionType.MINT]: TokenMintTokensAction,
+                [TokenProposalActionType.MINT]: TokenMintTokensAction,
             },
+        };
+    };
+
+    isChangeSettingsAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionChangeSettings =>
+        action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS;
+
+    isTokenMintAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionTokenMint => {
+        return action.type === TokenProposalActionType.MINT;
+    };
+
+    normalizeTokenMintAction = (action: ITokenActionTokenMint): IGukProposalActionTokenMint => {
+        const { token, receivers, ...otherValues } = action;
+        const { currentBalance, newBalance, ...otherReceiverValues } = receivers;
+
+        return {
+            ...otherValues,
+            type: GukProposalActionType.TOKEN_MINT,
+            tokenSymbol: token.symbol,
+            receiver: {
+                ...otherReceiverValues,
+                currentBalance: formatUnits(BigInt(currentBalance), token.decimals),
+                newBalance: formatUnits(BigInt(newBalance), token.decimals),
+            },
+        };
+    };
+
+    normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
+        const { action, t, settings } = params;
+        const { type, proposedSettings, ...otherValues } = action;
+
+        const completeProposedSettings = { ...settings, ...proposedSettings };
+
+        const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings, t });
+        const parsedProposedSettings = tokenSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
+
+        return {
+            ...otherValues,
+            type: GukProposalActionType.CHANGE_SETTINGS_MULTISIG,
+            existingSettings: parsedExistingSettings,
+            proposedSettings: parsedProposedSettings,
         };
     };
 }

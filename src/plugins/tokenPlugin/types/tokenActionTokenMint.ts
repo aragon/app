@@ -1,12 +1,12 @@
 import { type IToken } from '@/modules/finance/api/financeService';
-import { type ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum';
 import { type IProposalActionTokenMint as IGukProposalActionTokenMint } from '@aragon/gov-ui-kit';
+import type { TokenProposalActionType } from './enum';
 
-export interface IProposalActionTokenMint extends Omit<IGukProposalActionTokenMint, 'type' | 'receiver'> {
+export interface ITokenActionTokenMint extends Omit<IGukProposalActionTokenMint, 'type' | 'receiver'> {
     /**
      * The type of the proposal action.
      */
-    type: ProposalActionType.MINT;
+    type: TokenProposalActionType.MINT;
     /**
      * The token minted.
      */

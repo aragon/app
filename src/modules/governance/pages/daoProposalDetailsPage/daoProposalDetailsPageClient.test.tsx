@@ -2,12 +2,13 @@ import {
     DaoProposalDetailsPageClient,
     type IDaoProposalDetailsPageClientProps,
 } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
-import { generateProposal, generateProposalActionChangeMembers } from '@/modules/governance/testUtils';
+import { generateProposal } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateAddressInfo,
+    generateDao,
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
@@ -33,6 +34,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
@@ -177,33 +179,6 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
         expect(screen.queryByText(/daoProposalDetailsPage.aside.links.title/)).not.toBeInTheDocument();
-    });
-
-    it('renders the proposal actions when defined', () => {
-        const actions = [
-            generateProposalActionChangeMembers({
-                inputData: {
-                    function: 'test1',
-                    contract: 'test',
-                    parameters: [{ name: 'functionName1', type: 'argument', value: '1' }],
-                },
-            }),
-            generateProposalActionChangeMembers({
-                inputData: {
-                    function: 'test2',
-                    contract: 'test',
-                    parameters: [{ name: 'functionName2', type: 'argument', value: '1' }],
-                },
-            }),
-        ];
-        const proposal = generateProposal({ actions });
-        useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
-        render(createTestComponent());
-
-        expect(screen.getByText(/daoProposalDetailsPage.main.actions.header/)).toBeInTheDocument();
-        actions.forEach((action) => {
-            expect(screen.getByText(action.inputData!.function)).toBeInTheDocument();
-        });
     });
 
     it('renders the proposal voting terminal', () => {

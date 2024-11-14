@@ -1,13 +1,9 @@
 import {
-    generateProposal,
-    generateProposalActionChangeMembers,
-    generateProposalActionTokenMint,
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
 import * as viem from 'viem';
 import { formatUnits } from 'viem';
-import { type ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
 // Needed to spy formatUnits usage
@@ -39,37 +35,6 @@ describe('proposalActionUtils', () => {
         expect(formatUnits).toHaveBeenCalledWith(BigInt(action.amount), action.token.decimals);
     });
 
-    it('normalizes a token mint action', () => {
-        const baseAction = generateProposalActionTokenMint();
-
-        const action = {
-            ...baseAction,
-            receivers: { ...baseAction.receivers, currentBalance: '1000000', newBalance: '20000000' },
-        };
-
-        formatUnitsSpy.mockReturnValueOnce('1.0').mockReturnValueOnce('2.0');
-
-        const result = proposalActionUtils.normalizeTokenMintAction(action);
-
-        const { receivers, token, ...otherValues } = action;
-
-        expect(result).toEqual({
-            ...otherValues,
-            type: 'TOKEN_MINT',
-            receiver: { address: receivers.address, currentBalance: '1.0', newBalance: '2.0' },
-            tokenSymbol: token.symbol,
-        });
-
-        expect(formatUnits).toHaveBeenNthCalledWith(1, BigInt(action.receivers.currentBalance), action.token.decimals);
-        expect(formatUnits).toHaveBeenNthCalledWith(2, BigInt(action.receivers.newBalance), action.token.decimals);
-    });
-
-    it('normalizes a change members action', () => {
-        const action = { ...generateProposalActionChangeMembers(), currentMembers: [{ address: '0xMemberAddress' }] };
-        const result = proposalActionUtils.normalizeChangeMembersAction(action);
-        expect(result).toEqual({ ...action, type: 'ADD_MEMBERS', currentMembers: 1 });
-    });
-
     it('normalizes an update metadata action', () => {
         const baseAction = generateProposalActionUpdateMetadata();
         const { proposedMetadata, existingMetadata } = baseAction;
@@ -96,14 +61,5 @@ describe('proposalActionUtils', () => {
             },
             existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
         });
-    });
-
-    it('returns unmodified action if type does not match any known action', () => {
-        const action = { ...generateProposalActionWithdrawToken(), type: 'UNKNOWN_TYPE' as ProposalActionType };
-        const proposal = generateProposal({ actions: [action] });
-
-        const result = proposalActionUtils.normalizeActions({ proposal, daoId: 'daoId' });
-
-        expect(result).toEqual([action]);
     });
 });
