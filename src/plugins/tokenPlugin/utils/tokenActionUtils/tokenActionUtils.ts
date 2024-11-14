@@ -59,7 +59,7 @@ class TokenActionUtils {
             ],
             items: [
                 {
-                    id: TokenProposalActionType.MINT,
+                    id: `${address}-${TokenProposalActionType.MINT}`,
                     name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
                     groupId: address,

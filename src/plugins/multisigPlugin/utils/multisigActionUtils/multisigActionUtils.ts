@@ -58,14 +58,14 @@ class MultisigActionUtils {
             ],
             items: [
                 {
-                    id: MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
+                    id: `${address}-${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`,
                     name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`),
                     icon: IconType.PLUS,
                     groupId: address,
                     defaultValue: { ...defaultAddMembers, to: address },
                 },
                 {
-                    id: MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
+                    id: `${address}-${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
                     name: t(
                         `app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
                     ),
@@ -74,7 +74,7 @@ class MultisigActionUtils {
                     defaultValue: { ...defaultRemoveMembers, to: address },
                 },
                 {
-                    id: MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS,
+                    id: `${address}-${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
                     name: t(
                         `app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
                     ),
