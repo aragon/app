@@ -1,5 +1,5 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer/actionComposer.api';
+import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -13,11 +13,14 @@ import {
 import { MultisigAddMembersAction } from '../../components/multisigProposalActions/multisigAddMembersAction';
 import { MultisigRemoveMembersAction } from '../../components/multisigProposalActions/multisigRemoveMembersAction';
 import { MultisigUpdateSettingsAction } from '../../components/multisigProposalActions/multisigUpdateSettingsAction';
-import type { IMultisigActionChangeMembers, IMultisigPluginSettings, IMultisigProposalAction } from '../../types';
-import { MultisigProposalActionType } from '../../types/enum';
-import type { IMultisigActionChangeSettings } from '../../types/multisigActionChangeSettings';
-import { multisigSettingsUtils } from '../multisigSettingsUtils';
-import type { IMultisigSettingsParseParams } from '../multisigSettingsUtils/multisigSettingsUtils';
+import {
+    MultisigProposalActionType,
+    type IMultisigActionChangeMembers,
+    type IMultisigActionChangeSettings,
+    type IMultisigPluginSettings,
+    type IMultisigProposalAction,
+} from '../../types';
+import { multisigSettingsUtils, type IMultisigSettingsParseParams } from '../multisigSettingsUtils';
 import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
 
 export interface IGetMultisigActionsProps {

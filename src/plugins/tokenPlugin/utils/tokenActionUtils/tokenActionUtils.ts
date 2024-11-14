@@ -18,8 +18,7 @@ import {
     type ITokenPluginSettings,
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
-import { tokenSettingsUtils } from '../tokenSettingsUtils';
-import type { IParseTokenSettingsParams } from '../tokenSettingsUtils/tokenSettingsUtils';
+import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
 import { defaultMintAction } from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
