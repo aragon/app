@@ -35,17 +35,15 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const { index, action } = props;
 
     const { t } = useTranslations();
-
     const { setValue } = useFormContext();
 
     const actionFieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     const minimumApprovalFieldName = `${actionFieldName}.proposedSettings.minApprovals`;
-    const minimumApproval = useWatch<Record<string, IMultisigPluginSettings['minApprovals'] | undefined>>({
+    const minimumApproval = useWatch<Record<string, IMultisigPluginSettings['minApprovals']>>({
         name: minimumApprovalFieldName,
     });
-    const minimumApprovalNumber = minimumApproval != null ? Number(minimumApproval) : undefined;
 
     const {
         value: onlyListedFieldValue,
@@ -63,7 +61,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const handleRadioChange = (value: string) => onOnlyListedFieldChange(value === 'members');
 
     const majorityThreshold = Math.floor(membersCount / 2);
-    const isMinApprovalsMajority = minimumApprovalNumber != null && minimumApprovalNumber > majorityThreshold;
+    const isMinApprovalsMajority = minimumApproval > majorityThreshold;
 
     const minApprovalContext = isMinApprovalsMajority ? 'majority' : 'minority';
     const minApprovalAlert = {
@@ -90,7 +88,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
                 totalLabel={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.total', {
                     total: membersCount,
                 })}
-                alert={minimumApprovalNumber != null ? minApprovalAlert : undefined}
+                alert={minApprovalAlert}
             />
             <RadioGroup
                 helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.helpText')}
