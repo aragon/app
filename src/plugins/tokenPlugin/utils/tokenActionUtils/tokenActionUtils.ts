@@ -2,6 +2,7 @@ import type { IProposalAction } from '@/modules/governance/api/governanceService
 import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -21,7 +22,6 @@ import {
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
-import { daoUtils } from '@/shared/utils/daoUtils';
 
 export interface IGetTokenActionsProps {
     /**

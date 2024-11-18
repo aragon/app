@@ -12,8 +12,8 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, parseUnits } from 'viem';
 import { MinParticipationField } from './fields/minParticipationField';
-import { SupportThresholdField } from './fields/supportThresholdField';
 import { ProposalCreationEligibilityField } from './fields/proposalCreationEligibilityField';
+import { SupportThresholdField } from './fields/supportThresholdField';
 
 export interface ITokenUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
