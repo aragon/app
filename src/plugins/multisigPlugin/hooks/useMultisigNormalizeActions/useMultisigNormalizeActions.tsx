@@ -7,11 +7,11 @@ import { multisigActionUtils } from '../../utils/multisigActionUtils';
 export interface IUseMultisigNormalizeActionsParams extends INormalizeActionsParams<IMultisigPluginSettings> {}
 
 export const useMultisigNormalizeActions = (params: IUseMultisigNormalizeActionsParams) => {
-    const { actions, plugin, daoId } = params;
+    const { actions, settings, daoId } = params;
 
     const { t } = useTranslations();
 
-    const daoMembersParams = { daoId, pluginAddress: plugin.address };
+    const daoMembersParams = { daoId, pluginAddress: settings.pluginAddress };
     const { data: memberList } = useMemberList({ queryParams: daoMembersParams });
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 0;
 
@@ -19,8 +19,7 @@ export const useMultisigNormalizeActions = (params: IUseMultisigNormalizeActions
         if (multisigActionUtils.isChangeMembersAction(action)) {
             return multisigActionUtils.normalizeChangeMembersAction(action);
         } else if (multisigActionUtils.isChangeSettingsAction(action)) {
-            const params = { action, settings: plugin.settings, t, membersCount };
-            return multisigActionUtils.normalizeChangeSettingsAction(params);
+            return multisigActionUtils.normalizeChangeSettingsAction({ action, settings, t, membersCount });
         }
 
         return action;
