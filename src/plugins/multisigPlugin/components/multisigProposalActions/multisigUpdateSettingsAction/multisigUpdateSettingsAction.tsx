@@ -40,9 +40,12 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const actionFieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
+    // Set default values to minimumApproval and onlyListed values as values are reset when deleting an item from the
+    // useArrayField causing the useWatch / useFormField to return undefined before unmounting the component
     const minimumApprovalFieldName = `${actionFieldName}.proposedSettings.minApprovals`;
     const minimumApproval = useWatch<Record<string, IMultisigPluginSettings['minApprovals']>>({
         name: minimumApprovalFieldName,
+        defaultValue: 0,
     });
 
     const {
@@ -52,6 +55,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     } = useFormField<IMultisigPluginSettings, 'onlyListed'>('onlyListed', {
         fieldPrefix: `${actionFieldName}.proposedSettings`,
         label: t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.label'),
+        defaultValue: false,
     });
 
     const memberParams = { pluginAddress: action.to, daoId: action.daoId };
