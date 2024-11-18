@@ -11,6 +11,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { TokenMintTokensAction } from '../../components/tokenProposalActions/tokenMintTokensAction';
+import { TokenUpdateSettingsAction } from '../../components/tokenProposalActions/tokenUpdateSettingsAction';
 import {
     TokenProposalActionType,
     type ITokenActionChangeSettings,
@@ -20,7 +21,6 @@ import {
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
-import { TokenUpdateSettingsAction } from '../../components/tokenProposalActions/tokenUpdateSettingsAction';
 
 export interface IGetTokenActionsProps {
     /**

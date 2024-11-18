@@ -1,6 +1,7 @@
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { DaoTokenVotingMode, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -15,13 +16,12 @@ import {
     Switch,
     type IProposalActionComponentProps,
 } from '@aragon/gov-ui-kit';
+import { Duration } from 'luxon';
+import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { encodeFunctionData, parseUnits } from 'viem';
 import { MinParticipation } from './components/minParticipation';
 import { SupportThreshold } from './components/supportThreshold';
-import { useEffect } from 'react';
-import { encodeFunctionData, parseUnits } from 'viem';
-import { Duration } from 'luxon';
-import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 
 export interface ITokenUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}

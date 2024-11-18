@@ -1,7 +1,7 @@
 import { type IToken } from '@/modules/finance/api/financeService';
 import type {
-    IProposalActionTokenMint as IGukProposalActionTokenMint,
     IProposalActionChangeSettings as IGukProposalActionChangeSettings,
+    IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
 import type { TokenProposalActionType } from './enum/tokenProposalActionType';
 import type { ITokenPluginSettings } from './tokenPluginSettings';
