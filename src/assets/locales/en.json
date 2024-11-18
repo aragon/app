@@ -740,6 +740,13 @@
           }
         },
         "tokenUpdateSettingsAction": {
+          "earlyExecution": {
+            "helpText": "Allows a proposal to be executed before the voting period ends if the support threshold is surpassed, the minimum participation is met, and the outcome cannot be changed by more voters participating.",
+            "label": "Early execution",
+            "switch": {
+              "label": "Yes"
+            }
+          },
           "eligibleField": {
             "anyWallet": {
               "description": "Any connected address.",
@@ -779,13 +786,6 @@
           "voteChange": {
             "helpText": "Allows voters to change their vote during the voting period. This setting can’t be enabled if early execution is enabled.",
             "label": "Vote change",
-            "switch": {
-              "label": "Yes"
-            }
-          },
-          "votingMode": {
-            "helpText": "Allows a proposal to be executed before the voting period ends if the support threshold is surpassed, the minimum participation is met, and the outcome cannot be changed by more voters participating.",
-            "label": "Early execution",
             "switch": {
               "label": "Yes"
             }

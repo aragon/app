@@ -174,9 +174,9 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
                 </Card>
             </InputContainer>
             <Switch
-                label={t('app.plugins.token.tokenUpdateSettingsAction.votingMode.label')}
-                helpText={t('app.plugins.token.tokenUpdateSettingsAction.votingMode.helpText')}
-                inlineLabel={t('app.plugins.token.tokenUpdateSettingsAction.votingMode.switch.label')}
+                label={t('app.plugins.token.tokenUpdateSettingsAction.earlyExecution.label')}
+                helpText={t('app.plugins.token.tokenUpdateSettingsAction.earlyExecution.helpText')}
+                inlineLabel={t('app.plugins.token.tokenUpdateSettingsAction.earlyExecution.switch.label')}
                 onCheckedChanged={handleModeChange}
                 checked={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
                 disabled={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
