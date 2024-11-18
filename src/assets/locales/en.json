@@ -58,7 +58,7 @@
         }
       },
       "notFoundBase": {
-        "action": "Explore DAO's",
+        "action": "Explore DAOs",
         "description": "We couldn't find the page that you're looking for.",
         "title": "Page not found"
       },
@@ -69,7 +69,7 @@
       },
       "userDialog": {
         "screenReader": {
-          "description": "Information about the the connected user",
+          "description": "Information about the connected user",
           "title": "Connected user"
         }
       }
@@ -99,7 +99,7 @@
             "placeholder": "Description of the DAO"
           },
           "name": {
-            "helpText": "Give the DAO a name that it will be be recognized by.",
+            "helpText": "Give the DAO a name that it will be recognized by.",
             "label": "DAO Name",
             "placeholder": "Type the DAO's name"
           },
@@ -410,7 +410,7 @@
         "main": {
           "actions": {
             "description": "The following actions will execute if all voting stages are approved.",
-            "empty": "Proposal has not actions.",
+            "empty": "Proposal has no actions.",
             "header": "Actions"
           },
           "proposal": "Proposal",
@@ -543,7 +543,7 @@
           "addressInput": {
             "error": {
               "alreadyInList": "Address has already been added",
-              "alreadyMember": "Address is already member of the DAO",
+              "alreadyMember": "Address is already a member of the DAO",
               "invalid": "Address is not valid"
             },
             "label": "Member",
@@ -809,7 +809,7 @@
         },
         "ADMIN_PLUGIN": {
           "buttonLabel": "View Admins",
-          "message": "This DAO is under construction. One or more admins can make any change to the DAO without a proposal"
+          "message": "This DAO is under construction. One or more admins can make any change to the DAO without a proposal."
         }
       },
       "confirmWizardExit": {
@@ -825,7 +825,7 @@
       },
       "formField": {
         "error": {
-          "max": "{{name}} must be lower than {{value}}",
+          "max": "{{name}} must be less than {{value}}",
           "min": "{{name}} must be greater than {{value}}",
           "pattern": "Invalid {{name}} format",
           "required": "{{name}} is mandatory",
@@ -898,7 +898,7 @@
               "title": "Invalid data"
             },
             "invalid-required": {
-              "description": "Some inputs are not filled and not valid. Review, fix and fill out all mandatory data to proceed.",
+              "description": "Some inputs are not filled or are invalid. Review, fix, and fill out all mandatory data to proceed.",
               "title": "Missing and invalid data"
             },
             "required": {
