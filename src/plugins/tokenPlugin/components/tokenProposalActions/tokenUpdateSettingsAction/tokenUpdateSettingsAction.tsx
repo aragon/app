@@ -78,6 +78,9 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         label: t('app.plugins.token.tokenUpdateSettingsAction.minDuration.label'),
     });
 
+    /* For the transaction we need the value in seconds, but for the UI it is nicer to use the days/hours/mins object
+    When the user does not change the minDuration it will already be in seconds. However once this value is changed
+    it will be an object. Therefore we need to check if the value is an object and convert it to seconds if needed */
     const minDurationInSeconds =
         typeof minDurationField.value === 'object'
             ? Duration.fromObject(minDurationField.value).as('seconds')
