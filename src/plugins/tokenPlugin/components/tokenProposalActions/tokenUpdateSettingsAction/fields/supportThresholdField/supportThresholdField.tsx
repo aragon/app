@@ -1,7 +1,7 @@
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
-export interface ISupportThresholdProps {
+export interface ISupportThresholdFieldProps {
     /**
      * The field name for the supportThreshold field.
      */
@@ -12,7 +12,7 @@ export interface ISupportThresholdProps {
     supportThreshold?: number;
 }
 
-export const SupportThreshold: React.FC<ISupportThresholdProps> = (props) => {
+export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (props) => {
     const { supportThreshold, supportThresholdFieldName } = props;
 
     const { t } = useTranslations();

@@ -5,7 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 
-export interface IMinParticipationProps {
+export interface IMinParticipationFieldProps {
     /**
      * The field name for the min participation field.
      */
@@ -20,7 +20,7 @@ export interface IMinParticipationProps {
     plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
-export const MinParticipation: React.FC<IMinParticipationProps> = (props) => {
+export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (props) => {
     const { minParticipationFieldName, minParticipation, plugin } = props;
 
     const { symbol, totalSupply, decimals } = plugin.settings.token;

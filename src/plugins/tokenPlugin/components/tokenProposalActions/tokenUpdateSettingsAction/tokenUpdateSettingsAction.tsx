@@ -6,22 +6,14 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    AlertCard,
-    Card,
-    InputContainer,
-    InputNumber,
-    RadioCard,
-    RadioGroup,
-    Switch,
-    type IProposalActionComponentProps,
-} from '@aragon/gov-ui-kit';
+import { AlertCard, Card, InputContainer, Switch, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, parseUnits } from 'viem';
-import { MinParticipation } from './components/minParticipation';
-import { SupportThreshold } from './components/supportThreshold';
+import { MinParticipationField } from './fields/minParticipationField';
+import { SupportThresholdField } from './fields/supportThresholdField';
+import { ProposalCreationEligibilityField } from './fields/proposalCreationEligibilityField';
 
 export interface ITokenUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
@@ -106,8 +98,6 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         label: t('app.plugins.token.tokenUpdateSettingsAction.minVotingPower.label'),
     });
 
-    const handleRadioChange = (value: string) => onMinVotingPowerChange(value === 'members' ? '1' : '0');
-
     const handleModeChange = (checked: boolean) =>
         votingModeField.onChange(checked ? DaoTokenVotingMode.EARLY_EXECUTION : DaoTokenVotingMode.STANDARD);
 
@@ -147,11 +137,11 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
 
     return (
         <div className="flex w-full flex-col gap-y-6">
-            <SupportThreshold
+            <SupportThresholdField
                 supportThreshold={supportThreshold}
                 supportThresholdFieldName={supportThresholdFieldName}
             />
-            <MinParticipation
+            <MinParticipationField
                 minParticipationFieldName={minParticipationFieldName}
                 minParticipation={minParticipation}
                 plugin={action.meta}
@@ -189,39 +179,14 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
                 checked={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
                 disabled={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
             />
-            <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
-                <RadioGroup
-                    label={t('app.plugins.token.tokenUpdateSettingsAction.eligibleField.label')}
-                    helpText={t('app.plugins.token.tokenUpdateSettingsAction.eligibleField.helpText')}
-                    className="w-full"
-                    onValueChange={handleRadioChange}
-                    value={Number(minVotingPowerValue) > 0 ? 'members' : 'any'}
-                >
-                    <RadioCard
-                        label={t('app.plugins.token.tokenUpdateSettingsAction.eligibleField.members.label')}
-                        description={t('app.plugins.token.tokenUpdateSettingsAction.eligibleField.members.description')}
-                        value="members"
-                    />
-                    <RadioCard
-                        label={t('app.plugins.token.tokenUpdateSettingsAction.eligibleField.anyWallet.label')}
-                        description={t(
-                            'app.plugins.token.tokenUpdateSettingsAction.eligibleField.anyWallet.description',
-                        )}
-                        value="any"
-                    />
-                </RadioGroup>
-                {Number(minVotingPowerValue) > 0 && (
-                    <InputNumber
-                        className="w-full"
-                        helpText={t('app.plugins.token.tokenUpdateSettingsAction.minVotingPower.helpText')}
-                        placeholder={`≥ 1 ${tokenSymbol}`}
-                        prefix="≥"
-                        suffix={tokenSymbol}
-                        onChange={onMinVotingPowerChange}
-                        {...minVotingPowerField}
-                    />
-                )}
-            </Card>
+            <ProposalCreationEligibilityField
+                tokenSymbol={tokenSymbol}
+                minVotingPowerField={{
+                    value: minVotingPowerValue,
+                    onChange: onMinVotingPowerChange,
+                    ...minVotingPowerField,
+                }}
+            />
         </div>
     );
 };
