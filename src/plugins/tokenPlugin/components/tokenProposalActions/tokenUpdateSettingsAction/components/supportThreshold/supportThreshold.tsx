@@ -3,11 +3,11 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ISupportThresholdProps {
     /**
-     * The field name for the form.
+     * The field name for the supportThreshold field.
      */
     supportThresholdFieldName: string;
     /**
-     * The support threshold.
+     * The support threshold value.
      */
     supportThreshold?: number;
 }
@@ -17,7 +17,7 @@ export const SupportThreshold: React.FC<ISupportThresholdProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const supportThresholdNumber = supportThreshold != null ? Number(supportThreshold) : undefined;
+    const supportThresholdNumber = supportThreshold ?? undefined;
 
     const majorityThreshold = 50;
     const isSupportThresholdMajority = supportThresholdNumber != null && supportThresholdNumber > majorityThreshold;

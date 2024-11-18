@@ -7,15 +7,15 @@ import { formatUnits } from 'viem';
 
 export interface IMinParticipationProps {
     /**
-     * The field name from form.
+     * The field name for the min participation field.
      */
     minParticipationFieldName: string;
     /**
-     * The min participation.
+     * The min participation value.
      */
     minParticipation?: number;
     /**
-     * The plugin.
+     * The DAO token plugin.
      */
     plugin: IDaoPlugin<ITokenPluginSettings>;
 }
