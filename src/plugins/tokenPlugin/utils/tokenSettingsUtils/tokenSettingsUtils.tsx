@@ -24,7 +24,7 @@ class TokenSettingsUtils {
      */
     fromRatioToPercentage = (percentage: number) => percentage / 10 ** 4;
     /**
-     * Percentage values for token-based plugin in RATIO_BASE format.
+     * Parses the percentage value and returns it in RATIO_BASE format (as a value between 0 and 10**6)
      */
     fromPercentageToRatio = (percentage: number) => Math.round(percentage * 10 ** 4);
 
