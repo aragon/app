@@ -60,12 +60,12 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     const supportThresholdFieldName = `${actionFieldName}.proposedSettings.supportThreshold`;
-    const supportThreshold = useWatch<Record<string, ITokenPluginSettings['supportThreshold'] | undefined>>({
+    const supportThreshold = useWatch<Record<string, ITokenPluginSettings['supportThreshold']>>({
         name: supportThresholdFieldName,
     });
 
     const minParticipationFieldName = `${actionFieldName}.proposedSettings.minParticipation`;
-    const minParticipation = useWatch<Record<string, ITokenPluginSettings['minParticipation'] | undefined>>({
+    const minParticipation = useWatch<Record<string, ITokenPluginSettings['minParticipation']>>({
         name: minParticipationFieldName,
     });
 
@@ -89,11 +89,10 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         fieldPrefix: `${actionFieldName}.proposedSettings`,
     });
 
-    const {
-        value: minVotingPowerValue,
-        onChange: onMinVotingPowerChange,
-        ...minVotingPowerField
-    } = useFormField<ITokenPluginSettings, 'minProposerVotingPower'>('minProposerVotingPower', {
+    const { value: minVotingPowerValue, ...minVotingPowerField } = useFormField<
+        ITokenPluginSettings,
+        'minProposerVotingPower'
+    >('minProposerVotingPower', {
         fieldPrefix: `${actionFieldName}.proposedSettings`,
         label: t('app.plugins.token.tokenUpdateSettingsAction.minVotingPower.label'),
     });
@@ -183,7 +182,6 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
                 tokenSymbol={tokenSymbol}
                 minVotingPowerField={{
                     value: minVotingPowerValue,
-                    onChange: onMinVotingPowerChange,
                     ...minVotingPowerField,
                 }}
             />
