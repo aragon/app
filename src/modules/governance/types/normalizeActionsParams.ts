@@ -1,11 +1,11 @@
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
-import type { IProposal } from '../api/governanceService';
+import type { IProposalAction } from '../api/governanceService';
 
 export interface INormalizeActionsParams<TSettings extends IPluginSettings = IPluginSettings> {
     /**
-     * Proposal to normalize the actions for.
+     * Proposal actions to be normalized.
      */
-    proposal: IProposal;
+    actions: IProposalAction[];
     /**
      * Plugin to use for normalizing the actions.
      */

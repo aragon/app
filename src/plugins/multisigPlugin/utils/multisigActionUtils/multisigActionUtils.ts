@@ -102,9 +102,9 @@ class MultisigActionUtils {
     ): action is IMultisigActionChangeSettings => action.type === MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS;
 
     normalizeChangeMembersAction = (action: IMultisigActionChangeMembers): IGukProposalActionChangeMembers => {
-        const { type, currentMembers, ...otherValues } = action;
+        const { type, ...otherValues } = action;
 
-        return { ...otherValues, type: GukProposalActionType.ADD_MEMBERS, currentMembers: currentMembers.length };
+        return { ...otherValues, type: GukProposalActionType.ADD_MEMBERS };
     };
 
     normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {

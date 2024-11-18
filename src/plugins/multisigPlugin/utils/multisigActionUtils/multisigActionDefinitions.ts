@@ -8,7 +8,7 @@ export const defaultAddMembers: IMultisigActionChangeMembers = {
     data: '0x',
     value: '0',
     members: [{ address: '' }],
-    currentMembers: [],
+    currentMembers: 0,
     inputData: {
         function: 'addAddresses',
         contract: 'Multisig',
@@ -30,7 +30,7 @@ export const defaultRemoveMembers: IMultisigActionChangeMembers = {
     data: '0x',
     value: '0',
     members: [],
-    currentMembers: [],
+    currentMembers: 0,
     inputData: {
         function: 'removeAddresses',
         contract: 'Multisig',
