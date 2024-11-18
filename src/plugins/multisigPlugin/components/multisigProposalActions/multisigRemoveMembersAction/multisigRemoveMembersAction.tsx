@@ -51,7 +51,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
         remove: removeMember,
     } = useFieldArray<Record<string, IMultisigRemoveMembersActionFormData>>({
         name: membersFieldName,
-        rules: { minLength: 1 },
+        rules: { required: true, minLength: 1 },
     });
 
     const watchFieldArray = useWatch({ name: membersFieldName });
