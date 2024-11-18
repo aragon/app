@@ -2,7 +2,7 @@ import { generateProposalAction } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { generateSppProposal, generateSppStage } from '../../testUtils';
+import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 
@@ -24,7 +24,8 @@ describe('SppProposalUtils', () => {
 
         it('returns vetoed when any stage is vetoed', () => {
             const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
-            const proposal = generateSppProposal({ settings: { stages } });
+            const settings = generateSppPluginSettings({ stages });
+            const proposal = generateSppProposal({ settings });
             getStageStatusSpy.mockImplementation((_, stage) =>
                 stage.stageIndex === 0 ? ProposalVotingStatus.VETOED : ProposalVotingStatus.ACCEPTED,
             );
@@ -33,7 +34,8 @@ describe('SppProposalUtils', () => {
 
         it('returns rejected when any stage is rejected', () => {
             const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
-            const proposal = generateSppProposal({ settings: { stages: stages } });
+            const settings = generateSppPluginSettings({ stages });
+            const proposal = generateSppProposal({ settings });
             getStageStatusSpy.mockImplementation((_, stage) =>
                 stage.stageIndex === 0 ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.REJECTED,
             );
@@ -42,7 +44,8 @@ describe('SppProposalUtils', () => {
 
         it('returns expired when any stage is rejected', () => {
             const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
-            const proposal = generateSppProposal({ settings: { stages: stages } });
+            const settings = generateSppPluginSettings({ stages });
+            const proposal = generateSppProposal({ settings });
             getStageStatusSpy.mockImplementation((_, stage) =>
                 stage.stageIndex === 0 ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.EXPIRED,
             );
@@ -54,7 +57,7 @@ describe('SppProposalUtils', () => {
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
             const endDate = DateTime.fromISO(now).plus({ hours: 10 });
             const proposal = generateSppProposal({
-                settings: { stages: [generateSppStage()] },
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
                 actions: [{ ...generateProposalAction() }],
             });
@@ -79,7 +82,7 @@ describe('SppProposalUtils', () => {
             const startDate = DateTime.fromISO(now).minus({ days: 1 }).toSeconds();
             const endDate = undefined;
             const proposal = generateSppProposal({
-                settings: { stages: [generateSppStage()] },
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
             });
 
@@ -94,7 +97,7 @@ describe('SppProposalUtils', () => {
             const startDate = DateTime.fromISO(now).minus({ days: 1 }).toSeconds();
             const endDate = DateTime.fromISO(now).plus({ days: 1 });
             const proposal = generateSppProposal({
-                settings: { stages: [generateSppStage()] },
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
             });
 
@@ -110,7 +113,7 @@ describe('SppProposalUtils', () => {
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
             const proposal = generateSppProposal({
-                settings: { stages: [generateSppStage()] },
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
                 actions: [],
             });
@@ -127,7 +130,7 @@ describe('SppProposalUtils', () => {
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
             const proposal = generateSppProposal({
-                settings: { stages: [generateSppStage()] },
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
                 actions: [generateProposalAction()],
             });
@@ -143,7 +146,8 @@ describe('SppProposalUtils', () => {
     describe('getCurrentStage', () => {
         it('returns the current stage', () => {
             const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
-            const proposal = generateSppProposal({ settings: { stages }, stageIndex: 1 });
+            const settings = generateSppPluginSettings({ stages });
+            const proposal = generateSppProposal({ settings, stageIndex: 1 });
             expect(sppProposalUtils.getCurrentStage(proposal)).toBe(stages[1]);
         });
     });
@@ -151,14 +155,16 @@ describe('SppProposalUtils', () => {
     describe('areAllStagesAccepted', () => {
         it('returns true when all stages are accepted', () => {
             const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
-            const proposal = generateSppProposal({ settings: { stages } });
+            const settings = generateSppPluginSettings({ stages });
+            const proposal = generateSppProposal({ settings });
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
             expect(sppProposalUtils.areAllStagesAccepted(proposal)).toBeTruthy();
         });
 
         it('returns false if a stage is not accepted', () => {
             const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
-            const proposal = generateSppProposal({ settings: { stages } });
+            const settings = generateSppPluginSettings({ stages });
+            const proposal = generateSppProposal({ settings });
 
             getStageStatusSpy.mockImplementation((_, stage) =>
                 stage.stageIndex === 0 ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.REJECTED,

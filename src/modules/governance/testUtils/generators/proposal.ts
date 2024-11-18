@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { generateAddressInfo } from '@/shared/testUtils';
+import { generateAddressInfo, generatePluginSettings } from '@/shared/testUtils';
 import type { IProposal } from '../../api/governanceService';
 
 export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
@@ -16,7 +16,7 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     transactionHash: '0x123',
     resources: [],
     network: Network.ARBITRUM_MAINNET,
-    settings: {},
+    settings: generatePluginSettings(),
     executed: { status: false },
     actions: [],
     pluginAddress: '0x123',
