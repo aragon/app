@@ -59,14 +59,18 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     const actionFieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
+    /* Set default values to supportThreshold and minParticipation values as values are reset when deleting an item from the
+    useArrayField causing the useWatch / useFormField to return undefined before unmounting the component */
     const supportThresholdFieldName = `${actionFieldName}.proposedSettings.supportThreshold`;
     const supportThreshold = useWatch<Record<string, ITokenPluginSettings['supportThreshold']>>({
         name: supportThresholdFieldName,
+        defaultValue: 0,
     });
 
     const minParticipationFieldName = `${actionFieldName}.proposedSettings.minParticipation`;
     const minParticipation = useWatch<Record<string, ITokenPluginSettings['minParticipation']>>({
         name: minParticipationFieldName,
+        defaultValue: 0,
     });
 
     const minDurationField = useFormField<ITokenPluginSettings, 'minDuration'>('minDuration', {
