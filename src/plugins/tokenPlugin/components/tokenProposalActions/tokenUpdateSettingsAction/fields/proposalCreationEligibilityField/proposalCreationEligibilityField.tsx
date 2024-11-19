@@ -1,6 +1,6 @@
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { Card, InputNumber, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 
 export interface IProposalCreationEligibilityFieldProps {
@@ -9,18 +9,26 @@ export interface IProposalCreationEligibilityFieldProps {
      */
     tokenSymbol: string;
     /**
-     * The min voting power form field.
+     * The field name of the action to prefix the minVotingPower field with.
      */
-    minVotingPowerField: IUseFormFieldReturn<ITokenPluginSettings, 'minProposerVotingPower'>;
+    actionFieldName: string;
 }
 
 export const ProposalCreationEligibilityField: React.FC<IProposalCreationEligibilityFieldProps> = (props) => {
-    const { tokenSymbol, minVotingPowerField } = props;
-    const { onChange: onMinVotingPowerChange, value: minVotingPowerValue } = minVotingPowerField;
-
-    const handleRadioChange = (value: string) => onMinVotingPowerChange(value === 'members' ? '1' : '0');
+    const { tokenSymbol, actionFieldName } = props;
 
     const { t } = useTranslations();
+
+    const {
+        value: minVotingPowerValue,
+        onChange: onMinVotingPowerChange,
+        ...minVotingPowerField
+    } = useFormField<ITokenPluginSettings, 'minProposerVotingPower'>('minProposerVotingPower', {
+        fieldPrefix: `${actionFieldName}.proposedSettings`,
+        label: t('app.plugins.token.tokenUpdateSettingsAction.minVotingPower.label'),
+    });
+
+    const handleRadioChange = (value: string) => onMinVotingPowerChange(value === 'members' ? '1' : '0');
 
     return (
         <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
@@ -44,13 +52,13 @@ export const ProposalCreationEligibilityField: React.FC<IProposalCreationEligibi
             </RadioGroup>
             {Number(minVotingPowerValue) > 0 && (
                 <InputNumber
-                    {...minVotingPowerField}
                     className="w-full"
                     helpText={t('app.plugins.token.tokenUpdateSettingsAction.minVotingPower.helpText')}
                     placeholder={`≥ 1 ${tokenSymbol}`}
                     prefix="≥"
                     suffix={tokenSymbol}
                     onChange={onMinVotingPowerChange}
+                    {...minVotingPowerField}
                 />
             )}
         </Card>

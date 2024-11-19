@@ -59,8 +59,9 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     const actionFieldName = `actions.[${index}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
-    /* Set default values to supportThreshold and minParticipation values as values are reset when deleting an item from the
-    useArrayField causing the useWatch / useFormField to return undefined before unmounting the component */
+    /* Set default values to supportThreshold, minParticipation and minVotingPower values
+    as the values are reset when deleting an item from the useArrayField causing the useWatch/useFormField
+    to return undefined before unmounting the component */
     const supportThresholdFieldName = `${actionFieldName}.proposedSettings.supportThreshold`;
     const supportThreshold = useWatch<Record<string, ITokenPluginSettings['supportThreshold']>>({
         name: supportThresholdFieldName,
@@ -71,6 +72,12 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     const minParticipation = useWatch<Record<string, ITokenPluginSettings['minParticipation']>>({
         name: minParticipationFieldName,
         defaultValue: 0,
+    });
+
+    const minVotingPowerFieldName = `${actionFieldName}.proposedSettings.minProposerVotingPower`;
+    const minVotingPowerValue = useWatch<Record<string, ITokenPluginSettings['minProposerVotingPower']>>({
+        name: minVotingPowerFieldName,
+        defaultValue: '0',
     });
 
     const minDurationField = useFormField<ITokenPluginSettings, 'minDuration'>('minDuration', {
@@ -94,14 +101,6 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
 
     const votingModeField = useFormField<ITokenPluginSettings, 'votingMode'>('votingMode', {
         fieldPrefix: `${actionFieldName}.proposedSettings`,
-    });
-
-    const { value: minVotingPowerValue, ...minVotingPowerField } = useFormField<
-        ITokenPluginSettings,
-        'minProposerVotingPower'
-    >('minProposerVotingPower', {
-        fieldPrefix: `${actionFieldName}.proposedSettings`,
-        label: t('app.plugins.token.tokenUpdateSettingsAction.minVotingPower.label'),
     });
 
     const handleModeChange = (checked: boolean) =>
@@ -185,13 +184,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
                 checked={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
                 disabled={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
             />
-            <ProposalCreationEligibilityField
-                tokenSymbol={tokenSymbol}
-                minVotingPowerField={{
-                    value: minVotingPowerValue,
-                    ...minVotingPowerField,
-                }}
-            />
+            <ProposalCreationEligibilityField tokenSymbol={tokenSymbol} actionFieldName={actionFieldName} />
         </div>
     );
 };
