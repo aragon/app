@@ -37,6 +37,10 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             suffix="%"
             alert={supportThreshold != null ? supportThresholdAlert : undefined}
             thresholdIndicator={majorityThreshold}
+            tags={[
+                { label: 'Yes', variant: 'primary' },
+                { label: 'No', variant: 'neutral' },
+            ]}
         />
     );
 };

@@ -7,7 +7,9 @@ import {
     InputContainer,
     InputNumber,
     invariant,
+    type ITagProps,
     Progress,
+    Tag,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useId } from 'react';
@@ -45,6 +47,10 @@ export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'valu
      * Threshold indicator for the progress component
      */
     thresholdIndicator?: number;
+    /**
+     * Optional tags to be displayed to the left and right of the progress component. The first tag will be displayed to the left and the second to the right.
+     */
+    tags?: [ITagProps, ITagProps];
 }
 
 export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) => {
@@ -60,6 +66,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
         prefix,
         suffix,
         thresholdIndicator,
+        tags,
         ...otherProps
     } = props;
 
@@ -115,7 +122,12 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                                 {valueLabel}
                             </p>
                         )}
-                        <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
+                        <div className="flex items-center gap-3">
+                            {tags && <Tag {...tags[0]} />}
+                            <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
+                            {tags && <Tag {...tags[1]} />}
+                        </div>
+
                         {totalLabel && (
                             <p className="self-end text-xs font-normal leading-tight text-neutral-500">{totalLabel}</p>
                         )}
