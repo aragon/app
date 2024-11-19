@@ -17,10 +17,8 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
 
     const { t } = useTranslations();
 
-    const supportThresholdNumber = supportThreshold ?? undefined;
-
     const majorityThreshold = 50;
-    const isSupportThresholdMajority = supportThresholdNumber != null && supportThresholdNumber > majorityThreshold;
+    const isSupportThresholdMajority = supportThreshold != null && supportThreshold > majorityThreshold;
 
     const supportThresholdContext = isSupportThresholdMajority ? 'majority' : 'minority';
     const supportThresholdAlert = {
@@ -33,11 +31,11 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             fieldName={supportThresholdFieldName}
             label={t('app.plugins.token.tokenUpdateSettingsAction.supportThreshold.label')}
             helpText={t('app.plugins.token.tokenUpdateSettingsAction.supportThreshold.helpText')}
-            valueLabel={`> ${supportThresholdNumber} %`}
+            valueLabel={`> ${supportThreshold} %`}
             total={100}
             prefix=">"
             suffix="%"
-            alert={supportThresholdNumber != null ? supportThresholdAlert : undefined}
+            alert={supportThreshold != null ? supportThresholdAlert : undefined}
             thresholdIndicator={majorityThreshold}
         />
     );

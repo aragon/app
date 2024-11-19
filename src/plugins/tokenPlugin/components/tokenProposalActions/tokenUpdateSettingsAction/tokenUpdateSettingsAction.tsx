@@ -162,7 +162,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
                     <AdvancedDateInputDuration
                         field={`${actionFieldName}.proposedSettings.minDuration`}
                         label={t('app.plugins.token.tokenUpdateSettingsAction.minDuration.label')}
-                        className="p-0"
+                        className="!p-0"
                         minDuration={{ days: 0, hours: 1, minutes: 0 }}
                     />
                     <AlertCard {...minDurationAlert} />

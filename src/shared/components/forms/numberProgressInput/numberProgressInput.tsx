@@ -94,10 +94,10 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
             className={className}
         >
             <Card className="flex w-full flex-col gap-6 rounded-xl border border-neutral-100 p-4 md:p-6">
-                <div className="flex flex-row items-center justify-between gap-6">
+                <div className="flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                     <InputNumber
                         value={value}
-                        className="max-w-40"
+                        className="w-full md:max-w-40"
                         min={1}
                         max={total}
                         onChange={(value) => onChange(Number(value))}
