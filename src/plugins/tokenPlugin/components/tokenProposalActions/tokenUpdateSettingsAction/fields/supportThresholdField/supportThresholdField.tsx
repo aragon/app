@@ -10,10 +10,14 @@ export interface ISupportThresholdFieldProps {
      * The support threshold value.
      */
     supportThreshold?: number;
+    /**
+     * current support threshold from settings
+     */
+    currentSupportThreshold: number;
 }
 
 export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (props) => {
-    const { supportThreshold, supportThresholdFieldName } = props;
+    const { supportThreshold, supportThresholdFieldName, currentSupportThreshold } = props;
 
     const { t } = useTranslations();
 
@@ -36,7 +40,7 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             prefix=">"
             suffix="%"
             alert={supportThreshold != null ? supportThresholdAlert : undefined}
-            thresholdIndicator={majorityThreshold}
+            thresholdIndicator={currentSupportThreshold}
             tags={[
                 { label: 'Yes', variant: 'primary' },
                 { label: 'No', variant: 'neutral' },

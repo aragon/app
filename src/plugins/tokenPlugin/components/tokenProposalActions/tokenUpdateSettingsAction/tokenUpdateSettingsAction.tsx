@@ -145,6 +145,9 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
             <SupportThresholdField
                 supportThreshold={supportThreshold}
                 supportThresholdFieldName={supportThresholdFieldName}
+                currentSupportThreshold={tokenSettingsUtils.fromRatioToPercentage(
+                    action.meta.settings.supportThreshold,
+                )}
             />
             <MinParticipationField
                 minParticipationFieldName={minParticipationFieldName}

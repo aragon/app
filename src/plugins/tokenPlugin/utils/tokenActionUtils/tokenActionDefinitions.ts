@@ -4,6 +4,7 @@ import {
     type ITokenProposalAction,
     TokenProposalActionType,
 } from '../../types';
+import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
 export const defaultMintAction: ITokenProposalAction = {
     type: TokenProposalActionType.MINT,
@@ -37,7 +38,11 @@ export const defaultUpdateSettings = (settings: ITokenPluginSettings): ITokenAct
     to: '',
     data: '0x',
     value: '0',
-    proposedSettings: settings,
+    proposedSettings: {
+        ...settings,
+        minParticipation: tokenSettingsUtils.fromRatioToPercentage(settings.minParticipation),
+        supportThreshold: tokenSettingsUtils.fromRatioToPercentage(settings.supportThreshold),
+    },
     inputData: {
         function: 'updateVotingSettings',
         contract: '',

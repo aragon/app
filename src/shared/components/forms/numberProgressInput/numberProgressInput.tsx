@@ -100,7 +100,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
             useCustomWrapper={true}
             className={className}
         >
-            <Card className="flex w-full flex-col gap-6 rounded-xl border border-neutral-100 p-4 md:p-6">
+            <Card className="flex w-full flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:p-6">
                 <div className="flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                     <InputNumber
                         value={value}
@@ -113,10 +113,17 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         {...numberField}
                         {...otherProps}
                     />
-                    <div className={classNames('relative flex grow flex-col gap-2', { 'self-end': totalLabel })}>
+                    <div
+                        className={classNames('relative mt-4 flex grow flex-col gap-2 md:mt-0', {
+                            'self-end': totalLabel,
+                        })}
+                    >
                         {valueLabel && (
                             <p
-                                className="absolute -top-6 whitespace-nowrap text-primary-400 transition-all duration-500 ease-in-out"
+                                className={classNames(
+                                    'absolute -top-4 whitespace-nowrap text-xs text-primary-400 transition-all duration-500 ease-in-out',
+                                    { 'ml-12': tags },
+                                )}
                                 style={valueLabelStyle}
                             >
                                 {valueLabel}
