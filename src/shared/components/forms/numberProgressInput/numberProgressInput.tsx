@@ -140,7 +140,13 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         )}
                     </div>
                 </div>
-                {processedAlert && <AlertInline variant={processedAlert.variant} message={processedAlert.message} />}
+                {processedAlert && (
+                    <AlertInline
+                        variant={processedAlert.variant}
+                        message={processedAlert.message}
+                        className="self-center md:self-auto"
+                    />
+                )}
             </Card>
         </InputContainer>
     );
