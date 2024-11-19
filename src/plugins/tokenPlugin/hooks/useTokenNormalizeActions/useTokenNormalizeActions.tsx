@@ -6,7 +6,7 @@ import { tokenActionUtils } from '../../utils/tokenActionUtils';
 export interface IUseTokenNormalizeActionsParams extends INormalizeActionsParams<ITokenPluginSettings> {}
 
 export const useTokenNormalizeActions = (params: IUseTokenNormalizeActionsParams) => {
-    const { actions, plugin } = params;
+    const { actions, settings } = params;
 
     const { t } = useTranslations();
 
@@ -14,8 +14,7 @@ export const useTokenNormalizeActions = (params: IUseTokenNormalizeActionsParams
         if (tokenActionUtils.isTokenMintAction(action)) {
             return tokenActionUtils.normalizeTokenMintAction(action);
         } else if (tokenActionUtils.isChangeSettingsAction(action)) {
-            const params = { action, settings: plugin.settings, t };
-            return tokenActionUtils.normalizeChangeSettingsAction(params);
+            return tokenActionUtils.normalizeChangeSettingsAction({ action, settings, t });
         }
 
         return action;

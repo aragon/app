@@ -1,5 +1,6 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
+import { generatePluginSettings } from '@/shared/testUtils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -56,7 +57,7 @@ describe('<ProposalVotingTerminal /> component', () => {
 
     it('renders the proposal settings', () => {
         const daoId = 'test-id';
-        const settings = { pluginConfig: 'pluginValue' };
+        const settings = generatePluginSettings();
         const parsedSettings = { term: 'plugin-term', definition: 'plugin-value' };
         const proposal = generateProposal({ settings, pluginSubdomain: 'plugin-id' });
 

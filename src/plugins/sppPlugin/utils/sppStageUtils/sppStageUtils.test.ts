@@ -3,7 +3,13 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { generateSppProposal, generateSppStage, generateSppStagePlugin, generateSppSubProposal } from '../../testUtils';
+import {
+    generateSppPluginSettings,
+    generateSppProposal,
+    generateSppStage,
+    generateSppStagePlugin,
+    generateSppSubProposal,
+} from '../../testUtils';
 import { SppProposalType } from '../../types';
 import { sppStageUtils } from './sppStageUtils';
 
@@ -91,7 +97,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
                     generateSppSubProposal({ stageIndex: 1, pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ stageIndex: 1, pluginAddress: 'plugin2', result: false }),
@@ -110,7 +116,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
                     generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
@@ -126,7 +132,7 @@ describe('SppStageUtils', () => {
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO })],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: false })],
             });
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
@@ -144,7 +150,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
                     generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
@@ -163,7 +169,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
                     generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
@@ -184,7 +190,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
                     generateSppSubProposal({ pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ pluginAddress: 'plugin2', result: false }),
@@ -204,7 +210,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [generateSppSubProposal({ pluginAddress: 'plugin3', result: true })],
             });
             expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(0);
@@ -216,7 +222,7 @@ describe('SppStageUtils', () => {
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [generateSppSubProposal({ pluginAddress: 'plugin1' })],
             });
 
@@ -235,7 +241,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
                     generateSppSubProposal({ pluginAddress: 'plugin1', result: true }),
                     generateSppSubProposal({ pluginAddress: 'plugin2', result: true }),
@@ -259,7 +265,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
                     generateSppSubProposal({ pluginAddress: 'plugin1' }),
                     generateSppSubProposal({ pluginAddress: 'plugin2' }),
@@ -287,7 +293,7 @@ describe('SppStageUtils', () => {
                 ],
             });
             const proposal = generateSppProposal({
-                settings: { stages: [stage] },
+                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
                     generateSppSubProposal({ pluginAddress: 'plugin1' }),
                     generateSppSubProposal({ pluginAddress: 'plugin2' }),
@@ -368,7 +374,8 @@ describe('SppStageUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const endDate = DateTime.fromISO(now).plus({ days: 7 });
             const stage = generateSppStage();
-            const proposal = generateSppProposal({ actions: [], settings: { stages: [stage] } });
+            const settings = generateSppPluginSettings({ stages: [stage] });
+            const proposal = generateSppProposal({ actions: [], settings });
             getStageEndDateSpy.mockReturnValue(endDate);
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
@@ -406,7 +413,8 @@ describe('SppStageUtils', () => {
             const endDate = DateTime.fromISO(now).minus({ days: 3 });
             const maxAdvance = DateTime.fromISO(now).minus({ days: 1 });
             const stage = generateSppStage({ stageIndex: 1 });
-            const proposal = generateSppProposal({ stageIndex: 2, settings: { stages: [stage] } });
+            const settings = generateSppPluginSettings({ stages: [stage] });
+            const proposal = generateSppProposal({ stageIndex: 2, settings });
             getStageEndDateSpy.mockReturnValue(endDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(true);
@@ -419,7 +427,8 @@ describe('SppStageUtils', () => {
             const endDate = DateTime.fromISO(now).minus({ days: 3 });
             const maxAdvance = DateTime.fromISO(now).minus({ days: 1 });
             const stage = generateSppStage();
-            const proposal = generateSppProposal({ actions: [], settings: { stages: [stage] } });
+            const settings = generateSppPluginSettings({ stages: [stage] });
+            const proposal = generateSppProposal({ actions: [], settings });
             getStageEndDateSpy.mockReturnValue(endDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(true);

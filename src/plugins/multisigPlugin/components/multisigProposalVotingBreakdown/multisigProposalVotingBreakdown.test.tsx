@@ -1,6 +1,6 @@
 import { ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateMultisigProposal } from '../../testUtils';
+import { generateMultisigPluginSettings, generateMultisigProposal } from '../../testUtils';
 import {
     type IMultisigProposalVotingBreakdownProps,
     MultisigProposalVotingBreakdown,
@@ -22,7 +22,7 @@ describe('<MultisigProposalVotingBreakdown /> component', () => {
     };
     it('correctly displays the breakdown of the multisig proposal', () => {
         const proposal = generateMultisigProposal({
-            settings: { minApprovals: 4, onlyListed: false },
+            settings: generateMultisigPluginSettings({ minApprovals: 4, onlyListed: false }),
             metrics: { totalVotes: 2 },
         });
         render(createTestComponent({ proposal }));

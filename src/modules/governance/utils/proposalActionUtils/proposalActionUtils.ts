@@ -26,7 +26,9 @@ class ProposalActionUtils {
                 pluginId: plugin.subdomain,
             });
 
-            return normalizeFunction != null ? normalizeFunction({ actions: current, daoId: dao.id, plugin }) : current;
+            return normalizeFunction != null
+                ? normalizeFunction({ actions: current, daoId: dao.id, settings: proposal.settings })
+                : current;
         }, proposal.actions);
 
         return normalizedActions.map((action) => {
@@ -42,20 +44,16 @@ class ProposalActionUtils {
 
     normalizeTransferAction = (action: IProposalActionWithdrawToken): IGukProposalActionWithdrawToken => {
         const { amount, token, ...otherValues } = action;
+        const parsedAmount = formatUnits(BigInt(amount), token.decimals);
 
-        return {
-            ...otherValues,
-            type: GukProposalActionType.WITHDRAW_TOKEN,
-            token,
-            amount: formatUnits(BigInt(amount), token.decimals),
-        };
+        return { ...otherValues, type: GukProposalActionType.WITHDRAW_TOKEN, token, amount: parsedAmount };
     };
 
     normalizeUpdateMetaDataAction = (action: IProposalActionUpdateMetadata): IGukProposalActionUpdateMetadata => {
         const { type, proposedMetadata, existingMetadata, ...otherValues } = action;
 
         const normalizeLinks = (links: IResource[]): IProposalActionUpdateMetadataDaoMetadataLink[] =>
-            links.map((link: IResource) => ({ label: link.name, href: link.url }));
+            links.map(({ name, url }) => ({ label: name, href: url }));
 
         return {
             ...otherValues,
