@@ -2,6 +2,7 @@ import type { IProposalAction } from '@/modules/governance/api/governanceService
 import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     addressUtils,
     ProposalActionType as GukProposalActionType,
@@ -11,6 +12,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { TokenMintTokensAction } from '../../components/tokenProposalActions/tokenMintTokensAction';
+import { TokenUpdateSettingsAction } from '../../components/tokenProposalActions/tokenUpdateSettingsAction';
 import {
     TokenProposalActionType,
     type ITokenActionChangeSettings,
@@ -19,7 +21,7 @@ import {
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
-import { defaultMintAction } from './tokenActionDefinitions';
+import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
     /**
@@ -46,28 +48,44 @@ export type IGetTokenActionsResult = IPluginActionComposerData<
 
 class TokenActionUtils {
     getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
-        const { address, name } = plugin.settings.token;
+        const { address } = plugin;
+        const { address: tokenAddress, name } = plugin.settings.token;
 
         return {
             groups: [
                 {
-                    id: address,
+                    id: tokenAddress,
                     name: name,
+                    info: addressUtils.truncateAddress(tokenAddress),
+                    indexData: [tokenAddress],
+                },
+                {
+                    id: address,
+                    name: daoUtils.getPluginName(plugin),
                     info: addressUtils.truncateAddress(address),
                     indexData: [address],
                 },
             ],
             items: [
                 {
-                    id: `${address}-${TokenProposalActionType.MINT}`,
+                    id: `${tokenAddress}-${TokenProposalActionType.MINT}`,
                     name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.MINT}`),
                     icon: IconType.SETTINGS,
-                    groupId: address,
+                    groupId: tokenAddress,
                     meta: plugin,
-                    defaultValue: { ...defaultMintAction, to: address },
+                    defaultValue: { ...defaultMintAction, to: tokenAddress },
+                },
+                {
+                    id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
+                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`),
+                    icon: IconType.SETTINGS,
+                    groupId: address,
+                    defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
+                    meta: plugin,
                 },
             ],
             components: {
+                [TokenProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
                 [TokenProposalActionType.MINT]: TokenMintTokensAction,
             },
         };

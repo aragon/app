@@ -7,8 +7,11 @@ import {
     InputContainer,
     InputNumber,
     invariant,
+    type ITagProps,
     Progress,
+    Tag,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useId } from 'react';
 
 export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'value' | 'alert'> {
@@ -21,17 +24,33 @@ export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'valu
      */
     valueLabel?: string;
     /**
+     * Prefix for the input component.
+     */
+    prefix?: string;
+    /**
+     * Suffix for the input component.
+     */
+    suffix?: string;
+    /**
      * Value used for normalising the value and display it on the progress.
      */
     total: number;
     /**
      * Label displayed below the progress component.
      */
-    totalLabel: string;
+    totalLabel?: string;
     /**
      * Alert displayed below the input component.
      */
     alert?: Pick<IAlertInlineProps, 'message' | 'variant'>;
+    /**
+     * Threshold indicator for the progress component
+     */
+    thresholdIndicator?: number;
+    /**
+     * Optional tags to be displayed to the left and right of the progress component. The first tag will be displayed to the left and the second to the right.
+     */
+    tags?: [ITagProps, ITagProps];
 }
 
 export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) => {
@@ -44,6 +63,10 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
         totalLabel,
         alert: alertProp,
         className,
+        prefix,
+        suffix,
+        thresholdIndicator,
+        tags,
         ...otherProps
     } = props;
 
@@ -78,27 +101,43 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
             className={className}
         >
             <Card className="flex w-full flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:gap-6 md:p-6">
-                <div className="flex flex-col-reverse justify-between gap-6 md:flex-row">
+                <div className="flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                     <InputNumber
                         value={value}
-                        className="md:max-w-40"
+                        className="w-full md:max-w-40"
                         min={1}
                         max={total}
                         onChange={(value) => onChange(Number(value))}
+                        prefix={prefix}
+                        suffix={suffix}
                         {...numberField}
                         {...otherProps}
                     />
-                    <div className="relative mt-4 flex grow flex-col gap-2 md:mt-0 md:self-end">
+                    <div
+                        className={classNames('relative mt-4 flex grow flex-col gap-2 md:mt-0', {
+                            'self-end': totalLabel,
+                        })}
+                    >
                         {valueLabel && (
                             <p
-                                className="absolute -top-6 text-primary-400 transition-all duration-500 ease-in-out"
+                                className={classNames(
+                                    'absolute -top-4 whitespace-nowrap text-xs text-primary-400 transition-all duration-500 ease-in-out',
+                                    { 'ml-12': tags },
+                                )}
                                 style={valueLabelStyle}
                             >
                                 {valueLabel}
                             </p>
                         )}
-                        <Progress value={progressValue} />
-                        <p className="self-end text-xs font-normal leading-tight text-neutral-500">{totalLabel}</p>
+                        <div className="flex items-center gap-3">
+                            {tags && <Tag {...tags[0]} />}
+                            <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
+                            {tags && <Tag {...tags[1]} />}
+                        </div>
+
+                        {totalLabel && (
+                            <p className="self-end text-xs font-normal leading-tight text-neutral-500">{totalLabel}</p>
+                        )}
                     </div>
                 </div>
                 {processedAlert && (
