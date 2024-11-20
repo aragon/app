@@ -170,7 +170,8 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
                         field={`${actionFieldName}.proposedSettings.minDuration`}
                         label={t('app.plugins.token.tokenUpdateSettingsAction.minDuration.label')}
                         className="!p-0"
-                        minDuration={dateUtils.secondsToDaysHoursMinutes(action.meta.settings.minDuration)}
+                        minDuration={{ days: 0, hours: 1, minutes: 0 }}
+                        validateMinDuration={true}
                     />
                     <AlertCard {...minDurationAlert} />
                 </Card>
