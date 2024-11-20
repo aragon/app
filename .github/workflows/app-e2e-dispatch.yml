@@ -1,4 +1,4 @@
-name: App E2E Dispatch
+name: App E2E Dispatch (adjusted)
 
 on:
   pull_request:
