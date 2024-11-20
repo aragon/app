@@ -132,14 +132,20 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                     >
-                        <ProposalActions
-                            actions={normalizedProposalActions}
-                            chainId={chainId}
-                            emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.actions.empty')}
-                        />
-                        {normalizedProposalActions.length > 0 && (
-                            <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
-                        )}
+                        <ProposalActions.Root actionsCount={normalizedProposalActions.length}>
+                            <ProposalActions.Container
+                                emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.actions.empty')}
+                            >
+                                {normalizedProposalActions.map((action, index) => (
+                                    <ProposalActions.Item key={index} action={action} chainId={chainId} />
+                                ))}
+                            </ProposalActions.Container>
+                            <ProposalActions.Footer>
+                                {normalizedProposalActions.length > 0 && (
+                                    <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
+                                )}
+                            </ProposalActions.Footer>
+                        </ProposalActions.Root>
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>
