@@ -1,4 +1,4 @@
-name: App E2E Dispatch (adjusted)
+name: App E2E Dispatch
 
 on:
   pull_request:
@@ -43,5 +43,3 @@ jobs:
                    "branch": "'"$BRANCH"'"
                  }
                }'
-
-#test
