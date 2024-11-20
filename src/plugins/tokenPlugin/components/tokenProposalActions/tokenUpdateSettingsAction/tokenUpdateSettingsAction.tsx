@@ -14,6 +14,7 @@ import { encodeFunctionData, parseUnits } from 'viem';
 import { MinParticipationField } from './fields/minParticipationField';
 import { ProposalCreationEligibilityField } from './fields/proposalCreationEligibilityField';
 import { SupportThresholdField } from './fields/supportThresholdField';
+import { dateUtils } from '@/shared/utils/dateUtils';
 
 export interface ITokenUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
@@ -80,18 +81,17 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         defaultValue: '0',
     });
 
-    const minDurationField = useFormField<ITokenPluginSettings, 'minDuration'>('minDuration', {
-        fieldPrefix: `${actionFieldName}.proposedSettings`,
-        label: t('app.plugins.token.tokenUpdateSettingsAction.minDuration.label'),
+    const minDurationFieldName = `${actionFieldName}.proposedSettings.minDuration`;
+    const minDuration = useWatch<Record<string, ITokenPluginSettings['minDuration']>>({
+        name: minDurationFieldName,
+        defaultValue: 3600,
     });
 
     /* For the transaction we need the value in seconds, but for the UI it is nicer to use the days/hours/mins object
     When the user does not change the minDuration it will already be in seconds. However once this value is changed
     it will be an object. Therefore we need to check if the value is an object and convert it to seconds if needed */
     const minDurationInSeconds =
-        typeof minDurationField.value === 'object'
-            ? Duration.fromObject(minDurationField.value).as('seconds')
-            : (minDurationField.value ?? 3600);
+        typeof minDuration === 'object' ? Duration.fromObject(minDuration).as('seconds') : (minDuration ?? 3600);
 
     const minDurationAlert = {
         message: t('app.plugins.token.tokenUpdateSettingsAction.minDuration.alert.message'),
@@ -129,6 +129,10 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
             `${actionFieldName}.inputData.parameters[0].value`,
             `[${votingModeField.value}, ${supportThreshold}, ${minParticipation}, ${minDurationInSeconds}, ${minVotingPowerValue}]`,
         );
+        setValue(
+            `${actionFieldName}.proposedSettings.minDuration`,
+            dateUtils.secondsToDaysHoursMinutes(minDurationInSeconds),
+        );
     }, [
         actionFieldName,
         minDurationInSeconds,
@@ -159,14 +163,14 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
                 id="minDuration"
                 useCustomWrapper={true}
                 helpText={t('app.plugins.token.tokenUpdateSettingsAction.minDuration.helpText')}
-                {...minDurationField}
+                label={t('app.plugins.token.tokenUpdateSettingsAction.minDuration.label')}
             >
                 <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
                     <AdvancedDateInputDuration
                         field={`${actionFieldName}.proposedSettings.minDuration`}
                         label={t('app.plugins.token.tokenUpdateSettingsAction.minDuration.label')}
                         className="!p-0"
-                        minDuration={{ days: 0, hours: 1, minutes: 0 }}
+                        minDuration={dateUtils.secondsToDaysHoursMinutes(action.meta.settings.minDuration)}
                     />
                     <AlertCard {...minDurationAlert} />
                 </Card>
