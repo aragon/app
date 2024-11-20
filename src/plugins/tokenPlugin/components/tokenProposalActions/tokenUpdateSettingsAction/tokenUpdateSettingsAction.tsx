@@ -6,6 +6,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { AlertCard, Card, InputContainer, Switch, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { Duration } from 'luxon';
 import { useEffect } from 'react';
@@ -14,7 +15,6 @@ import { encodeFunctionData, parseUnits } from 'viem';
 import { MinParticipationField } from './fields/minParticipationField';
 import { ProposalCreationEligibilityField } from './fields/proposalCreationEligibilityField';
 import { SupportThresholdField } from './fields/supportThresholdField';
-import { dateUtils } from '@/shared/utils/dateUtils';
 
 export interface ITokenUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
