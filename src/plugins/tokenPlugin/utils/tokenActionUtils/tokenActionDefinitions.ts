@@ -1,3 +1,4 @@
+import { formatUnits } from 'viem';
 import {
     type ITokenActionChangeSettings,
     type ITokenPluginSettings,
@@ -42,6 +43,7 @@ export const defaultUpdateSettings = (settings: ITokenPluginSettings): ITokenAct
         ...settings,
         minParticipation: tokenSettingsUtils.fromRatioToPercentage(settings.minParticipation),
         supportThreshold: tokenSettingsUtils.fromRatioToPercentage(settings.supportThreshold),
+        minProposerVotingPower: formatUnits(BigInt(settings.minProposerVotingPower), settings.token.decimals),
     },
     inputData: {
         function: 'updateVotingSettings',

@@ -52,13 +52,14 @@ export const ProposalCreationEligibilityField: React.FC<IProposalCreationEligibi
             </RadioGroup>
             {Number(minVotingPowerValue) > 0 && (
                 <InputNumber
+                    {...minVotingPowerField}
                     className="w-full"
                     helpText={t('app.plugins.token.tokenUpdateSettingsAction.minVotingPower.helpText')}
                     placeholder={`≥ 1 ${tokenSymbol}`}
                     prefix="≥"
                     suffix={tokenSymbol}
                     onChange={onMinVotingPowerChange}
-                    {...minVotingPowerField}
+                    value={minVotingPowerValue}
                 />
             )}
         </Card>
