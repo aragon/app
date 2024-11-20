@@ -91,7 +91,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     When the user does not change the minDuration it will already be in seconds. However once this value is changed
     it will be an object. Therefore we need to check if the value is an object and convert it to seconds if needed */
     const minDurationInSeconds =
-        typeof minDuration === 'object' ? Duration.fromObject(minDuration).as('seconds') : (minDuration ?? 3600);
+        typeof minDuration === 'object' ? Duration.fromObject(minDuration).as('seconds') : minDuration;
 
     const minDurationAlert = {
         message: t('app.plugins.token.tokenUpdateSettingsAction.minDuration.alert.message'),
