@@ -20,7 +20,7 @@ export const CreateDaoFormDebug: React.FC<ICreateDaoFormDebugProps> = () => {
         label: t('app.createDao.createDaoForm.debug.factoryAddress.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
         trimOnBlur: true,
-        defaultValue: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
+        defaultValue: '0x23b2070d5f8E7B55644D86a0603e72A53393f539',
     });
 
     const adminPluginRepoField = useFormField<ICreateDaoFormData, 'adminPluginRepo'>('adminPluginRepo', {
