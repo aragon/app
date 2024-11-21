@@ -1,15 +1,16 @@
 export const sppPluginSetupAbi = [
+    { name: 'pluginMetadata', type: 'bytes' },
     {
         name: 'stages',
         type: 'tuple[]',
         components: [
             {
-                name: 'plugins',
+                name: 'bodies',
                 type: 'tuple[]',
                 components: [
-                    { name: 'pluginAddress', type: 'address' },
+                    { name: 'addr', type: 'address' },
                     { name: 'isManual', type: 'bool' },
-                    { name: 'allowedBody', type: 'address' },
+                    { name: 'tryAdvance', type: 'bool' },
                     { name: 'resultType', type: 'uint8' },
                 ],
             },
@@ -20,7 +21,28 @@ export const sppPluginSetupAbi = [
             { name: 'vetoThreshold', type: 'uint16' },
         ],
     },
-    { name: 'pluginMetadata', type: 'bytes' },
+    {
+        name: 'rules',
+        type: 'tuple[]',
+        components: [
+            {
+                name: 'id',
+                type: 'uint8',
+            },
+            {
+                name: 'op',
+                type: 'uint8',
+            },
+            {
+                name: 'value',
+                type: 'uint240',
+            },
+            {
+                name: 'permissionId',
+                type: 'bytes32',
+            },
+        ],
+    },
     {
         name: 'targetConfig',
         type: 'tuple',
