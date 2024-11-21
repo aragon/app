@@ -14,7 +14,6 @@ jobs:
   dispatch:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Load secrets
       - name: Load secrets
         id: load-secrets
         uses: 1password/load-secrets-action@v2.0.0
@@ -24,11 +23,9 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION_BACKUPS_TEMP }}
           GH_APP_QA: op://apikeys_production/gh-app-qa/credential
 
-      # Step 2: Extract branch name
       - name: Extract branch name
         run: echo "BRANCH=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
 
-      # Step 3: Trigger E2E tests in app-qa repository
       - name: Trigger E2E tests in app-qa repository
         env:
           GH_APP_QA: ${{ steps.load-secrets.outputs.GH_APP_QA }}
