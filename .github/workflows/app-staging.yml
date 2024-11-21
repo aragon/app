@@ -11,7 +11,7 @@ env:
   NODE_VERSION: 20
   NODE_CACHE: "yarn"
   APP_ENV: "staging"
-  APP_DOMAIN: "stg-app-next.vercel.app"
+  APP_DOMAIN: "stg.app-next.aragon.org"
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 

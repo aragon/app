@@ -14,7 +14,7 @@ env:
   NODE_VERSION: 20
   NODE_CACHE: "yarn"
   APP_ENV: ${{ (github.ref == 'refs/heads/main' && 'production') || 'development' }}
-  APP_DOMAIN: ${{ (github.ref == 'refs/heads/main' && 'prod-app-next.vercel.app') || 'dev-app-next.vercel.app'  }}
+  APP_DOMAIN: ${{ (github.ref == 'refs/heads/main' && 'app-next.aragon.org') || 'dev.app-next.aragon.org'  }}
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
