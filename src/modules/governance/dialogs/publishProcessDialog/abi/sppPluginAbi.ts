@@ -6,48 +6,59 @@ export const sppPluginAbi = [
             {
                 name: '_stages',
                 type: 'tuple[]',
+                internalType: 'struct StagedProposalProcessor.Stage[]',
                 components: [
                     {
-                        name: 'bodies',
+                        name: 'plugins',
                         type: 'tuple[]',
+                        internalType: 'struct StagedProposalProcessor.Plugin[]',
                         components: [
                             {
-                                name: 'addr',
+                                name: 'pluginAddress',
                                 type: 'address',
+                                internalType: 'address',
                             },
                             {
                                 name: 'isManual',
                                 type: 'bool',
+                                internalType: 'bool',
                             },
                             {
-                                name: 'tryAdvance',
-                                type: 'bool',
+                                name: 'allowedBody',
+                                type: 'address',
+                                internalType: 'address',
                             },
                             {
                                 name: 'resultType',
                                 type: 'uint8',
+                                internalType: 'enum StagedProposalProcessor.ResultType',
                             },
                         ],
                     },
                     {
                         name: 'maxAdvance',
                         type: 'uint64',
+                        internalType: 'uint64',
                     },
                     {
                         name: 'minAdvance',
                         type: 'uint64',
+                        internalType: 'uint64',
                     },
                     {
                         name: 'voteDuration',
                         type: 'uint64',
+                        internalType: 'uint64',
                     },
                     {
                         name: 'approvalThreshold',
                         type: 'uint16',
+                        internalType: 'uint16',
                     },
                     {
                         name: 'vetoThreshold',
                         type: 'uint16',
+                        internalType: 'uint16',
                     },
                 ],
             },

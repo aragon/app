@@ -89,17 +89,17 @@ export interface IPluginSetupData {
 class PrepareProcessDialogUtils {
     private sppRepo: IPluginRepoInfo = {
         address: '0xE67b8E026d190876704292442A38163Ce6945d6b',
-        version: { release: 1, build: 4 },
+        version: { release: 1, build: 2 },
     };
 
     private multisigRepo: IPluginRepoInfo = {
         address: '0xA0901B5BC6e04F14a9D0d094653E047644586DdE',
-        version: { release: 1, build: 5 },
+        version: { release: 1, build: 4 },
     };
 
     private tokenRepo: IPluginRepoInfo = {
         address: '0x6241ad0D3f162028d2e0000f1A878DBc4F5c4aD0',
-        version: { release: 1, build: 5 },
+        version: { release: 1, build: 4 },
     };
 
     private globalExecutor: Hex = '0x67744773b8C29aaDc8a11010C09306c0029219Ff';
@@ -201,7 +201,7 @@ class PrepareProcessDialogUtils {
 
     private buildPrepareSppInstallData = (metadataCid: string, daoAddress: Hex) => {
         const sppTarget = { target: daoAddress, operation: 0 };
-        const pluginSettingsData = encodeAbiParameters(sppPluginSetupAbi, [metadataCid as Hex, [], [], sppTarget]);
+        const pluginSettingsData = encodeAbiParameters(sppPluginSetupAbi, [[], metadataCid as Hex, sppTarget]);
 
         const transactionData = this.buildPrepareInstallationData(this.sppRepo, pluginSettingsData, daoAddress);
 
