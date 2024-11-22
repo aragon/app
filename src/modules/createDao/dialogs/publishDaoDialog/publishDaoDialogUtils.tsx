@@ -91,7 +91,7 @@ class PublishDaoDialogUtils {
         const pluginSettingsParams = {
             pluginSetupRef: {
                 pluginSetupRepo: adminPluginRepo as Hex,
-                versionTag: { release: 1, build: 3 },
+                versionTag: { release: 1, build: 6 },
             },
             data: pluginSettingsData,
         };
