@@ -145,14 +145,6 @@ class PublishProcessDialogUtils {
             })
             .filter((action) => action != null);
 
-        const grantCreateProposalAction = this.buildGrantWithConditionPermissionTransaction({
-            where: pluginAddresses[0], // SPP address
-            who: this.anyAddress,
-            what: this.permissionIds.createProposalPermission,
-            condition: this.alwaysTrueCondition,
-            to: daoAddress,
-        });
-
         const revokeMultiTargetPermissionAction = this.buildRevokePermissionTransaction({
             where: daoAddress,
             who: prepareProcessDialogUtils.pspRepoAddress,
@@ -165,7 +157,6 @@ class PublishProcessDialogUtils {
             ...applyInstallationActions,
             updateStagesAction,
             ...multisigPermissionActions.flat(),
-            grantCreateProposalAction,
             revokeMultiTargetPermissionAction,
         ];
     };
@@ -176,17 +167,6 @@ class PublishProcessDialogUtils {
             abi: daoAbi,
             functionName: 'grant',
             args: [where, who, keccak256(toBytes(what))],
-        });
-
-        return { to, data: transactionData, value: '0' };
-    };
-
-    private buildGrantWithConditionPermissionTransaction = (params: IUpdatePermissionWithConditionParams) => {
-        const { where, who, what, to, condition } = params;
-        const transactionData = encodeFunctionData({
-            abi: daoAbi,
-            functionName: 'grantWithCondition',
-            args: [where, who, keccak256(toBytes(what)), condition],
         });
 
         return { to, data: transactionData, value: '0' };
@@ -233,13 +213,13 @@ class PublishProcessDialogUtils {
         const [sppAddress, ...bodyAddresses] = pluginAddresses;
 
         const processedStages = stages.map((stage) => {
-            const plugins = stage.bodies.map(() => {
+            const bodies = stage.bodies.map(() => {
                 const pluginAddress = bodyAddresses.shift()!;
 
                 return {
-                    pluginAddress,
+                    addr: pluginAddress,
                     isManual: false,
-                    allowedBody: pluginAddress,
+                    tryAdvance: true,
                     resultType: stage.type === 'normal' ? SppProposalType.APPROVAL : SppProposalType.VETO,
                 };
             });
@@ -252,7 +232,7 @@ class PublishProcessDialogUtils {
                     : undefined;
 
             return {
-                plugins,
+                bodies,
                 minAdvance: stage.earlyStageAdvance ? BigInt(0) : dateUtils.durationToSeconds(stage.votingPeriod),
                 maxAdvance: maxAdvance ?? this.defaultMaxAdvance,
                 voteDuration,
