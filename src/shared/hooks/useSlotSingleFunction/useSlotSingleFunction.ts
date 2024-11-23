@@ -15,7 +15,8 @@ export interface IUseSlotSingleFunctionParams<TParams> {
     params: TParams;
 }
 
-export const useSlotSingleFunction = <TResult = unknown, TParams = unknown>(
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+export const useSlotSingleFunction = <TParams = unknown, TResult = unknown>(
     params: IUseSlotSingleFunctionParams<TParams>,
 ) => {
     const { params: functionParams, slotId, pluginId } = params;

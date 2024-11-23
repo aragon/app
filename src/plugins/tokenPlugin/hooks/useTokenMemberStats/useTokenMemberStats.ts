@@ -1,25 +1,12 @@
 import { useMember, type IMember } from '@/modules/governance/api/governanceService';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IUsePluginMemberStatsParams } from '@/modules/governance/types';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
-interface IUseTokenMemberStatsParams {
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
-    /**
-     * Address of the DAO member.
-     */
-    address: string;
-    /**
-     * Plugin to display the stats for.
-     */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
-}
+export interface IUseTokenMemberStatsParams extends IUsePluginMemberStatsParams<ITokenPluginSettings> {}
 
 const isTokenMember = (member?: IMember): member is ITokenMember =>
     member != null &&

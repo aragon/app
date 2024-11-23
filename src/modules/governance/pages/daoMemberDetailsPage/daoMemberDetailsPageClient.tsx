@@ -25,6 +25,7 @@ import { useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { VoteList } from '../../components/voteList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import type { IUsePluginMemberStatsParams } from '../../types';
 
 export interface IDaoMemberDetailsPageClientProps {
     /**
@@ -56,8 +57,8 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
-    const memberStatsParams = { daoId, address, plugin: dao?.plugins[0] };
-    const pluginStats = useSlotSingleFunction<IPageHeaderStat[]>({
+    const memberStatsParams = { daoId, address, plugin: dao!.plugins[0] };
+    const pluginStats = useSlotSingleFunction<IUsePluginMemberStatsParams, IPageHeaderStat[]>({
         params: memberStatsParams,
         slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
         pluginId: dao?.plugins[0]?.subdomain ?? '',

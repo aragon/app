@@ -28,7 +28,7 @@ import {
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
-import { useProposal } from '../../api/governanceService';
+import { type IProposal, useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
@@ -58,8 +58,8 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
 
-    const proposalStatus = useSlotSingleFunction<ProposalStatus>({
-        params: proposal,
+    const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
+        params: proposal!,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginId: proposal?.pluginSubdomain ?? '',
     })!;

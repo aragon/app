@@ -12,7 +12,10 @@ describe('usePinJson action', () => {
         const body = { key: 'value' };
         const expectedBody = JSON.stringify({ pinataContent: body });
         const expectedOptions = {
-            headers: { Authorization: expect.stringContaining('Bearer'), 'Content-Type': 'application/json' },
+            headers: {
+                Authorization: expect.stringContaining('Bearer') as unknown,
+                'Content-Type': 'application/json',
+            },
             method: 'POST',
         };
         await pinJsonAction({ body });

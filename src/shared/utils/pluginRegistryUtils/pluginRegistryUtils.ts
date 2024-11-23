@@ -102,7 +102,7 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getSlotFunction = <TParams, TResult>(
+    getSlotFunction = <TParams = unknown, TResult = unknown>(
         params: IGetSlotFunctionParams,
     ): PluginFunction<TParams, TResult> | undefined => {
         const { slotId, pluginId } = params;
