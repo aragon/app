@@ -1,2 +1,2 @@
 export { PluginTabComponent } from './pluginTabComponent';
-export * from './pluginTabComponent.api';
+export type * from './pluginTabComponent.api';

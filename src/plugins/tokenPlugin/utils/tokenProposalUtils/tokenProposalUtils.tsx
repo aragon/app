@@ -20,7 +20,7 @@ class TokenProposalUtils {
         const isExecutable =
             ((approvalReached && now >= endDate) || (isEarlyExecution && approvalReachedEarly)) && !isSignalingProposal;
 
-        if (proposal.executed.status === true) {
+        if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;
         }
 

@@ -31,7 +31,7 @@ export const useTokenMemberStats = (params: IUseTokenMemberStatsParams): IPageHe
     const { t } = useTranslations();
 
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId, pluginAddress: plugin?.address };
+    const memberQueryParams = { daoId, pluginAddress: plugin.address };
     const { data: member } = useMember({ urlParams: memberUrlParams, queryParams: memberQueryParams });
 
     if (!isTokenMember(member)) {

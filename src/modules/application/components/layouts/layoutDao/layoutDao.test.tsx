@@ -1,6 +1,6 @@
 import { daoOptions } from '@/shared/api/daoService';
 import { testLogger } from '@/test/utils';
-import * as ReactQuery from '@tanstack/react-query';
+import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';

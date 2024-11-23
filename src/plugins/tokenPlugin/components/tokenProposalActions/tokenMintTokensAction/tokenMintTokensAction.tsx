@@ -56,7 +56,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
     });
 
     const { symbol: tokenSymbol, decimals: tokenDecimals } = action.meta.settings.token;
-    const parsedAmount = parseUnits(amountField?.value ?? '0', tokenDecimals);
+    const parsedAmount = parseUnits(amountField.value ?? '0', tokenDecimals);
 
     useEffect(() => {
         const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;

@@ -5,7 +5,7 @@ import { generateDao, generateReactQueryResultError, generateReactQueryResultSuc
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { GukModulesProvider, IconType, addressUtils, clipboardUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
-import * as GovUiKit from '@tanstack/react-query';
+import type * as GovUiKit from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';

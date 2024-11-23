@@ -1,4 +1,4 @@
-import * as ReactQuery from '@tanstack/react-query';
+import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { CreateProposalPage, type ICreateProposalPageProps } from './createProposalPage';

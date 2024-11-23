@@ -18,7 +18,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const { setValue, trigger } = useFormContext();
 
     const { days = 0, hours = 0, minutes = 0 } = minDuration ?? {};
-    const defaultValue = (minTime ?? DateTime.now()).plus({ days, hours, minutes });
+    const defaultValue = minTime.plus({ days, hours, minutes });
 
     const validateFixedTime = (value: IDateFixed) =>
         dateUtils.validateFixedTime({ value, minTime, minDuration: validateMinDuration ? minDuration : undefined });

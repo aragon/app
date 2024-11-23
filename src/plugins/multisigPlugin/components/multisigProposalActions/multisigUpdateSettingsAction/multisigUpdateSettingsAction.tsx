@@ -1,4 +1,4 @@
-import { useMemberList, type IProposalAction } from '@/modules/governance/api/governanceService';
+import { useMemberList } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
@@ -10,8 +10,7 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 
-export interface IMultisigUpdateSettingsActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IMultisigUpdateSettingsActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 const updateMultisigSettingsAbi = {
     type: 'function',
@@ -98,7 +97,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
                 helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.helpText')}
                 className="w-full"
                 onValueChange={handleRadioChange}
-                value={onlyListedFieldValue === true ? 'members' : 'any'}
+                value={onlyListedFieldValue ? 'members' : 'any'}
                 {...onlyListedField}
             >
                 <RadioCard

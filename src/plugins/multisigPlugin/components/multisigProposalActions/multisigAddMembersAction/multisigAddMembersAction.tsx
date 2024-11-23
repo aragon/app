@@ -1,4 +1,3 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -14,8 +13,7 @@ import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import { MultisigAddMembersActionItem } from './multisigAddMembersActionItem';
 
-export interface IMultisigAddMembersActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IMultisigAddMembersActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 export interface IMultisigAddMembersActionFormData {
     /**
@@ -54,7 +52,7 @@ export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> 
         name: membersFieldName,
     });
     const controlledMembersField = useMemo(
-        () => membersField.map((field, index) => ({ ...field, ...watchMembersField?.[index] })),
+        () => membersField.map((field, index) => ({ ...field, ...watchMembersField[index] })),
         [membersField, watchMembersField],
     );
 

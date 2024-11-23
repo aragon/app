@@ -137,7 +137,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
             >
                 {Object.keys(groupedItems).map((groupId) => (
                     <AutocompleteInputGroup key={groupId} group={getGroupById(groupId)}>
-                        {groupedItems[groupId]?.map((item) => (
+                        {groupedItems[groupId].map((item) => (
                             <AutocompleteInputItem
                                 key={item.id}
                                 isActive={activeIndex === item.index}

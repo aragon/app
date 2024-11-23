@@ -1,7 +1,7 @@
 import { assetListOptions } from '@/modules/finance/api/financeService';
 import { daoOptions } from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import * as ReactQuery from '@tanstack/react-query';
+import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';

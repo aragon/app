@@ -14,7 +14,7 @@ class MultisigProposalUtils {
 
         const isExecutable = approvalReached && now <= endDate && !isSignalingProposal;
 
-        if (proposal.executed.status === true) {
+        if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;
         }
 

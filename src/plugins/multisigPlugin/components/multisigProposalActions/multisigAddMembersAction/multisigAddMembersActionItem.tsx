@@ -40,7 +40,7 @@ export interface IMultisigAddMembersActionItemProps {
 const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean, isMember?: boolean) => {
     const errorNamespace = 'app.plugins.multisig.multisigAddMembersAction.addressInput.error';
 
-    if (!addressUtils.isAddress(member?.address)) {
+    if (!addressUtils.isAddress(member.address)) {
         return `${errorNamespace}.invalid`;
     } else if (isMember) {
         return `${errorNamespace}.alreadyMember`;
@@ -57,7 +57,7 @@ export const MultisigAddMembersActionItem: React.FC<IMultisigAddMembersActionIte
     const { t } = useTranslations();
     const { trigger } = useFormContext();
 
-    const memberFieldName = `${fieldName}.[${index}]`;
+    const memberFieldName = `${fieldName}.[${index.toString()}]`;
     const {
         value,
         onChange: onAddressChange,

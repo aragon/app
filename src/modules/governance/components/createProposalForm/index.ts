@@ -11,7 +11,7 @@ export const CreateProposalForm = {
 };
 
 export * from './createProposalFormActions';
-export * from './createProposalFormDefinitions';
+export type * from './createProposalFormDefinitions';
 export * from './createProposalFormMetadata';
 export * from './createProposalFormProvider';
 export * from './createProposalFormSettings';

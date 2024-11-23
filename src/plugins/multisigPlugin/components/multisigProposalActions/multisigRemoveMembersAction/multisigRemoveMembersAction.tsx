@@ -1,4 +1,3 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -15,8 +14,7 @@ import { encodeFunctionData } from 'viem';
 import { MultisigRemoveMembersActionDialog } from './multisigRemoveMembersActionDialog';
 import { MultisigRemoveMembersActionItem } from './multisigRemoveMembersActionItem';
 
-export interface IMultisigRemoveMembersActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IMultisigRemoveMembersActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 export interface IMultisigRemoveMembersActionFormData {
     /**

@@ -1,4 +1,5 @@
 import { type Translations } from '@/shared/utils/translationsUtils';
+import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { Providers, type IProvidersProps } from './providers';
@@ -18,7 +19,7 @@ jest.mock('@/shared/components/dialogProvider', () => ({
 jest.mock('@/shared/components/dialogRoot', () => ({ DialogRoot: () => <div data-testid="dialog-root-mock" /> }));
 
 jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual('@aragon/gov-ui-kit'),
+    ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
     GukModulesProvider: (props: { children: ReactNode }) => (
         <div data-testid="guk-modules-context">{props.children}</div>
     ),

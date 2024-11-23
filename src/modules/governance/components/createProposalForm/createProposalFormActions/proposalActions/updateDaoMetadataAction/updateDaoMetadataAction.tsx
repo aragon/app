@@ -20,8 +20,7 @@ export interface IUpdateDaoMetadataAction extends Omit<IProposalActionUpdateMeta
     proposedMetadata: ICreateDaoFormMetadataData;
 }
 
-export interface IUpdateDaoMetadaActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IUpdateDaoMetadaActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 const setMetadataAbi = {
     type: 'function',

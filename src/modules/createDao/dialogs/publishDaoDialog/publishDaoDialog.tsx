@@ -1,6 +1,6 @@
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
+import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
 import {
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
@@ -44,8 +44,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     const { name: networkName } = networkDefinitions[network];
 
     const { t } = useTranslations();
-
-    const setIsBlocked = useSetIsBlocked();
+    const { setIsBlocked } = useBlockNavigationContext();
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishDaoStep | TransactionDialogStep>({
         initialActiveStep: PublishDaoStep.PIN_METADATA,
@@ -61,7 +60,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         [pinJson, values],
     );
 
-    const handlePrepareTransaction = async () => {
+    const handlePrepareTransaction = () => {
         invariant(pinJsonData != null, 'PublishDaoDialog: metadata not pinned for prepare transaction step.');
         const { IpfsHash: metadataCid } = pinJsonData;
 
@@ -71,7 +70,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     const getDaoLink = (txReceipt: TransactionReceipt) => {
         setIsBlocked(false);
 
-        const daoAddress = publishDaoDialogUtils.getDaoAddress(txReceipt);
+        const daoAddress = publishDaoDialogUtils.getDaoAddress(txReceipt)!;
         const daoId = `${network}-${daoAddress}`;
 
         return `/dao/${daoId}`;

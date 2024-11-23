@@ -43,11 +43,11 @@ export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalPro
         return (
             <Page.Error
                 error={JSON.parse(JSON.stringify(error))}
-                actionLink={`/dao/${props.params?.id}/proposals/`}
+                actionLink={`/dao/${props.params.id}/proposals/`}
                 notFoundNamespace="app.application.layoutWizard"
             />
         );
     }
 
-    return <LayoutWizard name={wizardName} exitPath={`/dao/${props.params?.id}/proposals/` as Route} {...props} />;
+    return <LayoutWizard name={wizardName} exitPath={`/dao/${props.params.id}/proposals/` as Route} {...props} />;
 };
