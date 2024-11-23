@@ -90,7 +90,7 @@ describe('<TransactionDialog /> component', () => {
         const activeStepIndex = 0;
         const stepper = generateStepperResult({ steps, activeStep, activeStepIndex });
         render(createTestComponent({ stepper }));
-        await waitFor(() => expect(stepAction).toHaveBeenCalledWith({ onError: expect.any(Function) }));
+        await waitFor(() => expect(stepAction).toHaveBeenCalledWith({ onError: expect.any(Function) as unknown }));
     });
 
     it('does not trigger the step action when its auto property is set to false', async () => {
@@ -126,29 +126,32 @@ describe('<TransactionDialog /> component', () => {
                 id: TransactionDialogStep.PREPARE,
                 order: 2,
                 meta: expect.objectContaining({
-                    label: expect.stringMatching(/PREPARE.label/),
-                    errorLabel: expect.stringMatching(/PREPARE.errorLabel/),
+                    label: expect.stringMatching(/PREPARE.label/) as unknown,
+                    errorLabel: expect.stringMatching(/PREPARE.errorLabel/) as unknown,
                     auto: true,
-                }),
+                }) as unknown,
             },
             {
                 id: TransactionDialogStep.APPROVE,
                 order: 3,
                 meta: expect.objectContaining({
-                    label: expect.stringMatching(/APPROVE.label/),
-                    errorLabel: expect.stringMatching(/APPROVE.errorLabel/),
+                    label: expect.stringMatching(/APPROVE.label/) as unknown,
+                    errorLabel: expect.stringMatching(/APPROVE.errorLabel/) as unknown,
                     auto: false,
-                    addon: { label: expect.stringMatching(/APPROVE.addon/), icon: IconType.BLOCKCHAIN_WALLET },
-                }),
+                    addon: {
+                        label: expect.stringMatching(/APPROVE.addon/) as unknown,
+                        icon: IconType.BLOCKCHAIN_WALLET,
+                    },
+                }) as unknown,
             },
             {
                 id: TransactionDialogStep.CONFIRM,
                 order: 4,
                 meta: expect.objectContaining({
-                    label: expect.stringMatching(/CONFIRM.label/),
-                    errorLabel: expect.stringMatching(/CONFIRM.errorLabel/),
+                    label: expect.stringMatching(/CONFIRM.label/) as unknown,
+                    errorLabel: expect.stringMatching(/CONFIRM.errorLabel/) as unknown,
                     auto: false,
-                }),
+                }) as unknown,
             },
         ];
         const updateSteps = jest.fn();
@@ -159,12 +162,12 @@ describe('<TransactionDialog /> component', () => {
 
     it('prepare transaction step triggers the prepareTransaction callback', async () => {
         const prepareTransaction = jest.fn();
-        const updateSteps = jest.fn();
+        const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
         useMutationSpy.mockReturnValue({ mutate: prepareTransaction } as unknown as ReactQuery.UseMutationResult);
         const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
         render(createTestComponent({ prepareTransaction, stepper }));
         const { action: prepareStepAction } = updateSteps.mock.calls[0][0][0].meta;
-        await act(() => prepareStepAction());
+        act(() => prepareStepAction?.({ onError: jest.fn() }));
         await waitFor(() => expect(prepareTransaction).toHaveBeenCalled());
     });
 
@@ -173,37 +176,37 @@ describe('<TransactionDialog /> component', () => {
         const sendTransaction = jest.fn();
         useMutationSpy.mockReturnValue({ data: transaction } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
-        const updateSteps = jest.fn();
+        const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
         const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
         render(createTestComponent({ stepper }));
         const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
-        act(() => approveStepAction());
+        act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(sendTransaction).toHaveBeenCalledWith(expect.objectContaining(transaction), expect.anything());
     });
 
-    it('does not send the transaction when transaction is not set at approve step', async () => {
+    it('does not send the transaction when transaction is not set at approve step', () => {
         const sendTransaction = jest.fn();
         useMutationSpy.mockReturnValue({ data: null } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
-        const updateSteps = jest.fn();
+        const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
         const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
         render(createTestComponent({ stepper }));
         const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
-        await act(() => approveStepAction());
+        act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(sendTransaction).not.toHaveBeenCalled();
     });
 
-    it('confirmation action step retries sending the transaction and updates active step', async () => {
+    it('confirmation action step retries sending the transaction and updates active step', () => {
         const transaction = { from: '0x', data: '0x' };
         const sendTransaction = jest.fn();
         useMutationSpy.mockReturnValue({ data: transaction } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
-        const updateSteps = jest.fn();
+        const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
         const updateActiveStep = jest.fn();
         const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps, updateActiveStep });
         render(createTestComponent({ stepper }));
         const { action: confirmStepAction } = updateSteps.mock.calls[0][0][2].meta;
-        await act(() => confirmStepAction());
+        act(() => confirmStepAction?.({ onError: jest.fn() }));
         expect(sendTransaction).toHaveBeenCalledWith(expect.objectContaining(transaction), expect.anything());
         expect(updateActiveStep).toHaveBeenCalledWith(TransactionDialogStep.APPROVE);
     });
@@ -215,12 +218,12 @@ describe('<TransactionDialog /> component', () => {
             data: transactionHash,
         } as unknown as Wagmi.UseSendTransactionReturnType);
         render(createTestComponent());
-        const updateSteps = jest.fn();
+        const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
         const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
         render(createTestComponent({ stepper }));
         const confirmStep = updateSteps.mock.calls[0][0][2];
         expect(confirmStep.meta.addon).toEqual({
-            label: expect.stringMatching(/CONFIRM.addon/),
+            label: expect.stringMatching(/CONFIRM.addon/) as unknown,
             href: `https://polygonscan.com/tx/${transactionHash}`,
         });
     });
@@ -236,7 +239,7 @@ describe('<TransactionDialog /> component', () => {
                 status,
                 fetchStatus,
             } as Wagmi.UseWaitForTransactionReceiptReturnType);
-            const updateSteps = jest.fn();
+            const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
             const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
             render(createTestComponent({ stepper }));
             const confirmStep = updateSteps.mock.calls[0][0][2];

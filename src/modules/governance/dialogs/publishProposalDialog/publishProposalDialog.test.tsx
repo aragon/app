@@ -1,6 +1,10 @@
 import * as usePinJson from '@/shared/api/ipfsService/mutations';
 import { type IDialogLocation } from '@/shared/components/dialogProvider';
-import { type ITransactionDialogStep, TransactionDialog } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogProps,
+    type ITransactionDialogStep,
+    TransactionDialog,
+} from '@/shared/components/transactionDialog';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
     generateDaoPlugin,
@@ -96,8 +100,8 @@ describe('<PublishProposalDialog /> component', () => {
         render(createTestComponent({ location }));
         expect(TransactionDialog).toHaveBeenCalledWith(
             expect.objectContaining({
-                title: expect.stringMatching(/publishProposalDialog.title/),
-                description: expect.stringMatching(/publishProposalDialog.description/),
+                title: expect.stringMatching(/publishProposalDialog.title/) as unknown,
+                description: expect.stringMatching(/publishProposalDialog.description/) as unknown,
             }),
             undefined,
         );
@@ -138,8 +142,10 @@ describe('<PublishProposalDialog /> component', () => {
         const location = generateDialogLocation({ values });
         render(createTestComponent({ location }));
 
-        const { customSteps } = (TransactionDialog as jest.Mock).mock.calls[0][0];
-        const pinMetadataStep: ITransactionDialogStep<PublishProposalStep> = customSteps[0];
+        const { customSteps } = (
+            TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
+        ).mock.calls[0][0];
+        const pinMetadataStep: ITransactionDialogStep<PublishProposalStep> = customSteps![0];
         expect(pinMetadataStep.meta.label).toMatch(/publishProposalDialog.step.PIN_METADATA.label/);
         expect(pinMetadataStep.meta.errorLabel).toMatch(/publishProposalDialog.step.PIN_METADATA.errorLabel/);
         expect(pinMetadataStep.meta.state).toEqual('idle');
@@ -158,7 +164,9 @@ describe('<PublishProposalDialog /> component', () => {
         const location = generateDialogLocation({ values });
         render(createTestComponent({ location }));
 
-        const { prepareTransaction } = (TransactionDialog as jest.Mock).mock.calls[0][0];
+        const { prepareTransaction } = (
+            TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
+        ).mock.calls[0][0];
         await act(() => prepareTransaction());
 
         expect(buildTransactionSpy).toHaveBeenCalledWith({
@@ -178,8 +186,10 @@ describe('<PublishProposalDialog /> component', () => {
         const location = generateDialogLocation({ daoId, pluginAddress });
         render(createTestComponent({ location }));
 
-        const { successLink } = (TransactionDialog as jest.Mock).mock.calls[0][0];
-        const proposalLink = successLink.href(txReceipt);
+        const { successLink } = (
+            TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
+        ).mock.calls[0][0];
+        const proposalLink = (successLink.href as (receipt: unknown) => string)(txReceipt);
         expect(proposalLink).toEqual(
             `/dao/${daoId}/proposals/${txReceipt.transactionHash}-${pluginAddress}-${proposalId}`,
         );
