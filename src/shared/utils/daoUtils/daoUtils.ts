@@ -9,7 +9,7 @@ export interface IGenerateDaoMetadataParams {
     /**
      * Path parameters of DAO pages.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
 export interface IGetDaoPluginsParams {
@@ -34,7 +34,7 @@ export interface IGetDaoPluginsParams {
 
 class DaoUtils {
     generateMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
-        const { id } = params;
+        const { id } = await params;
 
         const getDaoParams = { id };
         const dao = await daoService.getDao({ urlParams: getDaoParams });

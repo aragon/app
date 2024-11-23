@@ -1,13 +1,14 @@
-import { assetListOptions } from '@/modules/finance/api/financeService/queries/useAssetList';
+import { assetListOptions } from '@/modules/finance/api/financeService';
 import { daoOptions } from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { DaoAssetsPage, daoAssetsCount, type IDaoAssetsPageProps } from './daoAssetsPage';
 
 jest.mock('@tanstack/react-query', () => ({
-    ...jest.requireActual('@tanstack/react-query'),
+    ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
         <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
             {props.children}
@@ -34,7 +35,11 @@ describe('<DaoAssetsPage /> component', () => {
     });
 
     const createTestComponent = async (props?: Partial<IDaoAssetsPageProps>) => {
-        const completeProps: IDaoAssetsPageProps = { params: { id: 'test-slug' }, ...props };
+        const completeProps: IDaoAssetsPageProps = {
+            params: Promise.resolve({ id: 'test-slug' }),
+            ...props,
+        };
+
         const Component = await DaoAssetsPage(completeProps);
 
         return Component;
@@ -51,7 +56,7 @@ describe('<DaoAssetsPage /> component', () => {
         const dao = generateDao({ id });
         fetchQuerySpy.mockResolvedValue(dao);
 
-        render(await createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
 
         const expectedParams = { address: dao.address, network: dao.network, pageSize: daoAssetsCount };

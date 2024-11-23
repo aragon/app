@@ -39,7 +39,7 @@ describe('<LayoutDao /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: { id: 'test-dao' },
+            params: Promise.resolve({ id: 'test-dao' }),
             ...props,
         };
 
@@ -56,7 +56,7 @@ describe('<LayoutDao /> component', () => {
 
     it('prefetches the DAO from the given slug', async () => {
         const params = { id: 'my-dao' };
-        render(await createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
     });
 
@@ -77,9 +77,9 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('renders error with a link to explore page on fetch DAO error', async () => {
-        const daoId = 'dao-id';
+        const params = Promise.resolve({ id: 'daoId' });
         fetchQuerySpy.mockRejectedValue('error');
-        render(await createTestComponent({ params: { id: daoId } }));
+        render(await createTestComponent({ params }));
         const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/`);

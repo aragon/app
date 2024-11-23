@@ -2,6 +2,7 @@ import { DaoList } from '@/modules/explore/components/daoList';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { addressUtils, clipboardUtils, DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
@@ -9,7 +10,7 @@ import { generateMember, generateMemberMetrics } from '../../testUtils';
 import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual('@aragon/gov-ui-kit'),
+    ...jest.requireActual<typeof ReactQuery>('@aragon/gov-ui-kit'),
     MemberAvatar: (props: { src: string }) => <div data-testid="avatar-mock" data-src={props.src} />,
 }));
 
@@ -151,7 +152,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                     queryParams: { pageSize, excludeDaoId },
                 },
             }),
-            {},
+            undefined,
         );
     });
 

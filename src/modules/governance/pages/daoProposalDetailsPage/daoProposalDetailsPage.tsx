@@ -8,12 +8,12 @@ export interface IDaoProposalDetailsPageProps {
     /**
      * DAO member page parameters.
      */
-    params: IDaoProposalPageParams;
+    params: Promise<IDaoProposalPageParams>;
 }
 
 export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = async (props) => {
     const { params } = props;
-    const { id, proposalId } = params;
+    const { id, proposalId } = await params;
 
     const queryClient = new QueryClient();
 

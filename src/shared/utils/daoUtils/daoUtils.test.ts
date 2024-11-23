@@ -25,7 +25,7 @@ describe('dao utils', () => {
             const dao = generateDao({ name: 'My DAO', description: 'Description' });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await daoUtils.generateMetadata({ params: { id } });
+            const metadata = await daoUtils.generateMetadata({ params: Promise.resolve({ id }) });
             expect(metadata.title).toEqual(dao.name);
             expect(metadata.description).toEqual(dao.description);
         });
@@ -36,7 +36,7 @@ describe('dao utils', () => {
             getDaoSpy.mockResolvedValue(dao);
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
-            const metadata = await daoUtils.generateMetadata({ params: { id: 'test' } });
+            const metadata = await daoUtils.generateMetadata({ params: Promise.resolve({ id: 'test' }) });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
             expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
         });
@@ -45,7 +45,7 @@ describe('dao utils', () => {
             const dao = generateDao({ avatar: undefined });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await daoUtils.generateMetadata({ params: { id: 'test' } });
+            const metadata = await daoUtils.generateMetadata({ params: Promise.resolve({ id: 'test' }) });
             expect(metadata.openGraph?.images).toBeUndefined();
         });
     });

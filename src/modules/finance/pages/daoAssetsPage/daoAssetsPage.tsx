@@ -9,14 +9,14 @@ export interface IDaoAssetsPageProps {
     /**
      * DAO page parameters.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
 export const daoAssetsCount = 6;
 
 export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
     const { params } = props;
-    const id = params.id;
+    const { id } = await params;
 
     const queryClient = new QueryClient();
 
@@ -30,7 +30,7 @@ export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoAssetsPageClient id={params.id} initialParams={assetsParams} />
+            <DaoAssetsPageClient id={id} initialParams={assetsParams} />
         </Page.Container>
     );
 };

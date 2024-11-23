@@ -99,7 +99,7 @@ describe('<PublishProposalDialog /> component', () => {
                 title: expect.stringMatching(/publishProposalDialog.title/),
                 description: expect.stringMatching(/publishProposalDialog.description/),
             }),
-            {},
+            undefined,
         );
     });
 

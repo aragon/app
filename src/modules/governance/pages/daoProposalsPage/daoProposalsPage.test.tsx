@@ -2,6 +2,7 @@ import { daoOptions } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -9,7 +10,7 @@ import { proposalListOptions } from '../../api/governanceService';
 import { DaoProposalsPage, daoProposalsCount, type IDaoProposalsPageProps } from './daoProposalsPage';
 
 jest.mock('@tanstack/react-query', () => ({
-    ...jest.requireActual('@tanstack/react-query'),
+    ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
         <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
             {props.children}
@@ -40,7 +41,7 @@ describe('<DaoProposalsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoProposalsPageProps>) => {
         const completeProps: IDaoProposalsPageProps = {
-            params: { id: 'dao-id' },
+            params: Promise.resolve({ id: 'dao-id' }),
             ...props,
         };
         const Component = await DaoProposalsPage(completeProps);
@@ -55,7 +56,7 @@ describe('<DaoProposalsPage /> component', () => {
         getDaoPluginsSpy.mockReturnValue([bodyPlugin]);
 
         const params = { id: 'my-dao' };
-        render(await createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
 
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.PROCESS });

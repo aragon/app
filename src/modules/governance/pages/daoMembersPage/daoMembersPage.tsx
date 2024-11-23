@@ -10,22 +10,23 @@ export interface IDaoMembersPageProps {
     /**
      * DAO page parameters.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
 export const daoMembersCount = 9;
 
 export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     const { params } = props;
+    const { id: daoId } = await params;
 
     const queryClient = new QueryClient();
 
-    const daoUrlParams = { id: params.id };
+    const daoUrlParams = { id: daoId };
     const dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
 
     const { address: bodyPluginAddress } = daoUtils.getDaoPlugins(dao, { type: PluginType.BODY })![0];
 
-    const memberListQueryParams = { daoId: params.id, pluginAddress: bodyPluginAddress, pageSize: daoMembersCount };
+    const memberListQueryParams = { daoId, pluginAddress: bodyPluginAddress, pageSize: daoMembersCount };
     const memberListParams = { queryParams: memberListQueryParams };
     await queryClient.prefetchInfiniteQuery(memberListOptions({ queryParams: memberListQueryParams }));
 
