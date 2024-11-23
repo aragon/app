@@ -31,7 +31,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
 
     const { setValue } = useFormContext();
 
-    const fieldName = `actions.[${index}]`;
+    const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     const {

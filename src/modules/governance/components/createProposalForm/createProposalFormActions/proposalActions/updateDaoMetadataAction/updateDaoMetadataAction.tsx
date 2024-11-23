@@ -36,7 +36,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { addPrepareAction } = useCreateProposalFormContext();
 
-    const fieldName = `actions.[${index}]`;
+    const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
     const prepareAction = useCallback(

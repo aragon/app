@@ -2,15 +2,15 @@ import {
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
-import * as viem from 'viem';
+import * as Viem from 'viem';
 import { formatUnits } from 'viem';
 import { proposalActionUtils } from './proposalActionUtils';
 
 // Needed to spy formatUnits usage
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual('viem') }));
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('proposalActionUtils', () => {
-    const formatUnitsSpy = jest.spyOn(viem, 'formatUnits');
+    const formatUnitsSpy = jest.spyOn(Viem, 'formatUnits');
 
     afterEach(() => {
         formatUnitsSpy.mockReset();

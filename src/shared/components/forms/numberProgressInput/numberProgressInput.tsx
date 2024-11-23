@@ -88,7 +88,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
     const progressValue = (value * 100) / total;
 
     const valueLabelLeft = valueLabel ? Math.max(progressValue, valueLabel.length * 0.6) : 0;
-    const valueLabelStyle = { left: `${valueLabelLeft}%`, transform: 'translateX(-50%)' };
+    const valueLabelStyle = { left: `${valueLabelLeft.toString()}%`, transform: 'translateX(-50%)' };
 
     const processedAlert = alertProp ?? alert;
 

@@ -1,12 +1,13 @@
 import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsInfo, type IDaoSettingsInfoProps } from './daoSettingsInfo';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual('@aragon/gov-ui-kit'),
+    ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
 }));
 

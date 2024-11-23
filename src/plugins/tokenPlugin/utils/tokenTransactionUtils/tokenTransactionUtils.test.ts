@@ -4,7 +4,7 @@ import * as Viem from 'viem';
 import { tokenPluginAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual('viem') }));
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('tokenTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');

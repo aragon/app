@@ -73,7 +73,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
         format: DateFormat.YEAR_MONTH_DAY,
     });
 
-    const [value, unit] = formattedLatestActivity?.split(' ') ?? [];
+    const [value, unit] = formattedLatestActivity?.split(' ') ?? [undefined, undefined];
 
     const suffixLabel = t('app.governance.daoMemberDetailsPage.header.stat.latestActivityUnit', { unit: unit });
 

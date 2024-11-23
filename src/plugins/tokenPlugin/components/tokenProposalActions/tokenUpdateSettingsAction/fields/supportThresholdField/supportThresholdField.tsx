@@ -9,7 +9,7 @@ export interface ISupportThresholdFieldProps {
     /**
      * The support threshold value.
      */
-    supportThreshold?: number;
+    supportThreshold: number;
     /**
      * current support threshold from settings
      */
@@ -21,8 +21,7 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
 
     const { t } = useTranslations();
 
-    const majorityThreshold = 50;
-    const isSupportThresholdMajority = supportThreshold != null && supportThreshold > majorityThreshold;
+    const isSupportThresholdMajority = supportThreshold > 50;
 
     const supportThresholdContext = isSupportThresholdMajority ? 'majority' : 'minority';
     const supportThresholdAlert = {
@@ -35,11 +34,11 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             fieldName={supportThresholdFieldName}
             label={t('app.plugins.token.tokenUpdateSettingsAction.supportThreshold.label')}
             helpText={t('app.plugins.token.tokenUpdateSettingsAction.supportThreshold.helpText')}
-            valueLabel={`> ${supportThreshold} %`}
+            valueLabel={`> ${supportThreshold.toString()} %`}
             total={100}
             prefix=">"
             suffix="%"
-            alert={supportThreshold != null ? supportThresholdAlert : undefined}
+            alert={supportThresholdAlert}
             thresholdIndicator={currentSupportThreshold}
             tags={[
                 { label: 'Yes', variant: 'primary' },

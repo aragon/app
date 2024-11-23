@@ -24,7 +24,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
 
     const { t } = useTranslations();
 
-    const nameFieldName = `${name}.${index}.name`;
+    const nameFieldName = `${name}.${index.toString()}.name`;
     const nameField = useFormField<ResourcesInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
         label: t('app.shared.resourcesInput.item.labelInput.title'),
         rules: { required: true },
@@ -32,7 +32,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
         trimOnBlur: true,
     });
 
-    const urlFieldName = `${name}.${index}.url`;
+    const urlFieldName = `${name}.${index.toString()}.url`;
     const urlField = useFormField<ResourcesInputItemBaseForm, typeof urlFieldName>(urlFieldName, {
         label: t('app.shared.resourcesInput.item.linkInput.title'),
         defaultValue: '',

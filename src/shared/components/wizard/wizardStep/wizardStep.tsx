@@ -36,14 +36,14 @@ const getValidationError = <TFormFields extends FieldValues = FieldValues>(error
           : 'invalid';
 };
 
-export const WizardStep = <TFormFields extends FieldValues = FieldValues>(props: IWizardStepProps) => {
+export const WizardStep = (props: IWizardStepProps) => {
     const { title, description, id, hidden, meta, order, children, className, ...otherProps } = props;
 
     const { submitLabel, activeStep, hasNext, hasPrevious, previousStep, registerStep, unregisterStep } =
         useWizardContext();
 
     const { t } = useTranslations();
-    const { formState } = useFormContext<TFormFields>();
+    const { formState } = useFormContext();
     const { isSubmitted, errors } = formState;
 
     const validationError = getValidationError(errors);

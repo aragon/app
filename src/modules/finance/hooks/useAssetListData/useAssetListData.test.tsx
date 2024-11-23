@@ -13,7 +13,7 @@ import * as financeService from '../../api/financeService';
 
 jest.mock('../../api/financeService', () => ({
     __esModule: true,
-    ...jest.requireActual('../../api/financeService'),
+    ...jest.requireActual<typeof financeService>('../../api/financeService'),
 }));
 
 describe('useAssetListData hook', () => {

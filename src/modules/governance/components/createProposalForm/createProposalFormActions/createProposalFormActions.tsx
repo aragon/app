@@ -46,7 +46,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     });
 
     // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
-    const watchFieldArray = useWatch<Record<string, IProposalAction[]>>({ name: 'actions' });
+    const watchFieldArray = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
     const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();

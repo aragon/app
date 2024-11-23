@@ -20,7 +20,7 @@ export interface IBlockNavigationContextProviderProps {
     children: ReactNode;
 }
 
-const blockNavigationContext = createContext<IBlockNavigationContext | null>(null);
+const blockNavigationContext = createContext<IBlockNavigationContext>({ isBlocked: false, setIsBlocked: () => null });
 
 export const BlockNavigationContextProvider: React.FC<IBlockNavigationContextProviderProps> = (props) => {
     const { children } = props;
@@ -32,14 +32,8 @@ export const BlockNavigationContextProvider: React.FC<IBlockNavigationContextPro
     return <blockNavigationContext.Provider value={contextValue}>{children}</blockNavigationContext.Provider>;
 };
 
-export const useBlockNavigationContext = () => {
+export const useBlockNavigationContext = (): IBlockNavigationContext => {
     const values = useContext(blockNavigationContext);
-
-    if (values == null) {
-        throw new Error(
-            'useBlockNavigationContext: hook must be used inside a BlockNavigationContextProvider to work properly.',
-        );
-    }
 
     return values;
 };

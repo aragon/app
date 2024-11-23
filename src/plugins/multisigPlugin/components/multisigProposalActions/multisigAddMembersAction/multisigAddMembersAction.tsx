@@ -36,7 +36,7 @@ export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
 
-    const actionFieldName = `actions.[${index}]`;
+    const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     const membersFieldName: `${string}.members` = `${actionFieldName}.members`;

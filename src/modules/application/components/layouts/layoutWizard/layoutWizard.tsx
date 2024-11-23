@@ -40,7 +40,7 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
     } catch (error: unknown) {
         return (
             <Page.Error
-                error={JSON.parse(JSON.stringify(error))}
+                error={JSON.parse(JSON.stringify(error)) as unknown}
                 actionLink="/"
                 notFoundNamespace="app.application.layoutWizard"
             />

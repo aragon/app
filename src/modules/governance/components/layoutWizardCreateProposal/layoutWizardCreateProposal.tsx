@@ -42,7 +42,7 @@ export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalPro
     } catch (error: unknown) {
         return (
             <Page.Error
-                error={JSON.parse(JSON.stringify(error))}
+                error={JSON.parse(JSON.stringify(error)) as unknown}
                 actionLink={`/dao/${props.params.id}/proposals/`}
                 notFoundNamespace="app.application.layoutWizard"
             />

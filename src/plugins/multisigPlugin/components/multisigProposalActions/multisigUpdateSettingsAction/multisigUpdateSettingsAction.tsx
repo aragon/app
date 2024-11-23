@@ -36,7 +36,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const { t } = useTranslations();
     const { setValue } = useFormContext();
 
-    const actionFieldName = `actions.[${index}]`;
+    const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     // Set default values to minimumApproval and onlyListed values as values are reset when deleting an item from the
@@ -77,7 +77,10 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
         const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
 
         setValue(`${actionFieldName}.data`, newData);
-        setValue(`${actionFieldName}.inputData.parameters[0].value`, `[${onlyListedFieldValue}, ${minimumApproval}]`);
+        setValue(
+            `${actionFieldName}.inputData.parameters[0].value`,
+            `[${onlyListedFieldValue.toString()}, ${minimumApproval.toString()}]`,
+        );
     }, [setValue, actionFieldName, onlyListedFieldValue, minimumApproval]);
 
     return (

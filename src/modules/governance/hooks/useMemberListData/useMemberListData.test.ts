@@ -13,7 +13,7 @@ import { useMemberListData } from './useMemberListData';
 // Needed to spy usage of useMemberList hook
 jest.mock('../../api/governanceService', () => ({
     __esModule: true,
-    ...jest.requireActual('../../api/governanceService'),
+    ...jest.requireActual<typeof governanceService>('../../api/governanceService'),
 }));
 
 describe('useMemberListData hook', () => {

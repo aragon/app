@@ -26,7 +26,7 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
     } catch (error: unknown) {
         return (
             <Page.Error
-                error={JSON.parse(JSON.stringify(error))}
+                error={JSON.parse(JSON.stringify(error)) as unknown}
                 actionLink={`/dao/${daoId}/members`}
                 notFoundNamespace="app.governance.daoMemberDetailsPage"
             />
