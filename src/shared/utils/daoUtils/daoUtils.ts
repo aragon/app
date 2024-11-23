@@ -1,7 +1,7 @@
 import { daoService, type IDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { PluginType, type IDaoPageParams } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { type Metadata } from 'next';
+import { type Metadata } from 'next/types';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 

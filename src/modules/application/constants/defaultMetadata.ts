@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata } from 'next/types';
 
 export const defaultMetadata: Metadata = {
     title: 'Aragon App, DAO creation and management platform',
