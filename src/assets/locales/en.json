@@ -415,7 +415,8 @@
           },
           "proposal": "Proposal",
           "readLess": "Read less",
-          "readMore": "Read more"
+          "readMore": "Read more",
+          "voting": "Voting"
         },
         "notFound": {
           "action": "Explore proposals",
