@@ -531,8 +531,8 @@
           "membersCount": "{{count}} addresses"
         },
         "adminVotingTerminal": {
-          "description": "Proposals created through the admin plugin are executed immediately.",
-          "title": "Admin"
+          "description": "Proposals created by admins do not require governance in order to pass.",
+          "title": "Automatic execution"
         }
       },
       "multisig": {
