@@ -6,7 +6,6 @@ describe('<PageSection /> component', () => {
     const createTestComponent = (props?: Partial<IPageSectionProps>, context?: Partial<IPageContext>) => {
         const completeProps: IPageSectionProps = {
             title: 'test-title',
-            children: 'test',
             ...props,
         };
 
