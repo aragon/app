@@ -41,10 +41,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     });
 
     return (
-        <ProposalVoting.Container
-            title={t('app.governance.proposalVotingTerminal.title')}
-            description={t('app.governance.proposalVotingTerminal.description')}
-        >
+        <ProposalVoting.Container>
             <ProposalVoting.Stage
                 status={proposalStatusToVotingStatus[status]}
                 startDate={proposal.startDate * 1000}

@@ -472,10 +472,6 @@
         },
         "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
       },
-      "proposalVotingTerminal": {
-        "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
-        "title": "Voting"
-      },
       "publishProposalDialog": {
         "button": {
           "submit": "Publish proposal",
@@ -650,10 +646,6 @@
             "advanced": "Proposal advanced",
             "vote": "Vote on proposal"
           }
-        },
-        "sppVotingTerminal": {
-          "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
-          "title": "Voting"
         }
       },
       "token": {
