@@ -89,7 +89,7 @@ export interface IPluginSetupData {
 class PrepareProcessDialogUtils {
     private sppRepo: IPluginRepoInfo = {
         address: '0xE67b8E026d190876704292442A38163Ce6945d6b',
-        version: { release: 1, build: 5 },
+        version: { release: 1, build: 6 },
     };
 
     private multisigRepo: IPluginRepoInfo = {
