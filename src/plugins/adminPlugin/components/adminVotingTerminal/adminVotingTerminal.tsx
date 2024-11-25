@@ -9,6 +9,7 @@ export const AdminVotingTerminal: React.FC = () => {
             heading={t('app.plugins.admin.adminVotingTerminal.title')}
             description={t('app.plugins.admin.adminVotingTerminal.description')}
             objectIllustration={{ object: 'USERS' }}
+            isStacked={false}
         />
     );
 };
