@@ -529,6 +529,10 @@
         "adminMemberInfo": {
           "admins": "Admins",
           "membersCount": "{{count}} addresses"
+        },
+        "adminVotingTerminal": {
+          "description": "Proposals created through the admin plugin are executed immediately.",
+          "title": "Admin"
         }
       },
       "multisig": {

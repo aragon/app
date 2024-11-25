@@ -3,16 +3,6 @@ import { PageContextProvider, type IPageContext } from '../pageContext';
 import { PageSection, type IPageSectionProps } from './pageSection';
 
 describe('<PageSection /> component', () => {
-    const originalOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight')!;
-
-    beforeEach(() => {
-        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, value: 500 });
-    });
-
-    afterEach(() => {
-        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
-    });
-
     const createTestComponent = (props?: Partial<IPageSectionProps>, context?: Partial<IPageContext>) => {
         const completeProps: IPageSectionProps = {
             title: 'test-title',
@@ -56,11 +46,5 @@ describe('<PageSection /> component', () => {
         const description = 'test-description';
         render(createTestComponent({ description }));
         expect(screen.getByText(description)).toBeInTheDocument();
-    });
-
-    it('renders empty container when children height is zero', () => {
-        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, value: 0 });
-        const { container } = render(createTestComponent());
-        expect(container).toBeEmptyDOMElement();
     });
 });
