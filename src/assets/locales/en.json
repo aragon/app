@@ -413,9 +413,11 @@
             "empty": "Proposal has no actions.",
             "header": "Actions"
           },
-          "proposal": "Proposal",
-          "readLess": "Read less",
-          "readMore": "Read more",
+          "description": {
+            "header": "Proposal",
+            "readLess": "Read less",
+            "readMore": "Read more"
+          },
           "voting": "Voting"
         },
         "notFound": {
