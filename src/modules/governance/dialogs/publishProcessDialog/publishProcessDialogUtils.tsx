@@ -238,6 +238,8 @@ class PublishProcessDialogUtils {
                 voteDuration,
                 approvalThreshold: stage.type === 'normal' ? stage.requiredApprovals : 0,
                 vetoThreshold: stage.type === 'normal' ? 0 : stage.requiredApprovals,
+                cancelable: false,
+                editable: false,
             };
         });
 
