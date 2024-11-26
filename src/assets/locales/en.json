@@ -727,6 +727,7 @@
         "tokenSubmitVote": {
           "buttons": {
             "cancel": "Cancel",
+            "changeVote": "Change vote",
             "default": "Vote on proposal",
             "submit": "Submit vote"
           },

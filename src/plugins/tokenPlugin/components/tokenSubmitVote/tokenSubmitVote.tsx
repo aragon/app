@@ -1,10 +1,11 @@
 import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
+import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Card, RadioCard, RadioGroup, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { type ITokenProposal, VoteOption } from '../../types';
+import { DaoTokenVotingMode, type ITokenProposal, VoteOption } from '../../types';
 
 export interface ITokenSubmitVoteProps {
     /**
@@ -46,6 +47,8 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         open(GovernanceDialogs.VOTE, { params });
     };
 
+    const voted = useVotedStatus({ proposal });
+
     const onCancel = () => {
         setSelectedOption('');
         setShowOptions(false);
@@ -53,10 +56,22 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-4 pt-4">
-            {!showOptions && (
+            {!showOptions && !voted && (
                 <Button className="w-fit" size="md" onClick={() => setShowOptions(true)}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
+            )}
+            {!showOptions && voted && (
+                <>
+                    <Button className="w-fit" size="md">
+                        {t('app.plugins.token.tokenSubmitVote.buttons.alreadyVoted')}
+                    </Button>
+                    {proposal.settings.votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT && (
+                        <Button className="w-fit" size="md" onClick={() => setShowOptions(true)}>
+                            {t('app.plugins.token.tokenSubmitVote.buttons.changeVote')}
+                        </Button>
+                    )}
+                </>
             )}
             {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
@@ -69,9 +84,24 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                         value={selectedOption}
                         onValueChange={setSelectedOption}
                     >
-                        <RadioCard label={yesLabel} description="" value={VoteOption.YES.toString()} />
-                        <RadioCard label={abstainLabel} description="" value={VoteOption.ABSTAIN.toString()} />
-                        <RadioCard label={noLabel} description="" value={VoteOption.NO.toString()} />
+                        <RadioCard
+                            label={yesLabel}
+                            description=""
+                            tag={voted ? { variant: 'info', label: 'Current' } : undefined}
+                            value={VoteOption.YES.toString()}
+                        />
+                        <RadioCard
+                            label={abstainLabel}
+                            description=""
+                            tag={voted ? { variant: 'info', label: 'Current' } : undefined}
+                            value={VoteOption.ABSTAIN.toString()}
+                        />
+                        <RadioCard
+                            label={noLabel}
+                            description=""
+                            tag={voted ? { variant: 'info', label: 'Current' } : undefined}
+                            value={VoteOption.NO.toString()}
+                        />
                     </RadioGroup>
                 </Card>
             )}
