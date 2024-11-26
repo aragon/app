@@ -78,5 +78,5 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         );
     }
 
-    return <Button className="w-full md:w-fit" {...buttonConfig} />;
+    return <Button className="w-full md:w-fit" size="md" {...buttonConfig} />;
 };

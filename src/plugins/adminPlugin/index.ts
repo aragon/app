@@ -3,6 +3,7 @@ import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AdminGovernanceInfo } from './components/adminGovernanceInfo';
 import { AdminMemberInfo } from './components/adminMemberInfo';
+import { AdminVotingTerminal } from './components/adminVotingTerminal';
 import { plugin } from './constants/plugin';
 import { useAdminGovernanceSettings } from './hooks/useAdminGovernanceSettings';
 import { adminProposalUtils } from './utils/adminProposalUtils';
@@ -17,7 +18,7 @@ export const initialiseAdminPlugin = () => {
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL,
             pluginId: plugin.id,
-            component: () => null,
+            component: AdminVotingTerminal,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,

@@ -111,35 +111,43 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             <Page.Content>
                 <Page.Main>
                     {description && (
-                        <Page.Section title={t('app.governance.daoProposalDetailsPage.main.proposal')}>
+                        <Page.Section title={t('app.governance.daoProposalDetailsPage.main.description.header')}>
                             <CardCollapsible
-                                buttonLabelClosed={t('app.governance.daoProposalDetailsPage.main.readMore')}
-                                buttonLabelOpened={t('app.governance.daoProposalDetailsPage.main.readLess')}
+                                buttonLabelClosed={t('app.governance.daoProposalDetailsPage.main.description.readMore')}
+                                buttonLabelOpened={t('app.governance.daoProposalDetailsPage.main.description.readLess')}
                             >
                                 <DocumentParser document={description} />
                             </CardCollapsible>
                         </Page.Section>
                     )}
-                    <PluginSingleComponent
-                        slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
-                        pluginId={proposal.pluginSubdomain}
-                        proposal={proposal}
-                        status={proposalStatus}
-                        daoId={daoId}
-                        Fallback={ProposalVotingTerminal}
-                    />
+                    <Page.Section title={t('app.governance.daoProposalDetailsPage.main.voting')}>
+                        <PluginSingleComponent
+                            slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
+                            pluginId={proposal.pluginSubdomain}
+                            proposal={proposal}
+                            status={proposalStatus}
+                            daoId={daoId}
+                            Fallback={ProposalVotingTerminal}
+                        />
+                    </Page.Section>
                     <Page.Section
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                     >
-                        <ProposalActions
-                            actions={normalizedProposalActions}
-                            chainId={chainId}
-                            emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.actions.empty')}
-                        />
-                        {normalizedProposalActions.length > 0 && (
-                            <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
-                        )}
+                        <ProposalActions.Root actionsCount={normalizedProposalActions.length}>
+                            <ProposalActions.Container
+                                emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.actions.empty')}
+                            >
+                                {normalizedProposalActions.map((action, index) => (
+                                    <ProposalActions.Item key={index} action={action} chainId={chainId} />
+                                ))}
+                            </ProposalActions.Container>
+                            <ProposalActions.Footer>
+                                {normalizedProposalActions.length > 0 && (
+                                    <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
+                                )}
+                            </ProposalActions.Footer>
+                        </ProposalActions.Root>
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>

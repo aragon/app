@@ -119,7 +119,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
 
-        expect(screen.getByText(/daoProposalDetailsPage.main.proposal/)).toBeInTheDocument();
+        expect(screen.getByText(/daoProposalDetailsPage.main.description.header/)).toBeInTheDocument();
         expect(screen.getByTestId('doc-parser')).toBeInTheDocument();
         expect(screen.getByText(proposal.description!)).toBeInTheDocument();
     });
