@@ -15,7 +15,7 @@ import {
     type VoteIndicator,
 } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
-import { DaoTokenVotingMode, type ITokenProposal, ITokenVote, VoteOption } from '../../types';
+import { DaoTokenVotingMode, type ITokenProposal, type ITokenVote, VoteOption } from '../../types';
 
 export interface ITokenSubmitVoteProps {
     /**

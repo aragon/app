@@ -5,7 +5,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, ChainEntityType, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
-import type { IMultisigProposal } from '../../types';
+import type { IMultisigProposal, IMultisigVote } from '../../types';
 
 export interface IMultisigSubmitVoteProps {
     /**
@@ -32,20 +32,23 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
         const params: IVoteDialogParams = { daoId, proposal, vote: { label: 'approve' }, isVeto };
         open(GovernanceDialogs.VOTE, { params });
     };
+    const { voteStatus, didVote } = useVotedStatus({ proposal });
+    const latestVote = voteStatus?.pages[0].data[0] as IMultisigVote | undefined;
+    const { transactionHash } = latestVote ?? {};
 
-    const voted = useVotedStatus({ proposal });
+    const latestVoteTx = transactionHash;
     const chainId = networkDefinitions[proposal.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const latestTxHref = buildEntityUrl({
+    const latestVoteTxHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
-        id: voted.transactionHash,
+        id: latestVoteTx ?? '',
     });
 
     return (
         <div className="w-full pt-4">
-            {voted ? (
+            {didVote ? (
                 <Button
-                    href={latestTxHref}
+                    href={latestVoteTxHref}
                     target="_blank"
                     size="md"
                     iconLeft={IconType.CHECKMARK}
