@@ -94,6 +94,10 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
      * Plugin address to fetch the votes from.
      */
     pluginAddress: string;
+    /**
+     * Address to highlight in the vote list. Returns the connected user vote if present.
+     */
+    highlightAddress?: string;
 }
 
 export interface IGetVoteListParams extends IRequestQueryParams<IGetVoteListQueryParams> {}

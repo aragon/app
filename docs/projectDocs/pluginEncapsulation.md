@@ -9,18 +9,18 @@ folder.
 
 ## Glossary
 
--   **Plugin**: Defines the governance, asset management, and/or membership of a DAO. A DAO can have one or more plugins
-    installed depending on their governance needs. More information about the plugins' implementation at the
-    smart-contract level can be found [here](https://devs.aragon.org/osx/how-it-works/core/plugins/).
+- **Plugin**: Defines the governance, asset management, and/or membership of a DAO. A DAO can have one or more plugins
+  installed depending on their governance needs. More information about the plugins' implementation at the
+  smart-contract level can be found [here](https://devs.aragon.org/osx/how-it-works/core/plugins/).
 
--   **Plugin Registry**: A registry that collects information about the Plugins and how to display Plugin-specific data
-    on the UI.
+- **Plugin Registry**: A registry that collects information about the Plugins and how to display Plugin-specific data on
+  the UI.
 
--   **Slot**: Identified by an ID (e.g., `GOVERNANCE_DAO_MEMBER_LIST`), it defines a section of the Application that
-    changes depending on the DAO Plugin.
+- **Slot**: Identified by an ID (e.g., `GOVERNANCE_DAO_MEMBER_LIST`), it defines a section of the Application that
+  changes depending on the DAO Plugin.
 
--   **Slot Component**: A Plugin-specific React component used by the Application to render any kind of data in a
-    specific Slot.
+- **Slot Component**: A Plugin-specific React component used by the Application to render any kind of data in a specific
+  Slot.
 
 ## Implementation Details
 
@@ -99,15 +99,15 @@ export const initialiseMultisigPlugin = () => {
 
 #### Rendering of Slot Components
 
--   The
-    [`<PluginSingleComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginSingleComponent)
-    React component is located under the `/shared/components` folder and renders a Slot Component from a given Slot ID
-    and Plugin ID.
+- The
+  [`<PluginSingleComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginSingleComponent)
+  React component is located under the `/shared/components` folder and renders a Slot Component from a given Slot ID and
+  Plugin ID.
 
--   The
-    [`<PluginTabComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginTabComponent)
-    React component supports rendering multiple Slot Components for the given Slot ID and Plugins. The component renders
-    Slot Components through a Tab component to be able to switch between the Slot Component views.
+- The
+  [`<PluginTabComponent />`](https://github.com/aragon/app-next/tree/develop/src/shared/components/pluginTabComponent)
+  React component supports rendering multiple Slot Components for the given Slot ID and Plugins. The component renders
+  Slot Components through a Tab component to be able to switch between the Slot Component views.
 
 ## How to Support a New Plugin
 

@@ -14,8 +14,8 @@ import {
     useBlockExplorer,
     type VoteIndicator,
 } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
-import { DaoTokenVotingMode, type ITokenProposal, VoteOption } from '../../types';
+import { useEffect, useState } from 'react';
+import { DaoTokenVotingMode, type ITokenProposal, ITokenVote, VoteOption } from '../../types';
 
 export interface ITokenSubmitVoteProps {
     /**
@@ -39,7 +39,6 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const { open } = useDialogContext();
 
     const [showOptions, setShowOptions] = useState(false);
-    const [selectedOption, setSelectedOption] = useState('');
 
     const abstainLabel = t('app.plugins.token.tokenSubmitVote.options.abstain');
     const yesLabel = t('app.plugins.token.tokenSubmitVote.options.yes');
@@ -51,6 +50,18 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         [VoteOption.NO.toString()]: 'no',
     };
 
+    const voteStatus = useVotedStatus({ proposal });
+    const latestVote = voteStatus?.pages[0].data[0] as ITokenVote | undefined;
+    const { transactionHash } = latestVote ?? {};
+
+    const [selectedOption, setSelectedOption] = useState('');
+
+    useEffect(() => {
+        if (latestVote) {
+            setSelectedOption(latestVote.voteOption.toString());
+        }
+    }, [latestVote]);
+
     const openTransactionDialog = () => {
         const vote = { value: Number(selectedOption), label: voteOptionToIndicator[selectedOption] };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
@@ -58,12 +69,13 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         open(GovernanceDialogs.VOTE, { params });
     };
 
-    const voted = useVotedStatus({ proposal });
+    // const latestVoteTx = replacedTransactionHash ?? transactionHash;
+    const latestVoteTx = transactionHash;
     const chainId = networkDefinitions[proposal.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const latestTxHref = buildEntityUrl({
+    const latestVoteTxHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
-        id: voted.replacedTransactionHash ?? voted.transactionHash,
+        id: latestVoteTx ?? '',
     });
 
     const onCancel = () => {
@@ -71,20 +83,17 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         setShowOptions(false);
     };
 
-    // Set Radio Card selection to 'Current' vote if voted, update tag logic (tag stays on votedOption from backend)
-    // 'Vote submitted' button opens Votes tab above and shows users vote at top
-
     return (
         <div className="flex flex-col gap-4 pt-4">
-            {!showOptions && !voted && (
+            {!showOptions && !latestVote && (
                 <Button className="w-fit" size="md" onClick={() => setShowOptions(true)}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
-            {!showOptions && voted && (
+            {!showOptions && latestVote && (
                 <div className="flex w-full flex-col items-center gap-4 md:flex-row">
                     <Button
-                        href={latestTxHref}
+                        href={latestVoteTxHref}
                         target="_blank"
                         variant="secondary"
                         iconLeft={IconType.CHECKMARK}
@@ -119,19 +128,31 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                         <RadioCard
                             label={yesLabel}
                             description=""
-                            tag={voted ? { variant: 'info', label: 'Current' } : undefined}
+                            tag={
+                                latestVote?.voteOption === VoteOption.YES
+                                    ? { variant: 'info', label: 'Current' }
+                                    : undefined
+                            }
                             value={VoteOption.YES.toString()}
                         />
                         <RadioCard
                             label={abstainLabel}
                             description=""
-                            tag={voted ? { variant: 'info', label: 'Current' } : undefined}
+                            tag={
+                                latestVote?.voteOption === VoteOption.ABSTAIN
+                                    ? { variant: 'info', label: 'Current' }
+                                    : undefined
+                            }
                             value={VoteOption.ABSTAIN.toString()}
                         />
                         <RadioCard
                             label={noLabel}
                             description=""
-                            tag={voted ? { variant: 'info', label: 'Current' } : undefined}
+                            tag={
+                                latestVote?.voteOption === VoteOption.NO
+                                    ? { variant: 'info', label: 'Current' }
+                                    : undefined
+                            }
                             value={VoteOption.NO.toString()}
                         />
                     </RadioGroup>
@@ -141,12 +162,12 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                 <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
                     <Button
                         onClick={openTransactionDialog}
-                        disabled={!selectedOption}
+                        disabled={!selectedOption || selectedOption === latestVote?.voteOption.toString()}
                         size="md"
                         className="w-full md:w-fit"
                         variant="primary"
                     >
-                        {voted
+                        {latestVote
                             ? t('app.plugins.token.tokenSubmitVote.buttons.submitChange')
                             : t('app.plugins.token.tokenSubmitVote.buttons.submit')}
                     </Button>
