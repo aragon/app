@@ -50,7 +50,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         [VoteOption.NO.toString()]: 'no',
     };
 
-    const voteStatus = useVotedStatus({ proposal });
+    const { voteStatus } = useVotedStatus({ proposal });
     const latestVote = voteStatus?.pages[0].data[0] as ITokenVote | undefined;
     const { transactionHash } = latestVote ?? {};
 

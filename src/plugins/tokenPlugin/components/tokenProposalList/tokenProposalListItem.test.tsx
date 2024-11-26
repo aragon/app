@@ -14,7 +14,7 @@ describe('<TokenProposalListItem /> component', () => {
     const useVotedStatusSpy = jest.spyOn(useVotedStatus, 'useVotedStatus');
 
     beforeEach(() => {
-        useVotedStatusSpy.mockReturnValue(false);
+        useVotedStatusSpy.mockReturnValue({ voteStatus: undefined, didVote: false });
     });
 
     afterEach(() => {

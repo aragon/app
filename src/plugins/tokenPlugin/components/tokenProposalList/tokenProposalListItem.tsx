@@ -56,8 +56,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
     const winningOption = getWinningOption(proposal);
     const proposalResult = winningOption != null ? { ...winningOption, option: t(winningOption.option) } : undefined;
 
-    const voteStatus = useVotedStatus({ proposal });
-    const voted = voteStatus != null && voteStatus.pages[0].metadata.totalRecords > 0;
+    const { didVote } = useVotedStatus({ proposal });
 
     return (
         <ProposalDataListItem.Structure
@@ -69,7 +68,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={tokenProposalUtils.getProposalStatus(proposal)}
             type="majorityVoting"
-            voted={voted}
+            voted={didVote}
             publisher={{
                 address: proposal.creator.address,
                 link: `members/${proposal.creator.address}`,

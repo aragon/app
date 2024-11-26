@@ -24,7 +24,12 @@ export const useVotedStatus = (params: IUseVotedStatusParams) => {
         address: address as string,
         highlightAddress: highlightAddress ? address : undefined,
     };
-    const { data: userVote } = useVoteList({ queryParams: voteListParams }, { enabled: address != null });
+    const { data: voteStatus } = useVoteList({ queryParams: voteListParams }, { enabled: address != null });
 
-    return userVote;
+    const didVote = voteStatus != null && voteStatus.pages[0].metadata.totalRecords > 0;
+
+    return {
+        voteStatus,
+        didVote,
+    };
 };
