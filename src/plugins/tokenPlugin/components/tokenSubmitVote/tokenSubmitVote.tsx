@@ -3,7 +3,17 @@ import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog'
 import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, Card, RadioCard, RadioGroup, type VoteIndicator } from '@aragon/gov-ui-kit';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import {
+    Button,
+    Card,
+    ChainEntityType,
+    IconType,
+    RadioCard,
+    RadioGroup,
+    useBlockExplorer,
+    type VoteIndicator,
+} from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { DaoTokenVotingMode, type ITokenProposal, VoteOption } from '../../types';
 
@@ -44,15 +54,25 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const openTransactionDialog = () => {
         const vote = { value: Number(selectedOption), label: voteOptionToIndicator[selectedOption] };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
+
         open(GovernanceDialogs.VOTE, { params });
     };
 
     const voted = useVotedStatus({ proposal });
+    const chainId = networkDefinitions[proposal.network].chainId;
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const latestTxHref = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: voted.replacedTransactionHash ?? voted.transactionHash,
+    });
 
     const onCancel = () => {
         setSelectedOption('');
         setShowOptions(false);
     };
+
+    // Set Radio Card selection to 'Current' vote if voted, update tag logic (tag stays on votedOption from backend)
+    // 'Vote submitted' button opens Votes tab above and shows users vote at top
 
     return (
         <div className="flex flex-col gap-4 pt-4">
@@ -62,16 +82,28 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                 </Button>
             )}
             {!showOptions && voted && (
-                <>
-                    <Button className="w-fit" size="md">
-                        {t('app.plugins.token.tokenSubmitVote.buttons.alreadyVoted')}
+                <div className="flex w-full flex-col items-center gap-4 md:flex-row">
+                    <Button
+                        href={latestTxHref}
+                        target="_blank"
+                        variant="secondary"
+                        iconLeft={IconType.CHECKMARK}
+                        className="w-full md:w-fit"
+                        size="md"
+                    >
+                        {t('app.plugins.token.tokenSubmitVote.buttons.voteSubmitted')}
                     </Button>
                     {proposal.settings.votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT && (
-                        <Button className="w-fit" size="md" onClick={() => setShowOptions(true)}>
+                        <Button
+                            variant="tertiary"
+                            className="w-full md:w-fit"
+                            size="md"
+                            onClick={() => setShowOptions(true)}
+                        >
                             {t('app.plugins.token.tokenSubmitVote.buttons.changeVote')}
                         </Button>
                     )}
-                </>
+                </div>
             )}
             {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
@@ -106,11 +138,19 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                 </Card>
             )}
             {showOptions && (
-                <div className="flex gap-4">
-                    <Button onClick={openTransactionDialog} disabled={!selectedOption} size="md" variant="primary">
-                        {t('app.plugins.token.tokenSubmitVote.buttons.submit')}
+                <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
+                    <Button
+                        onClick={openTransactionDialog}
+                        disabled={!selectedOption}
+                        size="md"
+                        className="w-full md:w-fit"
+                        variant="primary"
+                    >
+                        {voted
+                            ? t('app.plugins.token.tokenSubmitVote.buttons.submitChange')
+                            : t('app.plugins.token.tokenSubmitVote.buttons.submit')}
                     </Button>
-                    <Button size="md" variant="tertiary" onClick={onCancel}>
+                    <Button size="md" variant="tertiary" className="w-full md:w-fit" onClick={onCancel}>
                         {t('app.plugins.token.tokenSubmitVote.buttons.cancel')}
                     </Button>
                 </div>

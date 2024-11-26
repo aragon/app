@@ -1,8 +1,10 @@
 import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
+import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button } from '@aragon/gov-ui-kit';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { Button, ChainEntityType, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal } from '../../types';
 
 export interface IMultisigSubmitVoteProps {
@@ -31,15 +33,36 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
         open(GovernanceDialogs.VOTE, { params });
     };
 
+    const voted = useVotedStatus({ proposal });
+    const chainId = networkDefinitions[proposal.network].chainId;
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const latestTxHref = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: voted.transactionHash,
+    });
+
     return (
-        <div className="pt-4">
-            <Button onClick={openTransactionDialog} size="md" variant="primary">
-                {t(
-                    isVeto
+        <div className="w-full pt-4">
+            {voted ? (
+                <Button
+                    href={latestTxHref}
+                    target="_blank"
+                    size="md"
+                    iconLeft={IconType.CHECKMARK}
+                    variant="secondary"
+                    className="w-full md:w-fit"
+                >
+                    {isVeto
+                        ? t('app.plugins.multisig.multisigSubmitVote.vetoedLabel')
+                        : t('app.plugins.multisig.multisigSubmitVote.approvedLabel')}
+                </Button>
+            ) : (
+                <Button onClick={openTransactionDialog} size="md" variant="primary" className="w-full md:w-fit">
+                    {isVeto
                         ? t('app.plugins.multisig.multisigSubmitVote.vetoLabel')
-                        : t('app.plugins.multisig.multisigSubmitVote.approveLabel'),
-                )}
-            </Button>
+                        : t('app.plugins.multisig.multisigSubmitVote.approveLabel')}
+                </Button>
+            )}
         </div>
     );
 };

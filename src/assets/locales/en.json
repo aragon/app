@@ -599,7 +599,9 @@
         },
         "multisigSubmitVote": {
           "approveLabel": "Approve proposal",
-          "vetoLabel": "Veto proposal"
+          "approvedLabel": "Approved",
+          "vetoLabel": "Veto proposal",
+          "vetoedLabel": "Vetoed"
         },
         "multisigUpdateSettingsAction": {
           "minimumApproval": {
@@ -728,7 +730,9 @@
             "cancel": "Cancel",
             "changeVote": "Change vote",
             "default": "Vote on proposal",
-            "submit": "Submit vote"
+            "submit": "Submit vote",
+            "submitChange": "Submit change",
+            "voteSubmitted": "Vote submitted"
           },
           "options": {
             "abstain": "Abstain",
