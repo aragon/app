@@ -71,7 +71,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     className="shrink-0"
                 >
                     <div className="flex items-center gap-x-1.5">
-                        {assetField.value?.token && <Avatar src={assetField.value?.token.logo} size="xs" />}
+                        {assetField.value?.token && <Avatar src={assetField.value?.token.logo} size="md" />}
                         {assetField.value?.token
                             ? assetField.value.token.symbol
                             : t('app.finance.assetInput.triggerLabelDefault')}

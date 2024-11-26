@@ -3,7 +3,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { Button, IconType, ProposalActions } from '@aragon/gov-ui-kit';
+import { Button, IconType, type IProposalActionsItemDropdownItem, ProposalActions } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
@@ -46,7 +46,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     });
 
     // Needed to control the entire field array (see Controlled Field Array on useFieldArray)
-    const watchFieldArray = useWatch({ name: 'actions' });
+    const watchFieldArray = useWatch<Record<string, IProposalAction[]>>({ name: 'actions' });
     const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
 
     const handleAddAction = () => autocompleteInputRef.current?.focus();
@@ -57,6 +57,31 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         if (newIndex >= 0 && newIndex < actions.length) {
             moveAction(index, newIndex);
         }
+    };
+
+    const getActionDropdownItems = (index: number) => {
+        const dropdownItems: Array<IProposalActionsItemDropdownItem & { hidden: boolean }> = [
+            {
+                label: t('app.governance.createProposalForm.actions.editAction.up'),
+                icon: IconType.CHEVRON_UP,
+                onClick: (_, index) => handleMoveAction(index, index - 1),
+                hidden: controlledActions.length < 2 || index === 0,
+            },
+            {
+                label: t('app.governance.createProposalForm.actions.editAction.down'),
+                icon: IconType.CHEVRON_DOWN,
+                onClick: (_, index) => handleMoveAction(index, index + 1),
+                hidden: controlledActions.length < 2 || index === controlledActions.length - 1,
+            },
+            {
+                label: t('app.governance.createProposalForm.actions.editAction.remove'),
+                icon: IconType.CLOSE,
+                onClick: (_, index) => removeAction(index),
+                hidden: false,
+            },
+        ];
+
+        return dropdownItems.filter((item) => !item.hidden);
     };
 
     const pluginActions =
@@ -75,29 +100,18 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions
-                actions={controlledActions}
-                actionKey="id"
-                customActionComponents={allCustomActionComponents}
-                emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
-                dropdownItems={[
-                    {
-                        label: t('app.governance.createProposalForm.actions.editAction.up'),
-                        icon: IconType.CHEVRON_UP,
-                        onClick: (_, index) => handleMoveAction(index, index - 1),
-                    },
-                    {
-                        label: t('app.governance.createProposalForm.actions.editAction.down'),
-                        icon: IconType.CHEVRON_DOWN,
-                        onClick: (_, index) => handleMoveAction(index, index + 1),
-                    },
-                    {
-                        label: t('app.governance.createProposalForm.actions.editAction.remove'),
-                        icon: IconType.CLOSE,
-                        onClick: (_, index) => removeAction(index),
-                    },
-                ]}
-            />
+            <ProposalActions.Root>
+                <ProposalActions.Container emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}>
+                    {controlledActions.map((action, index) => (
+                        <ProposalActions.Item
+                            key={action.id}
+                            action={action}
+                            CustomComponent={allCustomActionComponents[action.type]}
+                            dropdownItems={getActionDropdownItems(index)}
+                        />
+                    ))}
+                </ProposalActions.Container>
+            </ProposalActions.Root>
             <Button
                 variant="primary"
                 size="md"

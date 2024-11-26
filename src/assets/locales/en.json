@@ -413,9 +413,12 @@
             "empty": "Proposal has no actions.",
             "header": "Actions"
           },
-          "proposal": "Proposal",
-          "readLess": "Read less",
-          "readMore": "Read more"
+          "description": {
+            "header": "Proposal",
+            "readLess": "Read less",
+            "readMore": "Read more"
+          },
+          "voting": "Voting"
         },
         "notFound": {
           "action": "Explore proposals",
@@ -472,10 +475,6 @@
         },
         "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
       },
-      "proposalVotingTerminal": {
-        "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
-        "title": "Voting"
-      },
       "publishProposalDialog": {
         "button": {
           "submit": "Publish proposal",
@@ -530,6 +529,10 @@
         "adminMemberInfo": {
           "admins": "Admins",
           "membersCount": "{{count}} addresses"
+        },
+        "adminVotingTerminal": {
+          "description": "Proposals created by admins do not require governance in order to pass.",
+          "title": "Automatic execution"
         }
       },
       "multisig": {
@@ -650,10 +653,6 @@
             "advanced": "Proposal advanced",
             "vote": "Vote on proposal"
           }
-        },
-        "sppVotingTerminal": {
-          "description": "The proposal must pass the voting to be accepted and potential onchain actions to execute.",
-          "title": "Voting"
         }
       },
       "token": {

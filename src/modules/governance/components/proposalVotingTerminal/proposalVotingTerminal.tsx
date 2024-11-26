@@ -1,7 +1,6 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/gov-ui-kit';
 import type { IProposal } from '../../api/governanceService';
@@ -28,8 +27,6 @@ const votesPerPage = 6;
 export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
     const { proposal, status, daoId } = props;
 
-    const { t } = useTranslations();
-
     const voteListParams = {
         queryParams: { proposalId: proposal.id, pluginAddress: proposal.pluginAddress, pageSize: votesPerPage },
     };
@@ -41,10 +38,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
     });
 
     return (
-        <ProposalVoting.Container
-            title={t('app.governance.proposalVotingTerminal.title')}
-            description={t('app.governance.proposalVotingTerminal.description')}
-        >
+        <ProposalVoting.Container>
             <ProposalVoting.Stage
                 status={proposalStatusToVotingStatus[status]}
                 startDate={proposal.startDate * 1000}

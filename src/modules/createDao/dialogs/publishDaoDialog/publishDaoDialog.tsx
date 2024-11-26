@@ -41,6 +41,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
 
     const { values } = location.params;
     const { name, description, network } = values;
+    const { name: networkName } = networkDefinitions[network];
 
     const { t } = useTranslations();
 
@@ -103,12 +104,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
         >
-            <DaoDataListItem.Structure
-                name={name}
-                description={description}
-                network={networkDefinitions[network].name}
-                plugin="Admin"
-            />
+            <DaoDataListItem.Structure name={name} description={description} network={networkName} />
         </TransactionDialog>
     );
 };

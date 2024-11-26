@@ -34,12 +34,6 @@ describe('<ProposalVotingTerminal /> component', () => {
         return <ProposalVotingTerminal {...completeProps} />;
     };
 
-    it('renders the proposal voting component', () => {
-        render(createTestComponent());
-        expect(screen.getByText(/proposalVotingTerminal.title/)).toBeInTheDocument();
-        expect(screen.getByText(/proposalVotingTerminal.description/)).toBeInTheDocument();
-    });
-
     it('renders the plugin-specific proposal breakdown component', () => {
         const proposal = generateProposal({ pluginSubdomain: 'multisig' });
         render(createTestComponent({ proposal }));
