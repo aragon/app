@@ -39,19 +39,19 @@ yarn dev
 
 Other available commands include:
 
--   Lint the code:
+- Lint the code:
 
 ```bash
 yarn lint
 ```
 
--   Build the project:
+- Build the project:
 
 ```bash
 yarn build
 ```
 
--   Run tests:
+- Run tests:
 
 ```bash
 yarn test
@@ -73,10 +73,10 @@ environments:
 
 The Aragon App is built using the following tools to ensure a seamless user experience:
 
--   [ReactJS](https://reactjs.org)
--   [NextJs](https://nextjs.org/)
--   [TypeScript](https://www.typescriptlang.org)
--   [Tailwind CSS](https://tailwindcss.com)
+- [ReactJS](https://reactjs.org)
+- [NextJs](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org)
+- [Tailwind CSS](https://tailwindcss.com)
 
 For more technical information about the Aragon App, please check the [Aragon App Documentation](./docs/index.md).
 

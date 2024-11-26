@@ -41,22 +41,22 @@ a Server component, more info
 
 To introduce a new service, follow these guidelines:
 
--   **Module-specific Service**: If the data being fetched is specific to a module, create a new folder under the `api`
-    folder of the relative module.
+- **Module-specific Service**: If the data being fetched is specific to a module, create a new folder under the `api`
+  folder of the relative module.
 
     Example path: `/dashboard/api/exampleService`
 
--   **Shared Service**: If the service is reused by different modules/plugins, create a new folder under the `shared`
-    folder.
+- **Shared Service**: If the service is reused by different modules/plugins, create a new folder under the `shared`
+  folder.
 
     Example path: `/shared/api/exampleService`
 
 Each service folder should contain the following files and folders:
 
--   `/exampleService.ts`: This file should export a TypeScript class responsible for making requests to the third-party
-    service.
--   `/exampleService.api.ts`: This file includes the parameters that each request needs.
--   `/exampleServiceKeys.ts`: This file includes the React Query query keys used to cache the requests.
--   `/domain`: The domain folder includes all type definitions for this service.
--   `/queries`: The queries folder includes all React Query queries.
--   `/mutations`: The mutations folder includes all React Query mutations.
+- `/exampleService.ts`: This file should export a TypeScript class responsible for making requests to the third-party
+  service.
+- `/exampleService.api.ts`: This file includes the parameters that each request needs.
+- `/exampleServiceKeys.ts`: This file includes the React Query query keys used to cache the requests.
+- `/domain`: The domain folder includes all type definitions for this service.
+- `/queries`: The queries folder includes all React Query queries.
+- `/mutations`: The mutations folder includes all React Query mutations.
