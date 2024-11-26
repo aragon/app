@@ -79,7 +79,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     });
 
     const onCancel = () => {
-        setSelectedOption('');
+        setSelectedOption(latestVote?.voteOption.toString() ?? '');
         setShowOptions(false);
     };
 

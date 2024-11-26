@@ -17,7 +17,8 @@ export interface IMultisigProposalListItemProps {
 export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
-    const voted = useVotedStatus({ proposal: proposal });
+    const voteStatus = useVotedStatus({ proposal });
+    const voted = voteStatus != null && voteStatus.pages[0].metadata.totalRecords > 0;
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
