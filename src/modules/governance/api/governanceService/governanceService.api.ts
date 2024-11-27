@@ -95,7 +95,7 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
      */
     pluginAddress: string;
     /**
-     * If connected and has voted, shows the user's vote first in the list.
+     * If voted, show a specific address result first in the list.
      */
     highlightUser?: string;
 }
