@@ -86,6 +86,23 @@ describe('SppStageUtils', () => {
         });
     });
 
+    describe('getStageMinAdvance', () => {
+        const getStartStartDateSpy = jest.spyOn(sppStageUtils, 'getStageStartDate');
+
+        afterEach(() => {
+            getStartStartDateSpy.mockReset();
+        });
+
+        it('returns the min-advance time based on the proposal start date', () => {
+            const startDate = DateTime.fromISO('2016-05-25T09:08:34.123');
+            const proposal = generateSppProposal();
+            const stage = generateSppStage({ minAdvance: 300 });
+            const expectedValue = startDate.minus({ seconds: stage.minAdvance });
+            getStartStartDateSpy.mockReturnValue(startDate);
+            expect(sppStageUtils.getStageMinAdvance(proposal, stage)).toEqual(expectedValue);
+        });
+    });
+
     describe('isVetoReached', () => {
         it('returns true when veto count reaches threshold', () => {
             const stage = generateSppStage({
@@ -318,6 +335,7 @@ describe('SppStageUtils', () => {
         const getStageStartDateSpy = jest.spyOn(sppStageUtils, 'getStageStartDate');
         const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
         const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
+        const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
         const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
 
         afterEach(() => {
@@ -326,6 +344,7 @@ describe('SppStageUtils', () => {
             getStageStartDateSpy.mockReset();
             getStageEndDateSpy.mockReset();
             getStageMaxAdvanceSpy.mockReset();
+            getStageMinAdvanceSpy.mockReset();
             isApprovalReachedSpy.mockReset();
         });
 

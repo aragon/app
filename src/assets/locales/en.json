@@ -647,12 +647,14 @@
           "numberOfStages": "Number of stages"
         },
         "sppStageStatus": {
-          "advanceInfo": "left to advance",
+          "advanceExpired": "Proposal not advanced in time",
           "button": {
             "advance": "Advance proposal",
             "advanced": "Proposal advanced",
             "vote": "Vote on proposal"
-          }
+          },
+          "maxAdvanceInfo": "left to advance",
+          "minAdvanceInfo": "until advanceable"
         }
       },
       "token": {

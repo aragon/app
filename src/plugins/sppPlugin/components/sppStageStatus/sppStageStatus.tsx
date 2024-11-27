@@ -62,10 +62,15 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
     const canVote = stageStatus === ProposalVotingStatus.ACTIVE;
 
+    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
+
     const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
-    const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
+    const displayMaxAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
+
+    const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
+    const displayMinAdvanceTime = minAdvanceTime && minAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
 
     if (!displayAdvanceStatus && !canVote) {
         return null;
@@ -93,28 +98,54 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               label: 'advanced',
               href: advanceTransactionHref,
               target: '_blank',
-              variant: 'success' as const,
+              variant: 'secondary' as const,
               iconRight: IconType.LINK_EXTERNAL,
           }
-        : { label: 'advance', onClick: handleAdvanceStage, variant: 'primary' as const };
+        : {
+              label: 'advance',
+              onClick: handleAdvanceStage,
+              variant: 'primary' as const,
+              disabled: !displayMinAdvanceTime,
+          };
 
     return (
         <div className="mt-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">
-            <Button size="md" {...buttonProps}>
-                {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
-            </Button>
-            {displayAdvanceTime && (
-                <div className="flex flex-row justify-center gap-1">
-                    <Rerender>
-                        {() => (
-                            <span className="text-neutral-800">
-                                {formatterUtils.formatDate(maxAdvanceTime, { format: DateFormat.DURATION })}
-                            </span>
-                        )}
-                    </Rerender>
-                    <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceInfo')}</span>
-                </div>
+            {!stageAdvanceExpired && (
+                <Button size="md" {...buttonProps}>
+                    {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
+                </Button>
             )}
+
+            <div className="flex flex-row justify-center gap-1">
+                {displayMaxAdvanceTime && !displayMinAdvanceTime && (
+                    <>
+                        <Rerender>
+                            {() => (
+                                <span className="text-neutral-800">
+                                    {formatterUtils.formatDate(maxAdvanceTime, { format: DateFormat.DURATION })}
+                                </span>
+                            )}
+                        </Rerender>
+                        <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.maxAdvanceInfo')}</span>
+                    </>
+                )}
+                {displayMinAdvanceTime && !displayMaxAdvanceTime && (
+                    <>
+                        <Rerender>
+                            {() => (
+                                <span className="text-neutral-800">
+                                    {formatterUtils.formatDate(minAdvanceTime, { format: DateFormat.DURATION })}
+                                </span>
+                            )}
+                        </Rerender>
+                        <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.minAdvanceInfo')}</span>
+                    </>
+                )}
+                {stageAdvanceExpired && (
+                    <span className="text-neutral-800">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
+                )}
+            </div>
+
             <AdvanceStageDialog open={isAdvanceDialogOpen} onOpenChange={setIsAdvanceDialogOpen} proposal={proposal} />
         </div>
     );
