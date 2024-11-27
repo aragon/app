@@ -57,7 +57,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                     <DataList.Item
                         key={plugin.uniqueId}
                         onClick={() => setSelectedPlugin(plugin)}
-                        className={classNames('px-4 py-3 md:px-6 md:py-3.5', {
+                        className={classNames('px-4 py-3 md:p-6', {
                             'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
                                 plugin.uniqueId === selectedPlugin?.uniqueId,
                         })}

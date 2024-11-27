@@ -3,6 +3,7 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalStatus, ProposalVoting, proposalStatusToVotingStatus } from '@aragon/gov-ui-kit';
+import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { VoteList } from '../voteList';
@@ -27,8 +28,15 @@ const votesPerPage = 6;
 export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
     const { proposal, status, daoId } = props;
 
+    const { address: highlightAddress } = useAccount();
+
     const voteListParams = {
-        queryParams: { proposalId: proposal.id, pluginAddress: proposal.pluginAddress, pageSize: votesPerPage },
+        queryParams: {
+            proposalId: proposal.id,
+            pluginAddress: proposal.pluginAddress,
+            pageSize: votesPerPage,
+            highlightAddress,
+        },
     };
 
     const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
