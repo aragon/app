@@ -23,9 +23,9 @@ export interface ISelectPluginDialogParams {
      */
     buildSelectedPluginHref?: (plugin: IDaoPlugin) => string;
     /**
-     * Plugin to preselect.
+     * Plugin to preselect determined by the tab the user was on when they clicked create proposal.
      */
-    defaultPlugin: ITabComponentPlugin<IDaoPlugin>;
+    preselectedPlugin: ITabComponentPlugin<IDaoPlugin>;
 }
 
 export interface ISelectPluginDialogProps extends IDialogComponentProps<ISelectPluginDialogParams> {}
@@ -34,14 +34,13 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, onPluginSelected, buildSelectedPluginHref } = location.params;
+    const { daoId, onPluginSelected, buildSelectedPluginHref, preselectedPlugin } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
-    const preselectedPlugin = location.params.defaultPlugin;
     const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(preselectedPlugin);
 
     const selectPluginHref = selectedPlugin ? buildSelectedPluginHref?.(selectedPlugin.meta) : undefined;
