@@ -24,11 +24,11 @@ export const useVotedStatus = (params: IUseVotedStatusParams) => {
         { enabled: address != null },
     );
 
-    const didVote = voteStatus != null && voteStatus.pages[0].metadata.totalRecords > 0;
+    const voted = voteStatus != null && voteStatus.pages[0].metadata.totalRecords > 0;
 
     return {
         isFetchingVote,
         voteStatus,
-        didVote,
+        voted,
     };
 };

@@ -19,12 +19,23 @@ import { useEffect, useState } from 'react';
 import { DaoTokenVotingMode, type ITokenProposal, type ITokenVote, VoteOption } from '../../types';
 
 export interface ITokenSubmitVoteProps {
+    /**
+     * ID of the DAO to create the proposal for.
+     */
     daoId: string;
+    /**
+     * Proposal to submit the vote for.
+     */
     proposal: ITokenProposal;
+    /**
+     *  Defines if the vote is to approve or veto the proposal.
+     */
     isVeto?: boolean;
 }
 
-export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = ({ daoId, proposal, isVeto }) => {
+export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
+    const { daoId, proposal, isVeto } = props;
+
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
@@ -40,24 +51,23 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = ({ daoId, propos
 
     const { voteStatus, isFetchingVote } = useVotedStatus({ proposal });
     const latestVote = voteStatus?.pages[0].data[0] as ITokenVote;
-    const { transactionHash, replacedTransactionHash } = latestVote ?? {};
 
     const [voteState, setVoteState] = useState({
         showOptions: false,
         selectedOption: latestVote?.voteOption.toString() ?? '',
-        latestHash: transactionHash,
+        latestHash: latestVote.transactionHash,
     });
 
     useEffect(() => {
-        if (latestVote && transactionHash !== voteState.latestHash) {
+        if (latestVote && latestVote.transactionHash !== voteState.latestHash) {
             setVoteState((prevState) => ({
                 ...prevState,
-                latestHash: transactionHash,
+                latestHash: latestVote.transactionHash,
                 selectedOption: latestVote.voteOption.toString(),
                 showOptions: false,
             }));
         }
-    }, [replacedTransactionHash, transactionHash, voteState.latestHash, latestVote]);
+    }, [voteState.latestHash, latestVote]);
 
     const openTransactionDialog = () => {
         const vote = {

@@ -17,7 +17,7 @@ export interface IMultisigProposalListItemProps {
 export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
-    const { didVote } = useVotedStatus({ proposal });
+    const { voted } = useVotedStatus({ proposal });
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
@@ -31,7 +31,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={multisigProposalUtils.getProposalStatus(proposal)}
             type="approvalThreshold"
-            voted={didVote}
+            voted={voted}
             publisher={{
                 address: proposal.creator.address,
                 name: proposal.creator.ens ?? undefined,

@@ -9,16 +9,27 @@ import classNames from 'classnames';
 import type { IMultisigProposal, IMultisigVote } from '../../types';
 
 export interface IMultisigSubmitVoteProps {
+    /**
+     * ID of the DAO to create the proposal for.
+     */
     daoId: string;
+    /**
+     * Proposal to submit the vote for.
+     */
     proposal: IMultisigProposal;
+    /**
+     *  Defines if the vote is to approve or veto the proposal.
+     */
     isVeto?: boolean;
 }
 
-export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = ({ daoId, proposal, isVeto }) => {
+export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) => {
+    const { daoId, proposal, isVeto } = props;
+
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { voteStatus, didVote, isFetchingVote } = useVotedStatus({ proposal });
+    const { voteStatus, voted, isFetchingVote } = useVotedStatus({ proposal });
     const latestVote = voteStatus?.pages[0].data[0] as IMultisigVote;
     const { transactionHash } = latestVote ?? {};
 
@@ -37,15 +48,15 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = ({ daoId, 
     return (
         <div className={classNames('w-full', { 'pt-4': !isFetchingVote })}>
             <Button
-                onClick={didVote ? undefined : openTransactionDialog}
-                href={didVote ? latestVoteTxHref : undefined}
-                target={didVote ? '_blank' : undefined}
+                onClick={voted ? undefined : openTransactionDialog}
+                href={voted ? latestVoteTxHref : undefined}
+                target={voted ? '_blank' : undefined}
                 size="md"
-                iconLeft={didVote ? IconType.CHECKMARK : undefined}
-                variant={didVote ? 'secondary' : 'primary'}
+                iconLeft={voted ? IconType.CHECKMARK : undefined}
+                variant={voted ? 'secondary' : 'primary'}
                 className="w-full md:w-fit"
             >
-                {didVote
+                {voted
                     ? isVeto
                         ? t('app.plugins.multisig.multisigSubmitVote.vetoedLabel')
                         : t('app.plugins.multisig.multisigSubmitVote.approvedLabel')
