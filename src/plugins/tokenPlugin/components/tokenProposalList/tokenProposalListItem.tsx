@@ -1,4 +1,4 @@
-import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
+import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, NumberFormat, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
@@ -56,7 +56,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
     const winningOption = getWinningOption(proposal);
     const proposalResult = winningOption != null ? { ...winningOption, option: t(winningOption.option) } : undefined;
 
-    const { voted } = useVotedStatus({ proposal });
+    const vote = useUserVote({ proposal });
 
     return (
         <ProposalDataListItem.Structure
@@ -68,7 +68,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={tokenProposalUtils.getProposalStatus(proposal)}
             type="majorityVoting"
-            voted={voted}
+            voted={vote != null}
             publisher={{
                 address: proposal.creator.address,
                 link: `members/${proposal.creator.address}`,

@@ -15,8 +15,4 @@ export interface ITokenVote extends IVote {
      * Defines which option the user voted.
      */
     voteOption: VoteOption;
-    /**
-     * Hash of the transaction that replaced the vote.
-     */
-    replacedTransactionHash?: string;
 }
