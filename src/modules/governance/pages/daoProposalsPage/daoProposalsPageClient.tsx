@@ -38,7 +38,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         const params: ISelectPluginDialogParams = {
             daoId,
             buildSelectedPluginHref: buildCreateProposalUrl,
-            preselectedPlugin: selectedPlugin,
+            initialPlugin: selectedPlugin,
         };
         open(GovernanceDialogs.SELECT_PLUGIN, { params });
     };

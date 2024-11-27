@@ -23,9 +23,9 @@ export interface ISelectPluginDialogParams {
      */
     buildSelectedPluginHref?: (plugin: IDaoPlugin) => string;
     /**
-     * Plugin to preselect determined by the tab the user was on when they clicked create proposal.
+     * Plugin to preselect.
      */
-    preselectedPlugin: ITabComponentPlugin<IDaoPlugin>;
+    initialPlugin: ITabComponentPlugin<IDaoPlugin>;
 }
 
 export interface ISelectPluginDialogProps extends IDialogComponentProps<ISelectPluginDialogParams> {}
@@ -34,14 +34,14 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, onPluginSelected, buildSelectedPluginHref, preselectedPlugin } = location.params;
+    const { daoId, onPluginSelected, buildSelectedPluginHref, initialPlugin } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
-    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(preselectedPlugin);
+    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(initialPlugin);
 
     const selectPluginHref = selectedPlugin ? buildSelectedPluginHref?.(selectedPlugin.meta) : undefined;
 
@@ -61,7 +61,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                     <DataList.Item
                         key={plugin.uniqueId}
                         onClick={() => setSelectedPlugin(plugin)}
-                        className={classNames('px-4 py-3', {
+                        className={classNames('px-4 py-3 md:p-6', {
                             'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
                                 plugin.uniqueId === selectedPlugin?.uniqueId,
                         })}
