@@ -57,7 +57,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = ({ daoId, propos
                 showOptions: false,
             }));
         }
-    }, [replacedTransactionHash, transactionHash, voteState.latestHash]);
+    }, [replacedTransactionHash, transactionHash, voteState.latestHash, latestVote]);
 
     const openTransactionDialog = () => {
         const vote = {

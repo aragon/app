@@ -20,7 +20,7 @@ describe('<TokenProposalList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
-        useVotedStatusSpy.mockReturnValue({ voteStatus: undefined, didVote: false });
+        useVotedStatusSpy.mockReturnValue({ voteStatus: undefined, didVote: false, isFetchingVote: false });
     });
 
     afterEach(() => {
