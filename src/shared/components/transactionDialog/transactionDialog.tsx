@@ -65,7 +65,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         if (transaction == null) {
             handleTransactionError();
         } else {
-            sendTransaction({ ...transaction, gas: null }, { onError: handleTransactionError });
+            sendTransaction(transaction, { onError: handleTransactionError });
         }
     }, [transaction, sendTransaction, handleTransactionError]);
 

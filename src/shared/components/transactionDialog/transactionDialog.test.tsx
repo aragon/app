@@ -178,18 +178,6 @@ describe('<TransactionDialog /> component', () => {
         expect(sendTransaction).toHaveBeenCalledWith(expect.objectContaining(transaction), expect.anything());
     });
 
-    it('sets the transaction gas property to null to force sending the transaction even if gas estimation fails', () => {
-        const sendTransaction = jest.fn();
-        useMutationSpy.mockReturnValue({ data: { from: '0x', data: '0x' } } as unknown as ReactQuery.UseMutationResult);
-        useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
-        const updateSteps = jest.fn();
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
-        render(createTestComponent({ stepper }));
-        const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
-        act(() => approveStepAction());
-        expect(sendTransaction).toHaveBeenCalledWith(expect.objectContaining({ gas: null }), expect.anything());
-    });
-
     it('does not send the transaction when transaction is not set at approve step', () => {
         const sendTransaction = jest.fn();
         useMutationSpy.mockReturnValue({ data: null } as unknown as ReactQuery.UseMutationResult);
