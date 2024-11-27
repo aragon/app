@@ -22,6 +22,10 @@ export interface ISelectPluginDialogParams {
      * Callback used to build a link set on the confirm button when a plugin is selected.
      */
     buildSelectedPluginHref?: (plugin: IDaoPlugin) => string;
+    /**
+     * Plugin to preselect.
+     */
+    initialPlugin: ITabComponentPlugin<IDaoPlugin>;
 }
 
 export interface ISelectPluginDialogProps extends IDialogComponentProps<ISelectPluginDialogParams> {}
@@ -30,14 +34,14 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, onPluginSelected, buildSelectedPluginHref } = location.params;
+    const { daoId, onPluginSelected, buildSelectedPluginHref, initialPlugin } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
-    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>();
+    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(initialPlugin);
 
     const selectPluginHref = selectedPlugin ? buildSelectedPluginHref?.(selectedPlugin.meta) : undefined;
 
