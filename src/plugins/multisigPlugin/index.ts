@@ -14,6 +14,7 @@ import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSett
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
+import { MultisigProposalVotingSummary } from './components/multisigProposalVotingSummary';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -70,6 +71,11 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
             pluginId: plugin.id,
             function: useMultisigNormalizeActions,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_SUMMARY,
+            pluginId: plugin.id,
+            component: MultisigProposalVotingSummary,
         })
 
         // Settings module slots

@@ -582,6 +582,10 @@
         "multisigProposalList": {
           "entity": "Proposals"
         },
+        "multisigProposalVotingSummary": {
+          "description": "of {{count}} members",
+          "name": "{{name}} approval"
+        },
         "multisigRemoveMembersAction": {
           "add": "Add",
           "addressInput": {
@@ -653,6 +657,12 @@
             "advanced": "Proposal advanced",
             "vote": "Vote on proposal"
           }
+        },
+        "sppVotingTerminalStage": {
+          "footer": {
+            "actionRequired": "required to {{action}}",
+            "thresholdLabel": "{{count}} {{entityType}}"
+          }
         }
       },
       "token": {
@@ -722,6 +732,21 @@
           "abstain": "Abstain",
           "no": "No",
           "yes": "Yes"
+        },
+        "tokenProposalVotingSummary": {
+          "minParticipation": {
+            "description": "of {{details}}",
+            "name": "Minimum Participation"
+          },
+          "option": {
+            "abstain": "Abstain",
+            "no": "No",
+            "yes": "Yes"
+          },
+          "support": {
+            "description": "of {{details}}",
+            "name": "{{name}} support"
+          }
         },
         "tokenSubmitVote": {
           "buttons": {

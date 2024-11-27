@@ -16,7 +16,7 @@ export interface ITokenProposalVotingBreakdownProps {
     children?: ReactNode;
 }
 
-const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
+export const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
     const votes = proposal.metrics.votesByOption.find((vote) => vote.type === option);
     const parsedVotingPower = formatUnits(BigInt(votes?.totalVotingPower ?? 0), proposal.settings.token.decimals);
 

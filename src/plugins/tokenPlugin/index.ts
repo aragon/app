@@ -16,6 +16,7 @@ import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
+import { TokenProposalVotingSummary } from './components/tokenProposalVotingSummary';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
@@ -82,6 +83,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
             pluginId: plugin.id,
             function: useTokenNormalizeActions,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_SUMMARY,
+            pluginId: plugin.id,
+            component: TokenProposalVotingSummary,
         })
 
         // Settings module slots
