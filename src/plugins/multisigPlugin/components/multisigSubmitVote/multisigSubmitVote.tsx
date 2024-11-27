@@ -5,6 +5,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, ChainEntityType, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import type { IMultisigProposal, IMultisigVote } from '../../types';
 
 export interface IMultisigSubmitVoteProps {
@@ -17,7 +18,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = ({ daoId, 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { voteStatus, didVote } = useVotedStatus({ proposal });
+    const { voteStatus, didVote, isFetchingVote } = useVotedStatus({ proposal });
     const latestVote = voteStatus?.pages[0].data[0] as IMultisigVote;
     const { transactionHash } = latestVote ?? {};
 
@@ -34,7 +35,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = ({ daoId, 
     };
 
     return (
-        <div className="w-full pt-4">
+        <div className={classNames('w-full', { 'pt-4': !isFetchingVote })}>
             <Button
                 onClick={didVote ? undefined : openTransactionDialog}
                 href={didVote ? latestVoteTxHref : undefined}

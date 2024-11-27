@@ -6,14 +6,10 @@ export interface IUseVotedStatusParams {
      * Proposal to check the vote status for.
      */
     proposal: IProposal;
-    /**
-     * Address to highlight in the vote list. Returns the connected users vote if true.
-     */
-    highlightAddress?: boolean;
 }
 
 export const useVotedStatus = (params: IUseVotedStatusParams) => {
-    const { proposal, highlightAddress } = params;
+    const { proposal } = params;
     const { id, pluginAddress } = proposal;
 
     const { address } = useAccount();
@@ -22,7 +18,6 @@ export const useVotedStatus = (params: IUseVotedStatusParams) => {
         proposalId: id,
         pluginAddress,
         address: address as string,
-        highlightAddress: highlightAddress ? address : undefined,
     };
     const { data: voteStatus, isFetching: isFetchingVote } = useVoteList(
         { queryParams: voteListParams },

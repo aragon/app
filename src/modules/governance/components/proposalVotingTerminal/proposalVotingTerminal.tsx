@@ -28,14 +28,14 @@ const votesPerPage = 6;
 export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
     const { proposal, status, daoId } = props;
 
-    const { address: highlightAddress } = useAccount();
+    const { address } = useAccount();
 
     const voteListParams = {
         queryParams: {
             proposalId: proposal.id,
             pluginAddress: proposal.pluginAddress,
             pageSize: votesPerPage,
-            highlightAddress,
+            highlightUser: address,
         },
     };
 
