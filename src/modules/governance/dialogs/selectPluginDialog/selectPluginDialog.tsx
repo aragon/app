@@ -22,6 +22,10 @@ export interface ISelectPluginDialogParams {
      * Callback used to build a link set on the confirm button when a plugin is selected.
      */
     buildSelectedPluginHref?: (plugin: IDaoPlugin) => string;
+    /**
+     * Plugin to preselect.
+     */
+    defaultPlugin: ITabComponentPlugin<IDaoPlugin>;
 }
 
 export interface ISelectPluginDialogProps extends IDialogComponentProps<ISelectPluginDialogParams> {}
@@ -37,7 +41,8 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
-    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>();
+    const preselectedPlugin = location.params.defaultPlugin;
+    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(preselectedPlugin);
 
     const selectPluginHref = selectedPlugin ? buildSelectedPluginHref?.(selectedPlugin.meta) : undefined;
 
@@ -57,7 +62,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                     <DataList.Item
                         key={plugin.uniqueId}
                         onClick={() => setSelectedPlugin(plugin)}
-                        className={classNames({
+                        className={classNames('px-4 py-3', {
                             'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
                                 plugin.uniqueId === selectedPlugin?.uniqueId,
                         })}
