@@ -56,6 +56,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const threshold = isVetoStage ? stage.vetoThreshold : stage.approvalThreshold;
     const entityType = threshold > 1 ? 'bodies' : 'body';
 
+    console.log('stage', stage, 'status', stageStatus, 'subProposals', subProposals);
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
@@ -76,7 +78,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                                 proposal={subProposals?.find(
                                     (subProposal) => subProposal.pluginAddress === plugin.address,
                                 )}
-                                name="Body name"
+                                name={plugin.subdomain === 'multisig' ? 'Founders approval' : 'Token holder voting'}
                             />
                         </ProposalVoting.BodySummaryListItem>
                     ))}
@@ -90,12 +92,13 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                     </span>{' '}
                     {t('app.plugins.spp.sppVotingTerminalStage.footer.actionRequired', { action: actionType })}
                 </p>
+                <>{subProposals?.find((sub) => sub.executed.status) ? 'advanced' : 'not'}</>
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => {
                 const subProposal = subProposals?.find((subProposal) => subProposal.pluginAddress === plugin.address);
                 return (
                     <ProposalVoting.BodyContent
-                        name={subProposal?.title}
+                        name={plugin.subdomain}
                         key={plugin.address}
                         status={processedStageStatus}
                         bodyId={plugin.address}

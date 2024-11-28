@@ -65,7 +65,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     if (status === ProposalStatus.ACCEPTED) {
         return (
             <p>
-                {`${name}`} <span className="text-success-500">approved</span>
+                {`${name}`} <span className="text-success-800">approved</span>
             </p>
         );
     }
@@ -73,7 +73,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     if (status === ProposalStatus.VETOED) {
         return (
             <p>
-                {`${name}`} <span className="text-critical-500">vetoes</span>
+                {`${name}`} <span className="text-critical-800">vetoes</span>
             </p>
         );
     }

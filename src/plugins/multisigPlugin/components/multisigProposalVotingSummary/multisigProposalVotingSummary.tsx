@@ -30,6 +30,14 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     });
     const formattedMinApprovals = formatterUtils.formatNumber(minApprovals, { format: NumberFormat.GENERIC_SHORT })!;
 
+    if (approvalsAmount >= minApprovals) {
+        return (
+            <p>
+                {`${name}`} <span className="text-success-800">approved</span>
+            </p>
+        );
+    }
+
     return (
         <ProposalVotingProgress.Item
             name={t('app.plugins.multisig.multisigProposalVotingSummary.name', { name })}
@@ -40,6 +48,7 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
                     count: formattedMinApprovals,
                 }),
             }}
+            showStatusIcon={true}
             variant={approvalsAmount >= minApprovals ? 'primary' : 'neutral'}
         />
     );
