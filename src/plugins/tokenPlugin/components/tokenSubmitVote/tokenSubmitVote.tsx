@@ -64,12 +64,10 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     });
 
     useEffect(() => {
-        if (latestVote && latestVote.voteOption !== undefined) {
-            setVoteState((prevState) => ({
-                ...prevState,
-                selectedOption: latestVote.voteOption.toString(),
-            }));
-        }
+        setVoteState((prevState) => ({
+            ...prevState,
+            selectedOption: latestVote?.voteOption.toString(),
+        }));
     }, [latestVote]);
 
     const onCancel = () => {
@@ -79,27 +77,31 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             showOptions: false,
         }));
     };
+
     const current = { variant: 'info' as TagVariant, label: t('app.plugins.token.tokenSubmitVote.options.current') };
 
     const voteOptions = [
         {
             label: t('app.plugins.token.tokenSubmitVote.options.yes'),
             value: VoteOption.YES.toString(),
-            tag: latestVote?.voteOption === VoteOption.YES ? current : undefined,
         },
         {
             label: t('app.plugins.token.tokenSubmitVote.options.abstain'),
             value: VoteOption.ABSTAIN.toString(),
-            tag: latestVote?.voteOption === VoteOption.ABSTAIN ? current : undefined,
         },
         {
             label: t('app.plugins.token.tokenSubmitVote.options.no'),
             value: VoteOption.NO.toString(),
-            tag: latestVote?.voteOption === VoteOption.NO ? current : undefined,
         },
     ];
+
+    const voteOptionsWithTag = voteOptions.map((option) => ({
+        ...option,
+        tag: latestVote?.voteOption.toString() === option.value ? current : undefined,
+    }));
+
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 pt-2">
             {!voteState.showOptions && !latestVote && (
                 <Button
                     className="w-fit"
@@ -144,7 +146,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                         value={voteState.selectedOption}
                         onValueChange={(value) => setVoteState((prev) => ({ ...prev, selectedOption: value }))}
                     >
-                        {voteOptions.map(({ label, value, tag }) => (
+                        {voteOptionsWithTag.map(({ label, value, tag }) => (
                             <RadioCard key={value} label={label} tag={tag} value={value} />
                         ))}
                     </RadioGroup>

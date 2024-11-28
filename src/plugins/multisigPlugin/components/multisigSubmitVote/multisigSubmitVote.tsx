@@ -28,13 +28,13 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const latestVote = useUserVote<IMultisigVote>({ proposal });
-    const voted = latestVote != null;
+    const userVote = useUserVote<IMultisigVote>({ proposal });
+    const voted = userVote != null;
     const chainId = networkDefinitions[proposal.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const latestVoteTxHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
-        id: latestVote?.transactionHash,
+        id: userVote?.transactionHash,
     });
 
     const openTransactionDialog = () => {
@@ -46,7 +46,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
 
     return (
-        <div className="w-full">
+        <div className="w-full pt-2">
             <Button
                 onClick={voted ? undefined : openTransactionDialog}
                 href={voted ? latestVoteTxHref : undefined}
