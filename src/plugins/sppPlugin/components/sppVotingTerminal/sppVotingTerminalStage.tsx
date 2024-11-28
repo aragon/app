@@ -1,11 +1,11 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
+import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -33,8 +33,6 @@ export interface IProposalVotingTerminalStageProps {
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
     const { stage, daoId, subProposals, index, proposal } = props;
 
-    const { t } = useTranslations();
-
     const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
     const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
 
@@ -51,13 +49,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     const isMultiStage = proposal.settings.stages.length > 1;
 
-    const isVetoStage = stage.plugins[0].proposalType === SppProposalType.VETO;
-    const actionType = isVetoStage ? 'veto' : 'approve';
-    const threshold = isVetoStage ? stage.vetoThreshold : stage.approvalThreshold;
-    const entityType = threshold > 1 ? 'bodies' : 'body';
-
-    console.log('stage', stage, 'status', stageStatus, 'subProposals', subProposals);
-
     return (
         <ProposalVoting.Stage
             name={stage.name}
@@ -70,35 +61,27 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
-                    {stage.plugins.map((plugin) => (
+                    {stage.plugins.map((plugin, index) => (
                         <ProposalVoting.BodySummaryListItem key={plugin.address} id={plugin.address}>
                             <PluginSingleComponent
                                 slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_SUMMARY}
                                 pluginId={plugin.subdomain}
-                                proposal={subProposals?.find(
-                                    (subProposal) => subProposal.pluginAddress === plugin.address,
-                                )}
-                                name={plugin.subdomain === 'multisig' ? 'Founders approval' : 'Token holder voting'}
+                                proposal={subProposals?.[index]}
+                                name={plugin.name}
                             />
                         </ProposalVoting.BodySummaryListItem>
                     ))}
                 </ProposalVoting.BodySummaryList>
-                <p className="text-center text-neutral-500 md:text-right">
-                    <span className="text-neutral-800">
-                        {t('app.plugins.spp.sppVotingTerminalStage.footer.thresholdLabel', {
-                            count: threshold,
-                            entityType,
-                        })}
-                    </span>{' '}
-                    {t('app.plugins.spp.sppVotingTerminalStage.footer.actionRequired', { action: actionType })}
-                </p>
-                <>{subProposals?.find((sub) => sub.executed.status) ? 'advanced' : 'not'}</>
+                <SppVotingTerminalBodySummaryFooter
+                    isAdvanced={proposal.stageIndex > stage.stageIndex}
+                    proposal={proposal}
+                    stage={stage}
+                />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => {
-                const subProposal = subProposals?.find((subProposal) => subProposal.pluginAddress === plugin.address);
                 return (
                     <ProposalVoting.BodyContent
-                        name={plugin.subdomain}
+                        name={plugin.name}
                         key={plugin.address}
                         status={processedStageStatus}
                         bodyId={plugin.address}
@@ -106,7 +89,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         <SppVotingTerminalBodyContent
                             plugin={plugin}
                             daoId={daoId}
-                            subProposal={subProposal}
+                            subProposal={subProposals?.[index]}
                             proposal={proposal}
                             stage={stage}
                         />

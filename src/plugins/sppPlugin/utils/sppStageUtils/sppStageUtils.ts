@@ -34,8 +34,7 @@ class SppStageUtils {
         }
 
         if (stageEndDate != null && now < stageEndDate) {
-            const canAdvance =
-                approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal;
+            const canAdvance = this.canAdvanceStage(proposal, stage);
 
             return canAdvance ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
         }
@@ -48,6 +47,20 @@ class SppStageUtils {
             maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal && stageIndex === currentStageIndex;
 
         return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
+    };
+
+    canAdvanceStage = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const { actions, settings } = proposal;
+        const { minAdvance, stageIndex } = stage;
+
+        const now = DateTime.now();
+        const stageStartDate = this.getStageStartDate(proposal, stage);
+        const minAdvanceDate = stageStartDate?.plus({ seconds: minAdvance });
+        const approvalReached = this.isApprovalReached(proposal, stage);
+
+        const isSignalingProposal = actions.length === 0 && stageIndex === settings.stages.length - 1;
+
+        return approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal;
     };
 
     isStagedUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {

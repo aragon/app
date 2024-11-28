@@ -10,7 +10,7 @@ export interface ITokenProposalVotingSummaryProps {
     /**
      * Proposal to be used to display the breakdown.
      */
-    proposal: ITokenProposal;
+    proposal?: ITokenProposal;
     /**
      * Name of the body.
      */
@@ -19,10 +19,15 @@ export interface ITokenProposalVotingSummaryProps {
 
 export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryProps> = (props) => {
     const { proposal, name } = props;
-    const { supportThreshold, historicalTotalSupply } = proposal.settings;
-    const { symbol, decimals } = proposal.settings.token;
 
     const { t } = useTranslations();
+
+    if (!proposal) {
+        return <p>name</p>;
+    }
+
+    const { supportThreshold, historicalTotalSupply } = proposal.settings;
+    const { symbol, decimals } = proposal.settings.token;
 
     const status = tokenProposalUtils.getProposalStatus(proposal);
 
@@ -73,7 +78,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     if (status === ProposalStatus.VETOED) {
         return (
             <p>
-                {`${name}`} <span className="text-critical-800">vetoes</span>
+                {`${name}`} <span className="text-critical-800">vetoed</span>
             </p>
         );
     }

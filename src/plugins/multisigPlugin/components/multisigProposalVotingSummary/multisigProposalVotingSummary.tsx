@@ -6,7 +6,7 @@ export interface IMultisigProposalVotingSummaryProps {
     /**
      * Proposal to be used to display the breakdown.
      */
-    proposal: IMultisigProposal;
+    proposal?: IMultisigProposal;
     /**
      * Name of the body.
      */
@@ -17,6 +17,10 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     const { proposal, name } = props;
 
     const { t } = useTranslations();
+
+    if (!proposal) {
+        return <p>{name}</p>;
+    }
 
     const minApprovals = proposal.settings.minApprovals;
     const approvalsAmount = proposal.metrics.totalVotes;
