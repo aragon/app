@@ -6,7 +6,7 @@ class IpfsUtils {
             return `${this.ipfsGateway}/${cid.replace('://', '/')}`;
         }
 
-        return cid != null ? `${this.ipfsGateway}/ipfs/${cid}` : undefined;
+        return cid != null ? `${this.ipfsGateway}/ipfs/${cid}?img-width=80&img-height=80&img-onerror=redirect` : undefined;
     };
 }
 
