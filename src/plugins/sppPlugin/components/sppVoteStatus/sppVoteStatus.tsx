@@ -1,5 +1,4 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import type { ISppSubProposal } from '@/plugins/sppPlugin/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 
@@ -28,9 +27,7 @@ export const SppVoteStatus: React.FC<ISppVoteStatusProps> = (props) => {
     const slotId = GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE;
     const { pluginSubdomain: pluginId } = subProposal;
 
-    const userVote = useUserVote({ proposal: subProposal });
-
-    if (!canVote || userVote != null) {
+    if (!canVote) {
         return null;
     }
 

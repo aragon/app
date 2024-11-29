@@ -61,7 +61,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         open(GovernanceDialogs.VOTE, { params });
     };
 
-    const chainId = networkDefinitions[proposal.network].chainId;
+    const chainId = networkDefinitions[proposal.settings.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const latestVoteTxHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
@@ -101,7 +101,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     ];
 
     return (
-        <div className="flex flex-col gap-4 pt-6 md:pt-8">
+        <div className="flex flex-col gap-4 pt-2 md:pt-4">
             {!voteState.showOptions && !latestVote && (
                 <Button
                     className="w-fit"

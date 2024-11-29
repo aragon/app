@@ -73,7 +73,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const minAdvanceTime = stageStartDate?.plus({ seconds: stage.minAdvance });
     const displayMinAdvanceTime =
-        stageStartDate && DateTime.now() < stageStartDate?.plus({ seconds: stage.minAdvance }) && !isStageAdvanced;
+        stageStartDate && minAdvanceTime && DateTime.now() < minAdvanceTime && !isStageAdvanced;
 
     if (stageAdvanceExpired) {
         return (
@@ -115,7 +115,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
           : null;
 
     return (
-        <div className="mt-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <Button size="md" {...buttonProps}>
                 {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
             </Button>
