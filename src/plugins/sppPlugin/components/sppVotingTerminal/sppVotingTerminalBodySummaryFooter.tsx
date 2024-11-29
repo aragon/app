@@ -26,6 +26,8 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     const threshold = isVetoStage ? stage.vetoThreshold : stage.approvalThreshold;
     const entityType = threshold > 1 ? 'bodies' : 'body';
 
+    // TODO: Add new SPP STAGE STATUS component to handle advancing and all other footer logic
+
     return (
         <>
             <p className="text-center text-neutral-500 md:text-right">
