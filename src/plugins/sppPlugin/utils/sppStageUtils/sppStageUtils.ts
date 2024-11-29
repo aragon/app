@@ -13,6 +13,8 @@ class SppStageUtils {
         const stageStartDate = this.getStageStartDate(proposal, stage);
         const stageEndDate = this.getStageEndDate(proposal, stage);
 
+        const isAdvanceable = this.isAdvanceable(proposal);
+
         const minAdvanceDate = stageStartDate?.plus({ seconds: minAdvance });
         const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
 
@@ -20,6 +22,8 @@ class SppStageUtils {
 
         // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
         const isSignalingProposal = actions.length === 0 && stageIndex === settings.stages.length - 1;
+
+        const canAdvance = approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal;
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalVotingStatus.VETOED;
@@ -33,10 +37,11 @@ class SppStageUtils {
             return ProposalVotingStatus.PENDING;
         }
 
-        if (stageEndDate != null && now < stageEndDate) {
-            const canAdvance =
-                approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal;
+        if (isAdvanceable === true) {
+            return ProposalVotingStatus.ADVANCEABLE;
+        }
 
+        if (stageEndDate != null && now < stageEndDate) {
             return canAdvance ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
         }
 
@@ -83,7 +88,8 @@ class SppStageUtils {
 
     getStageMaxAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         const stageStartDate = this.getStageStartDate(proposal, stage);
-        return stageStartDate?.plus({ seconds: stage.maxAdvance });
+        const difference = stage.maxAdvance - stage.minAdvance;
+        return stageStartDate?.plus({ seconds: difference });
     };
 
     getStageMinAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
@@ -95,6 +101,21 @@ class SppStageUtils {
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
         const vetoCount = this.getCount(proposal, stage, SppProposalType.VETO);
         return stage.vetoThreshold > 0 && vetoCount >= stage.vetoThreshold;
+    };
+
+    isAdvanceable = (proposal: ISppProposal): boolean => {
+        return proposal.subProposals.some((subProposal) => {
+            const getStatusFunction = pluginRegistryUtils.getSlotFunction<ISppSubProposal, boolean>({
+                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_PASSING,
+                pluginId: subProposal.pluginSubdomain,
+            });
+
+            if (!getStatusFunction) {
+                return false;
+            }
+
+            return getStatusFunction(subProposal);
+        });
     };
 
     isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {

@@ -47,6 +47,8 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
 
+    const passingStatus = sppStageUtils.isAdvanceable(proposal);
+
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
     const stageStartDate = sppStageUtils.getStageStartDate(proposal, stage);
@@ -58,13 +60,12 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
 
-    const isApprovalReached = sppStageUtils.isApprovalReached(proposal, stage);
-
     // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
     // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
-    const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
+    const displayAdvanceStatus =
+        passingStatus || (stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage));
 
-    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED && isApprovalReached;
+    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
 
     const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
@@ -77,9 +78,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     if (stageAdvanceExpired) {
         return (
-            <span className="w-full text-center text-neutral-800">
-                {t('app.plugins.spp.sppStageStatus.advanceExpired')}
-            </span>
+            <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
         );
     }
 
@@ -99,7 +98,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               label: 'advance',
               onClick: handleAdvanceStage,
               variant: 'primary' as const,
-              disabled: displayMaxAdvanceTime,
+              disabled: displayMinAdvanceTime,
           };
 
     const displayAdvanceTime = displayMinAdvanceTime

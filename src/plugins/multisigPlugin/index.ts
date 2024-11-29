@@ -41,6 +41,11 @@ export const initialiseMultisigPlugin = () => {
             pluginId: plugin.id,
             function: multisigProposalUtils.getProposalStatus,
         })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_PASSING,
+            pluginId: plugin.id,
+            function: multisigProposalUtils.isApprovalReached,
+        })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM,
             pluginId: plugin.id,
