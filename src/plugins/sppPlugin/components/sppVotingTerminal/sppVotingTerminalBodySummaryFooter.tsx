@@ -32,12 +32,12 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
         <>
             <p className="text-center text-neutral-500 md:text-right">
                 <span className="text-neutral-800">
-                    {t('app.plugins.spp.sppVotingTerminalStage.footer.thresholdLabel', {
+                    {t('app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.thresholdLabel', {
                         count: threshold,
                         entityType,
                     })}
                 </span>{' '}
-                {t('app.plugins.spp.sppVotingTerminalStage.footer.actionRequired', { action: actionType })}
+                {t('app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.actionRequired', { action: actionType })}
             </p>
         </>
     );

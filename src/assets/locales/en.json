@@ -660,11 +660,9 @@
             "vote": "Vote on proposal"
           }
         },
-        "sppVotingTerminalStage": {
-          "footer": {
-            "actionRequired": "required to {{action}}",
-            "thresholdLabel": "{{count}} {{entityType}}"
-          }
+        "sppVotingTerminalStageBodySummaryFooter": {
+          "actionRequired": "required to {{action}}",
+          "thresholdLabel": "{{count}} {{entityType}}"
         }
       },
       "token": {
