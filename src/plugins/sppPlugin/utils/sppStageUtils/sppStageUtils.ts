@@ -13,8 +13,6 @@ class SppStageUtils {
         const stageStartDate = this.getStageStartDate(proposal, stage);
         const stageEndDate = this.getStageEndDate(proposal, stage);
 
-        const isAdvanceable = this.isAdvanceable(proposal);
-
         const minAdvanceDate = stageStartDate?.plus({ seconds: minAdvance });
         const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
 
@@ -37,7 +35,7 @@ class SppStageUtils {
             return ProposalVotingStatus.PENDING;
         }
 
-        if (isAdvanceable === true) {
+        if (this.isAdvanceable(proposal)) {
             return ProposalVotingStatus.ADVANCEABLE;
         }
 
