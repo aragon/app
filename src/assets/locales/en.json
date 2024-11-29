@@ -598,8 +598,10 @@
           "select": "select"
         },
         "multisigSubmitVote": {
-          "approveLabel": "Approve proposal",
-          "vetoLabel": "Veto proposal"
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed"
         },
         "multisigUpdateSettingsAction": {
           "minimumApproval": {
@@ -728,12 +730,16 @@
         "tokenSubmitVote": {
           "buttons": {
             "cancel": "Cancel",
+            "change": "Change vote",
             "default": "Vote on proposal",
-            "submit": "Submit vote"
+            "submit": "Submit vote",
+            "submitChange": "Submit change",
+            "submitted": "Vote submitted"
           },
           "options": {
             "abstain": "Abstain",
             "approveLabel": "approve",
+            "current": "Current",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
             "vetoLabel": "veto",

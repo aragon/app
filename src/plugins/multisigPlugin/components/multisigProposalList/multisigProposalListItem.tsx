@@ -1,4 +1,4 @@
-import { useVotedStatus } from '@/modules/governance/hooks/useVotedStatus';
+import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
@@ -17,7 +17,7 @@ export interface IMultisigProposalListItemProps {
 export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
-    const voted = useVotedStatus({ proposal: proposal });
+    const vote = useUserVote({ proposal });
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
@@ -31,7 +31,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={multisigProposalUtils.getProposalStatus(proposal)}
             type="approvalThreshold"
-            voted={voted}
+            voted={vote != null}
             publisher={{
                 address: proposal.creator.address,
                 name: proposal.creator.ens ?? undefined,
