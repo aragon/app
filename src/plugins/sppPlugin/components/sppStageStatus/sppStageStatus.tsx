@@ -10,6 +10,7 @@ import {
     Rerender,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
@@ -27,7 +28,7 @@ export interface ISppStageStatusProps {
     /**
      * Sub proposal to display the vote status for.
      */
-    subProposal: ISppSubProposal;
+    subProposal?: ISppSubProposal;
     /**
      * Stage to display the status for.
      */
@@ -48,28 +49,41 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
+    const stageStartDate = sppStageUtils.getStageStartDate(proposal, stage);
+
     // Fallback to main-proposal execution transaction hash and status for last-stage sub proposals
-    const isStageAdvanced = subProposal.executed.status || proposal.executed.status;
-    const transactionHash = subProposal.executed.transactionHash ?? proposal.executed.transactionHash;
+    const isStageAdvanced = subProposal?.executed.status ?? proposal.executed.status;
+    const transactionHash = subProposal?.executed.transactionHash ?? proposal.executed.transactionHash;
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
 
+    const isApprovalReached = sppStageUtils.isApprovalReached(proposal, stage);
+
     // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
     // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
     const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
-    const canVote = stageStatus === ProposalVotingStatus.ACTIVE;
 
-    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
+    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED && isApprovalReached;
 
     const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
-    const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
     const displayMaxAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
-    const displayMinAdvanceTime = minAdvanceTime && minAdvanceTime.diffNow('days').days > 0 && !isStageAdvanced;
 
-    if (!displayAdvanceStatus && !canVote) {
+    const minAdvanceTime = stageStartDate?.plus({ seconds: stage.minAdvance });
+    const displayMinAdvanceTime =
+        stageStartDate && DateTime.now() < stageStartDate?.plus({ seconds: stage.minAdvance }) && !isStageAdvanced;
+
+    if (stageAdvanceExpired) {
+        return (
+            <span className="w-full text-center text-neutral-800">
+                {t('app.plugins.spp.sppStageStatus.advanceExpired')}
+            </span>
+        );
+    }
+
+    if (!displayAdvanceStatus) {
         return null;
     }
 
@@ -88,25 +102,17 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               disabled: displayMaxAdvanceTime,
           };
 
-    const displayAdvanceTime = displayMaxAdvanceTime
+    const displayAdvanceTime = displayMinAdvanceTime
         ? {
-              time: maxAdvanceTime,
-              info: t('app.plugins.spp.sppStageStatus.maxAdvanceInfo'),
+              time: minAdvanceTime,
+              info: t('app.plugins.spp.sppStageStatus.minAdvanceInfo'),
           }
-        : displayMinAdvanceTime
+        : displayMaxAdvanceTime
           ? {
-                time: minAdvanceTime,
-                info: t('app.plugins.spp.sppStageStatus.minAdvanceInfo'),
+                time: maxAdvanceTime,
+                info: t('app.plugins.spp.sppStageStatus.maxAdvanceInfo'),
             }
           : null;
-
-    if (stageAdvanceExpired) {
-        return (
-            <span className="w-full text-center text-neutral-800">
-                {t('app.plugins.spp.sppStageStatus.advanceExpired')}
-            </span>
-        );
-    }
 
     return (
         <div className="mt-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">

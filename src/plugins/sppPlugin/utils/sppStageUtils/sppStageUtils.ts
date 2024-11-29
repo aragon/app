@@ -88,7 +88,8 @@ class SppStageUtils {
 
     getStageMinAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         const stageStartDate = this.getStageStartDate(proposal, stage);
-        return stageStartDate?.minus({ seconds: stage.minAdvance });
+
+        return stageStartDate?.plus({ seconds: stage.minAdvance });
     };
 
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
@@ -98,6 +99,7 @@ class SppStageUtils {
 
     isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
         const approvalCount = this.getCount(proposal, stage, SppProposalType.APPROVAL);
+
         return approvalCount >= stage.approvalThreshold;
     };
 

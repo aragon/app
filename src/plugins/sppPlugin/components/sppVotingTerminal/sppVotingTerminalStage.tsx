@@ -2,13 +2,14 @@ import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
+import { SppVoteStatus } from '@/plugins/sppPlugin/components/sppVoteStatus';
+import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '@/plugins/sppPlugin/types';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
-import { sppStageUtils } from '../../utils/sppStageUtils';
-import { SppStageStatus } from '../sppStageStatus';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -68,6 +69,10 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const processedStageStatus =
         stageStatus === ProposalVotingStatus.UNREACHED ? stageStatus : proposalStatusToVotingStatus[stageStatus];
 
+    const isVeto = stage.plugins[0].proposalType === SppProposalType.VETO;
+
+    const canVote = processedStageStatus === ProposalVotingStatus.ACTIVE;
+
     const isMultiStage = proposal.settings.stages.length > 1;
 
     return (
@@ -87,12 +92,21 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         proposal={subProposal}
                     >
                         {processedSubProposal && (
-                            <SppStageStatus
-                                proposal={proposal}
-                                subProposal={processedSubProposal}
-                                daoId={daoId}
-                                stage={stage}
-                            />
+                            <>
+                                <SppVoteStatus
+                                    daoId={daoId}
+                                    subProposal={processedSubProposal}
+                                    isVeto={isVeto}
+                                    canVote={canVote}
+                                />
+
+                                <SppStageStatus
+                                    proposal={proposal}
+                                    subProposal={processedSubProposal}
+                                    daoId={daoId}
+                                    stage={stage}
+                                />
+                            </>
                         )}
                     </PluginSingleComponent>
                     <ProposalVoting.Votes>
