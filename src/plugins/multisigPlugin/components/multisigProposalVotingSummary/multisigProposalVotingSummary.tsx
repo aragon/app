@@ -1,6 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { formatterUtils, invariant, NumberFormat, ProposalVotingProgress } from '@aragon/gov-ui-kit';
+import { formatterUtils, invariant, NumberFormat, ProposalStatus, ProposalVotingProgress } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal } from '../../types';
+import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 
 export interface IMultisigProposalVotingSummaryProps {
     /**
@@ -19,8 +20,10 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     const { t } = useTranslations();
 
     if (!proposal) {
-        return <p>{name}</p>;
+        return <p className="text-neutral-800">{name}</p>;
     }
+
+    const status = multisigProposalUtils.getProposalStatus(proposal);
 
     const minApprovals = proposal.settings.minApprovals;
     const approvalsAmount = proposal.metrics.totalVotes;
@@ -34,10 +37,24 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     });
     const formattedMinApprovals = formatterUtils.formatNumber(minApprovals, { format: NumberFormat.GENERIC_SHORT })!;
 
-    if (approvalsAmount >= minApprovals) {
+    if (status === ProposalStatus.VETOED) {
         return (
             <p>
-                {`${name}`} <span className="text-success-800">approved</span>
+                {`${name}`}{' '}
+                <span className="text-critical-800">
+                    {t('app.plugins.multisig.multisigProposalVotingSummary.vetoed')}
+                </span>
+            </p>
+        );
+    }
+
+    if (status === ProposalStatus.ACCEPTED) {
+        return (
+            <p>
+                {`${name}`}{' '}
+                <span className="text-success-800">
+                    {t('app.plugins.multisig.multisigProposalVotingSummary.approved')}
+                </span>
             </p>
         );
     }

@@ -23,7 +23,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     const { t } = useTranslations();
 
     if (!proposal) {
-        return <p>name</p>;
+        return <p className="text-neutral-800">{name}</p>;
     }
 
     const { supportThreshold, historicalTotalSupply } = proposal.settings;
@@ -70,7 +70,8 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     if (status === ProposalStatus.ACCEPTED) {
         return (
             <p>
-                {`${name}`} <span className="text-success-800">approved</span>
+                {`${name}`}{' '}
+                <span className="text-success-800">{t('app.plugins.token.tokenProposalVotingSummary.approved')}</span>
             </p>
         );
     }
@@ -78,7 +79,8 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     if (status === ProposalStatus.VETOED) {
         return (
             <p>
-                {`${name}`} <span className="text-critical-800">vetoed</span>
+                {`${name}`}{' '}
+                <span className="text-critical-800">{t('app.plugins.token.tokenProposalVotingSummary.vetoed')}</span>
             </p>
         );
     }

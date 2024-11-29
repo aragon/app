@@ -61,12 +61,14 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
-                    {stage.plugins.map((plugin, index) => (
+                    {stage.plugins.map((plugin) => (
                         <ProposalVoting.BodySummaryListItem key={plugin.address} id={plugin.address}>
                             <PluginSingleComponent
                                 slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_SUMMARY}
                                 pluginId={plugin.subdomain}
-                                proposal={subProposals?.[index]}
+                                proposal={subProposals?.find(
+                                    (subProposal) => subProposal.pluginAddress === plugin.address,
+                                )}
                                 name={plugin.name}
                             />
                         </ProposalVoting.BodySummaryListItem>
@@ -89,7 +91,9 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         <SppVotingTerminalBodyContent
                             plugin={plugin}
                             daoId={daoId}
-                            subProposal={subProposals?.[index]}
+                            subProposal={subProposals?.find(
+                                (subProposal) => subProposal.pluginAddress === plugin.address,
+                            )}
                             proposal={proposal}
                             stage={stage}
                         />

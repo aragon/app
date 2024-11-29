@@ -7,13 +7,12 @@ import { type ISppProposal, type ISppStage, type ISppSubProposal, SppProposalTyp
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): ProposalVotingStatus => {
         const { stageIndex: currentStageIndex, actions, settings } = proposal;
-        const { stageIndex, minAdvance } = stage;
+        const { stageIndex } = stage;
 
         const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal, stage);
         const stageEndDate = this.getStageEndDate(proposal, stage);
 
-        const minAdvanceDate = stageStartDate?.plus({ seconds: minAdvance });
         const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
 
         const approvalReached = this.isApprovalReached(proposal, stage);

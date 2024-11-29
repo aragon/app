@@ -583,8 +583,10 @@
           "entity": "Proposals"
         },
         "multisigProposalVotingSummary": {
+          "approved": "approved",
           "description": "of {{count}} members",
-          "name": "{{name}} approval"
+          "name": "{{name}} approval",
+          "vetoed": "vetoed"
         },
         "multisigRemoveMembersAction": {
           "add": "Add",
@@ -734,6 +736,7 @@
           "yes": "Yes"
         },
         "tokenProposalVotingSummary": {
+          "approved": "approved",
           "minParticipation": {
             "description": "of {{details}}",
             "name": "Minimum Participation"
@@ -746,7 +749,8 @@
           "support": {
             "description": "of {{details}}",
             "name": "{{name}} support"
-          }
+          },
+          "vetoed": "vetoed"
         },
         "tokenSubmitVote": {
           "buttons": {
