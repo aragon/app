@@ -108,6 +108,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             action={action}
                             CustomComponent={allCustomActionComponents[action.type]}
                             dropdownItems={getActionDropdownItems(index)}
+                            editMode={true}
+                            formPrefix={`actions.${index.toString()}`}
                         />
                     ))}
                 </ProposalActions.Container>

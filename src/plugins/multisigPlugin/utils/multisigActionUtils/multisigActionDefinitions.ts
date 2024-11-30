@@ -16,7 +16,7 @@ export const defaultAddMembers: IMultisigActionChangeMembers = {
             {
                 name: '_members',
                 type: 'address[]',
-                value: '',
+                value: undefined,
                 notice: 'The addresses to be added',
             },
         ],
@@ -38,7 +38,7 @@ export const defaultRemoveMembers: IMultisigActionChangeMembers = {
             {
                 name: '_members',
                 type: 'address[]',
-                value: '',
+                value: undefined,
                 notice: 'The addresses to be removed',
             },
         ],
@@ -60,7 +60,11 @@ export const defaultUpdateSettings = (settings: IMultisigPluginSettings): IMulti
                 name: '_multisigSettings',
                 type: 'tuple',
                 notice: 'The new settings',
-                value: '',
+                value: undefined,
+                components: [
+                    { name: 'onlyListed', type: 'bool' },
+                    { name: 'minApprovals', type: 'uint16' },
+                ],
             },
         ],
     },
