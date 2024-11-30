@@ -52,10 +52,8 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     };
 
     const openTransactionDialog = () => {
-        const vote = {
-            value: Number(voteState.selectedOption),
-            label: voteOptionToIndicator[voteState.selectedOption ?? ''],
-        };
+        const voteLabel = voteOptionToIndicator[voteState.selectedOption ?? ''];
+        const vote = { value: Number(voteState.selectedOption), label: voteLabel };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
 
         open(GovernanceDialogs.VOTE, { params });
@@ -63,16 +61,10 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const chainId = networkDefinitions[proposal.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const latestVoteTxHref = buildEntityUrl({
-        type: ChainEntityType.TRANSACTION,
-        id: latestVote?.transactionHash,
-    });
+    const latestVoteTxHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: latestVote?.transactionHash });
 
     useEffect(() => {
-        setVoteState((prevState) => ({
-            ...prevState,
-            selectedOption: latestVote?.voteOption.toString(),
-        }));
+        setVoteState((prevState) => ({ ...prevState, selectedOption: latestVote?.voteOption.toString() }));
     }, [latestVote]);
 
     const onCancel = () => {
@@ -83,21 +75,12 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         }));
     };
 
-    const current = { variant: 'info' as const, label: t('app.plugins.token.tokenSubmitVote.options.current') };
+    const currentTag = { variant: 'info' as const, label: t('app.plugins.token.tokenSubmitVote.options.current') };
 
     const voteOptions = [
-        {
-            label: t('app.plugins.token.tokenSubmitVote.options.yes'),
-            value: VoteOption.YES.toString(),
-        },
-        {
-            label: t('app.plugins.token.tokenSubmitVote.options.abstain'),
-            value: VoteOption.ABSTAIN.toString(),
-        },
-        {
-            label: t('app.plugins.token.tokenSubmitVote.options.no'),
-            value: VoteOption.NO.toString(),
-        },
+        { label: t('app.plugins.token.tokenSubmitVote.options.yes'), value: VoteOption.YES.toString() },
+        { label: t('app.plugins.token.tokenSubmitVote.options.abstain'), value: VoteOption.ABSTAIN.toString() },
+        { label: t('app.plugins.token.tokenSubmitVote.options.no'), value: VoteOption.NO.toString() },
     ];
 
     return (
@@ -150,7 +133,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                             <RadioCard
                                 key={value}
                                 label={label}
-                                tag={latestVote?.voteOption.toString() === value ? current : undefined}
+                                tag={latestVote?.voteOption.toString() === value ? currentTag : undefined}
                                 value={value}
                             />
                         ))}
