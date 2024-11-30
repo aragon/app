@@ -11,7 +11,7 @@ export interface ILayoutWizardCreateProposalProps {
     /**
      * URL parameters of the create proposal page.
      */
-    params: ICreateProposalPageParams;
+    params: Promise<ICreateProposalPageParams>;
 }
 
 const getWizardName = (dao: IDao, pluginAddress: string): ILayoutWizardProps['name'] => {
@@ -31,23 +31,23 @@ const getWizardName = (dao: IDao, pluginAddress: string): ILayoutWizardProps['na
 
 export const LayoutWizardCreateProposal: React.FC<ILayoutWizardCreateProposalProps> = async (props) => {
     const { params } = props;
+    const { id, pluginAddress } = await params;
 
     const queryClient = new QueryClient();
     let wizardName: ILayoutWizardProps['name'] = '';
 
     try {
-        const { id, pluginAddress } = params;
         const dao = await queryClient.fetchQuery(daoOptions({ urlParams: { id } }));
         wizardName = getWizardName(dao, pluginAddress);
     } catch (error: unknown) {
         return (
             <Page.Error
                 error={JSON.parse(JSON.stringify(error)) as unknown}
-                actionLink={`/dao/${props.params.id}/proposals/`}
+                actionLink={`/dao/${id}/proposals/`}
                 notFoundNamespace="app.application.layoutWizard"
             />
         );
     }
 
-    return <LayoutWizard name={wizardName} exitPath={`/dao/${props.params.id}/proposals/` as Route} {...props} />;
+    return <LayoutWizard name={wizardName} exitPath={`/dao/${id}/proposals/` as Route} {...props} />;
 };

@@ -27,7 +27,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
 
     const daoListParams = daoFilter === 'all' ? initialParams : undefined;
     const daoListMemberParams =
-        daoFilter === 'member' ? { urlParams: { address: address! }, queryParams: {} } : undefined;
+        daoFilter === 'member' ? { urlParams: { address: address! }, queryParams: { sort: 'blockNumber' } } : undefined;
 
     const { open } = useDialogContext();
 
