@@ -97,7 +97,7 @@ describe('SppStageUtils', () => {
             const startDate = DateTime.fromISO('2016-05-25T09:08:34.123');
             const proposal = generateSppProposal();
             const stage = generateSppStage({ minAdvance: 300 });
-            const expectedValue = startDate.minus({ seconds: stage.minAdvance });
+            const expectedValue = startDate.plus({ seconds: stage.minAdvance });
             getStartStartDateSpy.mockReturnValue(startDate);
             expect(sppStageUtils.getStageMinAdvance(proposal, stage)).toEqual(expectedValue);
         });

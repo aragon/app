@@ -86,8 +86,8 @@ class SppStageUtils {
 
     getStageMaxAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         const stageStartDate = this.getStageStartDate(proposal, stage);
-        const difference = stage.maxAdvance - stage.minAdvance;
-        return stageStartDate?.plus({ seconds: difference });
+
+        return stageStartDate?.plus({ seconds: stage.maxAdvance });
     };
 
     getStageMinAdvance = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
