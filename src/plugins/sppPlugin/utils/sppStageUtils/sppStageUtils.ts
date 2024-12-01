@@ -35,7 +35,7 @@ class SppStageUtils {
             return ProposalVotingStatus.PENDING;
         }
 
-        if (this.isAdvanceable(proposal)) {
+        if (this.isAdvanceable(proposal) && stageEndDate != null && now < stageEndDate && !canAdvance) {
             return ProposalVotingStatus.ADVANCEABLE;
         }
 
