@@ -49,8 +49,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
-    console.log('status', stageStatus);
-
     const stageStartDate = sppStageUtils.getStageStartDate(proposal, stage);
 
     // Fallback to main-proposal execution transaction hash and status for last-stage sub proposals
