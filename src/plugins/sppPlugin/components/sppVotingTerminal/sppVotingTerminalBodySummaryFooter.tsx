@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
+import { type ISppProposal, type ISppStage, type ISppSubProposal, SppProposalType } from '../../types';
+import { SppStageStatus } from '../sppStageStatus';
 
 export interface ISppVotingTerminalBodySummaryFooterProps {
     /**
@@ -11,13 +12,17 @@ export interface ISppVotingTerminalBodySummaryFooterProps {
      */
     stage: ISppStage;
     /**
-     * is this stage advanced
+     * is this stage active
      */
-    isAdvanced: boolean;
+    isActive: boolean;
+    /**
+     * Sub proposal to display the vote status for.
+     */
+    subProposal?: ISppSubProposal;
 }
 
 export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBodySummaryFooterProps> = (props) => {
-    const { stage } = props;
+    const { stage, proposal, isActive, subProposal } = props;
 
     const { t } = useTranslations();
 
@@ -26,7 +31,9 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     const threshold = isVetoStage ? stage.vetoThreshold : stage.approvalThreshold;
     const entityType = threshold > 1 ? 'bodies' : 'body';
 
-    // TODO: Add new SPP STAGE STATUS component to handle advancing and all other footer logic
+    if (!isActive) {
+        return <SppStageStatus proposal={proposal} stage={stage} subProposal={subProposal} />;
+    }
 
     return (
         <>

@@ -27,10 +27,6 @@ export interface ISppVotingTerminalBodyContentProps {
      */
     proposal: ISppProposal;
     /**
-     * Main stage of the body.
-     */
-    stage: ISppStage;
-    /**
      * Flag indicating if the vote is a veto.
      */
     isVeto: boolean;
@@ -42,7 +38,7 @@ export interface ISppVotingTerminalBodyContentProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, proposal, stage, canVote, isVeto } = props;
+    const { plugin, daoId, subProposal, proposal, canVote, isVeto } = props;
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
@@ -67,15 +63,12 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         proposal={subProposal}
                     >
                         {processedSubProposal && (
-                            <>
-                                <SppVoteStatus
-                                    daoId={daoId}
-                                    subProposal={processedSubProposal}
-                                    isVeto={isVeto}
-                                    canVote={canVote}
-                                />
-                                <SppStageStatus proposal={proposal} subProposal={processedSubProposal} stage={stage} />
-                            </>
+                            <SppVoteStatus
+                                daoId={daoId}
+                                subProposal={processedSubProposal}
+                                isVeto={isVeto}
+                                canVote={canVote}
+                            />
                         )}
                     </PluginSingleComponent>
                     <ProposalVoting.Votes>

@@ -80,9 +80,12 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                     ))}
                 </ProposalVoting.BodySummaryList>
                 <SppVotingTerminalBodySummaryFooter
-                    isAdvanced={proposal.stageIndex > stage.stageIndex}
                     proposal={proposal}
                     stage={stage}
+                    isActive={processedStageStatus === ProposalVotingStatus.ACTIVE}
+                    subProposal={subProposals?.find(
+                        (subProposal) => subProposal.pluginAddress === stage.plugins[stage.stageIndex].address,
+                    )}
                 />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => {
@@ -100,7 +103,6 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                                 (subProposal) => subProposal.pluginAddress === plugin.address,
                             )}
                             proposal={proposal}
-                            stage={stage}
                             canVote={canVote}
                             isVeto={isVeto}
                         />
