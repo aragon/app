@@ -60,9 +60,9 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
     // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
-    const displayAdvanceStatus =
-        (stageStatus === ProposalVotingStatus.ACCEPTED || stageStatus === ProposalVotingStatus.ADVANCEABLE) &&
-        !(isSignalingProposal && isLastStage);
+    const displayAdvance =
+        (stageStatus === ProposalVotingStatus.ACTIVE || stageStatus === ProposalVotingStatus.ACCEPTED) &&
+        sppStageUtils.isApprovalReached(proposal, stage);
 
     const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
 
@@ -81,7 +81,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         );
     }
 
-    if (!displayAdvanceStatus) {
+    if (!displayAdvance) {
         return null;
     }
 

@@ -1,6 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { type ISppProposal, type ISppStage, type ISppSubProposal, SppProposalType } from '../../types';
 
@@ -33,10 +33,6 @@ class SppStageUtils {
 
         if ((stageStartDate != null && stageStartDate > now) || stageIndex > currentStageIndex) {
             return ProposalVotingStatus.PENDING;
-        }
-
-        if (this.isAdvanceable(proposal) && stageEndDate != null && now < stageEndDate && !canAdvance) {
-            return ProposalVotingStatus.ADVANCEABLE;
         }
 
         if (stageEndDate != null && now < stageEndDate) {
@@ -98,22 +94,8 @@ class SppStageUtils {
 
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
         const vetoCount = this.getCount(proposal, stage, SppProposalType.VETO);
+
         return stage.vetoThreshold > 0 && vetoCount >= stage.vetoThreshold;
-    };
-
-    isAdvanceable = (proposal: ISppProposal): boolean => {
-        return proposal.subProposals.some((subProposal) => {
-            const getStatusFunction = pluginRegistryUtils.getSlotFunction<ISppSubProposal, boolean>({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_PASSING,
-                pluginId: subProposal.pluginSubdomain,
-            });
-
-            if (!getStatusFunction) {
-                return false;
-            }
-
-            return getStatusFunction(subProposal);
-        });
     };
 
     isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
@@ -130,28 +112,16 @@ class SppStageUtils {
                 return count;
             }
 
-            const getStatusFunction = pluginRegistryUtils.getSlotFunction<ISppSubProposal, ProposalStatus>({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
+            const getApprovalStatus = pluginRegistryUtils.getSlotFunction<ISppSubProposal, ProposalStatus>({
+                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_APPROVAL,
                 pluginId: subProposal.pluginSubdomain,
             });
 
-            if (getStatusFunction == null) {
+            if (getApprovalStatus == null) {
                 return subProposal.result ? count + 1 : count;
             }
 
-            const subProposalStatus = getStatusFunction(subProposal);
-            const { ACCEPTED, EXECUTABLE, EXECUTED, EXPIRED } = ProposalStatus;
-
-            // Do not include EXECUTED as approved status for veto proposals as a sub-proposal will have EXECUTED status
-            // when the stage has been advanced, therefore the proposal has not been vetoed. Include instead the EXPIRED
-            // status for veto proposals as plugins might set an expiry execution (e.g. multisig) and, if a sub-proposal
-            // has been accepted but not executed, the sub-proposal still counts as vetoed.
-            const approvedStatuses =
-                proposalType === SppProposalType.APPROVAL
-                    ? [ACCEPTED, EXECUTABLE, EXECUTED]
-                    : [ACCEPTED, EXECUTABLE, EXPIRED];
-
-            const isApprovalReached = approvedStatuses.includes(subProposalStatus);
+            const isApprovalReached = getApprovalStatus(subProposal);
 
             return isApprovalReached ? count + 1 : count;
         }, 0);
