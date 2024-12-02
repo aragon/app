@@ -2,7 +2,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
+import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
@@ -49,6 +49,11 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     const isMultiStage = proposal.settings.stages.length > 1;
 
+    const bodyList = stage.plugins.map((plugin) => plugin.address);
+
+    const canVote = processedStageStatus === ProposalVotingStatus.ACTIVE;
+    const isVeto = stage.plugins[0].proposalType === SppProposalType.VETO;
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
@@ -57,7 +62,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             endDate={processedEndDate}
             index={index}
             isMultiStage={isMultiStage}
-            bodyList={stage.plugins.map((plugin) => plugin.address)}
+            bodyList={bodyList}
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
@@ -96,6 +101,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                             )}
                             proposal={proposal}
                             stage={stage}
+                            canVote={canVote}
+                            isVeto={isVeto}
                         />
                     </ProposalVoting.BodyContent>
                 );

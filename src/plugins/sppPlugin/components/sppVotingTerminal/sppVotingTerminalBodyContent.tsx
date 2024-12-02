@@ -7,6 +7,7 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
 import { SppStageStatus } from '../sppStageStatus';
+import { SppVoteStatus } from '../sppVoteStatus';
 
 export interface ISppVotingTerminalBodyContentProps {
     /**
@@ -29,11 +30,19 @@ export interface ISppVotingTerminalBodyContentProps {
      * Main stage of the body.
      */
     stage: ISppStage;
+    /**
+     * Flag indicating if the vote is a veto.
+     */
+    isVeto: boolean;
+    /**
+     * Flag indicating if the user can vote.
+     */
+    canVote: boolean;
 }
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, proposal, stage } = props;
+    const { plugin, daoId, subProposal, proposal, stage, canVote, isVeto } = props;
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
@@ -47,6 +56,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
 
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
+
     return (
         <>
             {subProposal && (
@@ -57,7 +67,15 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         proposal={subProposal}
                     >
                         {processedSubProposal && (
-                            <SppStageStatus proposal={proposal} subProposal={processedSubProposal} stage={stage} />
+                            <>
+                                <SppVoteStatus
+                                    daoId={daoId}
+                                    subProposal={processedSubProposal}
+                                    isVeto={isVeto}
+                                    canVote={canVote}
+                                />
+                                <SppStageStatus proposal={proposal} subProposal={processedSubProposal} stage={stage} />
+                            </>
                         )}
                     </PluginSingleComponent>
                     <ProposalVoting.Votes>
