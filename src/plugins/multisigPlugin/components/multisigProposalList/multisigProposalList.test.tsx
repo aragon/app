@@ -1,14 +1,14 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
-import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
+import * as useUserVote from '@/modules/governance/hooks/useUserVote';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateMultisigProposal } from '../../testUtils';
+import { generateMultisigProposal, generateMultisigVote } from '../../testUtils';
 import { MultisigProposalList, type IMultisigProposalListProps } from './multisigProposalList';
 
 describe('<MultisigProposalList /> component', () => {
     const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');
-    const useVotedStatusSpy = jest.spyOn(useVotedStatus, 'useVotedStatus');
+    const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
 
     beforeEach(() => {
         useProposalListDataSpy.mockReturnValue({
@@ -20,7 +20,7 @@ describe('<MultisigProposalList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
-        useVotedStatusSpy.mockReturnValue(false);
+        useUserVoteSpy.mockReturnValue(generateMultisigVote());
     });
 
     afterEach(() => {

@@ -1,8 +1,8 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import * as useVotedStatus from '@/modules/governance/hooks/useVotedStatus';
+import * as useUserVote from '@/modules/governance/hooks/useUserVote';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
+import { generateTokenPluginSettings, generateTokenProposal, generateTokenVote } from '../../testUtils';
 import { VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
@@ -11,17 +11,17 @@ describe('<TokenProposalListItem /> component', () => {
     const getWinningOptionSpy = jest.spyOn(tokenProposalUtils, 'getWinningOption');
     const getTotalVotesSpy = jest.spyOn(tokenProposalUtils, 'getTotalVotes');
     const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');
-    const useVotedStatusSpy = jest.spyOn(useVotedStatus, 'useVotedStatus');
+    const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
 
     beforeEach(() => {
-        useVotedStatusSpy.mockReturnValue(false);
+        useUserVoteSpy.mockReturnValue(generateTokenVote());
     });
 
     afterEach(() => {
         getWinningOptionSpy.mockReset();
         getTotalVotesSpy.mockReset();
         getProposalStatusSpy.mockReset();
-        useVotedStatusSpy.mockReset();
+        useUserVoteSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenProposalListItemProps>) => {

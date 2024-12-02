@@ -4,6 +4,7 @@ import { generatePluginSettings } from '@/shared/testUtils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import * as wagmi from 'wagmi';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
 import { type IProposalVotingTerminalProps, ProposalVotingTerminal } from './proposalVotingTerminal';
@@ -18,8 +19,14 @@ jest.mock('../voteList', () => ({ VoteList: () => <div data-testid="vote-list-mo
 
 describe('<ProposalVotingTerminal /> component', () => {
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
+    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+
+    beforeEach(() => {
+        useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
+    });
 
     afterEach(() => {
+        useAccountSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
     });
 

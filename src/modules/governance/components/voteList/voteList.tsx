@@ -32,7 +32,6 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
             ...initialParams,
             queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
         };
-
         return { ...plugin, props: { initialParams: pluginInitialParams } };
     });
 
