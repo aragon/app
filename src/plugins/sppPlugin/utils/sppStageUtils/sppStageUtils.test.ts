@@ -583,5 +583,4 @@ describe('SppStageUtils', () => {
             expect(result).toBe(false);
         });
     });
-
 });

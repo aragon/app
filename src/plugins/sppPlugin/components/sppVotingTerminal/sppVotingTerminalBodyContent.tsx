@@ -5,8 +5,7 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
-import { SppStageStatus } from '../sppStageStatus';
+import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
 import { SppVoteStatus } from '../sppVoteStatus';
 
 export interface ISppVotingTerminalBodyContentProps {

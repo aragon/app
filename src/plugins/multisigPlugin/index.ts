@@ -6,6 +6,7 @@ import { MultisigGovernanceInfo } from './components/multisigGovernanceInfo';
 import { MultisigMemberInfo } from './components/multisigMemberInfo';
 import { MultisigProposalList } from './components/multisigProposalList';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
+import { MultisigProposalVotingSummary } from './components/multisigProposalVotingSummary';
 import { MultisigSubmitVote } from './components/multisigSubmitVote';
 import { MultisigVoteList } from './components/multisigVoteList';
 import { plugin } from './constants/plugin';
@@ -14,7 +15,6 @@ import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSett
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
-import { MultisigProposalVotingSummary } from './components/multisigProposalVotingSummary';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils

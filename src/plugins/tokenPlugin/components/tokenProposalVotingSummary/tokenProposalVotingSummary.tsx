@@ -81,7 +81,6 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
         );
     }
 
-
     return (
         <ProposalVotingProgress.Item
             name={t('app.plugins.token.tokenProposalVotingSummary.support.name', { name })}
