@@ -1,3 +1,4 @@
+import { IDaoPlugin } from '@/shared/api/daoService';
 import { formatUnits } from 'viem';
 import {
     type ITokenActionChangeSettings,
@@ -7,15 +8,15 @@ import {
 } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
-export const defaultMintAction: ITokenProposalAction = {
+export const defaultMintAction = (settings: ITokenPluginSettings): ITokenProposalAction => ({
     type: TokenProposalActionType.MINT,
     from: '',
-    to: '',
+    to: settings.token.address,
     data: '0x',
     value: '0',
     inputData: {
         function: 'mint',
-        contract: '',
+        contract: settings.token.name,
         parameters: [
             {
                 name: 'to',
@@ -31,12 +32,15 @@ export const defaultMintAction: ITokenProposalAction = {
             },
         ],
     },
-};
+});
 
-export const defaultUpdateSettings = (settings: ITokenPluginSettings): ITokenActionChangeSettings => ({
+export const defaultUpdateSettings = ({
+    address,
+    settings,
+}: IDaoPlugin<ITokenPluginSettings>): ITokenActionChangeSettings => ({
     type: TokenProposalActionType.UPDATE_VOTE_SETTINGS,
     from: '',
-    to: '',
+    to: address,
     data: '0x',
     value: '0',
     proposedSettings: {
@@ -54,6 +58,13 @@ export const defaultUpdateSettings = (settings: ITokenPluginSettings): ITokenAct
                 type: 'tuple',
                 notice: 'The new settings',
                 value: '',
+                components: [
+                    { name: 'votingMode', type: 'uint8' },
+                    { name: 'supportThreshold', type: 'uint32' },
+                    { name: 'minParticipation', type: 'uint32' },
+                    { name: 'minDuration', type: 'uint64' },
+                    { name: 'minProposerVotingPower', type: 'uint256' },
+                ],
             },
         ],
     },

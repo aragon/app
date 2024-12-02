@@ -80,7 +80,7 @@ class MultisigActionUtils {
                     ),
                     icon: IconType.SETTINGS,
                     groupId: address,
-                    defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
+                    defaultValue: defaultUpdateSettings(plugin),
                 },
             ],
             components: {
