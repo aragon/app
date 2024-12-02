@@ -37,24 +37,16 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     });
     const formattedMinApprovals = formatterUtils.formatNumber(minApprovals, { format: NumberFormat.GENERIC_SHORT })!;
 
-    if (status === ProposalStatus.VETOED) {
-        return (
-            <p>
-                {`${name}`}{' '}
-                <span className="text-critical-800">
-                    {t('app.plugins.multisig.multisigProposalVotingSummary.vetoed')}
-                </span>
-            </p>
-        );
-    }
+    if (status === ProposalStatus.VETOED || status === ProposalStatus.ACCEPTED) {
+        const isAccepted = status === ProposalStatus.ACCEPTED;
+        const statusText = isAccepted
+            ? t('app.plugins.multisig.multisigProposalVotingSummary.approved')
+            : t('app.plugins.multisig.multisigProposalVotingSummary.vetoed');
+        const statusClass = isAccepted ? 'text-success-800' : 'text-critical-800';
 
-    if (status === ProposalStatus.ACCEPTED) {
         return (
             <p>
-                {`${name}`}{' '}
-                <span className="text-success-800">
-                    {t('app.plugins.multisig.multisigProposalVotingSummary.approved')}
-                </span>
+                {name} <span className={statusClass}>{statusText}</span>
             </p>
         );
     }

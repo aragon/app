@@ -67,23 +67,20 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     const supportThresholdPercentage = tokenSettingsUtils.fromRatioToPercentage(supportThreshold);
     const supportReached = winningOptionPercentage >= supportThresholdPercentage;
 
-    if (status === ProposalStatus.ACCEPTED) {
+    if (status === ProposalStatus.ACCEPTED || status === ProposalStatus.VETOED) {
+        const isAccepted = status === ProposalStatus.ACCEPTED;
+        const statusText = isAccepted
+            ? t('app.plugins.token.tokenProposalVotingSummary.approved')
+            : t('app.plugins.token.tokenProposalVotingSummary.vetoed');
+        const statusClass = isAccepted ? 'text-success-800' : 'text-critical-800';
+
         return (
             <p>
-                {`${name}`}{' '}
-                <span className="text-success-800">{t('app.plugins.token.tokenProposalVotingSummary.approved')}</span>
+                {`${name}`} <span className={statusClass}>{statusText}</span>
             </p>
         );
     }
 
-    if (status === ProposalStatus.VETOED) {
-        return (
-            <p>
-                {`${name}`}{' '}
-                <span className="text-critical-800">{t('app.plugins.token.tokenProposalVotingSummary.vetoed')}</span>
-            </p>
-        );
-    }
 
     return (
         <ProposalVotingProgress.Item

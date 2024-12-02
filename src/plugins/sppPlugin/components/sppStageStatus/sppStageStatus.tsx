@@ -56,17 +56,17 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
     const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
 
-    const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
-    const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
-
     const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
-
+    // Currently this will show for expired status even if it was not previously accepted.
+    // We should adjust this once we finalise changes for the status utils.
     if (stageAdvanceExpired) {
         return (
             <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
         );
     }
 
+    const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
+    const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
     if (!displayAdvanceStatus) {
         return null;
     }
@@ -87,7 +87,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
                 {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
             </Button>
 
-           {displayAdvanceTime && (
+            {displayAdvanceTime && (
                 <div className="flex flex-row justify-center gap-1">
                     <Rerender>
                         {() => (
