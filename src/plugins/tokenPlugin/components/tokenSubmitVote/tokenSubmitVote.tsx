@@ -61,7 +61,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         open(GovernanceDialogs.VOTE, { params });
     };
 
-    const chainId = networkDefinitions[proposal.settings.network].chainId;
+    const chainId = networkDefinitions[proposal.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const latestVoteTxHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,

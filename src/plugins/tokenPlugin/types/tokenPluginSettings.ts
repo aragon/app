@@ -1,5 +1,5 @@
 import { type IToken } from '@/modules/finance/api/financeService';
-import type { IPluginSettings, Network } from '@/shared/api/daoService';
+import type { IPluginSettings } from '@/shared/api/daoService';
 import { type DaoTokenVotingMode } from './enum';
 
 export interface ITokenPluginSettings extends IPluginSettings {
@@ -31,8 +31,4 @@ export interface ITokenPluginSettings extends IPluginSettings {
      * Total supply of the token only set when settings are fetched for a specific block number (e.g. settings when a proposal was created)
      */
     historicalTotalSupply?: string;
-    /**
-     * Network of the DAO.
-     */
-    network: Network;
 }
