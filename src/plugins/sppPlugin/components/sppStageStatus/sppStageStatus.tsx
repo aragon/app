@@ -1,5 +1,3 @@
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -13,15 +11,11 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
 
 export interface ISppStageStatusProps {
-    /**
-     * ID of the related DAO.
-     */
-    daoId: string;
     /**
      * SPP main proposal.
      */
@@ -29,7 +23,7 @@ export interface ISppStageStatusProps {
     /**
      * Sub proposal to display the vote status for.
      */
-    subProposal: ISppSubProposal;
+    subProposal?: ISppSubProposal;
     /**
      * Stage to display the status for.
      */
@@ -37,7 +31,7 @@ export interface ISppStageStatusProps {
 }
 
 export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
-    const { proposal, daoId, subProposal, stage } = props;
+    const { proposal, subProposal, stage } = props;
 
     const { t } = useTranslations();
 
@@ -51,8 +45,9 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
     // Fallback to main-proposal execution transaction hash and status for last-stage sub proposals
-    const isStageAdvanced = subProposal.executed.status || proposal.executed.status;
-    const transactionHash = subProposal.executed.transactionHash ?? proposal.executed.transactionHash;
+    const isStageAdvanced = subProposal?.executed.status ?? proposal.executed.status;
+    const transactionHash = subProposal?.executed.transactionHash ?? proposal.executed.transactionHash;
+    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
@@ -60,32 +55,20 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
     // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
     const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
-    const canVote = stageStatus === ProposalVotingStatus.ACTIVE;
-
-    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
 
-    if (!displayAdvanceStatus && !canVote) {
-        return null;
+    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
+
+    if (stageAdvanceExpired) {
+        return (
+            <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
+        );
     }
 
-    const isVeto = stage.plugins[0].proposalType === SppProposalType.VETO;
-
-    if (canVote) {
-        const slotId = GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE;
-        const { pluginSubdomain: pluginId } = subProposal;
-
-        return (
-            <PluginSingleComponent
-                slotId={slotId}
-                pluginId={pluginId}
-                proposal={subProposal}
-                daoId={daoId}
-                isVeto={isVeto}
-            />
-        );
+    if (!displayAdvanceStatus) {
+        return null;
     }
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
@@ -93,17 +76,18 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               label: 'advanced',
               href: advanceTransactionHref,
               target: '_blank',
-              variant: 'success' as const,
+              variant: 'secondary' as const,
               iconRight: IconType.LINK_EXTERNAL,
           }
         : { label: 'advance', onClick: handleAdvanceStage, variant: 'primary' as const };
 
     return (
-        <div className="mt-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <Button size="md" {...buttonProps}>
                 {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
             </Button>
-            {displayAdvanceTime && (
+
+           {displayAdvanceTime && (
                 <div className="flex flex-row justify-center gap-1">
                     <Rerender>
                         {() => (
@@ -115,6 +99,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
                     <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceInfo')}</span>
                 </div>
             )}
+
             <AdvanceStageDialog open={isAdvanceDialogOpen} onOpenChange={setIsAdvanceDialogOpen} proposal={proposal} />
         </div>
     );

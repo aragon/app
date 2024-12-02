@@ -653,6 +653,7 @@
           "numberOfStages": "Number of stages"
         },
         "sppStageStatus": {
+          "advanceExpired": "Proposal not advanced in time",
           "advanceInfo": "left to advance",
           "button": {
             "advance": "Advance proposal",

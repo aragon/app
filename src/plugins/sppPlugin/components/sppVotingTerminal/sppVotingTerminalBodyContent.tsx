@@ -57,12 +57,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         proposal={subProposal}
                     >
                         {processedSubProposal && (
-                            <SppStageStatus
-                                proposal={proposal}
-                                subProposal={processedSubProposal}
-                                daoId={daoId}
-                                stage={stage}
-                            />
+                            <SppStageStatus proposal={proposal} subProposal={processedSubProposal} stage={stage} />
                         )}
                     </PluginSingleComponent>
                     <ProposalVoting.Votes>
