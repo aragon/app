@@ -58,7 +58,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
 
         return (
             <p>
-                {`${name}`} <span className={statusClass}>{statusText}</span>
+                {name} <span className={statusClass}>{statusText}</span>
             </p>
         );
     }
