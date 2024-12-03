@@ -80,7 +80,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
             <Button size="md" {...buttonProps}>
                 {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
             </Button>
-
             {displayAdvanceTime && (
                 <div className="flex flex-row justify-center gap-1">
                     <Rerender>
@@ -93,7 +92,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
                     <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceInfo')}</span>
                 </div>
             )}
-
             <AdvanceStageDialog open={isAdvanceDialogOpen} onOpenChange={setIsAdvanceDialogOpen} proposal={proposal} />
         </div>
     );
