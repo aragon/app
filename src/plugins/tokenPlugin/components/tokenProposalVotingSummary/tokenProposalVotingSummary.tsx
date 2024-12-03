@@ -4,7 +4,6 @@ import { formatUnits } from 'viem';
 import { type ITokenProposal, VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
-import { tokenVotingUtils } from '../../utils/tokenVotingUtils';
 
 export interface ITokenProposalVotingSummaryProps {
     /**
@@ -31,9 +30,9 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
 
     const status = tokenProposalUtils.getProposalStatus(proposal);
 
-    const yesVotes = Number(tokenVotingUtils.getOptionVotingPower(proposal, VoteOption.YES));
-    const noVotes = Number(tokenVotingUtils.getOptionVotingPower(proposal, VoteOption.NO));
-    const abstainVotes = Number(tokenVotingUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN));
+    const yesVotes = Number(tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES));
+    const noVotes = Number(tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO));
+    const abstainVotes = Number(tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN));
 
     const tokenTotalSupply = formatUnits(BigInt(historicalTotalSupply!), decimals);
     const totalSupplyNumber = Number(tokenTotalSupply);

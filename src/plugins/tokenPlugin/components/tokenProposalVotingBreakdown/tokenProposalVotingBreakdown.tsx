@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import { formatUnits } from 'viem';
 import type { ITokenProposal } from '../../types';
 import { VoteOption } from '../../types/enum/voteOption';
+import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
-import { tokenVotingUtils } from '../../utils/tokenVotingUtils';
 
 export interface ITokenProposalVotingBreakdownProps {
     /**
@@ -23,9 +23,9 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
     const { symbol, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold, historicalTotalSupply } = proposal.settings;
 
-    const yesVotes = tokenVotingUtils.getOptionVotingPower(proposal, VoteOption.YES);
-    const noVotes = tokenVotingUtils.getOptionVotingPower(proposal, VoteOption.NO);
-    const abstainVotes = tokenVotingUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN);
+    const yesVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES);
+    const noVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO);
+    const abstainVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN);
 
     return (
         <ProposalVoting.BreakdownToken
