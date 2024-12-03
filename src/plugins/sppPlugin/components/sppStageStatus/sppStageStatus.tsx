@@ -76,7 +76,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         : { label: 'advance', onClick: handleAdvanceStage, variant: 'primary' as const };
 
     return (
-        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+        <div className="mt-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <Button size="md" {...buttonProps}>
                 {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
             </Button>
