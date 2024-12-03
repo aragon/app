@@ -319,6 +319,7 @@ describe('tokenProposal utils', () => {
             expect(tokenProposalUtils.getVoteByType(votesByOption, VoteOption.YES)).toEqual(BigInt('0'));
         });
     });
+
     describe('getOptionVotingPower', () => {
         it('returns the correctly formatted voting power when the option exists', () => {
             const votesByOption: ITokenProposalOptionVotes[] = [
