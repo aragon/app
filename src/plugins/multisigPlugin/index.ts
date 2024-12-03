@@ -73,7 +73,7 @@ export const initialiseMultisigPlugin = () => {
             function: useMultisigNormalizeActions,
         })
         .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_SUMMARY,
+            slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY,
             pluginId: plugin.id,
             component: MultisigProposalVotingSummary,
         })

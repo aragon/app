@@ -6,7 +6,6 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
-import { SppVoteStatus } from '../sppVoteStatus';
 
 export interface ISppVotingTerminalBodyContentProps {
     /**
@@ -34,6 +33,7 @@ export interface ISppVotingTerminalBodyContentProps {
      */
     canVote: boolean;
 }
+
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
@@ -49,24 +49,26 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         pluginId: plugin.subdomain,
     });
 
+    // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
     return (
         <>
-            {subProposal && (
+            {processedSubProposal && (
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={plugin.subdomain}
                         proposal={subProposal}
                     >
-                        {processedSubProposal && (
-                            <SppVoteStatus
+                        {canVote && (
+                            <PluginSingleComponent
+                                slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                                pluginId={processedSubProposal.pluginSubdomain}
+                                proposal={processedSubProposal}
                                 daoId={daoId}
-                                subProposal={processedSubProposal}
                                 isVeto={isVeto}
-                                canVote={canVote}
                             />
                         )}
                     </PluginSingleComponent>

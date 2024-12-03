@@ -61,7 +61,6 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
                     count: formattedMinApprovals,
                 }),
             }}
-            showStatusIcon={true}
             variant={approvalsAmount >= minApprovals ? 'primary' : 'neutral'}
         />
     );

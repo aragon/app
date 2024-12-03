@@ -738,15 +738,6 @@
         },
         "tokenProposalVotingSummary": {
           "approved": "approved",
-          "minParticipation": {
-            "description": "of {{details}}",
-            "name": "Minimum Participation"
-          },
-          "option": {
-            "abstain": "Abstain",
-            "no": "No",
-            "yes": "Yes"
-          },
           "support": {
             "description": "of {{details}}",
             "name": "{{name}} support"

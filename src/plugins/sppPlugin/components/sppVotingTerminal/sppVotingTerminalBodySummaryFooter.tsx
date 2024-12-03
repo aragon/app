@@ -19,16 +19,19 @@ export interface ISppVotingTerminalBodySummaryFooterProps {
      * Sub proposal to display the vote status for.
      */
     subProposal?: ISppSubProposal;
+    /**
+     * Flag indicating if the vote is a veto.
+     */
+    isVeto: boolean;
 }
 
 export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBodySummaryFooterProps> = (props) => {
-    const { stage, proposal, isActive, subProposal } = props;
+    const { stage, proposal, isActive, subProposal, isVeto } = props;
 
     const { t } = useTranslations();
 
-    const isVetoStage = stage.plugins[0].proposalType === SppProposalType.VETO;
-    const actionType = isVetoStage ? 'veto' : 'approve';
-    const threshold = isVetoStage ? stage.vetoThreshold : stage.approvalThreshold;
+    const actionType = isVeto ? 'veto' : 'approve';
+    const threshold = isVeto ? stage.vetoThreshold : stage.approvalThreshold;
     const entityType = threshold > 1 ? 'bodies' : 'body';
 
     if (!isActive) {
@@ -36,16 +39,14 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     }
 
     return (
-        <>
-            <p className="text-center text-neutral-500 md:text-right">
-                <span className="text-neutral-800">
-                    {t('app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.thresholdLabel', {
-                        count: threshold,
-                        entityType,
-                    })}
-                </span>{' '}
-                {t('app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.actionRequired', { action: actionType })}
-            </p>
-        </>
+        <p className="text-center text-neutral-500 md:text-right">
+            <span className="text-neutral-800">
+                {t('app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.thresholdLabel', {
+                    count: threshold,
+                    entityType,
+                })}
+            </span>{' '}
+            {t('app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.actionRequired', { action: actionType })}
+        </p>
     );
 };

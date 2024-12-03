@@ -57,8 +57,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
 
     const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
-    // Currently this will show for expired status even if it was not previously accepted.
-    // We should adjust this once we finalise changes for the status utils.
     if (stageAdvanceExpired) {
         return (
             <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
