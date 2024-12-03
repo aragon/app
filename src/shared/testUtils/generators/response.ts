@@ -26,5 +26,7 @@ export const generateResponse = (response?: Partial<Response>): Response => ({
     formData: jest.fn(),
     text: jest.fn(),
     json: jest.fn(),
+    // @ts-expect-error TODO tsc command is failing without the "bytes" attribute after update to typescript@5.7.2
+    bytes: jest.fn(),
     ...response,
 });
