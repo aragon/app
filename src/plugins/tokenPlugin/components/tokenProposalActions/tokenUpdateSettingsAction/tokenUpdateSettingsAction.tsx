@@ -57,7 +57,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
 
     const { setValue } = useFormContext();
 
-    const actionFieldName = `actions.[${index}]`;
+    const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     /* Set default values to supportThreshold, minParticipation and minVotingPower values
@@ -117,8 +117,8 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     useEffect(() => {
         const updateSettingsParams = {
             votingMode: votingModeField.value,
-            supportThreshold: tokenSettingsUtils.fromPercentageToRatio(supportThreshold ?? 0),
-            minParticipation: tokenSettingsUtils.fromPercentageToRatio(minParticipation ?? 0),
+            supportThreshold: tokenSettingsUtils.fromPercentageToRatio(supportThreshold),
+            minParticipation: tokenSettingsUtils.fromPercentageToRatio(minParticipation),
             minDuration: minDurationInSeconds,
             minProposerVotingPower: parseUnits(minVotingPowerValue, tokenDecimals),
         };
@@ -127,7 +127,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         setValue(`${actionFieldName}.data`, newData);
         setValue(
             `${actionFieldName}.inputData.parameters[0].value`,
-            `[${votingModeField.value}, ${supportThreshold}, ${minParticipation}, ${minDurationInSeconds}, ${minVotingPowerValue}]`,
+            `[${votingModeField.value.toString()}, ${supportThreshold.toString()}, ${minParticipation.toString()}, ${minDurationInSeconds.toString()}, ${minVotingPowerValue}]`,
         );
         setValue(
             `${actionFieldName}.proposedSettings.minDuration`,

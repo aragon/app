@@ -5,6 +5,7 @@ import { generateDao, generateReactQueryResultError, generateReactQueryResultSuc
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { GukModulesProvider, IconType, addressUtils, clipboardUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
+import type * as GovUiKit from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
@@ -13,10 +14,10 @@ import { NavigationDao, type INavigationDaoProps } from './navigationDao';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual('@aragon/gov-ui-kit'),
+    ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
-    Wallet: (props: { user: ICompositeAddress; onClick: () => void }) => (
-        <button onClick={props.onClick}>{props?.user ? props.user.address : 'connect-mock'}</button>
+    Wallet: (props: { user?: ICompositeAddress; onClick: () => void }) => (
+        <button onClick={props.onClick}>{props.user ? props.user.address : 'connect-mock'}</button>
     ),
 }));
 
@@ -97,7 +98,7 @@ describe('<NavigationDao /> component', () => {
         render(createTestComponent());
         const triggerButton = screen.getByTestId('nav-trigger-mock');
         expect(triggerButton).toBeInTheDocument();
-        expect(triggerButton?.className).toContain('md:hidden');
+        expect(triggerButton.className).toContain('md:hidden');
         await userEvent.click(triggerButton);
         expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
@@ -147,10 +148,10 @@ describe('<NavigationDao /> component', () => {
         expect(exploreButton.href).toEqual('http://localhost/');
     });
 
-    it('does not crash when dao cannot be fetched', () => {
+    it('returns empty container when dao cannot be fetched', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
-        render(createTestComponent());
-        expect(screen.getByTestId('dao-avatar-mock')).toBeInTheDocument();
+        const { container } = render(createTestComponent());
+        expect(container).toBeEmptyDOMElement();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

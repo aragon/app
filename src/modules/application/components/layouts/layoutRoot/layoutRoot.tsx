@@ -19,8 +19,10 @@ export interface ILayoutRootProps {
 export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const { children } = props;
 
-    const translationAssets = await translations['en']();
-    const wagmiInitialState = cookieToInitialState(wagmiConfig, headers().get('cookie'));
+    const translationAssets = await translations.en();
+
+    const requestHeaders = await headers();
+    const wagmiInitialState = cookieToInitialState(wagmiConfig, requestHeaders.get('cookie'));
 
     return (
         <html lang="en" className="h-full">

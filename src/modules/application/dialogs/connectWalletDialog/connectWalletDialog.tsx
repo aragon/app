@@ -11,9 +11,9 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = () => {
     const { open: openWeb3Modal } = useWeb3Modal();
     const { t } = useTranslations();
 
-    const handleConnectClick = () => {
+    const handleConnectClick = async () => {
         close();
-        openWeb3Modal();
+        await openWeb3Modal();
     };
 
     return (

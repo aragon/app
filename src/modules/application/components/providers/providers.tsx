@@ -1,10 +1,10 @@
 'use client';
 
+import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { DialogRoot } from '@/shared/components/dialogRoot';
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
-import { NavigationBlockerProvider } from '@/shared/components/navigationBlockerProvider';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
@@ -40,7 +40,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
 
     return (
         <TranslationsProvider translations={translations}>
-            <NavigationBlockerProvider>
+            <BlockNavigationContextProvider>
                 <GukModulesProvider
                     wagmiConfig={wagmiConfig}
                     wagmiInitialState={wagmiInitialState}
@@ -52,7 +52,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                         <DialogRoot dialogs={providersDialogs} />
                     </DialogProvider>
                 </GukModulesProvider>
-            </NavigationBlockerProvider>
+            </BlockNavigationContextProvider>
         </TranslationsProvider>
     );
 };

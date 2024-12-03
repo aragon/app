@@ -4,3 +4,4 @@ export type { ICreateProposalPageParams } from './createProposalPageParams';
 export type { IDaoMemberPageParams } from './daoMemberPageParams';
 export type { IDaoProposalPageParams } from './daoProposalPageParams';
 export type { INormalizeActionsParams } from './normalizeActionsParams';
+export type { IUsePluginMemberStatsParams } from './usePluginMemberStatsParams';

@@ -7,5 +7,5 @@ export const CreateDaoForm = {
 };
 
 export * from './createDaoFormDebug';
-export * from './createDaoFormDefinitions';
+export type * from './createDaoFormDefinitions';
 export * from './createDaoFormMetadata';

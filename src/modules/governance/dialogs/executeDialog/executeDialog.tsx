@@ -49,7 +49,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     });
 
     const handlePrepareTransaction = async () => {
-        return executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
+        return await executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
     };
 
     return (
@@ -59,7 +59,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             submitLabel={t('app.governance.executeDialog.buttons.submit')}
             successLink={{
                 label: t('app.governance.executeDialog.buttons.success'),
-                onClick: router.refresh,
+                onClick: () => router.refresh(),
             }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}

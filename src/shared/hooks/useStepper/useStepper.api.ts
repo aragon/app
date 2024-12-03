@@ -53,7 +53,7 @@ export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = s
      */
     updateActiveStep: (stepId: TStepId) => void;
     /**
-     *
+     * Updates all stepper steps.
      */
     updateSteps: (steps: Array<IStepperStep<TMeta, TStepId>>) => void;
 }

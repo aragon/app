@@ -14,7 +14,7 @@ import { type IMultisigMemberInfoProps, MultisigMemberInfo } from './multisigMem
 // Needed to spy usage of useMemberList hook
 jest.mock('../../../../modules/governance/api/governanceService', () => ({
     __esModule: true,
-    ...jest.requireActual('../../../../modules/governance/api/governanceService'),
+    ...jest.requireActual<typeof governanceService>('../../../../modules/governance/api/governanceService'),
 }));
 
 describe('<MultisigMemberInfo /> component', () => {
@@ -44,7 +44,7 @@ describe('<MultisigMemberInfo /> component', () => {
         expect(screen.getByText(/multisigMembersInfo.membersLabel/)).toBeInTheDocument();
     });
 
-    it('displays the correct number of members', async () => {
+    it('displays the correct number of members', () => {
         const members = [
             generateMember({ address: '0x123' }),
             generateMember({ address: '0x123' }),

@@ -1,2 +1,2 @@
 export { dateUtils } from './dateUtils';
-export * from './dateUtils.api';
+export type * from './dateUtils.api';

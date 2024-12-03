@@ -29,7 +29,7 @@ class ExecuteDialogUtils {
         const data = encodeFunctionData({ abi: executeAbi, functionName: 'execute', args: [proposalIndex] });
         const transaction: TransactionDialogPrepareReturn = { to: pluginAddress as Hex, data: data };
 
-        return transaction;
+        return Promise.resolve(transaction);
     };
 }
 

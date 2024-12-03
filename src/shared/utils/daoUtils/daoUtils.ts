@@ -1,7 +1,7 @@
 import { daoService, type IDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { PluginType, type IDaoPageParams } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { type Metadata } from 'next';
+import { type Metadata } from 'next/types';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 
@@ -9,7 +9,7 @@ export interface IGenerateDaoMetadataParams {
     /**
      * Path parameters of DAO pages.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
 export interface IGetDaoPluginsParams {
@@ -34,7 +34,7 @@ export interface IGetDaoPluginsParams {
 
 class DaoUtils {
     generateMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
-        const { id } = params;
+        const { id } = await params;
 
         const getDaoParams = { id };
         const dao = await daoService.getDao({ urlParams: getDaoParams });

@@ -43,11 +43,11 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
 
     const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(initialPlugin);
 
-    const selectPluginHref = selectedPlugin ? buildSelectedPluginHref?.(selectedPlugin.meta) : undefined;
+    const selectPluginHref = buildSelectedPluginHref?.(selectedPlugin.meta);
 
     const handleConfirm = () => {
         close();
-        onPluginSelected?.(selectedPlugin!.meta);
+        onPluginSelected?.(selectedPlugin.meta);
     };
 
     return (
@@ -63,7 +63,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                         onClick={() => setSelectedPlugin(plugin)}
                         className={classNames('px-4 py-3 md:p-6', {
                             'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
-                                plugin.uniqueId === selectedPlugin?.uniqueId,
+                                plugin.uniqueId === selectedPlugin.uniqueId,
                         })}
                     >
                         <div className="flex flex-col gap-y-1">
@@ -85,7 +85,6 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                     label: t('app.governance.selectPluginDialog.action.select'),
                     onClick: handleConfirm,
                     href: selectPluginHref,
-                    disabled: selectedPlugin == null,
                 }}
                 secondaryAction={{ label: t('app.governance.selectPluginDialog.action.cancel'), onClick: close }}
             />

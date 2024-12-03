@@ -9,14 +9,14 @@ export interface IDaoTransactionsPageProps {
     /**
      * DAO page parameters necessary for data fetching.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
 export const daoTransactionsCount = 6;
 
 export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (props) => {
     const { params } = props;
-    const id = params.id;
+    const { id } = await params;
 
     const queryClient = new QueryClient();
 

@@ -1,4 +1,4 @@
-import { useMemberList, type IProposalAction } from '@/modules/governance/api/governanceService';
+import { useMemberList } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
@@ -10,8 +10,7 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 
-export interface IMultisigUpdateSettingsActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IMultisigUpdateSettingsActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 const updateMultisigSettingsAbi = {
     type: 'function',
@@ -37,7 +36,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const { t } = useTranslations();
     const { setValue } = useFormContext();
 
-    const actionFieldName = `actions.[${index}]`;
+    const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     // Set default values to minimumApproval and onlyListed values as values are reset when deleting an item from the
@@ -78,7 +77,10 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
         const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
 
         setValue(`${actionFieldName}.data`, newData);
-        setValue(`${actionFieldName}.inputData.parameters[0].value`, `[${onlyListedFieldValue}, ${minimumApproval}]`);
+        setValue(
+            `${actionFieldName}.inputData.parameters[0].value`,
+            `[${onlyListedFieldValue.toString()}, ${minimumApproval.toString()}]`,
+        );
     }, [setValue, actionFieldName, onlyListedFieldValue, minimumApproval]);
 
     return (
@@ -98,7 +100,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
                 helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.helpText')}
                 className="w-full"
                 onValueChange={handleRadioChange}
-                value={onlyListedFieldValue === true ? 'members' : 'any'}
+                value={onlyListedFieldValue ? 'members' : 'any'}
                 {...onlyListedField}
             >
                 <RadioCard

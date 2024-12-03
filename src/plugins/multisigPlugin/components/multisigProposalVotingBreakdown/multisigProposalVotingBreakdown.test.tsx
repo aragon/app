@@ -27,6 +27,6 @@ describe('<MultisigProposalVotingBreakdown /> component', () => {
         });
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.metrics.totalVotes)).toBeInTheDocument();
-        expect(screen.getByText(`of ${proposal.settings.minApprovals} members`)).toBeInTheDocument();
+        expect(screen.getByText(`of ${proposal.settings.minApprovals.toString()} members`)).toBeInTheDocument();
     });
 });

@@ -6,7 +6,6 @@ describe('<Image /> component', () => {
     const createTestComponent = (props?: Partial<IImageProps>) => {
         const completeProps: IImageProps = { ...props };
 
-        // eslint-disable-next-line jsx-a11y/alt-text
         return <Image {...completeProps} />;
     };
 

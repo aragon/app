@@ -1,2 +1,2 @@
 export { AdvancedDateInput } from './advancedDateInput';
-export * from './advancedDateInput.api';
+export type * from './advancedDateInput.api';

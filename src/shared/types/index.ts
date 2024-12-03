@@ -1,3 +1,3 @@
 export type { IDaoPageParams } from './daoPageParams';
 export * from './enum';
-export * from './queryOptions';
+export type * from './queryOptions';

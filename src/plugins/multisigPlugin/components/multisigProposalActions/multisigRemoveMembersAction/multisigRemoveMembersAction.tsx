@@ -1,4 +1,3 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -15,8 +14,7 @@ import { encodeFunctionData } from 'viem';
 import { MultisigRemoveMembersActionDialog } from './multisigRemoveMembersActionDialog';
 import { MultisigRemoveMembersActionItem } from './multisigRemoveMembersActionItem';
 
-export interface IMultisigRemoveMembersActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IMultisigRemoveMembersActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 export interface IMultisigRemoveMembersActionFormData {
     /**
@@ -41,7 +39,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const actionFieldName = `actions.[${index}]`;
+    const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     const membersFieldName: `${string}.members` = `${actionFieldName}.members`;
@@ -54,9 +52,11 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
         rules: { required: true, minLength: 1 },
     });
 
-    const watchFieldArray = useWatch({ name: membersFieldName });
+    const watchFieldArray = useWatch<Record<string, IMultisigRemoveMembersActionFormData['members']>>({
+        name: membersFieldName,
+    });
     const controlledMembersField = useMemo(
-        () => membersField.map((field, index) => ({ ...field, ...watchFieldArray?.[index] })),
+        () => membersField.map((field, index) => ({ ...field, ...watchFieldArray[index] })),
         [membersField, watchFieldArray],
     );
 

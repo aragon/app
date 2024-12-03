@@ -43,7 +43,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
     };
 
-    const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
+    const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
         params: { daoId, settings: plugin.settings, pluginAddress: plugin.address },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.subdomain,

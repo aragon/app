@@ -39,7 +39,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
         },
     };
 
-    const proposalSettings = useSlotSingleFunction<IDaoSettingTermAndDefinition[], IUseGovernanceSettingsParams>({
+    const proposalSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDaoSettingTermAndDefinition[]>({
         params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: proposal.pluginSubdomain,
