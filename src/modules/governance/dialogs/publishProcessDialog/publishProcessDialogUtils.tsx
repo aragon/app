@@ -56,8 +56,6 @@ class PublishProcessDialogUtils {
         executePermission: 'EXECUTE_PERMISSION',
     };
 
-    private alwaysTrueCondition: Hex = '0xCC8200adC6EF4d2E8746cdCB2B16b6d3ddeab18a';
-
     private defaultMaxAdvance = dateUtils.durationToSeconds({ days: 36500, hours: 0, minutes: 0 }); // 10 years
 
     prepareProposalMetadata = () => {
@@ -92,7 +90,7 @@ class PublishProcessDialogUtils {
             data: transactionData,
         };
 
-        return transaction;
+        return Promise.resolve(transaction);
     };
 
     private buildInstallActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], daoAddress: Hex) => {

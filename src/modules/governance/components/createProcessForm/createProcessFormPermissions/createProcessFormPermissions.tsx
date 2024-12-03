@@ -33,7 +33,9 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         defaultValue: 'bodies',
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const allBodies: ICreateProcessFormBody[] = useMemo(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unnecessary-condition
         () => getValues('stages')?.flatMap((stage: { bodies: ICreateProcessFormBody[] }) => stage.bodies || []) || [],
         [getValues],
     );
@@ -50,7 +52,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         eligibleField.onChange(value);
         if (value === 'bodies') {
             setValue('proposalCreationBodies', allBodies);
-            trigger('proposalCreationBodies');
+            void trigger('proposalCreationBodies');
         }
     };
 
@@ -77,7 +79,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     useCustomWrapper={true}
                     {...votingBodyField}
                 >
-                    {allBodies?.map((body) => (
+                    {allBodies.map((body) => (
                         <VotingBodyCheckboxCard key={body.id} values={votingBodyField.value} body={body} />
                     ))}
                 </InputContainer>

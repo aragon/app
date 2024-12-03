@@ -1,7 +1,7 @@
 import { Button, Dialog } from '@aragon/gov-ui-kit';
 import { useEffect, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import type { ICreateProcessFormBody } from '../../../createProcessFormDefinitions';
+import type { ICreateProcessFormBody, ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import {
     BodyCreationDialogSteps,
     CreateProcessFormBodyDialogSteps,
@@ -42,12 +42,12 @@ export interface IStageBodiesFieldDialogProps {
 
 export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (props) => {
     const { stageFieldName, removeBody, updateBody, isOpen, bodyIndex, isNewBody, onClose } = props;
-    const { getValues, setError, trigger, formState } = useFormContext();
+    const { getValues, setError, trigger, formState } = useFormContext<ICreateProcessFormData>();
     const [currentStep, setCurrentStep] = useState<BodyCreationDialogSteps>(
         isNewBody ? BodyCreationDialogSteps.PLUGIN_SELECT : BodyCreationDialogSteps.PLUGIN_METADATA,
     );
 
-    const fieldPrefix = `${stageFieldName}.bodies.${bodyIndex}`;
+    const fieldPrefix = `${stageFieldName}.bodies.${bodyIndex.toString()}` as `stages.${number}.bodies.${number}`;
     const bodyGovernanceType = useWatch<Record<string, 'tokenVoting' | 'multisig'>>({
         name: `${fieldPrefix}.governanceType`,
     });
@@ -57,7 +57,7 @@ export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (p
     useEffect(() => {
         if (isOpen) {
             const currentState = getValues(fieldPrefix);
-            initialStateRef.current = JSON.parse(JSON.stringify(currentState));
+            initialStateRef.current = JSON.parse(JSON.stringify(currentState)) as ICreateProcessFormBody;
         }
     }, [isOpen, getValues, fieldPrefix]);
 
@@ -82,19 +82,15 @@ export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (p
     const handleValidateStep = async (step: BodyCreationDialogSteps): Promise<boolean> => {
         const validationFunction = validationMap[step];
 
-        if (validationFunction) {
-            return await validationFunction({
-                step,
-                trigger,
-                getValues,
-                setError,
-                stageFieldName,
-                bodyIndex,
-                bodyGovernanceType,
-            });
-        }
-
-        return false;
+        return await validationFunction({
+            step,
+            trigger,
+            getValues,
+            setError,
+            stageFieldName,
+            bodyIndex,
+            bodyGovernanceType,
+        });
     };
 
     const handleNext = async () => {

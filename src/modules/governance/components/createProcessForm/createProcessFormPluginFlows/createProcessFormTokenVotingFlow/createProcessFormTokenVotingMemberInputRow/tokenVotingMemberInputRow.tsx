@@ -25,14 +25,17 @@ export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps
         onChange: onMemberChange,
         value,
         ...memberField
-    } = useFormField<ICreateProcessFormBody, `members.${number}.address`>(`members.${index}.address`, {
-        label: 'Address',
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
-        fieldPrefix: fieldNamePrefix,
-    });
+    } = useFormField<ICreateProcessFormBody, `members.${number}.address`>(
+        `members.${index.toString()}.address` as `members.${number}.address`,
+        {
+            label: 'Address',
+            rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
+            fieldPrefix: fieldNamePrefix,
+        },
+    );
 
     const tokenAmountField = useFormField<ICreateProcessFormBody, `members.${number}.tokenAmount`>(
-        `members.${index}.tokenAmount`,
+        `members.${index.toString()}.tokenAmount` as `members.${number}.tokenAmount`,
         {
             label: 'Tokens',
             rules: { required: true, validate: (value) => Number(value) > 0, min: 0 },

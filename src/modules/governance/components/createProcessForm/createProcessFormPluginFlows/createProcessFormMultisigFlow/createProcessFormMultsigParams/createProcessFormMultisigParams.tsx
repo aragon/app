@@ -10,6 +10,7 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
     const { fieldPrefix } = props;
 
     const { watch } = useFormContext();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const members = watch(`${fieldPrefix}.members`);
 
     const multisigThresholdField = useFormField<ICreateProcessFormBody, 'multisigThreshold'>('multisigThreshold', {
@@ -26,8 +27,10 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
         <InputNumber
             label="Approval Threshold"
             helpText="Number of approvals required to execute a proposal."
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             max={members?.length}
             min={1}
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
             suffix={`of ${members?.length}`}
             placeholder="Enter a number"
             {...multisigThresholdField}

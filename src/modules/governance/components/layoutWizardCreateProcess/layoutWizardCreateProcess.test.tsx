@@ -12,9 +12,7 @@ jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
 describe('<LayoutWizardCreateProcess /> component', () => {
     const createTestComponent = (props?: Partial<ILayoutWizardCreateProcessProps>) => {
         const completeProps: ILayoutWizardCreateProcessProps = {
-            params: {
-                id: 'test-id',
-            },
+            params: Promise.resolve({ id: 'test-id' }),
             ...props,
         };
 
