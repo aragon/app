@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type ISppProposal, type ISppStage, type ISppSubProposal, SppProposalType } from '../../types';
+import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
 import { SppStageStatus } from '../sppStageStatus';
 
 export interface ISppVotingTerminalBodySummaryFooterProps {
