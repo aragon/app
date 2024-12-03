@@ -30,7 +30,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
                     <CreateProcessFormStagesItem
                         key={field.id}
                         index={index}
-                        name={`stages.${index}`}
+                        name={`stages.${index.toString()}`}
                         stagesCount={fields.length}
                         onRemoveStage={() => remove(index)}
                     />

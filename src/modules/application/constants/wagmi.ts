@@ -26,8 +26,8 @@ export const wagmiConfig = createConfig({
     client: ({ chain }) => {
         const network = Object.values(Network).find(
             (network) => networkDefinitions[network as Network].chainId === chain.id,
-        ) as Network;
-        const rpcEndpoint = `${networkDefinitions[network].rpc}${process.env.NEXT_PUBLIC_RPC_KEY}`;
+        )!;
+        const rpcEndpoint = `${networkDefinitions[network].rpc}${process.env.NEXT_PUBLIC_RPC_KEY!}`;
 
         return createClient({ chain, transport: http(rpcEndpoint) });
     },

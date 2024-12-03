@@ -1,8 +1,8 @@
 import { type ICreateProcessFormData } from '@/modules/governance/components/createProcessForm';
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
+import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
 import {
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
@@ -51,7 +51,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
 
     const { t } = useTranslations();
 
-    const setIsBlocked = useSetIsBlocked();
+    const { setIsBlocked } = useBlockNavigationContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' }) ?? [];
@@ -68,7 +68,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
 
         const { IpfsHash: metadataCid } = pinJsonData;
 
-        const transaction = publishProcessDialogUtils.buildTransaction({
+        const transaction = await publishProcessDialogUtils.buildTransaction({
             values,
             setupData,
             dao,

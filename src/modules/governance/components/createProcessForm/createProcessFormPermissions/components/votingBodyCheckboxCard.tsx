@@ -27,7 +27,7 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
             : values.filter((b) => b.id !== body.id);
 
         setValue('proposalCreationBodies', updatedBodies);
-        trigger('proposalCreationBodies');
+        void trigger('proposalCreationBodies');
     };
 
     const handleMinRequirementChange = (value: number) => {

@@ -27,7 +27,7 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
                 {fields.map((member, index) => (
                     <MultisigMemberInputRow
                         key={member.id}
-                        fieldNamePrefix={`${fieldPrefix}.members.${index}`}
+                        fieldNamePrefix={`${fieldPrefix}.members.${index.toString()}`}
                         onRemoveMember={() => remove(index)}
                         canRemove={fields.length > 0}
                     />

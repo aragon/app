@@ -149,7 +149,7 @@ class PrepareProcessDialogUtils {
             data: transactionData,
         };
 
-        return transaction;
+        return Promise.resolve(transaction);
     };
 
     getPluginSetupData = (receipt: TransactionReceipt) => {

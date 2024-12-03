@@ -62,13 +62,13 @@ type ValidationFunction = (props: ValidateStepProps) => Promise<boolean>;
 
 export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> = {
     [BodyCreationDialogSteps.PLUGIN_SELECT]: async ({ trigger, stageFieldName, bodyIndex }) => {
-        const fieldPath = `${stageFieldName}.bodies.${bodyIndex}.governanceType`;
+        const fieldPath = `${stageFieldName}.bodies.${bodyIndex.toString()}.governanceType`;
         return await trigger(fieldPath);
     },
     [BodyCreationDialogSteps.PLUGIN_METADATA]: async ({ trigger, stageFieldName, bodyIndex }) => {
         const fieldPaths = [
-            `${stageFieldName}.bodies.${bodyIndex}.name`,
-            `${stageFieldName}.bodies.${bodyIndex}.description`,
+            `${stageFieldName}.bodies.${bodyIndex.toString()}.name`,
+            `${stageFieldName}.bodies.${bodyIndex.toString()}.description`,
         ];
         return await trigger(fieldPaths);
     },
@@ -80,9 +80,9 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
         bodyIndex,
         bodyGovernanceType,
     }) => {
-        const basePath = `${stageFieldName}.bodies.${bodyIndex}`;
+        const basePath = `${stageFieldName}.bodies.${bodyIndex.toString()}`;
 
-        const members = getValues(`${basePath}.members`);
+        const members = getValues(`${basePath}.members`) as any[] | undefined;
 
         if (!members || members.length === 0) {
             setError(`${basePath}.members`, {
@@ -104,7 +104,7 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
         return result;
     },
     [BodyCreationDialogSteps.GOVERNANCE_PARAMS]: async ({ trigger, stageFieldName, bodyIndex, bodyGovernanceType }) => {
-        const basePath = `${stageFieldName}.bodies.${bodyIndex}`;
+        const basePath = `${stageFieldName}.bodies.${bodyIndex.toString()}`;
 
         let fieldPaths: string[];
         if (bodyGovernanceType === 'tokenVoting') {

@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 import { StageTimingFieldDialog } from './stageTimingFieldDialog';
@@ -21,6 +21,7 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
     const { stageFieldName, isOptimisticStage } = props;
 
     const { t } = useTranslations();
+    const inputId = useId();
 
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
 
@@ -55,12 +56,12 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
             return '0 minutes';
         }
 
-        return units.map((unit) => `${unit.value} ${unit.label}`).join(', ');
+        return units.map((unit) => `${unit.value.toString()} ${unit.label}`).join(', ');
     };
 
     return (
         <InputContainer
-            id={`timingSummary.${name}.`}
+            id={inputId}
             useCustomWrapper={true}
             label={t('app.governance.createProcessForm.stage.timing.label')}
             className="flex w-full flex-col items-start gap-y-3"
@@ -74,8 +75,8 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
                     <DefinitionList.Item term={t('app.governance.createProcessForm.stage.timing.summary.earlyAdvance')}>
                         <Tag
                             className="w-fit"
-                            label={earlyStageAdvance === true ? 'Yes' : 'No'}
-                            variant={earlyStageAdvance === true ? 'primary' : 'neutral'}
+                            label={earlyStageAdvance ? 'Yes' : 'No'}
+                            variant={earlyStageAdvance ? 'primary' : 'neutral'}
                         />
                     </DefinitionList.Item>
                 )}

@@ -13,7 +13,9 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = (p
 
     const { control } = useFormContext();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const inputValue = useWatch({ name: fieldNamePrefix });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     const [memberInput, setMemberInput] = useState<string | undefined>(inputValue?.address);
 
     return (
@@ -24,6 +26,7 @@ export const MultisigMemberInputRow: React.FC<IMultisigMemberInputRowProps> = (p
                 defaultValue=""
                 rules={{
                     required: 'Address is required',
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
                     validate: (value) => addressUtils.isAddress(value?.address) || 'Valid 0x... or ENS Address',
                 }}
                 render={({ field: { onChange: onMemberChange }, fieldState: { error } }) => (

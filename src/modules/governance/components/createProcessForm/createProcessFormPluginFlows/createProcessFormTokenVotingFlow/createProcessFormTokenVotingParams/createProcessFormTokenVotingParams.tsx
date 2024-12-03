@@ -1,4 +1,7 @@
-import type { ICreateProcessFormBody } from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
+import {
+    type ICreateProcessFormBody,
+    type ITokenVotingMember,
+} from '@/modules/governance/components/createProcessForm/createProcessFormDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AlertInline,
@@ -40,17 +43,22 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
         fieldPrefix,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const members = watch(`${fieldPrefix}.members`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const tokenSymbolField = watch(`${fieldPrefix}.tokenSymbolField`);
 
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const totalTokenAmount = members?.reduce(
-            (acc: number, member: { tokenAmount: string }) => acc + Number(member.tokenAmount),
+            (acc: number, member: ITokenVotingMember) => acc + Number(member.tokenAmount),
             0,
         );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const formattedTotal = formatterUtils.formatNumber(totalTokenAmount, {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         setCurrentTotalTokenAmount(totalTokenAmount);
         setFormattedTotalTokenAmount(formattedTotal);
     }, [members]);

@@ -138,6 +138,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                         )}
                                                     >
                                                         {field.members.length}{' '}
+                                                        {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                                                         {(field.members.length ?? 0) > 1
                                                             ? t(
                                                                   'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.plural',
@@ -167,14 +168,14 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                             'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.support',
                                                         )}
                                                     >
-                                                        {`> ${field.supportThreshold}%`}
+                                                        {`> ${field.supportThreshold.toString()}%`}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
                                                             'app.governance.createProcessForm.stage.bodies.summary.tokenVoting.minimum',
                                                         )}
                                                     >
-                                                        {`≥ ${field.minimumParticipation}%`}
+                                                        {`≥ ${field.minimumParticipation.toString()}%`}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
@@ -206,6 +207,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                         )}
                                                     >
                                                         {field.members.length}{' '}
+                                                        {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                                                         {(field.members.length ?? 0) > 1
                                                             ? t(
                                                                   'app.governance.createProcessForm.stage.bodies.summary.multisig.plural',
