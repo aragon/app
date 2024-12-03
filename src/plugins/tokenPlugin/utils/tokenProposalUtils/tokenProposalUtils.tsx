@@ -1,5 +1,6 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { formatUnits } from 'viem';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
@@ -116,6 +117,13 @@ class TokenProposalUtils {
         const optionVotes = votes.find((option) => option.type === type);
 
         return BigInt(optionVotes?.totalVotingPower ?? 0);
+    };
+
+    getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
+        const votes = proposal.metrics.votesByOption.find((vote) => vote.type === option);
+        const parsedVotingPower = formatUnits(BigInt(votes?.totalVotingPower ?? 0), proposal.settings.token.decimals);
+
+        return parsedVotingPower;
     };
 }
 

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { formatUnits } from 'viem';
 import type { ITokenProposal } from '../../types';
 import { VoteOption } from '../../types/enum/voteOption';
+import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 
 export interface ITokenProposalVotingBreakdownProps {
@@ -16,22 +17,15 @@ export interface ITokenProposalVotingBreakdownProps {
     children?: ReactNode;
 }
 
-const getOptionVotingPower = (proposal: ITokenProposal, option: VoteOption) => {
-    const votes = proposal.metrics.votesByOption.find((vote) => vote.type === option);
-    const parsedVotingPower = formatUnits(BigInt(votes?.totalVotingPower ?? 0), proposal.settings.token.decimals);
-
-    return parsedVotingPower;
-};
-
 export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdownProps> = (props) => {
     const { proposal, children } = props;
 
     const { symbol, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold, historicalTotalSupply } = proposal.settings;
 
-    const yesVotes = getOptionVotingPower(proposal, VoteOption.YES);
-    const noVotes = getOptionVotingPower(proposal, VoteOption.NO);
-    const abstainVotes = getOptionVotingPower(proposal, VoteOption.ABSTAIN);
+    const yesVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES);
+    const noVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO);
+    const abstainVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN);
 
     return (
         <ProposalVoting.BreakdownToken

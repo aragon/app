@@ -1,10 +1,11 @@
+import { generateToken } from '@/modules/finance/testUtils';
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import { generateProposalAction } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
-import { DaoTokenVotingMode, VoteOption, type ITokenProposalOptionVotes } from '../../types';
+import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
 import { tokenProposalUtils } from './tokenProposalUtils';
 
 describe('tokenProposal utils', () => {
@@ -316,6 +317,67 @@ describe('tokenProposal utils', () => {
                 { type: VoteOption.ABSTAIN, totalVotingPower: '12' },
             ];
             expect(tokenProposalUtils.getVoteByType(votesByOption, VoteOption.YES)).toEqual(BigInt('0'));
+        });
+    });
+
+    describe('getOptionVotingPower', () => {
+        it('returns the correctly formatted voting power when the option exists', () => {
+            const votesByOption: ITokenProposalOptionVotes[] = [
+                { type: VoteOption.YES, totalVotingPower: '1000000000000000000' },
+                { type: VoteOption.NO, totalVotingPower: '2000000000000000000' },
+            ];
+            const proposal: ITokenProposal = generateTokenProposal({
+                settings: generateTokenPluginSettings({ token: generateToken({ decimals: 18 }) }),
+                metrics: { votesByOption },
+            });
+
+            const yesVotingPower = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES);
+            const noVotingPower = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO);
+
+            expect(yesVotingPower).toEqual('1');
+            expect(noVotingPower).toEqual('2');
+        });
+
+        it('returns 0 when the option does not exist', () => {
+            const votesByOption: ITokenProposalOptionVotes[] = [
+                { type: VoteOption.YES, totalVotingPower: '1000000000000000000' },
+            ];
+            const proposal: ITokenProposal = generateTokenProposal({
+                settings: generateTokenPluginSettings({ token: generateToken({ decimals: 18 }) }),
+                metrics: { votesByOption },
+            });
+
+            const noVotingPower = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO);
+
+            expect(noVotingPower).toEqual('0');
+        });
+
+        it('handles different decimals correctly', () => {
+            const votesByOption: ITokenProposalOptionVotes[] = [
+                { type: VoteOption.YES, totalVotingPower: '1000000' },
+                { type: VoteOption.NO, totalVotingPower: '2500000' },
+            ];
+            const proposal: ITokenProposal = generateTokenProposal({
+                settings: generateTokenPluginSettings({ token: generateToken({ decimals: 6 }) }),
+                metrics: { votesByOption },
+            });
+
+            const yesVotingPower = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES);
+            const noVotingPower = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO);
+
+            expect(yesVotingPower).toEqual('1');
+            expect(noVotingPower).toEqual('2.5');
+        });
+
+        it('returns 0 when votesByOption is empty', () => {
+            const proposal: ITokenProposal = generateTokenProposal({
+                settings: generateTokenPluginSettings({ token: generateToken({ decimals: 18 }) }),
+                metrics: { votesByOption: [] },
+            });
+
+            const yesVotingPower = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES);
+
+            expect(yesVotingPower).toEqual('0');
         });
     });
 });

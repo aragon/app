@@ -1,5 +1,3 @@
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -13,23 +11,15 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
 
 export interface ISppStageStatusProps {
     /**
-     * ID of the related DAO.
-     */
-    daoId: string;
-    /**
      * SPP main proposal.
      */
     proposal: ISppProposal;
-    /**
-     * Sub proposal to display the vote status for.
-     */
-    subProposal: ISppSubProposal;
     /**
      * Stage to display the status for.
      */
@@ -37,7 +27,7 @@ export interface ISppStageStatusProps {
 }
 
 export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
-    const { proposal, daoId, subProposal, stage } = props;
+    const { proposal, stage } = props;
 
     const { t } = useTranslations();
 
@@ -50,9 +40,10 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
-    // Fallback to main-proposal execution transaction hash and status for last-stage sub proposals
-    const isStageAdvanced = subProposal.executed.status || proposal.executed.status;
-    const transactionHash = subProposal.executed.transactionHash ?? proposal.executed.transactionHash;
+    const isStageAdvanced = stage.stageIndex < proposal.stageIndex;
+
+    //TODO: sync with backend to get correct transaction hash for advanced stages
+    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: '' });
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
@@ -60,32 +51,18 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
     // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
     const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
-    const canVote = stageStatus === ProposalVotingStatus.ACTIVE;
 
-    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
+    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
+    if (stageAdvanceExpired) {
+        return (
+            <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
+        );
+    }
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
-
-    if (!displayAdvanceStatus && !canVote) {
+    if (!displayAdvanceStatus) {
         return null;
-    }
-
-    const isVeto = stage.plugins[0].proposalType === SppProposalType.VETO;
-
-    if (canVote) {
-        const slotId = GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE;
-        const { pluginSubdomain: pluginId } = subProposal;
-
-        return (
-            <PluginSingleComponent
-                slotId={slotId}
-                pluginId={pluginId}
-                proposal={subProposal}
-                daoId={daoId}
-                isVeto={isVeto}
-            />
-        );
     }
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
@@ -93,7 +70,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               label: 'advanced',
               href: advanceTransactionHref,
               target: '_blank',
-              variant: 'success' as const,
+              variant: 'secondary' as const,
               iconRight: IconType.LINK_EXTERNAL,
           }
         : { label: 'advance', onClick: handleAdvanceStage, variant: 'primary' as const };
