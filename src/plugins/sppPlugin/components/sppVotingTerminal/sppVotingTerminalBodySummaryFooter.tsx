@@ -16,17 +16,13 @@ export interface ISppVotingTerminalBodySummaryFooterProps {
      */
     isActive: boolean;
     /**
-     * Sub proposal to display the vote status for.
-     */
-    subProposal?: ISppSubProposal;
-    /**
      * Flag indicating if the vote is a veto.
      */
     isVeto: boolean;
 }
 
 export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBodySummaryFooterProps> = (props) => {
-    const { stage, proposal, isActive, subProposal, isVeto } = props;
+    const { stage, proposal, isActive, isVeto } = props;
 
     const { t } = useTranslations();
 
@@ -35,7 +31,7 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     const entityType = threshold > 1 ? 'bodies' : 'body';
 
     if (!isActive) {
-        return <SppStageStatus proposal={proposal} stage={stage} subProposal={subProposal} />;
+        return <SppStageStatus proposal={proposal} stage={stage} />;
     }
 
     return (

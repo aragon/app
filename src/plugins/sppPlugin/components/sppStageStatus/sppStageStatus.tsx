@@ -11,7 +11,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
 
@@ -21,17 +21,13 @@ export interface ISppStageStatusProps {
      */
     proposal: ISppProposal;
     /**
-     * Sub proposal to display the vote status for.
-     */
-    subProposal?: ISppSubProposal;
-    /**
      * Stage to display the status for.
      */
     stage: ISppStage;
 }
 
 export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
-    const { proposal, subProposal, stage } = props;
+    const { proposal, stage } = props;
 
     const { t } = useTranslations();
 
@@ -44,10 +40,8 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
-    // Fallback to main-proposal execution transaction hash and status for last-stage sub proposals
-    const isStageAdvanced = subProposal?.executed.status ?? proposal.executed.status;
-    const transactionHash = subProposal?.executed.transactionHash ?? proposal.executed.transactionHash;
-    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
+    const isStageAdvanced = stage.stageIndex < proposal.stageIndex;
+    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: '' });
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
