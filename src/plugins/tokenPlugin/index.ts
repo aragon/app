@@ -54,7 +54,7 @@ export const initialiseTokenPlugin = () => {
             function: tokenProposalUtils.getProposalStatus,
         })
         .registerSlotFunction({
-            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_APPROVAL,
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
             pluginId: plugin.id,
             function: tokenProposalUtils.isApprovalReached,
         })

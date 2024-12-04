@@ -42,7 +42,7 @@ export const initialiseMultisigPlugin = () => {
             function: multisigProposalUtils.getProposalStatus,
         })
         .registerSlotFunction({
-            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_APPROVAL,
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
             pluginId: plugin.id,
             function: multisigProposalUtils.isApprovalReached,
         })

@@ -1,8 +1,8 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { type ISppProposal, type ISppStage, type ISppSubProposal, SppProposalType } from '../../types';
+import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): ProposalVotingStatus => {
@@ -93,37 +93,35 @@ class SppStageUtils {
     };
 
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const vetoCount = this.getCount(proposal, stage, SppProposalType.VETO);
+        const vetoCount = this.getSuccessThreshold(proposal, stage);
 
         return stage.vetoThreshold > 0 && vetoCount >= stage.vetoThreshold;
     };
 
     isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const approvalCount = this.getCount(proposal, stage, SppProposalType.APPROVAL);
+        const approvalCount = this.getSuccessThreshold(proposal, stage);
 
         return approvalCount >= stage.approvalThreshold;
     };
 
-    getCount = (proposal: ISppProposal, stage: ISppStage, proposalType: SppProposalType): number => {
+    getSuccessThreshold = (proposal: ISppProposal, stage: ISppStage): number => {
         return proposal.subProposals.reduce((count, subProposal) => {
-            const plugin = stage.plugins.find((plugin) => plugin.address === subProposal.pluginAddress);
-
-            if (plugin?.proposalType !== proposalType) {
+            if (subProposal.stageIndex !== stage.stageIndex) {
                 return count;
             }
 
-            const getApprovalStatus = pluginRegistryUtils.getSlotFunction<ISppSubProposal, ProposalStatus>({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_APPROVAL,
+            const getSucceededStatus = pluginRegistryUtils.getSlotFunction<ISppSubProposal, boolean>({
+                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
                 pluginId: subProposal.pluginSubdomain,
             });
 
-            if (getApprovalStatus == null) {
+            const isSuccessReached = getSucceededStatus?.(subProposal);
+
+            if (isSuccessReached == null) {
                 return subProposal.result ? count + 1 : count;
             }
 
-            const isApprovalReached = getApprovalStatus(subProposal);
-
-            return isApprovalReached ? count + 1 : count;
+            return isSuccessReached === true ? count + 1 : count;
         }, 0);
     };
 }

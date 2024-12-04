@@ -116,11 +116,14 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
-                    generateSppSubProposal({ stageIndex: 1, pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ stageIndex: 1, pluginAddress: 'plugin2', result: false }),
+                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: true }),
+                    generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeTruthy();
+
+            const result = sppStageUtils.isVetoReached(proposal, stage);
+
+            expect(result).toBeTruthy();
         });
 
         it('returns false when veto count is below threshold', () => {
@@ -132,6 +135,7 @@ describe('SppStageUtils', () => {
                     generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
                 ],
             });
+
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
@@ -139,7 +143,10 @@ describe('SppStageUtils', () => {
                     generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin2', result: false }),
                 ],
             });
-            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
+
+            const result = sppStageUtils.isVetoReached(proposal, stage);
+
+            expect(result).toBeFalsy();
         });
 
         it('returns false when veto threshold is set to 0', () => {
@@ -148,11 +155,15 @@ describe('SppStageUtils', () => {
                 vetoThreshold: 0,
                 plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO })],
             });
+
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: false })],
             });
-            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
+
+            const result = sppStageUtils.isVetoReached(proposal, stage);
+
+            expect(result).toBeFalsy();
         });
     });
 
@@ -196,136 +207,102 @@ describe('SppStageUtils', () => {
         });
     });
 
-    describe('getCount', () => {
-        it('returns correct veto and approval counts based on sub-proposal result', () => {
-            const stage = generateSppStage({
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin4', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
+    describe('getSuccessThreshold', () => {
+        it('returns count + 1 when getSucceededStatus is null and subProposal result is true', () => {
+            const stage = generateSppStage({ stageIndex: 0 }); // Mock stage
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [
-                    generateSppSubProposal({ pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ pluginAddress: 'plugin2', result: false }),
-                    generateSppSubProposal({ pluginAddress: 'plugin3', result: true }),
-                    generateSppSubProposal({ pluginAddress: 'plugin4', result: true }),
-                ],
-            });
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(1);
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(2);
-        });
-
-        it('returns 0 when no matching subProposals are found', () => {
-            const stage = generateSppStage({
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [generateSppSubProposal({ pluginAddress: 'plugin3', result: true })],
-            });
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(0);
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(0);
-        });
-
-        it('uses the plugin-specific proposal status processor when available', () => {
-            const stage = generateSppStage({
-                plugins: [generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL })],
-            });
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [generateSppSubProposal({ pluginAddress: 'plugin1' })],
+                subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
             });
 
-            const mockStatusFunction = jest.fn(() => ProposalStatus.ACCEPTED);
+            const mockStatusFunction = jest.fn(() => null);
             getSlotFunctionSpy.mockReturnValue(mockStatusFunction);
 
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toEqual(1);
-            expect(mockStatusFunction).toHaveBeenCalledWith(proposal.subProposals[0]);
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(1); // Expect count to be incremented by 1
         });
 
-        it('does not count sub-proposals with REJECTED or PENDING status even when result is true', () => {
-            const stage = generateSppStage({
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
+        it('returns count when getSucceededStatus is null and subProposal result is false', () => {
+            const stage = generateSppStage({ stageIndex: 0 }); // Mock stage
+            const proposal = generateSppProposal({
+                subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
+            });
+
+            const mockStatusFunction = jest.fn(() => null);
+            getSlotFunctionSpy.mockReturnValue(mockStatusFunction);
+
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(0); // No increment since result is false
+        });
+
+        it('returns count + 1 when getSucceededStatus is non-null and status is successful', () => {
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
+            });
+
+            getSlotFunctionSpy.mockReturnValue(() => true); // Successful status
+
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(1); // Expect +1 because getSucceededStatus is true
+        });
+
+        it('returns count when getSucceededStatus is non-null and status is not successful', () => {
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
+            });
+
+            getSlotFunctionSpy.mockReturnValue(() => false); // Unsuccessful status
+
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(0); // No increment since status is false
+        });
+
+        it('handles multiple subProposals correctly for the same stage', () => {
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                subProposals: [
+                    generateSppSubProposal({ stageIndex: 0, result: true }), // Should count as true
+                    generateSppSubProposal({ stageIndex: 0, result: false }), // Should not count
                 ],
             });
+
+            getSlotFunctionSpy.mockReturnValue(() => true); // Successful status for both
+
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(2); // Both should be counted
+        });
+
+        it('counts subProposals correctly with mixed statuses for the same stage', () => {
+            const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
-                    generateSppSubProposal({ pluginAddress: 'plugin1', result: true }),
-                    generateSppSubProposal({ pluginAddress: 'plugin2', result: true }),
+                    generateSppSubProposal({ stageIndex: 0, result: true }), // Successful subProposal
+                    generateSppSubProposal({ stageIndex: 0, result: false }), // Unsuccessful subProposal
                 ],
             });
 
             getSlotFunctionSpy
-                .mockImplementationOnce(() => () => ProposalStatus.REJECTED)
-                .mockImplementationOnce(() => () => ProposalStatus.PENDING);
+                .mockReturnValueOnce(() => true) // First subProposal, successful
+                .mockReturnValueOnce(() => false); // Second subProposal, unsuccessful
 
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(0);
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(1); // Only one successful subProposal should be counted
         });
 
-        it('uses correct proposal-status subset for approve proposal type', () => {
-            const stage = generateSppStage({
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.APPROVAL }),
-                    generateSppStagePlugin({ address: 'plugin4', proposalType: SppProposalType.APPROVAL }),
-                ],
-            });
+        it('returns count for subProposals from different stages', () => {
+            const stage = generateSppStage({ stageIndex: 1 }); // Check for stageIndex 1
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
                 subProposals: [
-                    generateSppSubProposal({ pluginAddress: 'plugin1' }),
-                    generateSppSubProposal({ pluginAddress: 'plugin2' }),
-                    generateSppSubProposal({ pluginAddress: 'plugin3' }),
-                    generateSppSubProposal({ pluginAddress: 'plugin4' }),
+                    generateSppSubProposal({ stageIndex: 0, result: true }), // Not counted, wrong stage
+                    generateSppSubProposal({ stageIndex: 1, result: true }), // Should count for stage 1
                 ],
             });
 
-            getSlotFunctionSpy
-                .mockImplementationOnce(() => () => ProposalStatus.ACCEPTED)
-                .mockImplementationOnce(() => () => ProposalStatus.EXECUTABLE)
-                .mockImplementationOnce(() => () => ProposalStatus.EXECUTED)
-                .mockImplementationOnce(() => () => ProposalStatus.REJECTED);
+            getSlotFunctionSpy.mockReturnValue(() => true); // Successful status for the correct stage
 
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.APPROVAL)).toBe(3);
-        });
-
-        it('uses correct proposal-status subset for veto proposal type', () => {
-            const stage = generateSppStage({
-                plugins: [
-                    generateSppStagePlugin({ address: 'plugin1', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin2', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin3', proposalType: SppProposalType.VETO }),
-                    generateSppStagePlugin({ address: 'plugin4', proposalType: SppProposalType.VETO }),
-                ],
-            });
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [stage] }),
-                subProposals: [
-                    generateSppSubProposal({ pluginAddress: 'plugin1' }),
-                    generateSppSubProposal({ pluginAddress: 'plugin2' }),
-                    generateSppSubProposal({ pluginAddress: 'plugin3' }),
-                    generateSppSubProposal({ pluginAddress: 'plugin4' }),
-                ],
-            });
-
-            getSlotFunctionSpy
-                .mockImplementationOnce(() => () => ProposalStatus.ACCEPTED)
-                .mockImplementationOnce(() => () => ProposalStatus.EXECUTABLE)
-                .mockImplementationOnce(() => () => ProposalStatus.EXECUTED)
-                .mockImplementationOnce(() => () => ProposalStatus.EXPIRED);
-
-            expect(sppStageUtils.getCount(proposal, stage, SppProposalType.VETO)).toBe(3);
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(1); // Only one subProposal should count for this stage
         });
     });
 
