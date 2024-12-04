@@ -1,9 +1,9 @@
+import { ISppProposal } from '@/plugins/sppPlugin/types';
+import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
-import { ISppProposal } from '@/plugins/sppPlugin/types';
-import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 
 export interface IMultisigProposalVotingSummaryProps {
     /**

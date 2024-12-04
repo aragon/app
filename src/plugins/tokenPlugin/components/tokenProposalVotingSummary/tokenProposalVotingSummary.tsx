@@ -1,11 +1,11 @@
+import { ISppProposal } from '@/plugins/sppPlugin/types';
+import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { type ITokenProposal, VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
-import { ISppProposal } from '@/plugins/sppPlugin/types';
-import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 
 export interface ITokenProposalVotingSummaryProps {
     /**
