@@ -209,7 +209,7 @@ describe('SppStageUtils', () => {
 
     describe('getSuccessThreshold', () => {
         it('returns count + 1 when getSucceededStatus is null and subProposal result is true', () => {
-            const stage = generateSppStage({ stageIndex: 0 }); // Mock stage
+            const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
             });
@@ -218,11 +218,11 @@ describe('SppStageUtils', () => {
             getSlotFunctionSpy.mockReturnValue(mockStatusFunction);
 
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1); // Expect count to be incremented by 1
+            expect(result).toBe(1);
         });
 
         it('returns count when getSucceededStatus is null and subProposal result is false', () => {
-            const stage = generateSppStage({ stageIndex: 0 }); // Mock stage
+            const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
             });
@@ -231,7 +231,7 @@ describe('SppStageUtils', () => {
             getSlotFunctionSpy.mockReturnValue(mockStatusFunction);
 
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(0); // No increment since result is false
+            expect(result).toBe(0);
         });
 
         it('returns count + 1 when getSucceededStatus is non-null and status is successful', () => {
@@ -240,10 +240,9 @@ describe('SppStageUtils', () => {
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
             });
 
-            getSlotFunctionSpy.mockReturnValue(() => true); // Successful status
-
+            getSlotFunctionSpy.mockReturnValue(() => true);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1); // Expect +1 because getSucceededStatus is true
+            expect(result).toBe(1);
         });
 
         it('returns count when getSucceededStatus is non-null and status is not successful', () => {
@@ -252,57 +251,54 @@ describe('SppStageUtils', () => {
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
             });
 
-            getSlotFunctionSpy.mockReturnValue(() => false); // Unsuccessful status
-
+            getSlotFunctionSpy.mockReturnValue(() => false);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(0); // No increment since status is false
+            expect(result).toBe(0);
         });
 
         it('handles multiple subProposals correctly for the same stage', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, result: true }), // Should count as true
-                    generateSppSubProposal({ stageIndex: 0, result: false }), // Should not count
+                    generateSppSubProposal({ stageIndex: 0, result: true }),
+                    generateSppSubProposal({ stageIndex: 0, result: false }),
                 ],
             });
 
-            getSlotFunctionSpy.mockReturnValue(() => true); // Successful status for both
+            getSlotFunctionSpy.mockReturnValue(() => true);
 
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(2); // Both should be counted
+            expect(result).toBe(2);
         });
 
         it('counts subProposals correctly with mixed statuses for the same stage', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, result: true }), // Successful subProposal
-                    generateSppSubProposal({ stageIndex: 0, result: false }), // Unsuccessful subProposal
+                    generateSppSubProposal({ stageIndex: 0, result: true }),
+                    generateSppSubProposal({ stageIndex: 0, result: false }),
                 ],
             });
 
-            getSlotFunctionSpy
-                .mockReturnValueOnce(() => true) // First subProposal, successful
-                .mockReturnValueOnce(() => false); // Second subProposal, unsuccessful
+            getSlotFunctionSpy.mockReturnValueOnce(() => true).mockReturnValueOnce(() => false);
 
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1); // Only one successful subProposal should be counted
+            expect(result).toBe(1);
         });
 
         it('returns count for subProposals from different stages', () => {
-            const stage = generateSppStage({ stageIndex: 1 }); // Check for stageIndex 1
+            const stage = generateSppStage({ stageIndex: 1 });
             const proposal = generateSppProposal({
                 subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, result: true }), // Not counted, wrong stage
-                    generateSppSubProposal({ stageIndex: 1, result: true }), // Should count for stage 1
+                    generateSppSubProposal({ stageIndex: 0, result: true }),
+                    generateSppSubProposal({ stageIndex: 1, result: true }),
                 ],
             });
 
-            getSlotFunctionSpy.mockReturnValue(() => true); // Successful status for the correct stage
+            getSlotFunctionSpy.mockReturnValue(() => true);
 
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1); // Only one subProposal should count for this stage
+            expect(result).toBe(1);
         });
     });
 
