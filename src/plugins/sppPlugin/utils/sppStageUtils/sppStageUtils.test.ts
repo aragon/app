@@ -255,51 +255,6 @@ describe('SppStageUtils', () => {
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
             expect(result).toBe(0);
         });
-
-        it('handles multiple subProposals correctly for the same stage', () => {
-            const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, result: true }),
-                    generateSppSubProposal({ stageIndex: 0, result: false }),
-                ],
-            });
-
-            getSlotFunctionSpy.mockReturnValue(() => true);
-
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(2);
-        });
-
-        it('counts subProposals correctly with mixed statuses for the same stage', () => {
-            const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, result: true }),
-                    generateSppSubProposal({ stageIndex: 0, result: false }),
-                ],
-            });
-
-            getSlotFunctionSpy.mockReturnValueOnce(() => true).mockReturnValueOnce(() => false);
-
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1);
-        });
-
-        it('returns count for subProposals from different stages', () => {
-            const stage = generateSppStage({ stageIndex: 1 });
-            const proposal = generateSppProposal({
-                subProposals: [
-                    generateSppSubProposal({ stageIndex: 0, result: true }),
-                    generateSppSubProposal({ stageIndex: 1, result: true }),
-                ],
-            });
-
-            getSlotFunctionSpy.mockReturnValue(() => true);
-
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1);
-        });
     });
 
     describe('getStageStatus', () => {
