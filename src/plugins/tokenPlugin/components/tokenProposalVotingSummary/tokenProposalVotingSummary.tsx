@@ -80,7 +80,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
 
         return (
             <p>
-                {`${name}`}{' '}
+                {name}{' '}
                 <span className={statusClass}>{t(`app.plugins.token.tokenProposalVotingSummary.${statusText}`)}</span>
             </p>
         );
