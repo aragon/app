@@ -582,6 +582,12 @@
         "multisigProposalList": {
           "entity": "Proposals"
         },
+        "multisigProposalVotingSummary": {
+          "approved": "approved",
+          "description": "of {{count}} members",
+          "name": "{{name}} approval",
+          "vetoed": "vetoed"
+        },
         "multisigRemoveMembersAction": {
           "add": "Add",
           "addressInput": {
@@ -650,6 +656,7 @@
         },
         "sppStageStatus": {
           "advanceExpired": "Proposal not advanced in time",
+          "advanceInfo": "left to advance",
           "button": {
             "advance": "Advance proposal",
             "advanced": "Proposal advanced",
@@ -657,6 +664,10 @@
           },
           "maxAdvanceInfo": "left to advance",
           "minAdvanceInfo": "until advanceable"
+        },
+        "sppVotingTerminalStageBodySummaryFooter": {
+          "actionRequired": "required to {{action}}",
+          "thresholdLabel": "{{count}} {{entityType}}"
         }
       },
       "token": {
@@ -726,6 +737,14 @@
           "abstain": "Abstain",
           "no": "No",
           "yes": "Yes"
+        },
+        "tokenProposalVotingSummary": {
+          "approved": "approved",
+          "support": {
+            "description": "of {{details}}",
+            "name": "{{name}} support"
+          },
+          "vetoed": "vetoed"
         },
         "tokenSubmitVote": {
           "buttons": {

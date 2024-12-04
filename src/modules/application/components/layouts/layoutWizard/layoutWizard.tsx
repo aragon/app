@@ -14,7 +14,7 @@ export interface ILayoutWizardProps<IPageParams extends IDaoPageParams = IDaoPag
     /**
      * URL parameters of the layout.
      */
-    params?: IPageParams;
+    params?: Promise<IPageParams>;
     /**
      * Optional query client to be used instead of generating a new instance of it.
      */
@@ -29,18 +29,19 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
     props: ILayoutWizardProps<IPageParams>,
 ) => {
     const { params, name, exitPath, queryClient, children } = props;
+    const { id } = (await params) ?? {};
 
     const reactQueryClient = queryClient ?? new QueryClient();
 
     try {
-        if (params?.id != null) {
-            const daoUrlParams = { id: params.id };
+        if (id != null) {
+            const daoUrlParams = { id };
             await reactQueryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
         }
     } catch (error: unknown) {
         return (
             <Page.Error
-                error={JSON.parse(JSON.stringify(error))}
+                error={JSON.parse(JSON.stringify(error)) as unknown}
                 actionLink="/"
                 notFoundNamespace="app.application.layoutWizard"
             />
@@ -49,7 +50,7 @@ export const LayoutWizard = async <IPageParams extends IDaoPageParams = IDaoPage
 
     return (
         <HydrationBoundary state={dehydrate(reactQueryClient)}>
-            <NavigationWizard id={params?.id} name={name} exitPath={exitPath} />
+            <NavigationWizard id={id} name={name} exitPath={exitPath} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

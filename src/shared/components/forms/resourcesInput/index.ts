@@ -1,2 +1,2 @@
 export { ResourcesInput } from './resourcesInput';
-export * from './resourcesInput.api';
+export type * from './resourcesInput.api';

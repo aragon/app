@@ -72,7 +72,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                         <p className="text-neutral-500">{dao.description}</p>
                     </Collapsible>
                 </DefinitionList.Item>
-                {dao.links && dao.links.length > 0 && (
+                {dao.links.length > 0 && (
                     <DefinitionList.Item term={t('app.settings.daoSettingsInfo.links')}>
                         <div className="flex flex-col gap-3">
                             {dao.links.map((link) => (

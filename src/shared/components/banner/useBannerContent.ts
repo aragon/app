@@ -18,7 +18,7 @@ export function useBannerContent(params: IUseBannerContentParams): IBannerConten
     const adminPlugin = useDaoPlugins({ daoId: id, subdomain: 'admin' });
     const pluginAddress = adminPlugin?.[0]?.meta?.address;
 
-    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: pluginAddress as string };
+    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: pluginAddress! };
     const { data: isAdminMember } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: memberAddress != null && pluginAddress != null },

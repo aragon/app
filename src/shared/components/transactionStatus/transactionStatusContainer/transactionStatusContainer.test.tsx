@@ -28,9 +28,9 @@ describe('<TransactionStatusContainer /> component', () => {
     it('renders an error feedback when one of the steps has error state', () => {
         const states = ['success', 'error', 'idle'] as const;
         const steps = states.map((state, index) => ({
-            id: `${index}`,
+            id: index.toString(),
             order: index,
-            meta: { label: `${index}`, state },
+            meta: { label: index.toString(), state },
         }));
         render(createTestComponent({ steps }));
         expect(screen.getByRole('list').className).toMatch(/critical/);
@@ -39,9 +39,9 @@ describe('<TransactionStatusContainer /> component', () => {
     it('renders a success feedback all the steps have success state', () => {
         const states = ['success', 'success'] as const;
         const steps = states.map((state, index) => ({
-            id: `${index}`,
+            id: index.toString(),
             order: index,
-            meta: { label: `${index}`, state },
+            meta: { label: index.toString(), state },
         }));
         render(createTestComponent({ steps }));
         expect(screen.getByRole('list').className).toMatch(/success/);

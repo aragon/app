@@ -30,7 +30,7 @@ export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
 
     return (
         <ProposalVoting.Container activeStage={activeStage} onStageClick={setActiveStage}>
-            {processedStages?.map(({ stage, subProposals, index }) => (
+            {processedStages.map(({ stage, subProposals, index }) => (
                 <SppVotingTerminalStage
                     key={stage.stageIndex}
                     daoId={daoId}

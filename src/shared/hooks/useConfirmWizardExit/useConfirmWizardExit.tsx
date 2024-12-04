@@ -1,9 +1,9 @@
-import { useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
+import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useEffect } from 'react';
 
 export const useConfirmWizardExit = (isFormDirty: boolean) => {
-    const setIsBlocked = useSetIsBlocked();
+    const { setIsBlocked } = useBlockNavigationContext();
     const { t } = useTranslations();
 
     useEffect(() => {

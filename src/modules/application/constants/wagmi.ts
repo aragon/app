@@ -1,7 +1,7 @@
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { type Chain, createClient } from 'viem';
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi';
-import { arbitrum, base, mainnet, polygon, sepolia, zkSync, zkSyncSepoliaTestnet } from 'wagmi/chains';
+import { arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
 import { coinbaseWallet, walletConnect } from 'wagmi/connectors';
 
 // Metadata used during wallet connection process.
@@ -13,7 +13,7 @@ const appMetadata = {
 };
 
 // Supported chains by the Application.
-const chains: [Chain, ...Chain[]] = [arbitrum, base, mainnet, polygon, sepolia, zkSync, zkSyncSepoliaTestnet];
+const chains: [Chain, ...Chain[]] = [arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet];
 
 // WalletConnect project ID.
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!;

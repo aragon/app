@@ -1,5 +1,5 @@
 import BundleAnalyzer from '@next/bundle-analyzer';
-import packageInfo from './package.json' assert { type: 'json' };
+import packageInfo from './package.json' with { type: 'json' };
 
 const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
 

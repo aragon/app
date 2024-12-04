@@ -57,7 +57,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             title={t('app.governance.voteDialog.title')}
             description={t('app.governance.voteDialog.description')}
             submitLabel={t('app.governance.voteDialog.button.submit')}
-            successLink={{ label: t('app.governance.voteDialog.button.success'), onClick: router.refresh }}
+            successLink={{ label: t('app.governance.voteDialog.button.success'), onClick: () => router.refresh() }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
         >

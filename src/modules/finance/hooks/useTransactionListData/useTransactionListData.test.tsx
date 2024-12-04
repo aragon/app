@@ -13,7 +13,7 @@ import { useTransactionListData } from './useTransactionListData';
 
 jest.mock('../../api/financeService', () => ({
     __esModule: true,
-    ...jest.requireActual('../../api/financeService'),
+    ...jest.requireActual<typeof financeService>('../../api/financeService'),
 }));
 
 describe('useTransactionListData hook', () => {

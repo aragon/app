@@ -36,7 +36,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
     const { network, pluginSubdomain, executed } = proposal;
     const { chainId } = networkDefinitions[network];
 
-    const proposalStatus = useSlotSingleFunction<ProposalStatus>({
+    const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
         params: proposal,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginId: pluginSubdomain,

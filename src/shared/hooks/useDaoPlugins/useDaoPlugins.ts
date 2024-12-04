@@ -26,9 +26,7 @@ export interface IUseDaoPluginsParams {
     subdomain?: string;
 }
 
-export const useDaoPlugins = (
-    params: IUseDaoPluginsParams,
-): Array<ITabComponentPlugin<IDaoPlugin, object>> | undefined => {
+export const useDaoPlugins = (params: IUseDaoPluginsParams): Array<ITabComponentPlugin<IDaoPlugin>> | undefined => {
     const { daoId, type, pluginAddress, includeSubPlugins, subdomain } = params;
 
     const daoParams = { id: daoId };

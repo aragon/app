@@ -13,7 +13,7 @@ import { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
 // Needed to spy on useMemberList hook
 jest.mock('../../../../modules/governance/api/governanceService', () => ({
     __esModule: true,
-    ...jest.requireActual('../../../../modules/governance/api/governanceService'),
+    ...jest.requireActual<typeof governanceService>('../../../../modules/governance/api/governanceService'),
 }));
 
 describe('useMultisigGovernanceSettings', () => {

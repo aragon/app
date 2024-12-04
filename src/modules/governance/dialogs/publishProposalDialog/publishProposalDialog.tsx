@@ -1,6 +1,6 @@
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
+import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useSetIsBlocked } from '@/shared/components/navigationBlockerProvider';
 import {
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
@@ -55,9 +55,8 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const { title, summary } = values;
 
     const { t } = useTranslations();
+    const { setIsBlocked } = useBlockNavigationContext();
     const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
-
-    const setIsBlocked = useSetIsBlocked();
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
@@ -93,7 +92,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
         setIsBlocked(false);
 
-        const proposalId = publishProposalDialogUtils.getProposalId(txReceipt, address);
+        const proposalId = publishProposalDialogUtils.getProposalId(txReceipt, address)!;
         const extendedProposalId = `${transactionHash}-${pluginAddress}-${proposalId}`;
 
         return `/dao/${daoId}/proposals/${extendedProposalId}`;

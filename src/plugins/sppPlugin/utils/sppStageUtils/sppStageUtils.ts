@@ -121,7 +121,7 @@ class SppStageUtils {
                 return subProposal.result ? count + 1 : count;
             }
 
-            return isSuccessReached === true ? count + 1 : count;
+            return isSuccessReached ? count + 1 : count;
         }, 0);
     };
 }

@@ -31,16 +31,20 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const urlParams = { id };
     const { data: dao } = useDao({ urlParams });
 
-    const handleCopyClick = () => clipboardUtils.copy(dao!.address);
+    if (dao == null) {
+        return null;
+    }
+
+    const handleCopyClick = () => clipboardUtils.copy(dao.address);
 
     const handleWalletClick = () => {
         const dialog = isConnected ? ApplicationDialog.USER : ApplicationDialog.CONNECT_WALLET;
         open(dialog);
     };
 
-    const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
+    const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
     const links = navigationDaoLinks(dao);
-    const dialogSubtitle = daoUtils.getDaoEns(dao) ?? addressUtils.truncateAddress(dao?.address);
+    const dialogSubtitle = daoUtils.getDaoEns(dao) ?? addressUtils.truncateAddress(dao.address);
 
     const walletUser = address != null ? { address } : undefined;
 
@@ -51,9 +55,9 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         >
             <div className="flex flex-row justify-between gap-1">
                 <button className="flex min-w-0 flex-row items-center gap-3 p-1">
-                    <DaoAvatar src={daoAvatar} name={dao?.name} size="lg" />
+                    <DaoAvatar src={daoAvatar} name={dao.name} size="lg" />
                     <p className="hidden truncate text-base font-normal leading-tight text-neutral-800 md:block">
-                        {dao?.name}
+                        {dao.name}
                     </p>
                 </button>
                 <div className="flex flex-row gap-2">
@@ -65,7 +69,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             <Navigation.Dialog links={links} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <div className="flex flex-col gap-4 px-4">
                     <div className="flex grow flex-row justify-between">
-                        <DaoAvatar src={daoAvatar} name={dao?.name} size="md" responsiveSize={{ sm: 'lg' }} />
+                        <DaoAvatar src={daoAvatar} name={dao.name} size="md" responsiveSize={{ sm: 'lg' }} />
                         <div className="flex flex-row gap-3">
                             <Button
                                 variant="tertiary"
@@ -84,7 +88,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                         </div>
                     </div>
                     <div className="flex flex-col gap-1.5 font-normal leading-tight">
-                        <p className="truncate text-lg text-neutral-800 sm:text-xl">{dao?.name}</p>
+                        <p className="truncate text-lg text-neutral-800 sm:text-xl">{dao.name}</p>
                         <p className="truncate text-sm text-neutral-500 sm:text-base">{dialogSubtitle}</p>
                     </div>
                 </div>

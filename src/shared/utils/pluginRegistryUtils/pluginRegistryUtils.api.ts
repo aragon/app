@@ -11,14 +11,14 @@ export type PluginId = string;
 export type PluginComponent<TComponentProps = any> = ComponentType<TComponentProps>;
 
 // Record of slot components
-export type SlotComponents = Record<SlotId, Record<PluginId, PluginComponent>>;
+export type SlotComponents = Record<SlotId, Record<PluginId, PluginComponent | undefined> | undefined>;
 
 // Plugin function registered for a specific SlotId
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PluginFunction<TParams = any, TResult = any> = (params: TParams) => TResult;
 
 // Record of slot functions
-export type SlotFunctions = Record<SlotId, Record<PluginId, PluginFunction>>;
+export type SlotFunctions = Record<SlotId, Record<PluginId, PluginFunction | undefined> | undefined>;
 
 /**
  * Plugin definitions.

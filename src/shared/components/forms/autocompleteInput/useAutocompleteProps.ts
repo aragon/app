@@ -45,7 +45,7 @@ export const useAutocompleteProps = (params: IUseAutocompletePropsParams) => {
 
     const updateFloatingStyle = (params: MiddlewareState) => {
         const { reference, floating } = params.elements;
-        const inputWrapperWidth = (reference as Element).parentElement?.offsetWidth;
+        const inputWrapperWidth = (reference as Element).parentElement?.offsetWidth.toString() ?? '0';
         Object.assign(floating.style, { width: `${inputWrapperWidth}px` });
     };
 

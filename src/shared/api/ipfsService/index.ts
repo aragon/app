@@ -1,2 +1,2 @@
 export { ipfsService } from './ipfsService';
-export * from './ipfsService.api';
+export type * from './ipfsService.api';

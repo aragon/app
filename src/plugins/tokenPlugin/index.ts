@@ -7,6 +7,7 @@ import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
+import { TokenProposalVotingSummary } from './components/tokenProposalVotingSummary';
 import { TokenSubmitVote } from './components/tokenSubmitVote';
 import { TokenVoteList } from './components/tokenVoteList';
 import { plugin } from './constants/plugin';
@@ -87,6 +88,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
             pluginId: plugin.id,
             function: useTokenNormalizeActions,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY,
+            pluginId: plugin.id,
+            component: TokenProposalVotingSummary,
         })
 
         // Settings module slots

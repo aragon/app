@@ -1,2 +1,2 @@
 export { pluginRegistryUtils } from './pluginRegistryUtils';
-export * from './pluginRegistryUtils.api';
+export type * from './pluginRegistryUtils.api';

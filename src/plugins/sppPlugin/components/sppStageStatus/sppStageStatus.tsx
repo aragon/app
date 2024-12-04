@@ -12,23 +12,15 @@ import {
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
 
 export interface ISppStageStatusProps {
     /**
-     * ID of the related DAO.
-     */
-    daoId: string;
-    /**
      * SPP main proposal.
      */
     proposal: ISppProposal;
-    /**
-     * Sub proposal to display the vote status for.
-     */
-    subProposal?: ISppSubProposal;
     /**
      * Stage to display the status for.
      */
@@ -36,7 +28,7 @@ export interface ISppStageStatusProps {
 }
 
 export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
-    const { proposal, subProposal, stage } = props;
+    const { proposal, stage } = props;
 
     const { t } = useTranslations();
 
@@ -51,9 +43,10 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const stageStartDate = sppStageUtils.getStageStartDate(proposal, stage);
 
-    // Fallback to main-proposal execution transaction hash and status for last-stage sub proposals
-    const isStageAdvanced = subProposal?.executed.status ?? proposal.executed.status;
-    const transactionHash = subProposal?.executed.transactionHash ?? proposal.executed.transactionHash;
+    const isStageAdvanced = stage.stageIndex < proposal.stageIndex;
+
+    //TODO: sync with backend to get correct transaction hash for advanced stages
+    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: '' });
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
@@ -65,9 +58,13 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         sppStageUtils.isApprovalReached(proposal, stage) &&
         !(isSignalingProposal && isLastStage);
 
-    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
+    console.log('displayAdvance', displayAdvance);
+    console.log('stageStatus', stageStatus);
+    console.log('isSignalingProposal', isSignalingProposal);
+    console.log('isLastStage', isLastStage);
+    console.log('isApprovalReached', sppStageUtils.isApprovalReached(proposal, stage));
 
-    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
+    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const displayMaxAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
@@ -114,7 +111,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
           : null;
 
     return (
-        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-3 pt-4 md:flex-row md:items-center">
             <Button size="md" {...buttonProps}>
                 {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
             </Button>

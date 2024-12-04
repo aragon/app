@@ -65,8 +65,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <p className="text-nowrap text-base leading-tight text-neutral-800">{wizardName}</p>
                     {dao != null && (
                         <div className="flex items-center gap-x-2">
-                            <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">{dao?.name}</p>
-                            <DaoAvatar name={dao?.name} src={daoAvatar} size="sm" />
+                            <p className="truncate text-nowrap text-sm leading-tight text-neutral-500">{dao.name}</p>
+                            <DaoAvatar name={dao.name} src={daoAvatar} size="sm" />
                         </div>
                     )}
                 </div>

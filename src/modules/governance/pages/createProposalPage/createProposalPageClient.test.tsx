@@ -29,9 +29,9 @@ describe('<CreateProposalPageClient /> component', () => {
         return <CreateProposalPageClient {...completeProps} />;
     };
 
-    it('renders the create-proposal wizard steps', () => {
+    it('renders the create-proposal wizard steps', async () => {
         render(createTestComponent());
-        expect(screen.getByText(/wizard.container.step \(number=1\)/)).toBeInTheDocument();
+        expect(await screen.findByText(/wizard.container.step \(number=1\)/)).toBeInTheDocument();
         expect(screen.getByText(/wizard.container.total \(total=3\)/)).toBeInTheDocument();
         expect(screen.getByTestId('steps-mock')).toBeInTheDocument();
     });
