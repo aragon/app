@@ -111,7 +111,7 @@ describe('Http service', () => {
                 null: null,
             };
             const expectedResult = new URLSearchParams({
-                bool: `${params.bool}`,
+                bool: params.bool.toString(),
                 string: params.string,
                 number: params.number.toString(),
                 null: 'null',

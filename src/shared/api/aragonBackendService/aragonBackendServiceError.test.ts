@@ -24,7 +24,7 @@ describe('AragonBackendServiceError class', () => {
         });
 
         it('generates a default error instance on parse response error', async () => {
-            const response = generateResponse({ json: () => Promise.reject('oops'), status: 500 });
+            const response = generateResponse({ json: () => Promise.reject(new Error('oops')), status: 500 });
             const aragonError = await AragonBackendServiceError.fromResponse(response);
             expect(aragonError.code).toEqual(AragonBackendServiceError.parseErrorCode);
             expect(aragonError.description).toEqual(AragonBackendServiceError.parseErrorDescription);

@@ -40,7 +40,7 @@ export interface IMultisigAddMembersActionItemProps {
 const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean, isMember?: boolean) => {
     const errorNamespace = 'app.plugins.multisig.multisigAddMembersAction.addressInput.error';
 
-    if (!addressUtils.isAddress(member?.address)) {
+    if (!addressUtils.isAddress(member.address)) {
         return `${errorNamespace}.invalid`;
     } else if (isMember) {
         return `${errorNamespace}.alreadyMember`;
@@ -57,7 +57,7 @@ export const MultisigAddMembersActionItem: React.FC<IMultisigAddMembersActionIte
     const { t } = useTranslations();
     const { trigger } = useFormContext();
 
-    const memberFieldName = `${fieldName}.[${index}]`;
+    const memberFieldName = `${fieldName}.[${index.toString()}]`;
     const {
         value,
         onChange: onAddressChange,
@@ -87,14 +87,14 @@ export const MultisigAddMembersActionItem: React.FC<IMultisigAddMembersActionIte
     // Trigger member validation to check if added user is already a member of the DAO or not.
     useEffect(() => {
         if (isMember != null) {
-            trigger(memberFieldName);
+            void trigger(memberFieldName);
         }
     }, [trigger, memberFieldName, isMember]);
 
     // Only trigger already-in-list validation if value is a valid address to avoid displaying an error on mount.
     useEffect(() => {
         if (addressUtils.isAddress(value.address)) {
-            trigger(memberFieldName);
+            void trigger(memberFieldName);
         }
     }, [trigger, memberFieldName, isAlreadyInList, value.address]);
 

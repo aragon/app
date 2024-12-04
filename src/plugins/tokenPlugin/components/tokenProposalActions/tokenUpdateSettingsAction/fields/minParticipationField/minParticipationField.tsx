@@ -31,7 +31,7 @@ export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (pro
     const parsedAmount = formatUnits(BigInt(amount), decimals);
     const parsedValue = formatterUtils.formatNumber(parsedAmount, {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
+    })!;
 
     return (
         <NumberProgressInput

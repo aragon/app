@@ -20,7 +20,7 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
     const { id, title, summary, executed, endDate, creator, pluginSubdomain: pluginId } = proposal;
 
     const slotId = GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS;
-    const proposalStatus = useSlotSingleFunction<ProposalStatus>({ params: proposal, slotId, pluginId })!;
+    const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({ params: proposal, slotId, pluginId })!;
 
     const proposalDate = (executed.blockTimestamp ? executed.blockTimestamp : endDate) * 1000;
     const processedEndDate = proposalDate === 0 ? undefined : proposalDate;

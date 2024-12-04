@@ -1,7 +1,7 @@
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { TransactionReceipt } from 'viem';
-import * as viem from 'viem';
+import * as Viem from 'viem';
 import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
@@ -12,11 +12,11 @@ import {
 import { proposalAbi } from './proposalAbi';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual('viem') }));
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('publishProposalDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
-    const parseEventLogsSpy = jest.spyOn(viem, 'parseEventLogs');
+    const parseEventLogsSpy = jest.spyOn(Viem, 'parseEventLogs');
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
@@ -93,7 +93,7 @@ describe('publishProposalDialog utils', () => {
                 { args: { proposalId: BigInt(subProposalId), creator: '0xplugin-address' } },
                 { args: { proposalId: BigInt(proposalId), creator: creator } },
             ];
-            parseEventLogsSpy.mockReturnValue(decodedLogs as unknown as viem.ParseEventLogsReturnType);
+            parseEventLogsSpy.mockReturnValue(decodedLogs as unknown as Viem.ParseEventLogsReturnType);
 
             const result = publishProposalDialogUtils.getProposalId({ logs } as TransactionReceipt, creator);
             expect(parseEventLogsSpy).toHaveBeenCalledWith({ abi: proposalAbi, eventName: 'ProposalCreated', logs });

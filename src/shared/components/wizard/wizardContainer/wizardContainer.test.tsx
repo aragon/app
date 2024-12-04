@@ -21,7 +21,7 @@ describe('<WizardContainer /> component', () => {
         return <WizardContainer {...completeProps} />;
     };
 
-    it('renders the current step, the total number of steps and current progress', () => {
+    it('renders the current step, the total number of steps and current progress', async () => {
         const activeStepIndex = 0;
         const hasNext = true;
         const steps = [
@@ -32,7 +32,7 @@ describe('<WizardContainer /> component', () => {
         ];
         useStepperSpy.mockReturnValue(generateStepperResult<unknown, string>({ activeStepIndex, hasNext, steps }));
         render(createTestComponent());
-        expect(screen.getByText(/wizard.container.step \(number=1\)/)).toBeInTheDocument();
+        expect(await screen.findByText(/wizard.container.step \(number=1\)/)).toBeInTheDocument();
         expect(screen.getByText(/wizard.container.total \(total=4\)/)).toBeInTheDocument();
         expect(screen.getByText(/wizard.container.next/)).toBeInTheDocument();
         expect(screen.getByText(steps[1].meta.name)).toBeInTheDocument();

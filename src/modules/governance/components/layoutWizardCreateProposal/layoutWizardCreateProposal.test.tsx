@@ -25,7 +25,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutWizardCreateProposalProps>) => {
         const completeProps: ILayoutWizardCreateProposalProps = {
-            params: { id: 'dao-id', pluginAddress: '0x123' },
+            params: Promise.resolve({ id: 'dao-id', pluginAddress: '0x123' }),
             ...props,
         };
 
@@ -39,7 +39,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
             throw new Error('fetch DAO error');
         });
         const params = { id: 'dao-id', pluginAddress: '0x123' };
-        render(await createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
     });
 
@@ -52,7 +52,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         fetchQuerySpy.mockResolvedValue(generateDao());
         getDaoPluginsSpy.mockReturnValue(plugins);
         const params = { id: dao.address, pluginAddress: plugins[1].address };
-        render(await createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(screen.getByText(/layoutWizardCreateProposal.namePlugin \(plugin=Multisig\)/)).toBeInTheDocument();
     });
 
@@ -62,7 +62,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
         fetchQuerySpy.mockResolvedValue(generateDao());
         getDaoPluginsSpy.mockReturnValue(plugins);
         const params = { id: dao.address, pluginAddress: plugins[0].address };
-        render(await createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(screen.getByText(/layoutWizardCreateProposal.name \(plugin=Spp\)/)).toBeInTheDocument();
     });
 });

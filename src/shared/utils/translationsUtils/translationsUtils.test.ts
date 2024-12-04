@@ -16,7 +16,7 @@ describe('translations utils', () => {
             const values = { firstValue: 'abc', secondValue: 123 };
             const translations = { app: { key: string } } as unknown as Translations;
             expect(translationUtils.t(translations)(key, { ...values })).toEqual(
-                `String with values: ${values.firstValue} and ${values.secondValue}`,
+                `String with values: ${values.firstValue} and ${values.secondValue.toString()}`,
             );
         });
 

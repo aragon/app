@@ -1,12 +1,13 @@
 import { daoOptions } from '@/shared/api/daoService';
 import { testLogger } from '@/test/utils';
+import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { LayoutDao, type ILayoutDaoProps } from './layoutDao';
 
 jest.mock('@tanstack/react-query', () => ({
-    ...jest.requireActual('@tanstack/react-query'),
+    ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
         <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
             {props.children}
@@ -38,7 +39,7 @@ describe('<LayoutDao /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: { id: 'test-dao' },
+            params: Promise.resolve({ id: 'test-dao' }),
             ...props,
         };
 
@@ -55,7 +56,7 @@ describe('<LayoutDao /> component', () => {
 
     it('prefetches the DAO from the given slug', async () => {
         const params = { id: 'my-dao' };
-        render(await createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
     });
 
@@ -76,9 +77,9 @@ describe('<LayoutDao /> component', () => {
     });
 
     it('renders error with a link to explore page on fetch DAO error', async () => {
-        const daoId = 'dao-id';
+        const params = Promise.resolve({ id: 'daoId' });
         fetchQuerySpy.mockRejectedValue('error');
-        render(await createTestComponent({ params: { id: daoId } }));
+        render(await createTestComponent({ params }));
         const errorLink = screen.getByRole('link', { name: /layoutDao.notFound.action/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/`);

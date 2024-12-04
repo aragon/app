@@ -29,14 +29,14 @@ describe('<PageSection /> component', () => {
 
     it('renders the title as heading 2 on main context', () => {
         const title = 'main-title';
-        const contentType = 'main' as const;
+        const contentType = 'main';
         render(createTestComponent({ title }, { contentType }));
         expect(screen.getByRole('heading', { name: title, level: 2 })).toBeInTheDocument();
     });
 
     it('renders the title as heading 3 on aside context', () => {
         const title = 'aside-title';
-        const contentType = 'aside' as const;
+        const contentType = 'aside';
         render(createTestComponent({ title }, { contentType }));
         expect(screen.getByRole('heading', { name: title, level: 3 })).toBeInTheDocument();
     });

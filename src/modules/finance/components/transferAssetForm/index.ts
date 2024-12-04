@@ -1,2 +1,2 @@
 export { TransferAssetForm, type ITransferAssetFormProps } from './transferAssetForm';
-export * from './transferAssetFormDefinitions';
+export type * from './transferAssetFormDefinitions';

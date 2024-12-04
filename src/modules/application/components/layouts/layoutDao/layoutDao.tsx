@@ -15,12 +15,12 @@ export interface ILayoutDaoProps {
     /**
      * URL parameters of the layout.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
 export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     const { params, children } = props;
-    const { id } = params;
+    const { id } = await params;
 
     const queryClient = new QueryClient();
 
@@ -30,7 +30,7 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     } catch (error: unknown) {
         return (
             <Page.Error
-                error={JSON.parse(JSON.stringify(error))}
+                error={JSON.parse(JSON.stringify(error)) as unknown}
                 actionLink="/"
                 notFoundNamespace="app.application.layoutDao"
             />

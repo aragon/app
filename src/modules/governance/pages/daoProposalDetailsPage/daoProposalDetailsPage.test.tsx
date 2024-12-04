@@ -1,3 +1,4 @@
+import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -5,7 +6,7 @@ import { proposalOptions } from '../../api/governanceService';
 import { DaoProposalDetailsPage, type IDaoProposalDetailsPageProps } from './daoProposalDetailsPage';
 
 jest.mock('@tanstack/react-query', () => ({
-    ...jest.requireActual('@tanstack/react-query'),
+    ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
         <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
             {props.children}
@@ -30,7 +31,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoProposalDetailsPageProps>) => {
         const completeProps: IDaoProposalDetailsPageProps = {
-            params: { proposalId: 'proposal-id', id: 'dao-id' },
+            params: Promise.resolve({ proposalId: 'proposal-id', id: 'dao-id' }),
             ...props,
         };
         const Component = await DaoProposalDetailsPage(completeProps);
@@ -43,7 +44,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
         const proposalParams = {
             urlParams: { id: params.proposalId },
         };
-        render(await createTestComponent({ params }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalOptions(proposalParams).queryKey);
     });
 
@@ -54,8 +55,9 @@ describe('<DaoProposalDetailsPage /> component', () => {
 
     it('renders error with a link to proposal list page on fetch proposal error', async () => {
         const daoId = 'test-dao-id';
+        const params = { id: daoId, proposalId: '' };
         fetchQuerySpy.mockRejectedValue('error');
-        render(await createTestComponent({ params: { id: daoId, proposalId: '' } }));
+        render(await createTestComponent({ params: Promise.resolve(params) }));
         const errorLink = screen.getByRole('link', { name: /daoProposalDetailsPage.notFound.action/ });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual(`/dao/${daoId}/proposals`);

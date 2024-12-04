@@ -6,16 +6,17 @@ export interface IDaoSettingsPageProps {
     /**
      * DAO page parameters.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
 export const DaoSettingsPage: React.FC<IDaoSettingsPageProps> = async (props) => {
     const { params } = props;
+    const { id: daoId } = await params;
 
     return (
         <Page.Container>
             <Page.Content>
-                <DaoSettingsPageClient daoId={params.id} />
+                <DaoSettingsPageClient daoId={daoId} />
             </Page.Content>
         </Page.Container>
     );

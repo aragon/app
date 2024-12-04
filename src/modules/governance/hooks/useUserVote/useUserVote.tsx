@@ -1,5 +1,5 @@
 import { useAccount } from 'wagmi';
-import { useVoteList, type IGetVoteListParams, type IProposal, type IVote } from '../../api/governanceService';
+import { useVoteList, type IProposal, type IVote } from '../../api/governanceService';
 
 export interface IUseUserVoteParams {
     /**
@@ -8,21 +8,16 @@ export interface IUseUserVoteParams {
     proposal: IProposal;
 }
 
+// Disabling eslint rule because we can to return the vote with the plugin-specific type
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export const useUserVote = <TVote extends IVote = IVote>(params: IUseUserVoteParams): TVote | undefined => {
     const { proposal } = params;
     const { id, pluginAddress } = proposal;
 
     const { address } = useAccount();
 
-    const voteListParams: IGetVoteListParams = {
-        queryParams: {
-            proposalId: id,
-            pluginAddress,
-            address: address as string,
-        },
-    };
-
-    const { data: voteListData } = useVoteList<TVote>(voteListParams, { enabled: address != null });
+    const voteListParams = { proposalId: id, pluginAddress, address: address };
+    const { data: voteListData } = useVoteList<TVote>({ queryParams: voteListParams }, { enabled: address != null });
 
     return voteListData?.pages[0].data[0];
 };

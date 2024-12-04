@@ -32,7 +32,7 @@ export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersAct
     const { t } = useTranslations();
     const { trigger } = useFormContext();
 
-    const memberFieldName = `${fieldName}.[${index}]`;
+    const memberFieldName = `${fieldName}.[${index.toString()}]`;
     const {
         value: memberValue,
         onChange,
@@ -45,7 +45,7 @@ export const MultisigRemoveMembersActionItem: React.FC<IMultisigRemoveMembersAct
     const [addressInputValue, setAddressInputValue] = useState<string | undefined>(memberValue.address);
 
     useEffect(() => {
-        trigger(memberFieldName);
+        void trigger(memberFieldName);
     }, [trigger, memberFieldName, isAlreadyInList]);
 
     return (

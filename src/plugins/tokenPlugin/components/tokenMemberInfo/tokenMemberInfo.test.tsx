@@ -15,7 +15,7 @@ import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 // Needed to spy usage of useMemberList hook
 jest.mock('../../../../modules/governance/api/governanceService', () => ({
     __esModule: true,
-    ...jest.requireActual('../../../../modules/governance/api/governanceService'),
+    ...jest.requireActual<typeof governanceService>('../../../../modules/governance/api/governanceService'),
 }));
 
 describe('<TokenMemberInfo /> component', () => {
@@ -39,7 +39,7 @@ describe('<TokenMemberInfo /> component', () => {
         );
     };
 
-    it('renders the component with the correct eligible voters and members info', async () => {
+    it('renders the component with the correct eligible voters and members info', () => {
         const token = generateToken({ symbol: 'BTC', name: 'Bitcoin', totalSupply: '300' });
         const mockSettings = generateTokenPluginSettings({ votingMode: 2, token });
         const plugin = generateDaoPlugin({ settings: mockSettings });

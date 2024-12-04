@@ -5,7 +5,10 @@ import { type IWizardContext, WizardProvider } from '../wizardProvider';
 import { type IWizardStepProps, WizardStep } from './wizardStep';
 
 // Needed to spy usage of useFormContext hook
-jest.mock('react-hook-form', () => ({ __esModule: true, ...jest.requireActual('react-hook-form') }));
+jest.mock('react-hook-form', () => ({
+    __esModule: true,
+    ...jest.requireActual<typeof ReactHookForm>('react-hook-form'),
+}));
 
 describe('<WizardStep /> component', () => {
     const useFormContextSpy = jest.spyOn(ReactHookForm, 'useFormContext');

@@ -14,9 +14,9 @@ describe('useAutocompleteProps hook', () => {
         expect(result.current.inputProps).toEqual(
             expect.objectContaining({
                 role: 'combobox',
-                onKeyDown: expect.any(Function),
-                onFocus: expect.any(Function),
-                onClick: expect.any(Function),
+                onKeyDown: expect.any(Function) as unknown,
+                onFocus: expect.any(Function) as unknown,
+                onClick: expect.any(Function) as unknown,
             }),
         );
     });
@@ -26,8 +26,8 @@ describe('useAutocompleteProps hook', () => {
         expect(result.current.floatingMenuProps).toEqual(
             expect.objectContaining({
                 role: 'listbox',
-                onKeyDown: expect.any(Function),
-                onPointerMove: expect.any(Function),
+                onKeyDown: expect.any(Function) as unknown,
+                onPointerMove: expect.any(Function) as unknown,
             }),
         );
     });
@@ -44,8 +44,8 @@ describe('useAutocompleteProps hook', () => {
         const itemProps = result.current.getMenuItemProps(0, {});
         expect(itemProps).toEqual(
             expect.objectContaining({
-                onFocus: expect.any(Function),
-                onClick: expect.any(Function),
+                onFocus: expect.any(Function) as unknown,
+                onClick: expect.any(Function) as unknown,
             }),
         );
     });

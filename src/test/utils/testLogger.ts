@@ -10,7 +10,10 @@ class TestLogger {
                 // Suppress "fetchPriority" React error until fixed on stable version
                 // (See https://github.com/facebook/react/issues/27233)
                 return;
-            } else if (/`DialogContent` requires a `DialogTitle`/.test(params[0])) {
+            } else if (
+                typeof params[0] === 'string' &&
+                params[0].includes('`DialogContent` requires a `DialogTitle`')
+            ) {
                 // Suppress radix-ui error about title missing on Dialog component
                 return;
             }
@@ -21,7 +24,7 @@ class TestLogger {
 
     private testWarnLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
-            if (/Missing `Description`/.test(params[0])) {
+            if (typeof params[0] === 'string' && params[0].includes('Missing `Description`')) {
                 // Suppress radix-ui error about title missing on Dialog component
                 return;
             }

@@ -53,7 +53,7 @@ class PublishDaoDialogUtils {
             data: transactionData,
         };
 
-        return transaction;
+        return Promise.resolve(transaction);
     };
 
     getDaoAddress = (receipt: TransactionReceipt) => {

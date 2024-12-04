@@ -1,7 +1,7 @@
 import { HttpService } from '../httpService';
 
 class IpfsService extends HttpService {
-    jwt = process.env.NEXT_SECRET_IPFS_JWT;
+    jwt = process.env.NEXT_SECRET_IPFS_JWT!;
 
     urls = {
         pinJson: '/pinning/pinJSONToIPFS',

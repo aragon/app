@@ -1,9 +1,10 @@
+import type * as FloatingUi from '@floating-ui/react';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { AutocompleteInputMenu, type IAutocompleteInputMenuProps } from './autocompleteInputMenu';
 
 jest.mock('@floating-ui/react', () => ({
-    ...jest.requireActual('@floating-ui/react'),
+    ...jest.requireActual<typeof FloatingUi>('@floating-ui/react'),
     FloatingFocusManager: (props: { children: ReactNode }) => props.children,
 }));
 

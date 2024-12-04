@@ -11,7 +11,7 @@ export const AragonLogo: React.FC<IAragonLogoProps> = (props) => {
     return (
         <div className={classNames('flex flex-row items-center gap-1', className)} {...otherProps}>
             <Image alt="Aragon logo" width={32} height={32} fill={false} src="/icon.svg" />
-            <Image alt="Aragon App logo" className="w-10" fill={false} src={AragonAppLogo} />
+            <Image alt="Aragon App logo" className="w-10" fill={false} src={AragonAppLogo as string} />
         </div>
     );
 };

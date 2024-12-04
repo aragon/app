@@ -13,7 +13,7 @@ import { AdminMemberInfo, type IAdminMemberInfoProps } from './adminMemberInfo';
 // Needed to spy usage of useMemberList hook
 jest.mock('../../../../modules/governance/api/governanceService', () => ({
     __esModule: true,
-    ...jest.requireActual('../../../../modules/governance/api/governanceService'),
+    ...jest.requireActual<typeof governanceService>('../../../../modules/governance/api/governanceService'),
 }));
 
 describe('<AdminMemberInfo /> component', () => {
@@ -37,7 +37,7 @@ describe('<AdminMemberInfo /> component', () => {
         );
     };
 
-    it('renders the correct member info for the admin plugin', async () => {
+    it('renders the correct member info for the admin plugin', () => {
         const members = [generateMember({ address: '0x123' }), generateMember({ address: '0x456' })];
         const membersMetadata = generatePaginatedResponseMetadata({ pageSize: 20, totalRecords: members.length });
         const membersResponse = generatePaginatedResponse({ data: members, metadata: membersMetadata });

@@ -9,6 +9,7 @@ import {
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { addressUtils, clipboardUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -16,7 +17,7 @@ import type { ReactNode } from 'react';
 import { DaoDashboardPageClient, type IDaoDashboardPageClientProps } from './daoDashboardPageClient';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual('@aragon/gov-ui-kit'),
+    ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
 }));
 

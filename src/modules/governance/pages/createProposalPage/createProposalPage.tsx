@@ -6,11 +6,12 @@ export interface ICreateProposalPageProps {
     /**
      * DAO page parameters.
      */
-    params: ICreateProposalPageParams;
+    params: Promise<ICreateProposalPageParams>;
 }
 
-export const CreateProposalPage: React.FC<ICreateProposalPageProps> = (props) => {
-    const { id, pluginAddress } = props.params;
+export const CreateProposalPage: React.FC<ICreateProposalPageProps> = async (props) => {
+    const { params } = props;
+    const { id, pluginAddress } = await params;
 
     return (
         <Page.Container>

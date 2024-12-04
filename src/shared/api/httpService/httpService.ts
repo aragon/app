@@ -39,10 +39,7 @@ export class HttpService {
         return parsedParams != null ? `${fullUrl}?${parsedParams.toString()}` : fullUrl;
     };
 
-    private replaceUrlParams = <TUrlParams extends Record<string, string>>(
-        url: string,
-        params?: TUrlParams,
-    ): string => {
+    private replaceUrlParams = (url: string, params?: Record<string, string>): string => {
         if (params == null) {
             return url;
         }
@@ -52,9 +49,7 @@ export class HttpService {
         return parsedUrl;
     };
 
-    private parseQueryParams = <TQueryParams extends Record<string, unknown>>(
-        params?: TQueryParams,
-    ): URLSearchParams | undefined => {
+    private parseQueryParams = (params?: Record<string, unknown>): URLSearchParams | undefined => {
         if (params == null || Object.keys(params).length === 0) {
             return undefined;
         }

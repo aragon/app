@@ -77,7 +77,7 @@ export class PluginRegistryUtils {
         slotFunctions: {},
     };
 
-    registerPlugin = (plugin: IPlugin): PluginRegistryUtils => {
+    registerPlugin = (plugin: IPlugin): this => {
         this.pluginRegistry.plugins.push(plugin);
 
         return this;
@@ -86,7 +86,7 @@ export class PluginRegistryUtils {
     getPlugin = (pluginId: PluginId): IPlugin | undefined =>
         this.pluginRegistry.plugins.find((plugin) => plugin.id === pluginId);
 
-    registerSlotFunction = (params: IRegisterSlotFunctionParams): PluginRegistryUtils => {
+    registerSlotFunction = (params: IRegisterSlotFunctionParams): this => {
         const { slotId, pluginId, function: func } = params;
         this.pluginRegistry = {
             ...this.pluginRegistry,
@@ -102,7 +102,7 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getSlotFunction = <TParams, TResult>(
+    getSlotFunction = <TParams = unknown, TResult = unknown>(
         params: IGetSlotFunctionParams,
     ): PluginFunction<TParams, TResult> | undefined => {
         const { slotId, pluginId } = params;
@@ -111,7 +111,7 @@ export class PluginRegistryUtils {
         return func;
     };
 
-    registerSlotComponent = (params: IRegisterSlotComponentParams): PluginRegistryUtils => {
+    registerSlotComponent = (params: IRegisterSlotComponentParams): this => {
         const { slotId, pluginId, component } = params;
         this.pluginRegistry = {
             ...this.pluginRegistry,

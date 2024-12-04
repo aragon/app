@@ -1,9 +1,9 @@
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import * as navigationBlockerProvider from '@/shared/components/navigationBlockerProvider/navigationBlockerProvider';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -13,10 +13,10 @@ import * as wagmi from 'wagmi';
 import { NavigationWizard, type INavigationWizardProps } from './navigationWizard';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual('@aragon/gov-ui-kit'),
+    ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
     DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
-    Wallet: (props: { user: { address: string } | undefined; onClick: () => void }) => (
-        <button onClick={props.onClick}>{props?.user ? props.user.address : 'connect-mock'}</button>
+    Wallet: (props: { user?: { address: string }; onClick: () => void }) => (
+        <button onClick={props.onClick}>{props.user ? props.user.address : 'connect-mock'}</button>
     ),
 }));
 
@@ -30,7 +30,6 @@ describe('<NavigationWizard /> component', () => {
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
-    const useIsBlockedSpy = jest.spyOn(navigationBlockerProvider, 'useIsBlocked');
     const confirmSpy = jest.spyOn(window, 'confirm');
 
     beforeEach(() => {
@@ -51,7 +50,6 @@ describe('<NavigationWizard /> component', () => {
         useRouterSpy.mockReset();
         useAccountSpy.mockReset();
         useDialogContextSpy.mockReset();
-        useIsBlockedSpy.mockReset();
         confirmSpy.mockReset();
     });
 
