@@ -1,3 +1,4 @@
+import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import { createContext, useContext } from 'react';
 import type { IProposalAction, ProposalActionType } from '../../../api/governanceService';
 
@@ -14,6 +15,14 @@ export interface ICreateProposalFormContext {
      * Callback to update the prepare-action maps for the given proposal action type.
      */
     addPrepareAction: (actionType: ProposalActionType, prepareAction: PrepareProposalActionFunction) => void;
+    /**
+     * ABIs of smart contract to be used for adding custom actions to proposals.
+     */
+    smartContractAbis: ISmartContractAbi[];
+    /**
+     * Callback called to add a smart contract ABI for proposal creation.
+     */
+    addSmartContractAbi: (abi: ISmartContractAbi) => void;
 }
 
 const createProposalFormContext = createContext<ICreateProposalFormContext | null>(null);

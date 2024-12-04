@@ -6,6 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useCallback, useMemo, useState } from 'react';
 import type { ProposalActionType } from '../../api/governanceService';
+import type { ISmartContractAbi } from '../../api/smartContractService';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
@@ -35,10 +36,16 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { t } = useTranslations();
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
+    const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);
 
     const addPrepareAction = useCallback(
         (type: ProposalActionType, prepareAction: PrepareProposalActionFunction) =>
             setPrepareActions((current) => ({ ...current, [type]: prepareAction })),
+        [],
+    );
+
+    const addSmartContractAbi = useCallback(
+        (abi: ISmartContractAbi) => setSmartContractAbis((current) => [...current, abi]),
         [],
     );
 
@@ -47,7 +54,10 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
     };
 
-    const contextValues = useMemo(() => ({ prepareActions, addPrepareAction }), [prepareActions, addPrepareAction]);
+    const contextValues = useMemo(
+        () => ({ prepareActions, addPrepareAction, smartContractAbis, addSmartContractAbi }),
+        [prepareActions, addPrepareAction, smartContractAbis, addSmartContractAbi],
+    );
 
     const processedSteps = useMemo(
         () =>

@@ -1,2 +1,7 @@
-export { ActionComposer, type IActionComposerProps } from './actionComposer';
-export type { IPluginActionComposerData } from './actionComposer.api';
+export { ActionComposer } from './actionComposer';
+export type {
+    ActionComposerMode,
+    IActionComposerItem,
+    IActionComposerProps,
+    IPluginActionComposerData,
+} from './actionComposer.api';

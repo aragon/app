@@ -2,6 +2,7 @@ import { type IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
 import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
+import { VerifySmartContractDialog } from '../dialogs/verifySmartContractDialog';
 import { VoteDialog } from '../dialogs/voteDialog';
 
 export enum GovernanceDialogs {
@@ -9,6 +10,7 @@ export enum GovernanceDialogs {
     VOTE = 'VOTE',
     EXECUTE = 'EXECUTE',
     SELECT_PLUGIN = 'SELECT_PLUGIN',
+    VERIFY_SMART_CONTRACT = 'VERIFY_SMART_CONTRACT',
 }
 
 export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefinitions> = {
@@ -28,4 +30,5 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
         description: 'app.governance.voteDialog.description',
     },
     [GovernanceDialogs.SELECT_PLUGIN]: { Component: SelectPluginDialog },
+    [GovernanceDialogs.VERIFY_SMART_CONTRACT]: { Component: VerifySmartContractDialog },
 };
