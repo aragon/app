@@ -61,6 +61,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
+
     if (!displayAdvanceStatus) {
         return null;
     }

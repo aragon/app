@@ -585,6 +585,8 @@
         "multisigProposalVotingSummary": {
           "approved": "approved",
           "description": "of {{count}} members",
+          "didNotApprove": "did not approve",
+          "didNotVeto": "did not veto",
           "name": "{{name}} approval",
           "vetoed": "vetoed"
         },
@@ -738,6 +740,8 @@
         },
         "tokenProposalVotingSummary": {
           "approved": "approved",
+          "didNotApprove": "did not approve",
+          "didNotVeto": "did not veto",
           "support": {
             "description": "of {{details}}",
             "name": "{{name}} support"
