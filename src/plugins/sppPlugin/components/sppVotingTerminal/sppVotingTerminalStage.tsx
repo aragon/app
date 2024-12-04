@@ -101,6 +101,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         daoId={daoId}
                         subProposal={getBodySubProposal(plugin.address)}
                         proposal={proposal}
+                        stage={stage}
                         canVote={canVote}
                         isVeto={isVeto}
                         isSingleBody={isSingleBody}

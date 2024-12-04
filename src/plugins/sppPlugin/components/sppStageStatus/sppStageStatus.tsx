@@ -63,19 +63,9 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const displayMaxAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
 
-    const minAdvanceTime = stageStartDate?.plus({ seconds: stage.minAdvance });
+    const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
     const displayMinAdvanceTime =
         stageStartDate && minAdvanceTime && DateTime.now() < minAdvanceTime && !isStageAdvanced;
-
-    if (stageAdvanceExpired) {
-        return (
-            <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
-        );
-    }
-
-    if (!displayAdvance) {
-        return null;
-    }
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
         ? {
@@ -104,8 +94,18 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
             }
           : null;
 
+    if (stageAdvanceExpired) {
+        return (
+            <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
+        );
+    }
+
+    if (!displayAdvance) {
+        return null;
+    }
+
     return (
-        <div className="flex flex-col justify-between gap-3 pt-4 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <Button size="md" {...buttonProps}>
                 {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
             </Button>

@@ -121,9 +121,7 @@ describe('SppStageUtils', () => {
                 ],
             });
 
-            const result = sppStageUtils.isVetoReached(proposal, stage);
-
-            expect(result).toBeTruthy();
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeTruthy();
         });
 
         it('returns false when veto count is below threshold', () => {
@@ -144,9 +142,7 @@ describe('SppStageUtils', () => {
                 ],
             });
 
-            const result = sppStageUtils.isVetoReached(proposal, stage);
-
-            expect(result).toBeFalsy();
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
 
         it('returns false when veto threshold is set to 0', () => {
@@ -161,9 +157,7 @@ describe('SppStageUtils', () => {
                 subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: 'plugin1', result: false })],
             });
 
-            const result = sppStageUtils.isVetoReached(proposal, stage);
-
-            expect(result).toBeFalsy();
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
     });
 
@@ -208,7 +202,7 @@ describe('SppStageUtils', () => {
     });
 
     describe('getSuccessThreshold', () => {
-        it('returns count + 1 when getSucceededStatus is null and subProposal result is true', () => {
+        it('returns correct success threshold when getSucceededStatus is null and subProposal result is true', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
@@ -221,7 +215,7 @@ describe('SppStageUtils', () => {
             expect(result).toBe(1);
         });
 
-        it('returns count when getSucceededStatus is null and subProposal result is false', () => {
+        it('returns correct success threshold when getSucceededStatus is null and subProposal result is false', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
@@ -234,7 +228,7 @@ describe('SppStageUtils', () => {
             expect(result).toBe(0);
         });
 
-        it('returns count + 1 when getSucceededStatus is non-null and status is successful', () => {
+        it('returns correct success threshold when getSucceededStatus is non-null and status is successful', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
@@ -245,7 +239,7 @@ describe('SppStageUtils', () => {
             expect(result).toBe(1);
         });
 
-        it('returns count when getSucceededStatus is non-null and status is not successful', () => {
+        it('returns correct success threshold when getSucceededStatus is non-null and status is not successful', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],

@@ -7,21 +7,19 @@ import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../t
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): ProposalVotingStatus => {
         const { stageIndex: currentStageIndex, actions, settings } = proposal;
-        const { stageIndex, minAdvance } = stage;
+        const { stageIndex } = stage;
 
         const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal, stage);
         const stageEndDate = this.getStageEndDate(proposal, stage);
 
-        const minAdvanceDate = stageStartDate?.plus({ seconds: minAdvance });
+        const minAdvanceDate = this.getStageMinAdvance(proposal, stage);
         const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
 
         const approvalReached = this.isApprovalReached(proposal, stage);
 
         // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
         const isSignalingProposal = actions.length === 0 && stageIndex === settings.stages.length - 1;
-
-        const canAdvance = approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal;
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalVotingStatus.VETOED;
@@ -36,7 +34,9 @@ class SppStageUtils {
         }
 
         if (stageEndDate != null && now < stageEndDate) {
-            return canAdvance ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
+            return approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal
+                ? ProposalVotingStatus.ACCEPTED
+                : ProposalVotingStatus.ACTIVE;
         }
 
         if (!approvalReached) {

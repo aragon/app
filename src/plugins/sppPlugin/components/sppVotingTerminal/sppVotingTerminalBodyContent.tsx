@@ -6,7 +6,7 @@ import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
 
 export interface ISppVotingTerminalBodyContentProps {
     /**
@@ -26,6 +26,10 @@ export interface ISppVotingTerminalBodyContentProps {
      */
     proposal: ISppProposal;
     /**
+     * Stage of the proposal which contains the body.
+     */
+    stage: ISppStage;
+    /**
      * Flag indicating if the vote is a veto.
      */
     isVeto: boolean;
@@ -42,7 +46,7 @@ export interface ISppVotingTerminalBodyContentProps {
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, proposal, canVote, isVeto, isSingleBody } = props;
+    const { plugin, daoId, subProposal, proposal, stage, canVote, isVeto, isSingleBody } = props;
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
@@ -58,8 +62,6 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     const processedSubProposal =
         subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
 
-    const stage = proposal.settings.stages[proposal.stageIndex];
-
     return (
         <>
             {processedSubProposal && (
@@ -69,16 +71,18 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         pluginId={plugin.subdomain}
                         proposal={subProposal}
                     >
-                        {canVote && (
-                            <PluginSingleComponent
-                                slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                pluginId={processedSubProposal.pluginSubdomain}
-                                proposal={processedSubProposal}
-                                daoId={daoId}
-                                isVeto={isVeto}
-                            />
-                        )}
-                        {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} />}
+                        <div className="flex flex-col gap-y-4">
+                            {canVote && (
+                                <PluginSingleComponent
+                                    slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                                    pluginId={processedSubProposal.pluginSubdomain}
+                                    proposal={processedSubProposal}
+                                    daoId={daoId}
+                                    isVeto={isVeto}
+                                />
+                            )}
+                            {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} />}
+                        </div>
                     </PluginSingleComponent>
                     <ProposalVoting.Votes>
                         <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />

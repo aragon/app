@@ -1,3 +1,4 @@
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ISppProposal, ISppStage } from '../../types';
 import { SppStageStatus } from '../sppStageStatus';
@@ -22,7 +23,7 @@ export interface ISppVotingTerminalBodySummaryFooterProps {
 }
 
 export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBodySummaryFooterProps> = (props) => {
-    const { stage, proposal, isActive, isVeto } = props;
+    const { stage, proposal, isVeto } = props;
 
     const { t } = useTranslations();
 
@@ -30,7 +31,7 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     const threshold = isVeto ? stage.vetoThreshold : stage.approvalThreshold;
     const entityType = threshold > 1 ? 'bodies' : 'body';
 
-    if (!isActive) {
+    if (sppStageUtils.isApprovalReached(proposal, stage)) {
         return <SppStageStatus proposal={proposal} stage={stage} />;
     }
 
