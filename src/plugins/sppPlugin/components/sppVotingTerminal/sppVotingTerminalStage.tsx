@@ -51,7 +51,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     const bodyList = stage.plugins.map((plugin) => plugin.address);
 
-    const isSingleBody = !bodyList || bodyList.length === 1;
+    const isSingleBody = bodyList.length === 1;
 
     const canVote = processedStageStatus === ProposalVotingStatus.ACTIVE;
     const isVeto = stage.plugins[0].proposalType === SppProposalType.VETO;
