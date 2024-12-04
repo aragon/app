@@ -4,6 +4,8 @@ import { formatUnits } from 'viem';
 import { type ITokenProposal, VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
+import { ISppProposal } from '@/plugins/sppPlugin/types';
+import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 
 export interface ITokenProposalVotingSummaryProps {
     /**
@@ -18,10 +20,14 @@ export interface ITokenProposalVotingSummaryProps {
      * Is optimistic stage
      */
     isOptimistic: boolean;
+    /**
+     * Parent proposal
+     */
+    parentProposal: ISppProposal;
 }
 
 export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryProps> = (props) => {
-    const { proposal, name, isOptimistic } = props;
+    const { proposal, name, isOptimistic, parentProposal } = props;
 
     const { t } = useTranslations();
 
@@ -55,7 +61,12 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
 
     const isApprovalReached = tokenProposalUtils.isApprovalReached(proposal);
 
-    if (status !== ProposalStatus.ACTIVE) {
+    const parentProposalStatus = sppProposalUtils.getProposalStatus(parentProposal);
+    const parentExecuted = parentProposalStatus === ProposalStatus.EXECUTED;
+
+    // For non voting bodies in the last stage the status is active so we show the progress
+    // Adding a check for proposal executed means we show the correct UI in those cases
+    if (status !== ProposalStatus.ACTIVE || parentExecuted) {
         const approvalText = isApprovalReached ? 'approved' : 'didNotApprove';
         const vetoText = isApprovalReached ? 'vetoed' : 'didNotVeto';
         const statusText = isOptimistic ? vetoText : approvalText;

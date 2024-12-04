@@ -2,6 +2,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
+import { ISppProposal } from '@/plugins/sppPlugin/types';
+import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 
 export interface IMultisigProposalVotingSummaryProps {
     /**
@@ -16,10 +18,14 @@ export interface IMultisigProposalVotingSummaryProps {
      * Is optimistic stage
      */
     isOptimistic: boolean;
+    /**
+     * Parent proposal
+     */
+    parentProposal: ISppProposal;
 }
 
 export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSummaryProps> = (props) => {
-    const { proposal, name, isOptimistic } = props;
+    const { proposal, name, isOptimistic, parentProposal } = props;
 
     const { t } = useTranslations();
 
@@ -43,7 +49,12 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
 
     const isApprovalReached = multisigProposalUtils.isApprovalReached(proposal);
 
-    if (status !== ProposalStatus.ACTIVE) {
+    const parentProposalStatus = sppProposalUtils.getProposalStatus(parentProposal);
+    const parentExecuted = parentProposalStatus === ProposalStatus.EXECUTED;
+
+    // For non voting bodies in the last stage the status is active so we show the progress
+    // Adding a check for proposal executed means we show the correct UI in those cases
+    if (status !== ProposalStatus.ACTIVE || parentExecuted) {
         const approvalText = isApprovalReached ? 'approved' : 'didNotApprove';
         const vetoText = isApprovalReached ? 'vetoed' : 'didNotVeto';
         const statusText = isOptimistic ? vetoText : approvalText;
