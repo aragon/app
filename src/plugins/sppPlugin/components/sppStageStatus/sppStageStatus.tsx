@@ -6,14 +6,12 @@ import {
     DateFormat,
     formatterUtils,
     IconType,
-    ProposalStatus,
     ProposalVotingStatus,
     Rerender,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
-import { sppProposalUtils } from '../../utils/sppProposalUtils';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
 
