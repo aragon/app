@@ -208,46 +208,42 @@ describe('SppStageUtils', () => {
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
             });
 
-            const mockStatusFunction = jest.fn(() => null);
-            getSlotFunctionSpy.mockReturnValue(mockStatusFunction);
-
+            getSlotFunctionSpy.mockReturnValue(undefined);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
             expect(result).toBe(1);
         });
 
-        it('returns correct success threshold when getSucceededStatus is null and subProposal result is false', () => {
+        it('returns correct success threshold when getSucceededStatus is unsupported and subProposal result is false', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
                 subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
             });
 
-            const mockStatusFunction = jest.fn(() => null);
-            getSlotFunctionSpy.mockReturnValue(mockStatusFunction);
-
+            getSlotFunctionSpy.mockReturnValue(undefined);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
             expect(result).toBe(0);
         });
 
-        it('returns correct success threshold when getSucceededStatus is non-null and status is successful', () => {
+        it('returns correct success threshold when getSucceededStatus is not passing and subProposal result is true', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({
-                subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
-            });
-
-            getSlotFunctionSpy.mockReturnValue(() => true);
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1);
-        });
-
-        it('returns correct success threshold when getSucceededStatus is non-null and status is not successful', () => {
-            const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({
-                subProposals: [generateSppSubProposal({ stageIndex: 0, result: false })],
+                subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
             });
 
             getSlotFunctionSpy.mockReturnValue(() => false);
             const result = sppStageUtils.getSuccessThreshold(proposal, stage);
             expect(result).toBe(0);
+        });
+
+        it('returns correct success threshold when getSucceededStatus is passing and subProposal result is true', () => {
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                subProposals: [generateSppSubProposal({ stageIndex: 0, result: true })],
+            });
+
+            getSlotFunctionSpy.mockReturnValue(() => true);
+            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
+            expect(result).toBe(1);
         });
     });
 

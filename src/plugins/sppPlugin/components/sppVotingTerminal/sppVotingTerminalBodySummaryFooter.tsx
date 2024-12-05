@@ -13,10 +13,6 @@ export interface ISppVotingTerminalBodySummaryFooterProps {
      */
     stage: ISppStage;
     /**
-     * is this stage active
-     */
-    isActive: boolean;
-    /**
      * Flag indicating if the vote is a veto.
      */
     isVeto: boolean;

@@ -2,13 +2,13 @@ import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from '@/modules/settings/types';
-import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
+import type { ComponentProps } from 'react';
 import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
 
-export interface ISppVotingTerminalBodyContentProps {
+export interface ISppVotingTerminalBodyContentProps extends ComponentProps<'div'> {
     /**
      * The plugin that the stage belongs to.
      */
@@ -37,16 +37,12 @@ export interface ISppVotingTerminalBodyContentProps {
      * Flag indicating if the user can vote.
      */
     canVote: boolean;
-    /**
-     * Flag indicating if the stage is single body.
-     */
-    isSingleBody: boolean;
 }
 
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, proposal, stage, canVote, isVeto, isSingleBody } = props;
+    const { plugin, daoId, subProposal, proposal, canVote, isVeto, children } = props;
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
@@ -81,7 +77,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                                     isVeto={isVeto}
                                 />
                             )}
-                            {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} />}
+                            {children}
                         </div>
                     </PluginSingleComponent>
                     <ProposalVoting.Votes>

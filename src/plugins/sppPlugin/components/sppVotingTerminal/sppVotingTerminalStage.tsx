@@ -1,4 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
@@ -82,12 +83,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         </ProposalVoting.BodySummaryListItem>
                     ))}
                 </ProposalVoting.BodySummaryList>
-                <SppVotingTerminalBodySummaryFooter
-                    proposal={proposal}
-                    stage={stage}
-                    isActive={processedStageStatus === ProposalVotingStatus.ACTIVE}
-                    isVeto={isVeto}
-                />
+                <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} isVeto={isVeto} />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
                 <ProposalVoting.BodyContent
@@ -104,8 +100,9 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         stage={stage}
                         canVote={canVote}
                         isVeto={isVeto}
-                        isSingleBody={isSingleBody}
-                    />
+                    >
+                        {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} />}
+                    </SppVotingTerminalBodyContent>
                 </ProposalVoting.BodyContent>
             ))}
         </ProposalVoting.Stage>
