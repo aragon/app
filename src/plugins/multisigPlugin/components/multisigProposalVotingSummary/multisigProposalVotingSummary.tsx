@@ -1,4 +1,3 @@
-import { SppNonActiveStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import type { ISppProposal } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
@@ -52,8 +51,24 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     // For non voting bodies in the last stage the status is active so we show the progress
     // Adding a check for proposal executed means we show the correct UI in those cases
     if (status !== ProposalStatus.ACTIVE || parentProposal.executed.status) {
+        const approvalText = isApprovalReached ? 'approved' : 'notApproved';
+        const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
+        const statusText = isOptimistic ? vetoText : approvalText;
+
+        const statusClass =
+            isApprovalReached && isOptimistic
+                ? 'text-critical-800'
+                : isApprovalReached
+                  ? 'text-success-800'
+                  : 'text-neutral-500';
+
         return (
-            <SppNonActiveStageStatus name={name} isOptimistic={isOptimistic} isApprovalReached={isApprovalReached} />
+            <p>
+                {name}{' '}
+                <span className={statusClass}>
+                    {t(`app.plugins.multisig.multisigProposalVotingSummary.${statusText}`)}
+                </span>
+            </p>
         );
     }
 

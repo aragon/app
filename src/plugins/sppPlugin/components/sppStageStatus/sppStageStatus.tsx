@@ -44,7 +44,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const execution = proposal.stageExecutions.find((execution) => execution.stageIndex === stage.stageIndex);
 
-    const transactionHash = execution?.transactionHash ?? '';
+    const transactionHash = execution?.transactionHash;
 
     const advanceTransactionHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,

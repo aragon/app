@@ -1,6 +1,6 @@
 import type { IProposalExecution } from '@/modules/governance/api/governanceService';
 
-export interface ISppExecution extends IProposalExecution {
+export interface ISppProposalExecution extends IProposalExecution {
     /**
      * The index of the stage this execution status is linked to.
      */
