@@ -40,18 +40,14 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
 
-    const proposalStatus = sppProposalUtils.getProposalStatus(proposal);
-
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
-    const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
-
-    const isStageAdvanced =
-        stage.stageIndex < proposal.stageIndex || (isLastStage && proposalStatus === ProposalStatus.EXECUTED);
+    const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
 
     //TODO: sync with backend to get correct transaction hash for advanced stages
     const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: '' });
 
+    const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
 
     // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
