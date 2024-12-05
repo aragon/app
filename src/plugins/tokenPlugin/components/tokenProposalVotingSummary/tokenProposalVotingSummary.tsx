@@ -1,4 +1,4 @@
-import { SppNonActiveStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
+import { SppNonActiveStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import type { ISppProposal } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
@@ -64,13 +64,20 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     // For non voting bodies in the last stage the status is active so we show the progress
     // Adding a check for proposal executed means we show the correct UI in those cases
     if (status !== ProposalStatus.ACTIVE || parentProposal.executed.status) {
-        return <SppNonActiveStatus name={name} isOptimistic={isOptimistic} isApprovalReached={isApprovalReached} />;
+        return (
+            <SppNonActiveStageStatus name={name} isOptimistic={isOptimistic} isApprovalReached={isApprovalReached} />
+        );
     }
 
     return (
         <div className="flex w-full flex-col gap-3">
             <p className="text-neutral-800">
-                {name} <span className="text-neutral-500">{isOptimistic ? `veto support` : 'support'}</span>
+                {name}{' '}
+                <span className="text-neutral-500">
+                    {isOptimistic
+                        ? t('app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel')
+                        : t('app.plugins.token.tokenProposalVotingSummary.supportLabel')}
+                </span>
             </p>
             <Progress
                 variant={supportReached ? 'primary' : 'neutral'}
@@ -80,7 +87,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
             <p className="text-neutral-800">
                 {formattedWinningOption}{' '}
                 <span className="text-neutral-500">
-                    {t('app.plugins.token.tokenProposalVotingSummary.support.description', {
+                    {t('app.plugins.token.tokenProposalVotingSummary.support.votesDescription', {
                         details: `${formattedTotalVotes} ${symbol}`,
                     })}
                 </span>

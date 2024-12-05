@@ -583,12 +583,9 @@
           "entity": "Proposals"
         },
         "multisigProposalVotingSummary": {
-          "approved": "approved",
-          "description": "of {{count}} members",
-          "name": "{{name}} approval",
-          "notApproved": "did not approve",
-          "notVetoed": "did not veto",
-          "vetoed": "vetoed"
+          "approvalLabel": "approval",
+          "memberCount": "of {{count}} members",
+          "optimisticApprovalLabel": "veto approval"
         },
         "multisigRemoveMembersAction": {
           "add": "Add",
@@ -655,6 +652,12 @@
         },
         "sppGovernanceSettings": {
           "numberOfStages": "Number of stages"
+        },
+        "sppNonActiveStageStatus": {
+          "approved": "approved",
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
+          "vetoed": "vetoed"
         },
         "sppStageStatus": {
           "advanceExpired": "Proposal not advanced in time",
@@ -739,14 +742,9 @@
           "yes": "Yes"
         },
         "tokenProposalVotingSummary": {
-          "approved": "approved",
-          "notApproved": "did not approve",
-          "notVetoed": "did not veto",
-          "support": {
-            "description": "of {{details}}",
-            "name": "{{name}} support"
-          },
-          "vetoed": "vetoed"
+          "optimisticSupportLabel": "veto support",
+          "supportLabel": "support",
+          "votesDescription": "of {{details}}"
         },
         "tokenSubmitVote": {
           "buttons": {

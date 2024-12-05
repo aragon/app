@@ -1,4 +1,4 @@
-import { SppNonActiveStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
+import { SppNonActiveStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import type { ISppProposal } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
@@ -52,13 +52,20 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     // For non voting bodies in the last stage the status is active so we show the progress
     // Adding a check for proposal executed means we show the correct UI in those cases
     if (status !== ProposalStatus.ACTIVE || parentProposal.executed.status) {
-        return <SppNonActiveStatus name={name} isOptimistic={isOptimistic} isApprovalReached={isApprovalReached} />;
+        return (
+            <SppNonActiveStageStatus name={name} isOptimistic={isOptimistic} isApprovalReached={isApprovalReached} />
+        );
     }
 
     return (
         <div className="flex w-full flex-col gap-3">
             <p className="text-neutral-800">
-                {name} <span className="text-neutral-500">{isOptimistic ? `veto support` : 'support'}</span>
+                {name}{' '}
+                <span className="text-neutral-500">
+                    {isOptimistic
+                        ? t('app.plugins.multisig.multisigProposalVotingSummary.optimisticApprovalLabel')
+                        : t('app.plugins.multisig.multisigProposalVotingSummary.approvalLabel')}
+                </span>
             </p>
             <Progress
                 variant={approvalsAmount >= minApprovals ? 'primary' : 'neutral'}
@@ -67,7 +74,7 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
             <p className="text-neutral-800">
                 {formattedApprovalsAmount}{' '}
                 <span className="text-neutral-500">
-                    {t('app.plugins.multisig.multisigProposalVotingSummary.description', {
+                    {t('app.plugins.multisig.multisigProposalVotingSummary.memberCount', {
                         count: formattedMinApprovals,
                     })}
                 </span>

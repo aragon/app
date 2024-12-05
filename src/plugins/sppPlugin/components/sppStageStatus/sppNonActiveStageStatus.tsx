@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 
-export interface ISppNonActiveStatusProps {
+export interface ISppNonActiveStageStatusProps {
     /**
      * Name of the body.
      */
@@ -15,7 +15,7 @@ export interface ISppNonActiveStatusProps {
     isApprovalReached: boolean;
 }
 
-export const SppNonActiveStatus: React.FC<ISppNonActiveStatusProps> = (props) => {
+export const SppNonActiveStageStatus: React.FC<ISppNonActiveStageStatusProps> = (props) => {
     const { name, isOptimistic, isApprovalReached } = props;
 
     const { t } = useTranslations();
@@ -33,8 +33,7 @@ export const SppNonActiveStatus: React.FC<ISppNonActiveStatusProps> = (props) =>
 
     return (
         <p>
-            {name}{' '}
-            <span className={statusClass}>{t(`app.plugins.token.tokenProposalVotingSummary.${statusText}`)}</span>
+            {name} <span className={statusClass}>{t(`app.plugins.spp.nonActiveStageStatus.${statusText}`)}</span>
         </p>
     );
 };
