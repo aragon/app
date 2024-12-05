@@ -34,9 +34,10 @@ class SppStageUtils {
         }
 
         if (stageEndDate != null && now < stageEndDate) {
-            return approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal
-                ? ProposalVotingStatus.ACCEPTED
-                : ProposalVotingStatus.ACTIVE;
+            const canAdvance =
+                approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal;
+
+            return canAdvance ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
         }
 
         if (!approvalReached) {
