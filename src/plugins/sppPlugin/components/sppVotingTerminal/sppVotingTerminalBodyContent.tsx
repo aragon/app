@@ -6,7 +6,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ComponentProps } from 'react';
-import type { ISppProposal, ISppStage, ISppStagePlugin, ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
 
 export interface ISppVotingTerminalBodyContentProps extends ComponentProps<'div'> {
     /**
@@ -25,10 +25,6 @@ export interface ISppVotingTerminalBodyContentProps extends ComponentProps<'div'
      * Parent proposal of the stage.
      */
     proposal: ISppProposal;
-    /**
-     * Stage of the proposal which contains the body.
-     */
-    stage: ISppStage;
     /**
      * Flag indicating if the vote is a veto.
      */
@@ -67,7 +63,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         pluginId={plugin.subdomain}
                         proposal={subProposal}
                     >
-                        <div className="flex flex-col gap-y-4">
+                        <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (
                                 <PluginSingleComponent
                                     slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}

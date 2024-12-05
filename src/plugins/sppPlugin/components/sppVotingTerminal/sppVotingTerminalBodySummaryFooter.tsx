@@ -26,7 +26,8 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     const actionType = isVeto ? 'veto' : 'approve';
     const threshold = isVeto ? stage.vetoThreshold : stage.approvalThreshold;
     const entityType = threshold > 1 ? 'bodies' : 'body';
-
+    console.log(proposal, stage);
+    console.log('isApprovalReached', sppStageUtils.isApprovalReached(proposal, stage));
     if (sppStageUtils.isApprovalReached(proposal, stage)) {
         return <SppStageStatus proposal={proposal} stage={stage} />;
     }

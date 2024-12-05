@@ -118,8 +118,6 @@ class SppStageUtils {
 
             const isSuccessReached = getSucceededStatus?.(subProposal);
 
-            console.log('isSuccessReached', isSuccessReached);
-
             if (isSuccessReached == null) {
                 return subProposal.result ? count + 1 : count;
             }
