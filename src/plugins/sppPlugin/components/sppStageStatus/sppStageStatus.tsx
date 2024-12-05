@@ -56,7 +56,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const displayAdvance =
         (stageStatus === ProposalVotingStatus.ACTIVE || stageStatus === ProposalVotingStatus.ACCEPTED) &&
         sppStageUtils.isApprovalReached(proposal, stage) &&
-        !(isSignalingProposal && isLastStage);
+        !isSignalingProposal;
 
     const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
 
@@ -82,17 +82,20 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               disabled: displayMinAdvanceTime,
           };
 
-    const displayAdvanceTime = displayMinAdvanceTime
-        ? {
-              time: minAdvanceTime,
-              info: t('app.plugins.spp.sppStageStatus.minAdvanceInfo'),
-          }
-        : displayMaxAdvanceTime
-          ? {
-                time: maxAdvanceTime,
-                info: t('app.plugins.spp.sppStageStatus.maxAdvanceInfo'),
-            }
-          : null;
+    const timeContext = isLastStage ? 'Advance' : 'Execute';
+
+    const displayAdvanceTime =
+        displayMinAdvanceTime && !isLastStage
+            ? {
+                  time: minAdvanceTime,
+                  info: t(`app.plugins.spp.sppStageStatus.min${timeContext}Info`),
+              }
+            : displayMaxAdvanceTime && !isLastStage
+              ? {
+                    time: maxAdvanceTime,
+                    info: t(`app.plugins.spp.sppStageStatus.max${timeContext}Info`),
+                }
+              : null;
 
     if (stageAdvanceExpired) {
         return (
@@ -105,10 +108,12 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     }
 
     return (
-        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
-            <Button size="md" {...buttonProps}>
-                {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
-            </Button>
+        <div className="flex flex-col items-end justify-between gap-3 md:flex-row md:items-center">
+            {!isLastStage && (
+                <Button size="md" {...buttonProps}>
+                    {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
+                </Button>
+            )}
 
             {displayAdvanceTime && (
                 <div className="flex flex-row justify-center gap-1">

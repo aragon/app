@@ -662,7 +662,9 @@
             "vote": "Vote on proposal"
           },
           "maxAdvanceInfo": "left to advance",
-          "minAdvanceInfo": "until advanceable"
+          "maxExecuteInfo": "left to execute",
+          "minAdvanceInfo": "until advanceable",
+          "minExecuteInfo": "until executable"
         },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",
