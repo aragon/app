@@ -4,3 +4,4 @@ export type { ISppProposal } from './sppProposal';
 export type { ISppStage } from './sppStage';
 export type { ISppStagePlugin } from './sppStagePlugin';
 export type { ISppSubProposal } from './sppSubProposal';
+export type { ISppExecution } from './sppExecution';
