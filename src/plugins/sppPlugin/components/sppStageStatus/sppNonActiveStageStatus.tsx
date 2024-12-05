@@ -33,7 +33,7 @@ export const SppNonActiveStageStatus: React.FC<ISppNonActiveStageStatusProps> = 
 
     return (
         <p>
-            {name} <span className={statusClass}>{t(`app.plugins.spp.nonActiveStageStatus.${statusText}`)}</span>
+            {name} <span className={statusClass}>{t(`app.plugins.spp.sppNonActiveStageStatus.${statusText}`)}</span>
         </p>
     );
 };
