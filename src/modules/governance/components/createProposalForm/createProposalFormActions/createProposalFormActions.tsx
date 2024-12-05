@@ -1,17 +1,25 @@
-import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { Button, IconType, type IProposalActionsItemDropdownItem, ProposalActions } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    IconType,
+    type IProposalActionsItemDropdownItem,
+    type ProposalActionComponent,
+    ProposalActions,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import { ActionComposer, type ActionComposerMode, type IPluginActionComposerData } from '../../actionComposer';
+import { ActionComposer, type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
+import { ActionItemId } from '../../actionComposer/actionComposerUtils';
 import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../createProposalFormProvider';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
@@ -25,8 +33,8 @@ export interface ICreateProposalFormActionsProps {
 }
 
 const coreCustomActionComponents = {
-    [ProposalActionType.TRANSFER]: TransferAssetAction,
-    [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
+    [ProposalActionType.TRANSFER]: TransferAssetAction as ProposalActionComponent,
+    [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction as ProposalActionComponent,
 };
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
@@ -57,28 +65,38 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const watchFieldArray = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
     const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
 
-    const handleAddAction = () => {
-        setActionComposerMode('native');
+    const handleAddAction = (mode: ActionComposerMode) => {
+        setActionComposerMode(mode);
         autocompleteInputRef.current?.focus();
     };
 
     const handleAbiSubmit = (abi: ISmartContractAbi) => {
         addSmartContractAbi(abi);
-        setActionComposerMode('custom');
-        autocompleteInputRef.current?.focus();
+        handleAddAction('custom');
+    };
+
+    const handleVerifySmartContract = () => {
+        const params: IVerifySmartContractDialogParams = { network: dao!.network, onSubmit: handleAbiSubmit };
+        open(GovernanceDialogs.VERIFY_SMART_CONTRACT, { params });
     };
 
     const handleAddCustomAction = () => {
         if (smartContractAbis.length === 0) {
-            const params: IVerifySmartContractDialogParams = { network: dao!.network, onSubmit: handleAbiSubmit };
-            open(GovernanceDialogs.VERIFY_SMART_CONTRACT, { params });
+            handleVerifySmartContract();
         } else {
-            setActionComposerMode('custom');
-            autocompleteInputRef.current?.focus();
+            handleAddAction('custom');
         }
     };
 
-    const handleItemSelected = (action: IProposalAction, meta: undefined) => addAction({ ...action, daoId, meta });
+    const handleItemSelected = (action: IActionComposerItem<undefined>) => {
+        const { id, defaultValue, meta } = action;
+
+        if (defaultValue != null) {
+            addAction({ ...defaultValue, daoId, meta });
+        } else if (id === ActionItemId.ADD_CONTRACT) {
+            handleVerifySmartContract();
+        }
+    };
 
     const handleMoveAction = (index: number, newIndex: number) => moveAction(index, newIndex);
 
@@ -108,8 +126,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     const pluginActions =
-        dao?.plugins.map((plugin) =>
-            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IPluginActionComposerData>({
+        dao?.plugins?.map((plugin) =>
+            pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
                 pluginId: plugin.subdomain,
                 slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             })?.(plugin),
@@ -119,7 +137,10 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
     const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
 
-    const customActionComponents = { ...coreCustomActionComponents, ...pluginComponents };
+    const customActionComponents: Record<string, ProposalActionComponent> = {
+        ...coreCustomActionComponents,
+        ...pluginComponents,
+    };
 
     return (
         <div className="flex flex-col gap-y-10">
@@ -143,7 +164,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     size="md"
                     iconLeft={IconType.PLUS}
                     className={classNames({ 'sr-only': displayActionComposer })}
-                    onClick={handleAddAction}
+                    onClick={() => handleAddAction('native')}
                 >
                     {t('app.governance.createProposalForm.actions.addAction.default')}
                 </Button>
@@ -162,8 +183,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                pluginItems={pluginItems}
-                pluginGroups={pluginGroups}
+                nativeItems={pluginItems}
+                nativeGroups={pluginGroups}
                 daoId={daoId}
                 mode={actionComposerMode}
             />

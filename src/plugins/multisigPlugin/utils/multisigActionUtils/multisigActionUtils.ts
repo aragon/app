@@ -1,5 +1,5 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -41,10 +41,8 @@ export interface INormalizeChangeSettingsParams extends IMultisigSettingsParsePa
     action: IMultisigActionChangeSettings;
 }
 
-export type IGetMultisigctionsResult = IPluginActionComposerData<undefined, MultisigProposalActionType>;
-
 class MultisigActionUtils {
-    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigctionsResult => {
+    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IActionComposerPluginData<undefined> => {
         const { address } = plugin;
 
         return {

@@ -1,35 +1,15 @@
-import type { IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type {
     IAutocompleteInputGroup,
     IAutocompleteInputItem,
     IAutocompleteInputProps,
 } from '@/shared/components/forms/autocompleteInput';
-import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import type { IProposalActionData } from '../createProposalForm';
 
-export interface IActionComposerItem<TMeta = undefined, TType = undefined> extends IAutocompleteInputItem<TMeta> {
+export interface IActionComposerItem<TMeta = undefined> extends IAutocompleteInputItem<TMeta> {
     /**
      * Default value for the action.
      */
-    defaultValue: IProposalAction<TType>;
-}
-
-export interface IPluginActionComposerData<TMeta = undefined, TType = ProposalActionType> {
-    /**
-     * Autocomplete groups for the actions.
-     */
-    groups: IAutocompleteInputGroup[];
-    /**
-     * Autocomplete action item.
-     */
-    items: Array<IActionComposerItem<TMeta, TType>>;
-    /**
-     * Custom action components.
-     */
-    components: Record<
-        string,
-        React.ComponentType<IProposalActionComponentProps<IProposalActionData<IProposalAction, TMeta>>>
-    >;
+    defaultValue?: IProposalAction;
 }
 
 export type ActionComposerMode = 'native' | 'custom';
@@ -39,19 +19,19 @@ export interface IActionComposerProps<TMeta = undefined>
     /**
      * Callback called on action selected.
      */
-    onActionSelected: (action: IProposalAction, meta?: TMeta) => void;
+    onActionSelected: (item: IActionComposerItem<TMeta>) => void;
     /**
      * ID of the DAO.
      */
     daoId: string;
     /**
-     * Plugin specific items.
+     * Additional native items to be displayed.
      */
-    pluginItems: IPluginActionComposerData['items'];
+    nativeItems: Array<IActionComposerItem<TMeta>>;
     /**
-     * Plugin specific groups.
+     * Additional native groups to be displayed.
      */
-    pluginGroups: IPluginActionComposerData['groups'];
+    nativeGroups: IAutocompleteInputGroup[];
     /**
      * Defines if the components displays the native or custom proposal actions.
      * @default default

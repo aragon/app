@@ -5,13 +5,18 @@ import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
 import { type IProposalAction, ProposalActionType } from '../../api/governanceService';
 import type { ISmartContractAbi } from '../../api/smartContractService';
-import type { IActionComposerItem, IPluginActionComposerData } from './actionComposer.api';
+import type { IActionComposerItem } from './actionComposer.api';
+
+export enum ActionItemId {
+    CUSTOM_ACTION = 'CUSTOM_ACTION',
+    ADD_CONTRACT = 'ADD_CONTRACT',
+}
 
 export enum ActionGroupId {
     OSX = 'OSX',
 }
 
-export interface IGetNativeActionGroupsParams {
+export interface IGetActionBaseParams {
     /**
      * DAO to build the native action groups for.
      */
@@ -20,86 +25,100 @@ export interface IGetNativeActionGroupsParams {
      * Translation function for group labels.
      */
     t: TranslationFunction;
-    /**
-     * Additional plugin-specific action groups.
-     */
-    pluginGroups: IPluginActionComposerData['groups'];
 }
 
-export interface IGetNativeActionItemsParams {
+export interface IGetNativeActionGroupsParams extends IGetActionBaseParams {
     /**
-     * DAO to build the native action groups for.
+     * Additional action groups.
      */
-    dao?: IDao;
+    nativeGroups: IAutocompleteInputGroup[];
+}
+
+export interface IGetNativeActionItemsParams extends IGetActionBaseParams {
     /**
-     * Translation function for group labels.
+     * Additional action items.
      */
-    t: TranslationFunction;
+    nativeItems: IActionComposerItem[];
+}
+
+export interface IGetCustomActionParams extends IGetActionBaseParams {
     /**
-     * Additional plugin-specific action items.
+     * Smart contract ABIs to be processed.
      */
-    pluginItems: IPluginActionComposerData['items'];
+    abis: ISmartContractAbi[];
 }
 
 class ActionComposerUtils {
-    getCustomActionGroups = (abis: ISmartContractAbi[]): IAutocompleteInputGroup[] =>
-        abis.map((abi, index) => ({
-            id: index.toString(),
+    getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
+        abis.map((abi) => ({
+            id: abi.address,
             name: abi.name,
-            info: addressUtils.truncateAddress('0x123'), // todo
-            indexData: ['0x123'], // todo
+            info: addressUtils.truncateAddress(abi.address),
+            indexData: [abi.address],
         }));
 
-    getCustomActionItems = (abis: ISmartContractAbi[]): Array<IActionComposerItem<undefined, ProposalActionType>> =>
-        abis
-            .flatMap((abi) => abi.functions)
-            .map((abiFunction, index) => ({
-                id: index.toString(),
-                name: abiFunction.name,
-                icon: IconType.MINUS,
+    getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerItem[] => {
+        const customActionItems = abis.map(({ name, address, functions }) =>
+            functions.map(({ name: functionName, stateMutability, parameters }) => ({
+                id: `${address}-${functionName}`,
+                name: functionName,
+                icon: IconType.SLASH,
+                groupId: address,
                 defaultValue: {
-                    type: 'custom' as ProposalActionType,
-                    to: '',
+                    type: ActionItemId.CUSTOM_ACTION,
+                    to: address,
                     from: '',
                     data: '0x',
                     value: '0',
                     inputData: {
-                        function: abiFunction.name,
-                        contract: '',
-                        parameters: abiFunction.parameters.map((parameter) => ({ ...parameter, value: '' })),
+                        function: functionName,
+                        contract: name,
+                        stateMutability,
+                        parameters: parameters.map((parameter) => ({ ...parameter, value: undefined })),
                     },
                 },
-            }));
+            })),
+        );
 
-    getNativeActionGroups = ({ t, dao, pluginGroups }: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => [
+        return [
+            {
+                id: ActionItemId.ADD_CONTRACT,
+                name: t(`app.governance.actionComposer.customItem.${ActionItemId.ADD_CONTRACT}`),
+                icon: IconType.PLUS,
+            },
+            ...customActionItems.flat(),
+        ];
+    };
+
+    getNativeActionGroups = ({ t, dao, nativeGroups }: IGetNativeActionGroupsParams): IAutocompleteInputGroup[] => [
         {
             id: ActionGroupId.OSX,
-            name: t(`app.governance.actionComposer.group.${ActionGroupId.OSX}`),
+            name: t(`app.governance.actionComposer.nativeGroup.${ActionGroupId.OSX}`),
             info: addressUtils.truncateAddress(dao?.address),
             indexData: [dao!.address],
         },
-        ...pluginGroups,
+        ...nativeGroups,
     ];
 
     getNativeActionItems = ({
         t,
         dao,
-        pluginItems,
-    }: IGetNativeActionItemsParams): Array<IActionComposerItem<undefined, ProposalActionType>> => [
+        nativeItems,
+    }: IGetNativeActionItemsParams): Array<IActionComposerItem<undefined>> => [
         {
             id: ProposalActionType.TRANSFER,
-            name: t(`app.governance.actionComposer.action.${ProposalActionType.TRANSFER}`),
+            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),
             icon: IconType.APP_TRANSACTIONS,
             defaultValue: this.buildDefaultActionTransfer(),
         },
         {
             id: ProposalActionType.METADATA_UPDATE,
-            name: t(`app.governance.actionComposer.action.${ProposalActionType.METADATA_UPDATE}`),
+            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`),
             icon: IconType.SETTINGS,
             groupId: ActionGroupId.OSX,
             defaultValue: this.buildDefaultActionMetadata(dao!),
         },
-        ...pluginItems,
+        ...nativeItems,
     ];
 
     private buildDefaultActionTransfer = (): IProposalAction => ({

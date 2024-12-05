@@ -58,8 +58,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         { enabled: smartContractValue != null },
     );
 
-    // TODO: use null check instead when endpoint is updated
-    const isContractVerified = (smartContractAbi?.name.length ?? 0) > 0;
+    const isContractVerified = smartContractAbi != null;
 
     const proxyState = isLoadingAbi ? 'pending' : smartContractAbi?.implementationAddress != null ? 'success' : 'idle';
     const abiState = isLoadingAbi ? 'pending' : isContractVerified ? 'success' : 'warning';
@@ -113,11 +112,10 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
             <Dialog.Footer
                 primaryAction={{
                     label: t(`app.governance.verifySmartContractDialog.action.${buttonLabel}`),
-                    onClick: handleFormSubmit,
                     // @ts-expect-error TODO: update gov-ui-kit to support type prop
                     type: 'submit',
                     isLoading: isLoadingAbi,
-                    disabled: smartContractAbi?.name.length === 0,
+                    disabled: smartContractValue != null && !isContractVerified && !isLoadingAbi,
                 }}
                 secondaryAction={{ label: t('app.governance.verifySmartContractDialog.action.cancel'), onClick: close }}
             />

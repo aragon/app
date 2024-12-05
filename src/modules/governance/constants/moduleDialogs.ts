@@ -30,5 +30,10 @@ export const governanceDialogs: Record<GovernanceDialogs, IDialogComponentDefini
         description: 'app.governance.voteDialog.description',
     },
     [GovernanceDialogs.SELECT_PLUGIN]: { Component: SelectPluginDialog },
-    [GovernanceDialogs.VERIFY_SMART_CONTRACT]: { Component: VerifySmartContractDialog },
+    [GovernanceDialogs.VERIFY_SMART_CONTRACT]: {
+        Component: VerifySmartContractDialog,
+        title: 'app.governance.verifySmartContractDialog.title',
+        description: 'app.governance.verifySmartContractDialog.description',
+        useFocusTrap: false,
+    },
 };

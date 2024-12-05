@@ -4,6 +4,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import type { ProposalActionType } from '../../api/governanceService';
 import type { ISmartContractAbi } from '../../api/smartContractService';
@@ -45,7 +46,14 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     );
 
     const addSmartContractAbi = useCallback(
-        (abi: ISmartContractAbi) => setSmartContractAbis((current) => [...current, abi]),
+        (abi: ISmartContractAbi) =>
+            setSmartContractAbis((current) => {
+                const alreadyExists = current.some((currentAbi) =>
+                    addressUtils.isAddressEqual(currentAbi.address, abi.address),
+                );
+
+                return alreadyExists ? current : [abi, ...current];
+            }),
         [],
     );
 

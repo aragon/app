@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import type { ISmartContractAbiFunction } from './smartContractAbiFunction';
 
 export interface ISmartContractAbi {
@@ -6,7 +7,15 @@ export interface ISmartContractAbi {
      */
     name: string;
     /**
-     * Address of the smart contract implementation, set when the smart contract is a proxy.
+     * Address of the smart contract.
+     */
+    address: string;
+    /**
+     * Network of the smart contract.
+     */
+    network: Network;
+    /**
+     * Address of the smart contract implementation, only set when the smart contract is a proxy.
      */
     implementationAddress: string | null;
     /**

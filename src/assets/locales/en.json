@@ -259,12 +259,15 @@
     },
     "governance": {
       "actionComposer": {
-        "action": {
+        "customItem": {
+          "ADD_CONTRACT": "Add new address"
+        },
+        "nativeGroup": {
+          "OSX": "DAO"
+        },
+        "nativeItem": {
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
-        },
-        "group": {
-          "OSX": "DAO"
         },
         "placeholder": "Filter by action, contract name or address",
         "selectItem": "Add action"

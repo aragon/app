@@ -1,3 +1,4 @@
+export type { IActionComposerPluginData } from './actionComposerPluginData';
 export type { IBuildCreateProposalDataParams } from './buildCreateProposalDataParams';
 export type { IBuildVoteDataParams } from './buildVoteDataParams';
 export type { ICreateProposalPageParams } from './createProposalPageParams';
