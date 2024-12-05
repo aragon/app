@@ -257,7 +257,6 @@ describe('SppStageUtils', () => {
         const getStageStartDateSpy = jest.spyOn(sppStageUtils, 'getStageStartDate');
         const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
         const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
-        const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
         const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
 
         afterEach(() => {
@@ -266,7 +265,6 @@ describe('SppStageUtils', () => {
             getStageStartDateSpy.mockReset();
             getStageEndDateSpy.mockReset();
             getStageMaxAdvanceSpy.mockReset();
-            getStageMinAdvanceSpy.mockReset();
             isApprovalReachedSpy.mockReset();
         });
 
