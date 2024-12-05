@@ -21,7 +21,8 @@ import {
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
-import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
+import { defaultMintAction, defaultUpdateMetadata, defaultUpdateSettings } from './tokenActionDefinitions';
+import { TokenUpdatePluginMetadataAction } from '../../components/tokenProposalActions/tokenUpdateMetadataAction';
 
 export interface IGetTokenActionsProps {
     /**
@@ -83,10 +84,26 @@ class TokenActionUtils {
                     defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
                     meta: plugin,
                 },
+                {
+                    id: `${address}-${TokenProposalActionType.UPDATE_PLUGIN_METADATA}`,
+                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_PLUGIN_METADATA}`),
+                    icon: IconType.SETTINGS,
+                    groupId: address,
+                    defaultValue: {
+                        ...defaultUpdateMetadata({
+                            name: plugin.name ?? '',
+                            summary: plugin.description,
+                            resources: plugin.links,
+                        }),
+                        to: address,
+                    },
+                    meta: plugin,
+                },
             ],
             components: {
                 [TokenProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
                 [TokenProposalActionType.MINT]: TokenMintTokensAction,
+                [TokenProposalActionType.UPDATE_PLUGIN_METADATA]: TokenUpdatePluginMetadataAction,
             },
         };
     };

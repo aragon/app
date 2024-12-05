@@ -1,4 +1,4 @@
-import type { IResourcesInputResource } from '../forms/resourcesInput';
+import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 
 export interface IUpdateMetadataFormData {
     /**

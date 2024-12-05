@@ -9,6 +9,7 @@ import { useSppGovernanceSettings } from './hooks/useSppGovernanceSettings';
 import { useSppNormalizeActions } from './hooks/useSppNormalizeActions';
 import { sppProposalUtils } from './utils/sppProposalUtils';
 import { sppTransactionUtils } from './utils/sppTransactionUtils';
+import { useSppActions } from './hooks/useSppActions';
 
 export const initialiseSppPlugin = () => {
     pluginRegistryUtils
@@ -40,6 +41,11 @@ export const initialiseSppPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
             pluginId: plugin.id,
             function: useSppNormalizeActions,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+            pluginId: plugin.id,
+            function: useSppActions,
         })
 
         // Settings module slots

@@ -497,6 +497,23 @@
         "description": "Select the proposal type that you'd like to create.",
         "title": "Create proposal"
       },
+      "updatePluginMetadataAction": {
+        "keyField": {
+          "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
+          "label": "Key",
+          "placeholder": "CRE"
+        },
+        "nameField": {
+          "helpText": "Give your governance process a name, so member can differentiate it.",
+          "label": "Name",
+          "placeholder": "Core"
+        },
+        "summaryField": {
+          "helpText": "Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
+          "label": "Summary",
+          "placeholder": "Core proposals are the primary governance process of Patito DAO. Grants and protocol upgrades both require proposals to pass in a Core  proposal process."
+        }
+      },
       "voteDialog": {
         "button": {
           "submit": "Submit vote",
@@ -539,7 +556,8 @@
         "multisigActions": {
           "MultisigAddMembers": "Add Members",
           "MultisigRemoveMembers": "Remove Members",
-          "UpdateMultiSigSettings": "Update settings"
+          "UpdateMultiSigSettings": "Update settings",
+          "UpdatePluginMetadata": "Update metadata"
         },
         "multisigAddMembersAction": {
           "add": "Add",
@@ -645,6 +663,9 @@
           "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
           "title": "Advance proposal"
         },
+        "sppActions": {
+          "UpdatePluginMetadata": "Update metadata"
+        },
         "sppCreateProposalSettingsForm": {
           "startTime": {
             "helpText": "Define when the first stage should start. If now is selected, the first stage is immediately active after publishing.",
@@ -671,6 +692,7 @@
       "token": {
         "tokenActions": {
           "Mint": "Mint",
+          "UpdatePluginMetadata": "Update metadata",
           "UpdateVoteSettings": "Update settings"
         },
         "tokenCreateProposalSettingsForm": {

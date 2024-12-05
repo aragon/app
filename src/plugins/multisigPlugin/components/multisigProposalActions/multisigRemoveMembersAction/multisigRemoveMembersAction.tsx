@@ -13,8 +13,12 @@ import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import { MultisigRemoveMembersActionDialog } from './multisigRemoveMembersActionDialog';
 import { MultisigRemoveMembersActionItem } from './multisigRemoveMembersActionItem';
+import { type IProposalAction } from '@/modules/governance/api/governanceService';
+import { type IDaoPlugin } from '@/shared/api/daoService';
+import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 
-export interface IMultisigRemoveMembersActionProps extends IProposalActionComponentProps<IProposalActionData> {}
+export interface IMultisigRemoveMembersActionProps
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
 
 export interface IMultisigRemoveMembersActionFormData {
     /**

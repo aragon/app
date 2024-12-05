@@ -21,7 +21,13 @@ import {
     type IMultisigProposalAction,
 } from '../../types';
 import { multisigSettingsUtils, type IMultisigSettingsParseParams } from '../multisigSettingsUtils';
-import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
+import {
+    defaultAddMembers,
+    defaultRemoveMembers,
+    defaultUpdateMetadata,
+    defaultUpdateSettings,
+} from './multisigActionDefinitions';
+import { MultisigUpdatePluginMetadataAction } from '../../components/multisigProposalActions/multisigUpdateMetadataAction';
 
 export interface IGetMultisigActionsProps {
     /**
@@ -41,10 +47,13 @@ export interface INormalizeChangeSettingsParams extends IMultisigSettingsParsePa
     action: IMultisigActionChangeSettings;
 }
 
-export type IGetMultisigctionsResult = IPluginActionComposerData<undefined, MultisigProposalActionType>;
+export type IGetMultisigActionsResult = IPluginActionComposerData<
+    IDaoPlugin<IMultisigPluginSettings>,
+    MultisigProposalActionType
+>;
 
 class MultisigActionUtils {
-    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigctionsResult => {
+    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
         const { address } = plugin;
 
         return {
@@ -82,11 +91,29 @@ class MultisigActionUtils {
                     groupId: address,
                     defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
                 },
+                {
+                    id: `${address}-${MultisigProposalActionType.UPDATE_PLUGIN_METADATA}`,
+                    name: t(
+                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_PLUGIN_METADATA}`,
+                    ),
+                    icon: IconType.SETTINGS,
+                    groupId: address,
+                    defaultValue: {
+                        ...defaultUpdateMetadata({
+                            name: plugin.name ?? '',
+                            summary: plugin.description,
+                            resources: plugin.links,
+                        }),
+                        to: address,
+                    },
+                    meta: plugin,
+                },
             ],
             components: {
                 [MultisigProposalActionType.MULTISIG_ADD_MEMBERS]: MultisigAddMembersAction,
                 [MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS]: MultisigRemoveMembersAction,
                 [MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS]: MultisigUpdateSettingsAction,
+                [MultisigProposalActionType.UPDATE_PLUGIN_METADATA]: MultisigUpdatePluginMetadataAction,
             },
         };
     };
