@@ -585,9 +585,9 @@
         "multisigProposalVotingSummary": {
           "approved": "approved",
           "description": "of {{count}} members",
-          "didNotApprove": "did not approve",
-          "didNotVeto": "did not veto",
           "name": "{{name}} approval",
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
           "vetoed": "vetoed"
         },
         "multisigRemoveMembersAction": {
@@ -740,8 +740,8 @@
         },
         "tokenProposalVotingSummary": {
           "approved": "approved",
-          "didNotApprove": "did not approve",
-          "didNotVeto": "did not veto",
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
           "support": {
             "description": "of {{details}}",
             "name": "{{name}} support"

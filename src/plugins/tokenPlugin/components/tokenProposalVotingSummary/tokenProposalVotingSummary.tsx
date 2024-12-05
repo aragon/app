@@ -67,8 +67,8 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     // For non voting bodies in the last stage the status is active so we show the progress
     // Adding a check for proposal executed means we show the correct UI in those cases
     if (status !== ProposalStatus.ACTIVE || parentExecuted) {
-        const approvalText = isApprovalReached ? 'approved' : 'didNotApprove';
-        const vetoText = isApprovalReached ? 'vetoed' : 'didNotVeto';
+        const approvalText = isApprovalReached ? 'approved' : 'notApproved';
+        const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
         const statusText = isOptimistic ? vetoText : approvalText;
 
         const statusClass =
