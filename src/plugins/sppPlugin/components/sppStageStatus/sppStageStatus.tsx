@@ -42,9 +42,13 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
 
+    const execution = proposal.stageExecutions.find((execution) => execution.stageIndex === stage.stageIndex);
+
+    const transactionHash = execution?.transactionHash ?? '';
+
     const advanceTransactionHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
-        id: proposal.stageExecutions[stage.stageIndex].transactionHash,
+        id: transactionHash,
     });
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
