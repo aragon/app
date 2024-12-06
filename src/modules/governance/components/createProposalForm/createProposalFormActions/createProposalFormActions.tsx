@@ -126,7 +126,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     const pluginActions =
-        dao?.plugins?.map((plugin) =>
+        dao?.plugins.map((plugin) =>
             pluginRegistryUtils.getSlotFunction<IDaoPlugin, IActionComposerPluginData>({
                 pluginId: plugin.subdomain,
                 slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
