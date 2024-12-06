@@ -5,7 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSmartContractAbi, type IGetAbiUrlParams, type ISmartContractAbi } from '../../api/smartContractService';
 
@@ -27,6 +27,10 @@ export interface IVerifySmartContractFormData {
      * Address to be verified.
      */
     smartContract?: ICompositeAddress;
+    /**
+     * ABI of the smart contract.
+     */
+    abi?: ISmartContractAbi;
 }
 
 export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps> = (props) => {
@@ -49,6 +53,11 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     } = useFormField<IVerifySmartContractFormData, 'smartContract'>('smartContract', {
         label: t('app.governance.verifySmartContractDialog.smartContractLabel'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
+        control,
+    });
+
+    const { onChange: updateAbi } = useFormField<IVerifySmartContractFormData, 'abi'>('abi', {
+        rules: { required: true },
         control,
     });
 
@@ -79,10 +88,15 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         },
     ];
 
-    const handleFormSubmit = () => {
-        onSubmit?.(smartContractAbi!);
+    const handleFormSubmit = (values: IVerifySmartContractFormData) => {
+        onSubmit?.(values.abi!);
         close();
     };
+
+    // Update ABI form field when fetching the smart-contract ABI
+    useEffect(() => {
+        updateAbi(smartContractAbi);
+    }, [updateAbi, smartContractAbi]);
 
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
 
@@ -115,7 +129,6 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                     // @ts-expect-error TODO: update gov-ui-kit to support type prop
                     type: 'submit',
                     isLoading: isLoadingAbi,
-                    disabled: smartContractValue != null && !isContractVerified && !isLoadingAbi,
                 }}
                 secondaryAction={{ label: t('app.governance.verifySmartContractDialog.action.cancel'), onClick: close }}
             />
