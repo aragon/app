@@ -61,10 +61,10 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         !(isSignalingProposal && isLastStage);
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
-    const displayMaxAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90;
+    const displayMaxAdvanceTime = maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90;
 
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
-    const displayMinAdvanceTime = stageStartDate && minAdvanceTime && DateTime.now() < minAdvanceTime;
+    const displayMinAdvanceTime = stageStartDate != null && minAdvanceTime != null && DateTime.now() < minAdvanceTime;
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
         ? {
