@@ -1,4 +1,3 @@
-import type { ISppProposal } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
@@ -12,21 +11,21 @@ export interface ITokenProposalVotingSummaryProps {
      */
     proposal?: ITokenProposal;
     /**
-     * Name of the body.
+     * Name of the plugin.
      */
     name: string;
     /**
-     * Is optimistic stage
+     * Defines if the voting is optimistic or not.
      */
     isOptimistic: boolean;
     /**
-     * Parent proposal
+     * Additional executed status when plugin is a sub-plugin.
      */
-    parentProposal: ISppProposal;
+    isExecuted?: boolean;
 }
 
 export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryProps> = (props) => {
-    const { proposal, name, isOptimistic, parentProposal } = props;
+    const { proposal, name, isOptimistic, isExecuted } = props;
 
     const { t } = useTranslations();
 
@@ -60,9 +59,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
 
     const isApprovalReached = tokenProposalUtils.isApprovalReached(proposal);
 
-    // For non voting bodies in the last stage the status is active so we show the progress
-    // Adding a check for proposal executed means we show the correct UI in those cases
-    if (status !== ProposalStatus.ACTIVE || parentProposal.executed.status) {
+    if (status !== ProposalStatus.ACTIVE || isExecuted) {
         const approvalText = isApprovalReached ? 'approved' : 'notApproved';
         const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
         const statusText = isOptimistic ? vetoText : approvalText;
@@ -73,6 +70,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
                 : isApprovalReached
                   ? 'text-success-800'
                   : 'text-neutral-500';
+
         return (
             <p>
                 {name}{' '}
