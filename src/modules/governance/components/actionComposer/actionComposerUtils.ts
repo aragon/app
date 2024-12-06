@@ -58,9 +58,9 @@ class ActionComposerUtils {
         }));
 
     getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerItem[] => {
-        const customActionItems = abis.map(({ name, address, functions }, abiIndex) =>
+        const customActionItems = abis.map(({ name, address, functions }) =>
             functions.map(({ name: functionName, stateMutability, parameters }, functionIndex) => ({
-                id: `${address}-${functionName}-${abiIndex.toString()}-${functionIndex.toString()}`,
+                id: `${address}-${functionName}-${functionIndex.toString()}`,
                 name: functionName,
                 icon: IconType.SLASH,
                 groupId: address,
