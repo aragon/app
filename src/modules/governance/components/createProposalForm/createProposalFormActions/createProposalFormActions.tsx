@@ -65,6 +65,15 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const watchFieldArray = useWatch<Record<string, ICreateProposalFormData['actions']>>({ name: 'actions' });
     const controlledActions = actions.map((field, index) => ({ ...field, ...watchFieldArray[index] }));
 
+    // When moving actions up or down, the value field of the decoded parameters does not get unregistered, causing
+    // actions to have redundant parameters (coming from the action before/after) with a value but no type or name.
+    const processedActions = controlledActions.map(({ inputData, ...field }) => ({
+        ...field,
+        inputData: inputData
+            ? { ...inputData, parameters: inputData.parameters.filter(({ type }) => (type as unknown) != null) }
+            : null,
+    }));
+
     const handleAddAction = (mode: ActionComposerMode) => {
         setActionComposerMode(mode);
         autocompleteInputRef.current?.focus();
@@ -146,7 +155,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         <div className="flex flex-col gap-y-10">
             <ProposalActions.Root>
                 <ProposalActions.Container emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}>
-                    {controlledActions.map((action, index) => (
+                    {processedActions.map((action, index) => (
                         <ProposalActions.Item
                             key={action.id}
                             action={action}
