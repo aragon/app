@@ -40,7 +40,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
-    const stageStartDate = sppStageUtils.getStageStartDate(proposal, stage);
     const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
 
     const execution = proposal.stageExecutions.find((execution) => execution.stageIndex === stage.stageIndex);
@@ -61,10 +60,11 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         !(isSignalingProposal && isLastStage);
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
-    const displayMaxAdvanceTime = maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90;
+    const displayMaxAdvanceTime =
+        maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
 
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
-    const displayMinAdvanceTime = stageStartDate != null && minAdvanceTime != null && DateTime.now() < minAdvanceTime;
+    const displayMinAdvanceTime = minAdvanceTime != null && DateTime.now() < minAdvanceTime;
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
         ? {
@@ -89,7 +89,9 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     // Stage cannot be advanced anymore, display exired info text.
     if (stageStatus === ProposalVotingStatus.EXPIRED) {
         return (
-            <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
+            <span className="text-right text-neutral-500">
+                {t(`app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`)}
+            </span>
         );
     }
 

@@ -9,10 +9,12 @@ import { sppProposalUtils } from './sppProposalUtils';
 describe('SppProposalUtils', () => {
     const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
     const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
+    const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
 
     afterEach(() => {
         getStageStatusSpy.mockReset();
         getStageEndDateSpy.mockReset();
+        getStageMaxAdvanceSpy.mockReset();
     });
 
     describe('getProposalStatus', () => {
@@ -52,10 +54,10 @@ describe('SppProposalUtils', () => {
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.EXPIRED);
         });
 
-        it('returns executable when all stages are accepted, proposal has actions and ends in future', () => {
+        it('returns executable when all stages are accepted, proposal has actions and execution ends in future', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
-            const endDate = DateTime.fromISO(now).plus({ hours: 10 });
+            const endExecutionDate = DateTime.fromISO(now).plus({ hours: 10 });
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
@@ -63,7 +65,7 @@ describe('SppProposalUtils', () => {
             });
 
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
-            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(endExecutionDate);
             timeUtils.setTime(now);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.EXECUTABLE);
