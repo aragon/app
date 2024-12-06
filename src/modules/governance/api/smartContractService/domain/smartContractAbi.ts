@@ -1,4 +1,4 @@
-import { Network } from '@/shared/api/daoService';
+import type { Network } from '@/shared/api/daoService';
 import type { ISmartContractAbiFunction } from './smartContractAbiFunction';
 
 export interface ISmartContractAbi {

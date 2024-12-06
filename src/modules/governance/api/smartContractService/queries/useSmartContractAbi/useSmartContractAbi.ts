@@ -7,13 +7,13 @@ import { smartContractServiceKeys } from '../../smartContractServiceKeys';
 
 export const smartContractAbiOptions = (
     params: IGetAbiParams,
-    options?: QueryOptions<ISmartContractAbi>,
-): SharedQueryOptions<ISmartContractAbi> => ({
+    options?: QueryOptions<ISmartContractAbi | undefined>,
+): SharedQueryOptions<ISmartContractAbi | undefined> => ({
     queryKey: smartContractServiceKeys.abi(params),
     queryFn: () => smartContractService.getAbi(params),
     ...options,
 });
 
-export const useSmartContractAbi = (params: IGetAbiParams, options?: QueryOptions<ISmartContractAbi>) => {
+export const useSmartContractAbi = (params: IGetAbiParams, options?: QueryOptions<ISmartContractAbi | undefined>) => {
     return useQuery(smartContractAbiOptions(params, options));
 };

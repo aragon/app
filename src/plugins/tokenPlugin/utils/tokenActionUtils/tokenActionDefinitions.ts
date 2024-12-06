@@ -1,4 +1,4 @@
-import { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { formatUnits } from 'viem';
 import {
     type ITokenActionChangeSettings,

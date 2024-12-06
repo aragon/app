@@ -7,8 +7,8 @@ class SmartContractService extends AragonBackendService {
         abi: '/contract/:network/:address',
     };
 
-    getAbi = async (params: IGetAbiParams): Promise<ISmartContractAbi> => {
-        const result = await this.request<ISmartContractAbi>(this.urls.abi, params);
+    getAbi = async (params: IGetAbiParams): Promise<ISmartContractAbi | undefined> => {
+        const result = await this.request<ISmartContractAbi | undefined>(this.urls.abi, params);
 
         return result;
     };

@@ -42,7 +42,7 @@ export interface INormalizeChangeSettingsParams extends IMultisigSettingsParsePa
 }
 
 class MultisigActionUtils {
-    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IActionComposerPluginData<undefined> => {
+    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IActionComposerPluginData => {
         const { address } = plugin;
 
         return {
