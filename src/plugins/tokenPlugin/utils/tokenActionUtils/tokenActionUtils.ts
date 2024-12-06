@@ -1,5 +1,7 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
+import { defaultUpdateMetadata } from '@/modules/governance/components/actionComposer/actionComposerDefinitions';
+import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -21,8 +23,7 @@ import {
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
-import { defaultMintAction, defaultUpdateMetadata, defaultUpdateSettings } from './tokenActionDefinitions';
-import { TokenUpdatePluginMetadataAction } from '../../components/tokenProposalActions/tokenUpdateMetadataAction';
+import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
     /**
@@ -86,7 +87,7 @@ class TokenActionUtils {
                 },
                 {
                     id: `${address}-${TokenProposalActionType.UPDATE_PLUGIN_METADATA}`,
-                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_PLUGIN_METADATA}`),
+                    name: 'UPDATE_METADATA_TOKEN',
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: {
@@ -104,7 +105,7 @@ class TokenActionUtils {
             components: {
                 [TokenProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
                 [TokenProposalActionType.MINT]: TokenMintTokensAction,
-                [TokenProposalActionType.UPDATE_PLUGIN_METADATA]: TokenUpdatePluginMetadataAction,
+                [ProposalActionType.METADATA_UPDATE]: UpdatePluginMetadataAction,
             },
         };
     };

@@ -1,10 +1,4 @@
-import type { IDaoPluginMetadata } from '@/shared/api/daoService';
-import type {
-    IMultisigActionChangeMembers,
-    IMultisigActionChangeSettings,
-    IMultisigActionUpdateMetadata,
-    IMultisigPluginSettings,
-} from '../../types';
+import type { IMultisigActionChangeMembers, IMultisigActionChangeSettings, IMultisigPluginSettings } from '../../types';
 import { MultisigProposalActionType } from '../../types/enum';
 
 export const defaultAddMembers: IMultisigActionChangeMembers = {
@@ -66,27 +60,6 @@ export const defaultUpdateSettings = (settings: IMultisigPluginSettings): IMulti
                 name: '_multisigSettings',
                 type: 'tuple',
                 notice: 'The new settings',
-                value: '',
-            },
-        ],
-    },
-});
-
-export const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): IMultisigActionUpdateMetadata => ({
-    type: MultisigProposalActionType.UPDATE_PLUGIN_METADATA,
-    from: '',
-    to: '',
-    data: '0x',
-    value: '0',
-    proposedMetadata: metadata,
-    inputData: {
-        function: 'updateMetadata',
-        contract: 'Multisig',
-        parameters: [
-            {
-                name: '_metadata',
-                type: 'tuple',
-                notice: 'The new metadata',
                 value: '',
             },
         ],

@@ -1,5 +1,7 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
+import { defaultUpdateMetadata } from '@/modules/governance/components/actionComposer/actionComposerDefinitions';
+import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -21,13 +23,7 @@ import {
     type IMultisigProposalAction,
 } from '../../types';
 import { multisigSettingsUtils, type IMultisigSettingsParseParams } from '../multisigSettingsUtils';
-import {
-    defaultAddMembers,
-    defaultRemoveMembers,
-    defaultUpdateMetadata,
-    defaultUpdateSettings,
-} from './multisigActionDefinitions';
-import { MultisigUpdatePluginMetadataAction } from '../../components/multisigProposalActions/multisigUpdateMetadataAction';
+import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
 
 export interface IGetMultisigActionsProps {
     /**
@@ -92,10 +88,8 @@ class MultisigActionUtils {
                     defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
                 },
                 {
-                    id: `${address}-${MultisigProposalActionType.UPDATE_PLUGIN_METADATA}`,
-                    name: t(
-                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_PLUGIN_METADATA}`,
-                    ),
+                    id: `${address}-${ProposalActionType.UPDATE_METADATA}`,
+                    name: 'UPDATE_METADATA',
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: {
@@ -114,7 +108,7 @@ class MultisigActionUtils {
                 [MultisigProposalActionType.MULTISIG_ADD_MEMBERS]: MultisigAddMembersAction,
                 [MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS]: MultisigRemoveMembersAction,
                 [MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS]: MultisigUpdateSettingsAction,
-                [MultisigProposalActionType.UPDATE_PLUGIN_METADATA]: MultisigUpdatePluginMetadataAction,
+                [ProposalActionType.METADATA_UPDATE]: UpdatePluginMetadataAction,
             },
         };
     };

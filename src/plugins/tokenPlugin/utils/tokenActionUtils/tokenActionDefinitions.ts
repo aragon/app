@@ -6,8 +6,6 @@ import {
     TokenProposalActionType,
 } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
-import { type IDaoPluginMetadata } from '@/shared/api/daoService';
-import { type ITokenActionUpdateMetadata } from '../../types/tokenActionUpdateMetadata';
 
 export const defaultMintAction: ITokenProposalAction = {
     type: TokenProposalActionType.MINT,
@@ -61,23 +59,3 @@ export const defaultUpdateSettings = (settings: ITokenPluginSettings): ITokenAct
     },
 });
 
-export const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): ITokenActionUpdateMetadata => ({
-    type: TokenProposalActionType.UPDATE_PLUGIN_METADATA,
-    from: '',
-    to: '',
-    data: '0x',
-    value: '0',
-    proposedMetadata: metadata,
-    inputData: {
-        function: 'updateMetadata',
-        contract: '',
-        parameters: [
-            {
-                name: '_metadata',
-                type: 'tuple',
-                notice: 'The new metadata',
-                value: '',
-            },
-        ],
-    },
-});

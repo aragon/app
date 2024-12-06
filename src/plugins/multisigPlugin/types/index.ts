@@ -5,4 +5,3 @@ export type { IMultisigPluginSettings } from './multisigPluginSettings';
 export type { IMultisigProposal } from './multisigProposal';
 export type { IMultisigProposalAction } from './multisigProposalAction';
 export type { IMultisigVote } from './multisigVote';
-export type { IMultisigActionUpdateMetadata } from './multisigActionUpdateMetadata';

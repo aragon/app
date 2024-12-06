@@ -1,28 +1,43 @@
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
-import { type IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import { type IDaoPlugin } from '@/shared/api/daoService';
+import {
+    ProposalActionType,
+    type IProposalAction,
+    type IProposalActionUpdatePluginMetadata,
+} from '@/modules/governance/api/governanceService/domain';
+import {
+    useCreateProposalFormContext,
+    type IProposalActionData,
+} from '@/modules/governance/components/createProposalForm';
+import type { IDaoPluginMetadata } from '@/shared/api/daoService';
+import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { InputText, TextArea } from '@aragon/gov-ui-kit';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { InputText, TextArea, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useCallback, useEffect } from 'react';
+import { encodeFunctionData } from 'viem';
 import type { IUpdateMetadataFormData } from './updateMetadataFormDefinitions';
 
-export interface IUpdatePluginMetadataActionProps {
-    action: IProposalActionData<IProposalAction, IDaoPlugin>;
-    index: number;
+export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdatePluginMetadata, 'proposedMetadata'> {
+    /**
+     * Metadata proposed on the action.
+     */
+    proposedMetadata: IDaoPluginMetadata;
 }
+
+export interface IUpdatePluginMetadataActionProps extends IProposalActionComponentProps<IProposalActionData> {}
 
 const nameMaxLength = 40;
 const keyMaxLength = 5;
 const summaryMaxLength = 480;
 
-// const setMetadataAbi = {
-//     type: 'function',
-//     inputs: [{ name: '_metadata', internalType: 'bytes', type: 'bytes' }],
-//     name: 'setMetadata',
-//     outputs: [],
-//     stateMutability: 'nonpayable',
-// };
+const setMetadataAbi = {
+    type: 'function',
+    inputs: [{ name: '_metadata', internalType: 'bytes', type: 'bytes' }],
+    name: 'setMetadata',
+    outputs: [],
+    stateMutability: 'nonpayable',
+};
 
 export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionProps> = (props) => {
     const { index, action } = props;
@@ -31,7 +46,12 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
 
     const { isProcess } = meta;
 
+    console.log(action);
+
     const { t } = useTranslations();
+
+    const { mutateAsync: pinJsonAsync } = usePinJson();
+    const { addPrepareAction } = useCreateProposalFormContext();
 
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
@@ -59,6 +79,25 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
         trimOnBlur: true,
         defaultValue: '',
     });
+
+    const prepareAction = useCallback(
+        async (action: IProposalAction) => {
+            //TODO:
+            const { name, summary, resources } = (action as IUpdatePluginMetadataAction).proposedMetadata;
+            const proposedMetadata = { name, summary, links: resources };
+
+            const ipfsResult = await pinJsonAsync({ body: proposedMetadata });
+            const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
+
+            const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
+            return data;
+        },
+        [pinJsonAsync],
+    );
+
+    useEffect(() => {
+        addPrepareAction(ProposalActionType.METADATA_UPDATE, prepareAction);
+    }, [addPrepareAction, prepareAction]);
 
     return (
         <div className="flex w-full flex-col gap-y-6">

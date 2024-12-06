@@ -1,3 +1,5 @@
+import { type IProposalActionUpdatePluginMetadata } from '@/modules/governance/api/governanceService/domain/proposalActionUpdatePluginMetadata';
+import { type IDaoPluginMetadata } from '@/shared/api/daoService';
 import { zeroAddress } from 'viem';
 import {
     type IProposalAction,
@@ -17,6 +19,27 @@ export const defaultTransferAction: IProposalAction = {
     value: '0',
     inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
 };
+
+export const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): IProposalActionUpdatePluginMetadata => ({
+    type: ProposalActionType.METADATA_UPDATE,
+    from: '',
+    to: '',
+    data: '0x',
+    value: '0',
+    proposedMetadata: metadata,
+    inputData: {
+        function: 'setMetadata',
+        contract: '',
+        parameters: [
+            {
+                name: '_metadata',
+                type: 'bytes',
+                notice: 'The IPFS hash of the new metadata object',
+                value: '',
+            },
+        ],
+    },
+});
 
 export const defaultMetadataAction: Omit<
     IProposalActionUpdateMetadata,

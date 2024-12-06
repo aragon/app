@@ -3,9 +3,10 @@ import { type IDaoPlugin } from '@/shared/api/daoService';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { SppUpdatePluginMetadataAction } from '../../components/sppProposalActions/sppUpdateMetadataAction';
 import { type ISppPluginSettings, SppProposalActionType } from '../../types';
-import { defaultUpdateMetadata } from './sppActionDefinitions';
+import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
+import { defaultUpdateMetadata } from '@/modules/governance/components/actionComposer/actionComposerDefinitions';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
 
 export interface IGetSppActionsProps {
     /**
@@ -36,7 +37,7 @@ class SppActionUtils {
             items: [
                 {
                     id: `${address}-${SppProposalActionType.UPDATE_PLUGIN_METADATA}`,
-                    name: t(`app.plugins.spp.sppActions.${SppProposalActionType.UPDATE_PLUGIN_METADATA}`),
+                    name: 'UPDATE_METADATA_SPP',
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: {
@@ -52,7 +53,7 @@ class SppActionUtils {
                 },
             ],
             components: {
-                [SppProposalActionType.UPDATE_PLUGIN_METADATA]: SppUpdatePluginMetadataAction,
+                [ProposalActionType.METADATA_UPDATE]: UpdatePluginMetadataAction,
             },
         };
     };

@@ -7,3 +7,4 @@ export type { IProposalActionUpdateMetadata } from './proposalActionUpdateMetada
 export type { IProposalActionWithdrawToken } from './proposalActionWithdrawToken';
 export type { IProposalExecution } from './proposalExecution';
 export type { IVote } from './vote';
+export type { IProposalActionUpdatePluginMetadata } from './proposalActionUpdatePluginMetadata';
