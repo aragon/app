@@ -100,11 +100,7 @@ class ActionComposerUtils {
         ...nativeGroups,
     ];
 
-    getNativeActionItems = ({
-        t,
-        dao,
-        nativeItems,
-    }: IGetNativeActionItemsParams): Array<IActionComposerItem<undefined>> => [
+    getNativeActionItems = ({ t, dao, nativeItems }: IGetNativeActionItemsParams): IActionComposerItem[] => [
         {
             id: ProposalActionType.TRANSFER,
             name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`),

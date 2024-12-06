@@ -1,9 +1,9 @@
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import { createContext, useContext } from 'react';
-import type { IProposalAction, ProposalActionType } from '../../../api/governanceService';
+import type { IProposalAction } from '../../../api/governanceService';
 
 export type PrepareProposalActionFunction = (action: IProposalAction) => Promise<string>;
-export type PrepareProposalActionMap = Partial<Record<ProposalActionType, PrepareProposalActionFunction>>;
+export type PrepareProposalActionMap = Partial<Record<string, PrepareProposalActionFunction>>;
 
 export interface ICreateProposalFormContext {
     /**
@@ -14,7 +14,7 @@ export interface ICreateProposalFormContext {
     /**
      * Callback to update the prepare-action maps for the given proposal action type.
      */
-    addPrepareAction: (actionType: ProposalActionType, prepareAction: PrepareProposalActionFunction) => void;
+    addPrepareAction: (actionType: string, prepareAction: PrepareProposalActionFunction) => void;
     /**
      * ABIs of smart contract to be used for adding custom actions to proposals.
      */

@@ -26,7 +26,7 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
 
     const handleActionSelected = (itemId: string) => {
         const action = items.find((item) => item.id === itemId)!;
-        onActionSelected?.(action);
+        onActionSelected(action);
     };
 
     return (

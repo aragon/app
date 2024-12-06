@@ -88,7 +88,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         }
     };
 
-    const handleItemSelected = (action: IActionComposerItem<undefined>) => {
+    const handleItemSelected = (action: IActionComposerItem) => {
         const { id, defaultValue, meta } = action;
 
         if (defaultValue != null) {

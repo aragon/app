@@ -6,7 +6,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import type { ProposalActionType } from '../../api/governanceService';
 import type { ISmartContractAbi } from '../../api/smartContractService';
 import {
     CreateProposalForm,
@@ -40,7 +39,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);
 
     const addPrepareAction = useCallback(
-        (type: ProposalActionType, prepareAction: PrepareProposalActionFunction) =>
+        (type: string, prepareAction: PrepareProposalActionFunction) =>
             setPrepareActions((current) => ({ ...current, [type]: prepareAction })),
         [],
     );
