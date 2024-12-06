@@ -11,5 +11,5 @@ export interface IMultisigActionUpdateMetadata
     /**
      * The proposed metadata to be updated.
      */
-    existingMetadata: IDaoPluginMetadata;
+    proposedMetadata: IDaoPluginMetadata;
 }

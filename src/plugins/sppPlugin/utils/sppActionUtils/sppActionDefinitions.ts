@@ -8,7 +8,7 @@ export const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): ISppActionU
     to: '',
     data: '0x',
     value: '0',
-    existingMetadata: metadata,
+    proposedMetadata: metadata,
     inputData: {
         function: 'updateMetadata',
         contract: '',

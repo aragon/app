@@ -103,6 +103,7 @@ class MultisigActionUtils {
                             name: plugin.name ?? '',
                             summary: plugin.description,
                             resources: plugin.links,
+                            key: plugin.processKey,
                         }),
                         to: address,
                     },

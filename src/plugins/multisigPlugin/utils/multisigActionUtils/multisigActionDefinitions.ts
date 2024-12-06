@@ -78,7 +78,7 @@ export const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): IMultisigAc
     to: '',
     data: '0x',
     value: '0',
-    existingMetadata: metadata,
+    proposedMetadata: metadata,
     inputData: {
         function: 'updateMetadata',
         contract: 'Multisig',

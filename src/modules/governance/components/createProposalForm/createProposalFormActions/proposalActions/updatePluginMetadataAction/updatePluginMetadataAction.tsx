@@ -1,12 +1,11 @@
+import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import { type IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { type IDaoPlugin } from '@/shared/api/daoService';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, TextArea } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
 import type { IUpdateMetadataFormData } from './updateMetadataFormDefinitions';
-import { type IDaoPlugin } from '@/shared/api/daoService';
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
 
 export interface IUpdatePluginMetadataActionProps {
     action: IProposalActionData<IProposalAction, IDaoPlugin>;
@@ -16,6 +15,14 @@ export interface IUpdatePluginMetadataActionProps {
 const nameMaxLength = 40;
 const keyMaxLength = 5;
 const summaryMaxLength = 480;
+
+// const setMetadataAbi = {
+//     type: 'function',
+//     inputs: [{ name: '_metadata', internalType: 'bytes', type: 'bytes' }],
+//     name: 'setMetadata',
+//     outputs: [],
+//     stateMutability: 'nonpayable',
+// };
 
 export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionProps> = (props) => {
     const { index, action } = props;
@@ -53,10 +60,6 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
         defaultValue: '',
     });
 
-    useEffect(() => {
-        console.log('ACTION =>', action);
-    }, [action]);
-
     return (
         <div className="flex w-full flex-col gap-y-6">
             <InputText
@@ -82,7 +85,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
             />
             <ResourcesInput
                 name="resources"
-                fieldPrefix={`${actionFieldName}.proposedMetadata.resources`}
+                fieldPrefix={`${actionFieldName}.proposedMetadata`}
                 helpText={t('app.createDao.createDaoForm.metadata.resources.helpText')}
             />
         </div>
