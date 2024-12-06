@@ -126,7 +126,6 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
             <Dialog.Footer
                 primaryAction={{
                     label: t(`app.governance.verifySmartContractDialog.action.${buttonLabel}`),
-                    // @ts-expect-error TODO: update gov-ui-kit to support type prop
                     type: 'submit',
                     isLoading: isLoadingAbi,
                 }}
