@@ -5,10 +5,10 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
-import type { ComponentProps } from 'react';
+import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
 
-export interface ISppVotingTerminalBodyContentProps extends ComponentProps<'div'> {
+export interface ISppVotingTerminalBodyContentProps {
     /**
      * The plugin that the stage belongs to.
      */
@@ -33,6 +33,10 @@ export interface ISppVotingTerminalBodyContentProps extends ComponentProps<'div'
      * Flag indicating if the user can vote.
      */
     canVote: boolean;
+    /**
+     * Children of the component.
+     */
+    children?: ReactNode;
 }
 
 const votesPerPage = 6;

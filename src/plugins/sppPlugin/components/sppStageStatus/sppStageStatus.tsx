@@ -40,34 +40,28 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
-
     const stageStartDate = sppStageUtils.getStageStartDate(proposal, stage);
-
     const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
 
     const execution = proposal.stageExecutions.find((execution) => execution.stageIndex === stage.stageIndex);
-
-    const transactionHash = execution?.transactionHash;
-
     const advanceTransactionHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
-        id: transactionHash,
+        id: execution?.transactionHash,
     });
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
 
-    // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
-    // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
+    // Only display the advance button if stage has been accepted or stage is still active but approval has already
+    // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
+    // to hide executable info text.
     const displayAdvanceButton =
-        (stageStatus === ProposalVotingStatus.ACTIVE || stageStatus === ProposalVotingStatus.ACCEPTED) &&
-        sppStageUtils.isApprovalReached(proposal, stage) &&
-        !isSignalingProposal;
-
-    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
+        (stageStatus === ProposalVotingStatus.ACCEPTED ||
+            (stageStatus === ProposalVotingStatus.ACTIVE && sppStageUtils.isApprovalReached(proposal, stage))) &&
+        !(isSignalingProposal && isLastStage);
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
-    const displayMaxAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
+    const displayMaxAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90;
 
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
     const displayMinAdvanceTime = stageStartDate && minAdvanceTime && DateTime.now() < minAdvanceTime;
@@ -87,22 +81,15 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               disabled: displayMinAdvanceTime,
           };
 
-    const timeContext = isLastStage ? 'Execute' : 'Advance';
+    const advanceTimeContext = isLastStage ? 'Execute' : 'Advance';
+    const advanceTimeInfo = displayMinAdvanceTime
+        ? { time: minAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.min${advanceTimeContext}Info`) }
+        : { time: maxAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.max${advanceTimeContext}Info`) };
 
-    const displayAdvanceTime =
-        displayMinAdvanceTime && !isLastStage
-            ? {
-                  time: minAdvanceTime,
-                  info: t(`app.plugins.spp.sppStageStatus.min${timeContext}Info`),
-              }
-            : displayMaxAdvanceTime && !isLastStage
-              ? {
-                    time: maxAdvanceTime,
-                    info: t(`app.plugins.spp.sppStageStatus.max${timeContext}Info`),
-                }
-              : null;
+    console.log({ displayMinAdvanceTime });
 
-    if (stageAdvanceExpired) {
+    // Stage cannot be advanced anymore, display exired info text.
+    if (stageStatus === ProposalVotingStatus.EXPIRED) {
         return (
             <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
         );
@@ -113,23 +100,23 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     }
 
     return (
-        <div className="flex flex-col items-end justify-between gap-3 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
             {!isLastStage && (
                 <Button size="md" {...buttonProps}>
                     {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
                 </Button>
             )}
 
-            {displayAdvanceTime && (
+            {(displayMinAdvanceTime || displayMaxAdvanceTime) && (
                 <div className="flex flex-row justify-center gap-1">
                     <Rerender>
                         {() => (
                             <span className="text-neutral-800">
-                                {formatterUtils.formatDate(displayAdvanceTime.time, { format: DateFormat.DURATION })}
+                                {formatterUtils.formatDate(advanceTimeInfo.time, { format: DateFormat.DURATION })}
                             </span>
                         )}
                     </Rerender>
-                    <span className="text-neutral-500">{displayAdvanceTime.info}</span>
+                    <span className="text-neutral-500">{advanceTimeInfo.info}</span>
                 </div>
             )}
 
