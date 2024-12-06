@@ -43,10 +43,16 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const stageStartDate = sppStageUtils.getStageStartDate(proposal, stage);
 
-    const isStageAdvanced = stage.stageIndex < proposal.stageIndex;
+    const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
 
-    //TODO: sync with backend to get correct transaction hash for advanced stages
-    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: '' });
+    const execution = proposal.stageExecutions.find((execution) => execution.stageIndex === stage.stageIndex);
+
+    const transactionHash = execution?.transactionHash;
+
+    const advanceTransactionHref = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: transactionHash,
+    });
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;

@@ -1,5 +1,6 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import type { ISppPluginSettings } from './sppPluginSettings';
+import type { ISppProposalExecution } from './sppProposalExecution';
 import type { ISppSubProposal } from './sppSubProposal';
 
 export interface ISppProposal extends Omit<IProposal<ISppPluginSettings>, 'endDate'> {
@@ -15,4 +16,8 @@ export interface ISppProposal extends Omit<IProposal<ISppPluginSettings>, 'endDa
      * Stage sub proposals.
      */
     subProposals: ISppSubProposal[];
+    /**
+     * Execution information for each stage.
+     */
+    stageExecutions: ISppProposalExecution[];
 }

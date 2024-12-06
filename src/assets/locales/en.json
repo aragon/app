@@ -583,9 +583,12 @@
           "entity": "Proposals"
         },
         "multisigProposalVotingSummary": {
+          "approvalLabel": "approval",
           "approved": "approved",
-          "description": "of {{count}} members",
-          "name": "{{name}} approval",
+          "memberCount": "of {{count}} members",
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
+          "optimisticApprovalLabel": "veto approval",
           "vetoed": "vetoed"
         },
         "multisigRemoveMembersAction": {
@@ -741,11 +744,12 @@
         },
         "tokenProposalVotingSummary": {
           "approved": "approved",
-          "support": {
-            "description": "of {{details}}",
-            "name": "{{name}} support"
-          },
-          "vetoed": "vetoed"
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
+          "optimisticSupportLabel": "veto support",
+          "supportLabel": "support",
+          "vetoed": "vetoed",
+          "votesDescription": "of {{details}}"
         },
         "tokenSubmitVote": {
           "buttons": {
