@@ -44,7 +44,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
 
     return (
-        <div className="w-full pt-6 md:pt-8">
+        <div className="w-full">
             <Button
                 onClick={voted ? undefined : openTransactionDialog}
                 href={voted ? voteTransactionHref : undefined}

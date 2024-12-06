@@ -658,13 +658,17 @@
           "numberOfStages": "Number of stages"
         },
         "sppStageStatus": {
-          "advanceExpired": "Proposal not advanced in time",
-          "advanceInfo": "left to advance",
           "button": {
             "advance": "Advance proposal",
             "advanced": "Proposal advanced",
             "vote": "Vote on proposal"
-          }
+          },
+          "expiredAdvance": "Proposal not advanced in time",
+          "expiredExecute": "Proposal not executed in time",
+          "maxAdvanceInfo": "left to advance",
+          "maxExecuteInfo": "left to execute",
+          "minAdvanceInfo": "until advanceable",
+          "minExecuteInfo": "until executable"
         },
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",
