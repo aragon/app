@@ -97,7 +97,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
             <p className="text-neutral-800">
                 {formattedWinningOption}{' '}
                 <span className="text-neutral-500">
-                    {t('app.plugins.token.tokenProposalVotingSummary.support.votesDescription', {
+                    {t('app.plugins.token.tokenProposalVotingSummary.votesDescription', {
                         details: `${formattedTotalVotes} ${symbol}`,
                     })}
                 </span>
