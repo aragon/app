@@ -7,7 +7,7 @@ import {
     useCreateProposalFormContext,
     type IProposalActionData,
 } from '@/modules/governance/components/createProposalForm';
-import type { IDaoPluginMetadata } from '@/shared/api/daoService';
+import type { IDaoPlugin, IDaoPluginMetadata } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -25,7 +25,9 @@ export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdateP
     proposedMetadata: IDaoPluginMetadata;
 }
 
-export interface IUpdatePluginMetadataActionProps extends IProposalActionComponentProps<IProposalActionData> {}
+// TODO: fix any type
+export interface IUpdatePluginMetadataActionProps
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<any>>> {}
 
 const nameMaxLength = 40;
 const keyMaxLength = 5;
@@ -45,8 +47,6 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     const { meta } = action;
 
     const { isProcess } = meta;
-
-    console.log(action);
 
     const { t } = useTranslations();
 
@@ -96,7 +96,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     );
 
     useEffect(() => {
-        addPrepareAction(ProposalActionType.METADATA_UPDATE, prepareAction);
+        addPrepareAction(ProposalActionType.METADATA_PLUGIN_UPDATE, prepareAction);
     }, [addPrepareAction, prepareAction]);
 
     return (

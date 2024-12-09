@@ -1,6 +1,11 @@
-import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
+import {
+    ProposalActionType,
+    type IProposalAction,
+    type IProposalActionUpdatePluginMetadata,
+} from '@/modules/governance/api/governanceService';
+import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin, IDaoPluginMetadata } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -22,7 +27,27 @@ import {
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
-import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
+
+const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): IProposalActionUpdatePluginMetadata => ({
+    type: ProposalActionType.METADATA_PLUGIN_UPDATE,
+    from: '',
+    to: '',
+    data: '0x',
+    value: '0',
+    proposedMetadata: metadata,
+    inputData: {
+        function: 'setMetadata',
+        contract: '',
+        parameters: [
+            {
+                name: '_metadata',
+                type: 'bytes',
+                notice: 'The IPFS hash of the new metadata object',
+                value: '',
+            },
+        ],
+    },
+});
 
 export interface IGetTokenActionsProps {
     /**
@@ -82,8 +107,8 @@ class TokenActionUtils {
                     meta: plugin,
                 },
                 {
-                    id: `${address}-${TokenProposalActionType.UPDATE_PLUGIN_METADATA}`,
-                    name: 'UPDATE_METADATA_TOKEN',
+                    id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
+                    name: t(`app.plugins.token.tokenActions.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: {
@@ -91,7 +116,7 @@ class TokenActionUtils {
                             name: plugin.name ?? '',
                             summary: plugin.description,
                             resources: plugin.links,
-                            key: plugin.processKey,
+                            key: plugin.processKey ?? '',
                         }),
                         to: address,
                     },
@@ -101,7 +126,7 @@ class TokenActionUtils {
             components: {
                 [TokenProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
                 [TokenProposalActionType.MINT]: TokenMintTokensAction,
-                [ProposalActionType.METADATA_UPDATE]: UpdatePluginMetadataAction,
+                [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
             },
         };
     };

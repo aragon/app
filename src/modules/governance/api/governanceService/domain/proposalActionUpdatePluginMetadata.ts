@@ -6,7 +6,7 @@ export interface IProposalActionUpdatePluginMetadata
     /**
      * The type of the proposal action.
      */
-    type: ProposalActionType.METADATA_UPDATE;
+    type: ProposalActionType.METADATA_PLUGIN_UPDATE;
     /**
      * The proposed metadata to be updated.
      */

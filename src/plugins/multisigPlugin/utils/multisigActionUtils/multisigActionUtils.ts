@@ -1,6 +1,11 @@
-import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
+import {
+    ProposalActionType,
+    type IProposalAction,
+    type IProposalActionUpdatePluginMetadata,
+} from '@/modules/governance/api/governanceService';
+import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin, IDaoPluginMetadata } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -22,7 +27,27 @@ import {
 } from '../../types';
 import { multisigSettingsUtils, type IMultisigSettingsParseParams } from '../multisigSettingsUtils';
 import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
-import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
+
+const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): IProposalActionUpdatePluginMetadata => ({
+    type: ProposalActionType.METADATA_PLUGIN_UPDATE,
+    from: '',
+    to: '',
+    data: '0x',
+    value: '0',
+    proposedMetadata: metadata,
+    inputData: {
+        function: 'setMetadata',
+        contract: '',
+        parameters: [
+            {
+                name: '_metadata',
+                type: 'bytes',
+                notice: 'The IPFS hash of the new metadata object',
+                value: '',
+            },
+        ],
+    },
+});
 
 export interface IGetMultisigActionsProps {
     /**
@@ -43,7 +68,6 @@ export interface INormalizeChangeSettingsParams extends IMultisigSettingsParsePa
 }
 
 export type IGetMultisigActionsResult = IActionComposerPluginData<IDaoPlugin<IMultisigPluginSettings>>;
-
 
 class MultisigActionUtils {
     getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
@@ -85,8 +109,8 @@ class MultisigActionUtils {
                     defaultValue: defaultUpdateSettings(plugin),
                 },
                 {
-                    id: `${address}-${ProposalActionType.UPDATE_METADATA}`,
-                    name: 'UPDATE_METADATA',
+                    id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
+                    name: t(`app.plugins.multisig.multisigActions.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: {
@@ -94,7 +118,7 @@ class MultisigActionUtils {
                             name: plugin.name ?? '',
                             summary: plugin.description,
                             resources: plugin.links,
-                            key: plugin.processKey,
+                            key: plugin.processKey ?? '',
                         }),
                         to: address,
                     },
@@ -105,7 +129,7 @@ class MultisigActionUtils {
                 [MultisigProposalActionType.MULTISIG_ADD_MEMBERS]: MultisigAddMembersAction,
                 [MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS]: MultisigRemoveMembersAction,
                 [MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS]: MultisigUpdateSettingsAction,
-                [ProposalActionType.METADATA_UPDATE]: UpdatePluginMetadataAction,
+                [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
             },
         };
     };

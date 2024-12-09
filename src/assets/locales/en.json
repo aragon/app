@@ -583,10 +583,10 @@
       },
       "multisig": {
         "multisigActions": {
+          "MetadataPluginUpdate": "Update metadata",
           "MultisigAddMembers": "Add Members",
           "MultisigRemoveMembers": "Remove Members",
-          "UpdateMultiSigSettings": "Update settings",
-          "UpdatePluginMetadata": "Update metadata"
+          "UpdateMultiSigSettings": "Update settings"
         },
         "multisigAddMembersAction": {
           "add": "Add",
@@ -696,7 +696,7 @@
           "title": "Advance proposal"
         },
         "sppActions": {
-          "UpdatePluginMetadata": "Update metadata"
+          "MetadataPluginUpdate": "Update metadata"
         },
         "sppCreateProposalSettingsForm": {
           "startTime": {
@@ -727,8 +727,8 @@
       },
       "token": {
         "tokenActions": {
+          "MetadataPluginUpdate": "Update metadata",
           "Mint": "Mint",
-          "UpdatePluginMetadata": "Update metadata",
           "UpdateVoteSettings": "Update settings"
         },
         "tokenCreateProposalSettingsForm": {

@@ -1,12 +1,35 @@
-import { type IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
-import { type IDaoPlugin } from '@/shared/api/daoService';
+import {
+    type IProposalActionUpdatePluginMetadata,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
+import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
+import { type IDaoPlugin, type IDaoPluginMetadata } from '@/shared/api/daoService';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { type ISppPluginSettings, SppProposalActionType } from '../../types';
-import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
-import { defaultUpdateMetadata } from '@/modules/governance/components/actionComposer/actionComposerDefinitions';
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { type ISppPluginSettings } from '../../types';
+
+const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): IProposalActionUpdatePluginMetadata => ({
+    type: ProposalActionType.METADATA_PLUGIN_UPDATE,
+    from: '',
+    to: '',
+    data: '0x',
+    value: '0',
+    proposedMetadata: metadata,
+    inputData: {
+        function: 'setMetadata',
+        contract: '',
+        parameters: [
+            {
+                name: '_metadata',
+                type: 'bytes',
+                notice: 'The IPFS hash of the new metadata object',
+                value: '',
+            },
+        ],
+    },
+});
 
 export interface IGetSppActionsProps {
     /**
@@ -19,7 +42,7 @@ export interface IGetSppActionsProps {
     t: TranslationFunction;
 }
 
-export type IGetSppActionsResult = IPluginActionComposerData<IDaoPlugin<ISppPluginSettings>, SppProposalActionType>;
+export type IGetSppActionsResult = IActionComposerPluginData<IDaoPlugin<ISppPluginSettings>>;
 
 class SppActionUtils {
     getSppActions = ({ plugin, t }: IGetSppActionsProps): IGetSppActionsResult => {
@@ -36,8 +59,8 @@ class SppActionUtils {
             ],
             items: [
                 {
-                    id: `${address}-${SppProposalActionType.UPDATE_PLUGIN_METADATA}`,
-                    name: 'UPDATE_METADATA_SPP',
+                    id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
+                    name: t(`app.plugins.spp.sppActions.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: {
@@ -45,7 +68,7 @@ class SppActionUtils {
                             name: plugin.name ?? '',
                             summary: plugin.description,
                             resources: plugin.links,
-                            key: plugin.processKey,
+                            key: plugin.processKey ?? '',
                         }),
                         to: address,
                     },
@@ -53,7 +76,7 @@ class SppActionUtils {
                 },
             ],
             components: {
-                [ProposalActionType.METADATA_UPDATE]: UpdatePluginMetadataAction,
+                [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
             },
         };
     };
