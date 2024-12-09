@@ -5,7 +5,7 @@ import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
 import {
     type IProposalAction,
-    IProposalActionUpdatePluginMetadata,
+    type IProposalActionUpdatePluginMetadata,
     ProposalActionType,
 } from '../../api/governanceService';
 import type { ISmartContractAbi } from '../../api/smartContractService';
