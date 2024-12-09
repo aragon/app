@@ -1,9 +1,13 @@
-import type { IDao } from '@/shared/api/daoService';
+import type { IDao, IDaoPluginMetadata } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
-import { type IProposalAction, ProposalActionType } from '../../api/governanceService';
+import {
+    type IProposalAction,
+    IProposalActionUpdatePluginMetadata,
+    ProposalActionType,
+} from '../../api/governanceService';
 import type { ISmartContractAbi } from '../../api/smartContractService';
 import type { IActionComposerItem } from './actionComposer.api';
 
@@ -116,6 +120,27 @@ class ActionComposerUtils {
         },
         ...nativeItems,
     ];
+
+    buildDefaultActionPluginMetadata = (metadata: IDaoPluginMetadata): IProposalActionUpdatePluginMetadata => ({
+        type: ProposalActionType.METADATA_PLUGIN_UPDATE,
+        from: '',
+        to: '',
+        data: '0x',
+        value: '0',
+        proposedMetadata: metadata,
+        inputData: {
+            function: 'setMetadata',
+            contract: '',
+            parameters: [
+                {
+                    name: '_metadata',
+                    type: 'bytes',
+                    notice: 'The IPFS hash of the new metadata object',
+                    value: '',
+                },
+            ],
+        },
+    });
 
     private buildDefaultActionTransfer = (): IProposalAction => ({
         type: ProposalActionType.TRANSFER,

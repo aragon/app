@@ -1,11 +1,7 @@
-import {
-    ProposalActionType,
-    type IProposalAction,
-    type IProposalActionUpdatePluginMetadata,
-} from '@/modules/governance/api/governanceService';
+import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
 import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
-import type { IDaoPlugin, IDaoPluginMetadata } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -27,27 +23,7 @@ import {
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
-
-const defaultUpdateMetadata = (metadata: IDaoPluginMetadata): IProposalActionUpdatePluginMetadata => ({
-    type: ProposalActionType.METADATA_PLUGIN_UPDATE,
-    from: '',
-    to: '',
-    data: '0x',
-    value: '0',
-    proposedMetadata: metadata,
-    inputData: {
-        function: 'setMetadata',
-        contract: '',
-        parameters: [
-            {
-                name: '_metadata',
-                type: 'bytes',
-                notice: 'The IPFS hash of the new metadata object',
-                value: '',
-            },
-        ],
-    },
-});
+import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 
 export interface IGetTokenActionsProps {
     /**
@@ -112,7 +88,7 @@ class TokenActionUtils {
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: {
-                        ...defaultUpdateMetadata({
+                        ...actionComposerUtils.buildDefaultActionPluginMetadata({
                             name: plugin.name ?? '',
                             summary: plugin.description,
                             resources: plugin.links,

@@ -27,6 +27,7 @@ export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdateP
 
 // TODO: fix any type
 export interface IUpdatePluginMetadataActionProps
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<any>>> {}
 
 const nameMaxLength = 40;
