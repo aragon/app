@@ -84,7 +84,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     ];
 
     return (
-        <div className="flex flex-col gap-4 pt-6 md:pt-8">
+        <div className="flex flex-col gap-4">
             {!voteState.showOptions && !latestVote && (
                 <Button
                     className="w-fit"

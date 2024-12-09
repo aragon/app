@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { formatterUtils, invariant, NumberFormat, ProposalStatus, ProposalVotingProgress } from '@aragon/gov-ui-kit';
+import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { type ITokenProposal, VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
@@ -11,13 +11,21 @@ export interface ITokenProposalVotingSummaryProps {
      */
     proposal?: ITokenProposal;
     /**
-     * Name of the body.
+     * Name of the plugin.
      */
     name: string;
+    /**
+     * Defines if the voting is optimistic or not.
+     */
+    isOptimistic: boolean;
+    /**
+     * Additional executed status when plugin is a sub-plugin.
+     */
+    isExecuted?: boolean;
 }
 
 export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryProps> = (props) => {
-    const { proposal, name } = props;
+    const { proposal, name, isOptimistic, isExecuted } = props;
 
     const { t } = useTranslations();
 
@@ -49,33 +57,51 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     const supportThresholdPercentage = tokenSettingsUtils.fromRatioToPercentage(supportThreshold);
     const supportReached = winningOptionPercentage >= supportThresholdPercentage;
 
-    if (status === ProposalStatus.ACCEPTED || status === ProposalStatus.VETOED) {
-        const isAccepted = status === ProposalStatus.ACCEPTED;
-        const statusText = isAccepted
-            ? t('app.plugins.token.tokenProposalVotingSummary.approved')
-            : t('app.plugins.token.tokenProposalVotingSummary.vetoed');
-        const statusClass = isAccepted ? 'text-success-800' : 'text-critical-800';
+    const isApprovalReached = tokenProposalUtils.isApprovalReached(proposal);
+
+    if (status !== ProposalStatus.ACTIVE || isExecuted) {
+        const approvalText = isApprovalReached ? 'approved' : 'notApproved';
+        const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
+        const statusText = isOptimistic ? vetoText : approvalText;
+
+        const statusClass =
+            isApprovalReached && isOptimistic
+                ? 'text-critical-800'
+                : isApprovalReached
+                  ? 'text-success-800'
+                  : 'text-neutral-500';
 
         return (
             <p>
-                {name} <span className={statusClass}>{statusText}</span>
+                {name}{' '}
+                <span className={statusClass}>{t(`app.plugins.token.tokenProposalVotingSummary.${statusText}`)}</span>
             </p>
         );
     }
 
     return (
-        <ProposalVotingProgress.Item
-            name={t('app.plugins.token.tokenProposalVotingSummary.support.name', { name })}
-            value={winningOptionPercentage}
-            description={{
-                value: formattedWinningOption,
-                text: t('app.plugins.token.tokenProposalVotingSummary.support.description', {
-                    details: `${formattedTotalVotes} ${symbol}`,
-                }),
-            }}
-            showPercentage={true}
-            variant={supportReached ? 'primary' : 'neutral'}
-            thresholdIndicator={supportThresholdPercentage}
-        />
+        <div className="flex w-full flex-col gap-3">
+            <p className="text-neutral-800">
+                {name}{' '}
+                <span className="text-neutral-500">
+                    {isOptimistic
+                        ? t('app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel')
+                        : t('app.plugins.token.tokenProposalVotingSummary.supportLabel')}
+                </span>
+            </p>
+            <Progress
+                variant={supportReached ? 'primary' : 'neutral'}
+                thresholdIndicator={supportThresholdPercentage}
+                value={winningOptionPercentage}
+            />
+            <p className="text-neutral-800">
+                {formattedWinningOption}{' '}
+                <span className="text-neutral-500">
+                    {t('app.plugins.token.tokenProposalVotingSummary.votesDescription', {
+                        details: `${formattedTotalVotes} ${symbol}`,
+                    })}
+                </span>
+            </p>
+        </div>
     );
 };

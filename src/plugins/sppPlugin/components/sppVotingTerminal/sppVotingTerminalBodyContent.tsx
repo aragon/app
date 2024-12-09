@@ -5,6 +5,7 @@ import type { IDaoSettingTermAndDefinition, IUseGovernanceSettingsParams } from 
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalVoting } from '@aragon/gov-ui-kit';
+import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStagePlugin, ISppSubProposal } from '../../types';
 
 export interface ISppVotingTerminalBodyContentProps {
@@ -32,12 +33,16 @@ export interface ISppVotingTerminalBodyContentProps {
      * Flag indicating if the user can vote.
      */
     canVote: boolean;
+    /**
+     * Children of the component.
+     */
+    children?: ReactNode;
 }
 
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyContentProps> = (props) => {
-    const { plugin, daoId, subProposal, proposal, canVote, isVeto } = props;
+    const { plugin, daoId, subProposal, proposal, canVote, isVeto, children } = props;
 
     const voteListParams = {
         queryParams: { proposalId: subProposal?.id, pluginAddress: subProposal?.pluginAddress, pageSize: votesPerPage },
@@ -62,15 +67,18 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                         pluginId={plugin.subdomain}
                         proposal={subProposal}
                     >
-                        {canVote && (
-                            <PluginSingleComponent
-                                slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                                pluginId={processedSubProposal.pluginSubdomain}
-                                proposal={processedSubProposal}
-                                daoId={daoId}
-                                isVeto={isVeto}
-                            />
-                        )}
+                        <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
+                            {canVote && (
+                                <PluginSingleComponent
+                                    slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                                    pluginId={processedSubProposal.pluginSubdomain}
+                                    proposal={processedSubProposal}
+                                    daoId={daoId}
+                                    isVeto={isVeto}
+                                />
+                            )}
+                            {children}
+                        </div>
                     </PluginSingleComponent>
                     <ProposalVoting.Votes>
                         <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={plugin.address} />

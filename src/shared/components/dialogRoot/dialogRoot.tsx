@@ -19,7 +19,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
     const activeDialog = location != null ? dialogs[location.id] : undefined;
 
     return (
-        <Dialog.Root {...props} open={isOpen} onOpenChange={close}>
+        <Dialog.Root {...props} open={isOpen} onOpenChange={close} useFocusTrap={activeDialog?.useFocusTrap}>
             {activeDialog && (
                 <>
                     <DialogRootHiddenElement labelKey={activeDialog.title} type="title" />

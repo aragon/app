@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { formatterUtils, invariant, NumberFormat, ProposalStatus, ProposalVotingProgress } from '@aragon/gov-ui-kit';
+import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
 
@@ -9,13 +9,21 @@ export interface IMultisigProposalVotingSummaryProps {
      */
     proposal?: IMultisigProposal;
     /**
-     * Name of the body.
+     * Name of the plugin.
      */
     name: string;
+    /**
+     * Defines if the voting is optimistic or not.
+     */
+    isOptimistic: boolean;
+    /**
+     * Additional executed status when plugin is a sub-plugin.
+     */
+    isExecuted?: boolean;
 }
 
 export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSummaryProps> = (props) => {
-    const { proposal, name } = props;
+    const { proposal, name, isOptimistic, isExecuted } = props;
 
     const { t } = useTranslations();
 
@@ -37,31 +45,52 @@ export const MultisigProposalVotingSummary: React.FC<IMultisigProposalVotingSumm
     });
     const formattedMinApprovals = formatterUtils.formatNumber(minApprovals, { format: NumberFormat.GENERIC_SHORT })!;
 
-    if (status === ProposalStatus.VETOED || status === ProposalStatus.ACCEPTED) {
-        const isAccepted = status === ProposalStatus.ACCEPTED;
-        const statusText = isAccepted
-            ? t('app.plugins.multisig.multisigProposalVotingSummary.approved')
-            : t('app.plugins.multisig.multisigProposalVotingSummary.vetoed');
-        const statusClass = isAccepted ? 'text-success-800' : 'text-critical-800';
+    const isApprovalReached = multisigProposalUtils.isApprovalReached(proposal);
+
+    if (status !== ProposalStatus.ACTIVE || isExecuted) {
+        const approvalText = isApprovalReached ? 'approved' : 'notApproved';
+        const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
+        const statusText = isOptimistic ? vetoText : approvalText;
+
+        const statusClass =
+            isApprovalReached && isOptimistic
+                ? 'text-critical-800'
+                : isApprovalReached
+                  ? 'text-success-800'
+                  : 'text-neutral-500';
 
         return (
             <p>
-                {name} <span className={statusClass}>{statusText}</span>
+                {name}{' '}
+                <span className={statusClass}>
+                    {t(`app.plugins.multisig.multisigProposalVotingSummary.${statusText}`)}
+                </span>
             </p>
         );
     }
 
     return (
-        <ProposalVotingProgress.Item
-            name={t('app.plugins.multisig.multisigProposalVotingSummary.name', { name })}
-            value={currentApprovalsPercentage}
-            description={{
-                value: formattedApprovalsAmount,
-                text: t('app.plugins.multisig.multisigProposalVotingSummary.description', {
-                    count: formattedMinApprovals,
-                }),
-            }}
-            variant={approvalsAmount >= minApprovals ? 'primary' : 'neutral'}
-        />
+        <div className="flex w-full flex-col gap-3">
+            <p className="text-neutral-800">
+                {name}{' '}
+                <span className="text-neutral-500">
+                    {isOptimistic
+                        ? t('app.plugins.multisig.multisigProposalVotingSummary.optimisticApprovalLabel')
+                        : t('app.plugins.multisig.multisigProposalVotingSummary.approvalLabel')}
+                </span>
+            </p>
+            <Progress
+                variant={approvalsAmount >= minApprovals ? 'primary' : 'neutral'}
+                value={currentApprovalsPercentage}
+            />
+            <p className="text-neutral-800">
+                {formattedApprovalsAmount}{' '}
+                <span className="text-neutral-500">
+                    {t('app.plugins.multisig.multisigProposalVotingSummary.memberCount', {
+                        count: formattedMinApprovals,
+                    })}
+                </span>
+            </p>
+        </div>
     );
 };

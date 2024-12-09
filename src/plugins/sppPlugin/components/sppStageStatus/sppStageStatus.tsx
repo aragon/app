@@ -10,6 +10,7 @@ import {
     Rerender,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { DateTime } from 'luxon';
 import { useState } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
@@ -39,31 +40,31 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
 
-    const isStageAdvanced = stage.stageIndex < proposal.stageIndex;
-
-    //TODO: sync with backend to get correct transaction hash for advanced stages
-    const advanceTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: '' });
+    const execution = proposal.stageExecutions.find((execution) => execution.stageIndex === stage.stageIndex);
+    const advanceTransactionHref = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: execution?.transactionHash,
+    });
 
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
 
-    // Hide the "advance" button when this is the last stage of a signaling proposal because the advance-stage on the
-    // last stage executes the proposal actions and the proposal would get an EXECUTED status instead of ACCEPTED.
-    const displayAdvanceStatus = stageStatus === ProposalVotingStatus.ACCEPTED && !(isSignalingProposal && isLastStage);
-
-    const stageAdvanceExpired = stageStatus === ProposalVotingStatus.EXPIRED;
-    if (stageAdvanceExpired) {
-        return (
-            <span className="text-right text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceExpired')}</span>
-        );
-    }
+    // Only display the advance button if stage has been accepted or stage is still active but approval has already
+    // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
+    // to hide executable info text.
+    const displayAdvanceButton =
+        (stageStatus === ProposalVotingStatus.ACCEPTED ||
+            (stageStatus === ProposalVotingStatus.ACTIVE && sppStageUtils.isApprovalReached(proposal, stage))) &&
+        !(isSignalingProposal && isLastStage);
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
-    const displayAdvanceTime = maxAdvanceTime && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
-    if (!displayAdvanceStatus) {
-        return null;
-    }
+    const displayMaxAdvanceTime =
+        maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
+
+    const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
+    const displayMinAdvanceTime = minAdvanceTime != null && DateTime.now() < minAdvanceTime;
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
         ? {
@@ -73,25 +74,52 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
               variant: 'secondary' as const,
               iconRight: IconType.LINK_EXTERNAL,
           }
-        : { label: 'advance', onClick: handleAdvanceStage, variant: 'primary' as const };
+        : {
+              label: 'advance',
+              onClick: handleAdvanceStage,
+              variant: 'primary' as const,
+              disabled: displayMinAdvanceTime,
+          };
+
+    const advanceTimeContext = isLastStage ? 'Execute' : 'Advance';
+    const advanceTimeInfo = displayMinAdvanceTime
+        ? { time: minAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.min${advanceTimeContext}Info`) }
+        : { time: maxAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.max${advanceTimeContext}Info`) };
+
+    // Stage cannot be advanced anymore, display exired info text.
+    if (stageStatus === ProposalVotingStatus.EXPIRED) {
+        return (
+            <span className="text-right text-neutral-500">
+                {t(`app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`)}
+            </span>
+        );
+    }
+
+    if (!displayAdvanceButton) {
+        return null;
+    }
 
     return (
-        <div className="mt-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">
-            <Button size="md" {...buttonProps}>
-                {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
-            </Button>
-            {displayAdvanceTime && (
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+            {!isLastStage && (
+                <Button size="md" {...buttonProps}>
+                    {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
+                </Button>
+            )}
+
+            {(displayMinAdvanceTime || displayMaxAdvanceTime) && (
                 <div className="flex flex-row justify-center gap-1">
                     <Rerender>
                         {() => (
                             <span className="text-neutral-800">
-                                {formatterUtils.formatDate(maxAdvanceTime, { format: DateFormat.DURATION })}
+                                {formatterUtils.formatDate(advanceTimeInfo.time, { format: DateFormat.DURATION })}
                             </span>
                         )}
                     </Rerender>
-                    <span className="text-neutral-500">{t('app.plugins.spp.sppStageStatus.advanceInfo')}</span>
+                    <span className="text-neutral-500">{advanceTimeInfo.info}</span>
                 </div>
             )}
+
             <AdvanceStageDialog open={isAdvanceDialogOpen} onOpenChange={setIsAdvanceDialogOpen} proposal={proposal} />
         </div>
     );

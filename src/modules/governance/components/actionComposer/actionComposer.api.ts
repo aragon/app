@@ -1,29 +1,40 @@
-import type { IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
-import type { IAutocompleteInputGroup, IAutocompleteInputItem } from '@/shared/components/forms/autocompleteInput';
-import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import type { IProposalActionData } from '../createProposalForm';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import type {
+    IAutocompleteInputGroup,
+    IAutocompleteInputItem,
+    IAutocompleteInputProps,
+} from '@/shared/components/forms/autocompleteInput';
 
-export interface IPluginActionComposerItem<TMeta, TType> extends IAutocompleteInputItem<TMeta> {
+export interface IActionComposerItem<TMeta = undefined> extends IAutocompleteInputItem<TMeta> {
     /**
      * Default value for the action.
      */
-    defaultValue: IProposalAction<TType>;
+    defaultValue?: IProposalAction;
 }
 
-export interface IPluginActionComposerData<TMeta = undefined, TType = ProposalActionType> {
+export type ActionComposerMode = 'native' | 'custom';
+
+export interface IActionComposerProps<TMeta = undefined>
+    extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
     /**
-     * Autocomplete groups for the actions.
+     * Callback called on action selected.
      */
-    groups: IAutocompleteInputGroup[];
+    onActionSelected: (item: IActionComposerItem<TMeta>) => void;
     /**
-     * Autocomplete action item.
+     * ID of the DAO.
      */
-    items: Array<IPluginActionComposerItem<TMeta, TType>>;
+    daoId: string;
     /**
-     * Custom action components.
+     * Additional native items to be displayed.
      */
-    components: Record<
-        string,
-        React.ComponentType<IProposalActionComponentProps<IProposalActionData<IProposalAction, TMeta>>>
-    >;
+    nativeItems: Array<IActionComposerItem<TMeta>>;
+    /**
+     * Additional native groups to be displayed.
+     */
+    nativeGroups: IAutocompleteInputGroup[];
+    /**
+     * Defines if the components displays the native or custom proposal actions.
+     * @default default
+     */
+    mode?: ActionComposerMode;
 }

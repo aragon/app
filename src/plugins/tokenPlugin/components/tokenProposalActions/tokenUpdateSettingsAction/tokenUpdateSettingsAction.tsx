@@ -122,17 +122,14 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
             minDuration: minDurationInSeconds,
             minProposerVotingPower: parseUnits(minVotingPowerValue, tokenDecimals),
         };
+
         const newData = encodeFunctionData({ abi: [updateTokenSettingsAbi], args: [updateSettingsParams] });
+        const paramValues = Object.values(updateSettingsParams).map((value) => value.toString());
+        const minDuration = dateUtils.secondsToDaysHoursMinutes(minDurationInSeconds);
 
         setValue(`${actionFieldName}.data`, newData);
-        setValue(
-            `${actionFieldName}.inputData.parameters[0].value`,
-            `[${votingModeField.value.toString()}, ${supportThreshold.toString()}, ${minParticipation.toString()}, ${minDurationInSeconds.toString()}, ${minVotingPowerValue}]`,
-        );
-        setValue(
-            `${actionFieldName}.proposedSettings.minDuration`,
-            dateUtils.secondsToDaysHoursMinutes(minDurationInSeconds),
-        );
+        setValue(`${actionFieldName}.inputData.parameters[0].value`, paramValues);
+        setValue(`${actionFieldName}.proposedSettings.minDuration`, minDuration);
     }, [
         actionFieldName,
         minDurationInSeconds,
