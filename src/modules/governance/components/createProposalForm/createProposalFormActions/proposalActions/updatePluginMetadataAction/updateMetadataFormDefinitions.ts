@@ -16,5 +16,5 @@ export interface IUpdateMetadataFormData {
     /**
      * Resources of the process.
      */
-    resources: IResourcesInputResource[];
+    resources?: IResourcesInputResource[];
 }
