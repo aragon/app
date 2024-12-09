@@ -83,7 +83,6 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
 
     const prepareAction = useCallback(
         async (action: IProposalAction) => {
-            //TODO:
             const { name, summary, resources } = (action as IUpdatePluginMetadataAction).proposedMetadata;
             const proposedMetadata = { name, summary, links: resources };
 
