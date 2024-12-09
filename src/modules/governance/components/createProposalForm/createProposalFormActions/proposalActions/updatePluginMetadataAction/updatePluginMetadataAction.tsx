@@ -103,7 +103,11 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     return (
         <div className="flex w-full flex-col gap-y-6">
             <InputText
-                helpText={t('app.governance.updatePluginMetadataAction.nameField.helpText')}
+                helpText={t('app.governance.updatePluginMetadataAction.nameField.helpText', {
+                    type: isProcess
+                        ? t('app.governance.updatePluginMetadataAction.process')
+                        : t('app.governance.updatePluginMetadataAction.plugin'),
+                })}
                 placeholder={t('app.governance.updatePluginMetadataAction.nameField.placeholder')}
                 maxLength={nameMaxLength}
                 {...nameField}
@@ -117,7 +121,11 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
                 />
             )}
             <TextArea
-                helpText={t('app.governance.updatePluginMetadataAction.summaryField.helpText')}
+                helpText={t('app.governance.updatePluginMetadataAction.summaryField.helpText', {
+                    type: isProcess
+                        ? t('app.governance.updatePluginMetadataAction.process')
+                        : t('app.governance.updatePluginMetadataAction.plugin'),
+                })}
                 placeholder={t('app.governance.updatePluginMetadataAction.summaryField.placeholder')}
                 maxLength={summaryMaxLength}
                 isOptional={true}

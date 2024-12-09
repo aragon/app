@@ -533,12 +533,14 @@
           "placeholder": "CRE"
         },
         "nameField": {
-          "helpText": "Give your governance process a name, so member can differentiate it.",
+          "helpText": "Give your {{type}} a name, so member can differentiate it.",
           "label": "Name",
           "placeholder": "Core"
         },
+        "plugin": "plugin",
+        "process": "governance process",
         "summaryField": {
-          "helpText": "Summarize your governance process in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
+          "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
           "label": "Summary",
           "placeholder": "Core proposals are the primary governance process of Patito DAO. Grants and protocol upgrades both require proposals to pass in a Core  proposal process."
         }
