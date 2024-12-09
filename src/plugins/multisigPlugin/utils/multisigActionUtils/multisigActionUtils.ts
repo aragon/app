@@ -1,4 +1,5 @@
 import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
+import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
@@ -23,7 +24,6 @@ import {
 } from '../../types';
 import { multisigSettingsUtils, type IMultisigSettingsParseParams } from '../multisigSettingsUtils';
 import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
-import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 
 export interface IGetMultisigActionsProps {
     /**

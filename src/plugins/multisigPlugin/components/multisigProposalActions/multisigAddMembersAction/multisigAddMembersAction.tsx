@@ -1,4 +1,7 @@
+import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import { type IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
@@ -12,9 +15,6 @@ import { useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import { MultisigAddMembersActionItem } from './multisigAddMembersActionItem';
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
-import { type IDaoPlugin } from '@/shared/api/daoService';
-import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 
 export interface IMultisigAddMembersActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}

@@ -1,4 +1,5 @@
 import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
+import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
@@ -23,7 +24,6 @@ import {
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils, type IParseTokenSettingsParams } from '../tokenSettingsUtils';
 import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
-import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 
 export interface IGetTokenActionsProps {
     /**

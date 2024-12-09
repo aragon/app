@@ -1,4 +1,4 @@
-import { useMemberList } from '@/modules/governance/api/governanceService';
+import { useMemberList, type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
@@ -6,7 +6,6 @@ import { NumberProgressInput } from '@/shared/components/forms/numberProgressInp
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
 
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
