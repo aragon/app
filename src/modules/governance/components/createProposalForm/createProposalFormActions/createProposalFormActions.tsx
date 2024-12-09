@@ -167,21 +167,14 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
-            <div className="flex flex-row gap-3">
-                <Button
-                    variant="primary"
-                    size="md"
-                    iconLeft={IconType.PLUS}
-                    className={classNames({ 'sr-only': displayActionComposer })}
-                    onClick={() => handleAddAction('native')}
-                >
+            <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
+                <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction('native')}>
                     {t('app.governance.createProposalForm.actions.addAction.default')}
                 </Button>
                 <Button
                     variant="secondary"
                     size="md"
                     iconRight={IconType.BLOCKCHAIN_SMARTCONTRACT}
-                    className={classNames({ 'sr-only': displayActionComposer })}
                     onClick={handleAddCustomAction}
                 >
                     {t('app.governance.createProposalForm.actions.addAction.custom')}
