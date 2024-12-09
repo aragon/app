@@ -19,7 +19,11 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
     const { steps, className, children, ...otherProps } = props;
 
     const hasError = steps.some((step) => step.meta.state === 'error');
-    const isSuccess = steps.every((step) => step.meta.state === 'success');
+    const hasWarnings = steps.some((step) => step.meta.state === 'warning');
+    const isLoading = steps.some((step) => step.meta.state === 'pending');
+
+    const lastStep = steps.length > 0 ? steps[steps.length - 1] : undefined;
+    const isSuccess = lastStep?.meta.state === 'success';
 
     return (
         <ul
@@ -27,7 +31,9 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
                 'flex flex-col gap-3 rounded-xl border bg-neutral-0 p-4 md:gap-4 md:p-6',
                 { 'border-critical-300 shadow-critical': hasError },
                 { 'border-success-300 shadow-success': isSuccess },
-                { 'border-primary-100 shadow-primary': !hasError && !isSuccess },
+                { 'border-warning-300 shadow-warning': hasWarnings },
+                { 'border-primary-100 shadow-primary': isLoading },
+                { 'border-neutral-100 shadow-neutral': !hasError && !isSuccess && !hasWarnings && !isLoading },
                 className,
             )}
             {...otherProps}
