@@ -1,5 +1,5 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IPluginActionComposerData } from '@/modules/governance/components/actionComposer';
+import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -41,10 +41,7 @@ export interface INormalizeChangeSettingsParams extends IParseTokenSettingsParam
     action: ITokenActionChangeSettings;
 }
 
-export type IGetTokenActionsResult = IPluginActionComposerData<
-    IDaoPlugin<ITokenPluginSettings>,
-    TokenProposalActionType
->;
+export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<ITokenPluginSettings>>;
 
 class TokenActionUtils {
     getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
@@ -73,14 +70,14 @@ class TokenActionUtils {
                     icon: IconType.SETTINGS,
                     groupId: tokenAddress,
                     meta: plugin,
-                    defaultValue: { ...defaultMintAction, to: tokenAddress },
+                    defaultValue: defaultMintAction(plugin.settings),
                 },
                 {
                     id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
                     name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`),
                     icon: IconType.SETTINGS,
                     groupId: address,
-                    defaultValue: { ...defaultUpdateSettings(plugin.settings), to: address },
+                    defaultValue: defaultUpdateSettings(plugin),
                     meta: plugin,
                 },
             ],

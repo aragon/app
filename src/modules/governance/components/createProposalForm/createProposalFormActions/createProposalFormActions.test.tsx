@@ -1,8 +1,10 @@
 import * as daoService from '@/shared/api/daoService';
+import * as DialogProvider from '@/shared/components/dialogProvider';
 import { FormWrapper, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { forwardRef } from 'react';
+import * as CreateProposalProvider from '../createProposalFormProvider';
 import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
 
 jest.mock('../../actionComposer', () => ({
@@ -12,13 +14,24 @@ jest.mock('../../actionComposer', () => ({
 
 describe('<CreateProposalFormActions /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
+    const useCreateProposalFormContextSpy = jest.spyOn(CreateProposalProvider, 'useCreateProposalFormContext');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useCreateProposalFormContextSpy.mockReturnValue({
+            prepareActions: {},
+            addPrepareAction: jest.fn(),
+            smartContractAbis: [],
+            addSmartContractAbi: jest.fn(),
+        });
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
+        useDialogContextSpy.mockReset();
+        useCreateProposalFormContextSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ICreateProposalFormActionsProps>) => {
@@ -44,7 +57,7 @@ describe('<CreateProposalFormActions /> component', () => {
 
     it('renders a button to add an action', () => {
         render(createTestComponent());
-        const actionButton = screen.getByRole('button', { name: /createProposalForm.actions.action/ });
+        const actionButton = screen.getByRole('button', { name: /createProposalForm.actions.addAction.default/ });
         expect(actionButton).toBeInTheDocument();
     });
 });

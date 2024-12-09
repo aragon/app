@@ -36,6 +36,10 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      * Flag to control trimming behavior.
      */
     trimOnBlur?: boolean;
+    /**
+     * Control property to be used only when hook is not used inside a form-context provider.
+     */
+    control?: UseControllerProps<TFieldValues, TName>['control'];
 }
 
 export type IUseFormFieldReturn<

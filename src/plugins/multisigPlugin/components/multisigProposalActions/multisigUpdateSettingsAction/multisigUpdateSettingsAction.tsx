@@ -77,10 +77,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
         const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
 
         setValue(`${actionFieldName}.data`, newData);
-        setValue(
-            `${actionFieldName}.inputData.parameters[0].value`,
-            `[${onlyListedFieldValue.toString()}, ${minimumApproval.toString()}]`,
-        );
+        setValue(`${actionFieldName}.inputData.parameters[0].value`, [onlyListedFieldValue, minimumApproval]);
     }, [setValue, actionFieldName, onlyListedFieldValue, minimumApproval]);
 
     return (

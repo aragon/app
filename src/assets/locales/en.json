@@ -259,19 +259,25 @@
     },
     "governance": {
       "actionComposer": {
-        "action": {
+        "customItem": {
+          "ADD_CONTRACT": "Add new address"
+        },
+        "nativeGroup": {
+          "OSX": "DAO"
+        },
+        "nativeItem": {
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
-        },
-        "group": {
-          "OSX": "DAO"
         },
         "placeholder": "Filter by action, contract name or address",
         "selectItem": "Add action"
       },
       "createProposalForm": {
         "actions": {
-          "action": "Action",
+          "addAction": {
+            "custom": "Custom",
+            "default": "Action"
+          },
           "editAction": {
             "down": "Move down",
             "remove": "Remove",
@@ -496,6 +502,29 @@
         },
         "description": "Select the proposal type that you'd like to create.",
         "title": "Create proposal"
+      },
+      "verifySmartContractDialog": {
+        "action": {
+          "add": "Add contract",
+          "cancel": "Cancel",
+          "verify": "Verify contract"
+        },
+        "description": "Enter the contract address to configure your action.",
+        "smartContractLabel": "Address",
+        "step": {
+          "abi": {
+            "default": "Retrieve ABI",
+            "warning": "Unable to retrieve ABI"
+          },
+          "proxy": {
+            "default": "Detect proxy contract"
+          },
+          "verify": {
+            "default": "Verify contract",
+            "warning": "Unable to verify contract"
+          }
+        },
+        "title": "Add contract address"
       },
       "voteDialog": {
         "button": {

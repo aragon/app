@@ -1,3 +1,4 @@
+import type { IDialogRootProps } from '@aragon/gov-ui-kit';
 import type { ComponentType } from 'react';
 
 // Default properties type for dialog components.
@@ -59,4 +60,8 @@ export interface IDialogComponentDefinitions<TParams extends DialogComponentProp
      * description on the relative Dialog.Header component.
      */
     description?: string;
+    /**
+     * Overrides the focus-trap property for the specific dialog when set.
+     */
+    useFocusTrap?: IDialogRootProps['useFocusTrap'];
 }

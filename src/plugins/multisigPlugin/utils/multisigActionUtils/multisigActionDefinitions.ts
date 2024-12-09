@@ -1,3 +1,4 @@
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IMultisigActionChangeMembers, IMultisigActionChangeSettings, IMultisigPluginSettings } from '../../types';
 import { MultisigProposalActionType } from '../../types/enum';
 
@@ -16,7 +17,7 @@ export const defaultAddMembers: IMultisigActionChangeMembers = {
             {
                 name: '_members',
                 type: 'address[]',
-                value: '',
+                value: undefined,
                 notice: 'The addresses to be added',
             },
         ],
@@ -38,17 +39,20 @@ export const defaultRemoveMembers: IMultisigActionChangeMembers = {
             {
                 name: '_members',
                 type: 'address[]',
-                value: '',
+                value: undefined,
                 notice: 'The addresses to be removed',
             },
         ],
     },
 };
 
-export const defaultUpdateSettings = (settings: IMultisigPluginSettings): IMultisigActionChangeSettings => ({
+export const defaultUpdateSettings = ({
+    address,
+    settings,
+}: IDaoPlugin<IMultisigPluginSettings>): IMultisigActionChangeSettings => ({
     type: MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS,
     from: '',
-    to: '',
+    to: address,
     data: '0x',
     value: '0',
     proposedSettings: settings,
@@ -60,7 +64,11 @@ export const defaultUpdateSettings = (settings: IMultisigPluginSettings): IMulti
                 name: '_multisigSettings',
                 type: 'tuple',
                 notice: 'The new settings',
-                value: '',
+                value: undefined,
+                components: [
+                    { name: 'onlyListed', type: 'bool' },
+                    { name: 'minApprovals', type: 'uint16' },
+                ],
             },
         ],
     },

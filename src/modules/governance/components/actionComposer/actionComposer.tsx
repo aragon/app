@@ -1,82 +1,32 @@
 import { useDao } from '@/shared/api/daoService';
-import { AutocompleteInput, type IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
+import { AutocompleteInput } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { forwardRef, useMemo } from 'react';
-import { ProposalActionType, type IProposalAction } from '../../api/governanceService';
-import type { IPluginActionComposerData } from './actionComposer.api';
-import { ActionGroupId, defaultMetadataAction, defaultTransferAction } from './actionComposerDefinitions';
-
-export interface IActionComposerProps<TMeta = undefined>
-    extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
-    /**
-     * Callback called on action selected.
-     */
-    onActionSelected: (action: IProposalAction, meta?: TMeta) => void;
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
-    /**
-     * Plugin specific items.
-     */
-    pluginItems: IPluginActionComposerData['items'];
-    /**
-     * Plugin specific groups.
-     */
-    pluginGroups: IPluginActionComposerData['groups'];
-}
+import { forwardRef } from 'react';
+import { useCreateProposalFormContext } from '../createProposalForm/createProposalFormProvider';
+import type { IActionComposerProps } from './actionComposer.api';
+import { actionComposerUtils } from './actionComposerUtils';
 
 export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>((props, ref) => {
-    const { daoId, onActionSelected, pluginItems, pluginGroups, ...otherProps } = props;
+    const { daoId, onActionSelected, nativeItems, nativeGroups, mode = 'native', ...otherProps } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
+    const { smartContractAbis: abis } = useCreateProposalFormContext();
 
-    const defaultActionMetadata = useMemo(() => {
-        const { avatar, address, name, description, links: resources } = dao!;
-        const existingMetadata = { logo: avatar, name, description, resources };
+    const customGroups = actionComposerUtils.getCustomActionGroups({ t, abis });
+    const customItems = actionComposerUtils.getCustomActionItems({ t, abis });
 
-        return {
-            to: address,
-            existingMetadata,
-            proposedMetadata: existingMetadata,
-            ...defaultMetadataAction,
-        };
-    }, [dao]);
+    const completeNativeGroups = actionComposerUtils.getNativeActionGroups({ t, dao, nativeGroups });
+    const completeNativeItems = actionComposerUtils.getNativeActionItems({ t, dao, nativeItems });
 
-    const groups = [
-        {
-            id: ActionGroupId.OSX,
-            name: t(`app.governance.actionComposer.group.${ActionGroupId.OSX}`),
-            info: addressUtils.truncateAddress(dao?.address),
-            indexData: [dao!.address],
-        },
-        ...pluginGroups,
-    ];
-
-    const items = [
-        {
-            id: ProposalActionType.TRANSFER,
-            name: t(`app.governance.actionComposer.action.${ProposalActionType.TRANSFER}`),
-            icon: IconType.APP_TRANSACTIONS,
-            defaultValue: defaultTransferAction,
-        },
-        {
-            id: ProposalActionType.METADATA_UPDATE,
-            name: t(`app.governance.actionComposer.action.${ProposalActionType.METADATA_UPDATE}`),
-            icon: IconType.SETTINGS,
-            groupId: ActionGroupId.OSX,
-            defaultValue: defaultActionMetadata,
-        },
-        ...pluginItems,
-    ];
+    const [items, groups] =
+        mode === 'native' ? [completeNativeItems, completeNativeGroups] : [customItems, customGroups];
 
     const handleActionSelected = (itemId: string) => {
         const action = items.find((item) => item.id === itemId)!;
-        onActionSelected(action.defaultValue, action.meta);
+        onActionSelected(action);
     };
 
     return (

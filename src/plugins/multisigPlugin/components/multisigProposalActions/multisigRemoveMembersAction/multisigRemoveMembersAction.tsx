@@ -75,7 +75,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
         const addresses = controlledMembersField.map((field) => field.address);
         const newData = encodeFunctionData({ abi: [removeMembersAbi], args: [addresses] });
         setValue(`${actionFieldName}.data`, newData);
-        setValue(`${actionFieldName}.inputData.parameters[0].value`, addresses.toString());
+        setValue(`${actionFieldName}.inputData.parameters[0].value`, addresses);
     }, [actionFieldName, controlledMembersField, setValue]);
 
     return (
