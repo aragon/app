@@ -2,6 +2,7 @@ import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ISppProposal, ISppStage } from '../../types';
 import { SppStageStatus } from '../sppStageStatus';
+import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 
 export interface ISppVotingTerminalBodySummaryFooterProps {
     /**
@@ -24,7 +25,14 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     const threshold = isVeto ? stage.vetoThreshold : stage.approvalThreshold;
     const entityType = threshold > 1 ? 'bodies' : 'body';
 
-    if (sppStageUtils.isApprovalReached(proposal, stage) && !isVeto) {
+    const isApprovalReached = sppStageUtils.isApprovalReached(proposal, stage);
+
+    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
+    const isAccepted = stageStatus === ProposalVotingStatus.ACCEPTED;
+
+    // Display stage status component if approval is reached and it is not an optimistic stage
+    // or if it is an optimistic stage that is accepted
+    if ((isApprovalReached && !isVeto) || (isVeto && isAccepted)) {
         return <SppStageStatus proposal={proposal} stage={stage} />;
     }
 
