@@ -126,6 +126,7 @@ class SppStageUtils {
             return isSuccessReached ? count + 1 : count;
         }, 0);
     };
+
     isVeto = (stage: ISppStage): boolean => {
         return stage.vetoThreshold > 0;
     };
