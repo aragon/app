@@ -61,7 +61,7 @@ __metadata:
     "@types/luxon": "npm:^3.4.2"
     "@types/node": "npm:^22.10.1"
     "@types/react": "npm:^19.0.1"
-    "@types/react-dom": "npm:^19.0.1"
+    "@types/react-dom": "npm:^19.0.2"
     "@web3modal/wagmi": "npm:^5.1.11"
     autoprefixer: "npm:^10.4.20"
     classnames: "npm:^2.5.1"
@@ -4012,7 +4012,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^19.0.1":
+"@types/react-dom@npm:^19.0.2":
   version: 19.0.2
   resolution: "@types/react-dom@npm:19.0.2"
   peerDependencies:
