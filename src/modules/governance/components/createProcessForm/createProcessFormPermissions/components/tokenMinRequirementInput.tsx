@@ -1,15 +1,28 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { InputNumber } from '@aragon/gov-ui-kit';
+import type { ICreateProcessFormProposalCreationBody } from '../../createProcessFormDefinitions';
 
-interface ITokenMinRequirementInputProps {
-    handleMinRequirementChange: (value: number) => void;
-    maxTokens: number;
+export interface ITokenMinRequirementInputProps {
+    /**
+     * Total supply of the token.
+     */
+    totalSupply: number;
+    /**
+     * Prefix to be prepended to the form field.
+     */
+    fieldPrefix: string;
 }
 
 export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> = (props) => {
-    const { handleMinRequirementChange, maxTokens } = props;
+    const { fieldPrefix, totalSupply } = props;
 
     const { t } = useTranslations();
+
+    const minVotingPowerField = useFormField<ICreateProcessFormProposalCreationBody, 'minVotingPower'>(
+        'minVotingPower',
+        { fieldPrefix, defaultValue: '1' },
+    );
 
     return (
         <button className="text-left" onClick={(e) => e.preventDefault()}>
@@ -18,10 +31,9 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
                 label={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.label')}
                 helpText={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
                 placeholder={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.placeholder')}
-                onChange={(value) => handleMinRequirementChange(Number(value))}
                 min={0}
-                max={maxTokens}
-                defaultValue={0}
+                max={totalSupply}
+                {...minVotingPowerField}
             />
         </button>
     );
