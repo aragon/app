@@ -40,7 +40,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         const alertValue =
             error.type === 'min'
                 ? (rules?.min as number | undefined)?.toString()
-                : (rules?.min as number | undefined)?.toString();
+                : (rules?.max as number | undefined)?.toString();
         const alertMessageParams = { name: label ?? name, value: alertValue };
 
         const alertMessage =
