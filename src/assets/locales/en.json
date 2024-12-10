@@ -355,7 +355,11 @@
           }
         },
         "permissions": {
-          "eligibleVoters": {
+          "proposalCreationBodies": {
+            "error": "You must select at least one governing body.",
+            "label": "Governing Bodies"
+          },
+          "proposalCreationMode": {
             "anyDescription": "Any address can create proposals",
             "anyLabel": "Anyone",
             "bodiesDescription": "Select which governing bodies are able to create proposals",
@@ -366,10 +370,6 @@
             "helpText": "The voting power or token balance needed to create proposals.",
             "label": "Minimum requirement",
             "placeholder": "≥ 1"
-          },
-          "votingBodies": {
-            "error": "You must select at least one governing body.",
-            "label": "Governing Bodies"
           }
         },
         "stage": {

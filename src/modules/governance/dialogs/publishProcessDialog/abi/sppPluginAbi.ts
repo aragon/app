@@ -30,4 +30,20 @@ export const sppPluginAbi = [
         outputs: [],
         stateMutability: 'nonpayable',
     },
+    {
+        type: 'function',
+        name: 'updateRules',
+        inputs: [
+            {
+                name: '_rules',
+                type: 'tuple[]',
+                components: [
+                    { name: 'id', type: 'uint8' },
+                    { name: 'op', type: 'uint8' },
+                    { name: 'value', type: 'uint240' },
+                    { name: 'permissionId', type: 'bytes32' },
+                ],
+            },
+        ],
+    },
 ] as const;
