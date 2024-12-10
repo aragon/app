@@ -382,4 +382,16 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.REJECTED);
         });
     });
+
+    describe('isVeto', () => {
+        it('returns true when stage veto threshold is > 0', () => {
+            const stage = generateSppStage({ vetoThreshold: 1 });
+            expect(sppStageUtils.isVeto(stage)).toBeTruthy();
+        });
+
+        it('returns false when veto threshold is 0', () => {
+            const stage = generateSppStage({ vetoThreshold: 0 });
+            expect(sppStageUtils.isVeto(stage)).toBeFalsy();
+        });
+    });
 });
