@@ -1,8 +1,8 @@
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage } from '../../types';
 import { SppStageStatus } from '../sppStageStatus';
-import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 
 export interface ISppVotingTerminalBodySummaryFooterProps {
     /**
