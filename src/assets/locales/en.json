@@ -260,7 +260,8 @@
     "governance": {
       "actionComposer": {
         "customItem": {
-          "ADD_CONTRACT": "Add new address"
+          "ADD_CONTRACT": "Add new address",
+          "RAW_CALLDATA": "Enter raw calldata"
         },
         "nativeGroup": {
           "OSX": "DAO"

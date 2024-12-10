@@ -4,7 +4,7 @@ import { TransactionStatus, type ITransactionStatusStepMeta } from '@/shared/com
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, Dialog, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, Dialog, Heading, invariant, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSmartContractAbi, type IGetAbiUrlParams, type ISmartContractAbi } from '../../api/smartContractService';
@@ -98,6 +98,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         updateAbi(smartContractAbi);
     }, [updateAbi, smartContractAbi]);
 
+    const contractName = smartContractAbi?.name ?? addressUtils.truncateAddress(smartContractValue?.address);
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
 
     return (
@@ -117,6 +118,9 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                 />
                 {smartContractValue?.address != null && (
                     <TransactionStatus.Container steps={verificationSteps}>
+                        <Heading size="h4" className="truncate">
+                            {contractName}
+                        </Heading>
                         {verificationSteps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}
