@@ -1,8 +1,10 @@
-import type {
-    ICreateProcessFormBody,
-    ICreateProcessFormData,
-    ICreateProcessFormStage,
-    ITokenVotingMember,
+import {
+    ProposalCreationMode,
+    type ICreateProcessFormBody,
+    type ICreateProcessFormData,
+    type ICreateProcessFormProposalCreationBody,
+    type ICreateProcessFormStage,
+    type ITokenVotingMember,
 } from '@/modules/governance/components/createProcessForm';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
@@ -176,17 +178,24 @@ class PrepareProcessDialogUtils {
         daoAddress: Hex,
         processMetadata: IPrepareProcessMetadata,
     ) => {
+        const { stages, permissions } = values;
+        const { proposalCreationBodies, proposalCreationMode } = permissions;
+
         const sppMetadata = transactionUtils.cidToHex(processMetadata.spp);
         const pluginsMetadata = processMetadata.plugins.map((cid) => transactionUtils.cidToHex(cid));
 
         const sppInstallData = this.buildPrepareSppInstallData(sppMetadata, daoAddress);
-        const pluginsInstallData = values.stages.map((stage) => {
+        const pluginsInstallData = stages.map((stage) => {
             const installData = stage.bodies.map((body) => {
                 const pluginMetadata = pluginsMetadata.shift()!;
+                const permissionSettings =
+                    proposalCreationMode === ProposalCreationMode.ANY_WALLET
+                        ? undefined
+                        : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.id);
 
                 return body.governanceType === 'multisig'
-                    ? this.buildPrepareMultisigInstallData(body, pluginMetadata, daoAddress)
-                    : this.buildPrepareTokenInstallData(body, pluginMetadata, daoAddress, stage);
+                    ? this.buildPrepareMultisigInstallData(body, pluginMetadata, daoAddress, permissionSettings)
+                    : this.buildPrepareTokenInstallData(body, pluginMetadata, daoAddress, stage, permissionSettings);
             });
 
             return installData;
@@ -208,12 +217,17 @@ class PrepareProcessDialogUtils {
         return transactionData;
     };
 
-    private buildPrepareMultisigInstallData = (body: ICreateProcessFormBody, metadataCid: string, daoAddress: Hex) => {
+    private buildPrepareMultisigInstallData = (
+        body: ICreateProcessFormBody,
+        metadataCid: string,
+        daoAddress: Hex,
+        permissionSettings?: ICreateProcessFormProposalCreationBody,
+    ) => {
         const { members, multisigThreshold } = body;
 
         const memberAddresses = members.map((member) => member.address as Hex);
         const multisigTarget = { target: this.globalExecutor, operation: 1 };
-        const pluginSettings = { onlyListed: true, minApprovals: multisigThreshold };
+        const pluginSettings = { onlyListed: permissionSettings != null, minApprovals: multisigThreshold };
 
         const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [
             memberAddresses,
@@ -232,8 +246,10 @@ class PrepareProcessDialogUtils {
         metadataCid: string,
         daoAddress: Hex,
         stage: ICreateProcessFormStage,
+        permissionSettings?: ICreateProcessFormProposalCreationBody,
     ) => {
         const { voteChange, supportThreshold, minimumParticipation, tokenName, tokenSymbol, members } = body;
+        const { minVotingPower } = permissionSettings ?? {};
 
         const votingMode = voteChange
             ? DaoTokenVotingMode.VOTE_REPLACEMENT
@@ -241,12 +257,13 @@ class PrepareProcessDialogUtils {
               ? DaoTokenVotingMode.EARLY_EXECUTION
               : DaoTokenVotingMode.STANDARD;
 
+        const minProposerVotingPower = minVotingPower ? parseUnits(minVotingPower, 18) : BigInt(0);
         const votingSettings = {
             votingMode,
             supportThreshold: supportThreshold * 10 ** 4,
             minParticipation: minimumParticipation * 10 ** 4,
             minDuration: dateUtils.durationToSeconds(stage.votingPeriod),
-            minProposerVotingPower: BigInt(0),
+            minProposerVotingPower: minProposerVotingPower,
         };
 
         const tokenSettings = { addr: zeroAddress, name: tokenName, symbol: tokenSymbol };

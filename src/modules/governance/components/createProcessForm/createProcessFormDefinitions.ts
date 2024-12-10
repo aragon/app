@@ -2,6 +2,11 @@ import type { IResourcesInputResource } from '@/shared/components/forms/resource
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
+export enum ProposalCreationMode {
+    LISTED_BODIES = 'LISTED_BODIES',
+    ANY_WALLET = 'ANY_WALLET',
+}
+
 export interface ICreateProcessFormData {
     /**
      * Name of the process.
@@ -119,11 +124,11 @@ export interface ICreateProcessFormBody {
 
 export interface ICreateProcessFormPermissions {
     /**
-     * Defines who can create proposals on this process.
+     * Defines who can create proposals on the process.
      */
-    proposalCreation: 'any' | 'bodies';
+    proposalCreationMode: ProposalCreationMode;
     /**
-     * List of bodies that can create proposals.
+     * List of bodies that can create proposals when proposalCreationMode is set to "LISTED_BODIES".
      */
     proposalCreationBodies: ICreateProcessFormProposalCreationBody[];
 }
@@ -132,11 +137,13 @@ export interface ICreateProcessFormProposalCreationBody {
     /**
      * ID of the body.
      */
-    id: string;
+    bodyId: string;
+
+    // Token-specific values
     /**
-     * Settings of the specific body for creating proposals.
+     * Min voting power / balance the user needs to have for creating proposals
      */
-    settings?: Record<string, unknown>;
+    minVotingPower?: string;
 }
 
 export interface ITokenVotingMember extends ICompositeAddress {

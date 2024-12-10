@@ -6,11 +6,12 @@ export interface ICreateProcessPageProps {
     /**
      * DAO page parameters.
      */
-    params: IDaoPageParams;
+    params: Promise<IDaoPageParams>;
 }
 
-export const CreateProcessPage: React.FC<ICreateProcessPageProps> = (props) => {
-    const { id } = props.params;
+export const CreateProcessPage: React.FC<ICreateProcessPageProps> = async (props) => {
+    const { params } = props;
+    const { id } = await params;
 
     return (
         <Page.Container>
