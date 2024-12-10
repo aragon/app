@@ -36,6 +36,13 @@ export interface IBuildTransactionParams {
     metadataCid: string;
 }
 
+export interface IConditionRule {
+    id: number;
+    op: number;
+    value: bigint | string;
+    permissionId: string;
+}
+
 export interface IUpdatePermissionParams {
     where: Hex;
     who: Hex;
@@ -57,6 +64,18 @@ class PublishProcessDialogUtils {
     };
 
     private defaultMaxAdvance = dateUtils.durationToSeconds({ days: 36500, hours: 0, minutes: 0 }); // 10 years
+
+    // Identifiers of rule conditions (see https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L12)
+    private ruleConditionId = {
+        condition: 202,
+        logicOperation: 203,
+    };
+
+    // Operations for conditions (see https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L43)
+    private ruleConditionOperator = {
+        eq: 1,
+        or: 10,
+    };
 
     prepareProposalMetadata = () => {
         const title = 'Apply plugin installation';
@@ -249,6 +268,42 @@ class PublishProcessDialogUtils {
 
         return { to: sppAddress, data: transactionData, value: '0' };
     };
+
+    private buildCreateProposalRuleConditions = (
+        conditionAddresses: string[],
+        conditionRules: IConditionRule[],
+    ): IConditionRule[] => {
+        if (!conditionAddresses.length) {
+            return conditionRules;
+        }
+
+        if (conditionAddresses.length === 1) {
+            return [...conditionRules, this.addressToCondition(conditionAddresses[0])];
+        }
+
+        const conditionAddress = conditionAddresses.pop()!;
+        const { logicOperation } = this.ruleConditionId;
+        const { or } = this.ruleConditionOperator;
+
+        const baseIndex = conditionRules.length * 2;
+        const value = this.encodeLogicalOperator(baseIndex + 1, baseIndex + 2);
+        const newCondition = { id: logicOperation, op: or, value, permissionId: '' };
+
+        return [
+            ...this.buildCreateProposalRuleConditions(conditionAddresses, [...conditionRules, newCondition]),
+            this.addressToCondition(conditionAddress),
+        ];
+    };
+
+    private encodeLogicalOperator = (firstIndex: number, secondIndex: number) =>
+        BigInt(firstIndex) + (BigInt(secondIndex) << BigInt(32));
+
+    private addressToCondition = (address: string): IConditionRule => ({
+        id: this.ruleConditionId.condition,
+        op: this.ruleConditionOperator.eq,
+        value: address,
+        permissionId: '',
+    });
 
     private hashHelpers = (helpers: readonly Hex[]): Hex =>
         keccak256(encodeAbiParameters([{ type: 'address[]' }], [helpers]));
