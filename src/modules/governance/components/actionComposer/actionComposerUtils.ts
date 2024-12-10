@@ -112,7 +112,7 @@ class ActionComposerUtils {
         ...nativeItems,
     ];
 
-        getDefaultActionPluginMetadataItem = (plugin: IDaoPlugin, t: TranslationFunction): IActionComposerItem => {
+    getDefaultActionPluginMetadataItem = (plugin: IDaoPlugin, t: TranslationFunction): IActionComposerItem => {
         const { address } = plugin;
 
         return {
