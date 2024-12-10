@@ -8,12 +8,13 @@ import {
     type IProposalActionUpdatePluginMetadata,
     ProposalActionType,
 } from '../../api/governanceService';
-import type { ISmartContractAbi } from '../../api/smartContractService';
+import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
 import type { IActionComposerItem } from './actionComposer.api';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',
     ADD_CONTRACT = 'ADD_CONTRACT',
+    RAW_CALLDATA = 'RAW_CALLDATA',
 }
 
 export enum ActionGroupId {
@@ -62,27 +63,17 @@ class ActionComposerUtils {
         }));
 
     getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerItem[] => {
-        const customActionItems = abis.map(({ name, address, functions }) =>
-            functions.map(({ name: functionName, stateMutability, parameters }, functionIndex) => ({
-                id: `${address}-${functionName}-${functionIndex.toString()}`,
-                name: functionName,
-                icon: IconType.SLASH,
-                groupId: address,
-                defaultValue: {
-                    type: ActionItemId.CUSTOM_ACTION,
-                    to: address,
-                    from: '',
-                    data: '0x',
-                    value: '0',
-                    inputData: {
-                        function: functionName,
-                        contract: name,
-                        stateMutability,
-                        parameters: parameters.map((parameter) => ({ ...parameter, value: undefined })),
-                    },
-                },
-            })),
-        );
+        const customActionItems = abis.map((abi) => {
+            const { address: contractAddress, functions } = abi;
+
+            const functionActions = functions.map((abiFunction, index) =>
+                this.buildDefaultCustomAction(abi, abiFunction, index),
+            );
+
+            const rawCalldataAction = this.buildDefaultRawCalldataAction(contractAddress, t);
+
+            return [...functionActions, rawCalldataAction];
+        });
 
         return [
             {
@@ -121,7 +112,7 @@ class ActionComposerUtils {
         ...nativeItems,
     ];
 
-    getDefaultActionPluginMetadataItem = (plugin: IDaoPlugin, t: TranslationFunction): IActionComposerItem => {
+        getDefaultActionPluginMetadataItem = (plugin: IDaoPlugin, t: TranslationFunction): IActionComposerItem => {
         const { address } = plugin;
 
         return {
@@ -156,6 +147,45 @@ class ActionComposerUtils {
                     value: '',
                 },
             ],
+        },
+    });
+
+    private buildDefaultCustomAction = (
+        { address: contractAddress, name: contractName }: ISmartContractAbi,
+        { name: functionName, stateMutability, parameters }: ISmartContractAbiFunction,
+        index: number,
+    ): IActionComposerItem => ({
+        id: `${contractAddress}-${functionName}-${index.toString()}`,
+        name: functionName,
+        icon: IconType.SLASH,
+        groupId: contractAddress,
+        defaultValue: {
+            type: ActionItemId.CUSTOM_ACTION,
+            to: contractAddress,
+            from: '',
+            data: '0x',
+            value: '0',
+            inputData: {
+                function: functionName,
+                contract: contractName,
+                stateMutability,
+                parameters: parameters.map((parameter) => ({ ...parameter, value: undefined })),
+            },
+        },
+    });
+
+    private buildDefaultRawCalldataAction = (address: string, t: TranslationFunction): IActionComposerItem => ({
+        id: `${address}-${ActionItemId.RAW_CALLDATA}`,
+        name: t(`app.governance.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
+        icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
+        groupId: address,
+        defaultValue: {
+            type: ActionItemId.RAW_CALLDATA,
+            to: address,
+            from: '',
+            data: '0x',
+            value: '0',
+            inputData: null,
         },
     });
 
