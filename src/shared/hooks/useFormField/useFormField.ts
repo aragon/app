@@ -37,7 +37,10 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         }
 
         const alertMessageKey = `app.shared.formField.error.${error.type}`;
-        const alertValue = error.type === 'min' ? rules?.min?.toString() : rules?.max?.toString();
+        const alertValue =
+            error.type === 'min'
+                ? (rules?.min as number | undefined)?.toString()
+                : (rules?.max as number | undefined)?.toString();
         const alertMessageParams = { name: label ?? name, value: alertValue };
 
         const alertMessage =
