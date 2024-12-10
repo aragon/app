@@ -1,4 +1,4 @@
-import type { IDao, IDaoPluginMetadata } from '@/shared/api/daoService';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
@@ -121,13 +121,30 @@ class ActionComposerUtils {
         ...nativeItems,
     ];
 
-    buildDefaultActionPluginMetadata = (metadata: IDaoPluginMetadata): IProposalActionUpdatePluginMetadata => ({
+    getDefaultActionPluginMetadataItem = (plugin: IDaoPlugin, t: TranslationFunction): IActionComposerItem => {
+        const { address } = plugin;
+
+        return {
+            id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
+            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
+            icon: IconType.SETTINGS,
+            groupId: address,
+            defaultValue: this.buildDefaultActionPluginMetadata(plugin),
+        };
+    };
+
+    private buildDefaultActionPluginMetadata = (plugin: IDaoPlugin): IProposalActionUpdatePluginMetadata => ({
         type: ProposalActionType.METADATA_PLUGIN_UPDATE,
         from: '',
         to: '',
         data: '0x',
         value: '0',
-        proposedMetadata: metadata,
+        proposedMetadata: {
+            name: plugin.name ?? '',
+            processKey: plugin.processKey ?? '',
+            summary: plugin.description,
+            resources: plugin.links,
+        },
         inputData: {
             function: 'setMetadata',
             contract: '',

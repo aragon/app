@@ -1,5 +1,5 @@
-import { type IProposalAction, type ProposalActionType } from '@/modules/governance/api/governanceService';
-import { type IDaoPluginMetadata } from '@/shared/api/daoService';
+import type { IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
+import type { IDaoPluginMetadata } from '@/shared/types';
 
 export interface IProposalActionUpdatePluginMetadata
     extends Omit<IProposalAction, 'type' | 'proposedMetadata' | 'existingMetadata'> {

@@ -6,7 +6,6 @@ import { NumberProgressInput } from '@/shared/components/forms/numberProgressInp
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';

@@ -24,6 +24,7 @@ import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../createProposalFormProvider';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
+import { UpdatePluginMetadataAction } from './proposalActions/updatePluginMetadataAction';
 
 export interface ICreateProposalFormActionsProps {
     /**
@@ -35,6 +36,7 @@ export interface ICreateProposalFormActionsProps {
 const coreCustomActionComponents = {
     [ProposalActionType.TRANSFER]: TransferAssetAction as ProposalActionComponent,
     [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction as ProposalActionComponent,
+    [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction as ProposalActionComponent,
 };
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {

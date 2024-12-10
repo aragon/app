@@ -1,11 +1,9 @@
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
-import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import { type IDaoPlugin } from '@/shared/api/daoService';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { type ISppPluginSettings } from '../../types';
 
 export interface IGetSppActionsProps {
@@ -36,25 +34,11 @@ class SppActionUtils {
             ],
             items: [
                 {
-                    id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
-                    name: t(`app.plugins.spp.sppActions.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
-                    icon: IconType.SETTINGS,
-                    groupId: address,
-                    defaultValue: {
-                        ...actionComposerUtils.buildDefaultActionPluginMetadata({
-                            name: plugin.name ?? '',
-                            summary: plugin.description,
-                            resources: plugin.links,
-                            key: plugin.processKey ?? '',
-                        }),
-                        to: address,
-                    },
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
                 },
             ],
-            components: {
-                [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
-            },
+            components: {},
         };
     };
 }

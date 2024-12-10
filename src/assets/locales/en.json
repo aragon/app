@@ -266,6 +266,7 @@
           "OSX": "DAO"
         },
         "nativeItem": {
+          "MetadataPluginUpdate": "Update metadata",
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
@@ -585,7 +586,6 @@
       },
       "multisig": {
         "multisigActions": {
-          "MetadataPluginUpdate": "Update metadata",
           "MultisigAddMembers": "Add Members",
           "MultisigRemoveMembers": "Remove Members",
           "UpdateMultiSigSettings": "Update settings"
@@ -697,9 +697,6 @@
           "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
           "title": "Advance proposal"
         },
-        "sppActions": {
-          "MetadataPluginUpdate": "Update metadata"
-        },
         "sppCreateProposalSettingsForm": {
           "startTime": {
             "helpText": "Define when the first stage should start. If now is selected, the first stage is immediately active after publishing.",
@@ -729,7 +726,6 @@
       },
       "token": {
         "tokenActions": {
-          "MetadataPluginUpdate": "Update metadata",
           "Mint": "Mint",
           "UpdateVoteSettings": "Update settings"
         },

@@ -3,11 +3,7 @@ import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
 } from '@/modules/governance/api/governanceService/domain';
-import {
-    useCreateProposalFormContext,
-    type IProposalActionData,
-} from '@/modules/governance/components/createProposalForm';
-import type { IDaoPlugin, IDaoPluginMetadata } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -17,6 +13,9 @@ import { InputText, TextArea, type IProposalActionComponentProps } from '@aragon
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
 import type { IUpdateMetadataFormData } from './updateMetadataFormDefinitions';
+import type { IDaoPluginMetadata } from '@/shared/types';
+import type { IProposalActionData } from '../../../createProposalFormDefinitions';
+import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 
 export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdatePluginMetadata, 'proposedMetadata'> {
     /**
@@ -25,10 +24,8 @@ export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdateP
     proposedMetadata: IDaoPluginMetadata;
 }
 
-// TODO: fix any type
 export interface IUpdatePluginMetadataActionProps
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<any>>> {}
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin>> {}
 
 const nameMaxLength = 40;
 const keyMaxLength = 5;
@@ -65,7 +62,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
         defaultValue: '',
     });
 
-    const keyField = useFormField<IUpdateMetadataFormData, 'key'>('key', {
+    const keyField = useFormField<IUpdateMetadataFormData, 'processKey'>('processKey', {
         label: t('app.governance.updatePluginMetadataAction.keyField.label'),
         fieldPrefix: `${actionFieldName}.proposedMetadata`,
         rules: { required: true, maxLength: keyMaxLength },

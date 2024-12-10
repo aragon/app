@@ -1,6 +1,5 @@
-import { ProposalActionType, type IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
-import { UpdatePluginMetadataAction } from '@/modules/governance/components/createProposalForm/createProposalFormActions/proposalActions/updatePluginMetadataAction';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
@@ -83,26 +82,13 @@ class TokenActionUtils {
                     meta: plugin,
                 },
                 {
-                    id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
-                    name: t(`app.plugins.token.tokenActions.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
-                    icon: IconType.SETTINGS,
-                    groupId: address,
-                    defaultValue: {
-                        ...actionComposerUtils.buildDefaultActionPluginMetadata({
-                            name: plugin.name ?? '',
-                            summary: plugin.description,
-                            resources: plugin.links,
-                            key: plugin.processKey ?? '',
-                        }),
-                        to: address,
-                    },
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
                 },
             ],
             components: {
                 [TokenProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
                 [TokenProposalActionType.MINT]: TokenMintTokensAction,
-                [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
             },
         };
     };
