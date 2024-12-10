@@ -127,13 +127,13 @@ class ActionComposerUtils {
     private buildDefaultActionPluginMetadata = (plugin: IDaoPlugin): IProposalActionUpdatePluginMetadata => ({
         type: ProposalActionType.METADATA_PLUGIN_UPDATE,
         from: '',
-        to: '',
+        to: plugin.address,
         data: '0x',
         value: '0',
         proposedMetadata: {
             name: plugin.name ?? '',
             processKey: plugin.processKey ?? '',
-            summary: plugin.description,
+            summary: plugin.description ?? '',
             resources: plugin.links,
         },
         inputData: {

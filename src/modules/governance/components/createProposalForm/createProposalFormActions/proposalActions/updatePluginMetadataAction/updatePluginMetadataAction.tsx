@@ -80,8 +80,8 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
 
     const prepareAction = useCallback(
         async (action: IProposalAction) => {
-            const { name, summary, resources } = (action as IUpdatePluginMetadataAction).proposedMetadata;
-            const proposedMetadata = { name, summary, links: resources };
+            const { name, summary, resources, processKey } = (action as IUpdatePluginMetadataAction).proposedMetadata;
+            const proposedMetadata = { name, description: summary, links: resources, processKey };
 
             const ipfsResult = await pinJsonAsync({ body: proposedMetadata });
             const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
