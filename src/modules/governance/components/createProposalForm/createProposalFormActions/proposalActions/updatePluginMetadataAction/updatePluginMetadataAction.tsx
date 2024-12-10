@@ -8,14 +8,14 @@ import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import type { IDaoPluginMetadata } from '@/shared/types';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { InputText, TextArea, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
-import type { IUpdateMetadataFormData } from './updateMetadataFormDefinitions';
-import type { IDaoPluginMetadata } from '@/shared/types';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
+import type { IUpdateMetadataFormData } from './updateMetadataFormDefinitions';
 
 export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdatePluginMetadata, 'proposedMetadata'> {
     /**
