@@ -3,7 +3,7 @@ import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import { SppProposalType, type ISppProposal, type ISppStage, type ISppSubProposal } from '../../types';
+import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
@@ -55,7 +55,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const isSingleBody = bodyList.length === 1;
 
     const canVote = processedStageStatus === ProposalVotingStatus.ACTIVE;
-    const isVeto = stage.plugins[0].proposalType === SppProposalType.VETO;
+    const isVeto = sppStageUtils.isVeto(stage);
 
     const getBodySubProposal = (address: string) =>
         subProposals?.find((subProposal) => subProposal.pluginAddress === address);
@@ -85,7 +85,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         </ProposalVoting.BodySummaryListItem>
                     ))}
                 </ProposalVoting.BodySummaryList>
-                <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} isVeto={isVeto} />
+                <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
                 <ProposalVoting.BodyContent

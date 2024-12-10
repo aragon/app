@@ -12,22 +12,19 @@ export interface ISppVotingTerminalBodySummaryFooterProps {
      * Stage of proposal
      */
     stage: ISppStage;
-    /**
-     * Flag indicating if the vote is a veto.
-     */
-    isVeto: boolean;
 }
 
 export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBodySummaryFooterProps> = (props) => {
-    const { stage, proposal, isVeto } = props;
+    const { stage, proposal } = props;
 
     const { t } = useTranslations();
 
+    const isVeto = sppStageUtils.isVeto(stage);
     const actionType = isVeto ? 'veto' : 'approve';
     const threshold = isVeto ? stage.vetoThreshold : stage.approvalThreshold;
     const entityType = threshold > 1 ? 'bodies' : 'body';
 
-    if (sppStageUtils.isApprovalReached(proposal, stage)) {
+    if (sppStageUtils.isApprovalReached(proposal, stage) && !isVeto) {
         return <SppStageStatus proposal={proposal} stage={stage} />;
     }
 
