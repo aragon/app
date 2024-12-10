@@ -66,16 +66,9 @@ class ActionComposerUtils {
                 this.buildDefaultCustomAction(abi, abiFunction, index),
             );
 
-            return [
-                ...functionActions,
-                {
-                    id: `${contractAddress}-${ActionItemId.RAW_CALLDATA}`,
-                    name: t(`app.governance.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
-                    icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
-                    groupId: contractAddress,
-                    defaultValue: this.buildDefaultRawCalldataAction(contractAddress),
-                },
-            ];
+            const rawCalldataAction = this.buildDefaultRawCalldataAction(contractAddress, t);
+
+            return [...functionActions, rawCalldataAction];
         });
 
         return [
@@ -119,7 +112,7 @@ class ActionComposerUtils {
         { address: contractAddress, name: contractName }: ISmartContractAbi,
         { name: functionName, stateMutability, parameters }: ISmartContractAbiFunction,
         index: number,
-    ) => ({
+    ): IActionComposerItem => ({
         id: `${contractAddress}-${functionName}-${index.toString()}`,
         name: functionName,
         icon: IconType.SLASH,
@@ -139,13 +132,19 @@ class ActionComposerUtils {
         },
     });
 
-    private buildDefaultRawCalldataAction = (address: string): IProposalAction => ({
-        type: ActionItemId.RAW_CALLDATA,
-        to: address,
-        from: '',
-        data: '0x',
-        value: '0',
-        inputData: null,
+    private buildDefaultRawCalldataAction = (address: string, t: TranslationFunction): IActionComposerItem => ({
+        id: `${address}-${ActionItemId.RAW_CALLDATA}`,
+        name: t(`app.governance.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
+        icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
+        groupId: address,
+        defaultValue: {
+            type: ActionItemId.RAW_CALLDATA,
+            to: address,
+            from: '',
+            data: '0x',
+            value: '0',
+            inputData: null,
+        },
     });
 
     private buildDefaultActionTransfer = (): IProposalAction => ({
