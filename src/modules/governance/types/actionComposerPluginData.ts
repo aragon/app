@@ -21,5 +21,5 @@ export interface IActionComposerPluginData<TMeta = undefined> {
     /**
      * Custom action components.
      */
-    components: Record<string, ActionComposerPluginComponent<TMeta>>;
+    components?: Record<string, ActionComposerPluginComponent<TMeta>>;
 }

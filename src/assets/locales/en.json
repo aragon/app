@@ -506,11 +506,6 @@
         "title": "Create proposal"
       },
       "updatePluginMetadataAction": {
-        "keyField": {
-          "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
-          "label": "Key",
-          "placeholder": "CRE"
-        },
         "nameField": {
           "helpText": "Give your {{type}} a name, so member can differentiate it.",
           "label": "Name",
@@ -518,10 +513,15 @@
         },
         "plugin": "plugin",
         "process": "governance process",
+        "processKeyField": {
+          "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
+          "label": "Key",
+          "placeholder": "CRE"
+        },
         "summaryField": {
           "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
           "label": "Summary",
-          "placeholder": "Core proposals are the primary governance process of Patito DAO. Grants and protocol upgrades both require proposals to pass in a Core  proposal process."
+          "placeholder": "Core proposals are the primary governance process of a DAO. Grants and protocol upgrades both require proposals to pass in a Core proposal process."
         }
       },
       "verifySmartContractDialog": {

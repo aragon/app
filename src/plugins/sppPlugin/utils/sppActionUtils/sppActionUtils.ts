@@ -38,7 +38,6 @@ class SppActionUtils {
                     meta: plugin,
                 },
             ],
-            components: {},
         };
     };
 }

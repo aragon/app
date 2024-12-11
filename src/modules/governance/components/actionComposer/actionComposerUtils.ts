@@ -136,6 +136,12 @@ class ActionComposerUtils {
             summary: plugin.description ?? '',
             resources: plugin.links,
         },
+        existingMetadata: {
+            name: plugin.name ?? '',
+            processKey: plugin.processKey ?? '',
+            summary: plugin.description ?? '',
+            resources: plugin.links,
+        },
         inputData: {
             function: 'setMetadata',
             contract: '',
