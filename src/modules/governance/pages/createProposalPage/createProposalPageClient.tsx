@@ -1,5 +1,6 @@
 'use client';
 
+import { useConnectedParticipantGuard } from '@/modules/governance/hooks/useConnectedParticpantGuard/useConnectedParticipantGuard';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -9,6 +10,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAccount } from 'wagmi';
 import type { ISmartContractAbi } from '../../api/smartContractService';
 import {
     CreateProposalForm,
@@ -19,7 +21,6 @@ import {
 import { GovernanceDialog } from '../../constants/moduleDialogs';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
-import { usePermissionCheckGuard } from '../../hooks/usePermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
@@ -41,6 +42,8 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
     const router = useRouter();
 
+    const { address } = useAccount();
+
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
@@ -50,9 +53,14 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const onPermissionCheckError = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
 
-    const { check: checkPermissions, result: hasPermissions } = usePermissionCheckGuard({
+    const slotParams = {
+        plugin: plugin![0],
+        daoId,
         slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
-        params: { plugin: plugin![0] },
+    };
+    const { check: checkParticipant, result: canParticipate } = useConnectedParticipantGuard({
+        params: slotParams,
+        slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
         onError: onPermissionCheckError,
     });
 
@@ -96,14 +104,14 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         [t],
     );
 
-    const [permissionChecked, setPermissionChecked] = useState(false);
+    const [participantChecked, setParticipantChecked] = useState(false);
 
     useEffect(() => {
-        if (!permissionChecked && !hasPermissions) {
-            checkPermissions();
-            setPermissionChecked(true); // Set permissionChecked to true after checking
+        if (!participantChecked && !canParticipate) {
+            checkParticipant();
+            setParticipantChecked(true);
         }
-    }, [checkPermissions, hasPermissions, permissionChecked]);
+    }, [canParticipate, checkParticipant, participantChecked, address]);
 
     return (
         <Page.Main fullWidth={true}>

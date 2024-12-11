@@ -1,20 +1,17 @@
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
-import { useCallback } from 'react';
-import { useAccount } from 'wagmi';
+import { useCallback, useState } from 'react';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
 
-export interface IUsePermissionCheckBaseParams {
+export interface IUsePermissionCheckGuardParams<TSlotParams extends IUseConnectedParticipantGuardBaseParams> {
     /**
-     * Plugin to check permissions for.
+     * Callback called when user has permissions
      */
-    plugin: ITabComponentPlugin<IDaoPlugin>;
-}
-
-export interface IUsePermissionCheckGuard<TSlotParams extends IUsePermissionCheckBaseParams> {
+    onSuccess?: () => void;
+    /**
+     * Callback called when user does not have permissions.
+     */
+    onError?: () => void;
     /**
      * Parameters to be forwarded to the plugin-specific slot function.
      */
@@ -23,77 +20,35 @@ export interface IUsePermissionCheckGuard<TSlotParams extends IUsePermissionChec
      * Slot ID to use for checking the user permissions.
      */
     slotId: string;
-    /**
-     * Callback called when the user has the necessary permissions.
-     */
-    onSuccess?: () => void;
-    /**
-     * Callback called when the user does not have the necessary permissions.
-     */
-    onError?: () => void;
 }
 
-export const usePermissionCheckGuard = <TSlotParams extends IUsePermissionCheckBaseParams>(
-    params: IUsePermissionCheckGuard<TSlotParams>,
+export const usePermissionCheckGuard = <TSlotParams extends IUseConnectedParticipantGuardBaseParams>(
+    params: IUsePermissionCheckGuardParams<TSlotParams>,
 ) => {
-    const { params: slotParams, slotId, onSuccess, onError } = params;
-    const { plugin } = slotParams;
+    const { onSuccess, onError, params: slotParams, slotId } = params;
 
-    const { address } = useAccount();
+    const [hasPermissions, setHasPermissions] = useState<boolean | null>(null);
 
     const { open } = useDialogContext();
 
-    const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
-        onSuccess: () => {
-            if (onSuccess) {
-                checkProposalCreationPermissions();
+    const updatePermissions = useCallback(
+        (permissions: boolean) => {
+            setHasPermissions(permissions);
+            if (permissions && onSuccess) {
                 onSuccess();
-            }
-        },
-        onError: () => {
-            if (onError) {
+            } else if (!permissions && onError) {
                 onError();
             }
         },
-    });
-
-    const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.meta.address };
-    const { data: isMember } = useMemberExists(
-        {
-            urlParams: memberExistsParams,
-        },
-        { enabled: isConnected && !!plugin.meta.address },
+        [onSuccess, onError],
     );
 
-    const checkProposalCreationPermissions = useCallback(() => {
-        if (!isMember) {
-            open(GovernanceDialog.PERMISSION_CHECK, {
-                params: { slotId, onError, plugin },
-            });
-            onError?.();
-            return false;
-        }
+    const checkPermission = useCallback(() => {
+        const dialogParams = { slotParams, slotId, onError, onSuccess, updatePermissions };
+        open(GovernanceDialog.PERMISSION_CHECK, {
+            params: dialogParams,
+        });
+    }, [onError, onSuccess, open, slotParams, slotId, updatePermissions]);
 
-        return true;
-    }, [isMember, open, slotId, onError, plugin]);
-
-    const checkPermissions = useCallback(() => {
-        if (!isConnected) {
-            checkWalletConnected();
-            return false;
-        }
-
-        if (!isMember) {
-            open(GovernanceDialog.PERMISSION_CHECK, {
-                params: { slotId, slotParams, onError, plugin },
-            });
-
-            onError?.();
-            return false;
-        }
-
-        return true;
-    }, [checkWalletConnected, isConnected, isMember, onError, open, slotId, plugin, slotParams]);
-
-    return { check: checkPermissions, result: isMember };
+    return { check: checkPermission, result: hasPermissions, updatePermissions };
 };

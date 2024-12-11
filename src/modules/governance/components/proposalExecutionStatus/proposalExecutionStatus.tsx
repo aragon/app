@@ -1,4 +1,4 @@
-import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -50,7 +50,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
 
     const openTransactionDialog = () => {
         const params: IExecuteDialogParams = { daoId, proposal, status: proposalStatus };
-        open(GovernanceDialogs.EXECUTE, { params });
+        open(GovernanceDialog.EXECUTE, { params });
     };
 
     const buttonConfigs: Partial<Record<ProposalStatus, IButtonProps>> = {
