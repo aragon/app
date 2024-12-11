@@ -1,5 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { MultisigCreateProposalRequirements } from '@/plugins/multisigPlugin/components/multisigCreateProposalRequirements';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 import { MultisigGovernanceInfo } from './components/multisigGovernanceInfo';
@@ -81,6 +82,11 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY,
             pluginId: plugin.id,
             component: MultisigProposalVotingSummary,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
+            pluginId: plugin.id,
+            component: MultisigCreateProposalRequirements,
         })
 
         // Settings module slots

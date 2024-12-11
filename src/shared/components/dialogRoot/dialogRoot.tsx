@@ -18,8 +18,21 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
     const isOpen = location != null;
     const activeDialog = location != null ? dialogs[location.id] : undefined;
 
+    const { disableOutsideClick, onClose } = location ?? {};
+
+    const handleInteractOutside = (event: Event) => {
+        if (disableOutsideClick) {
+            event.preventDefault();
+        }
+    };
+
+    const handleOpenChange = () => {
+        const closeFunction = onClose ?? close;
+        closeFunction();
+    };
+
     return (
-        <Dialog.Root {...props} open={isOpen} onOpenChange={close} useFocusTrap={activeDialog?.useFocusTrap}>
+        <Dialog.Root {...props} open={isOpen} onOpenChange={handleOpenChange} onInteractOutside={handleInteractOutside}>
             {activeDialog && (
                 <>
                     <DialogRootHiddenElement labelKey={activeDialog.title} type="title" />

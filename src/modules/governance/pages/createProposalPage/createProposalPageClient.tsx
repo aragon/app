@@ -1,11 +1,14 @@
 'use client';
 
+import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ISmartContractAbi } from '../../api/smartContractService';
 import {
     CreateProposalForm,
@@ -13,14 +16,16 @@ import {
     type PrepareProposalActionFunction,
     type PrepareProposalActionMap,
 } from '../../components/createProposalForm';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
+import { usePermissionCheckGuard } from '../../hooks/usePermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientProps {
     /**
-     * ID of the current DAO.
+     * ID of the DAO to create a proposal for.
      */
     daoId: string;
     /**
@@ -32,8 +37,24 @@ export interface ICreateProposalPageClientProps {
 export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = (props) => {
     const { daoId, pluginAddress } = props;
 
-    const { open } = useDialogContext();
     const { t } = useTranslations();
+    const { open } = useDialogContext();
+    const router = useRouter();
+
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const plugin = useDaoPlugins({ daoId, pluginAddress });
+
+    const proposalsUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${dao!.id}/proposals`;
+
+    const onPermissionCheckError = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
+
+    const { check: checkPermissions, result: hasPermissions } = usePermissionCheckGuard({
+        slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
+        params: { plugin: plugin![0] },
+        onError: onPermissionCheckError,
+    });
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
     const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);
@@ -58,7 +79,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
-        open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
+        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };
 
     const contextValues = useMemo(
@@ -74,6 +95,15 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
             })),
         [t],
     );
+
+    const [permissionChecked, setPermissionChecked] = useState(false);
+
+    useEffect(() => {
+        if (!permissionChecked && !hasPermissions) {
+            checkPermissions();
+            setPermissionChecked(true); // Set permissionChecked to true after checking
+        }
+    }, [checkPermissions, hasPermissions, permissionChecked]);
 
     return (
         <Page.Main fullWidth={true}>

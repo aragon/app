@@ -1,7 +1,9 @@
 'use client';
 
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -11,7 +13,7 @@ import { useState } from 'react';
 import { DaoGovernanceInfo } from '../../../settings/components/daoGovernanceInfo';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/moduleDialogs';
 import type { ISelectPluginDialogParams } from '../../dialogs/selectPluginDialog';
 
 export interface IDaoProposalsPageClientProps {
@@ -23,16 +25,18 @@ export interface IDaoProposalsPageClientProps {
 
 export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (props) => {
     const { initialParams } = props;
-
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    // const router = useRouter();
 
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
     const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
 
-    const buildCreateProposalUrl = (plugin: IDaoPlugin) => `/dao/${daoId}/create/${plugin.address}/proposal`;
+    const buildCreateProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
+        `/dao/${daoId}/create/${plugin.address}/proposal`;
+    const createProposalUrl = buildCreateProposalUrl(selectedPlugin.meta);
 
     const openSelectPluginDialog = () => {
         const params: ISelectPluginDialogParams = {
@@ -40,19 +44,30 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
             buildSelectedPluginHref: buildCreateProposalUrl,
             initialPlugin: selectedPlugin,
         };
-        open(GovernanceDialogs.SELECT_PLUGIN, { params });
+        open(GovernanceDialog.SELECT_PLUGIN, { params });
     };
+
+    const { check: checkPermissions, result: hasPermissions } = usePermissionCheckGuard({
+        slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
+        params: { plugin: selectedPlugin },
+    });
 
     const actionProps =
         processPlugins.length > 1
             ? { onClick: openSelectPluginDialog }
-            : { href: buildCreateProposalUrl(selectedPlugin.meta) };
+            : {
+                  onClick: hasPermissions ? undefined : checkPermissions,
+                  href: hasPermissions ? createProposalUrl : undefined,
+              };
 
     return (
         <>
             <Page.Main
                 title={t('app.governance.daoProposalsPage.main.title')}
-                action={{ label: t('app.governance.daoProposalsPage.main.action'), ...actionProps }}
+                action={{
+                    label: t('app.governance.daoProposalsPage.main.action'),
+                    ...actionProps,
+                }}
             >
                 <DaoProposalList.Container
                     initialParams={initialParams}
