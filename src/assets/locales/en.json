@@ -271,6 +271,7 @@
           "Transfer": "Transfer"
         },
         "placeholder": "Filter by action, contract name or address",
+        "rawCalldataFunction": "Unknown",
         "selectItem": "Add action"
       },
 
