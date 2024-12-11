@@ -21,14 +21,17 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
 
     const minVotingPowerField = useFormField<ICreateProcessFormProposalCreationBody, 'minVotingPower'>(
         'minVotingPower',
-        { fieldPrefix, defaultValue: '1' },
+        {
+            fieldPrefix,
+            defaultValue: '1',
+            label: t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.label'),
+        },
     );
 
     return (
-        <button className="text-left" onClick={(e) => e.preventDefault()}>
+        <button className="w-full text-left" onClick={(e) => e.preventDefault()}>
             <InputNumber
                 prefix="≥"
-                label={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.label')}
                 helpText={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
                 placeholder={t('app.governance.createProcessForm.permissions.tokenMinRequirementInput.placeholder')}
                 min={0}
