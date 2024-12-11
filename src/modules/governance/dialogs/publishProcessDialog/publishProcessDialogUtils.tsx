@@ -225,6 +225,8 @@ class PublishProcessDialogUtils {
         const [sppAddress, ...bodyAddresses] = pluginAddresses;
 
         const processedStages = stages.map((stage) => {
+            const isTimelockStage = stage.type === 'timelock';
+
             const bodies = stage.bodies.map(() => {
                 const pluginAddress = bodyAddresses.shift()!;
 
@@ -236,7 +238,9 @@ class PublishProcessDialogUtils {
                 };
             });
 
-            const voteDuration = dateUtils.durationToSeconds(stage.votingPeriod);
+            const votingPeriod = dateUtils.durationToSeconds(stage.votingPeriod);
+
+            const voteDuration = isTimelockStage ? BigInt(0) : votingPeriod;
 
             const maxAdvance =
                 stage.stageExpiration != null
@@ -245,11 +249,11 @@ class PublishProcessDialogUtils {
 
             return {
                 bodies,
-                minAdvance: stage.earlyStageAdvance ? BigInt(0) : dateUtils.durationToSeconds(stage.votingPeriod),
+                minAdvance: stage.earlyStageAdvance ? BigInt(0) : votingPeriod,
                 maxAdvance: maxAdvance ?? this.defaultMaxAdvance,
                 voteDuration,
                 approvalThreshold: stage.type === 'normal' ? stage.requiredApprovals : 0,
-                vetoThreshold: stage.type === 'normal' ? 0 : stage.requiredApprovals,
+                vetoThreshold: stage.type === 'optimistic' ? stage.requiredApprovals : 0,
                 cancelable: false,
                 editable: false,
             };

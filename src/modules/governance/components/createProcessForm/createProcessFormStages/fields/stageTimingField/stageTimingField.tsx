@@ -12,18 +12,21 @@ export interface IStageTimingFieldProps {
      */
     stageFieldName: string;
     /**
-     * Defines if current stage is optimistic or not.
+     * Type of the stage (normal, optimistic, timelock).
      */
-    isOptimisticStage: boolean;
+    stageType: ICreateProcessFormStage['type'];
 }
 
 export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
-    const { stageFieldName, isOptimisticStage } = props;
+    const { stageFieldName, stageType } = props;
 
     const { t } = useTranslations();
     const inputId = useId();
 
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
+
+    const isOptimisticStage = stageType === 'optimistic';
+    const isTimelockStage = stageType === 'timelock';
 
     const votingPeriod = useWatch<Record<string, ICreateProcessFormStage['votingPeriod']>>({
         name: `${stageFieldName}.votingPeriod`,
@@ -59,6 +62,10 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
         return units.map((unit) => `${unit.value.toString()} ${unit.label}`).join(', ');
     };
 
+    const periodLabel = isTimelockStage
+        ? t('app.governance.createProcessForm.stage.timing.summary.timelockPeriod')
+        : t('app.governance.createProcessForm.stage.timing.summary.votingPeriod');
+
     return (
         <InputContainer
             id={inputId}
@@ -68,10 +75,8 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
             helpText={t('app.governance.createProcessForm.stage.timing.helpText')}
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                <DefinitionList.Item term={t('app.governance.createProcessForm.stage.timing.summary.votingPeriod')}>
-                    {formatDuration(votingPeriod)}
-                </DefinitionList.Item>
-                {!isOptimisticStage && (
+                <DefinitionList.Item term={periodLabel}>{formatDuration(votingPeriod)}</DefinitionList.Item>
+                {!isOptimisticStage && !isTimelockStage && (
                     <DefinitionList.Item term={t('app.governance.createProcessForm.stage.timing.summary.earlyAdvance')}>
                         <Tag
                             className="w-fit"
@@ -100,7 +105,7 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
                 stageFieldName={stageFieldName}
                 isTimingDialogOpen={isTimingDialogOpen}
                 setIsTimingDialogOpen={setIsTimingDialogOpen}
-                isOptimisticStage={isOptimisticStage}
+                stageType={stageType}
             />
         </InputContainer>
     );

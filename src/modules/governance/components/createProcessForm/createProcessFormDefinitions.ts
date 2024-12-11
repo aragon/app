@@ -42,7 +42,7 @@ export interface ICreateProcessFormStage {
     /**
      * Type of the stage.
      */
-    type: 'normal' | 'optimistic';
+    type: 'normal' | 'optimistic' | 'timelock';
     /**
      * The period of time the stage is open for voting.
      */
