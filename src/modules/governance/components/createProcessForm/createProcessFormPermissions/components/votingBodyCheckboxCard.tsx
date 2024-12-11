@@ -16,15 +16,14 @@ export interface IVotingBodyCheckboxCardProps {
      */
     checked: boolean;
     /**
-     * Index of the body inside the proposal-creation-bodies form field.
+     * Prefix to be used for the body permission settings.
      */
-    bodyIndex: number;
+    fieldPrefix: string;
 }
 
 export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (props) => {
-    const { body, onChange, checked, bodyIndex } = props;
+    const { body, onChange, checked, fieldPrefix } = props;
 
-    const settingsFieldPrefix = `proposalCreationBodies.${bodyIndex.toString()}`;
     const isTokenVoting = body.governanceType === 'tokenVoting';
 
     const tokenTotalSupply = body.members.reduce(
@@ -39,9 +38,7 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
             onCheckedChange={(isChecked) => onChange(body.id, Boolean(isChecked))}
             checked={checked}
         >
-            {isTokenVoting && (
-                <TokenMinRequirementInput fieldPrefix={settingsFieldPrefix} totalSupply={tokenTotalSupply} />
-            )}
+            {isTokenVoting && <TokenMinRequirementInput fieldPrefix={fieldPrefix} totalSupply={tokenTotalSupply} />}
         </CheckboxCard>
     );
 };

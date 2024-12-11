@@ -4,8 +4,8 @@ import type { TransactionDialogPrepareReturn } from '@/shared/components/transac
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { encodeAbiParameters, encodeFunctionData, type Hex, keccak256, toBytes } from 'viem';
-import type { ICreateProcessFormData } from '../../components/createProcessForm';
+import { encodeAbiParameters, encodeFunctionData, type Hex, keccak256, toBytes, zeroHash } from 'viem';
+import { type ICreateProcessFormData, ProposalCreationMode } from '../../components/createProcessForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
 import { type IPluginSetupData, prepareProcessDialogUtils } from '../prepareProcessDialog/prepareProcessDialogUtils';
@@ -123,44 +123,38 @@ class PublishProcessDialogUtils {
         });
         const applyInstallationActions = this.buildApplyInstallationTransactions(setupData, daoAddress);
         const updateStagesAction = this.buildUpdateStagesTransaction(values, pluginAddresses);
+        const updateCreateProposalRulesAction = this.buildUpdateRulesTransaction(values, setupData);
 
-        const multisigPermissionActions = values.stages
-            .flatMap((stage) => stage.bodies)
-            .map((body, index) => {
-                if (body.governanceType === 'tokenVoting') {
-                    return undefined;
-                }
+        // Skip first setupData item as it is related to the SPP plugin
+        const pluginPermissionActions = setupData.slice(1).map((pluginData) => {
+            const { pluginAddress: bodyAddress } = pluginData;
 
-                // Add one to index as the setupData on first index is the SPP one
-                const { pluginAddress: bodyAddress } = setupData[index + 1];
+            // No one should be able to create proposals directly on sub-plugins
+            const revokePluginCreateProposalAction = this.buildRevokePermissionTransaction({
+                where: bodyAddress,
+                who: this.anyAddress,
+                what: this.permissionIds.createProposalPermission,
+                to: daoAddress,
+            });
 
-                // No one should be able to create proposals directly to multisig
-                const revokeMultisigCreateProposalAction = this.buildRevokePermissionTransaction({
-                    where: bodyAddress,
-                    who: this.anyAddress,
-                    what: this.permissionIds.createProposalPermission,
-                    to: daoAddress,
-                });
+            // Allow SPP to create proposals on sub-plugins
+            const grantSppCreateProposalAction = this.buildGrantPermissionTransaction({
+                where: bodyAddress,
+                who: pluginAddresses[0], // SPP address
+                what: this.permissionIds.createProposalPermission,
+                to: daoAddress,
+            });
 
-                // Allow SPP to create proposals to multisig
-                const grantSppCreateProposalAction = this.buildGrantPermissionTransaction({
-                    where: bodyAddress,
-                    who: pluginAddresses[0], // SPP address
-                    what: this.permissionIds.createProposalPermission,
-                    to: daoAddress,
-                });
+            // Sub-plugin shouldn't have execute permission as SPP will already have it
+            const revokeExecutePermission = this.buildRevokePermissionTransaction({
+                where: daoAddress,
+                who: bodyAddress,
+                what: this.permissionIds.executePermission,
+                to: daoAddress,
+            });
 
-                // Multisig shouldn't have execute permission as SPP will already have it
-                const revokeExecutePermission = this.buildRevokePermissionTransaction({
-                    where: daoAddress,
-                    who: bodyAddress,
-                    what: this.permissionIds.executePermission,
-                    to: daoAddress,
-                });
-
-                return [revokeMultisigCreateProposalAction, grantSppCreateProposalAction, revokeExecutePermission];
-            })
-            .filter((action) => action != null);
+            return [revokePluginCreateProposalAction, grantSppCreateProposalAction, revokeExecutePermission];
+        });
 
         const revokeMultiTargetPermissionAction = this.buildRevokePermissionTransaction({
             where: daoAddress,
@@ -173,9 +167,10 @@ class PublishProcessDialogUtils {
             grantMultiTargetPermissionAction,
             ...applyInstallationActions,
             updateStagesAction,
-            ...multisigPermissionActions.flat(),
+            updateCreateProposalRulesAction,
+            ...pluginPermissionActions.flat(),
             revokeMultiTargetPermissionAction,
-        ];
+        ].filter((action) => action != null);
     };
 
     private buildGrantPermissionTransaction = (params: IUpdatePermissionParams) => {
@@ -269,6 +264,37 @@ class PublishProcessDialogUtils {
         return { to: sppAddress, data: transactionData, value: '0' };
     };
 
+    private buildUpdateRulesTransaction = (values: ICreateProcessFormData, setupData: IPluginSetupData[]) => {
+        const { permissions, stages } = values;
+        const { proposalCreationBodies, proposalCreationMode } = permissions;
+
+        // SPP setup data is the first element of the setupData array and the related rule-condition contract is the
+        // first item of the helpers address array (similarly for the plugin-specific conditions)
+        const sppRuleCondition = setupData[0].preparedSetupData.helpers[0];
+
+        if (proposalCreationMode === ProposalCreationMode.ANY_WALLET) {
+            return undefined;
+        }
+
+        const conditionAddresses = stages
+            .flatMap((stage) => stage.bodies)
+            .reduce<string[]>((current, body, bodyIndex) => {
+                const isBodyAllowed = proposalCreationBodies.find((bodySettings) => bodySettings.bodyId === body.id);
+
+                return isBodyAllowed ? [...current, setupData[bodyIndex + 1].preparedSetupData.helpers[0]] : current;
+            }, []);
+
+        const conditionRules = this.buildCreateProposalRuleConditions(conditionAddresses, []);
+
+        const transactionData = encodeFunctionData({
+            abi: sppPluginAbi,
+            functionName: 'updateRules',
+            args: [conditionRules],
+        });
+
+        return { to: sppRuleCondition, data: transactionData, value: '0' };
+    };
+
     private buildCreateProposalRuleConditions = (
         conditionAddresses: string[],
         conditionRules: IConditionRule[],
@@ -287,7 +313,7 @@ class PublishProcessDialogUtils {
 
         const baseIndex = conditionRules.length * 2;
         const value = this.encodeLogicalOperator(baseIndex + 1, baseIndex + 2);
-        const newCondition = { id: logicOperation, op: or, value, permissionId: '' };
+        const newCondition = { id: logicOperation, op: or, value, permissionId: zeroHash };
 
         return [
             ...this.buildCreateProposalRuleConditions(conditionAddresses, [...conditionRules, newCondition]),
@@ -302,7 +328,7 @@ class PublishProcessDialogUtils {
         id: this.ruleConditionId.condition,
         op: this.ruleConditionOperator.eq,
         value: address,
-        permissionId: '',
+        permissionId: zeroHash,
     });
 
     private hashHelpers = (helpers: readonly Hex[]): Hex =>
