@@ -47,6 +47,14 @@ export interface IPermissionCheckDialogParams<TSlotParams extends IUseConnectedP
      * Callback called when user does not have permissions.
      */
     onError?: () => void;
+    /**
+     * Callback to update the permissions.
+     */
+    updatePermissions: (permissions: boolean) => void;
+    /**
+     * Additional data to be passed to the dialog.
+     */
+    slotParams: TSlotParams;
 }
 
 export interface IPermissionCheckDialogProps<TSlotParams extends IUseConnectedParticipantGuardBaseParams>
@@ -57,7 +65,7 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
 ) => {
     const { params } = props.location;
     const { slotParams, slotId, onSuccess, onError, updatePermissions } = params ?? {};
-    const { plugin, daoId } = slotParams ?? {};
+    const { plugin } = slotParams ?? {};
 
     const { close } = useDialogContext();
 
@@ -67,16 +75,8 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
     >({
         slotId: slotId!,
         pluginId: plugin!.id,
-        params: slotParams,
-    });
-
-    // get the plugin settings
-
-    // get the member settings for the plugin
-
-    // check if the qualifies for the proposal creation requirements
-
-    // return the definition list of terms and definitions as array of objects
+        params: slotParams!,
+    }) ?? { hasPermission: false, settings: [], isLoading: false };
 
     const handleDialogClose = useCallback(() => {
         close();
@@ -85,11 +85,11 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
 
     useEffect(() => {
         if (hasPermission) {
-            updatePermissions(hasPermission);
+            updatePermissions?.(hasPermission);
             onSuccess?.();
             close();
         }
-    }, [hasPermission, onSuccess, close]);
+    }, [hasPermission, onSuccess, close, updatePermissions]);
 
     if (isLoading) {
         return (

@@ -1,14 +1,21 @@
-import { type IMember, useMember } from '@/modules/governance/api/governanceService';
+import { useMember, type IMember } from '@/modules/governance/api/governanceService';
 import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
-import { type ITokenMember } from '@/plugins/tokenPlugin/types';
+import { type ITokenMember, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import { type IDaoPlugin } from '@/shared/api/daoService';
+import { type ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { formatterUtils, numberFormats } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
-export interface ITokenProposalCreationRequirementsParams extends IUseConnectedParticipantGuardBaseParams {}
+export interface ITokenProposalCreationRequirementsParams extends IUseConnectedParticipantGuardBaseParams {
+    /**
+     * Plugin to create the proposal for.
+     */
+    plugin: ITabComponentPlugin<IDaoPlugin<ITokenPluginSettings>>;
+}
 
 const isTokenMember = (member?: IMember): member is ITokenMember =>
     member != null &&
@@ -32,7 +39,7 @@ export const useTokenCreateProposalRequirements = (
 
     const tokenSymbol = plugin.meta.settings.token.symbol;
 
-    const minTokenRequired = `${formattedMinVotingPower} ${tokenSymbol}`;
+    const minTokenRequired = `${formattedMinVotingPower ?? '0'} ${tokenSymbol}`;
 
     const memberUrlParams = { address: address as string };
     const memberQueryParams = { daoId, pluginAddress: plugin.meta.address };
@@ -65,7 +72,7 @@ export const useTokenCreateProposalRequirements = (
         };
     }
 
-    const hasPermission = member.votingPower && BigInt(member.votingPower) >= BigInt(minVotingPower as string);
+    const hasPermission = member.votingPower && BigInt(member.votingPower) >= BigInt(minVotingPower);
 
     if (hasPermission) {
         return {
@@ -101,11 +108,11 @@ export const useTokenCreateProposalRequirements = (
             },
             {
                 term: t('app.plugins.token.tokenProposalCreationRequirements.userVotingPower'),
-                definition: `${formattedInsufficientMin} ${pluginTokenSymbol}`,
+                definition: `${formattedInsufficientMin ?? '0'} ${tokenSymbol}`,
             },
             {
                 term: t('app.plugins.token.tokenProposalCreationRequirements.userTokenBalance'),
-                definition: `${formattedInsufficientBalance} ${pluginTokenSymbol}`,
+                definition: `${formattedInsufficientBalance ?? '0'} ${tokenSymbol}`,
             },
         ],
         isLoading: isLoading,

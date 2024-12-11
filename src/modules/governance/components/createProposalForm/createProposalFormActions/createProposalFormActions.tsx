@@ -1,6 +1,6 @@
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
-import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
@@ -86,7 +86,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const handleVerifySmartContract = () => {
         const params: IVerifySmartContractDialogParams = { network: dao!.network, onSubmit: handleAbiSubmit };
-        open(GovernanceDialogs.VERIFY_SMART_CONTRACT, { params });
+        open(GovernanceDialog.VERIFY_SMART_CONTRACT, { params });
     };
 
     const handleAddCustomAction = () => {

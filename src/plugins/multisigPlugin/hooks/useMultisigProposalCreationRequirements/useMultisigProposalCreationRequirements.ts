@@ -1,11 +1,19 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
 import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
+import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import { type IDaoPlugin } from '@/shared/api/daoService';
+import { type ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
 
-export interface IUseMultisigProposalCreationRequirementsParams extends IUseConnectedParticipantGuardBaseParams {}
+export interface IUseMultisigProposalCreationRequirementsParams extends IUseConnectedParticipantGuardBaseParams {
+    /**
+     * Plugin to create the proposal for.
+     */
+    plugin: ITabComponentPlugin<IDaoPlugin<IMultisigPluginSettings>>;
+}
 
 export const useMultisigProposalCreationRequirements = (
     params: IUseMultisigProposalCreationRequirementsParams,

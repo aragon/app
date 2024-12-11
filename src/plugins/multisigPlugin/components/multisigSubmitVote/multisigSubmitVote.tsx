@@ -1,4 +1,4 @@
-import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -38,7 +38,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const openTransactionDialog = () => {
         const vote = { label: 'approve' as const };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
-        open(GovernanceDialogs.VOTE, { params });
+        open(GovernanceDialog.VOTE, { params });
     };
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
