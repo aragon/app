@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:^1.0.58"
+    "@aragon/gov-ui-kit": "npm:^1.0.59"
     "@floating-ui/react": "npm:^0.27.0"
     "@hookform/devtools": "npm:^4.3.1"
     "@next/bundle-analyzer": "npm:^15.0.4"
@@ -101,9 +101,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:^1.0.58":
-  version: 1.0.58
-  resolution: "@aragon/gov-ui-kit@npm:1.0.58"
+"@aragon/gov-ui-kit@npm:^1.0.59":
+  version: 1.0.59
+  resolution: "@aragon/gov-ui-kit@npm:1.0.59"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -129,7 +129,7 @@ __metadata:
     "@tiptap/starter-kit": "npm:^2.10.0"
     blockies-ts: "npm:^1.0.0"
     classnames: "npm:^2.0.0"
-    framer-motion: "npm:^11.12.0"
+    framer-motion: "npm:^11.13.0"
     luxon: "npm:^3.5.0"
     react-dropzone: "npm:^14.3.0"
     react-imask: "npm:^7.6.1"
@@ -140,11 +140,11 @@ __metadata:
     "@tanstack/react-query": ^5.62.0
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
-    react-hook-form: ^7.53.0
+    react-hook-form: ^7.54.0
     tailwindcss: ^3.4.0
     viem: ^2.21.0
     wagmi: ^2.13.0
-  checksum: 10c0/0a5444c13c571e860e2613a21e8382ebd3ca52904cab4953e43fe7a45953e449518d3208ec847f371714da638ca3cf8f1dcfab5683ba3250e095ed6f945accc9
+  checksum: 10c0/f7560ef5d8dd7b54fe063bd8c21d6f25a1089f9c9c058fcde6d8d4eaa255402777d90e193c4fe17417d0764ad73dc9f7e45923db098a4e6155b4e6961f91f406
   languageName: node
   linkType: hard
 
@@ -8492,17 +8492,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.12.0":
-  version: 11.13.1
-  resolution: "framer-motion@npm:11.13.1"
+"framer-motion@npm:^11.13.0":
+  version: 11.13.5
+  resolution: "framer-motion@npm:11.13.5"
   dependencies:
     motion-dom: "npm:^11.13.0"
     motion-utils: "npm:^11.13.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@emotion/is-prop-valid": "*"
-    react: ^18.0.0
-    react-dom: ^18.0.0
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
@@ -8510,7 +8510,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/ab55da590b9c60141bfaaca3da4dbc0cd6b7021cb9bb697c19c511ca487306c78d6af4fa94cd72016a4ad47a9737206977eba33fe63eec40504d66535e081190
+  checksum: 10c0/b494a399a74074e6d5dc23d14145423862bdd458808d1525d5941f3f8a737b67a443abc8f513ff4ea4b3dda9aacf9e9a8bbe9a15bfed394d1d4060865a849726
   languageName: node
   linkType: hard
 

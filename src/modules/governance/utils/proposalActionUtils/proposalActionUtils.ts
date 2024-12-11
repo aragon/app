@@ -60,19 +60,21 @@ class ProposalActionUtils {
 
         if (isPluginMetadata) {
             const isProcess = action.existingMetadata.processKey !== undefined;
-
+            console.log('fired', isProcess);
             return {
                 ...otherValues,
                 type: GukProposalActionType.UPDATE_PLUGIN_METADATA,
                 proposedMetadata: {
                     ...proposedMetadata,
                     name: proposedMetadata.name ?? '',
+                    description: proposedMetadata.summary ?? '',
                     links: normalizeLinks(proposedMetadata.resources ?? []),
                     processKey: isProcess ? action.proposedMetadata.processKey : undefined,
                 },
                 existingMetadata: {
                     ...existingMetadata,
                     name: existingMetadata.name ?? '',
+                    description: existingMetadata.summary ?? '',
                     links: normalizeLinks(existingMetadata.resources ?? []),
                     processKey: isProcess ? action.existingMetadata.processKey : undefined,
                 },

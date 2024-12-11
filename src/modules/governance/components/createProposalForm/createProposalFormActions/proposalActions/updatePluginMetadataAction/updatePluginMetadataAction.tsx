@@ -63,7 +63,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     });
 
     const processKeyField = useFormField<IUpdatePluginMetadataFormData, 'processKey'>('processKey', {
-        label: t('app.governance.updatePluginMetadataAction.keyField.label'),
+        label: t('app.governance.updatePluginMetadataAction.processKeyField.label'),
         fieldPrefix: `${actionFieldName}.proposedMetadata`,
         rules: { required: true, maxLength: keyMaxLength },
         trimOnBlur: true,
@@ -117,8 +117,8 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
             />
             {isProcess && (
                 <InputText
-                    helpText={t('app.governance.updatePluginMetadataAction.keyField.helpText')}
-                    placeholder={t('app.governance.updatePluginMetadataAction.keyField.placeholder')}
+                    helpText={t('app.governance.updatePluginMetadataAction.processKeyField.helpText')}
+                    placeholder={t('app.governance.updatePluginMetadataAction.processKeyField.placeholder')}
                     maxLength={keyMaxLength}
                     {...processKeyField}
                 />

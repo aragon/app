@@ -124,37 +124,32 @@ class ActionComposerUtils {
         };
     };
 
-    private buildDefaultActionPluginMetadata = (plugin: IDaoPlugin): IProposalActionUpdatePluginMetadata => ({
-        type: ProposalActionType.METADATA_PLUGIN_UPDATE,
-        from: '',
-        to: plugin.address,
-        data: '0x',
-        value: '0',
-        proposedMetadata: {
-            name: plugin.name ?? '',
-            processKey: plugin.processKey ?? '',
-            summary: plugin.description ?? '',
-            resources: plugin.links,
-        },
-        existingMetadata: {
-            name: plugin.name ?? '',
-            processKey: plugin.processKey ?? '',
-            summary: plugin.description ?? '',
-            resources: plugin.links,
-        },
-        inputData: {
-            function: 'setMetadata',
-            contract: '',
-            parameters: [
-                {
-                    name: '_metadata',
-                    type: 'bytes',
-                    notice: 'The IPFS hash of the new metadata object',
-                    value: '',
-                },
-            ],
-        },
-    });
+    private buildDefaultActionPluginMetadata = (plugin: IDaoPlugin): IProposalActionUpdatePluginMetadata => {
+        const { name, processKey, description: summary, links: resources } = plugin;
+        const existingMetadata = { name, processKey, summary, resources };
+
+        return {
+            type: ProposalActionType.METADATA_PLUGIN_UPDATE,
+            from: '',
+            to: plugin.address,
+            data: '0x',
+            value: '0',
+            proposedMetadata: existingMetadata,
+            existingMetadata,
+            inputData: {
+                function: 'setMetadata',
+                contract: '',
+                parameters: [
+                    {
+                        name: '_metadata',
+                        type: 'bytes',
+                        notice: 'The IPFS hash of the new metadata object',
+                        value: '',
+                    },
+                ],
+            },
+        };
+    };
 
     private buildDefaultCustomAction = (
         { address: contractAddress, name: contractName }: ISmartContractAbi,
