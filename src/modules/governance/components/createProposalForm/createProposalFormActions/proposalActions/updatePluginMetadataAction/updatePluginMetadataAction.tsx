@@ -3,6 +3,7 @@ import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
 } from '@/modules/governance/api/governanceService/domain';
+import type { IDaoPluginMetadataObject } from '@/modules/governance/api/governanceService/domain/proposalActionUpdatePluginMetadata';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
@@ -15,7 +16,6 @@ import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 import type { IUpdatePluginMetadataFormData } from './updatePluginMetadataActionDefinitions';
-import type { IDaoPluginMetadataObject } from '@/modules/governance/api/governanceService/domain/proposalActionUpdatePluginMetadata';
 
 export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdatePluginMetadata, 'proposedMetadata'> {
     /**
@@ -85,7 +85,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
                 name,
                 description: summary,
                 links: resources,
-                ...(action.type === ProposalActionType.METADATA_PLUGIN_UPDATE && {
+                ...(isProcess && {
                     processKey: (action as IUpdatePluginMetadataAction).proposedMetadata.processKey,
                 }),
             };
@@ -96,7 +96,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
             const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
             return data;
         },
-        [pinJsonAsync],
+        [pinJsonAsync, isProcess],
     );
 
     useEffect(() => {

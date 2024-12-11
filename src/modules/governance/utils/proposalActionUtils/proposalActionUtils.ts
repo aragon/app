@@ -1,4 +1,5 @@
 import {
+    type IProposalActionUpdatePluginMetadata,
     ProposalActionType,
     type IProposal,
     type IProposalAction,
@@ -47,11 +48,36 @@ class ProposalActionUtils {
         return { ...otherValues, type: GukProposalActionType.WITHDRAW_TOKEN, token, amount: parsedAmount };
     };
 
-    normalizeUpdateMetaDataAction = (action: IProposalActionUpdateMetadata): IGukProposalActionUpdateMetadata => {
+    normalizeUpdateMetaDataAction = (
+        action: IProposalActionUpdateMetadata | IProposalActionUpdatePluginMetadata,
+    ): IGukProposalActionUpdateMetadata => {
         const { type, proposedMetadata, existingMetadata, ...otherValues } = action;
 
         const normalizeLinks = (links: IResource[]): IProposalActionUpdateMetadataDaoMetadataLink[] =>
             links.map(({ name, url }) => ({ label: name, href: url }));
+
+        const isPluginMetadata = type === ProposalActionType.METADATA_PLUGIN_UPDATE;
+
+        if (isPluginMetadata) {
+            const isProcess = action.existingMetadata.processKey !== undefined;
+
+            return {
+                ...otherValues,
+                type: GukProposalActionType.UPDATE_PLUGIN_METADATA,
+                proposedMetadata: {
+                    ...proposedMetadata,
+                    name: proposedMetadata.name ?? '',
+                    links: normalizeLinks(proposedMetadata.resources ?? []),
+                    processKey: isProcess ? action.proposedMetadata.processKey : undefined,
+                },
+                existingMetadata: {
+                    ...existingMetadata,
+                    name: existingMetadata.name ?? '',
+                    links: normalizeLinks(existingMetadata.resources ?? []),
+                    processKey: isProcess ? action.existingMetadata.processKey : undefined,
+                },
+            };
+        }
 
         return {
             ...otherValues,
@@ -74,7 +100,10 @@ class ProposalActionUtils {
     };
 
     isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata => {
-        return action.type === ProposalActionType.METADATA_UPDATE;
+        return (
+            action.type === ProposalActionType.METADATA_UPDATE ||
+            action.type === ProposalActionType.METADATA_PLUGIN_UPDATE
+        );
     };
 }
 
