@@ -34,20 +34,28 @@ export const StageTypeField: React.FC<IStageTypeFieldProps> = (props) => {
 
     return (
         <RadioGroup
-            className="flex flex-col gap-x-4 md:!flex-row"
+            className="flex flex-row gap-x-4"
             onValueChange={handleTypeChange}
             helpText={t('app.governance.createProcessForm.stage.type.helpText')}
             {...stageTypeField}
         >
             <RadioCard
                 className="w-full"
-                label={t('app.governance.createProcessForm.stage.type.normal')}
+                label={t('app.governance.createProcessForm.stage.type.normal.label')}
+                description={t('app.governance.createProcessForm.stage.type.normal.description')}
                 value="normal"
             />
             <RadioCard
                 className="w-full"
-                label={t('app.governance.createProcessForm.stage.type.optimistic')}
+                label={t('app.governance.createProcessForm.stage.type.optimistic.label')}
+                description={t('app.governance.createProcessForm.stage.type.optimistic.description')}
                 value="optimistic"
+            />
+            <RadioCard
+                className="w-full"
+                label={t('app.governance.createProcessForm.stage.type.timelock.label')}
+                description={t('app.governance.createProcessForm.stage.type.timelock')}
+                value="timelock"
             />
         </RadioGroup>
     );

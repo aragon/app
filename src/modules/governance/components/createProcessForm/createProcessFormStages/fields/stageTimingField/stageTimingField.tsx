@@ -15,10 +15,14 @@ export interface IStageTimingFieldProps {
      * Defines if current stage is optimistic or not.
      */
     isOptimisticStage: boolean;
+    /**
+     * Defines if current stage is timelock or not.
+     */
+    isTimelockStage: boolean;
 }
 
 export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
-    const { stageFieldName, isOptimisticStage } = props;
+    const { stageFieldName, isOptimisticStage, isTimelockStage } = props;
 
     const { t } = useTranslations();
     const inputId = useId();
@@ -59,6 +63,10 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
         return units.map((unit) => `${unit.value.toString()} ${unit.label}`).join(', ');
     };
 
+    const periodLabel = isTimelockStage
+        ? t('app.governance.createProcessForm.stage.timing.summary.timelockPeriod')
+        : t('app.governance.createProcessForm.stage.timing.summary.votingPeriod');
+
     return (
         <InputContainer
             id={inputId}
@@ -68,10 +76,8 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
             helpText={t('app.governance.createProcessForm.stage.timing.helpText')}
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                <DefinitionList.Item term={t('app.governance.createProcessForm.stage.timing.summary.votingPeriod')}>
-                    {formatDuration(votingPeriod)}
-                </DefinitionList.Item>
-                {!isOptimisticStage && (
+                <DefinitionList.Item term={periodLabel}>{formatDuration(votingPeriod)}</DefinitionList.Item>
+                {!isOptimisticStage && !isTimelockStage && (
                     <DefinitionList.Item term={t('app.governance.createProcessForm.stage.timing.summary.earlyAdvance')}>
                         <Tag
                             className="w-fit"
@@ -101,6 +107,7 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
                 isTimingDialogOpen={isTimingDialogOpen}
                 setIsTimingDialogOpen={setIsTimingDialogOpen}
                 isOptimisticStage={isOptimisticStage}
+                isTimelockStage={isTimelockStage}
             />
         </InputContainer>
     );

@@ -21,16 +21,28 @@ export interface IStageTimingFieldDialogProps {
      * Defines if current stage is optimistic or not.
      */
     isOptimisticStage: boolean;
+    /**
+     * Defines if current stage is timelock or not.
+     */
+    isTimelockStage: boolean;
 }
 
 export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (props) => {
-    const { isTimingDialogOpen, setIsTimingDialogOpen, stageFieldName, isOptimisticStage } = props;
+    const { isTimingDialogOpen, setIsTimingDialogOpen, stageFieldName, isOptimisticStage, isTimelockStage } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
 
+    const periodLabel = isTimelockStage
+        ? t('app.governance.createProcessForm.stage.timing.dialog.timelockPeriod.label')
+        : t('app.governance.createProcessForm.stage.timing.dialog.votingPeriod.label');
+
+    const periodHelpText = isTimelockStage
+        ? t('app.governance.createProcessForm.stage.timing.dialog.timelockPeriod.helpText')
+        : t('app.governance.createProcessForm.stage.timing.dialog.votingPeriod.helpText');
+
     const votingPeriodField = useFormField<ICreateProcessFormStage, 'votingPeriod'>('votingPeriod', {
-        label: t('app.governance.createProcessForm.stage.timing.dialog.votingPeriod.label'),
+        label: periodLabel,
         fieldPrefix: stageFieldName,
     });
 
@@ -65,7 +77,7 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                 <InputContainer
                     id={votingPeriodField.name}
                     useCustomWrapper={true}
-                    helpText={t('app.governance.createProcessForm.stage.timing.dialog.votingPeriod.helpText')}
+                    helpText={periodHelpText}
                     {...votingPeriodField}
                 />
                 <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
@@ -106,9 +118,11 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                             }
                         />
                     </div>
-                    <AlertInline message={t('app.governance.createProcessForm.stage.timing.dialog.helpInfo')} />
+                    {!isTimelockStage && (
+                        <AlertInline message={t('app.governance.createProcessForm.stage.timing.dialog.helpInfo')} />
+                    )}
                 </div>
-                {!isOptimisticStage && (
+                {!isOptimisticStage && !isTimelockStage && (
                     <Switch
                         helpText={t('app.governance.createProcessForm.stage.timing.dialog.earlyAdvance.helpText')}
                         inlineLabel={

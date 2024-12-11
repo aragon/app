@@ -12,15 +12,13 @@ import { VotingBodyCheckboxCard } from './components/votingBodyCheckboxCard';
 
 export interface ICreateProcessFormPermissionProps {}
 
-const validateProposalCreationBodies =
-    (proposalCreationMode: ProposalCreationMode) =>
-    (bodies: ICreateProcessFormPermissions['proposalCreationBodies']) => {
-        if (proposalCreationMode === ProposalCreationMode.ANY_WALLET) {
-            return true;
-        }
-
-        return bodies.length > 0 || 'app.governance.createProcessForm.permissions.votingBodies.error';
-    };
+const validateProposalCreationBodies = (proposalCreationMode: ProposalCreationMode) => () => {
+    if (proposalCreationMode === ProposalCreationMode.ANY_WALLET) {
+        return true;
+    }
+    return true;
+    //return bodies.length > 0 || 'app.governance.createProcessForm.permissions.votingBodies.error';
+};
 
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
     const { t } = useTranslations();
