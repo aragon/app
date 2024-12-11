@@ -1,9 +1,9 @@
 import {
-    type IProposalActionUpdatePluginMetadata,
     ProposalActionType,
     type IProposal,
     type IProposalAction,
     type IProposalActionUpdateMetadata,
+    type IProposalActionUpdatePluginMetadata,
     type IProposalActionWithdrawToken,
 } from '@/modules/governance/api/governanceService';
 import type { IDao, IResource } from '@/shared/api/daoService';
