@@ -101,11 +101,11 @@ export const useTokenCreateProposalRequirements = (
             },
             {
                 term: t('app.plugins.token.tokenProposalCreationRequirements.userVotingPower'),
-                definition: `${formattedInsufficientBalance} ${pluginTokenSymbol}`,
+                definition: `${formattedInsufficientMin} ${pluginTokenSymbol}`,
             },
             {
                 term: t('app.plugins.token.tokenProposalCreationRequirements.userTokenBalance'),
-                definition: `${formattedInsufficientMin} ${pluginTokenSymbol}`,
+                definition: `${formattedInsufficientBalance} ${pluginTokenSymbol}`,
             },
         ],
         isLoading: isLoading,
