@@ -56,7 +56,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         control,
     });
 
-    const { onChange: updateAbi } = useFormField<IVerifySmartContractFormData, 'abi'>('abi', {
+    const { onChange: updateAbi, value: abiFieldValue } = useFormField<IVerifySmartContractFormData, 'abi'>('abi', {
         rules: { required: true },
         control,
     });
@@ -95,8 +95,10 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
 
     // Update ABI form field when fetching the smart-contract ABI
     useEffect(() => {
-        updateAbi(smartContractAbi);
-    }, [updateAbi, smartContractAbi]);
+        if (smartContractAbi?.address !== abiFieldValue?.address) {
+            updateAbi(smartContractAbi);
+        }
+    }, [updateAbi, smartContractAbi, abiFieldValue]);
 
     const contractName = smartContractAbi?.name ?? addressUtils.truncateAddress(smartContractValue?.address);
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
