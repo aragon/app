@@ -32,8 +32,9 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
 
     const { t } = useTranslations();
 
-    const stageType = useWatch<Record<string, string>>({ name: `${name}.type` });
+    const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${name}.type` });
     const isOptimisticStage = stageType === 'optimistic';
+    const isTimelockStage = stageType === 'timelock';
 
     const stageNameField = useFormField<ICreateProcessFormStage, 'name'>('name', {
         label: t('app.governance.createProcessForm.stage.name.label'),
@@ -52,8 +53,10 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                 {...stageNameField}
             />
             <StageTypeField fieldPrefix={name} />
-            <StageTimingField stageFieldName={name} isOptimisticStage={isOptimisticStage} />
-            <StageBodiesField index={index} isOptimisticStage={isOptimisticStage} stageFieldName={name} />
+            <StageTimingField stageFieldName={name} stageType={stageType} />
+            {!isTimelockStage && (
+                <StageBodiesField index={index} isOptimisticStage={isOptimisticStage} stageFieldName={name} />
+            )}
             {stagesCount > 1 && (
                 <div className="flex self-end">
                     <Dropdown.Container
