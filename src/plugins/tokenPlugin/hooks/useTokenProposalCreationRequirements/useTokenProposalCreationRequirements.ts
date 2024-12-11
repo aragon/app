@@ -2,6 +2,10 @@ import { type IMember, useMember } from '@/modules/governance/api/governanceServ
 import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { type ITokenMember } from '@/plugins/tokenPlugin/types';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { formatterUtils, numberFormats } from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
 export interface ITokenProposalCreationRequirementsParams extends IUseConnectedParticipantGuardBaseParams {}
@@ -18,43 +22,52 @@ export const useTokenCreateProposalRequirements = (
 
     const { address } = useAccount();
 
-    const pluginMinProposerVotingPower = plugin.meta.settings.minProposerVotingPower;
-    const pluginTokenSymbol = plugin.meta.settings.token.symbol;
+    const { t } = useTranslations();
 
-    const minTokenRequired = `${pluginMinProposerVotingPower} ${pluginTokenSymbol}`;
+    const tokenDecimals = plugin.meta.settings.token.decimals;
+
+    const minVotingPower = plugin.meta.settings.minProposerVotingPower;
+    const parsedMinVotingPower = formatUnits(BigInt(minVotingPower), tokenDecimals);
+    const formattedMinVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, numberFormats.TOKEN_AMOUNT_SHORT);
+
+    const tokenSymbol = plugin.meta.settings.token.symbol;
+
+    const minTokenRequired = `${formattedMinVotingPower} ${tokenSymbol}`;
 
     const memberUrlParams = { address: address as string };
     const memberQueryParams = { daoId, pluginAddress: plugin.meta.address };
     const { data: member, isLoading } = useMember({ urlParams: memberUrlParams, queryParams: memberQueryParams });
 
-    const pluginName = plugin.meta.name ?? 'Multisig TODO'; // TODO
+    const pluginName = daoUtils.getPluginName(plugin.meta);
 
     if (!isTokenMember(member)) {
         return {
             hasPermission: false,
             settings: [
                 {
-                    term: 'Name',
+                    term: t('app.plugins.token.tokenProposalCreationRequirements.name'),
                     definition: pluginName,
                 },
                 {
-                    term: 'Proposal creation',
-                    definition: minTokenRequired, // TODO
+                    term: t('app.plugins.token.tokenProposalCreationRequirements.proposalCreation'),
+                    definition: minTokenRequired,
                 },
                 {
-                    term: 'Your token balance',
-                    definition: `0 ${pluginTokenSymbol}`,
+                    term: t('app.plugins.token.tokenProposalCreationRequirements.userTokenBalance'),
+                    definition: `0 ${tokenSymbol}`,
                 },
                 {
-                    term: 'Your voting power',
-                    definition: `0 ${pluginTokenSymbol}`,
+                    term: t('app.plugins.token.tokenProposalCreationRequirements.userVotingPower'),
+                    definition: `0 ${tokenSymbol}`,
                 },
             ],
             isLoading: isLoading,
         };
     }
 
-    if (member.votingPower && BigInt(member.votingPower) >= BigInt(pluginMinProposerVotingPower as string)) {
+    const hasPermission = member.votingPower && BigInt(member.votingPower) >= BigInt(minVotingPower as string);
+
+    if (hasPermission) {
         return {
             hasPermission: true,
             settings: [],
@@ -62,27 +75,37 @@ export const useTokenCreateProposalRequirements = (
         };
     }
 
-    const insufficientVotingPower = member.votingPower ?? '0';
-    const insufficientTokenBalance = member.tokenBalance ?? '0';
+    const insufficientMin = member.votingPower ?? '0';
+    const parsedInsuficcientMin = formatUnits(BigInt(insufficientMin), tokenDecimals);
+    const formattedInsufficientMin = formatterUtils.formatNumber(
+        parsedInsuficcientMin,
+        numberFormats.TOKEN_AMOUNT_SHORT,
+    );
+    const insufficientBalance = member.tokenBalance ?? '0';
+    const parsedInsufficientBalance = formatUnits(BigInt(insufficientBalance), tokenDecimals);
+    const formattedInsufficientBalance = formatterUtils.formatNumber(
+        parsedInsufficientBalance,
+        numberFormats.TOKEN_AMOUNT_SHORT,
+    );
 
     return {
         hasPermission: false,
         settings: [
             {
-                term: 'Name',
-                definition: 'Group name',
-            },
-            {
-                term: 'Proposal creation',
+                term: t('app.plugins.token.tokenProposalCreationRequirements.name'),
                 definition: pluginName,
             },
             {
-                term: 'Your voting power',
-                definition: `${insufficientVotingPower} ${pluginTokenSymbol}`,
+                term: t('app.plugins.token.tokenProposalCreationRequirements.proposalCreation'),
+                definition: minTokenRequired,
             },
             {
-                term: 'Your token balance',
-                definition: `${insufficientTokenBalance} ${pluginTokenSymbol}`,
+                term: t('app.plugins.token.tokenProposalCreationRequirements.userVotingPower'),
+                definition: `${formattedInsufficientBalance} ${pluginTokenSymbol}`,
+            },
+            {
+                term: t('app.plugins.token.tokenProposalCreationRequirements.userTokenBalance'),
+                definition: `${formattedInsufficientMin} ${pluginTokenSymbol}`,
             },
         ],
         isLoading: isLoading,

@@ -1,5 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { useMultisigProposalCreationRequirements } from '@/plugins/multisigPlugin/hooks/useMultisigProposalCreationRequirements';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AdminGovernanceInfo } from './components/adminGovernanceInfo';
 import { AdminMemberInfo } from './components/adminMemberInfo';
@@ -29,6 +30,11 @@ export const initialiseAdminPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             pluginId: plugin.id,
             function: adminTransactionUtils.buildCreateProposalData,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
+            pluginId: plugin.id,
+            function: useMultisigProposalCreationRequirements,
         })
 
         // Settings module slots

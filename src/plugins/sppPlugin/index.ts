@@ -1,5 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { useSppProposalCreationRequirements } from '@/plugins/sppPlugin/hooks/useSppProposalCreationRequirements';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SppCreateProposalSettingsForm } from './components/sppCreateProposalSettingsForm';
 import { SppGovernanceInfo } from './components/sppGovernanceInfo';
@@ -40,6 +41,11 @@ export const initialiseSppPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
             pluginId: plugin.id,
             function: useSppNormalizeActions,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
+            pluginId: plugin.id,
+            function: useSppProposalCreationRequirements,
         })
 
         // Settings module slots

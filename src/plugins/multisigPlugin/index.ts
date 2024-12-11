@@ -1,6 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { useMultisigProposalCreationRequirements } from '@/plugins/multisigPlugin/hooks/useMultisigProposalCreationRequirements/useMultisigCreateProposalRequirements';
+import { useMultisigProposalCreationRequirements } from '@/plugins/multisigPlugin/hooks/useMultisigProposalCreationRequirements/useMultisigProposalCreationRequirements';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 import { MultisigGovernanceInfo } from './components/multisigGovernanceInfo';

@@ -608,6 +608,11 @@
           "membersLabel": "Members",
           "multisigMembers": "Multisig members"
         },
+        "multisigProposalCreationRequirements": {
+          "name": "Name",
+          "proposalCreation": "Proposal creation",
+          "proposalCreationRequirement": "Multisig Members"
+        },
         "multisigProposalList": {
           "entity": "Proposals"
         },
@@ -763,6 +768,12 @@
             "label": "Amount",
             "placeholder": "0 {{symbol}}"
           }
+        },
+        "tokenProposalCreationRequirements": {
+          "name": "Name",
+          "proposalCreation": "Proposal creation",
+          "userTokenBalance": "Your balance",
+          "userVotingPower": "Your voting power"
         },
         "tokenProposalList": {
           "entity": "Proposals"
