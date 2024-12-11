@@ -60,13 +60,11 @@ class ActionComposerUtils {
 
     getCustomActionItems = ({ abis, t }: IGetCustomActionParams): IActionComposerItem[] => {
         const customActionItems = abis.map((abi) => {
-            const { address: contractAddress, functions } = abi;
-
-            const functionActions = functions.map((abiFunction, index) =>
+            const functionActions = abi.functions.map((abiFunction, index) =>
                 this.buildDefaultCustomAction(abi, abiFunction, index),
             );
 
-            const rawCalldataAction = this.buildDefaultRawCalldataAction(contractAddress, t);
+            const rawCalldataAction = this.buildDefaultRawCalldataAction(abi, t);
 
             return [...functionActions, rawCalldataAction];
         });
@@ -132,7 +130,10 @@ class ActionComposerUtils {
         },
     });
 
-    private buildDefaultRawCalldataAction = (address: string, t: TranslationFunction): IActionComposerItem => ({
+    private buildDefaultRawCalldataAction = (
+        { address, name }: ISmartContractAbi,
+        t: TranslationFunction,
+    ): IActionComposerItem => ({
         id: `${address}-${ActionItemId.RAW_CALLDATA}`,
         name: t(`app.governance.actionComposer.customItem.${ActionItemId.RAW_CALLDATA}`),
         icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
@@ -143,7 +144,11 @@ class ActionComposerUtils {
             from: '',
             data: '0x',
             value: '0',
-            inputData: null,
+            inputData: {
+                function: t(`app.governance.actionComposer.rawCalldataFunction`),
+                contract: name,
+                parameters: [],
+            },
         },
     });
 
