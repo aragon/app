@@ -36,30 +36,30 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         ...proposalCreationModeField
     } = useFormField<ICreateProcessFormPermissions, 'proposalCreationMode'>('proposalCreationMode', {
         label: t('app.governance.createProcessForm.permissions.proposalCreationMode.label'),
+        fieldPrefix: 'permissions',
         defaultValue: ProposalCreationMode.LISTED_BODIES,
     });
 
+    const proposalCreationBodiesName = 'permissions.proposalCreationBodies';
     const {
         fields: proposalCreationBodies,
         remove: removeProposalCreationBody,
         append: addProposalCreationBody,
-    } = useFieldArray<ICreateProcessFormPermissions, 'proposalCreationBodies'>({
-        name: 'proposalCreationBodies',
+    } = useFieldArray<ICreateProcessFormData, typeof proposalCreationBodiesName>({
+        name: proposalCreationBodiesName,
         rules: { validate: validateProposalCreationBodies(proposalCreationMode) },
     });
 
     // Initialise proposalCreationBodies to all process bodies and update value on bodies list change
     useEffect(() => {
-        setValue('proposalCreationBodies', defaultBodiesValue);
+        setValue(proposalCreationBodiesName, defaultBodiesValue);
     }, [setValue, defaultBodiesValue]);
 
     const handleProposalCreationModeChange = (value: string) => {
         onProposalCreationModeChange(value);
-        // TODO: remove after rebase
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         if (value === ProposalCreationMode.LISTED_BODIES) {
-            setValue('proposalCreationBodies', defaultBodiesValue);
-            void trigger('proposalCreationBodies');
+            setValue(proposalCreationBodiesName, defaultBodiesValue);
+            void trigger(proposalCreationBodiesName);
         }
     };
 
@@ -107,7 +107,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                             body={body}
                             onChange={handleBodyCheckboxChange}
                             checked={proposalCreationBodies.some(({ bodyId }) => body.id === bodyId)}
-                            bodyIndex={proposalCreationBodies.findIndex(({ bodyId }) => body.id === bodyId)}
+                            fieldPrefix={`${proposalCreationBodiesName}.${proposalCreationBodies.findIndex(({ bodyId }) => body.id === bodyId).toString()}`}
                         />
                     ))}
                 </InputContainer>
