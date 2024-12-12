@@ -7,6 +7,7 @@ export * from './paginatedResponseMetadata';
 export * from './plugin';
 export * from './pluginSettings';
 export * from './reactQueryResponse';
+export * from './request';
 export * from './response';
 export * from './stepperResult';
 export * from './tabComponentPlugin';
