@@ -125,8 +125,8 @@ class ActionComposerUtils {
     };
 
     private buildDefaultActionPluginMetadata = (plugin: IDaoPlugin): IProposalActionUpdatePluginMetadata => {
-        const { name, processKey, description: summary, links: resources } = plugin;
-        const existingMetadata = { name, processKey, summary, resources };
+        const { name, processKey, description = '', links = [] } = plugin;
+        const existingMetadata = { name, processKey, description, links };
 
         return {
             type: ProposalActionType.METADATA_PLUGIN_UPDATE,
@@ -134,8 +134,8 @@ class ActionComposerUtils {
             to: plugin.address,
             data: '0x',
             value: '0',
-            proposedMetadata: existingMetadata,
             existingMetadata,
+            proposedMetadata: existingMetadata,
             inputData: {
                 function: 'setMetadata',
                 contract: '',

@@ -1,1 +1,1 @@
-export { useSppNormalizeActions, type IUseSppNormalizeActionsParams } from './useMultisigNormalizeActions';
+export { useSppNormalizeActions, type IUseSppNormalizeActionsParams } from './useSppNormalizeActions';

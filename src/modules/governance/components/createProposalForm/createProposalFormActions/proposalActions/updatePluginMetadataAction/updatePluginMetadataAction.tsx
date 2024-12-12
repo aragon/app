@@ -70,7 +70,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
         defaultValue: '',
     });
 
-    const summaryField = useFormField<IUpdatePluginMetadataFormData, 'summary'>('summary', {
+    const summaryField = useFormField<IUpdatePluginMetadataFormData, 'description'>('description', {
         label: t('app.governance.updatePluginMetadataAction.summaryField.label'),
         fieldPrefix: `${actionFieldName}.proposedMetadata`,
         rules: { maxLength: summaryMaxLength },
@@ -80,14 +80,12 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
 
     const prepareAction = useCallback(
         async (action: IProposalAction) => {
-            const { name, summary, resources } = (action as IUpdatePluginMetadataAction).proposedMetadata;
+            const { name, description, links, processKey } = (action as IUpdatePluginMetadataAction).proposedMetadata;
             const proposedMetadata = {
                 name,
-                description: summary,
-                links: resources,
-                ...(isProcess && {
-                    processKey: (action as IUpdatePluginMetadataAction).proposedMetadata.processKey,
-                }),
+                description,
+                links,
+                ...(isProcess && { processKey }),
             };
 
             const ipfsResult = await pinJsonAsync({ body: proposedMetadata });

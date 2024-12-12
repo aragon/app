@@ -14,11 +14,15 @@ export interface IDaoPluginMetadataObject {
     /**
      * Summary of the plugin/process.
      */
-    summary?: string;
+    description: string;
     /**
      * Resources of the plugin/process.
      */
-    resources?: IResource[];
+    links: IResource[];
+    /**
+     * The stage names of the process plugin. Only set for SPP.
+     */
+    stageNames?: string[];
 }
 
 export interface IProposalActionUpdatePluginMetadata
