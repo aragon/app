@@ -54,7 +54,7 @@ export const StageTypeField: React.FC<IStageTypeFieldProps> = (props) => {
             <RadioCard
                 className="w-full"
                 label={t('app.governance.createProcessForm.stage.type.timelock.label')}
-                description={t('app.governance.createProcessForm.stage.type.timelock')}
+                description={t('app.governance.createProcessForm.stage.type.timelock.description')}
                 value="timelock"
             />
         </RadioGroup>

@@ -4,6 +4,7 @@ import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import {
+    type ICreateProcessFormStage,
     ProposalCreationMode,
     type ICreateProcessFormData,
     type ICreateProcessFormPermissions,
@@ -13,13 +14,16 @@ import { VotingBodyCheckboxCard } from './components/votingBodyCheckboxCard';
 export interface ICreateProcessFormPermissionProps {}
 
 const validateProposalCreationBodies =
-    (proposalCreationMode: ProposalCreationMode) =>
-    (bodies: ICreateProcessFormPermissions['proposalCreationBodies']) => {
+    (proposalCreationMode: ProposalCreationMode, processStages: ICreateProcessFormStage[]) => () => {
         if (proposalCreationMode === ProposalCreationMode.ANY_WALLET) {
             return true;
         }
 
-        return bodies.length > 0 || 'app.governance.createProcessForm.permissions.votingBodies.error';
+        // Filter out timelock stages
+        const relevantStages = processStages.filter((stage) => stage.type !== 'timelock');
+        const relevantBodies = relevantStages.flatMap((stage) => stage.bodies);
+
+        return relevantBodies.length > 0 || 'app.governance.createProcessForm.permissions.votingBodies.error';
     };
 
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
@@ -47,7 +51,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         append: addProposalCreationBody,
     } = useFieldArray<ICreateProcessFormData, typeof proposalCreationBodiesName>({
         name: proposalCreationBodiesName,
-        rules: { validate: validateProposalCreationBodies(proposalCreationMode) },
+        rules: { validate: validateProposalCreationBodies(proposalCreationMode, processStages) },
     });
 
     // Initialise proposalCreationBodies to all process bodies and update value on bodies list change
