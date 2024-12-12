@@ -112,7 +112,11 @@ class ActionComposerUtils {
         ...nativeItems,
     ];
 
-    getDefaultActionPluginMetadataItem = (plugin: IDaoPlugin, t: TranslationFunction): IActionComposerItem => {
+    getDefaultActionPluginMetadataItem = (
+        plugin: IDaoPlugin,
+        t: TranslationFunction,
+        additionalMetadata?: Record<string, unknown>,
+    ): IActionComposerItem => {
         const { address } = plugin;
 
         return {
@@ -120,13 +124,16 @@ class ActionComposerUtils {
             name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
             icon: IconType.SETTINGS,
             groupId: address,
-            defaultValue: this.buildDefaultActionPluginMetadata(plugin),
+            defaultValue: this.buildDefaultActionPluginMetadata(plugin, additionalMetadata),
         };
     };
 
-    private buildDefaultActionPluginMetadata = (plugin: IDaoPlugin): IProposalActionUpdatePluginMetadata => {
+    private buildDefaultActionPluginMetadata = (
+        plugin: IDaoPlugin,
+        additionalMetadata?: Record<string, unknown>,
+    ): IProposalActionUpdatePluginMetadata => {
         const { name, processKey, description = '', links = [] } = plugin;
-        const existingMetadata = { name, processKey, description, links };
+        const existingMetadata = { name, processKey, description, links, ...additionalMetadata };
 
         return {
             type: ProposalActionType.METADATA_PLUGIN_UPDATE,

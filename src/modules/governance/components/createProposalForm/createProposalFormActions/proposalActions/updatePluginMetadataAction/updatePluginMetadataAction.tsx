@@ -44,7 +44,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
 
     const { meta } = action;
 
-    const { isProcess } = meta;
+    const { isProcess, isSubPlugin } = meta;
 
     const { t } = useTranslations();
 
@@ -82,10 +82,11 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
         async (action: IProposalAction) => {
             const { name, description, links, processKey } = (action as IUpdatePluginMetadataAction).proposedMetadata;
             const proposedMetadata = {
+                ...(action as IUpdatePluginMetadataAction).existingMetadata,
                 name,
                 description,
                 links,
-                ...(isProcess && { processKey }),
+                ...(isProcess && !isSubPlugin && { processKey }),
             };
 
             const ipfsResult = await pinJsonAsync({ body: proposedMetadata });
@@ -94,7 +95,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
             const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
             return data;
         },
-        [pinJsonAsync, isProcess],
+        [pinJsonAsync, isProcess, isSubPlugin],
     );
 
     useEffect(() => {
