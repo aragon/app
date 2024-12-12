@@ -129,7 +129,10 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                     type: 'submit',
                     isLoading: isLoadingAbi,
                 }}
-                secondaryAction={{ label: t('app.governance.verifySmartContractDialog.action.cancel'), onClick: close }}
+                secondaryAction={{
+                    label: t('app.governance.verifySmartContractDialog.action.cancel'),
+                    onClick: () => close(),
+                }}
             />
         </form>
     );

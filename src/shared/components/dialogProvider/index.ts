@@ -5,5 +5,4 @@ export type {
     IDialogComponentProps,
     IDialogContext,
     IDialogLocation,
-    IOpenDialogOptions,
 } from './dialogProvider.api';
