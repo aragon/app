@@ -6,6 +6,8 @@ import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateRequest, generateResponse } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
+import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
+import * as NextHeaders from 'next/headers';
 import { NextResponse } from 'next/server';
 import { type IRpcRequestOptions, RpcRequestUtils } from './rpcRequestUtils';
 
@@ -13,11 +15,17 @@ describe('rpcRequest utils', () => {
     const originalProcessEnv = process.env;
     const fetchSpy = jest.spyOn(global, 'fetch');
     const nextResponseJsonSpy = jest.spyOn(NextResponse, 'json');
+    const headersSpy = jest.spyOn(NextHeaders, 'headers');
+
+    beforeEach(() => {
+        headersSpy.mockResolvedValue({ get: jest.fn(() => 'http://localhost') } as unknown as ReadonlyHeaders);
+    });
 
     afterEach(() => {
         process.env = originalProcessEnv;
         fetchSpy.mockReset();
         nextResponseJsonSpy.mockReset();
+        headersSpy.mockReset();
     });
 
     const createTestClass = (rpcKey?: string) => {
@@ -51,6 +59,24 @@ describe('rpcRequest utils', () => {
             expect(fetchSpy).toHaveBeenCalled();
             expect(fetchReturn.json).toHaveBeenCalled();
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
+        });
+    });
+
+    describe('checkReferer', () => {
+        it('returns true when allowed-domain variable is not defined', () => {
+            const testClass = createTestClass();
+            expect(
+                testClass['checkReferer']({ get: () => 'http://localhost' } as unknown as ReadonlyHeaders),
+            ).toBeTruthy();
+        });
+
+        it('returns true when referer hostname ends with allowed-domain variable', () => {
+            process.env.NEXT_PUBLIC_RPC_ALLOWED_DOMAIN = 'aragon.org';
+            const testClass = createTestClass();
+            const subdomain = { get: () => 'https://stg.app-next.aragon.org/' } as unknown as ReadonlyHeaders;
+            expect(testClass['checkReferer'](subdomain)).toBeTruthy();
+            const exact = { get: () => 'https://aragon.org/' } as unknown as ReadonlyHeaders;
+            expect(testClass['checkReferer'](exact)).toBeTruthy();
         });
     });
 

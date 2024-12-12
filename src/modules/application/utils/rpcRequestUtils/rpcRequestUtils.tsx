@@ -1,5 +1,7 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export interface IRpcRequestParams {
@@ -29,17 +31,29 @@ export class RpcRequestUtils {
 
     request = async (request: Request, { params }: IRpcRequestOptions) => {
         const { chainId } = await params;
+        const headersList = await headers();
+
         const rpcEndpoint = this.chainIdToRpcEndpoint(chainId);
         const requestOptions = this.buildRequestOptions(request);
+        const isRefererAllowed = this.checkReferer(headersList);
 
         if (rpcEndpoint == null) {
             return NextResponse.json({ error: `Chain ${chainId.toString()} is not supported` }, { status: 501 });
+        } else if (!isRefererAllowed) {
+            return NextResponse.json({ error: `Referer not authorized` }, { status: 401 });
         }
 
         const result = await fetch(rpcEndpoint, requestOptions);
         const parsedResult = (await result.json()) as unknown;
 
         return NextResponse.json(parsedResult);
+    };
+
+    private checkReferer = (headersList: ReadonlyHeaders): boolean | undefined => {
+        const referer = new URL(headersList.get('referer') ?? '');
+        const allowedRefererDomain = process.env.NEXT_PUBLIC_RPC_ALLOWED_DOMAIN;
+
+        return allowedRefererDomain == null || referer.hostname.endsWith(allowedRefererDomain);
     };
 
     private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
