@@ -1,4 +1,4 @@
-import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
+import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useCallback, useState } from 'react';
 import { GovernanceDialog } from '../../constants/moduleDialogs';

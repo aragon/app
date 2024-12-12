@@ -1,9 +1,9 @@
 'use client';
 
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { useConnectedParticipantGuard } from '@/modules/governance/hooks/useConnectedParticpantGuard/useConnectedParticipantGuard';
+import { useConnectedParticipantGuard } from '@/modules/governance/hooks/useConnectedParticipantGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
-import { type IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';

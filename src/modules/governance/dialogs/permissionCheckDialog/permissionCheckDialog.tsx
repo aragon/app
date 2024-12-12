@@ -1,5 +1,6 @@
-import type { IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
+import type { IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { DefinitionList, Dialog, Heading, Spinner } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
@@ -67,6 +68,8 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
     const { slotParams, slotId, onSuccess, onError, updatePermissions } = params ?? {};
     const { plugin } = slotParams ?? {};
 
+    const { t } = useTranslations();
+
     const { close } = useDialogContext();
 
     const { hasPermission, settings, isLoading } = useSlotSingleFunction<
@@ -106,8 +109,10 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
         <>
             <Dialog.Content className="flex flex-col gap-y-4 py-4 md:py-6">
                 <div>
-                    <Heading size="h3">You can&apos;t create</Heading>
-                    <p className="text-neutral-500">Not a member of this voting body</p>
+                    <Heading size="h3">{t('app.governance.permissionCheckDialog.title')}</Heading>
+                    <p className="text-sm text-neutral-500 md:text-base">
+                        {t('app.governance.permissionCheckDialog.description')}
+                    </p>
                 </div>
                 <DefinitionList.Container>
                     {settings.map((setting, index) => (

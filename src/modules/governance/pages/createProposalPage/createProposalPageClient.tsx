@@ -1,6 +1,6 @@
 'use client';
 
-import { useConnectedParticipantGuard } from '@/modules/governance/hooks/useConnectedParticpantGuard/useConnectedParticipantGuard';
+import { useConnectedParticipantGuard } from '@/modules/governance/hooks/useConnectedParticipantGuard';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';

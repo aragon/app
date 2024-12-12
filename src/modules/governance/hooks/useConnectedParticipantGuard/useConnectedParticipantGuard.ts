@@ -49,6 +49,7 @@ export const useConnectedParticipantGuard = <TSlotParams extends IUseConnectedPa
         },
         onSuccess: () => {
             checkPermissions();
+            onSuccess?.();
         },
     });
 

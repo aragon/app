@@ -86,7 +86,10 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                     onClick: handleConfirm,
                     href: selectPluginHref,
                 }}
-                secondaryAction={{ label: t('app.governance.selectPluginDialog.action.cancel'), onClick: close }}
+                secondaryAction={{
+                    label: t('app.governance.selectPluginDialog.action.cancel'),
+                    onClick: () => close(),
+                }}
             />
         </>
     );

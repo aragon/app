@@ -1,5 +1,5 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
+import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { type IDaoPlugin } from '@/shared/api/daoService';
@@ -36,7 +36,7 @@ export const useMultisigProposalCreationRequirements = (
         return {
             hasPermission: true,
             settings: [],
-            isLoading: isLoading,
+            isLoading,
         };
     }
 
@@ -52,6 +52,6 @@ export const useMultisigProposalCreationRequirements = (
                 definition: 'Multisig member',
             },
         ],
-        isLoading: isLoading,
+        isLoading,
     };
 };

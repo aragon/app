@@ -1,4 +1,4 @@
-import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
+import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 
 export interface IUseSppProposalCreationRequirementsParams extends IUseConnectedParticipantGuardBaseParams {}

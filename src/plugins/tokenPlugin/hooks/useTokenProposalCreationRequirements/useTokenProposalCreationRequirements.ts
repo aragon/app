@@ -1,5 +1,5 @@
 import { useMember, type IMember } from '@/modules/governance/api/governanceService';
-import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticpantGuard';
+import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { type ITokenMember, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin } from '@/shared/api/daoService';
@@ -60,15 +60,15 @@ export const useTokenCreateProposalRequirements = (
                     definition: minTokenRequired,
                 },
                 {
-                    term: t('app.plugins.token.tokenProposalCreationRequirements.userTokenBalance'),
-                    definition: `0 ${tokenSymbol}`,
-                },
-                {
                     term: t('app.plugins.token.tokenProposalCreationRequirements.userVotingPower'),
                     definition: `0 ${tokenSymbol}`,
                 },
+                {
+                    term: t('app.plugins.token.tokenProposalCreationRequirements.userTokenBalance'),
+                    definition: `0 ${tokenSymbol}`,
+                },
             ],
-            isLoading: isLoading,
+            isLoading,
         };
     }
 
@@ -78,7 +78,7 @@ export const useTokenCreateProposalRequirements = (
         return {
             hasPermission: true,
             settings: [],
-            isLoading: isLoading,
+            isLoading,
         };
     }
 
@@ -115,6 +115,6 @@ export const useTokenCreateProposalRequirements = (
                 definition: `${formattedInsufficientBalance ?? '0'} ${tokenSymbol}`,
             },
         ],
-        isLoading: isLoading,
+        isLoading,
     };
 };
