@@ -2,7 +2,13 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import {
+    Card,
+    EmptyState,
+    proposalStatusToVotingStatus,
+    ProposalVoting,
+    ProposalVotingStatus,
+} from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
@@ -60,6 +66,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const getBodySubProposal = (address: string) =>
         subProposals?.find((subProposal) => subProposal.pluginAddress === address);
 
+    const timelock = !stage.plugins.length;
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
@@ -70,42 +78,62 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             isMultiStage={isMultiStage}
             bodyList={bodyList}
         >
-            <ProposalVoting.BodySummary>
-                <ProposalVoting.BodySummaryList>
-                    {stage.plugins.map((plugin) => (
-                        <ProposalVoting.BodySummaryListItem key={plugin.address} id={plugin.address}>
-                            <PluginSingleComponent
-                                slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
-                                pluginId={plugin.subdomain}
-                                proposal={getBodySubProposal(plugin.address)}
-                                isExecuted={proposal.executed.status}
-                                name={plugin.name}
-                                isOptimistic={isVeto}
-                            />
-                        </ProposalVoting.BodySummaryListItem>
-                    ))}
-                </ProposalVoting.BodySummaryList>
-                <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} />
-            </ProposalVoting.BodySummary>
-            {stage.plugins.map((plugin) => (
-                <ProposalVoting.BodyContent
-                    name={plugin.name}
-                    key={plugin.address}
-                    status={processedStageStatus}
-                    bodyId={plugin.address}
-                >
-                    <SppVotingTerminalBodyContent
-                        plugin={plugin}
-                        daoId={daoId}
-                        subProposal={getBodySubProposal(plugin.address)}
-                        proposal={proposal}
-                        canVote={canVote}
-                        isVeto={isVeto}
+            {!timelock && (
+                <ProposalVoting.BodySummary>
+                    <ProposalVoting.BodySummaryList>
+                        {stage.plugins.map((plugin) => (
+                            <ProposalVoting.BodySummaryListItem key={plugin.address} id={plugin.address}>
+                                <PluginSingleComponent
+                                    slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY}
+                                    pluginId={plugin.subdomain}
+                                    proposal={getBodySubProposal(plugin.address)}
+                                    isExecuted={proposal.executed.status}
+                                    name={plugin.name}
+                                    isOptimistic={isVeto}
+                                />
+                            </ProposalVoting.BodySummaryListItem>
+                        ))}
+                    </ProposalVoting.BodySummaryList>
+                    <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} />
+                </ProposalVoting.BodySummary>
+            )}
+            {timelock && (
+                <div className="flex flex-col gap-2">
+                    <Card className="border border-neutral-100 shadow-neutral-sm">
+                        <EmptyState
+                            heading="Timelock active"
+                            description={`Ends ${
+                                sppStageUtils
+                                    .getStageMinAdvance(proposal, stage)
+                                    ?.toFormat("cccc, LLLL dd yyyy 'at' HH:mm 'UTC'") ?? ''
+                            }`}
+                            objectIllustration={{ object: 'SETTINGS' }}
+                            isStacked={false}
+                        />
+                    </Card>
+                    <SppStageStatus proposal={proposal} stage={stage} />
+                </div>
+            )}
+            {!timelock &&
+                stage.plugins.map((plugin) => (
+                    <ProposalVoting.BodyContent
+                        name={plugin.name}
+                        key={plugin.address}
+                        status={processedStageStatus}
+                        bodyId={plugin.address}
                     >
-                        {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} />}
-                    </SppVotingTerminalBodyContent>
-                </ProposalVoting.BodyContent>
-            ))}
+                        <SppVotingTerminalBodyContent
+                            plugin={plugin}
+                            daoId={daoId}
+                            subProposal={getBodySubProposal(plugin.address)}
+                            proposal={proposal}
+                            canVote={canVote}
+                            isVeto={isVeto}
+                        >
+                            {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} />}
+                        </SppVotingTerminalBodyContent>
+                    </ProposalVoting.BodyContent>
+                ))}
         </ProposalVoting.Stage>
     );
 };
