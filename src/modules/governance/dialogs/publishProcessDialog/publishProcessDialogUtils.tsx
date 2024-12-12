@@ -224,42 +224,42 @@ class PublishProcessDialogUtils {
         const { stages } = values;
         const [sppAddress, ...bodyAddresses] = pluginAddresses;
 
-            const processedStages = stages.map((stage) => {
-                const isTimelockStage = stage.type === 'timelock';
+        const processedStages = stages.map((stage) => {
+            const isTimelockStage = stage.type === 'timelock';
 
-                const bodies = isTimelockStage
-                    ? []
-                    : stage.bodies.map(() => {
-                          const pluginAddress = bodyAddresses.shift()!;
+            const bodies = isTimelockStage
+                ? []
+                : stage.bodies.map(() => {
+                      const pluginAddress = bodyAddresses.shift()!;
 
-                          return {
-                              addr: pluginAddress,
-                              isManual: false,
-                              tryAdvance: true,
-                              resultType: stage.type === 'normal' ? SppProposalType.APPROVAL : SppProposalType.VETO,
-                          };
-                      });
+                      return {
+                          addr: pluginAddress,
+                          isManual: false,
+                          tryAdvance: true,
+                          resultType: stage.type === 'normal' ? SppProposalType.APPROVAL : SppProposalType.VETO,
+                      };
+                  });
 
-                const votingPeriod = dateUtils.durationToSeconds(stage.votingPeriod);
+            const votingPeriod = dateUtils.durationToSeconds(stage.votingPeriod);
 
-                const voteDuration = isTimelockStage ? BigInt(0) : votingPeriod;
+            const voteDuration = isTimelockStage ? BigInt(0) : votingPeriod;
 
-                const maxAdvance =
-                    stage.stageExpiration != null
-                        ? dateUtils.durationToSeconds(stage.stageExpiration) + voteDuration
-                        : undefined;
+            const maxAdvance =
+                stage.stageExpiration != null
+                    ? dateUtils.durationToSeconds(stage.stageExpiration) + voteDuration
+                    : undefined;
 
-                return {
-                    bodies,
-                    minAdvance: stage.earlyStageAdvance ? BigInt(0) : votingPeriod,
-                    maxAdvance: maxAdvance ?? this.defaultMaxAdvance,
-                    voteDuration,
-                    approvalThreshold: stage.type === 'normal' ? stage.requiredApprovals : 0,
-                    vetoThreshold: stage.type === 'optimistic' ? stage.requiredApprovals : 0,
-                    cancelable: false,
-                    editable: false,
-                };
-            });
+            return {
+                bodies,
+                minAdvance: stage.earlyStageAdvance ? BigInt(0) : votingPeriod,
+                maxAdvance: maxAdvance ?? this.defaultMaxAdvance,
+                voteDuration,
+                approvalThreshold: stage.type === 'normal' ? stage.requiredApprovals : 0,
+                vetoThreshold: stage.type === 'optimistic' ? stage.requiredApprovals : 0,
+                cancelable: false,
+                editable: false,
+            };
+        });
 
         const transactionData = encodeFunctionData({
             abi: sppPluginAbi,
