@@ -12,7 +12,7 @@ describe('<ExploreDaosPageClient /> component', () => {
 
     beforeEach(() => {
         useAccountSpy.mockReturnValue({} as Wagmi.UseAccountReturnType);
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
     });
 
     afterEach(() => {

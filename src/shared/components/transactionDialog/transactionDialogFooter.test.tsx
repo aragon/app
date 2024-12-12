@@ -10,7 +10,7 @@ describe('<TransactionDialogFooter /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogFooterProps>) => {

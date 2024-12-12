@@ -72,14 +72,16 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
 
     const { close } = useDialogContext();
 
-    const { hasPermission, settings, isLoading } = useSlotSingleFunction<
+    const checkPermissions = useSlotSingleFunction<
         IUseConnectedParticipantGuardBaseParams,
         IPermissionCheckGuardResult
     >({
         slotId: slotId!,
         pluginId: plugin!.id,
         params: slotParams!,
-    }) ?? { hasPermission: false, settings: [], isLoading: false };
+    }) ?? { hasPermission: true, settings: [], isLoading: false };
+
+    const { settings, isLoading, hasPermission } = checkPermissions;
 
     const handleDialogClose = useCallback(() => {
         close();
@@ -97,7 +99,7 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
     if (isLoading) {
         return (
             <Dialog.Content className="flex w-full flex-col gap-y-4 py-4 md:py-6">
-                <Heading size="h3">Checking permissions...</Heading>
+                <Heading size="h3">{t('app.governance.permissionCheckDialog.checkingPermissions')}</Heading>
                 <div className="flex h-12 w-full items-center justify-center">
                     <Spinner size="xl" className="self-center" />
                 </div>

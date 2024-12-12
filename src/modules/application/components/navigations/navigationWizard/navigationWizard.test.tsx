@@ -40,7 +40,7 @@ describe('<NavigationWizard /> component', () => {
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({ address: '0x123', isConnected: true } as unknown as wagmi.UseAccountReturnType);
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
         confirmSpy.mockReset();
     });
 
@@ -94,7 +94,7 @@ describe('<NavigationWizard /> component', () => {
         const address = '0xUser123';
         const open = jest.fn();
         useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
-        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open, close: jest.fn(), updateOptions: jest.fn() });
 
         render(createTestComponent());
 
@@ -107,7 +107,7 @@ describe('<NavigationWizard /> component', () => {
 
     it('renders connect wallet button when user is not connected', async () => {
         const open = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open, close: jest.fn(), updateOptions: jest.fn() });
         useAccountSpy.mockReturnValue({ address: null, isConnected: false } as unknown as wagmi.UseAccountReturnType);
 
         render(createTestComponent());

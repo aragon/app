@@ -473,6 +473,7 @@
         "namePlugin": "{{plugin}}: Create Proposal"
       },
       "permissionCheckDialog": {
+        "checkingPermissions": "Checking permissions...",
         "description": "Not a member of this voting body",
         "title": "You can't create"
       },

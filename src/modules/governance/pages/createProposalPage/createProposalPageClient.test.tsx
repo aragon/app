@@ -1,22 +1,43 @@
+import * as DaoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
+import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import * as NextNavigation from 'next/navigation';
+import * as wagmi from 'wagmi';
+import { GovernanceDialog } from '../../constants/moduleDialogs';
 import { CreateProposalPageClient, type ICreateProposalPageClientProps } from './createProposalPageClient';
 
 jest.mock('./createProposalPageClientSteps', () => ({
     CreateProposalPageClientSteps: () => <button data-testid="steps-mock" type="submit" />,
 }));
 
+jest.mock('next/navigation', () => ({
+    useRouter: jest.fn(),
+}));
+
 describe('<CreateProposalPageClient /> component', () => {
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
+        useRouterSpy.mockReturnValue({
+            push: jest.fn(),
+            prefetch: jest.fn(),
+        } as unknown as AppRouterInstance);
+        useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
+        useRouterSpy.mockReset();
+        useAccountSpy.mockReset();
+        useDaoSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ICreateProposalPageClientProps>) => {
@@ -40,7 +61,7 @@ describe('<CreateProposalPageClient /> component', () => {
         const daoId = 'test-id';
         const pluginAddress = '0x472839';
         const open = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open, close: jest.fn(), updateOptions: jest.fn() });
         render(createTestComponent({ daoId, pluginAddress }));
         // Advance the wizard three times to trigger the submit function
         await userEvent.click(screen.getByTestId('steps-mock'));
@@ -52,6 +73,6 @@ describe('<CreateProposalPageClient /> component', () => {
             prepareActions: {},
             values: { actions: [] },
         };
-        expect(open).toHaveBeenCalledWith(GovernanceDialogs.PUBLISH_PROPOSAL, { params: expectedParams });
+        expect(open).toHaveBeenCalledWith(GovernanceDialog.PUBLISH_PROPOSAL, { params: expectedParams });
     });
 });

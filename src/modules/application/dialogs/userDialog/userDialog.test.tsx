@@ -19,7 +19,7 @@ describe('<UserDialog /> component', () => {
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
         useAccountSpy.mockReturnValue({} as unknown as wagmi.UseAccountReturnType);
         useDisconnectSpy.mockReturnValue({} as unknown as wagmi.UseDisconnectReturnType);
         useEnsNameSpy.mockReturnValue({} as unknown as wagmi.UseEnsNameReturnType);
@@ -83,7 +83,7 @@ describe('<UserDialog /> component', () => {
         const close = jest.fn();
         useAccountSpy.mockReturnValue({ address: '0x123' } as unknown as wagmi.UseAccountReturnType);
         useDisconnectSpy.mockReturnValue({ disconnect } as unknown as wagmi.UseDisconnectReturnType);
-        useDialogContextSpy.mockReturnValue({ close, open: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ close, open: jest.fn(), updateOptions: jest.fn() });
         render(createTestComponent());
 
         const disconnectButton = screen
@@ -91,13 +91,12 @@ describe('<UserDialog /> component', () => {
             .find((button) => within(button).queryByTestId(IconType.LOGOUT));
         expect(disconnectButton).toBeInTheDocument();
         await userEvent.click(disconnectButton!);
-        expect(close).toHaveBeenCalled();
         expect(disconnect).toHaveBeenCalled();
     });
 
     it('closes the dialog when the user disconnects', () => {
         const close = jest.fn();
-        useDialogContextSpy.mockReturnValue({ close, open: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ close, open: jest.fn(), updateOptions: jest.fn() });
         useAccountSpy
             .mockReturnValueOnce({ address: '0x123' } as unknown as wagmi.UseAccountReturnType)
             .mockReturnValueOnce({ address: null } as unknown as wagmi.UseAccountReturnType);

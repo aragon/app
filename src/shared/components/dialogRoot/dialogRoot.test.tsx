@@ -7,7 +7,7 @@ describe('<DialogRoot /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
     });
 
     afterEach(() => {

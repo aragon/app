@@ -41,11 +41,6 @@ export const initialiseSppPlugin = () => {
             pluginId: plugin.id,
             function: useSppNormalizeActions,
         })
-        .registerSlotFunction({
-            slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
-            pluginId: plugin.id,
-            function: () => null,
-        })
 
         // Settings module slots
         .registerSlotFunction({

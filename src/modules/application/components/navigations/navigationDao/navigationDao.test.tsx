@@ -40,7 +40,7 @@ describe('<NavigationDao /> component', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         usePathnameSpy.mockReturnValue('');
         useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
     });
 
     afterEach(() => {
@@ -156,7 +156,7 @@ describe('<NavigationDao /> component', () => {
 
     it('renders a connect button opening the connect-wallet dialog', async () => {
         const open = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open, close: jest.fn(), updateOptions: jest.fn() });
         render(createTestComponent());
         const button = screen.getByRole('button', { name: 'connect-mock' });
         expect(button).toBeInTheDocument();
@@ -166,7 +166,7 @@ describe('<NavigationDao /> component', () => {
 
     it('renders the user avatar on a button opening the user dialog', async () => {
         const open = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open, close: jest.fn(), updateOptions: jest.fn() });
         const address = '0x097d5e2325C2a98d3Adb0FE771ef66584698c59e';
         useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
         render(createTestComponent());

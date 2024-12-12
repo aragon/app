@@ -19,7 +19,7 @@ describe('<CreateProposalFormActions /> component', () => {
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
         useCreateProposalFormContextSpy.mockReturnValue({
             prepareActions: {},
             addPrepareAction: jest.fn(),
