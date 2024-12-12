@@ -36,7 +36,7 @@ describe('<TransactionDialogFooter /> component', () => {
     it('closes the dialog on cancel button click and calls the onCancelClick property', async () => {
         const close = jest.fn();
         const onCancelClick = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close, updateOptions: jest.fn() });
         render(createTestComponent({ onCancelClick }));
         await userEvent.click(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ }));
         expect(close).toHaveBeenCalled();
@@ -146,7 +146,7 @@ describe('<TransactionDialogFooter /> component', () => {
         const href = () => `/custom-link`;
         const successLink = { label: 'View proposal', href };
         const close = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close });
+        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close, updateOptions: jest.fn() });
         const activeStep = {
             id: TransactionDialogStep.CONFIRM,
             meta: { state: 'success' },
