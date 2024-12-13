@@ -2,17 +2,12 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SppStageStatus } from '@/plugins/sppPlugin/components/sppStageStatus';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import {
-    Card,
-    EmptyState,
-    proposalStatusToVotingStatus,
-    ProposalVoting,
-    ProposalVotingStatus,
-} from '@aragon/gov-ui-kit';
+import { proposalStatusToVotingStatus, ProposalVoting, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
+import { SppTimelockStageContent } from './sppTimelockStageContent';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -66,7 +61,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const getBodySubProposal = (address: string) =>
         subProposals?.find((subProposal) => subProposal.pluginAddress === address);
 
-    const timelock = !stage.plugins.length;
+    const isTimelockStage = !stage.plugins.length;
 
     return (
         <ProposalVoting.Stage
@@ -78,7 +73,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
             isMultiStage={isMultiStage}
             bodyList={bodyList}
         >
-            {!timelock && (
+            {!isTimelockStage && (
                 <ProposalVoting.BodySummary>
                     <ProposalVoting.BodySummaryList>
                         {stage.plugins.map((plugin) => (
@@ -97,24 +92,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                     <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} />
                 </ProposalVoting.BodySummary>
             )}
-            {timelock && (
-                <div className="flex flex-col gap-2">
-                    <Card className="border border-neutral-100 shadow-neutral-sm">
-                        <EmptyState
-                            heading="Timelock active"
-                            description={`Ends ${
-                                sppStageUtils
-                                    .getStageMinAdvance(proposal, stage)
-                                    ?.toFormat("cccc, LLLL dd yyyy 'at' HH:mm 'UTC'") ?? ''
-                            }`}
-                            objectIllustration={{ object: 'SETTINGS' }}
-                            isStacked={false}
-                        />
-                    </Card>
-                    <SppStageStatus proposal={proposal} stage={stage} />
-                </div>
-            )}
-            {!timelock &&
+            {isTimelockStage && <SppTimelockStageContent stage={stage} proposal={proposal} />}
+            {!isTimelockStage &&
                 stage.plugins.map((plugin) => (
                     <ProposalVoting.BodyContent
                         name={plugin.name}
