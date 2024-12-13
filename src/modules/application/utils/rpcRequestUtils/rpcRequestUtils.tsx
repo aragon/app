@@ -22,7 +22,7 @@ export class RpcRequestUtils {
     private rpcKey: string;
 
     constructor() {
-        if (process.env.NEXT_SECRET_RPC_KEY == null && !process.env.CI) {
+        if (process.env.NEXT_SECRET_RPC_KEY == null && process.env.CI !== 'true') {
             throw new Error('RpcRequestUtils: NEXT_SECRET_RPC_KEY not valid.');
         }
 
