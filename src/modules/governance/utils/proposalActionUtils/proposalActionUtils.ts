@@ -3,6 +3,7 @@ import {
     type IProposal,
     type IProposalAction,
     type IProposalActionUpdateMetadata,
+    type IProposalActionUpdatePluginMetadata,
     type IProposalActionWithdrawToken,
 } from '@/modules/governance/api/governanceService';
 import type { IDao, IResource } from '@/shared/api/daoService';
@@ -47,24 +48,37 @@ class ProposalActionUtils {
         return { ...otherValues, type: GukProposalActionType.WITHDRAW_TOKEN, token, amount: parsedAmount };
     };
 
-    normalizeUpdateMetaDataAction = (action: IProposalActionUpdateMetadata): IGukProposalActionUpdateMetadata => {
+    normalizeUpdateMetaDataAction = (
+        action: IProposalActionUpdateMetadata | IProposalActionUpdatePluginMetadata,
+    ): IGukProposalActionUpdateMetadata => {
         const { type, proposedMetadata, existingMetadata, ...otherValues } = action;
 
         const normalizeLinks = (links: IResource[]): IProposalActionUpdateMetadataDaoMetadataLink[] =>
             links.map(({ name, url }) => ({ label: name, href: url }));
 
+        const isPluginMetadata = type === ProposalActionType.METADATA_PLUGIN_UPDATE;
+        const isProcess = isPluginMetadata && action.existingMetadata.processKey !== undefined;
+
         return {
             ...otherValues,
-            type: GukProposalActionType.UPDATE_METADATA,
+            type: isPluginMetadata
+                ? GukProposalActionType.UPDATE_PLUGIN_METADATA
+                : GukProposalActionType.UPDATE_METADATA,
             proposedMetadata: {
                 ...proposedMetadata,
-                logo: proposedMetadata.logo ?? '',
-                links: normalizeLinks(proposedMetadata.links),
+                name: proposedMetadata.name ?? '',
+                description: proposedMetadata.description ?? '',
+                links: normalizeLinks(proposedMetadata.links ?? []),
+                ...(isProcess && { processKey: proposedMetadata.processKey }),
+                ...(!isPluginMetadata && { logo: proposedMetadata.logo ?? '' }),
             },
             existingMetadata: {
                 ...existingMetadata,
-                logo: existingMetadata.logo ?? '',
-                links: normalizeLinks(existingMetadata.links),
+                name: existingMetadata.name ?? '',
+                description: existingMetadata.description ?? '',
+                links: normalizeLinks(existingMetadata.links ?? []),
+                ...(isProcess && { processKey: existingMetadata.processKey }),
+                ...(!isPluginMetadata && { logo: existingMetadata.logo ?? '' }),
             },
         };
     };
@@ -74,7 +88,10 @@ class ProposalActionUtils {
     };
 
     isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata => {
-        return action.type === ProposalActionType.METADATA_UPDATE;
+        return (
+            action.type === ProposalActionType.METADATA_UPDATE ||
+            action.type === ProposalActionType.METADATA_PLUGIN_UPDATE
+        );
     };
 }
 

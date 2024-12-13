@@ -1,6 +1,7 @@
-import { useMemberList } from '@/modules/governance/api/governanceService';
+import { useMemberList, type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -10,7 +11,8 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 
-export interface IMultisigUpdateSettingsActionProps extends IProposalActionComponentProps<IProposalActionData> {}
+export interface IMultisigUpdateSettingsActionProps
+    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
 
 const updateMultisigSettingsAbi = {
     type: 'function',

@@ -1,9 +1,13 @@
-import type { IDao } from '@/shared/api/daoService';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
-import { type IProposalAction, ProposalActionType } from '../../api/governanceService';
+import {
+    type IProposalAction,
+    type IProposalActionUpdatePluginMetadata,
+    ProposalActionType,
+} from '../../api/governanceService';
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
 import type { IActionComposerItem } from './actionComposer.api';
 
@@ -105,6 +109,52 @@ class ActionComposerUtils {
         },
         ...nativeItems,
     ];
+
+    getDefaultActionPluginMetadataItem = (
+        plugin: IDaoPlugin,
+        t: TranslationFunction,
+        additionalMetadata?: Record<string, unknown>,
+    ): IActionComposerItem => {
+        const { address } = plugin;
+
+        return {
+            id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
+            name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
+            icon: IconType.SETTINGS,
+            groupId: address,
+            defaultValue: this.buildDefaultActionPluginMetadata(plugin, additionalMetadata),
+        };
+    };
+
+    private buildDefaultActionPluginMetadata = (
+        plugin: IDaoPlugin,
+        additionalMetadata?: Record<string, unknown>,
+    ): IProposalActionUpdatePluginMetadata => {
+        const { name, processKey, description, links: resources } = plugin;
+        const existingMetadata = { name, processKey, description, resources, ...additionalMetadata };
+
+        return {
+            type: ProposalActionType.METADATA_PLUGIN_UPDATE,
+            from: '',
+            to: plugin.address,
+            data: '0x',
+            value: '0',
+            existingMetadata,
+            proposedMetadata: existingMetadata,
+            inputData: {
+                function: 'setMetadata',
+                contract: plugin.subdomain,
+                parameters: [
+                    {
+                        name: '_metadata',
+                        type: 'bytes',
+                        notice: 'The IPFS hash of the new metadata object',
+                        value: '',
+                    },
+                ],
+            },
+        };
+    };
 
     private buildDefaultCustomAction = (
         { address: contractAddress, name: contractName }: ISmartContractAbi,
