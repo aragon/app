@@ -32,7 +32,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
 
     const { t } = useTranslations();
 
-    const stageType = useWatch<Record<string, string>>({ name: `${name}.type` });
+    const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${name}.type` });
     const isOptimisticStage = stageType === 'optimistic';
     const isTimelockStage = stageType === 'timelock';
 

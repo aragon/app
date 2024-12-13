@@ -18,20 +18,19 @@ export interface IStageTimingFieldDialogProps {
      */
     stageFieldName: string;
     /**
-     * Defines if current stage is optimistic or not.
+     * Type of the stage (normal, optimistic, timelock).
      */
-    isOptimisticStage: boolean;
-    /**
-     * Defines if current stage is timelock or not.
-     */
-    isTimelockStage: boolean;
+    stageType: ICreateProcessFormStage['type'];
 }
 
 export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (props) => {
-    const { isTimingDialogOpen, setIsTimingDialogOpen, stageFieldName, isOptimisticStage, isTimelockStage } = props;
+    const { isTimingDialogOpen, setIsTimingDialogOpen, stageFieldName, stageType } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
+
+    const isOptimisticStage = stageType === 'optimistic';
+    const isTimelockStage = stageType === 'timelock';
 
     const periodLabel = isTimelockStage
         ? t('app.governance.createProcessForm.stage.timing.dialog.timelockPeriod.label')

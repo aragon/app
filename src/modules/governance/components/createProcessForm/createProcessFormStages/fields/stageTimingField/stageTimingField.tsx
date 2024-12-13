@@ -14,7 +14,7 @@ export interface IStageTimingFieldProps {
     /**
      * Type of the stage (normal, optimistic, timelock).
      */
-    stageType: string;
+    stageType: ICreateProcessFormStage['type'];
 }
 
 export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
@@ -105,8 +105,7 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
                 stageFieldName={stageFieldName}
                 isTimingDialogOpen={isTimingDialogOpen}
                 setIsTimingDialogOpen={setIsTimingDialogOpen}
-                isOptimisticStage={isOptimisticStage}
-                isTimelockStage={isTimelockStage}
+                stageType={stageType}
             />
         </InputContainer>
     );
