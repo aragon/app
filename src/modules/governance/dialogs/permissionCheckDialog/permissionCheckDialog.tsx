@@ -2,7 +2,7 @@ import type { IUseConnectedParticipantGuardBaseParams } from '@/modules/governan
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { DefinitionList, Dialog, Heading, Spinner } from '@aragon/gov-ui-kit';
+import { DefinitionList, Dialog, Heading, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 
 export interface IPermissionCheckGuardResult {
@@ -100,8 +100,9 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
         return (
             <Dialog.Content className="flex w-full flex-col gap-y-4 py-4 md:py-6">
                 <Heading size="h3">{t('app.governance.permissionCheckDialog.checkingPermissions')}</Heading>
-                <div className="flex h-12 w-full items-center justify-center">
-                    <Spinner size="xl" className="self-center" />
+                <div className="flex w-full flex-col gap-y-2">
+                    <StateSkeletonBar width="40%" size="lg" />
+                    <StateSkeletonBar width="65%" size="lg" />
                 </div>
             </Dialog.Content>
         );

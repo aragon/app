@@ -42,7 +42,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
     const router = useRouter();
 
-    const { address } = useAccount();
+    const { isConnected, address } = useAccount();
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -58,7 +58,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         daoId,
         slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
     };
-    const { check: checkParticipant, result: canParticipate } = useConnectedParticipantGuard({
+    const { check: checkParticipant } = useConnectedParticipantGuard({
         params: slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
         onError: onPermissionCheckError,
@@ -104,14 +104,27 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
         [t],
     );
 
-    const [participantChecked, setParticipantChecked] = useState(false);
+    const [participantChecked, setParticipantChecked] = useState({ checked: false, address: '' });
 
     useEffect(() => {
-        if (!participantChecked && !canParticipate) {
+        if (!isConnected && !participantChecked.checked) {
             checkParticipant();
-            setParticipantChecked(true);
+            setParticipantChecked({ checked: true, address: address as string });
         }
-    }, [canParticipate, checkParticipant, participantChecked, address]);
+    }, [checkParticipant, participantChecked.checked, isConnected, address]);
+
+    useEffect(() => {
+        if (isConnected && address !== participantChecked.address) {
+            checkParticipant();
+            setParticipantChecked({ checked: true, address: address as string });
+        }
+    }, [checkParticipant, isConnected, address, participantChecked.address]);
+
+    useEffect(() => {
+        if (address !== participantChecked.address) {
+            setParticipantChecked({ checked: false, address: '' });
+        }
+    }, [address, participantChecked.address]);
 
     return (
         <Page.Main fullWidth={true}>

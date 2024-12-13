@@ -33,6 +33,7 @@ export const usePermissionCheckGuard = <TSlotParams extends IUseConnectedPartici
             } else if (!permissions && onError) {
                 onError();
             }
+            setHasPermissions(null);
         },
         [onSuccess, onError],
     );

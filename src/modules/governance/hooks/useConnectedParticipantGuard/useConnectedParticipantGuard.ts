@@ -59,7 +59,6 @@ export const useConnectedParticipantGuard = <TSlotParams extends IUseConnectedPa
             checkWalletConnected();
             return false;
         }
-
         if (!hasPermissions) {
             checkPermissions();
             return false;
