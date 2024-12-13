@@ -2,5 +2,8 @@ import type { IDaoPluginMetadataObject } from '@/modules/governance/api/governan
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 
 export interface IUpdatePluginMetadataFormData extends Omit<IDaoPluginMetadataObject, 'links'> {
+    /**
+     * Resources of the plugin.
+     */
     resources?: IResourcesInputResource[];
 }
