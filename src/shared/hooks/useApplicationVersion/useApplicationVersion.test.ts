@@ -8,21 +8,18 @@ describe('useApplicationVersion hook', () => {
         process.env = originalProcessEnv;
     });
 
-    it('returns the version with environment label for development', () => {
-        process.env.version = '1.0.0';
-        process.env.NEXT_PUBLIC_ENV = 'development';
-        const { result } = renderHook(() => useApplicationVersion());
-        expect(result.current).toMatch(/useApplicationVersion.versionEnv \(version=1.0.0,env=DEV\)/);
-    });
-
-    it('returns the version with environment label for staging', () => {
+    test.each([
+        { env: 'development', label: 'DEV' },
+        { env: 'staging', label: 'STG' },
+        { env: 'local', label: 'LOC' },
+    ])('returns the version with environment label for $env', ({ env, label }) => {
         process.env.version = '1.5.0';
-        process.env.NEXT_PUBLIC_ENV = 'staging';
+        process.env.NEXT_PUBLIC_ENV = env;
         const { result } = renderHook(() => useApplicationVersion());
-        expect(result.current).toMatch(/useApplicationVersion.versionEnv \(version=1.5.0,env=STG\)/);
+        expect(result.current).toMatch(new RegExp(`useApplicationVersion.versionEnv \\(version=1.5.0,env=${label}\\)`));
     });
 
-    it('returns the version without environment label for unknown environment', () => {
+    it('returns the version without environment label for production environment', () => {
         process.env.version = '1.2.3';
         process.env.NEXT_PUBLIC_ENV = 'production';
         const { result } = renderHook(() => useApplicationVersion());

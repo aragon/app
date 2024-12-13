@@ -3,6 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 const envLabel: Record<string, string | undefined> = {
     development: 'DEV',
     staging: 'STG',
+    local: 'LOC',
 };
 
 export const useApplicationVersion = (): string => {

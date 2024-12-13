@@ -21,21 +21,28 @@ integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the
 
 ## Getting Started
 
-Follow these steps to set up the Aragon App locally:
+Follow these steps to get the app running on your machine:
 
-1. Install the project's dependencies:
+1. Install the required dependencies by running:
 
 ```bash
 yarn install
 ```
 
-2. Start the development server:
+2. Create a `.env` file in the root of the project and populate it with the required environment variables. Use the
+   `.env.example` file as a template:
+
+```bash
+cp .env.example .env
+```
+
+3. Start the development server with:
 
 ```bash
 yarn dev
 ```
 
-3. Access the Aragon App by opening [http://localhost:3000](http://localhost:3000) in your web browser.
+4. Access the Aragon App by navigating to [http://localhost:3000](http://localhost:3000) in your browser.
 
 Other available commands include:
 
