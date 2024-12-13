@@ -1,3 +1,4 @@
+import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as useDialogContext from '../dialogProvider';
@@ -7,7 +8,7 @@ describe('<DialogRoot /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
     afterEach(() => {
@@ -24,12 +25,8 @@ describe('<DialogRoot /> component', () => {
     };
 
     it('renders empty container when no dialog is active', () => {
-        useDialogContextSpy.mockReturnValue({
-            location: undefined,
-            close: jest.fn(),
-            open: jest.fn(),
-            updateOptions: jest.fn(),
-        });
+        const location = undefined;
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ location }));
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
     });
@@ -39,7 +36,7 @@ describe('<DialogRoot /> component', () => {
         const dialogContent = 'connect-wallet-content';
         const dialogs = { [dialogId]: { Component: () => dialogContent } };
         const location = { id: dialogId };
-        useDialogContextSpy.mockReturnValue({ location, open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ location }));
         render(createTestComponent({ dialogs }));
         expect(screen.getByRole('dialog')).toBeInTheDocument();
         expect(screen.getByText(dialogContent)).toBeInTheDocument();
@@ -51,7 +48,7 @@ describe('<DialogRoot /> component', () => {
         const description = 'test-description';
         const dialogs = { [dialogId]: { Component: () => 'test', title, description } };
         const location = { id: dialogId };
-        useDialogContextSpy.mockReturnValue({ location, open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ location }));
         render(createTestComponent({ dialogs }));
         expect(screen.getByText(title)).toBeInTheDocument();
         expect(screen.getByText(description)).toBeInTheDocument();
@@ -62,7 +59,7 @@ describe('<DialogRoot /> component', () => {
         const dialogs = { [dialogId]: { Component: () => null } };
         const location = { id: dialogId };
         const close = jest.fn();
-        useDialogContextSpy.mockReturnValue({ location, open: jest.fn(), close, updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ location, close }));
         render(createTestComponent({ dialogs }));
         await userEvent.keyboard('{Escape}');
         expect(close).toHaveBeenCalled();

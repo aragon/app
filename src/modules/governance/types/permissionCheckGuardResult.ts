@@ -17,9 +17,9 @@ export interface IPermissionCheckGuardResult {
     /**
      * Settings to be displayed as reason on why the user does not have the specified permission.
      */
-    settings: IPermissionCheckGuardSetting[];
+    settings?: IPermissionCheckGuardSetting[];
     /**
      * Indicates if the slot-function is loading the data needed to check the specific permission.
      */
-    isLoading: boolean;
+    isLoading?: boolean;
 }

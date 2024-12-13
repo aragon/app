@@ -2,6 +2,7 @@ import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs
 import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
@@ -40,7 +41,7 @@ describe('<NavigationWizard /> component', () => {
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({ address: '0x123', isConnected: true } as unknown as wagmi.UseAccountReturnType);
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         confirmSpy.mockReset();
     });
 
@@ -94,7 +95,7 @@ describe('<NavigationWizard /> component', () => {
         const address = '0xUser123';
         const open = jest.fn();
         useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
-        useDialogContextSpy.mockReturnValue({ open, close: jest.fn(), updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
 
         render(createTestComponent());
 
@@ -107,7 +108,7 @@ describe('<NavigationWizard /> component', () => {
 
     it('renders connect wallet button when user is not connected', async () => {
         const open = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open, close: jest.fn(), updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         useAccountSpy.mockReturnValue({ address: null, isConnected: false } as unknown as wagmi.UseAccountReturnType);
 
         render(createTestComponent());

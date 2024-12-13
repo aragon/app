@@ -1,4 +1,4 @@
-import type { IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
+import type { IUseCheckPermissionGuardBaseParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
@@ -31,7 +31,7 @@ export interface IPermissionCheckGuardSetting {
     definition: string;
 }
 
-export interface IPermissionCheckDialogParams<TSlotParams extends IUseConnectedParticipantGuardBaseParams> {
+export interface IPermissionCheckDialogParams<TSlotParams extends IUseCheckPermissionGuardBaseParams> {
     /**
      * Parameters related to the proposal.
      */
@@ -58,26 +58,23 @@ export interface IPermissionCheckDialogParams<TSlotParams extends IUseConnectedP
     slotParams: TSlotParams;
 }
 
-export interface IPermissionCheckDialogProps<TSlotParams extends IUseConnectedParticipantGuardBaseParams>
+export interface IPermissionCheckDialogProps<TSlotParams extends IUseCheckPermissionGuardBaseParams>
     extends IDialogComponentProps<IPermissionCheckDialogParams<TSlotParams>> {}
 
-export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipantGuardBaseParams>(
+export const PermissionCheckDialog = <TSlotParams extends IUseCheckPermissionGuardBaseParams>(
     props: IPermissionCheckDialogProps<TSlotParams>,
 ) => {
     const { params } = props.location;
-    const { slotParams, slotId, onSuccess, onError, updatePermissions } = params ?? {};
+    const { slotParams, slotId, onSuccess, onError } = params ?? {};
     const { plugin } = slotParams ?? {};
 
     const { t } = useTranslations();
 
-    const { close } = useDialogContext();
+    const { close, updateOptions } = useDialogContext();
 
-    const checkPermissions = useSlotSingleFunction<
-        IUseConnectedParticipantGuardBaseParams,
-        IPermissionCheckGuardResult
-    >({
+    const checkPermissions = useSlotSingleFunction<IUseCheckPermissionGuardBaseParams, IPermissionCheckGuardResult>({
         slotId: slotId!,
-        pluginId: plugin!.id,
+        pluginId: plugin!.subdomain,
         params: slotParams!,
     }) ?? { hasPermission: true, settings: [], isLoading: false };
 
@@ -90,11 +87,14 @@ export const PermissionCheckDialog = <TSlotParams extends IUseConnectedParticipa
 
     useEffect(() => {
         if (hasPermission) {
-            updatePermissions?.(hasPermission);
             onSuccess?.();
             close();
         }
-    }, [hasPermission, onSuccess, close, updatePermissions]);
+    }, [hasPermission, onSuccess, close]);
+
+    useEffect(() => {
+        updateOptions({ onClose: handleDialogClose });
+    }, [handleDialogClose, updateOptions]);
 
     if (isLoading) {
         return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { useConnectedParticipantGuard } from '@/modules/governance/hooks/useConnectedParticipantGuard';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -49,12 +49,12 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     };
 
     const slotParams = {
-        plugin: selectedPlugin,
+        plugin: selectedPlugin.meta,
         daoId,
     };
-    const { check: checkParticipant, result: connectedParticipant } = useConnectedParticipantGuard({
+    const { check: checkParticipant, result: connectedParticipant } = usePermissionCheckGuard({
         params: slotParams,
-        slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         onSuccess: () => router.push(createProposalUrl),
     });
 

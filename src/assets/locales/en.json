@@ -475,6 +475,10 @@
       "permissionCheckDialog": {
         "checkingPermissions": "Checking permissions",
         "description": "Not a member of this voting body",
+        "screenReader": {
+          "description": "You don't have the permissions require for that DAO action.",
+          "title": "Permission denied"
+        },
         "title": "You can't create"
       },
       "proposalExecutionStatus": {

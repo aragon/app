@@ -1,7 +1,8 @@
-import * as useConnectedParticipantGuard from '@/modules/governance/hooks/useConnectedParticipantGuard';
+import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
 import { render, screen } from '@testing-library/react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
@@ -29,17 +30,17 @@ describe('<DaoProposalsPageClient /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
-    const useConnectedParticipantGuardSpy = jest.spyOn(useConnectedParticipantGuard, 'useConnectedParticipantGuard');
+    const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
-        useDialogContextSpy.mockReturnValue({ close: jest.fn(), open: jest.fn(), updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         useRouterSpy.mockReturnValue({
             push: jest.fn(),
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
-        useConnectedParticipantGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
+        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
     });
 
     afterEach(() => {
@@ -47,7 +48,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         useDialogContextSpy.mockReset();
         useRouterSpy.mockReset();
         useAccountSpy.mockReset();
-        useConnectedParticipantGuardSpy.mockReset();
+        usePermissionCheckGuardSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
@@ -73,7 +74,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         const initialParams = { queryParams: { daoId, pluginAddress } };
         const plugin = generateDaoPlugin({ address: pluginAddress });
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
-        useConnectedParticipantGuardSpy.mockReturnValue({ check: jest.fn(), result: true });
+        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: true });
 
         render(createTestComponent({ initialParams }));
         const createProposalButton = screen.getByRole<HTMLAnchorElement>('link', {

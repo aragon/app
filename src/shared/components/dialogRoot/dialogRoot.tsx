@@ -32,7 +32,13 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
     };
 
     return (
-        <Dialog.Root {...props} open={isOpen} onOpenChange={handleOpenChange} onInteractOutside={handleInteractOutside}>
+        <Dialog.Root
+            {...props}
+            open={isOpen}
+            onOpenChange={handleOpenChange}
+            onInteractOutside={handleInteractOutside}
+            useFocusTrap={activeDialog?.useFocusTrap}
+        >
             {activeDialog && (
                 <>
                     <DialogRootHiddenElement labelKey={activeDialog.title} type="title" />

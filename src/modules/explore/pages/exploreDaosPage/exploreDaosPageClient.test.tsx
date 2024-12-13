@@ -1,4 +1,5 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as Wagmi from 'wagmi';
@@ -12,7 +13,7 @@ describe('<ExploreDaosPageClient /> component', () => {
 
     beforeEach(() => {
         useAccountSpy.mockReturnValue({} as Wagmi.UseAccountReturnType);
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn(), updateOptions: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
     afterEach(() => {

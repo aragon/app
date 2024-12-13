@@ -1,22 +1,20 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
+import type { IUseCheckPermissionGuardBaseParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
-import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
-import { type IDaoPlugin } from '@/shared/api/daoService';
-import { type ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
 
-export interface IUseMultisigProposalCreationRequirementsParams extends IUseConnectedParticipantGuardBaseParams {
+export interface IUseMultisigPermissionCheckProposalCreationParams extends IUseCheckPermissionGuardBaseParams {
     /**
      * Plugin to create the proposal for.
      */
-    plugin: ITabComponentPlugin<IDaoPlugin<IMultisigPluginSettings>>;
+    plugin: IDaoPlugin;
 }
 
-export const useMultisigProposalCreationRequirements = (
-    params: IUseMultisigProposalCreationRequirementsParams,
+export const useMultisigPermissionCheckProposalCreation = (
+    params: IUseMultisigPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
     const { plugin } = params;
 
@@ -24,19 +22,17 @@ export const useMultisigProposalCreationRequirements = (
 
     const { t } = useTranslations();
 
-    const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.meta.address };
+    const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address };
     const { data: hasPermission, isLoading } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: address != null },
     );
 
-    const pluginName = daoUtils.getPluginName(plugin.meta);
+    const pluginName = daoUtils.getPluginName(plugin);
 
     if (hasPermission) {
         return {
             hasPermission: true,
-            settings: [],
-            isLoading,
         };
     }
 
@@ -48,8 +44,8 @@ export const useMultisigProposalCreationRequirements = (
                 definition: pluginName,
             },
             {
-                term: t('app.plugins.multisig.multisigProposalCreationRequirements.proposalCreationRequirement'),
-                definition: 'Multisig member',
+                term: t('app.plugins.multisig.multisigProposalCreationRequirements.proposalCreation'),
+                definition: t('app.plugins.multisig.multisigProposalCreationRequirements.proposalCreationRequirement'),
             },
         ],
         isLoading,

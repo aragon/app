@@ -1,4 +1,4 @@
 export {
-    useMultisigProposalCreationRequirements,
-    type IUseMultisigProposalCreationRequirementsParams,
-} from './useMultisigProposalCreationRequirements';
+    useMultisigPermissionCheckProposalCreation,
+    type IUseMultisigPermissionCheckProposalCreationParams,
+} from './useMultisigPermissionCheckProposalCreation';

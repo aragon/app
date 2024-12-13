@@ -1,6 +1,6 @@
 'use client';
 
-import { useConnectedParticipantGuard } from '@/modules/governance/hooks/useConnectedParticipantGuard';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -10,7 +10,6 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAccount } from 'wagmi';
 import type { ISmartContractAbi } from '../../api/smartContractService';
 import {
     CreateProposalForm,
@@ -42,8 +41,6 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
     const router = useRouter();
 
-    const { isConnected, address } = useAccount();
-
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
@@ -54,15 +51,21 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const onPermissionCheckError = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
 
     const slotParams = {
-        plugin: plugin![0],
+        plugin: plugin![0].meta,
         daoId,
-        slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
     };
-    const { check: checkParticipant } = useConnectedParticipantGuard({
+    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
         params: slotParams,
-        slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_REQUIREMENTS,
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         onError: onPermissionCheckError,
     });
+
+    useEffect(() => {
+        if (!canCreateProposal) {
+            createProposalGuard();
+        }
+    }, [canCreateProposal, createProposalGuard]);
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
     const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);
@@ -103,28 +106,6 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
             })),
         [t],
     );
-
-    const [participantChecked, setParticipantChecked] = useState({ checked: false, address: '' });
-
-    useEffect(() => {
-        if (!isConnected && !participantChecked.checked) {
-            checkParticipant();
-            setParticipantChecked({ checked: true, address: address as string });
-        }
-    }, [checkParticipant, participantChecked.checked, isConnected, address]);
-
-    useEffect(() => {
-        if (isConnected && address !== participantChecked.address) {
-            checkParticipant();
-            setParticipantChecked({ checked: true, address: address as string });
-        }
-    }, [checkParticipant, isConnected, address, participantChecked.address]);
-
-    useEffect(() => {
-        if (address !== participantChecked.address) {
-            setParticipantChecked({ checked: false, address: '' });
-        }
-    }, [address, participantChecked.address]);
 
     return (
         <Page.Main fullWidth={true}>
