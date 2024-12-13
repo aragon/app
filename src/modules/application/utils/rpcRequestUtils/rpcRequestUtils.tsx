@@ -22,11 +22,11 @@ export class RpcRequestUtils {
     private rpcKey: string;
 
     constructor() {
-        if (process.env.NEXT_SECRET_RPC_KEY == null) {
+        if (process.env.NEXT_SECRET_RPC_KEY == null && !process.env.CI) {
             throw new Error('RpcRequestUtils: NEXT_SECRET_RPC_KEY not valid.');
         }
 
-        this.rpcKey = process.env.NEXT_SECRET_RPC_KEY;
+        this.rpcKey = process.env.NEXT_SECRET_RPC_KEY!;
     }
 
     request = async (request: Request, { params }: IRpcRequestOptions) => {

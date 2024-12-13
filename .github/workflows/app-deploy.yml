@@ -37,10 +37,6 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Prepare secrets
-        run: |
-          echo "NEXT_SECRET_IPFS_JWT=${{secrets.NEXT_SECRET_IPFS_JWT}}" >> .env
-          echo "NEXT_SECRET_RPC_KEY=${{secrets.NEXT_SECRET_RPC_KEY}}" >> .env
       - name: Build DEV or PROD application
         run: |
           yarn setup ${{ env.APP_ENV }}
