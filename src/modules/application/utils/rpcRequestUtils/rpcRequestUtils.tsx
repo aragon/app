@@ -50,10 +50,11 @@ export class RpcRequestUtils {
     };
 
     private checkReferer = (headersList: ReadonlyHeaders): boolean | undefined => {
-        const referer = new URL(headersList.get('referer') ?? '');
+        const referer = headersList.get('referer');
+        const { hostname: refererHostname } = referer ? new URL(referer) : {};
         const allowedRefererDomain = process.env.NEXT_PUBLIC_RPC_ALLOWED_DOMAIN;
 
-        return allowedRefererDomain == null || referer.hostname.endsWith(allowedRefererDomain);
+        return allowedRefererDomain == null || refererHostname?.endsWith(allowedRefererDomain);
     };
 
     private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
