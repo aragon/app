@@ -39,6 +39,7 @@ describe('proposalActionUtils', () => {
     it('normalizes an update metadata action', () => {
         const baseAction = generateProposalActionUpdateMetadata();
         const { proposedMetadata, existingMetadata } = baseAction;
+
         const action = {
             ...baseAction,
             proposedMetadata: { ...proposedMetadata, links: [{ name: 'Link1', url: 'https://link1.com' }] },
@@ -48,7 +49,9 @@ describe('proposalActionUtils', () => {
                 links: [{ name: 'Link2', url: 'https://link2.com' }],
             },
         };
+
         const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
+
         expect(result).toEqual({
             ...action,
             type: 'UPDATE_METADATA',
