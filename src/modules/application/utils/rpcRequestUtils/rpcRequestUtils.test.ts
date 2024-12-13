@@ -36,9 +36,18 @@ describe('rpcRequest utils', () => {
 
     const createTestOptions = (chainId: string): IRpcRequestOptions => ({ params: Promise.resolve({ chainId }) });
 
-    it('throws error when the rpc key is not defined', () => {
-        testLogger.suppressErrors();
-        expect(() => new RpcRequestUtils()).toThrow();
+    describe('constructor', () => {
+        it('throws error when the rpc key is not defined on non CI context', () => {
+            testLogger.suppressErrors();
+            process.env.CI = 'false';
+            expect(() => new RpcRequestUtils()).toThrow();
+        });
+
+        it('does not throw error when the rpc key is not defined on CI context', () => {
+            testLogger.suppressErrors();
+            process.env.CI = 'true';
+            expect(() => new RpcRequestUtils()).not.toThrow();
+        });
     });
 
     describe('request', () => {
