@@ -1,25 +1,19 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
+import type { IUseGuardBaseParams } from '@/modules/governance/types/useGuardBaseParams';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { ITabComponentPlugin } from '@/shared/components/pluginTabComponent';
 import { useCallback } from 'react';
-
-export interface IUseGuardBaseParams {
-    /**
-     * Callback called when the user is capable of participating.
-     */
-    onSuccess?: () => void;
-    /**
-     * Callback called when the user cannot participate.
-     */
-    onError?: () => void;
-}
 
 export interface IUseConnectedParticipantGuardBaseParams {
     /**
      * Plugin to check permissions for.
      */
     plugin: ITabComponentPlugin<IDaoPlugin>;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
 }
 
 export interface IUseConnectedParticipantGuardParams<TSlotParams extends IUseConnectedParticipantGuardBaseParams>

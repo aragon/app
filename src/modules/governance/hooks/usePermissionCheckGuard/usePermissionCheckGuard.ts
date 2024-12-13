@@ -1,5 +1,5 @@
 import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
-import type { IUseGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard/useConnectedParticipantGuard';
+import type { IUseGuardBaseParams } from '@/modules/governance/types/useGuardBaseParams';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useCallback, useState } from 'react';
 import { GovernanceDialog } from '../../constants/moduleDialogs';

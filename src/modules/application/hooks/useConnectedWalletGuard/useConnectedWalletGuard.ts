@@ -1,4 +1,4 @@
-import type { IUseGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard/useConnectedParticipantGuard';
+import type { IUseGuardBaseParams } from '@/modules/governance/types/useGuardBaseParams';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
