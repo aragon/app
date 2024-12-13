@@ -2,7 +2,7 @@ import type { ProposalActionType } from '@/modules/governance/api/governanceServ
 import type { IResource } from '@/shared/api/daoService';
 import { type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata } from '@aragon/gov-ui-kit';
 
-export interface IDaoPluginMetadataObject {
+export interface IProposalActionUpdatePluginMetadataObject {
     /**
      * The name of the plugin.
      */
@@ -30,9 +30,9 @@ export interface IProposalActionUpdatePluginMetadata
     /**
      * The proposed metadata to be updated.
      */
-    proposedMetadata: IDaoPluginMetadataObject;
+    proposedMetadata: IProposalActionUpdatePluginMetadataObject;
     /**
      * The existing metadata.
      */
-    existingMetadata: IDaoPluginMetadataObject;
+    existingMetadata: IProposalActionUpdatePluginMetadataObject;
 }
