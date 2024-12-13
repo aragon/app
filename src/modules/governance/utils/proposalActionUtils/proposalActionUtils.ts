@@ -70,6 +70,7 @@ class ProposalActionUtils {
                 description: proposedMetadata.description ?? '',
                 links: normalizeLinks(proposedMetadata.links ?? []),
                 ...(isProcess && { processKey: proposedMetadata.processKey }),
+                ...(!isPluginMetadata && { logo: proposedMetadata.logo ?? '' }),
             },
             existingMetadata: {
                 ...existingMetadata,
@@ -77,6 +78,7 @@ class ProposalActionUtils {
                 description: existingMetadata.description ?? '',
                 links: normalizeLinks(existingMetadata.links ?? []),
                 ...(isProcess && { processKey: existingMetadata.processKey }),
+                ...(!isPluginMetadata && { logo: existingMetadata.logo ?? '' }),
             },
         };
     };

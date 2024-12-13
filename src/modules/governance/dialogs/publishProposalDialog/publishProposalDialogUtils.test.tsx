@@ -6,7 +6,7 @@ import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
     generateCreateProposalFormData,
-    generateProposalActionUpdateMetadataBase,
+    generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '../../testUtils';
 import { proposalAbi } from './proposalAbi';
@@ -51,10 +51,7 @@ describe('publishProposalDialog utils', () => {
             const values = generateCreateProposalFormData({
                 actions: [
                     {
-                        ...generateProposalActionUpdateMetadataBase(
-                            ProposalActionType.METADATA_UPDATE,
-                            actionBaseValues,
-                        ),
+                        ...generateProposalActionUpdateMetadata(actionBaseValues),
                         daoId: 'test',
                         meta: undefined,
                     },
@@ -106,7 +103,7 @@ describe('publishProposalDialog utils', () => {
 
     describe('prepareActions', () => {
         it('calls the prepareAction function related to the action when set', async () => {
-            const updateMetadataAction = generateProposalActionUpdateMetadataBase(ProposalActionType.METADATA_UPDATE, {
+            const updateMetadataAction = generateProposalActionUpdateMetadata({
                 data: 'default-data',
             });
             const updateMetadataActionData = 'data-with-ipfs-cid';
@@ -131,7 +128,7 @@ describe('publishProposalDialog utils', () => {
 
         it('defaults to the action data when no prepare function is found for the aciton', async () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
-            const updateAction = generateProposalActionUpdateMetadataBase(ProposalActionType.METADATA_UPDATE, {
+            const updateAction = generateProposalActionUpdateMetadata({
                 data: '0x456',
             });
             const actions = [
@@ -152,7 +149,7 @@ describe('publishProposalDialog utils', () => {
             ];
             const actions = [
                 generateProposalActionWithdrawToken(actionsBaseData[0]),
-                generateProposalActionUpdateMetadataBase(ProposalActionType.METADATA_UPDATE, actionsBaseData[1]),
+                generateProposalActionUpdateMetadata(actionsBaseData[1]),
             ];
             expect(publishProposalDialogUtils['formToProposalActions'](actions)).toEqual(actionsBaseData);
         });

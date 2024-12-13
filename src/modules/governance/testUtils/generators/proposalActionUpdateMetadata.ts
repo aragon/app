@@ -1,11 +1,11 @@
 import {
+    ProposalActionType,
     type IProposalActionUpdateMetadata,
     type IProposalActionUpdatePluginMetadata,
-    type ProposalActionType,
 } from '@/modules/governance/api/governanceService';
 import { generateProposalAction } from './proposalAction';
 
-export const generateProposalActionUpdateMetadataBase = <
+const generateProposalActionUpdateMetadataBase = <
     T extends IProposalActionUpdateMetadata | IProposalActionUpdatePluginMetadata,
 >(
     type: ProposalActionType,
@@ -26,3 +26,16 @@ export const generateProposalActionUpdateMetadataBase = <
         },
         ...action,
     }) as T;
+
+export const generateProposalActionUpdateMetadata = (
+    action?: Partial<IProposalActionUpdateMetadata>,
+): IProposalActionUpdateMetadata =>
+    generateProposalActionUpdateMetadataBase<IProposalActionUpdateMetadata>(ProposalActionType.METADATA_UPDATE, action);
+
+export const generateProposalActionUpdatePluginMetadata = (
+    action?: Partial<IProposalActionUpdatePluginMetadata>,
+): IProposalActionUpdatePluginMetadata =>
+    generateProposalActionUpdateMetadataBase<IProposalActionUpdatePluginMetadata>(
+        ProposalActionType.METADATA_PLUGIN_UPDATE,
+        action,
+    );
