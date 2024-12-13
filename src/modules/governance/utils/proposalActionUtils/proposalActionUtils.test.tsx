@@ -37,62 +37,62 @@ describe('proposalActionUtils', () => {
     });
 
     it('normalizes an update metadata action', () => {
-     const baseAction = generateProposalActionUpdateMetadata();
-     const { proposedMetadata, existingMetadata } = baseAction;
-     const action = {
-         ...baseAction,
-         proposedMetadata: { ...proposedMetadata, links: [{ name: 'Link1', url: 'https://link1.com' }] },
-         existingMetadata: {
-             ...existingMetadata,
-             logo: 'test.png',
-             links: [{ name: 'Link2', url: 'https://link2.com' }],
-         },
-     };
-     const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
-     expect(result).toEqual({
-         ...action,
-         type: 'UPDATE_METADATA',
-         proposedMetadata: {
-             ...action.proposedMetadata,
-             logo: '',
-             links: [{ label: 'Link1', href: 'https://link1.com' }],
-         },
-         existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
-     });
- });
+        const baseAction = generateProposalActionUpdateMetadata();
+        const { proposedMetadata, existingMetadata } = baseAction;
+        const action = {
+            ...baseAction,
+            proposedMetadata: { ...proposedMetadata, links: [{ name: 'Link1', url: 'https://link1.com' }] },
+            existingMetadata: {
+                ...existingMetadata,
+                logo: 'test.png',
+                links: [{ name: 'Link2', url: 'https://link2.com' }],
+            },
+        };
+        const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
+        expect(result).toEqual({
+            ...action,
+            type: 'UPDATE_METADATA',
+            proposedMetadata: {
+                ...action.proposedMetadata,
+                logo: '',
+                links: [{ label: 'Link1', href: 'https://link1.com' }],
+            },
+            existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
+        });
+    });
 
- it('normalizes an update metadata action for plugin', () => {
-     const baseAction = generateProposalActionUpdatePluginMetadata();
-     const { proposedMetadata, existingMetadata } = baseAction;
+    it('normalizes an update metadata action for plugin', () => {
+        const baseAction = generateProposalActionUpdatePluginMetadata();
+        const { proposedMetadata, existingMetadata } = baseAction;
 
-     const action = {
-         ...baseAction,
-         proposedMetadata: {
-             ...proposedMetadata,
-             name: 'Updated name',
-             description: 'Updated description',
-             links: [{ name: 'Link1', url: 'https://link1.com' }],
-         },
-         existingMetadata: {
-             ...existingMetadata,
-             name: '',
-             description: '',
-             links: [{ name: 'Link2', url: 'https://link2.com' }],
-         },
-     };
+        const action = {
+            ...baseAction,
+            proposedMetadata: {
+                ...proposedMetadata,
+                name: 'Updated name',
+                description: 'Updated description',
+                links: [{ name: 'Link1', url: 'https://link1.com' }],
+            },
+            existingMetadata: {
+                ...existingMetadata,
+                name: '',
+                description: '',
+                links: [{ name: 'Link2', url: 'https://link2.com' }],
+            },
+        };
 
-     const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
+        const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
 
-     expect(result).toEqual({
-         ...action,
-         type: 'UPDATE_PLUGIN_METADATA',
-         proposedMetadata: {
-             ...action.proposedMetadata,
-             name: 'Updated name',
-             description: 'Updated description',
-             links: [{ label: 'Link1', href: 'https://link1.com' }],
-         },
-         existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
-     });
- });
+        expect(result).toEqual({
+            ...action,
+            type: 'UPDATE_PLUGIN_METADATA',
+            proposedMetadata: {
+                ...action.proposedMetadata,
+                name: 'Updated name',
+                description: 'Updated description',
+                links: [{ label: 'Link1', href: 'https://link1.com' }],
+            },
+            existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
+        });
+    });
 });
