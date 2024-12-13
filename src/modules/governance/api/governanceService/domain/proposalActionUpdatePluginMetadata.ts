@@ -4,25 +4,21 @@ import { type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata 
 
 export interface IDaoPluginMetadataObject {
     /**
-     * The name of the plugin/process.
+     * The name of the plugin.
      */
     name?: string;
     /**
-     * The key of the plugin/process.
+     * The key of the plugin.
      */
     processKey?: string;
     /**
-     * Summary of the plugin/process.
+     * Summary of the plugin.
      */
-    description: string;
+    description?: string;
     /**
-     * Resources of the plugin/process.
+     * Resources of the plugin.
      */
-    links: IResource[];
-    /**
-     * The stage names of the process plugin. Only set for SPP.
-     */
-    stageNames?: string[];
+    links?: IResource[];
 }
 
 export interface IProposalActionUpdatePluginMetadata

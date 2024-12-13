@@ -57,40 +57,26 @@ class ProposalActionUtils {
             links.map(({ name, url }) => ({ label: name, href: url }));
 
         const isPluginMetadata = type === ProposalActionType.METADATA_PLUGIN_UPDATE;
-
-        if (isPluginMetadata) {
-            const isProcess = action.existingMetadata.processKey !== undefined;
-
-            return {
-                ...otherValues,
-                type: GukProposalActionType.UPDATE_PLUGIN_METADATA,
-                proposedMetadata: {
-                    ...proposedMetadata,
-                    name: proposedMetadata.name ?? '',
-                    links: normalizeLinks(proposedMetadata.links),
-                    processKey: isProcess ? action.proposedMetadata.processKey : undefined,
-                },
-                existingMetadata: {
-                    ...existingMetadata,
-                    name: existingMetadata.name ?? '',
-                    links: normalizeLinks(existingMetadata.links),
-                    processKey: isProcess ? action.existingMetadata.processKey : undefined,
-                },
-            };
-        }
+        const isProcess = isPluginMetadata && action.existingMetadata.processKey !== undefined;
 
         return {
             ...otherValues,
-            type: GukProposalActionType.UPDATE_METADATA,
+            type: isPluginMetadata
+                ? GukProposalActionType.UPDATE_PLUGIN_METADATA
+                : GukProposalActionType.UPDATE_METADATA,
             proposedMetadata: {
                 ...proposedMetadata,
-                logo: proposedMetadata.logo ?? '',
-                links: normalizeLinks(proposedMetadata.links),
+                name: proposedMetadata.name ?? '',
+                description: proposedMetadata.description ?? '',
+                links: normalizeLinks(proposedMetadata.links ?? []),
+                ...(isProcess && { processKey: proposedMetadata.processKey }),
             },
             existingMetadata: {
                 ...existingMetadata,
-                logo: existingMetadata.logo ?? '',
-                links: normalizeLinks(existingMetadata.links),
+                name: existingMetadata.name ?? '',
+                description: existingMetadata.description ?? '',
+                links: normalizeLinks(existingMetadata.links ?? []),
+                ...(isProcess && { processKey: existingMetadata.processKey }),
             },
         };
     };

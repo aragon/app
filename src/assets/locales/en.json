@@ -518,6 +518,9 @@
           "label": "Key",
           "placeholder": "CRE"
         },
+        "resourcesField": {
+          "helpText": "Add any additional external resources that help members understand the {{type}}."
+        },
         "summaryField": {
           "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
           "label": "Summary",

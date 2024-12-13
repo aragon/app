@@ -6,7 +6,7 @@ import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
     generateCreateProposalFormData,
-    generateProposalActionUpdateMetadata,
+    generateProposalActionUpdateMetadataBase,
     generateProposalActionWithdrawToken,
 } from '../../testUtils';
 import { proposalAbi } from './proposalAbi';
@@ -51,7 +51,10 @@ describe('publishProposalDialog utils', () => {
             const values = generateCreateProposalFormData({
                 actions: [
                     {
-                        ...generateProposalActionUpdateMetadata(actionBaseValues),
+                        ...generateProposalActionUpdateMetadataBase(
+                            ProposalActionType.METADATA_UPDATE,
+                            actionBaseValues,
+                        ),
                         daoId: 'test',
                         meta: undefined,
                     },
@@ -103,7 +106,9 @@ describe('publishProposalDialog utils', () => {
 
     describe('prepareActions', () => {
         it('calls the prepareAction function related to the action when set', async () => {
-            const updateMetadataAction = generateProposalActionUpdateMetadata({ data: 'default-data' });
+            const updateMetadataAction = generateProposalActionUpdateMetadataBase(ProposalActionType.METADATA_UPDATE, {
+                data: 'default-data',
+            });
             const updateMetadataActionData = 'data-with-ipfs-cid';
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
             const transferActionData = 'transfer-async-data';
@@ -126,7 +131,9 @@ describe('publishProposalDialog utils', () => {
 
         it('defaults to the action data when no prepare function is found for the aciton', async () => {
             const transferAction = generateProposalActionWithdrawToken({ data: '0x123' });
-            const updateAction = generateProposalActionUpdateMetadata({ data: '0x456' });
+            const updateAction = generateProposalActionUpdateMetadataBase(ProposalActionType.METADATA_UPDATE, {
+                data: '0x456',
+            });
             const actions = [
                 { ...transferAction, daoId: 'test', meta: undefined },
                 { ...updateAction, daoId: 'test', meta: undefined },
@@ -145,7 +152,7 @@ describe('publishProposalDialog utils', () => {
             ];
             const actions = [
                 generateProposalActionWithdrawToken(actionsBaseData[0]),
-                generateProposalActionUpdateMetadata(actionsBaseData[1]),
+                generateProposalActionUpdateMetadataBase(ProposalActionType.METADATA_UPDATE, actionsBaseData[1]),
             ];
             expect(publishProposalDialogUtils['formToProposalActions'](actions)).toEqual(actionsBaseData);
         });

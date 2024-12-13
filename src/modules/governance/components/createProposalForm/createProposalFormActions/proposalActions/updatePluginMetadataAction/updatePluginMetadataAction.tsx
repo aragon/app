@@ -3,7 +3,6 @@ import {
     type IProposalAction,
     type IProposalActionUpdatePluginMetadata,
 } from '@/modules/governance/api/governanceService/domain';
-import type { IDaoPluginMetadataObject } from '@/modules/governance/api/governanceService/domain/proposalActionUpdatePluginMetadata';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
@@ -21,7 +20,7 @@ export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdateP
     /**
      * Metadata proposed on the action.
      */
-    proposedMetadata: IDaoPluginMetadataObject;
+    proposedMetadata: IUpdatePluginMetadataFormData;
 }
 
 export interface IUpdatePluginMetadataActionProps
@@ -80,16 +79,18 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
 
     const prepareAction = useCallback(
         async (action: IProposalAction) => {
-            const { name, description, links, processKey } = (action as IUpdatePluginMetadataAction).proposedMetadata;
-            const proposedMetadata = {
-                ...(action as IUpdatePluginMetadataAction).existingMetadata,
+            const { proposedMetadata, existingMetadata } = action as IUpdatePluginMetadataAction;
+            const { name, description, resources, processKey } = proposedMetadata;
+
+            const metadataToPin = {
+                ...existingMetadata,
                 name,
                 description,
-                links,
+                links: resources,
                 ...(isProcess && !isSubPlugin && { processKey }),
             };
 
-            const ipfsResult = await pinJsonAsync({ body: proposedMetadata });
+            const ipfsResult = await pinJsonAsync({ body: metadataToPin });
             const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
 
             const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
@@ -114,7 +115,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
                 maxLength={nameMaxLength}
                 {...nameField}
             />
-            {isProcess && (
+            {isProcess && !isSubPlugin && (
                 <InputText
                     helpText={t('app.governance.updatePluginMetadataAction.processKeyField.helpText')}
                     placeholder={t('app.governance.updatePluginMetadataAction.processKeyField.placeholder')}
@@ -132,7 +133,7 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
             <ResourcesInput
                 name="resources"
                 fieldPrefix={`${actionFieldName}.proposedMetadata`}
-                helpText={t('app.createDao.createDaoForm.metadata.resources.helpText')}
+                helpText={t('app.governance.updatePluginMetadataAction.resourcesField.helpText', { type })}
             />
         </div>
     );

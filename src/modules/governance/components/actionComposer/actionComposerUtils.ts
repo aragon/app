@@ -132,8 +132,8 @@ class ActionComposerUtils {
         plugin: IDaoPlugin,
         additionalMetadata?: Record<string, unknown>,
     ): IProposalActionUpdatePluginMetadata => {
-        const { name, processKey, description = '', links = [] } = plugin;
-        const existingMetadata = { name, processKey, description, links, ...additionalMetadata };
+        const { name, processKey, description, links: resources } = plugin;
+        const existingMetadata = { name, processKey, description, resources, ...additionalMetadata };
 
         return {
             type: ProposalActionType.METADATA_PLUGIN_UPDATE,
@@ -145,7 +145,7 @@ class ActionComposerUtils {
             proposedMetadata: existingMetadata,
             inputData: {
                 function: 'setMetadata',
-                contract: '',
+                contract: plugin.subdomain,
                 parameters: [
                     {
                         name: '_metadata',

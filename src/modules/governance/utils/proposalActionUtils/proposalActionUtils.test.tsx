@@ -1,10 +1,10 @@
 import {
-    generateProposalActionUpdateMetadata,
-    generateProposalActionUpdatePluginMetadata,
+    generateProposalActionUpdateMetadataBase,
     generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
 import * as Viem from 'viem';
 import { formatUnits } from 'viem';
+import { ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
 // Needed to spy formatUnits usage
@@ -37,14 +37,23 @@ describe('proposalActionUtils', () => {
     });
 
     it('normalizes an update metadata action', () => {
-        const baseAction = generateProposalActionUpdateMetadata();
+        const baseAction = generateProposalActionUpdateMetadataBase(ProposalActionType.METADATA_UPDATE);
+
         const { proposedMetadata, existingMetadata } = baseAction;
 
         const action = {
             ...baseAction,
-            proposedMetadata: { ...proposedMetadata, links: [{ name: 'Link1', url: 'https://link1.com' }] },
+            proposedMetadata: {
+                ...proposedMetadata,
+                name: 'Updated name',
+                description: 'Updated description',
+                logo: '',
+                links: [{ name: 'Link1', url: 'https://link1.com' }],
+            },
             existingMetadata: {
                 ...existingMetadata,
+                name: '',
+                description: '',
                 logo: 'test.png',
                 links: [{ name: 'Link2', url: 'https://link2.com' }],
             },
@@ -57,6 +66,8 @@ describe('proposalActionUtils', () => {
             type: 'UPDATE_METADATA',
             proposedMetadata: {
                 ...action.proposedMetadata,
+                name: 'Updated name',
+                description: 'Updated description',
                 logo: '',
                 links: [{ label: 'Link1', href: 'https://link1.com' }],
             },
@@ -65,14 +76,21 @@ describe('proposalActionUtils', () => {
     });
 
     it('normalizes an update metadata action for plugin', () => {
-        const baseAction = generateProposalActionUpdatePluginMetadata();
+        const baseAction = generateProposalActionUpdateMetadataBase(ProposalActionType.METADATA_PLUGIN_UPDATE);
         const { proposedMetadata, existingMetadata } = baseAction;
 
         const action = {
             ...baseAction,
-            proposedMetadata: { ...proposedMetadata, links: [{ name: 'Link1', url: 'https://link1.com' }] },
+            proposedMetadata: {
+                ...proposedMetadata,
+                name: 'Updated name',
+                description: 'Updated description',
+                links: [{ name: 'Link1', url: 'https://link1.com' }],
+            },
             existingMetadata: {
                 ...existingMetadata,
+                name: '',
+                description: '',
                 links: [{ name: 'Link2', url: 'https://link2.com' }],
             },
         };
@@ -84,6 +102,8 @@ describe('proposalActionUtils', () => {
             type: 'UPDATE_PLUGIN_METADATA',
             proposedMetadata: {
                 ...action.proposedMetadata,
+                name: 'Updated name',
+                description: 'Updated description',
                 links: [{ label: 'Link1', href: 'https://link1.com' }],
             },
             existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
