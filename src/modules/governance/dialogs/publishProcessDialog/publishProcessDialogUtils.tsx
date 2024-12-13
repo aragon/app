@@ -227,18 +227,16 @@ class PublishProcessDialogUtils {
         const processedStages = stages.map((stage) => {
             const isTimelockStage = stage.type === 'timelock';
 
-            const bodies = isTimelockStage
-                ? []
-                : stage.bodies.map(() => {
-                      const pluginAddress = bodyAddresses.shift()!;
+            const bodies = stage.bodies.map(() => {
+                const pluginAddress = bodyAddresses.shift()!;
 
-                      return {
-                          addr: pluginAddress,
-                          isManual: false,
-                          tryAdvance: true,
-                          resultType: stage.type === 'normal' ? SppProposalType.APPROVAL : SppProposalType.VETO,
-                      };
-                  });
+                return {
+                    addr: pluginAddress,
+                    isManual: false,
+                    tryAdvance: true,
+                    resultType: stage.type === 'normal' ? SppProposalType.APPROVAL : SppProposalType.VETO,
+                };
+            });
 
             const votingPeriod = dateUtils.durationToSeconds(stage.votingPeriod);
 

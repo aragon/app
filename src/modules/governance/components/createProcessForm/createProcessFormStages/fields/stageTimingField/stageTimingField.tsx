@@ -12,22 +12,21 @@ export interface IStageTimingFieldProps {
      */
     stageFieldName: string;
     /**
-     * Defines if current stage is optimistic or not.
+     * Type of the stage (normal, optimistic, timelock).
      */
-    isOptimisticStage: boolean;
-    /**
-     * Defines if current stage is timelock or not.
-     */
-    isTimelockStage: boolean;
+    stageType: string;
 }
 
 export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
-    const { stageFieldName, isOptimisticStage, isTimelockStage } = props;
+    const { stageFieldName, stageType } = props;
 
     const { t } = useTranslations();
     const inputId = useId();
 
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
+
+    const isOptimisticStage = stageType === 'optimistic';
+    const isTimelockStage = stageType === 'timelock';
 
     const votingPeriod = useWatch<Record<string, ICreateProcessFormStage['votingPeriod']>>({
         name: `${stageFieldName}.votingPeriod`,

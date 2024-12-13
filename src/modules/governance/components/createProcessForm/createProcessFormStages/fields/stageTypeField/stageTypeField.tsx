@@ -27,14 +27,17 @@ export const StageTypeField: React.FC<IStageTypeFieldProps> = (props) => {
         onTypeChange(value);
 
         // Make sure earlyStageAdvance is false when governance type is optimistic
-        if (value === 'optimistic') {
+        if (value === 'optimistic' || value === 'timelock') {
             setValue(`${fieldPrefix}.earlyStageAdvance`, false);
+        }
+        // If a user has previously set a body for the stage, clear it when changing the stage type to timelock
+        if (value === 'timelock') {
+            setValue(`${fieldPrefix}.bodies`, []);
         }
     };
 
     return (
         <RadioGroup
-            className="flex flex-row gap-x-4"
             onValueChange={handleTypeChange}
             helpText={t('app.governance.createProcessForm.stage.type.helpText')}
             {...stageTypeField}

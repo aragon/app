@@ -53,12 +53,10 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                 {...stageNameField}
             />
             <StageTypeField fieldPrefix={name} />
-            <StageTimingField
-                stageFieldName={name}
-                isTimelockStage={isTimelockStage}
-                isOptimisticStage={isOptimisticStage}
-            />
-            <StageBodiesField index={index} isOptimisticStage={isOptimisticStage} stageFieldName={name} />
+            <StageTimingField stageFieldName={name} stageType={stageType} />
+            {!isTimelockStage && (
+                <StageBodiesField index={index} isOptimisticStage={isOptimisticStage} stageFieldName={name} />
+            )}
             {stagesCount > 1 && (
                 <div className="flex self-end">
                     <Dropdown.Container
