@@ -1,5 +1,5 @@
 export {
     useConnectedParticipantGuard,
-    type IUseConnectedParticipantGuard,
     type IUseConnectedParticipantGuardBaseParams,
+    type IUseConnectedParticipantGuardParams,
 } from './useConnectedParticipantGuard';

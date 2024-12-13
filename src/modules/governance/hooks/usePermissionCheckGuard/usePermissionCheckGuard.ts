@@ -1,17 +1,11 @@
 import { type IUseConnectedParticipantGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard';
+import type { IUseGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard/useConnectedParticipantGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useCallback, useState } from 'react';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
 
-export interface IUsePermissionCheckGuardParams<TSlotParams extends IUseConnectedParticipantGuardBaseParams> {
-    /**
-     * Callback called when user has permissions
-     */
-    onSuccess?: () => void;
-    /**
-     * Callback called when user does not have permissions.
-     */
-    onError?: () => void;
+export interface IUsePermissionCheckGuardParams<TSlotParams extends IUseConnectedParticipantGuardBaseParams>
+    extends IUseGuardBaseParams {
     /**
      * Parameters to be forwarded to the plugin-specific slot function.
      */

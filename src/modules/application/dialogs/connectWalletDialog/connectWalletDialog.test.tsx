@@ -9,6 +9,7 @@ jest.mock('@web3modal/wagmi/react', () => ({
     useWeb3Modal: jest.fn(),
     useWeb3ModalState: jest.fn(),
 }));
+
 describe('<ConnectWalletDialog /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
     const useWeb3ModalSpy = jest.spyOn(web3Modal, 'useWeb3Modal');

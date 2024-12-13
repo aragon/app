@@ -1,18 +1,10 @@
+import type { IUseGuardBaseParams } from '@/modules/governance/hooks/useConnectedParticipantGuard/useConnectedParticipantGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import { ApplicationDialog } from '../../constants/moduleDialogs';
 
-export interface IUseConnectedWalletGuardParams {
-    /**
-     * Callback called when user is successfully connected.
-     */
-    onSuccess?: () => void;
-    /**
-     * Callback called when user closes the dialog without connecting his wallet.
-     */
-    onError?: () => void;
-}
+export interface IUseConnectedWalletGuardParams extends IUseGuardBaseParams {}
 
 export const useConnectedWalletGuard = (params?: IUseConnectedWalletGuardParams) => {
     const { onSuccess, onError } = params ?? {};

@@ -20,13 +20,9 @@ export interface IUseConnectedParticipantGuardBaseParams {
      * Plugin to check permissions for.
      */
     plugin: ITabComponentPlugin<IDaoPlugin>;
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
 }
 
-export interface IUseConnectedParticipantGuard<TSlotParams extends IUseConnectedParticipantGuardBaseParams>
+export interface IUseConnectedParticipantGuardParams<TSlotParams extends IUseConnectedParticipantGuardBaseParams>
     extends IUseGuardBaseParams {
     /**
      * Parameters to be forwarded to the plugin-specific slot function.
@@ -39,7 +35,7 @@ export interface IUseConnectedParticipantGuard<TSlotParams extends IUseConnected
 }
 
 export const useConnectedParticipantGuard = <TSlotParams extends IUseConnectedParticipantGuardBaseParams>(
-    params: IUseConnectedParticipantGuard<TSlotParams>,
+    params: IUseConnectedParticipantGuardParams<TSlotParams>,
 ) => {
     const { params: slotParams, slotId, onSuccess, onError } = params;
 
