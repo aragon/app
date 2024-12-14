@@ -37,29 +37,32 @@ export const useSppTimelockInfo = (params: IUseSppTimelockInfoParams): TimelockI
         formatterUtils.formatDate(sppStageUtils.getStageEndDate(proposal, stage), {
             format: DateFormat.YEAR_MONTH_DAY_TIME,
         }) ?? '';
+
     const timelockEndsDate =
         formatterUtils.formatDate(sppStageUtils.getStageMinAdvance(proposal, stage), {
             format: DateFormat.YEAR_MONTH_DAY_TIME,
         }) ?? '';
 
+    const pendingString = 'app.plugins.spp.sppVotingTerminalStageTimelock.pending';
+    const activeString = 'app.plugins.spp.sppVotingTerminalStageTimelock.active';
+    const completeString = 'app.plugins.spp.sppVotingTerminalStageTimelock.complete';
+
     if (isTimelockActive) {
-        const baseString = 'app.plugins.spp.sppVotingTerminalStageTimelock.active';
         return {
-            heading: t(`${baseString}.heading`),
-            description: t(`${baseString}.description`, { date: timelockEndsDate }),
+            heading: t(`${activeString}.heading`),
+            description: t(`${activeString}.description`, { date: timelockEndsDate }),
         };
     }
 
     if (isTimelockComplete) {
-        const baseText = 'app.plugins.spp.sppVotingTerminalStageTimelock.complete';
         return {
-            heading: t(`${baseText}.heading`),
-            description: t(`${baseText}.description`, { date: timelockCompletedDate }),
+            heading: t(`${completeString}.heading`),
+            description: t(`${completeString}.description`, { date: timelockCompletedDate }),
         };
     }
 
     return {
-        heading: t('app.plugins.spp.sppVotingTerminalStageTimelock.pending.heading'),
-        description: t('app.plugins.spp.sppVotingTerminalStageTimelock.pending.description'),
+        heading: t(`${pendingString}.heading`),
+        description: t(`${pendingString}.description`),
     };
 };
