@@ -15,7 +15,13 @@ export interface IUseSppTimelockInfoParams {
 }
 
 export interface TimelockInfo {
+    /**
+     * Heading text to display on the card.
+     */
     heading: string;
+    /**
+     * Description text to display on the card. Showing the end/completed date or other useful information.
+     */
     description: string;
 }
 
