@@ -5,11 +5,11 @@ import { sppStageUtils } from '../../utils/sppStageUtils';
 
 export interface IUseSppTimelockInfoParams {
     /**
-     * Stage to display the info for.
+     * Timelock stage to display the info for.
      */
     stage: ISppStage;
     /**
-     * Parent Proposal of the stage
+     * Parent Proposal of the timelock stage.
      */
     proposal: ISppProposal;
 }

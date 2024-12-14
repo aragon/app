@@ -4,11 +4,11 @@ import type { ISppProposal, ISppStage } from '../../types';
 
 export interface ISppVotingTerminalStageTimelockProps {
     /**
-     * Stage to display the info for.
+     * Timelock stage to display the info for.
      */
     stage: ISppStage;
     /**
-     * Parent Proposal of the stage
+     * Parent Proposal of the stage.
      */
     proposal: ISppProposal;
 }
