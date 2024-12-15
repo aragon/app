@@ -90,29 +90,16 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const slotParams = { plugin: plugin![0].meta, daoId, proposal, chainId };
 
-    const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
+    const { check: submitVoteGuard } = usePermissionCheckGuard({
         params: slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
-        onSuccess: openTransactionDialog,
+        onSuccess: () => setVoteState((prev) => ({ ...prev, showOptions: true })),
     });
-
-    const handleVoteClick = () => {
-        if (!canSubmitVote) {
-            submitVoteGuard();
-        }
-        if (canSubmitVote) {
-            openTransactionDialog();
-        }
-    };
 
     return (
         <div className="flex flex-col gap-4">
             {!voteState.showOptions && !latestVote && (
-                <Button
-                    className="w-fit"
-                    size="md"
-                    onClick={() => setVoteState((prev) => ({ ...prev, showOptions: true }))}
-                >
+                <Button className="w-fit" size="md" onClick={submitVoteGuard}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
@@ -165,7 +152,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             {voteState.showOptions && (
                 <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
                     <Button
-                        onClick={handleVoteClick}
+                        onClick={openTransactionDialog}
                         disabled={
                             !voteState.selectedOption ||
                             voteState.selectedOption.toString() === latestVote?.voteOption.toString()

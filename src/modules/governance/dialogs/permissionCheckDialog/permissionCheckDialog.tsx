@@ -75,8 +75,9 @@ export const PermissionCheckDialog = <TSlotParams extends IUseCheckPermissionGua
     useEffect(() => {
         if (hasPermission) {
             onSuccess?.();
+            handleDialogClose();
         }
-    }, [hasPermission, onSuccess, close]);
+    }, [hasPermission, onSuccess, close, handleDialogClose]);
 
     useEffect(() => {
         updateOptions({ onClose: handleDialogClose });
