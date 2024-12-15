@@ -1,3 +1,4 @@
+import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IUseCheckPermissionGuardBaseParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -67,14 +68,13 @@ export const PermissionCheckDialog = <TSlotParams extends IUseCheckPermissionGua
     const { settings, isLoading, hasPermission } = checkPermissions;
 
     const handleDialogClose = useCallback(() => {
-        close();
+        close(GovernanceDialog.PERMISSION_CHECK);
         onError?.();
     }, [close, onError]);
 
     useEffect(() => {
         if (hasPermission) {
             onSuccess?.();
-            close();
         }
     }, [hasPermission, onSuccess, close]);
 
