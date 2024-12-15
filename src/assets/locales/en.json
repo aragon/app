@@ -879,6 +879,10 @@
         },
         "tokenVoteList": {
           "entity": "Votes"
+        },
+        "tokenVoteSubmissionRequirements": {
+          "createdAt": "Created at",
+          "membership": "Your voting power"
         }
       }
     },

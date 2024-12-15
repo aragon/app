@@ -1,9 +1,12 @@
 import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import {
     Button,
     Card,
@@ -83,6 +86,25 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         { label: t('app.plugins.token.tokenSubmitVote.options.no'), value: VoteOption.NO.toString() },
     ];
 
+    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress });
+
+    const slotParams = { plugin: plugin![0].meta, daoId, proposal, chainId };
+
+    const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
+        params: slotParams,
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
+        onSuccess: openTransactionDialog,
+    });
+
+    const handleVoteClick = () => {
+        if (!canSubmitVote) {
+            submitVoteGuard();
+        }
+        if (canSubmitVote) {
+            openTransactionDialog();
+        }
+    };
+
     return (
         <div className="flex flex-col gap-4">
             {!voteState.showOptions && !latestVote && (
@@ -143,7 +165,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             {voteState.showOptions && (
                 <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
                     <Button
-                        onClick={openTransactionDialog}
+                        onClick={handleVoteClick}
                         disabled={
                             !voteState.selectedOption ||
                             voteState.selectedOption.toString() === latestVote?.voteOption.toString()

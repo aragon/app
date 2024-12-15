@@ -2,6 +2,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 
 import { useTokenPermissionCheckProposalCreation } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
+import { useTokenPermissionCheckVoteSubmission } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckVoteSubmission';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposalSettingsForm';
 import { TokenGovernanceInfo } from './components/tokenGovernanceInfo';
@@ -100,6 +101,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: plugin.id,
             function: useTokenPermissionCheckProposalCreation,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
+            pluginId: plugin.id,
+            function: useTokenPermissionCheckVoteSubmission,
         })
 
         // Settings module slots
