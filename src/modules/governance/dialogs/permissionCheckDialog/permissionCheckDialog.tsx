@@ -1,24 +1,10 @@
 import type { IUseCheckPermissionGuardBaseParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
+import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { DefinitionList, Dialog, Heading, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
-
-export interface IPermissionCheckGuardResult {
-    /**
-     * Defines if the user has permission or not.
-     */
-    hasPermission: boolean;
-    /**
-     * Settings to be displayed as reason on why the user does not have the specified permission.
-     */
-    settings: IPermissionCheckGuardSetting[];
-    /**
-     * Indicates if the slot-function is loading the data needed to check the specific permission.
-     */
-    isLoading: boolean;
-}
 
 export interface IPermissionCheckGuardSetting {
     /**
@@ -118,7 +104,7 @@ export const PermissionCheckDialog = <TSlotParams extends IUseCheckPermissionGua
                     </p>
                 </div>
                 <DefinitionList.Container>
-                    {settings.map((setting, index) => (
+                    {settings?.map((setting, index) => (
                         <DefinitionList.Item key={index} term={setting.term}>
                             {setting.definition}
                         </DefinitionList.Item>
