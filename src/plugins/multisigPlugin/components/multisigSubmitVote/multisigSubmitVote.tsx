@@ -1,6 +1,5 @@
 import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
-import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -43,8 +42,6 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     };
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
-
-    const canVote = usePermissionCheckGuard({ daoId, proposal });
 
     return (
         <div className="w-full">
