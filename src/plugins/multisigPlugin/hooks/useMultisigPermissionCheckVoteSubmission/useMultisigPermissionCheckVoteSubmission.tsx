@@ -63,12 +63,12 @@ export const useMultisigPermissionCheckVoteSubmission = (
         hasPermission: false,
         settings: [
             {
-                term: 'Created at',
+                term: t('app.plugins.multisig.multisigVoteSubmissionRequirements.createdAt'),
                 definition: proposalCreationLink(),
             },
             {
-                term: 'Your membership',
-                definition: 'Not a member',
+                term: t('app.plugins.multisig.multisigVoteSubmissionRequirements.membership'),
+                definition: t('app.plugins.multisig.multisigVoteSubmissionRequirements.nonMember'),
             },
         ],
         isLoading,

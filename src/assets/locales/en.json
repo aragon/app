@@ -680,6 +680,11 @@
         },
         "multisigVoteList": {
           "entity": "Votes"
+        },
+        "multisigVoteSubmissionRequirements": {
+          "createdAt": "Created at",
+          "membership": "Your membership",
+          "nonMember": "Not a member"
         }
       },
       "spp": {
