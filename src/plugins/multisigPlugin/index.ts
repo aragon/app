@@ -1,7 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { useMultisigPermissionCheckProposalCreation } from '@/plugins/multisigPlugin/hooks/useMultisigPermissionCheckProposalCreation';
 import { useMultisigPermissionCheckVoteSubmission } from '@/plugins/multisigPlugin/hooks/useMultisigPermissionCheckVoteSubmission';
-import { useMultisigPermissionCheckProposalCreation } from '@/plugins/multisigPlugin/hooks/useMultisigProposalCreationRequirements';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 import { MultisigGovernanceInfo } from './components/multisigGovernanceInfo';
