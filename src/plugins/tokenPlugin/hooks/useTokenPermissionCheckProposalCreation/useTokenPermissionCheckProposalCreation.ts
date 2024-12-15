@@ -54,9 +54,9 @@ export const useTokenPermissionCheckProposalCreation = (
         };
     }
 
-    const parsedInsuficcientMin = formatUnits(BigInt(member?.votingPower ?? '0'), tokenDecimals);
+    const parsedInsufficientMin = formatUnits(BigInt(member?.votingPower ?? '0'), tokenDecimals);
     const formattedInsufficientMin = formatterUtils.formatNumber(
-        parsedInsuficcientMin,
+        parsedInsufficientMin,
         numberFormats.TOKEN_AMOUNT_SHORT,
     );
 
