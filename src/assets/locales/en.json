@@ -472,14 +472,24 @@
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
       },
-      "permissionCheckDialog": {
-        "checkingPermissions": "Checking permissions",
-        "description": "Not a member of this voting body",
+      "permissionCheckBaseDialog": {
         "screenReader": {
           "description": "You don't have the permissions require for that DAO action.",
           "title": "Permission denied"
         },
+        "title": "Checking permissions"
+      },
+      "permissionCheckMultisigVoteDialog": {
+        "description": "Not a member when proposal was created.",
+        "title": "You can't vote"
+      },
+      "permissionCheckProposalDialog": {
+        "description": "Not a member of this voting body",
         "title": "You can't create"
+      },
+      "permissionCheckTokenVoteDialog": {
+        "description": "Not enough voting power at the block this proposal was created.",
+        "title": "You can't vote"
       },
       "proposalExecutionStatus": {
         "buttons": {

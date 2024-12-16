@@ -51,6 +51,8 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const onPermissionCheckError = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
 
     const slotParams = {
+        title: t('app.governance.permissionCheckProposalDialog.title'),
+        description: t('app.governance.permissionCheckProposalDialog.description'),
         plugin: plugin![0].meta,
         daoId,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,

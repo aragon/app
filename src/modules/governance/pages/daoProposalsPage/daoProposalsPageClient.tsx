@@ -51,6 +51,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const slotParams = {
         plugin: selectedPlugin.meta,
         daoId,
+        title: t('app.governance.permissionCheckProposalDialog.title'),
+        description: t('app.governance.permissionCheckProposalDialog.description'),
     };
     const { check: checkParticipant, result: connectedParticipant } = usePermissionCheckGuard({
         params: slotParams,

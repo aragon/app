@@ -3,7 +3,7 @@ import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { DefinitionList, Dialog, Heading, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import { DefinitionList, Dialog, Heading, invariant, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 
 export interface IPermissionCheckGuardSetting {
@@ -35,10 +35,6 @@ export interface IPermissionCheckDialogParams<TSlotParams extends IUseCheckPermi
      */
     onError?: () => void;
     /**
-     * Callback to update the permissions.
-     */
-    updatePermissions: (permissions: boolean) => void;
-    /**
      * Additional data to be passed to the dialog.
      */
     slotParams: TSlotParams;
@@ -52,7 +48,12 @@ export const PermissionCheckDialog = <TSlotParams extends IUseCheckPermissionGua
 ) => {
     const { params } = props.location;
     const { slotParams, slotId, onSuccess, onError } = params ?? {};
-    const { plugin } = slotParams ?? {};
+    const { plugin, title, description } = slotParams ?? {};
+
+    invariant(
+        title != null && description != null,
+        'Title and description are required for the permission check dialog. Please initialize them at the usePermissionCheckGuard entry.',
+    );
 
     const { t } = useTranslations();
 
@@ -85,7 +86,7 @@ export const PermissionCheckDialog = <TSlotParams extends IUseCheckPermissionGua
     if (isLoading) {
         return (
             <Dialog.Content className="flex w-full flex-col gap-y-4 py-4 md:py-6">
-                <Heading size="h3">{t('app.governance.permissionCheckDialog.checkingPermissions')}</Heading>
+                <Heading size="h3">{t('app.governance.permissionCheckBaseDialog.title')}</Heading>
                 <div className="flex w-full flex-col gap-y-2">
                     <StateSkeletonBar width="40%" size="lg" />
                     <StateSkeletonBar width="65%" size="lg" />
@@ -98,10 +99,8 @@ export const PermissionCheckDialog = <TSlotParams extends IUseCheckPermissionGua
         <>
             <Dialog.Content className="flex flex-col gap-y-4 py-4 md:py-6">
                 <div>
-                    <Heading size="h3">{t('app.governance.permissionCheckDialog.title')}</Heading>
-                    <p className="text-sm text-neutral-500 md:text-base">
-                        {t('app.governance.permissionCheckDialog.description')}
-                    </p>
+                    <Heading size="h3">{title}</Heading>
+                    <p className="text-sm text-neutral-500 md:text-base">{description}</p>
                 </div>
                 <DefinitionList.Container>
                     {settings?.map((setting, index) => (

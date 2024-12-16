@@ -90,8 +90,14 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress });
 
-    const slotParams = { plugin: plugin![0].meta, daoId, proposal, chainId };
-
+    const slotParams = {
+        plugin: plugin![0].meta,
+        daoId,
+        proposal,
+        chainId,
+        title: t('app.governance.permissionCheckTokenVoteDialog.title'),
+        description: t('app.governance.permissionCheckTokenVoteDialog.description'),
+    };
     const { check: submitVoteGuard, result: canVote } = usePermissionCheckGuard({
         params: slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,

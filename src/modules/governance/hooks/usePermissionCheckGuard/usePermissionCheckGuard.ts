@@ -16,6 +16,14 @@ export interface IUseCheckPermissionGuardBaseParams {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Title of the dialog.
+     */
+    title: string;
+    /**
+     * Description of the dialog.
+     */
+    description: string;
 }
 
 export interface IUseCheckPermissionGuardParams<TSlotParams extends IUseCheckPermissionGuardBaseParams>
