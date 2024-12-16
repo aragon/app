@@ -40,7 +40,7 @@ export const governanceDialogs: Record<GovernanceDialog, IDialogComponentDefinit
     },
     [GovernanceDialog.PERMISSION_CHECK]: {
         Component: PermissionCheckDialog,
-        title: 'app.governance.permissionCheckDialog.screenReader.title', // TODO
-        description: 'app.governance.permissionCheckDialog.screenReader.description', // TODO
+        title: 'app.governance.permissionCheckDialog.screenReader.title',
+        description: 'app.governance.permissionCheckDialog.screenReader.description',
     },
 };
