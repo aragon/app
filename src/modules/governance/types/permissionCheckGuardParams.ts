@@ -1,16 +1,5 @@
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 
-export interface IUseGuardBaseParams {
-    /**
-     * Callback called when the user is capable of participating.
-     */
-    onSuccess?: () => void;
-    /**
-     * Callback called when the user cannot participate.
-     */
-    onError?: () => void;
-}
-
 export interface IUsePermissionCheckGuardSlotParams<TPluginSettings extends IPluginSettings> {
     /**
      * Plugin to check permissions for.
@@ -30,7 +19,7 @@ export interface IUsePermissionCheckGuardSlotParams<TPluginSettings extends IPlu
     description: string;
 }
 
-export interface IUsePermissionCheckGuardParams extends IUseGuardBaseParams {
+export interface IUsePermissionCheckGuardParams {
     /**
      * Parameters to be forwarded to the plugin-specific slot function.
      */
@@ -39,4 +28,12 @@ export interface IUsePermissionCheckGuardParams extends IUseGuardBaseParams {
      * Slot ID to use for checking the user permissions.
      */
     slotId: string;
+    /**
+     * Callback called when the user has the required permissions.
+     */
+    onSuccess?: () => void;
+    /**
+     * Callback called when the user does not have the required permissions.
+     */
+    onError?: () => void;
 }

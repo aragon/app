@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import { ApplicationDialog } from '../../constants/moduleDialogs';
 
-export interface IUseGuardBaseParams {
+export interface IUseConnectedWalletGuardParams {
     /**
      * Callback called when the user is capable of participating.
      */
@@ -13,8 +13,6 @@ export interface IUseGuardBaseParams {
      */
     onError?: () => void;
 }
-
-export interface IUseConnectedWalletGuardParams extends IUseGuardBaseParams {}
 
 export const useConnectedWalletGuard = (params?: IUseConnectedWalletGuardParams) => {
     const { onSuccess, onError } = params ?? {};

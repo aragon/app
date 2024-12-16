@@ -1,6 +1,5 @@
 import type {
     IPermissionCheckGuardResult,
-    IUseGuardBaseParams,
     IUsePermissionCheckGuardParams,
     IUsePermissionCheckGuardSlotParams,
 } from '@/modules/governance/types';
@@ -8,10 +7,19 @@ import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { DefinitionList, Dialog, Heading, invariant, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import { DefinitionList, Dialog, invariant, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 
-export interface IPermissionCheckDialogParams extends IUseGuardBaseParams {}
+export interface IPermissionCheckDialogParams {
+    /**
+     * Callback called when the user has the required permissions.
+     */
+    onSuccess?: () => void;
+    /**
+     * Callback called when the user does not have the required permissions.
+     */
+    onError?: () => void;
+}
 
 export interface IPermissionCheckDialogProps<IUseCheckPermissionGuardBaseParams>
     extends IDialogComponentProps<IUseCheckPermissionGuardBaseParams> {}
@@ -61,23 +69,22 @@ export const PermissionCheckDialog = (props: IPermissionCheckDialogProps<IUsePer
 
     if (isLoading) {
         return (
-            <Dialog.Content className="flex w-full flex-col gap-y-4 py-4 md:py-6">
-                <Heading size="h3">{t('app.governance.permissionCheckBaseDialog.loading')}</Heading>
-                <div className="flex w-full flex-col gap-y-2">
-                    <StateSkeletonBar width="40%" size="lg" />
-                    <StateSkeletonBar width="65%" size="lg" />
-                </div>
-            </Dialog.Content>
+            <>
+                <Dialog.Header title={t('app.governance.permissionCheckBaseDialog.loading')} />
+                <Dialog.Content className="flex w-full flex-col gap-y-4 py-4 md:py-6">
+                    <div className="flex w-full flex-col gap-y-2">
+                        <StateSkeletonBar width="40%" size="lg" />
+                        <StateSkeletonBar width="65%" size="lg" />
+                    </div>
+                </Dialog.Content>
+            </>
         );
     }
 
     return (
         <>
+            <Dialog.Header title={title} description={description} />
             <Dialog.Content className="flex flex-col gap-y-4 py-4 md:py-6">
-                <div>
-                    <Heading size="h3">{title}</Heading>
-                    <p className="text-sm text-neutral-500 md:text-base">{description}</p>
-                </div>
                 <DefinitionList.Container>
                     {settings?.map((setting, index) => (
                         <DefinitionList.Item key={index} term={setting.term}>
