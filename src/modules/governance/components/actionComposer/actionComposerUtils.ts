@@ -59,7 +59,7 @@ export interface IGetDefaultActionPluginMetadataItemParams {
      */
     plugin: IDaoPlugin;
     /**
-     * Translation function for group labels.
+     * Translation function.
      */
     t: TranslationFunction;
     /**
