@@ -52,10 +52,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
 
-    const currentTime = useDynamicValue<DateTime>({
-        callback: () => DateTime.now(),
-    });
-
     // Only display the advance button if stage has been accepted or non veto stage is still active but approval has already
     // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
     // to hide executable info text.
@@ -67,10 +63,20 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         !(isSignalingProposal && isLastStage);
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
+    const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
+
+    // Determine if we need to dynamically calculate the current time
+    const hasTimeConstraints = minAdvanceTime != null || maxAdvanceTime != null;
+    const enableDynamicTime = hasTimeConstraints && displayAdvanceButton && !isStageAdvanced;
+
+    const currentTime = useDynamicValue<DateTime>({
+        callback: () => DateTime.now(),
+        enabled: enableDynamicTime,
+    });
+
     const displayMaxAdvanceTime =
         maxAdvanceTime != null && maxAdvanceTime.diff(currentTime, 'days').days < 90 && !isStageAdvanced;
 
-    const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
     // Due to the delay in the dynamic value hook, the remaining time can be negative, and the counter will count up until 1 second.
     // Adding the remaining time check to avoid displaying the counter when it is negative.
     const remainingTime = minAdvanceTime ? minAdvanceTime.diff(currentTime).milliseconds : 0;
