@@ -50,8 +50,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     };
 
     const slotParams = {
-        title: '',
-        description: '',
+        title: t('app.governance.permissionCheckProposalDialog.title'),
+        description: t('app.governance.permissionCheckProposalDialog.description'),
         plugin: selectedPlugin.meta,
         daoId,
     };
