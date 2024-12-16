@@ -53,36 +53,6 @@ class TokenActionUtils {
         const includePluginMetadataItem =
             Number(plugin.release) > 1 || (Number(plugin.release) === 1 && Number(plugin.build) >= 4);
 
-        const updatePluginMetadataItem = includePluginMetadataItem
-            ? [
-                  {
-                      ...actionComposerUtils.getDefaultActionPluginMetadataItem({ plugin, t, groupId: tokenAddress }),
-                      meta: plugin,
-                  },
-              ]
-            : [];
-
-        const coreItems = [
-            {
-                id: `${tokenAddress}-${TokenProposalActionType.MINT}`,
-                name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.MINT}`),
-                icon: IconType.SETTINGS,
-                groupId: tokenAddress,
-                meta: plugin,
-                defaultValue: defaultMintAction(plugin.settings),
-            },
-            {
-                id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
-                name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`),
-                icon: IconType.SETTINGS,
-                groupId: address,
-                defaultValue: defaultUpdateSettings(plugin),
-                meta: plugin,
-            },
-        ];
-
-        const items = [...coreItems, ...updatePluginMetadataItem];
-
         return {
             groups: [
                 {
@@ -98,7 +68,29 @@ class TokenActionUtils {
                     indexData: [address],
                 },
             ],
-            items,
+            items: [
+                {
+                    id: `${tokenAddress}-${TokenProposalActionType.MINT}`,
+                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.MINT}`),
+                    icon: IconType.SETTINGS,
+                    groupId: tokenAddress,
+                    meta: plugin,
+                    defaultValue: defaultMintAction(plugin.settings),
+                },
+                {
+                    id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
+                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`),
+                    icon: IconType.SETTINGS,
+                    groupId: address,
+                    defaultValue: defaultUpdateSettings(plugin),
+                    meta: plugin,
+                },
+                {
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem({ plugin, t, groupId: tokenAddress }),
+                    meta: plugin,
+                    hidden: !includePluginMetadataItem,
+                },
+            ],
             components: {
                 [TokenProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
                 [TokenProposalActionType.MINT]: TokenMintTokensAction,
