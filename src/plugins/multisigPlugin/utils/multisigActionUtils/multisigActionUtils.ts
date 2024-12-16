@@ -48,6 +48,44 @@ class MultisigActionUtils {
     getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
         const { address } = plugin;
 
+        //setMetadata of the plugin is only supported from version 1.4 onwards
+        const includePluginMetadataItem =
+            Number(plugin.release) > 1 || (Number(plugin.release) === 1 && Number(plugin.build) >= 4);
+
+        const metadataItem = includePluginMetadataItem
+            ? [
+                  {
+                      ...actionComposerUtils.getDefaultActionPluginMetadataItem({ plugin, t }),
+                      meta: plugin,
+                  },
+              ]
+            : [];
+
+        const coreItems = [
+            {
+                id: `${address}-${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`,
+                name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`),
+                icon: IconType.PLUS,
+                groupId: address,
+                defaultValue: { ...defaultAddMembers, to: address },
+            },
+            {
+                id: `${address}-${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
+                name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`),
+                icon: IconType.MINUS,
+                groupId: address,
+                defaultValue: { ...defaultRemoveMembers, to: address },
+            },
+            {
+                id: `${address}-${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
+                name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`),
+                icon: IconType.SETTINGS,
+                groupId: address,
+                defaultValue: defaultUpdateSettings(plugin),
+            },
+        ];
+
+        const items = [...coreItems, ...metadataItem];
         return {
             groups: [
                 {
@@ -57,37 +95,7 @@ class MultisigActionUtils {
                     indexData: [address],
                 },
             ],
-            items: [
-                {
-                    id: `${address}-${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`,
-                    name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`),
-                    icon: IconType.PLUS,
-                    groupId: address,
-                    defaultValue: { ...defaultAddMembers, to: address },
-                },
-                {
-                    id: `${address}-${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
-                    name: t(
-                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
-                    ),
-                    icon: IconType.MINUS,
-                    groupId: address,
-                    defaultValue: { ...defaultRemoveMembers, to: address },
-                },
-                {
-                    id: `${address}-${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
-                    name: t(
-                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
-                    ),
-                    icon: IconType.SETTINGS,
-                    groupId: address,
-                    defaultValue: defaultUpdateSettings(plugin),
-                },
-                {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem({ plugin, t }),
-                    meta: plugin,
-                },
-            ],
+            items,
             components: {
                 [MultisigProposalActionType.MULTISIG_ADD_MEMBERS]: MultisigAddMembersAction,
                 [MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS]: MultisigRemoveMembersAction,
