@@ -78,7 +78,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         const { actions } = values;
 
         const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
-        const processedValues = { ...values, actions: processedActions };
+        const processedValues = { ...values, actions: values.addActions ? processedActions : [] };
 
         return publishProposalDialogUtils.buildTransaction({
             values: processedValues,
