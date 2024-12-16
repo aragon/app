@@ -510,14 +510,14 @@
         "nameField": {
           "helpText": "Give your {{type}} a name, so member can differentiate it.",
           "label": "Name",
-          "placeholder": "Core"
+          "placeholder": "Type a name"
         },
         "plugin": "plugin",
         "process": "governance process",
         "processKeyField": {
-          "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
+          "helpText": "Define a unique and recognizable prefix for this governance process so that each proposal has a unique ID. For example, CORE would be identifiable as CORE-1, CORE-2, etc",
           "label": "Key",
-          "placeholder": "CRE"
+          "placeholder": "Type a key"
         },
         "resourcesField": {
           "helpText": "Add any additional external resources that help members understand the {{type}}."
@@ -525,7 +525,7 @@
         "summaryField": {
           "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
           "label": "Summary",
-          "placeholder": "Core proposals are the primary governance process of a DAO. Grants and protocol upgrades both require proposals to pass in a Core proposal process."
+          "placeholder": "Type a summary"
         }
       },
       "verifySmartContractDialog": {

@@ -82,7 +82,7 @@ class TokenActionUtils {
                     meta: plugin,
                 },
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem({ plugin, t, groupId: tokenAddress }),
                     meta: plugin,
                 },
             ],

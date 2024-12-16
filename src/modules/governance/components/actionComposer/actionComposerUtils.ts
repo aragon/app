@@ -53,6 +53,24 @@ export interface IGetCustomActionParams extends IGetActionBaseParams {
     abis: ISmartContractAbi[];
 }
 
+export interface IGetDefaultActionPluginMetadataItemParams {
+    /**
+     * Plugin to build the metadata action for.
+     */
+    plugin: IDaoPlugin;
+    /**
+     * Translation function for group labels.
+     */
+    t: TranslationFunction;
+    /**
+     * Optional group ID for the action, fallback to plugin address if not set.
+     */
+    groupId?: string;
+    /**
+     * Additional metadata to be merged with the existing metadata.
+     */
+    additionalMetadata?: Record<string, unknown>;
+}
 class ActionComposerUtils {
     getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
         abis.map((abi) => ({
@@ -110,18 +128,19 @@ class ActionComposerUtils {
         ...nativeItems,
     ];
 
-    getDefaultActionPluginMetadataItem = (
-        plugin: IDaoPlugin,
-        t: TranslationFunction,
-        additionalMetadata?: Record<string, unknown>,
-    ): IActionComposerItem => {
+    getDefaultActionPluginMetadataItem = ({
+        plugin,
+        t,
+        groupId,
+        additionalMetadata,
+    }: IGetDefaultActionPluginMetadataItemParams): IActionComposerItem => {
         const { address } = plugin;
 
         return {
             id: `${address}-${ProposalActionType.METADATA_PLUGIN_UPDATE}`,
             name: t(`app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_PLUGIN_UPDATE}`),
             icon: IconType.SETTINGS,
-            groupId: address,
+            groupId: groupId ?? address,
             defaultValue: this.buildDefaultActionPluginMetadata(plugin, additionalMetadata),
         };
     };

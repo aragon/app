@@ -34,8 +34,12 @@ class SppActionUtils {
             ],
             items: [
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t, {
-                        stageNames: plugin.settings.stages.map((stage) => stage.name),
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem({
+                        plugin,
+                        t,
+                        additionalMetadata: {
+                            stageNames: plugin.settings.stages.map((stage) => stage.name),
+                        },
                     }),
                     meta: plugin,
                 },
