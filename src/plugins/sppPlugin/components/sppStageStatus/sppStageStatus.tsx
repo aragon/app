@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import {
     Button,
     ChainEntityType,
@@ -15,7 +16,6 @@ import { useState } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
-import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 
 export interface ISppStageStatusProps {
     /**
