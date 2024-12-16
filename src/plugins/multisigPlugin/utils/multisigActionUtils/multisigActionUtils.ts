@@ -88,7 +88,7 @@ class MultisigActionUtils {
                     defaultValue: defaultUpdateSettings(plugin),
                 },
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem({ plugin, t }),
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
                     hidden: !includePluginMetadataItem,
                 },

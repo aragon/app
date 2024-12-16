@@ -86,7 +86,7 @@ class TokenActionUtils {
                     meta: plugin,
                 },
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem({ plugin, t, groupId: tokenAddress }),
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
                     hidden: !includePluginMetadataItem,
                 },
