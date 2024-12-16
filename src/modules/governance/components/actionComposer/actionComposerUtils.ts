@@ -71,6 +71,7 @@ export interface IGetDefaultActionPluginMetadataItemParams {
      */
     additionalMetadata?: Record<string, unknown>;
 }
+
 class ActionComposerUtils {
     getCustomActionGroups = ({ abis }: IGetCustomActionParams): IAutocompleteInputGroup[] =>
         abis.map((abi) => ({

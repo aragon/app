@@ -515,7 +515,7 @@
         "plugin": "plugin",
         "process": "governance process",
         "processKeyField": {
-          "helpText": "Define a unique and recognizable prefix for this governance process so that each proposal has a unique ID. For example, CORE would be identifiable as CORE-1, CORE-2, etc",
+          "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
           "label": "Key",
           "placeholder": "Type a key"
         },
