@@ -1,8 +1,6 @@
-import * as DaoService from '@/shared/api/daoService';
+import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as DialogProvider from '@/shared/components/dialogProvider';
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDao, generateReactQueryResultSuccess, generateTabComponentPlugin } from '@/shared/testUtils';
-import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
+import { generateDialogContext } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
@@ -23,8 +21,7 @@ describe('<CreateProposalPageClient /> component', () => {
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
-    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
-    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+    const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
@@ -33,16 +30,14 @@ describe('<CreateProposalPageClient /> component', () => {
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
         useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
+        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
         useRouterSpy.mockReset();
         useAccountSpy.mockReset();
-        useDaoSpy.mockReset();
-        useDaoPluginsSpy.mockReset();
+        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
     });
 
     const createTestComponent = (props?: Partial<ICreateProposalPageClientProps>) => {

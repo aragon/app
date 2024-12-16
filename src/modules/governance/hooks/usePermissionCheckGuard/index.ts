@@ -1,1 +1,1 @@
-export { usePermissionCheckGuard, type IUsePermissionCheckGuardParams } from './usePermissionCheckGuard';
+export { usePermissionCheckGuard } from './usePermissionCheckGuard';

@@ -1,8 +1,12 @@
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import * as DaoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
+import {
+    generateDao,
+    generateDialogContext,
+    generateReactQueryResultError,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { GukModulesProvider, IconType, addressUtils, clipboardUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';

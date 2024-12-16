@@ -1,5 +1,5 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
+import { generateDialogContext } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as web3Modal from '@web3modal/wagmi/react';

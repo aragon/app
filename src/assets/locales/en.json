@@ -472,13 +472,16 @@
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
       },
-      "permissionCheckDialog": {
-        "checkingPermissions": "Checking permissions",
-        "description": "Not a member of this voting body",
+      "permissionCheckBaseDialog": {
+        "action": "OK",
+        "loading": "Checking permissions",
         "screenReader": {
           "description": "You don't have the permissions require for that DAO action.",
           "title": "Permission denied"
-        },
+        }
+      },
+      "permissionCheckProposalDialog": {
+        "description": "Not a member of this voting body",
         "title": "You can't create"
       },
       "proposalExecutionStatus": {
@@ -617,7 +620,7 @@
           "membersLabel": "Members",
           "multisigMembers": "Multisig members"
         },
-        "multisigProposalCreationRequirements": {
+        "multisigPermissionCheckProposalCreation": {
           "name": "Name",
           "proposalCreation": "Proposal creation",
           "proposalCreationRequirement": "Multisig Members"
@@ -778,7 +781,7 @@
             "placeholder": "0 {{symbol}}"
           }
         },
-        "tokenProposalCreationRequirements": {
+        "tokenPermissionCheckProposalCreation": {
           "name": "Name",
           "proposalCreation": "Proposal creation",
           "userTokenBalance": "Your balance",

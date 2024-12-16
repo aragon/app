@@ -49,11 +49,13 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     };
 
     const slotParams = {
+        title: '',
+        description: '',
         plugin: selectedPlugin.meta,
         daoId,
     };
-    const { check: checkParticipant, result: connectedParticipant } = usePermissionCheckGuard({
-        params: slotParams,
+    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
+        slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         onSuccess: () => router.push(createProposalUrl),
     });
@@ -62,8 +64,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         processPlugins.length > 1
             ? { onClick: openSelectPluginDialog }
             : {
-                  onClick: connectedParticipant ? undefined : checkParticipant,
-                  href: connectedParticipant ? createProposalUrl : undefined,
+                  onClick: canCreateProposal ? undefined : createProposalGuard,
+                  href: canCreateProposal ? createProposalUrl : undefined,
               };
 
     return (

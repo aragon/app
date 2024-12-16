@@ -1,5 +1,5 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
+import { generateDialogContext } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as Wagmi from 'wagmi';

@@ -1,7 +1,6 @@
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
-import { FormWrapper, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
+import { FormWrapper, generateDao, generateDialogContext, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { forwardRef } from 'react';
