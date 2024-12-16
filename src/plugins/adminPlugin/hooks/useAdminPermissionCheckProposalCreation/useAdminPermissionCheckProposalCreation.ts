@@ -3,7 +3,6 @@ import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { IUsePermissionCheckGuardSlotParams } from '@/modules/governance/types/permissionCheckGuardParams';
 import type { IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
 
 export interface IUseAdminPermissionCheckProposalCreationParams
@@ -24,8 +23,6 @@ export const useAdminPermissionCheckProposalCreation = (
         { enabled: address != null },
     );
 
-    const pluginName = daoUtils.getPluginName(plugin);
-
     if (hasPermission) {
         return {
             hasPermission: true,
@@ -37,11 +34,11 @@ export const useAdminPermissionCheckProposalCreation = (
         settings: [
             {
                 term: t('app.plugins.admin.adminProposalCreationRequirements.name'),
-                definition: pluginName,
+                definition: t('app.plugins.admin.adminPermissionCheckProposalCreation.pluginName'),
             },
             {
-                term: t('app.plugins.admin.adminProposalCreationRequirements.proposalCreation'),
-                definition: t('app.plugins.admin.adminProposalCreationRequirements.proposalCreationRequirement'),
+                term: t('app.plugins.admin.adminPermissionCheckProposalCreation.action'),
+                definition: t('app.plugins.admin.adminPermissionCheckProposalCreation.requirement'),
             },
         ],
         isLoading,

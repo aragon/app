@@ -571,6 +571,12 @@
           "admins": "Admins",
           "membersCount": "{{count}} addresses"
         },
+        "adminPermissionCheckProposalCreation": {
+          "action": "Proposal creation",
+          "name": "Name",
+          "pluginName": "Admin",
+          "requirement": "Admin only"
+        },
         "adminVotingTerminal": {
           "description": "Proposals created by admins do not require governance in order to pass.",
           "title": "Automatic execution"
