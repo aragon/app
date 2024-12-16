@@ -267,7 +267,7 @@
           "OSX": "DAO"
         },
         "nativeItem": {
-          "MetadataPluginUpdate": "Update metadata",
+          "MetadataPluginUpdate": "Set metadata",
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
