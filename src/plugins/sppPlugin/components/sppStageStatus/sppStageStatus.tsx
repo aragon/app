@@ -96,7 +96,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         ? { time: minAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.min${advanceTimeContext}Info`) }
         : { time: maxAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.max${advanceTimeContext}Info`) };
 
-    // Stage cannot be advanced anymore, display exired info text.
+    // Stage cannot be advanced anymore, display expired info text.
     if (stageStatus === ProposalVotingStatus.EXPIRED) {
         return (
             <span className="text-right text-neutral-500">
