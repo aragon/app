@@ -7,6 +7,7 @@ import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
+import { SppVotingTerminalStageTimelock } from './sppVotingTerminalStageTimelock';
 
 export interface IProposalVotingTerminalStageProps {
     /**
@@ -60,6 +61,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const getBodySubProposal = (address: string) =>
         subProposals?.find((subProposal) => subProposal.pluginAddress === address);
 
+    const isTimelockStage = !stage.plugins.length;
+
     return (
         <ProposalVoting.Stage
             name={stage.name}
@@ -85,6 +88,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         </ProposalVoting.BodySummaryListItem>
                     ))}
                 </ProposalVoting.BodySummaryList>
+                {isTimelockStage && <SppVotingTerminalStageTimelock stage={stage} proposal={proposal} />}
                 <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
