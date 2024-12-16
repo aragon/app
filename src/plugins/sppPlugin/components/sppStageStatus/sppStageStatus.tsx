@@ -15,6 +15,7 @@ import { useState } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
+import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 
 export interface ISppStageStatusProps {
     /**
@@ -51,6 +52,10 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
     const isSignalingProposal = proposal.actions.length === 0;
 
+    const currentTime = useDynamicValue<DateTime>({
+        callback: () => DateTime.now(),
+    });
+
     // Only display the advance button if stage has been accepted or non veto stage is still active but approval has already
     // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
     // to hide executable info text.
@@ -63,10 +68,13 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const displayMaxAdvanceTime =
-        maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
+        maxAdvanceTime != null && maxAdvanceTime.diff(currentTime, 'days').days < 90 && !isStageAdvanced;
 
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
-    const displayMinAdvanceTime = minAdvanceTime != null && DateTime.now() < minAdvanceTime;
+    // Due to the delay in the dynamic value hook, the remaining time can be negative, and the counter will count up until 1 second.
+    // Adding the remaining time check to avoid displaying the counter when it is negative.
+    const remainingTime = minAdvanceTime ? minAdvanceTime.diff(currentTime).milliseconds : 0;
+    const displayMinAdvanceTime = minAdvanceTime != null && remainingTime > 0;
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
         ? {
