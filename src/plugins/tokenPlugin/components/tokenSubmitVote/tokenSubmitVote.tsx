@@ -18,6 +18,7 @@ import {
     type VoteIndicator,
 } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenVote } from '../../types';
 
 export interface ITokenSubmitVoteProps {
@@ -40,6 +41,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const { isConnected } = useAccount();
 
     const latestVote = useUserVote<ITokenVote>({ proposal });
 
@@ -68,7 +70,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     useEffect(() => {
         setVoteState((prevState) => ({ ...prevState, selectedOption: latestVote?.voteOption.toString() }));
-    }, [latestVote]);
+    }, [latestVote, isConnected]);
 
     const onCancel = () => {
         setVoteState((prevState) => ({
@@ -90,11 +92,18 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const slotParams = { plugin: plugin![0].meta, daoId, proposal, chainId };
 
-    const { check: submitVoteGuard } = usePermissionCheckGuard({
+    const { check: submitVoteGuard, result: canVote } = usePermissionCheckGuard({
         params: slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
         onSuccess: () => setVoteState((prev) => ({ ...prev, showOptions: true })),
     });
+
+    useEffect(() => {
+        if (!isConnected || !canVote) {
+            setVoteState((prevState) => ({ ...prevState, showOptions: false }));
+            // TODO should include vote guard, but need to investigate max rerender issue w/ Radix
+        }
+    }, [isConnected, canVote]);
 
     return (
         <div className="flex flex-col gap-4">
