@@ -1,13 +1,16 @@
+import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as DaoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDao, generateReactQueryResultSuccess, generateTabComponentPlugin } from '@/shared/testUtils';
-import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
+import {
+    generateDao,
+    generateDialogContext,
+    generateReactQueryResultSuccess,
+    generateTabComponentPlugin,
+} from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import * as NextNavigation from 'next/navigation';
-import * as wagmi from 'wagmi';
+
 import { GovernanceDialog } from '../../constants/moduleDialogs';
 import { CreateProposalPageClient, type ICreateProposalPageClientProps } from './createProposalPageClient';
 
@@ -21,26 +24,20 @@ jest.mock('next/navigation', () => ({
 
 describe('<CreateProposalPageClient /> component', () => {
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
-    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
-    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useRouterSpy.mockReturnValue({
-            push: jest.fn(),
-            prefetch: jest.fn(),
-        } as unknown as AppRouterInstance);
-        useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
+        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
-        useRouterSpy.mockReset();
-        useAccountSpy.mockReset();
+        usePermissionCheckGuardSpy.mockReset();
         useDaoSpy.mockReset();
         useDaoPluginsSpy.mockReset();
     });

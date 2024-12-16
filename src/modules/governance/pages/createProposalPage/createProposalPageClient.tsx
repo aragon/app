@@ -1,7 +1,6 @@
 'use client';
 
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -41,24 +40,21 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
     const router = useRouter();
 
-    const daoUrlParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
+    const plugin = useDaoPlugins({ daoId, pluginAddress })![0];
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress });
-
-    const proposalsUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${dao!.id}/proposals`;
+    const proposalsUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${daoId}/proposals`;
 
     const onPermissionCheckError = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
 
     const slotParams = {
         title: t('app.governance.permissionCheckProposalDialog.title'),
         description: t('app.governance.permissionCheckProposalDialog.description'),
-        plugin: plugin![0].meta,
+        plugin: plugin.meta,
         daoId,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
     };
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        params: slotParams,
+        slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         onError: onPermissionCheckError,
     });

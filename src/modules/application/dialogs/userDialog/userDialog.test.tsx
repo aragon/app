@@ -1,5 +1,5 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDialogContext } from '@/shared/testUtils/generators/dialogContext';
+import { generateDialogContext } from '@/shared/testUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { addressUtils, clipboardUtils, IconType } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';

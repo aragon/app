@@ -1,15 +1,16 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import type { IPermissionCheckGuardResult, IUsePermissionCheckGuardSlotParams } from '@/modules/governance/types';
+import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IUsePermissionCheckGuardSlotParams } from '@/modules/governance/types/permissionCheckGuardParams';
+import type { IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
-import type { IMultisigPluginSettings } from './../../types/multisigPluginSettings';
 
-export interface IUseMultisigPermissionCheckProposalCreationParams
-    extends IUsePermissionCheckGuardSlotParams<IMultisigPluginSettings> {}
+export interface IUseAdminPermissionCheckProposalCreationParams
+    extends IUsePermissionCheckGuardSlotParams<IPluginSettings> {}
 
-export const useMultisigPermissionCheckProposalCreation = (
-    params: IUseMultisigPermissionCheckProposalCreationParams,
+export const useAdminPermissionCheckProposalCreation = (
+    params: IUseAdminPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
     const { plugin } = params;
 
@@ -35,14 +36,12 @@ export const useMultisigPermissionCheckProposalCreation = (
         hasPermission: false,
         settings: [
             {
-                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.name'),
+                term: t('app.plugins.admin.adminProposalCreationRequirements.name'),
                 definition: pluginName,
             },
             {
-                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.proposalCreation'),
-                definition: t(
-                    'app.plugins.multisig.multisigPermissionCheckProposalCreation.proposalCreationRequirement',
-                ),
+                term: t('app.plugins.admin.adminProposalCreationRequirements.proposalCreation'),
+                definition: t('app.plugins.admin.adminProposalCreationRequirements.proposalCreationRequirement'),
             },
         ],
         isLoading,

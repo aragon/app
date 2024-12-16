@@ -1,10 +1,18 @@
-import type { IUseGuardBaseParams } from '@/modules/governance/types/useGuardBaseParams';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import { ApplicationDialog } from '../../constants/moduleDialogs';
 
-export interface IUseConnectedWalletGuardParams extends IUseGuardBaseParams {}
+export interface IUseConnectedWalletGuardParams {
+    /**
+     * Callback called when the user is capable of participating.
+     */
+    onSuccess?: () => void;
+    /**
+     * Callback called when the user cannot participate.
+     */
+    onError?: () => void;
+}
 
 export const useConnectedWalletGuard = (params?: IUseConnectedWalletGuardParams) => {
     const { onSuccess, onError } = params ?? {};
