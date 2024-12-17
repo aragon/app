@@ -472,17 +472,17 @@
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
       },
-      "permissionCheckBaseDialog": {
+      "permissionCheckDialog": {
         "action": "OK",
         "loading": "Checking permissions",
+        "proposal": {
+          "description": "Not a member of this voting body",
+          "title": "You can't create"
+        },
         "screenReader": {
           "description": "You don't have the permissions require for that DAO action.",
           "title": "Permission denied"
         }
-      },
-      "permissionCheckProposalDialog": {
-        "description": "Not a member of this voting body",
-        "title": "You can't create"
       },
       "proposalExecutionStatus": {
         "buttons": {
@@ -574,7 +574,6 @@
         "adminPermissionCheckProposalCreation": {
           "action": "Proposal creation",
           "name": "Name",
-          "pluginName": "Admin",
           "requirement": "Admin only"
         },
         "adminVotingTerminal": {
@@ -613,11 +612,11 @@
           }
         },
         "multisigGovernanceSettings": {
+          "action": "Proposal creation",
           "anyWallet": "Any wallet",
           "approvals": "{{min}} of {{max}} authorized addresses",
           "members": "Multisig members",
-          "minimumApproval": "Minimum approval",
-          "proposalCreation": "Proposal creation"
+          "minimumApproval": "Minimum approval"
         },
         "multisigMembersInfo": {
           "eligibleVoters": "Eligible voters",
@@ -627,9 +626,9 @@
           "multisigMembers": "Multisig members"
         },
         "multisigPermissionCheckProposalCreation": {
+          "action": "Proposal creation",
           "name": "Name",
-          "proposalCreation": "Proposal creation",
-          "proposalCreationRequirement": "Multisig Members"
+          "requirement": "Multisig Members"
         },
         "multisigProposalList": {
           "entity": "Proposals"

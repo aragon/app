@@ -42,7 +42,6 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const openSelectPluginDialog = () => {
         const params: ISelectPluginDialogParams = {
             daoId,
-            buildSelectedPluginHref: buildCreateProposalUrl,
             initialPlugin: selectedPlugin,
             onPluginSelected: createProposalGuard,
         };
@@ -50,12 +49,12 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     };
 
     const slotParams = {
-        title: t('app.governance.permissionCheckProposalDialog.title'),
-        description: t('app.governance.permissionCheckProposalDialog.description'),
         plugin: selectedPlugin.meta,
         daoId,
     };
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
+        dialogTitle: t('app.governance.permissionCheckProposalDialog.title'),
+        dialogDescription: t('app.governance.permissionCheckProposalDialog.description'),
         slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         onSuccess: () => router.push(createProposalUrl),

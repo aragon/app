@@ -1,12 +1,12 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { IUsePermissionCheckGuardSlotParams } from '@/modules/governance/types/permissionCheckGuardParams';
+import type { IPermissionCheckGuardParams } from '@/modules/governance/types/permissionCheckGuardParams';
 import type { IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
 
-export interface IUseAdminPermissionCheckProposalCreationParams
-    extends IUsePermissionCheckGuardSlotParams<IPluginSettings> {}
+export interface IUseAdminPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<IPluginSettings> {}
 
 export const useAdminPermissionCheckProposalCreation = (
     params: IUseAdminPermissionCheckProposalCreationParams,
@@ -23,6 +23,8 @@ export const useAdminPermissionCheckProposalCreation = (
         { enabled: address != null },
     );
 
+    const pluginName = daoUtils.getPluginName(plugin);
+
     if (hasPermission) {
         return {
             hasPermission: true,
@@ -34,7 +36,7 @@ export const useAdminPermissionCheckProposalCreation = (
         settings: [
             {
                 term: t('app.plugins.admin.adminProposalCreationRequirements.name'),
-                definition: t('app.plugins.admin.adminPermissionCheckProposalCreation.pluginName'),
+                definition: pluginName,
             },
             {
                 term: t('app.plugins.admin.adminPermissionCheckProposalCreation.action'),

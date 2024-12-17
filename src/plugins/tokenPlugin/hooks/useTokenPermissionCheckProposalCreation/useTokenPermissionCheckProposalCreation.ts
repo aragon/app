@@ -1,5 +1,5 @@
 import { useMember } from '@/modules/governance/api/governanceService';
-import type { IPermissionCheckGuardResult, IUsePermissionCheckGuardSlotParams } from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -8,7 +8,7 @@ import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
 export interface ITokenPermissionCheckProposalCreationParams
-    extends IUsePermissionCheckGuardSlotParams<ITokenPluginSettings> {}
+    extends IPermissionCheckGuardParams<ITokenPluginSettings> {}
 
 export const useTokenPermissionCheckProposalCreation = (
     params: ITokenPermissionCheckProposalCreationParams,
@@ -36,7 +36,9 @@ export const useTokenPermissionCheckProposalCreation = (
 
     const pluginName = daoUtils.getPluginName(plugin);
 
-    const hasPermission = member?.votingPower && BigInt(member.votingPower) >= BigInt(minProposerVotingPower);
+    const hasPermission =
+        (member?.votingPower && BigInt(member.votingPower) >= BigInt(minProposerVotingPower)) ??
+        (member?.tokenBalance && BigInt(member.tokenBalance) >= BigInt(minProposerVotingPower));
 
     const parsedMemberVotingPower = formatUnits(BigInt(member?.votingPower ?? '0'), tokenDecimals);
     const formattedMemberVotingPower = formatterUtils.formatNumber(
@@ -47,11 +49,9 @@ export const useTokenPermissionCheckProposalCreation = (
     const parsedMemberBalance = formatUnits(BigInt(member?.tokenBalance ?? '0'), tokenDecimals);
     const formattedMemberBalance = formatterUtils.formatNumber(parsedMemberBalance, numberFormats.TOKEN_AMOUNT_SHORT);
 
-    if (hasPermission) {
+    if (hasPermission !== false) {
         return {
             hasPermission: true,
-            settings: [],
-            isLoading,
         };
     }
 

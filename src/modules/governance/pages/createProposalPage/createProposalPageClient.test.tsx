@@ -1,13 +1,7 @@
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
-import * as DaoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import {
-    generateDao,
-    generateDialogContext,
-    generateReactQueryResultSuccess,
-    generateTabComponentPlugin,
-} from '@/shared/testUtils';
+import { generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
@@ -24,20 +18,17 @@ jest.mock('next/navigation', () => ({
 describe('<CreateProposalPageClient /> component', () => {
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
     const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
-    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
         usePermissionCheckGuardSpy.mockReset();
-        useDaoSpy.mockReset();
         useDaoPluginsSpy.mockReset();
     });
 
