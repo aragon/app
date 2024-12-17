@@ -46,11 +46,10 @@ export type IGetMultisigActionsResult = IActionComposerPluginData<IDaoPlugin<IMu
 
 class MultisigActionUtils {
     getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
-        const { address } = plugin;
+        const { address, release, build } = plugin;
 
         // The setMetadata function on the Multisig plugin is only supported from version 1.4 onwards
-        const includePluginMetadataItem =
-            Number(plugin.release) > 1 || (Number(plugin.release) === 1 && Number(plugin.build) >= 4);
+        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 4);
 
         return {
             groups: [
