@@ -71,12 +71,13 @@ export const PermissionCheckDialog = (props: IPermissionCheckDialogProps<IUsePer
         return (
             <>
                 <Dialog.Header title={t('app.governance.permissionCheckBaseDialog.loading')} />
-                <Dialog.Content className="flex w-full flex-col gap-y-4 py-4 md:py-6">
+                <Dialog.Content className="pb-4 pt-1 md:pb-6 md:pt-2">
                     <div className="flex w-full flex-col gap-y-2">
                         <StateSkeletonBar width="40%" size="lg" />
                         <StateSkeletonBar width="65%" size="lg" />
                     </div>
                 </Dialog.Content>
+                <Dialog.Footer />
             </>
         );
     }
@@ -84,7 +85,7 @@ export const PermissionCheckDialog = (props: IPermissionCheckDialogProps<IUsePer
     return (
         <>
             <Dialog.Header title={title} description={description} />
-            <Dialog.Content className="flex flex-col gap-y-4 py-4 md:py-6">
+            <Dialog.Content className="pb-4 pt-1 md:pb-6 md:pt-2">
                 <DefinitionList.Container>
                     {settings?.map((setting, index) => (
                         <DefinitionList.Item key={index} term={setting.term}>
