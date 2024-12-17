@@ -57,7 +57,17 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
-        const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
+            const updatedValues = {
+                ...values,
+                actions: values.addActions ? values.actions : [],
+            };
+
+            const params: IPublishProposalDialogParams = {
+                values: updatedValues,
+                daoId,
+                pluginAddress,
+                prepareActions,
+            };
         open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
     };
 

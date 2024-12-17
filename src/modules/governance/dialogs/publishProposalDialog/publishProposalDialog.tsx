@@ -75,12 +75,10 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
     const handlePrepareTransaction = async () => {
         invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
         const { IpfsHash: metadataCid } = pinJsonData;
-        const { actions, addActions } = values;
+        const { actions } = values;
 
         const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
-        // The user may have added actions, but then set the toggle to add actions to false.
-        // In this case, we should not include the actions in the transaction.
-        const processedValues = { ...values, actions: addActions ? processedActions : [] };
+        const processedValues = { ...values, actions: processedActions };
 
         return publishProposalDialogUtils.buildTransaction({
             values: processedValues,
