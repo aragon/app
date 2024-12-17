@@ -248,7 +248,16 @@ class PrepareProcessDialogUtils {
         stage: ICreateProcessFormStage,
         permissionSettings?: ICreateProcessFormProposalCreationBody,
     ) => {
-        const { voteChange, supportThreshold, minimumParticipation, tokenName, tokenSymbol, members } = body;
+        const {
+            voteChange,
+            supportThreshold,
+            minimumParticipation,
+            tokenType,
+            importTokenAddress,
+            tokenName,
+            tokenSymbol,
+            members,
+        } = body;
         const { minVotingPower } = permissionSettings ?? {};
 
         const votingMode = voteChange
@@ -266,20 +275,26 @@ class PrepareProcessDialogUtils {
             minProposerVotingPower: minProposerVotingPower,
         };
 
-        const tokenSettings = { addr: zeroAddress, name: tokenName, symbol: tokenSymbol };
+        const tokenSettings = {
+            addr: tokenType === 'imported' ? (importTokenAddress as Hex) : zeroAddress,
+            name: tokenName ?? '',
+            symbol: tokenSymbol ?? '',
+        };
+
+        const defaultMintSettings = { receivers: [], amounts: [] };
         const mintSettings = members.reduce<{ receivers: Hex[]; amounts: bigint[] }>(
             (current, member) => ({
                 receivers: current.receivers.concat(member.address as Hex),
                 amounts: current.amounts.concat(parseUnits((member as ITokenVotingMember).tokenAmount.toString(), 18)),
             }),
-            { receivers: [], amounts: [] },
+            defaultMintSettings,
         );
 
         const tokenTarget = { target: this.globalExecutor, operation: 1 };
         const pluginSettingsData = encodeAbiParameters(tokenPluginSetupAbi, [
             votingSettings,
             tokenSettings,
-            mintSettings,
+            tokenType === 'imported' ? defaultMintSettings : mintSettings,
             tokenTarget,
             BigInt(0),
             metadataCid as Hex,

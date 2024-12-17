@@ -93,13 +93,21 @@ export interface ICreateProcessFormBody {
 
     // Token-specific values
     /**
+     * Type of the token used on the body.
+     */
+    tokenType: 'imported' | 'new';
+    /**
+     * Address of the token to be imported.
+     */
+    importTokenAddress?: string;
+    /**
      * Name of the governance token.
      */
-    tokenName: string;
+    tokenName?: string;
     /**
      * Symbol of the governance token.
      */
-    tokenSymbol: string;
+    tokenSymbol?: string;
     /**
      * The percentage of tokens that vote yes, out of all tokens that have voted, must be greater than this value for
      * the proposal to pass.
