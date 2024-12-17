@@ -12,7 +12,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
@@ -69,8 +69,9 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const hasTimeConstraints = minAdvanceTime != null || maxAdvanceTime != null;
     const enableDynamicTime = hasTimeConstraints && displayAdvanceButton && !isStageAdvanced;
 
+    const callback = useCallback(() => DateTime.now(), []);
     const currentTime = useDynamicValue<DateTime>({
-        callback: () => DateTime.now(),
+        callback,
         enabled: enableDynamicTime,
     });
 
