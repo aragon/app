@@ -49,7 +49,7 @@ __metadata:
   dependencies:
     "@aragon/gov-ui-kit": "npm:^1.0.59"
     "@floating-ui/react": "npm:^0.27.2"
-    "@hookform/devtools": "npm:^4.3.2"
+    "@hookform/devtools": "npm:^4.3.3"
     "@next/bundle-analyzer": "npm:^15.1.0"
     "@tailwindcss/typography": "npm:^0.5.15"
     "@tanstack/react-query": "npm:^5.62.7"
@@ -97,7 +97,7 @@ __metadata:
     typescript-eslint: "npm:^8.18.1"
     vercel: "npm:^39.2.2"
     viem: "npm:^2.21.55"
-    wagmi: "npm:^2.14.1"
+    wagmi: "npm:^2.14.3"
   languageName: unknown
   linkType: soft
 
@@ -948,9 +948,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hookform/devtools@npm:^4.3.2":
-  version: 4.3.2
-  resolution: "@hookform/devtools@npm:4.3.2"
+"@hookform/devtools@npm:^4.3.3":
+  version: 4.3.3
+  resolution: "@hookform/devtools@npm:4.3.3"
   dependencies:
     "@emotion/react": "npm:^11.1.5"
     "@emotion/styled": "npm:^11.3.0"
@@ -963,7 +963,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18 || ^19
     react-dom: ^16.8.0 || ^17 || ^18 || ^19
-  checksum: 10c0/8bc008e8e9fd0f39ebd751befb625117e41a5a219c83059a011958f41f25617fd74f80e6282ab8951d0c4013b1f67236fc4a14baa30b968daf352d4a167d2998
+  checksum: 10c0/eef986545a4a2c0d7d5c20d84048c064ccf121f803bc5490832a46a69024f50af8c6976b0feb78790a05d7c1b722dc0d664ff538d717f0d15ddc8f197e495dc0
   languageName: node
   linkType: hard
 
@@ -3027,13 +3027,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@safe-global/safe-apps-provider@npm:0.18.4":
-  version: 0.18.4
-  resolution: "@safe-global/safe-apps-provider@npm:0.18.4"
+"@safe-global/safe-apps-provider@npm:0.18.5":
+  version: 0.18.5
+  resolution: "@safe-global/safe-apps-provider@npm:0.18.5"
   dependencies:
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     events: "npm:^3.3.0"
-  checksum: 10c0/612c9816b75b86b73b95b5df35529f4d48da1a3a59b2b999f6ef836b28b10cda2142e159dbc97f0298fa8f5b76df82a1e08e34034fdf12f148e9fd4af2f72134
+  checksum: 10c0/5699b4abd63d1042aca299cddb466ebf79b0e6709a22b277c7320343edce36e50f4d5356c4eda4497e1c2f4d6a92b14b29c7aefe0cf673f5614752f5ff6fbac5
   languageName: node
   linkType: hard
 
@@ -4402,13 +4402,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/connectors@npm:5.6.1":
-  version: 5.6.1
-  resolution: "@wagmi/connectors@npm:5.6.1"
+"@wagmi/connectors@npm:5.7.0":
+  version: 5.7.0
+  resolution: "@wagmi/connectors@npm:5.7.0"
   dependencies:
     "@coinbase/wallet-sdk": "npm:4.2.3"
     "@metamask/sdk": "npm:0.31.2"
-    "@safe-global/safe-apps-provider": "npm:0.18.4"
+    "@safe-global/safe-apps-provider": "npm:0.18.5"
     "@safe-global/safe-apps-sdk": "npm:9.1.0"
     "@walletconnect/ethereum-provider": "npm:2.17.0"
     cbw-sdk: "npm:@coinbase/wallet-sdk@3.9.3"
@@ -4419,7 +4419,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/f9c6d8f3e4c1022a9eeb9af2cda9578c724a9c4977620b40e452612233abc9cc0198e58a828733b8a5a967b8e4c2cd2f827b7111f1ba415f64f0dae3ec89e753
+  checksum: 10c0/7ae82891312b06b311558035dba9a3533a0af1bf4d6187e531459a797fcd4933348d5d35c4f6337f4ee87cb48b0e4afc08d754b875dccf151ee7ec80bfdd5eb1
   languageName: node
   linkType: hard
 
@@ -15100,11 +15100,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^2.14.1":
-  version: 2.14.1
-  resolution: "wagmi@npm:2.14.1"
+"wagmi@npm:^2.14.3":
+  version: 2.14.3
+  resolution: "wagmi@npm:2.14.3"
   dependencies:
-    "@wagmi/connectors": "npm:5.6.1"
+    "@wagmi/connectors": "npm:5.7.0"
     "@wagmi/core": "npm:2.16.0"
     use-sync-external-store: "npm:1.2.0"
   peerDependencies:
@@ -15115,7 +15115,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/e02cd69dc6774f26d6e4983aa239249cc6f3b08dc746449f12c62b13e1c221cd95b5ccf483a9f0ec52f9c219fc0ab1c85e4b7c33d26d408d696b83e5b89bdf3a
+  checksum: 10c0/da2b9664449c9efa1ace6c5b427a093d30dd84e5a2c18c687c64321bdf0c5d8ece098a44454fe03f87f90ec655b4922451935fe6a996cb2662896b4bffb575e9
   languageName: node
   linkType: hard
 

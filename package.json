@@ -34,10 +34,10 @@
     "react-hook-form": "^7.54.1",
     "server-only": "^0.0.1",
     "viem": "^2.21.55",
-    "wagmi": "^2.14.1"
+    "wagmi": "^2.14.3"
   },
   "devDependencies": {
-    "@hookform/devtools": "^4.3.2",
+    "@hookform/devtools": "^4.3.3",
     "@next/bundle-analyzer": "^15.1.0",
     "@tailwindcss/typography": "^0.5.15",
     "@testing-library/dom": "^10.4.0",
