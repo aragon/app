@@ -1,4 +1,4 @@
-import { type IUsePermissionCheckGuardParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
+import type { IUsePermissionCheckGuardParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
