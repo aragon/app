@@ -48,7 +48,7 @@ class MultisigActionUtils {
     getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
         const { address } = plugin;
 
-        //setMetadata of the plugin is only supported from version 1.4 onwards
+        // The setMetadata function on the Multisig plugin is only supported from version 1.4 onwards
         const includePluginMetadataItem =
             Number(plugin.release) > 1 || (Number(plugin.release) === 1 && Number(plugin.build) >= 4);
 
