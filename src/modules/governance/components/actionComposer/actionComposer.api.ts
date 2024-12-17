@@ -10,10 +10,6 @@ export interface IActionComposerItem<TMeta = undefined> extends IAutocompleteInp
      * Default value for the action.
      */
     defaultValue?: IProposalAction;
-    /**
-     * Flag to determine if we should hide the item in the action composer.
-     */
-    hidden?: boolean;
 }
 
 export type ActionComposerMode = 'native' | 'custom';

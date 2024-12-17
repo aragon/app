@@ -41,6 +41,10 @@ export interface IAutocompleteInputItem<TMeta = undefined> {
      * Additional metadata of the item.
      */
     meta?: TMeta;
+    /**
+     * Flag to determine if we should hide the item in the action composer.
+     */
+    hidden?: boolean;
 }
 
 export interface IAutocompleteInputItemIndex extends IAutocompleteInputItem {

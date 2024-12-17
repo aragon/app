@@ -29,11 +29,9 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
         onActionSelected(action);
     };
 
-    const itemsToShow = items.filter((item) => !item.hidden);
-
     return (
         <AutocompleteInput
-            items={itemsToShow}
+            items={items}
             groups={groups}
             selectItemLabel={t('app.governance.actionComposer.selectItem')}
             placeholder={t('app.governance.actionComposer.placeholder')}
