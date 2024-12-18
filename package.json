@@ -22,7 +22,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.0.59",
+    "@aragon/gov-ui-kit": "^1.0.60",
     "@floating-ui/react": "^0.27.2",
     "@tanstack/react-query": "^5.62.7",
     "@web3modal/wagmi": "^5.1.11",
