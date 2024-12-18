@@ -40,7 +40,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     } = props;
 
     const [isOpen, setIsOpen] = useState(false);
-    const [inputValue, setInputValue] = useState(items.find((item) => item.id === value)?.name ?? '');
+    const [inputValue, setInputValue] = useState('');
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     const updateOpenState = (open: boolean) => {
@@ -102,6 +102,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     };
 
     const processedItems: IAutocompleteInputItemIndex[] = items
+        .filter((item) => !item.hidden)
         .filter(filterItem)
         .sort((itemOne, itemTwo) => (!itemTwo.groupId ? 1 : !itemOne.groupId ? -1 : 0))
         .map((item, index) => ({ ...item, index }));

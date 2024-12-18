@@ -46,8 +46,11 @@ export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<IToken
 
 class TokenActionUtils {
     getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
-        const { address } = plugin;
-        const { address: tokenAddress, name } = plugin.settings.token;
+        const { address, release, build, settings } = plugin;
+        const { address: tokenAddress, name } = settings.token;
+
+        // The setMetadata function on the TokenVoting plugin is only supported from version 1.4 onwards
+        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 4);
 
         return {
             groups: [
@@ -71,7 +74,7 @@ class TokenActionUtils {
                     icon: IconType.SETTINGS,
                     groupId: tokenAddress,
                     meta: plugin,
-                    defaultValue: defaultMintAction(plugin.settings),
+                    defaultValue: defaultMintAction(settings),
                 },
                 {
                     id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
@@ -84,6 +87,7 @@ class TokenActionUtils {
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
                     meta: plugin,
+                    hidden: !includePluginMetadataItem,
                 },
             ],
             components: {

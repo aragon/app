@@ -41,6 +41,10 @@ export interface IAutocompleteInputItem<TMeta = undefined> {
      * Additional metadata of the item.
      */
     meta?: TMeta;
+    /**
+     * Hides the item from the autocomplete list when set to true.
+     */
+    hidden?: boolean;
 }
 
 export interface IAutocompleteInputItemIndex extends IAutocompleteInputItem {

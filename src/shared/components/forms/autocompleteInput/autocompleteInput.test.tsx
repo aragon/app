@@ -43,13 +43,6 @@ describe('<AutocompleteInput /> component', () => {
         expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     });
 
-    it('initialises the input value with the name of the specified item id', () => {
-        const items = [{ id: '0', name: 'item-0', icon: IconType.APP_ASSETS }];
-        const value = '0';
-        render(createTestComponent({ items, value }));
-        expect(screen.getByDisplayValue(items[0].name)).toBeInTheDocument();
-    });
-
     it('correctly render grouped items', async () => {
         const items = [
             { id: '0', name: 'item-0-group-0', icon: IconType.APP_ASSETS, groupId: 'group-0' },
