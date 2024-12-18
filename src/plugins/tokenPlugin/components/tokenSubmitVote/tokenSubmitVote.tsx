@@ -95,11 +95,11 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         daoId,
         proposal,
         chainId,
-        title: t('app.governance.permissionCheckTokenVoteDialog.title'),
-        description: t('app.governance.permissionCheckTokenVoteDialog.description'),
     };
     const { check: submitVoteGuard, result: canVote } = usePermissionCheckGuard({
-        params: slotParams,
+        dialogTitle: t('app.governance.permissionCheckTokenVoteDialog.title'),
+        dialogDescription: t('app.governance.permissionCheckTokenVoteDialog.description'),
+        slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
         onSuccess: () => setVoteState((prev) => ({ ...prev, showOptions: true })),
     });
