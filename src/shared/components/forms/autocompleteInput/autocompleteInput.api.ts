@@ -42,7 +42,7 @@ export interface IAutocompleteInputItem<TMeta = undefined> {
      */
     meta?: TMeta;
     /**
-     * Flag to determine if we should hide the item in the action composer.
+     * Hides the item from the autocomplete list when set to true.
      */
     hidden?: boolean;
 }

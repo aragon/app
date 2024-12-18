@@ -39,10 +39,8 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
         ...otherProps
     } = props;
 
-    const itemsToShow = items.filter((item) => !item.hidden);
-
     const [isOpen, setIsOpen] = useState(false);
-    const [inputValue, setInputValue] = useState(itemsToShow.find((item) => item.id === value)?.name ?? '');
+    const [inputValue, setInputValue] = useState('');
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     const updateOpenState = (open: boolean) => {
@@ -103,7 +101,8 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
         return searchStrings.some((stringValue) => stringValue?.toLowerCase().includes(inputValue.toLowerCase()));
     };
 
-    const processedItems: IAutocompleteInputItemIndex[] = itemsToShow
+    const processedItems: IAutocompleteInputItemIndex[] = items
+        .filter((item) => !item.hidden)
         .filter(filterItem)
         .sort((itemOne, itemTwo) => (!itemTwo.groupId ? 1 : !itemOne.groupId ? -1 : 0))
         .map((item, index) => ({ ...item, index }));
