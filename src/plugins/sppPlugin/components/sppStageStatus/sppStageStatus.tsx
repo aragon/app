@@ -69,6 +69,8 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const hasTimeConstraints = minAdvanceTime != null || maxAdvanceTime != null;
     const enableDynamicTime = hasTimeConstraints && displayAdvanceButton && !isStageAdvanced;
 
+    // Use a callback to avoid re-creating the DateTime object on every render
+    // Which would cause the dynamic value hook to re-run on every render and result in an infinite loop
     const callback = useCallback(() => DateTime.now(), []);
     const currentTime = useDynamicValue<DateTime>({
         callback,
