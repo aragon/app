@@ -1,4 +1,4 @@
-import { type IProposal } from '@/modules/governance/api/governanceService';
+import type { IProposal } from '@/modules/governance/api/governanceService';
 import { useProposalCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';

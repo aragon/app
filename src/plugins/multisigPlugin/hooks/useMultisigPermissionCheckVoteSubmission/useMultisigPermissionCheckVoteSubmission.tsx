@@ -1,8 +1,7 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import { useProposalCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
-
+import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ChainEntityType, DateFormat, formatterUtils, IconType, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
