@@ -482,6 +482,11 @@
         "screenReader": {
           "description": "You don't have the permissions require for that DAO action.",
           "title": "Permission denied"
+        },
+        "vote": {
+          "multisigDescription": "Not a member when proposal was created.",
+          "title": "You can't create",
+          "tokenDescription": "Not enough voting power at the block this proposal was created."
         }
       },
       "proposalExecutionStatus": {

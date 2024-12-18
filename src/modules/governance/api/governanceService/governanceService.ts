@@ -4,6 +4,7 @@ import type {
     IGetMemberExistsParams,
     IGetMemberListParams,
     IGetMemberParams,
+    IGetProposalCanVoteParams,
     IGetProposalListParams,
     IGetProposalParams,
     IGetVoteListParams,
@@ -50,6 +51,12 @@ class GovernanceService extends AragonBackendService {
 
     getProposal = async <TProposal extends IProposal = IProposal>(params: IGetProposalParams): Promise<TProposal> => {
         const result = await this.request<TProposal>(this.urls.proposal, params);
+
+        return result;
+    };
+
+    getProposalCanVote = async (params: IGetProposalCanVoteParams): Promise<boolean> => {
+        const result = await this.request<boolean>(this.urls.proposalCanVote, params);
 
         return result;
     };

@@ -56,8 +56,8 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
         chainId,
     };
     const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
-        dialogTitle: t('app.governance.permissionCheckMultisigVoteDialog.title'),
-        dialogDescription: t('app.governance.permissionCheckMultisigVoteDialog.description'),
+        dialogTitle: t('app.governance.permissionCheckDialog.vote.title'),
+        dialogDescription: t('app.governance.permissionCheckDialog.vote.multisigDescription'),
         slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
         onSuccess: openTransactionDialog,

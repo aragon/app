@@ -97,8 +97,8 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         chainId,
     };
     const { check: submitVoteGuard, result: canVote } = usePermissionCheckGuard({
-        dialogTitle: t('app.governance.permissionCheckTokenVoteDialog.title'),
-        dialogDescription: t('app.governance.permissionCheckTokenVoteDialog.description'),
+        dialogTitle: t('app.governance.permissionCheckDialog.vote.title'),
+        dialogDescription: t('app.governance.permissionCheckDialog.vote.tokenDescription'),
         slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
         onSuccess: () => setVoteState((prev) => ({ ...prev, showOptions: true })),
