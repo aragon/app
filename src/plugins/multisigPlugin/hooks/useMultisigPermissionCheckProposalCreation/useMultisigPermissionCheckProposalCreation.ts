@@ -35,14 +35,12 @@ export const useMultisigPermissionCheckProposalCreation = (
         hasPermission: false,
         settings: [
             {
-                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.name'),
+                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
                 definition: pluginName,
             },
             {
-                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.proposalCreation'),
-                definition: t(
-                    'app.plugins.multisig.multisigPermissionCheckProposalCreation.proposalCreationRequirement',
-                ),
+                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
+                definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
             },
         ],
         isLoading,

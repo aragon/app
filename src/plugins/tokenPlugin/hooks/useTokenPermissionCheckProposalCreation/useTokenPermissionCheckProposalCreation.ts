@@ -59,11 +59,11 @@ export const useTokenPermissionCheckProposalCreation = (
         hasPermission: false,
         settings: [
             {
-                term: t('app.plugins.token.tokenPermissionCheckProposalCreation.name'),
+                term: t('app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel'),
                 definition: pluginName,
             },
             {
-                term: t('app.plugins.token.tokenPermissionCheckProposalCreation.proposalCreation'),
+                term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
                 definition: minTokenRequired,
             },
             {

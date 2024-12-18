@@ -53,8 +53,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
         daoId,
     };
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        dialogTitle: t('app.governance.permissionCheckProposalDialog.title'),
-        dialogDescription: t('app.governance.permissionCheckProposalDialog.description'),
+        dialogTitle: t('app.governance.permissionCheckDialog.proposal.title'),
+        dialogDescription: t('app.governance.permissionCheckDialog.proposal.description'),
         slotParams,
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         onSuccess: () => router.push(createProposalUrl),

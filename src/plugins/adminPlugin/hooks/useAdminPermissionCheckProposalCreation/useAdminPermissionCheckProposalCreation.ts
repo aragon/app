@@ -35,11 +35,11 @@ export const useAdminPermissionCheckProposalCreation = (
         hasPermission: false,
         settings: [
             {
-                term: t('app.plugins.admin.adminProposalCreationRequirements.name'),
+                term: t('app.plugins.admin.adminProposalCreationRequirements.pluginLabelName'),
                 definition: pluginName,
             },
             {
-                term: t('app.plugins.admin.adminPermissionCheckProposalCreation.action'),
+                term: t('app.plugins.admin.adminPermissionCheckProposalCreation.function'),
                 definition: t('app.plugins.admin.adminPermissionCheckProposalCreation.requirement'),
             },
         ],

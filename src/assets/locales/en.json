@@ -572,8 +572,8 @@
           "membersCount": "{{count}} addresses"
         },
         "adminPermissionCheckProposalCreation": {
-          "action": "Proposal creation",
-          "name": "Name",
+          "function": "Proposal creation",
+          "pluginLabelName": "Name",
           "requirement": "Admin only"
         },
         "adminVotingTerminal": {
@@ -612,11 +612,11 @@
           }
         },
         "multisigGovernanceSettings": {
-          "action": "Proposal creation",
           "anyWallet": "Any wallet",
           "approvals": "{{min}} of {{max}} authorized addresses",
           "members": "Multisig members",
-          "minimumApproval": "Minimum approval"
+          "minimumApproval": "Minimum approval",
+          "proposalCreation": "Proposal creation"
         },
         "multisigMembersInfo": {
           "eligibleVoters": "Eligible voters",
@@ -626,9 +626,9 @@
           "multisigMembers": "Multisig members"
         },
         "multisigPermissionCheckProposalCreation": {
-          "action": "Proposal creation",
-          "name": "Name",
-          "requirement": "Multisig Members"
+          "function": "Proposal creation",
+          "pluginLabelName": "Name",
+          "requirement": "Multisig member"
         },
         "multisigProposalList": {
           "entity": "Proposals"
@@ -787,8 +787,8 @@
           }
         },
         "tokenPermissionCheckProposalCreation": {
-          "name": "Name",
-          "proposalCreation": "Proposal creation",
+          "function": "Proposal creation",
+          "pluginNameLabel": "Name",
           "userTokenBalance": "Your balance",
           "userVotingPower": "Your voting power"
         },

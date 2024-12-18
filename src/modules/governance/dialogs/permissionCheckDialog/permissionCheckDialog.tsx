@@ -59,7 +59,7 @@ export const PermissionCheckDialog = (props: IPermissionCheckDialogProps<IUsePer
         updateOptions({ onClose: handleDialogClose });
     }, [handleDialogClose, updateOptions]);
 
-    const title = isLoading ? t('app.governance.permissionCheckBaseDialog.loading') : dialogTitle;
+    const title = isLoading ? t('app.governance.permissionCheckDialog.loading') : dialogTitle;
     const description = isLoading ? undefined : dialogDescription;
 
     return (
@@ -87,7 +87,7 @@ export const PermissionCheckDialog = (props: IPermissionCheckDialogProps<IUsePer
                     isLoading
                         ? undefined
                         : {
-                              label: t('app.governance.permissionCheckBaseDialog.action'),
+                              label: t('app.governance.permissionCheckDialog.action'),
                               onClick: handleDialogClose,
                           }
                 }
