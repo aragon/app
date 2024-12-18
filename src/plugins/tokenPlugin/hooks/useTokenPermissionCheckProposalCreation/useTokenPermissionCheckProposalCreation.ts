@@ -3,7 +3,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { formatterUtils, numberFormats } from '@aragon/gov-ui-kit';
+import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -16,43 +16,45 @@ export const useTokenPermissionCheckProposalCreation = (
     const { plugin, daoId } = params;
 
     const { address } = useAccount();
-
     const { t } = useTranslations();
 
-    const { decimals: tokenDecimals, symbol: tokenSymbol } = plugin.settings.token;
+    const pluginName = daoUtils.getPluginName(plugin);
 
-    const { minProposerVotingPower } = plugin.settings;
+    const { minProposerVotingPower, token } = plugin.settings;
+    const { decimals: tokenDecimals, symbol: tokenSymbol } = token;
+
     const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPower), tokenDecimals);
-    const formattedMinVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, numberFormats.TOKEN_AMOUNT_SHORT);
+    const formattedMinVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, {
+        format: NumberFormat.TOKEN_AMOUNT_SHORT,
+    });
 
     const minTokenRequired = `${formattedMinVotingPower ?? '0'} ${tokenSymbol}`;
 
     const memberUrlParams = { address: address as string };
     const memberQueryParams = { daoId, pluginAddress: plugin.address };
-    const { data: member, isLoading } = useMember<ITokenMember>({
-        urlParams: memberUrlParams,
-        queryParams: memberQueryParams,
-    });
-
-    const pluginName = daoUtils.getPluginName(plugin);
-
-    const hasPermission =
-        (member?.votingPower && BigInt(member.votingPower) >= BigInt(minProposerVotingPower)) ??
-        (member?.tokenBalance && BigInt(member.tokenBalance) >= BigInt(minProposerVotingPower));
-
-    const parsedMemberVotingPower = formatUnits(BigInt(member?.votingPower ?? '0'), tokenDecimals);
-    const formattedMemberVotingPower = formatterUtils.formatNumber(
-        parsedMemberVotingPower,
-        numberFormats.TOKEN_AMOUNT_SHORT,
+    const { data: member, isLoading } = useMember<ITokenMember>(
+        { urlParams: memberUrlParams, queryParams: memberQueryParams },
+        { enabled: address != null },
     );
 
-    const parsedMemberBalance = formatUnits(BigInt(member?.tokenBalance ?? '0'), tokenDecimals);
-    const formattedMemberBalance = formatterUtils.formatNumber(parsedMemberBalance, numberFormats.TOKEN_AMOUNT_SHORT);
+    const userVotingPower = BigInt(member?.votingPower ?? '0');
+    const userBalance = BigInt(member?.tokenBalance ?? '0');
 
-    if (hasPermission !== false) {
-        return {
-            hasPermission: true,
-        };
+    const hasPermission =
+        userVotingPower >= BigInt(minProposerVotingPower) || userBalance >= BigInt(minProposerVotingPower);
+
+    const parsedMemberVotingPower = formatUnits(userVotingPower, tokenDecimals);
+    const formattedMemberVotingPower = formatterUtils.formatNumber(parsedMemberVotingPower, {
+        format: NumberFormat.TOKEN_AMOUNT_SHORT,
+    });
+
+    const parsedMemberBalance = formatUnits(userBalance, tokenDecimals);
+    const formattedMemberBalance = formatterUtils.formatNumber(parsedMemberBalance, {
+        format: NumberFormat.TOKEN_AMOUNT_SHORT,
+    });
+
+    if (hasPermission) {
+        return { hasPermission: true };
     }
 
     return {

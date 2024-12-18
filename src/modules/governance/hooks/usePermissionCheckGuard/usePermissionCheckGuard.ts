@@ -1,62 +1,52 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { useCallback } from 'react';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
+import type { IPermissionCheckDialogParams } from '../../dialogs/permissionCheckDialog';
 
-export interface IUsePermissionCheckGuardParams {
-    /**
-     * Parameters to be forwarded to the plugin-specific slot function.
-     */
-    slotParams: IPermissionCheckGuardParams<IPluginSettings>;
-    /**
-     * Slot ID to use for checking the user permissions.
-     */
-    slotId: string;
-    /**
-     * Callback called when the user has the required permissions.
-     */
-    onSuccess?: () => void;
-    /**
-     * Callback called when the user does not have the required permissions.
-     */
-    onError?: () => void;
-    /**
-     * Title of the permission check dialog.
-     */
-    dialogTitle: string;
-    /**
-     * Description of the permission check dialog.
-     */
-    dialogDescription: string;
-}
+export interface IUsePermissionCheckGuardParams extends IPermissionCheckDialogParams {}
 
 export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) => {
-    const { onSuccess, onError, slotParams, slotId, dialogTitle, dialogDescription } = params;
-    const { plugin } = slotParams;
+    const { onSuccess, onError, slotId, permissionNamespace, plugin, daoId } = params;
 
     const { open } = useDialogContext();
 
-    const { hasPermission } = useSlotSingleFunction<
-        IPermissionCheckGuardParams<IPluginSettings>,
-        IPermissionCheckGuardResult
-    >({
+    const { hasPermission } = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
         slotId: slotId,
         pluginId: plugin.subdomain,
-        params: slotParams,
+        params: { plugin, daoId },
     }) ?? { hasPermission: true };
 
-    const handleWalletConnectionSuccess = useCallback(() => {
-        const dialogParams = { slotParams, slotId, onError, onSuccess, dialogTitle, dialogDescription };
-        open(GovernanceDialog.PERMISSION_CHECK, { params: dialogParams });
-    }, [slotParams, slotId, onError, onSuccess, dialogTitle, dialogDescription, open]);
+    const checkUserPermission = useCallback(
+        (functionParams?: Partial<IUsePermissionCheckGuardParams>) => {
+            const dialogParams = { slotId, onError, onSuccess, permissionNamespace, plugin, daoId, ...functionParams };
+            open(GovernanceDialog.PERMISSION_CHECK, { params: dialogParams });
+        },
+        [slotId, onError, onSuccess, permissionNamespace, open, daoId, plugin],
+    );
 
     const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
         onError,
-        onSuccess: handleWalletConnectionSuccess,
+        onSuccess: checkUserPermission,
     });
 
-    return { check: checkWalletConnected, result: isConnected && hasPermission };
+    const checkFunction = useCallback(
+        (functionParams?: Partial<IUsePermissionCheckGuardParams>) => {
+            if (isConnected) {
+                // Skip wallet-connection check if user is already connected
+                checkUserPermission(functionParams);
+            } else {
+                // Make sure to forward custom checkFunction params to check-permission
+                checkWalletConnected({
+                    onError: functionParams?.onError ?? params.onError,
+                    onSuccess: () => checkUserPermission(functionParams),
+                });
+            }
+        },
+        [isConnected, params.onError, checkUserPermission, checkWalletConnected],
+    );
+
+    return { check: checkFunction, result: isConnected && hasPermission };
 };

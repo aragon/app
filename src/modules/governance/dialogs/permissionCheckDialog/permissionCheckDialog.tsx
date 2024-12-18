@@ -1,13 +1,15 @@
-import type { IUsePermissionCheckGuardParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { DefinitionList, Dialog, invariant, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 
-export interface IPermissionCheckDialogParams {
+export interface IPermissionCheckDialogParams extends IPermissionCheckGuardParams {
+    /**
+     * Slot ID to use for checking the user permissions.
+     */
+    slotId: string;
     /**
      * Callback called when the user has the required permissions.
      */
@@ -16,29 +18,27 @@ export interface IPermissionCheckDialogParams {
      * Callback called when the user does not have the required permissions.
      */
     onError?: () => void;
+    /**
+     * Namespace to be used for the dialog title and description.
+     */
+    permissionNamespace: string;
 }
 
-export interface IPermissionCheckDialogProps<IUseCheckPermissionGuardBaseParams>
-    extends IDialogComponentProps<IUseCheckPermissionGuardBaseParams> {}
+export interface IPermissionCheckDialogProps extends IDialogComponentProps<IPermissionCheckDialogParams> {}
 
-export const PermissionCheckDialog = (props: IPermissionCheckDialogProps<IUsePermissionCheckGuardParams>) => {
+export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (props) => {
     const { params } = props.location;
-    const { slotParams, slotId, onSuccess, onError, dialogTitle, dialogDescription } = params ?? {};
-    const { plugin } = slotParams ?? {};
 
     invariant(params != null, 'PermissionCheckDialog: plugin is required for permission check dialog');
+    const { slotId, onSuccess, onError, permissionNamespace, plugin, daoId } = params;
 
     const { t } = useTranslations();
-
     const { close, updateOptions } = useDialogContext();
 
-    const checkPermissions = useSlotSingleFunction<
-        IPermissionCheckGuardParams<IPluginSettings>,
-        IPermissionCheckGuardResult
-    >({
-        slotId: slotId!,
-        pluginId: plugin!.subdomain,
-        params: slotParams!,
+    const checkPermissions = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
+        slotId: slotId,
+        pluginId: plugin.subdomain,
+        params: { plugin, daoId },
     }) ?? { hasPermission: true };
 
     const { settings, isLoading, hasPermission } = checkPermissions;
@@ -59,12 +59,17 @@ export const PermissionCheckDialog = (props: IPermissionCheckDialogProps<IUsePer
         updateOptions({ onClose: handleDialogClose });
     }, [handleDialogClose, updateOptions]);
 
-    const title = isLoading ? t('app.governance.permissionCheckDialog.loading') : dialogTitle;
-    const description = isLoading ? undefined : dialogDescription;
+    const keyNamespace = `app.governance.permissionCheckDialog.${permissionNamespace}`;
+    const title = isLoading ? t('app.governance.permissionCheckDialog.loading') : t(`${keyNamespace}.title`);
+    const description = isLoading ? undefined : t(`${keyNamespace}.description`);
+
+    const footerAction = isLoading
+        ? undefined
+        : { label: t('app.governance.permissionCheckDialog.action'), onClick: handleDialogClose };
 
     return (
         <>
-            <Dialog.Header title={title!} description={description} />
+            <Dialog.Header title={title} description={description} />
             <Dialog.Content className="pb-4 pt-1 md:pb-6 md:pt-2">
                 {isLoading && (
                     <div className="flex w-full flex-col gap-y-2">
@@ -82,16 +87,7 @@ export const PermissionCheckDialog = (props: IPermissionCheckDialogProps<IUsePer
                     </DefinitionList.Container>
                 )}
             </Dialog.Content>
-            <Dialog.Footer
-                secondaryAction={
-                    isLoading
-                        ? undefined
-                        : {
-                              label: t('app.governance.permissionCheckDialog.action'),
-                              onClick: handleDialogClose,
-                          }
-                }
-            />
+            <Dialog.Footer secondaryAction={footerAction} />
         </>
     );
 };
