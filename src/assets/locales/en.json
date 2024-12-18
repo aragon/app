@@ -472,21 +472,17 @@
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
       },
-      "permissionCheckBaseDialog": {
+      "permissionCheckDialog": {
         "action": "OK",
         "loading": "Checking permissions",
+        "proposal": {
+          "description": "Not a member of this voting body",
+          "title": "You can't create"
+        },
         "screenReader": {
           "description": "You don't have the permissions require for that DAO action.",
           "title": "Permission denied"
         }
-      },
-      "permissionCheckProposalDialog": {
-        "description": "Not a member of this voting body",
-        "title": "You can't create"
-      },
-      "permissionCheckTokenVoteDialog": {
-        "description": "Not enough voting power at the block this proposal was created.",
-        "title": "You can't vote"
       },
       "proposalExecutionStatus": {
         "buttons": {
@@ -575,6 +571,11 @@
           "admins": "Admins",
           "membersCount": "{{count}} addresses"
         },
+        "adminPermissionCheckProposalCreation": {
+          "function": "Proposal creation",
+          "pluginLabelName": "Name",
+          "requirement": "Admin only"
+        },
         "adminVotingTerminal": {
           "description": "Proposals created by admins do not require governance in order to pass.",
           "title": "Automatic execution"
@@ -625,9 +626,9 @@
           "multisigMembers": "Multisig members"
         },
         "multisigPermissionCheckProposalCreation": {
-          "name": "Name",
-          "proposalCreation": "Proposal creation",
-          "proposalCreationRequirement": "Multisig Members"
+          "function": "Proposal creation",
+          "pluginLabelName": "Name",
+          "requirement": "Multisig member"
         },
         "multisigProposalList": {
           "entity": "Proposals"
@@ -791,8 +792,8 @@
           }
         },
         "tokenPermissionCheckProposalCreation": {
-          "name": "Name",
-          "proposalCreation": "Proposal creation",
+          "function": "Proposal creation",
+          "pluginNameLabel": "Name",
           "userTokenBalance": "Your balance",
           "userVotingPower": "Your voting power"
         },

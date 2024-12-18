@@ -19,10 +19,6 @@ export interface ISelectPluginDialogParams {
      */
     onPluginSelected?: (plugin: IDaoPlugin) => void;
     /**
-     * Callback used to build a link set on the confirm button when a plugin is selected.
-     */
-    buildSelectedPluginHref?: (plugin: IDaoPlugin) => string;
-    /**
      * Plugin to preselect.
      */
     initialPlugin: ITabComponentPlugin<IDaoPlugin>;
@@ -34,7 +30,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, onPluginSelected, buildSelectedPluginHref, initialPlugin } = location.params;
+    const { daoId, onPluginSelected, initialPlugin } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -42,8 +38,6 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
     const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(initialPlugin);
-
-    const selectPluginHref = buildSelectedPluginHref?.(selectedPlugin.meta);
 
     const handleConfirm = () => {
         close();
@@ -84,7 +78,6 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
                 primaryAction={{
                     label: t('app.governance.selectPluginDialog.action.select'),
                     onClick: handleConfirm,
-                    href: selectPluginHref,
                 }}
                 secondaryAction={{
                     label: t('app.governance.selectPluginDialog.action.cancel'),

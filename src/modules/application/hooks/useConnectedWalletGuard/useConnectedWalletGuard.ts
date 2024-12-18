@@ -5,11 +5,11 @@ import { ApplicationDialog } from '../../constants/moduleDialogs';
 
 export interface IUseConnectedWalletGuardParams {
     /**
-     * Callback called when the user is capable of participating.
+     * Callback called when the user successfully connects their wallet.
      */
     onSuccess?: () => void;
     /**
-     * Callback called when the user cannot participate.
+     * Callback called when the user does not connect their wallet.
      */
     onError?: () => void;
 }
