@@ -16,7 +16,7 @@ class GovernanceService extends AragonBackendService {
         memberExists: '/members/:memberAddress/:pluginAddress/exists',
         proposals: '/proposals',
         proposal: '/proposals/:id',
-        proposalCanVote: '/proposals/:id',
+        proposalCanVote: '/proposals/:id/can-vote',
         votes: '/votes',
     };
 

@@ -1,4 +1,4 @@
 export {
     useTokenPermissionCheckVoteSubmission,
     type ITokenPermissionCheckVoteSubmissionParams,
-} from './useTokenPermissionVoteSubmission';
+} from './useTokenPermissionCheckVoteSubmission';

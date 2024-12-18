@@ -1,17 +1,12 @@
-import { type IProposal, useMember } from '@/modules/governance/api/governanceService';
-import type { IUseCheckPermissionGuardBaseParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
-import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IProposal } from '@/modules/governance/api/governanceService';
+import { useProposalCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ChainEntityType, DateFormat, formatterUtils, IconType, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 
-export interface ITokenPermissionCheckVoteSubmissionParams extends IUseCheckPermissionGuardBaseParams {
-    /**
-     * Plugin to create the proposal for.
-     */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {
     /**
      * Proposal to create the vote for.
      */
@@ -25,7 +20,7 @@ export interface ITokenPermissionCheckVoteSubmissionParams extends IUseCheckPerm
 export const useTokenPermissionCheckVoteSubmission = (
     params: ITokenPermissionCheckVoteSubmissionParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin, daoId, proposal, chainId } = params;
+    const { plugin, proposal, chainId } = params;
 
     const { address } = useAccount();
 
@@ -33,14 +28,10 @@ export const useTokenPermissionCheckVoteSubmission = (
 
     const tokenSymbol = plugin.settings.token.symbol;
 
-    const memberUrlParams = { address: address as string };
-    const memberQueryParams = { daoId, pluginAddress: plugin.address };
-    const { data: member, isLoading } = useMember<ITokenMember>({
-        urlParams: memberUrlParams,
-        queryParams: memberQueryParams,
-    });
-
-    const hasPermission = member?.votingPower != null;
+    const { data: hasPermission, isLoading } = useProposalCanVote(
+        { urlParams: { id: proposal.id }, queryParams: { userAddress: address as string } },
+        { enabled: address != null },
+    );
 
     const formattedCreationDate = formatterUtils.formatDate(proposal.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,

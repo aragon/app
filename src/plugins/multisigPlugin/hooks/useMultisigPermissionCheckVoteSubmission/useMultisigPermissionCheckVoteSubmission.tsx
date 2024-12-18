@@ -1,18 +1,14 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
-import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import type { IUseCheckPermissionGuardBaseParams } from '@/modules/governance/hooks/usePermissionCheckGuard/usePermissionCheckGuard';
-import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useProposalCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ChainEntityType, DateFormat, formatterUtils, IconType, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 
-export interface IUseMultisigPermissionCheckVoteSubmissionParams extends IUseCheckPermissionGuardBaseParams {
-    /**
-     * Plugin to create the proposal for.
-     */
-    plugin: IDaoPlugin;
+export interface IUseMultisigPermissionCheckVoteSubmissionParams
+    extends IPermissionCheckGuardParams<IMultisigPluginSettings> {
     /**
      * Proposal to create the vote for.
      */
@@ -26,15 +22,14 @@ export interface IUseMultisigPermissionCheckVoteSubmissionParams extends IUseChe
 export const useMultisigPermissionCheckVoteSubmission = (
     params: IUseMultisigPermissionCheckVoteSubmissionParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin, proposal, chainId } = params;
+    const { proposal, chainId } = params;
 
     const { address } = useAccount();
 
     const { t } = useTranslations();
 
-    const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address };
-    const { data: hasPermission, isLoading } = useMemberExists(
-        { urlParams: memberExistsParams },
+    const { data: hasPermission, isLoading } = useProposalCanVote(
+        { urlParams: { id: proposal.id }, queryParams: { userAddress: address as string } },
         { enabled: address != null },
     );
 

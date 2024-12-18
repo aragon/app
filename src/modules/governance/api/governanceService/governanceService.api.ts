@@ -84,7 +84,7 @@ export interface IGetProposalCanVoteQueryParams {
     /**
      * ID of the proposal to fetch.
      */
-    address?: string;
+    userAddress: string;
 }
 
 export interface IGetProposalCanVoteParams
