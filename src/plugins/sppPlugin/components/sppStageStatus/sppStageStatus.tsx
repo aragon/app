@@ -12,7 +12,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
@@ -65,25 +65,11 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
 
-    // Determine if we need to dynamically calculate the current time
-    const hasTimeConstraints = minAdvanceTime != null || maxAdvanceTime != null;
-    const enableDynamicTime = hasTimeConstraints && displayAdvanceButton && !isStageAdvanced;
-
-    // Use a callback to avoid re-creating the DateTime object on every render
-    // Which would cause the dynamic value hook to re-run on every render and result in an infinite loop
-    const callback = useCallback(() => DateTime.now(), []);
-    const currentTime = useDynamicValue<DateTime>({
-        callback,
-        enabled: enableDynamicTime,
+    const displayMinAdvanceTime = useDynamicValue({
+        callback: () => minAdvanceTime != null && DateTime.now() < minAdvanceTime,
     });
-
     const displayMaxAdvanceTime =
-        maxAdvanceTime != null && maxAdvanceTime.diff(currentTime, 'days').days < 90 && !isStageAdvanced;
-
-    // Due to the delay in the dynamic value hook, the remaining time can be negative, and the counter will count up until 1 second.
-    // Adding the remaining time check to avoid displaying the counter when it is negative.
-    const remainingTime = minAdvanceTime ? minAdvanceTime.diff(currentTime).milliseconds : 0;
-    const displayMinAdvanceTime = minAdvanceTime != null && remainingTime > 0;
+        maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
         ? {
