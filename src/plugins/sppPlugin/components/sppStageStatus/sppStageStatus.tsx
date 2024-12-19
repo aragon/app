@@ -67,6 +67,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const displayMinAdvanceTime = useDynamicValue({
         callback: () => minAdvanceTime != null && DateTime.now() < minAdvanceTime,
+        enabled: minAdvanceTime != null && displayAdvanceButton,
     });
     const displayMaxAdvanceTime =
         maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
