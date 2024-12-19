@@ -2,16 +2,20 @@ import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnecte
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
 import type { IPermissionCheckDialogParams } from '../../dialogs/permissionCheckDialog';
 
 export interface IUsePermissionCheckGuardParams extends IPermissionCheckDialogParams {}
 
 export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) => {
-    const { onSuccess, onError, slotId, permissionNamespace, plugin, daoId } = params;
+    const { onSuccess, onError, slotId, permissionNamespace, plugin: pluginProp, daoId } = params;
 
     const { open } = useDialogContext();
+
+    // Use ref for plugin property as the plugin-specific permission-check hooks don't share the same hooks calls and if
+    // the property is not stable we break the rules of hooks (see https://react.dev/warnings/invalid-hook-call-warning)
+    const plugin = useRef(pluginProp).current;
 
     const { hasPermission } = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
         slotId: slotId,
