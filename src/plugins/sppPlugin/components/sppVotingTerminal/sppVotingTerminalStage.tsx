@@ -88,7 +88,13 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         </ProposalVoting.BodySummaryListItem>
                     ))}
                 </ProposalVoting.BodySummaryList>
-                {isTimelockStage && <SppVotingTerminalStageTimelock stage={stage} proposal={proposal} />}
+                {isTimelockStage && (
+                    <SppVotingTerminalStageTimelock
+                        stage={stage}
+                        proposal={proposal}
+                        stageStatus={processedStageStatus}
+                    />
+                )}
                 <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (

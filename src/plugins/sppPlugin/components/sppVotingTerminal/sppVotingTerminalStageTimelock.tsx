@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { CardEmptyState, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
+import { CardEmptyState, DateFormat, formatterUtils, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
@@ -12,11 +12,16 @@ export interface ISppVotingTerminalStageTimelockProps {
      * Parent Proposal of the stage.
      */
     proposal: ISppProposal;
+    /**
+     * Status of the stage
+     */
+    stageStatus: ProposalVotingStatus;
 }
 
-const getTimelockInfo = (stage: ISppStage, proposal: ISppProposal) => {
-    const isTimelockActive = stage.stageIndex === proposal.stageIndex;
-    const isTimelockComplete = stage.stageIndex < proposal.stageIndex;
+const getTimelockInfo = (stage: ISppStage, proposal: ISppProposal, stageStatus: ProposalVotingStatus) => {
+    const isTimelockExpired = stageStatus === ProposalVotingStatus.EXPIRED;
+    const isTimelockActive = !isTimelockExpired && stage.stageIndex === proposal.stageIndex;
+    const isTimelockComplete = isTimelockExpired || stage.stageIndex < proposal.stageIndex;
 
     const timelockCompletedDate =
         formatterUtils.formatDate(sppStageUtils.getStageEndDate(proposal, stage), {
@@ -51,11 +56,11 @@ const getTimelockInfo = (stage: ISppStage, proposal: ISppProposal) => {
 };
 
 export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTimelockProps> = (props) => {
-    const { stage, proposal } = props;
+    const { stage, proposal, stageStatus } = props;
 
     const { t } = useTranslations();
 
-    const { heading, description, date } = getTimelockInfo(stage, proposal);
+    const { heading, description, date } = getTimelockInfo(stage, proposal, stageStatus);
 
     return (
         <CardEmptyState

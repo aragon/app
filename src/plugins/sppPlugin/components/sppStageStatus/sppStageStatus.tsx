@@ -1,5 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import {
     Button,
     ChainEntityType,
@@ -62,11 +63,14 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         !(isSignalingProposal && isLastStage);
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
+    const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
+
+    const displayMinAdvanceTime = useDynamicValue({
+        callback: () => minAdvanceTime != null && DateTime.now() < minAdvanceTime,
+        enabled: minAdvanceTime != null && displayAdvanceButton,
+    });
     const displayMaxAdvanceTime =
         maxAdvanceTime != null && maxAdvanceTime.diffNow('days').days < 90 && !isStageAdvanced;
-
-    const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
-    const displayMinAdvanceTime = minAdvanceTime != null && DateTime.now() < minAdvanceTime;
 
     const { label: buttonLabel, ...buttonProps } = isStageAdvanced
         ? {
@@ -88,7 +92,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         ? { time: minAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.min${advanceTimeContext}Info`) }
         : { time: maxAdvanceTime, info: t(`app.plugins.spp.sppStageStatus.max${advanceTimeContext}Info`) };
 
-    // Stage cannot be advanced anymore, display exired info text.
+    // Stage cannot be advanced anymore, display expired info text.
     if (stageStatus === ProposalVotingStatus.EXPIRED) {
         return (
             <span className="text-right text-neutral-500">
