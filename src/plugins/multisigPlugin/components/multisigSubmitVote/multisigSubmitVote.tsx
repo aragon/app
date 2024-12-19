@@ -57,8 +57,6 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
         onSuccess: openTransactionDialog,
     });
 
-    console.log('can 1', canSubmitVote);
-
     const handleVoteClick = () => {
         if (!canSubmitVote) {
             submitVoteGuard();
