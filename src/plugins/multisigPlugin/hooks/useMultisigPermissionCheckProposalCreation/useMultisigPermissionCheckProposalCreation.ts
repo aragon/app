@@ -3,7 +3,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
-import type { IMultisigPluginSettings } from './../../types/multisigPluginSettings';
+import type { IMultisigPluginSettings } from '../../types';
 
 export interface IUseMultisigPermissionCheckProposalCreationParams
     extends IPermissionCheckGuardParams<IMultisigPluginSettings> {}
@@ -14,21 +14,21 @@ export const useMultisigPermissionCheckProposalCreation = (
     const { plugin } = params;
 
     const { address } = useAccount();
-
     const { t } = useTranslations();
 
+    const { onlyListed } = plugin.settings;
+    const pluginName = daoUtils.getPluginName(plugin);
+
     const memberExistsParams = { memberAddress: address as string, pluginAddress: plugin.address };
-    const { data: hasPermission, isLoading } = useMemberExists(
+    const { data: memberExists, isLoading } = useMemberExists(
         { urlParams: memberExistsParams },
         { enabled: address != null },
     );
 
-    const pluginName = daoUtils.getPluginName(plugin);
+    const hasPermission = memberExists === true || !onlyListed;
 
     if (hasPermission) {
-        return {
-            hasPermission: true,
-        };
+        return { hasPermission: true };
     }
 
     return {

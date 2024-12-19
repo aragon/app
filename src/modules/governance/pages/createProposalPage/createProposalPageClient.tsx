@@ -40,22 +40,16 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
     const { open } = useDialogContext();
     const router = useRouter();
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress })![0];
+    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
 
-    const proposalsUrl: __next_route_internal_types__.DynamicRoutes = `/dao/${daoId}/proposals`;
+    const handlePermissionCheckError = useCallback(() => router.push(`/dao/${daoId}/proposals`), [router, daoId]);
 
-    const onPermissionCheckError = useCallback(() => router.push(proposalsUrl), [router, proposalsUrl]);
-
-    const slotParams = {
-        plugin: plugin.meta,
-        daoId,
-    };
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        dialogTitle: t('app.governance.permissionCheckProposalDialog.title'),
-        dialogDescription: t('app.governance.permissionCheckProposalDialog.description'),
-        slotParams,
+        permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onError: onPermissionCheckError,
+        onError: handlePermissionCheckError,
+        plugin,
+        daoId,
     });
 
     useEffect(() => {

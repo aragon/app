@@ -35,38 +35,36 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
     const [selectedPlugin, setSelectedPlugin] = useState(processPlugins[0]);
 
-    const buildCreateProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
+    const buildProposalUrl = (plugin: IDaoPlugin): __next_route_internal_types__.DynamicRoutes =>
         `/dao/${daoId}/create/${plugin.address}/proposal`;
-    const createProposalUrl = buildCreateProposalUrl(selectedPlugin.meta);
+    const createProposalUrl = buildProposalUrl(selectedPlugin.meta);
+
+    const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) =>
+        router.push(buildProposalUrl(plugin ?? selectedPlugin.meta));
+
+    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
+        permissionNamespace: 'proposal',
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+        onSuccess: handlePermissionGuardSuccess,
+        plugin: selectedPlugin.meta,
+        daoId,
+    });
+
+    const handlePluginSelected = (plugin: IDaoPlugin) =>
+        createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
 
     const openSelectPluginDialog = () => {
-        const params: ISelectPluginDialogParams = {
-            daoId,
-            initialPlugin: selectedPlugin,
-            onPluginSelected: createProposalGuard,
-        };
+        const initialPlugin = selectedPlugin;
+        const params: ISelectPluginDialogParams = { daoId, initialPlugin, onPluginSelected: handlePluginSelected };
         open(GovernanceDialog.SELECT_PLUGIN, { params });
     };
 
-    const slotParams = {
-        plugin: selectedPlugin.meta,
-        daoId,
+    const defaultActionProps = {
+        onClick: canCreateProposal ? undefined : createProposalGuard,
+        href: canCreateProposal ? createProposalUrl : undefined,
     };
-    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        dialogTitle: t('app.governance.permissionCheckDialog.proposal.title'),
-        dialogDescription: t('app.governance.permissionCheckDialog.proposal.description'),
-        slotParams,
-        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onSuccess: () => router.push(createProposalUrl),
-    });
 
-    const actionProps =
-        processPlugins.length > 1
-            ? { onClick: openSelectPluginDialog }
-            : {
-                  onClick: canCreateProposal ? undefined : createProposalGuard,
-                  href: canCreateProposal ? createProposalUrl : undefined,
-              };
+    const actionProps = processPlugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
 
     return (
         <>
