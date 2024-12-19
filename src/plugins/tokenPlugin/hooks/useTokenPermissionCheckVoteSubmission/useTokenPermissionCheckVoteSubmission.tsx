@@ -14,7 +14,7 @@ export const useTokenPermissionCheckVoteSubmission = (
     params: ITokenPermissionCheckVoteSubmissionParams,
 ): IPermissionCheckGuardResult => {
     const { plugin } = params;
-    const urlParams = useParams<{ proposalId: string }>();
+    const { proposalId: id } = useParams<{ proposalId: string }>();
 
     const { address } = useAccount();
 
@@ -22,11 +22,11 @@ export const useTokenPermissionCheckVoteSubmission = (
 
     const tokenSymbol = plugin.settings.token.symbol;
 
-    const { data: proposal } = useProposal({ urlParams: { id: urlParams.proposalId } });
+    const { data: proposal } = useProposal({ urlParams: { id } });
 
     const { data: hasPermission, isLoading } = useProposalCanVote(
-        { urlParams: { id: urlParams.proposalId }, queryParams: { userAddress: address as string } },
-        { enabled: address != null && proposal != null },
+        { urlParams: { id }, queryParams: { userAddress: address as string } },
+        { enabled: address != null },
     );
 
     const formattedCreationDate = formatterUtils.formatDate(proposal!.blockTimestamp * 1000, {
