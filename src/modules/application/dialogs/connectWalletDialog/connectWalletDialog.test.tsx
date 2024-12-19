@@ -1,21 +1,29 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDialogContext } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import * as useWeb3Modal from '@web3modal/wagmi/react';
+import * as web3Modal from '@web3modal/wagmi/react';
+import * as wagmi from 'wagmi';
 import { ConnectWalletDialog, type IConnectWalletDialogProps } from './connectWalletDialog';
 
 describe('<ConnectWalletDialog /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
-    const useWeb3ModalSpy = jest.spyOn(useWeb3Modal, 'useWeb3Modal');
+    const useWeb3ModalSpy = jest.spyOn(web3Modal, 'useWeb3Modal');
+    const useWeb3ModalState = jest.spyOn(web3Modal, 'useWeb3ModalState');
+    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         useWeb3ModalSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useWeb3ModalState.mockReturnValue({ open: false, loading: false });
+        useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
         useWeb3ModalSpy.mockReset();
+        useWeb3ModalState.mockReset();
+        useAccountSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IConnectWalletDialogProps>) => {
@@ -41,7 +49,7 @@ describe('<ConnectWalletDialog /> component', () => {
 
     it('renders a cancel button to close the dialog', async () => {
         const close = jest.fn();
-        useDialogContextSpy.mockReturnValue({ close, open: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         render(createTestComponent());
         const cancelButton = screen.getByRole('button', { name: /connectWalletDialog.action.cancel/ });
         expect(cancelButton).toBeInTheDocument();
@@ -50,17 +58,15 @@ describe('<ConnectWalletDialog /> component', () => {
         expect(close).toHaveBeenCalled();
     });
 
-    it('renders a connect button to close current dialog and trigger the wallet connection', async () => {
-        const close = jest.fn();
+    it('renders a connect button to trigger the wallet connection', async () => {
         const openWeb3Modal = jest.fn();
-        useDialogContextSpy.mockReturnValue({ close, open: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         useWeb3ModalSpy.mockReturnValue({ open: openWeb3Modal, close: jest.fn() });
         render(createTestComponent());
         const connectButton = screen.getByRole('button', { name: /connectWalletDialog.action.connect/ });
         expect(connectButton).toBeInTheDocument();
 
         await userEvent.click(connectButton);
-        expect(close).toHaveBeenCalled();
         expect(openWeb3Modal).toHaveBeenCalled();
     });
 });

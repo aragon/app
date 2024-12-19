@@ -1,22 +1,35 @@
+import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as DialogProvider from '@/shared/components/dialogProvider';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/moduleDialogs';
 import { CreateProposalPageClient, type ICreateProposalPageClientProps } from './createProposalPageClient';
 
 jest.mock('./createProposalPageClientSteps', () => ({
     CreateProposalPageClientSteps: () => <button data-testid="steps-mock" type="submit" />,
 }));
 
+jest.mock('next/navigation', () => ({
+    useRouter: jest.fn(),
+}));
+
 describe('<CreateProposalPageClient /> component', () => {
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
+    const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
+        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
+        usePermissionCheckGuardSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ICreateProposalPageClientProps>) => {
@@ -40,7 +53,7 @@ describe('<CreateProposalPageClient /> component', () => {
         const daoId = 'test-id';
         const pluginAddress = '0x472839';
         const open = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open, close: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         render(createTestComponent({ daoId, pluginAddress }));
         // Advance the wizard three times to trigger the submit function
         await userEvent.click(screen.getByTestId('steps-mock'));
@@ -52,6 +65,6 @@ describe('<CreateProposalPageClient /> component', () => {
             prepareActions: {},
             values: { actions: [] },
         };
-        expect(open).toHaveBeenCalledWith(GovernanceDialogs.PUBLISH_PROPOSAL, { params: expectedParams });
+        expect(open).toHaveBeenCalledWith(GovernanceDialog.PUBLISH_PROPOSAL, { params: expectedParams });
     });
 });

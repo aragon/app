@@ -1,11 +1,14 @@
 'use client';
 
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ISmartContractAbi } from '../../api/smartContractService';
 import {
     CreateProposalForm,
@@ -13,14 +16,15 @@ import {
     type PrepareProposalActionFunction,
     type PrepareProposalActionMap,
 } from '../../components/createProposalForm';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/moduleDialogs';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { type IPublishProposalDialogParams } from '../../dialogs/publishProposalDialog';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import { createProposalWizardSteps } from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientProps {
     /**
-     * ID of the current DAO.
+     * ID of the DAO to create a proposal for.
      */
     daoId: string;
     /**
@@ -32,8 +36,27 @@ export interface ICreateProposalPageClientProps {
 export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = (props) => {
     const { daoId, pluginAddress } = props;
 
-    const { open } = useDialogContext();
     const { t } = useTranslations();
+    const { open } = useDialogContext();
+    const router = useRouter();
+
+    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
+
+    const handlePermissionCheckError = useCallback(() => router.push(`/dao/${daoId}/proposals`), [router, daoId]);
+
+    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
+        permissionNamespace: 'proposal',
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+        onError: handlePermissionCheckError,
+        plugin,
+        daoId,
+    });
+
+    useEffect(() => {
+        if (!canCreateProposal) {
+            createProposalGuard();
+        }
+    }, [canCreateProposal, createProposalGuard]);
 
     const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
     const [smartContractAbis, setSmartContractAbis] = useState<ISmartContractAbi[]>([]);
@@ -58,7 +81,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
-        open(GovernanceDialogs.PUBLISH_PROPOSAL, { params });
+        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };
 
     const contextValues = useMemo(

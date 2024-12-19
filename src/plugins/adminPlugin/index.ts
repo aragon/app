@@ -1,5 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { useAdminPermissionCheckProposalCreation } from '@/plugins/adminPlugin/hooks/useAdminPermissionCheckProposalCreation';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AdminGovernanceInfo } from './components/adminGovernanceInfo';
 import { AdminMemberInfo } from './components/adminMemberInfo';
@@ -30,7 +31,11 @@ export const initialiseAdminPlugin = () => {
             pluginId: plugin.id,
             function: adminTransactionUtils.buildCreateProposalData,
         })
-
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            pluginId: plugin.id,
+            function: useAdminPermissionCheckProposalCreation,
+        })
         // Settings module slots
         .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,

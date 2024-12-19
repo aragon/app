@@ -1,6 +1,6 @@
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
-import { FormWrapper, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import { FormWrapper, generateDao, generateDialogContext, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { forwardRef } from 'react';
@@ -19,7 +19,7 @@ describe('<CreateProposalFormActions /> component', () => {
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         useCreateProposalFormContextSpy.mockReturnValue({
             prepareActions: {},
             addPrepareAction: jest.fn(),

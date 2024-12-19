@@ -2,6 +2,7 @@ export * from './addressInfo';
 export * from './dao';
 export * from './daoMetrics';
 export * from './daoPlugin';
+export * from './dialogContext';
 export * from './paginatedResponse';
 export * from './paginatedResponseMetadata';
 export * from './plugin';

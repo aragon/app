@@ -475,6 +475,18 @@
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
       },
+      "permissionCheckDialog": {
+        "action": "OK",
+        "loading": "Checking permissions",
+        "proposal": {
+          "description": "Not a member of this voting body",
+          "title": "You can't create"
+        },
+        "screenReader": {
+          "description": "You don't have the permissions require for that DAO action.",
+          "title": "Permission denied"
+        }
+      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",
@@ -584,6 +596,11 @@
           "admins": "Admins",
           "membersCount": "{{count}} addresses"
         },
+        "adminPermissionCheckProposalCreation": {
+          "function": "Proposal creation",
+          "pluginLabelName": "Name",
+          "requirement": "Admin only"
+        },
         "adminVotingTerminal": {
           "description": "Proposals created by admins do not require governance in order to pass.",
           "title": "Automatic execution"
@@ -632,6 +649,11 @@
           "membersCount": "See {{count}} addresses",
           "membersLabel": "Members",
           "multisigMembers": "Multisig members"
+        },
+        "multisigPermissionCheckProposalCreation": {
+          "function": "Proposal creation",
+          "pluginLabelName": "Name",
+          "requirement": "Multisig member"
         },
         "multisigProposalList": {
           "entity": "Proposals"
@@ -802,6 +824,12 @@
             "label": "Amount",
             "placeholder": "0 {{symbol}}"
           }
+        },
+        "tokenPermissionCheckProposalCreation": {
+          "function": "Proposal creation",
+          "pluginNameLabel": "Name",
+          "userTokenBalance": "Your balance",
+          "userVotingPower": "Your voting power"
         },
         "tokenProposalList": {
           "entity": "Proposals"

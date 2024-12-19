@@ -1,6 +1,7 @@
+import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
+import { generateDaoPlugin, generateDialogContext, generateTabComponentPlugin } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
 
@@ -16,18 +17,25 @@ jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
     DaoPluginInfo: () => <div data-testid="plugin-info-mock" />,
 }));
 
+jest.mock('next/navigation', () => ({
+    useRouter: jest.fn(),
+}));
+
 describe('<DaoProposalsPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
+    const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
-        useDialogContextSpy.mockReturnValue({ close: jest.fn(), open: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
+        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
     });
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
         useDialogContextSpy.mockReset();
+        usePermissionCheckGuardSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
@@ -53,6 +61,8 @@ describe('<DaoProposalsPageClient /> component', () => {
         const initialParams = { queryParams: { daoId, pluginAddress } };
         const plugin = generateDaoPlugin({ address: pluginAddress });
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
+        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: true });
+
         render(createTestComponent({ initialParams }));
         const createProposalButton = screen.getByRole<HTMLAnchorElement>('link', {
             name: /daoProposalsPage.main.action/,

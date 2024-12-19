@@ -1,4 +1,4 @@
-import { GovernanceDialogs } from '@/modules/governance/constants/moduleDialogs';
+import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -56,7 +56,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         const vote = { value: Number(voteState.selectedOption), label: voteLabel };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
 
-        open(GovernanceDialogs.VOTE, { params });
+        open(GovernanceDialog.VOTE, { params });
     };
 
     const chainId = networkDefinitions[proposal.network].chainId;

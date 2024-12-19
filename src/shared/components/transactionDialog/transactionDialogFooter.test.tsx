@@ -1,3 +1,4 @@
+import { generateDialogContext } from '@/shared/testUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -10,7 +11,7 @@ describe('<TransactionDialogFooter /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogFooterProps>) => {
@@ -36,7 +37,7 @@ describe('<TransactionDialogFooter /> component', () => {
     it('closes the dialog on cancel button click and calls the onCancelClick property', async () => {
         const close = jest.fn();
         const onCancelClick = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         render(createTestComponent({ onCancelClick }));
         await userEvent.click(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ }));
         expect(close).toHaveBeenCalled();
@@ -146,7 +147,7 @@ describe('<TransactionDialogFooter /> component', () => {
         const href = () => `/custom-link`;
         const successLink = { label: 'View proposal', href };
         const close = jest.fn();
-        useDialogContextSpy.mockReturnValue({ open: jest.fn(), close });
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         const activeStep = {
             id: TransactionDialogStep.CONFIRM,
             meta: { state: 'success' },
