@@ -260,16 +260,19 @@
     "governance": {
       "actionComposer": {
         "customItem": {
-          "ADD_CONTRACT": "Add new address"
+          "ADD_CONTRACT": "Add new address",
+          "RAW_CALLDATA": "Enter raw calldata"
         },
         "nativeGroup": {
           "OSX": "DAO"
         },
         "nativeItem": {
+          "MetadataPluginUpdate": "Set metadata",
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
         "placeholder": "Filter by action, contract name or address",
+        "rawCalldataFunction": "Unknown",
         "selectItem": "Add action"
       },
       "createProposalForm": {
@@ -523,6 +526,28 @@
         "description": "Select the proposal type that you'd like to create.",
         "title": "Create proposal"
       },
+      "updatePluginMetadataAction": {
+        "nameField": {
+          "helpText": "Give your {{type}} a name, so member can differentiate it.",
+          "label": "Name",
+          "placeholder": "Type a name"
+        },
+        "plugin": "plugin",
+        "process": "governance process",
+        "processKeyField": {
+          "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
+          "label": "Key",
+          "placeholder": "Type a key"
+        },
+        "resourcesField": {
+          "helpText": "Add any additional external resources that help members understand the {{type}}."
+        },
+        "summaryField": {
+          "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
+          "label": "Summary",
+          "placeholder": "Type a summary"
+        }
+      },
       "verifySmartContractDialog": {
         "action": {
           "add": "Add contract",
@@ -737,6 +762,20 @@
         "sppVotingTerminalStageBodySummaryFooter": {
           "actionRequired": "required to {{action}}",
           "thresholdLabel": "{{count}} {{entityType}}"
+        },
+        "sppVotingTerminalStageTimelock": {
+          "active": {
+            "description": "Ends {{date}}",
+            "heading": "Timelock active"
+          },
+          "complete": {
+            "description": "Ended {{date}}",
+            "heading": "Timelock ended"
+          },
+          "pending": {
+            "description": "Starts when previous stage is advanced",
+            "heading": "Timelock pending"
+          }
         }
       },
       "token": {

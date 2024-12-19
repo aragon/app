@@ -1,4 +1,5 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { actionComposerUtils } from '@/modules/governance/components/actionComposer/actionComposerUtils';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
@@ -41,9 +42,14 @@ export interface INormalizeChangeSettingsParams extends IMultisigSettingsParsePa
     action: IMultisigActionChangeSettings;
 }
 
+export type IGetMultisigActionsResult = IActionComposerPluginData<IDaoPlugin<IMultisigPluginSettings>>;
+
 class MultisigActionUtils {
-    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IActionComposerPluginData => {
-        const { address } = plugin;
+    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
+        const { address, release, build } = plugin;
+
+        // The setMetadata function on the Multisig plugin is only supported from version 1.4 onwards
+        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 4);
 
         return {
             groups: [
@@ -79,6 +85,11 @@ class MultisigActionUtils {
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
+                },
+                {
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
+                    meta: plugin,
+                    hidden: !includePluginMetadataItem,
                 },
             ],
             components: {

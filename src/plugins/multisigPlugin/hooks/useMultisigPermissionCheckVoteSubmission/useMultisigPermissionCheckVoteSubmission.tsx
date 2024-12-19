@@ -24,7 +24,7 @@ export const useMultisigPermissionCheckVoteSubmission = (): IPermissionCheckGuar
         { urlParams: { id: urlParams.proposalId }, queryParams: { userAddress: address as string } },
         { enabled: address != null && proposal != null },
     );
-    console.log('can 2', hasPermission);
+
     const formattedCreationDate = formatterUtils.formatDate(proposal!.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
     });

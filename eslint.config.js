@@ -85,7 +85,7 @@ const config = tsEslint.config(
     },
     // Rules for JavaScript files
     {
-        files: ['**/*.js'],
+        files: ['**/*.js', '**/*.mjs'],
         ...tsEslint.configs.disableTypeChecked,
         rules: {
             ...tsEslint.configs.disableTypeChecked.rules,

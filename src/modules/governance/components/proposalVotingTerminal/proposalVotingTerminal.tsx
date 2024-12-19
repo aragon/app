@@ -57,19 +57,22 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
                         pluginId={proposal.pluginSubdomain}
                         proposal={proposal}
-                    />
+                    >
+                        {status === ProposalStatus.ACTIVE && (
+                            <div className="pt-6 md:pt-8">
+                                <PluginSingleComponent
+                                    slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                                    pluginId={proposal.pluginSubdomain}
+                                    proposal={proposal}
+                                    daoId={daoId}
+                                />
+                            </div>
+                        )}
+                    </PluginSingleComponent>
                     <ProposalVoting.Votes>
                         <VoteList initialParams={voteListParams} daoId={daoId} pluginAddress={proposal.pluginAddress} />
                     </ProposalVoting.Votes>
                     <ProposalVoting.Details settings={proposalSettings} />
-                    {status === ProposalStatus.ACTIVE && (
-                        <PluginSingleComponent
-                            slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
-                            pluginId={proposal.pluginSubdomain}
-                            proposal={proposal}
-                            daoId={daoId}
-                        />
-                    )}
                 </ProposalVoting.BodyContent>
             </ProposalVoting.Stage>
         </ProposalVoting.Container>

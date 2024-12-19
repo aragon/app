@@ -21,8 +21,8 @@ const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!;
 // Wagmi configuration for the Application.
 export const wagmiConfig = createConfig({
     chains,
-    client: ({ chain }) => createClient({ chain, transport: http() }),
     ssr: true,
+    client: ({ chain }) => createClient({ chain, transport: http(`/api/rpc/${chain.id.toString()}`) }),
     connectors: [
         walletConnect({ projectId, metadata: appMetadata, showQrModal: false }),
         coinbaseWallet({ appName: appMetadata.name, appLogoUrl: appMetadata.icons[0] }),
