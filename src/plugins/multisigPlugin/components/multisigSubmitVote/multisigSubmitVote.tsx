@@ -47,21 +47,17 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress });
+    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })![0];
 
-    const slotParams = {
-        plugin: plugin![0].meta,
-        daoId,
-        proposal,
-        chainId,
-    };
     const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
-        dialogTitle: t('app.governance.permissionCheckDialog.vote.title'),
-        dialogDescription: t('app.governance.permissionCheckDialog.vote.multisigDescription'),
-        slotParams,
+        permissionNamespace: 'voteMultisig',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
+        plugin,
+        daoId,
         onSuccess: openTransactionDialog,
     });
+
+    console.log('can 1', canSubmitVote);
 
     const handleVoteClick = () => {
         if (!canSubmitVote) {

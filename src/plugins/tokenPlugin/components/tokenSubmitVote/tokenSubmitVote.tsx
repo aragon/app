@@ -88,33 +88,30 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         { label: t('app.plugins.token.tokenSubmitVote.options.no'), value: VoteOption.NO.toString() },
     ];
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress });
+    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })![0];
 
-    const slotParams = {
-        plugin: plugin![0].meta,
-        daoId,
-        proposal,
-        chainId,
-    };
-    const { check: submitVoteGuard, result: canVote } = usePermissionCheckGuard({
-        dialogTitle: t('app.governance.permissionCheckDialog.vote.title'),
-        dialogDescription: t('app.governance.permissionCheckDialog.vote.tokenDescription'),
-        slotParams,
+    const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
+        permissionNamespace: 'voteToken',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
+        plugin,
+        daoId,
         onSuccess: () => setVoteState((prev) => ({ ...prev, showOptions: true })),
     });
 
+    const handleSubmitVoteGuard = () => {
+        submitVoteGuard();
+    };
+
     useEffect(() => {
-        if (!isConnected || !canVote) {
-            setVoteState((prevState) => ({ ...prevState, showOptions: false }));
-            // TODO should include vote guard, but need to investigate max rerender issue w/ Radix
+        if (!canSubmitVote) {
+            setVoteState((prev) => ({ ...prev, showOptions: false }));
         }
-    }, [isConnected, canVote]);
+    }, [canSubmitVote]);
 
     return (
         <div className="flex flex-col gap-4">
             {!voteState.showOptions && !latestVote && (
-                <Button className="w-fit" size="md" onClick={submitVoteGuard}>
+                <Button className="w-fit" size="md" onClick={handleSubmitVoteGuard}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
