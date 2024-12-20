@@ -28,8 +28,6 @@ export interface IMultisigSubmitVoteProps {
 export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) => {
     const { daoId, proposal, isVeto } = props;
 
-    console.log('vote proposal', proposal);
-
     const { t } = useTranslations();
     const { open } = useDialogContext();
 

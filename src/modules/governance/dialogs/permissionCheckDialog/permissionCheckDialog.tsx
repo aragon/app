@@ -32,8 +32,6 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     invariant(params != null, 'PermissionCheckDialog: plugin is required for permission check dialog');
     const { slotId, onSuccess, onError, permissionNamespace, plugin, ...otherParams } = params;
 
-    console.log('PermissionCheckDialog', params);
-
     const { t } = useTranslations();
     const { close, updateOptions } = useDialogContext();
 
