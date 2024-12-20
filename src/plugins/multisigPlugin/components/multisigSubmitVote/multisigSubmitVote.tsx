@@ -49,7 +49,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })![0];
 
     const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
-        permissionNamespace: 'voteMultisig',
+        permissionNamespace: 'vote',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
         plugin,
         daoId,

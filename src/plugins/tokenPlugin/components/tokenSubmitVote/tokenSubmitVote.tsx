@@ -85,7 +85,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = ({ daoId, propos
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })![0];
 
     const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
-        permissionNamespace: 'voteToken',
+        permissionNamespace: 'vote',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
         plugin,
         daoId,

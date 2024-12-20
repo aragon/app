@@ -486,12 +486,8 @@
           "description": "You don't have the permissions required for that DAO action.",
           "title": "Permission denied"
         },
-        "voteMultisig": {
+        "vote": {
           "description": "Not a member when proposal was created.",
-          "title": "You can't create"
-        },
-        "voteToken": {
-          "description": "Not enough voting power at the block this proposal was created.",
           "title": "You can't create"
         }
       },
