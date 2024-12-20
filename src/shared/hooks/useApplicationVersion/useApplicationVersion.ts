@@ -4,7 +4,7 @@ const envLabel: Record<string, string | undefined> = {
     development: 'DEV',
     staging: 'STG',
     local: 'LOC',
-    preview: 'PRE',
+    preview: 'PRE_TEST',
 };
 
 export const useApplicationVersion = (): string => {
