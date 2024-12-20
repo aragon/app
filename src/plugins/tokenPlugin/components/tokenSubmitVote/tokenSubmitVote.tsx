@@ -116,7 +116,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
-            {!showOption && (
+            {!showOptions && (
                 <div className="flex w-full flex-col items-center gap-4 md:flex-row">
                     <Button
                         href={latestVoteTxHref}
