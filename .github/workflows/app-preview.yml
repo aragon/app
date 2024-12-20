@@ -51,6 +51,6 @@ jobs:
       - name: Comment preview PR
         uses: thollander/actions-comment-pull-request@v3.0.1
         with:
-          file-path: ./deployment-url.tsx
+          file-path: ./deployment-url.txt
           comment-tag: preview-url
           github-token: ${{ secrets.GITHUB_TOKEN }}
