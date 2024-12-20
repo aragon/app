@@ -1,1 +1,1 @@
-export { proposalCanVoteOptions, useProposalCanVote } from './useProposalCanVote';
+export { canVoteOptions, useCanVote } from './useProposalCanVote';

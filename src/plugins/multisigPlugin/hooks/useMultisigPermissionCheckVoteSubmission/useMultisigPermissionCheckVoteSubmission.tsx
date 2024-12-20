@@ -1,46 +1,38 @@
-import { useProposal } from '@/modules/governance/api/governanceService';
-import { useProposalCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
+import { useCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, DateFormat, formatterUtils, IconType, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
-import { useParams } from 'next/navigation';
+import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 
 export interface IUseMultisigPermissionCheckVoteSubmissionParams
     extends IPermissionCheckGuardParams<IMultisigPluginSettings> {}
 
-export const useMultisigPermissionCheckVoteSubmission = (): IPermissionCheckGuardResult => {
-    const { proposalId: id } = useParams<{ proposalId: string }>();
+export const useMultisigPermissionCheckVoteSubmission = (
+    params: IUseMultisigPermissionCheckVoteSubmissionParams,
+): IPermissionCheckGuardResult => {
+    const { proposal } = params;
 
     const { address } = useAccount();
 
     const { t } = useTranslations();
 
-    const { data: proposal } = useProposal({ urlParams: { id } });
+    const { id, blockTimestamp, network, transactionHash } = proposal!;
 
-    const { data: hasPermission, isLoading } = useProposalCanVote(
+    const { data: hasPermission, isLoading } = useCanVote(
         { urlParams: { id }, queryParams: { userAddress: address as string } },
         { enabled: address != null },
     );
 
-    const formattedCreationDate = formatterUtils.formatDate(proposal!.blockTimestamp * 1000, {
+    const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
     });
 
-    const { chainId } = networkDefinitions[proposal!.network];
+    const { chainId } = networkDefinitions[network];
 
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: proposal!.transactionHash });
-
-    const proposalCreationLink = () => {
-        return (
-            <Link href={proposalCreationUrl} iconRight={IconType.LINK_EXTERNAL}>
-                {formattedCreationDate}
-            </Link>
-        );
-    };
+    const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     if (hasPermission) {
         return {
@@ -53,7 +45,8 @@ export const useMultisigPermissionCheckVoteSubmission = (): IPermissionCheckGuar
         settings: [
             {
                 term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.createdAt'),
-                definition: proposalCreationLink(),
+                definition: formattedCreationDate!,
+                href: proposalCreationUrl,
             },
             {
                 term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.membership'),

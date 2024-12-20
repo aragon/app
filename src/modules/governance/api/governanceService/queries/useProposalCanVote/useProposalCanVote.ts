@@ -1,18 +1,18 @@
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
 import { governanceService } from '../../governanceService';
-import type { IGetProposalCanVoteParams } from '../../governanceService.api';
+import type { IGetCanVoteParams } from '../../governanceService.api';
 import { governanceServiceKeys } from '../../governanceServiceKeys';
 
-export const proposalCanVoteOptions = (
-    params: IGetProposalCanVoteParams,
+export const canVoteOptions = (
+    params: IGetCanVoteParams,
     options?: QueryOptions<boolean>,
 ): SharedQueryOptions<boolean> => ({
-    queryKey: governanceServiceKeys.proposalCanVote(params),
-    queryFn: () => governanceService.getProposalCanVote(params),
+    queryKey: governanceServiceKeys.canVote(params),
+    queryFn: () => governanceService.getCanVote(params),
     ...options,
 });
 
-export const useProposalCanVote = (params: IGetProposalCanVoteParams, options?: QueryOptions<boolean>) => {
-    return useQuery(proposalCanVoteOptions(params, options));
+export const useCanVote = (params: IGetCanVoteParams, options?: QueryOptions<boolean>) => {
+    return useQuery(canVoteOptions(params, options));
 };

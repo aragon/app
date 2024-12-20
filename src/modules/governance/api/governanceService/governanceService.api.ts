@@ -73,22 +73,21 @@ export interface IGetProposalUrlParams {
 
 export interface IGetProposalParams extends IRequestUrlParams<IGetProposalUrlParams> {}
 
-export interface IGetProposalCanVoteUrlParams {
+export interface IGetCanVoteUrlParams {
     /**
      * ID of the proposal to fetch.
      */
     id: string;
 }
 
-export interface IGetProposalCanVoteQueryParams {
+export interface IGetCanVoteQueryParams {
     /**
-     * ID of the proposal to fetch.
+     * Address of the connected user to check voting permissions for.
      */
     userAddress: string;
 }
 
-export interface IGetProposalCanVoteParams
-    extends IRequestUrlQueryParams<IGetProposalCanVoteUrlParams, IGetProposalCanVoteQueryParams> {}
+export interface IGetCanVoteParams extends IRequestUrlQueryParams<IGetCanVoteUrlParams, IGetCanVoteQueryParams> {}
 
 export interface IGetVoteListQueryParams extends IPaginatedRequest {
     /**

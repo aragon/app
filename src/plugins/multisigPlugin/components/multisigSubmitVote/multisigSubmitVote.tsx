@@ -8,7 +8,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Button, ChainEntityType, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
-import { useCallback } from 'react';
 import type { IMultisigProposal, IMultisigVote } from '../../types';
 
 export interface IMultisigSubmitVoteProps {
@@ -39,11 +38,11 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const voteTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: userVote?.transactionHash });
 
-    const openTransactionDialog = useCallback(() => {
+    const openTransactionDialog = () => {
         const vote = { label: 'approve' as const };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
         open(GovernanceDialog.VOTE, { params });
-    }, [daoId, isVeto, open, proposal]);
+    };
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
 
@@ -63,6 +62,9 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
         }
         if (canSubmitVote && !voted) {
             openTransactionDialog();
+        }
+        if (voted) {
+            return undefined;
         }
     };
 

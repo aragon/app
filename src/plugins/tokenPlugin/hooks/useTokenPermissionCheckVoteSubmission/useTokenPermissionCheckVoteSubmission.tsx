@@ -1,11 +1,9 @@
-import { useProposal } from '@/modules/governance/api/governanceService';
-import { useProposalCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
+import { useCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, DateFormat, formatterUtils, IconType, Link, useBlockExplorer } from '@aragon/gov-ui-kit';
-import { useParams } from 'next/navigation';
+import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 
 export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {}
@@ -13,8 +11,7 @@ export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCh
 export const useTokenPermissionCheckVoteSubmission = (
     params: ITokenPermissionCheckVoteSubmissionParams,
 ): IPermissionCheckGuardResult => {
-    const { plugin } = params;
-    const { proposalId: id } = useParams<{ proposalId: string }>();
+    const { plugin, proposal } = params;
 
     const { address } = useAccount();
 
@@ -22,35 +19,25 @@ export const useTokenPermissionCheckVoteSubmission = (
 
     const tokenSymbol = plugin.settings.token.symbol;
 
-    const { data: proposal } = useProposal({ urlParams: { id } });
+    const { id, blockTimestamp, network, transactionHash } = proposal!;
 
-    const { data: hasPermission, isLoading } = useProposalCanVote(
+    const { data: hasPermission, isLoading } = useCanVote(
         { urlParams: { id }, queryParams: { userAddress: address as string } },
         { enabled: address != null },
     );
 
-    const formattedCreationDate = formatterUtils.formatDate(proposal!.blockTimestamp * 1000, {
+    const formattedCreationDate = formatterUtils.formatDate(blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH_DAY,
     });
 
-    const { chainId } = networkDefinitions[proposal!.network];
+    const { chainId } = networkDefinitions[network];
 
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: proposal!.transactionHash });
-
-    const proposalCreationLink = () => {
-        return (
-            <Link href={proposalCreationUrl} iconRight={IconType.LINK_EXTERNAL}>
-                {formattedCreationDate}
-            </Link>
-        );
-    };
+    const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     if (hasPermission) {
         return {
             hasPermission: true,
-            settings: [],
-            isLoading,
         };
     }
 
@@ -59,7 +46,8 @@ export const useTokenPermissionCheckVoteSubmission = (
         settings: [
             {
                 term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.createdAt'),
-                definition: proposalCreationLink(),
+                definition: formattedCreationDate!,
+                href: proposalCreationUrl,
             },
             {
                 term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.membership'),

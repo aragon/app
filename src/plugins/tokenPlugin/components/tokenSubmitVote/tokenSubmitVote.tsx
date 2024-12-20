@@ -17,8 +17,7 @@ import {
     useBlockExplorer,
     type VoteIndicator,
 } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useCallback, useEffect, useState } from 'react';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenVote } from '../../types';
 
 export interface ITokenSubmitVoteProps {
@@ -31,24 +30,19 @@ export interface ITokenSubmitVoteProps {
      */
     proposal: ITokenProposal;
     /**
-     *  Defines if the vote is to approve or veto the proposal.
+     * Defines if the vote is to approve or veto the proposal.
      */
     isVeto?: boolean;
 }
 
-export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
-    const { daoId, proposal, isVeto } = props;
-
+export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = ({ daoId, proposal, isVeto }) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { isConnected } = useAccount();
 
     const latestVote = useUserVote<ITokenVote>({ proposal });
 
-    const [voteState, setVoteState] = useState({
-        showOptions: false,
-        selectedOption: latestVote?.voteOption.toString(),
-    });
+    const [showOptions, setShowOptions] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<string | undefined>(latestVote?.voteOption.toString());
 
     const voteOptionToIndicator: Record<string, VoteIndicator> = {
         [VoteOption.YES.toString()]: 'yes',
@@ -57,8 +51,8 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     };
 
     const openTransactionDialog = () => {
-        const voteLabel = voteOptionToIndicator[voteState.selectedOption ?? ''];
-        const vote = { value: Number(voteState.selectedOption), label: voteLabel };
+        const voteLabel = voteOptionToIndicator[selectedOption ?? ''];
+        const vote = { value: Number(selectedOption), label: voteLabel };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto };
 
         open(GovernanceDialog.VOTE, { params });
@@ -66,19 +60,19 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     const chainId = networkDefinitions[proposal.network].chainId;
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const latestVoteTxHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: latestVote?.transactionHash });
+    const latestVoteTxHref = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: latestVote?.transactionHash,
+    });
 
     useEffect(() => {
-        setVoteState((prevState) => ({ ...prevState, selectedOption: latestVote?.voteOption.toString() }));
-    }, [latestVote, isConnected]);
+        setSelectedOption(latestVote?.voteOption.toString());
+    }, [latestVote]);
 
-    const onCancel = () => {
-        setVoteState((prevState) => ({
-            ...prevState,
-            selectedOption: latestVote?.voteOption.toString(),
-            showOptions: false,
-        }));
-    };
+    const resetVoteOptions = useCallback(() => {
+        setSelectedOption(latestVote?.voteOption.toString());
+        setShowOptions(false);
+    }, [latestVote]);
 
     const currentTag = { variant: 'info' as const, label: t('app.plugins.token.tokenSubmitVote.options.current') };
 
@@ -95,27 +89,33 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
         plugin,
         daoId,
-        onSuccess: () => setVoteState((prev) => ({ ...prev, showOptions: true })),
+        proposal,
+        onSuccess: () => setShowOptions(true),
     });
 
-    const handleSubmitVoteGuard = () => {
-        submitVoteGuard();
+    const handleVoteClick = () => {
+        if (!canSubmitVote) {
+            submitVoteGuard();
+        }
+        if (canSubmitVote && !latestVote) {
+            setShowOptions(true);
+        }
     };
 
     useEffect(() => {
         if (!canSubmitVote) {
-            setVoteState((prev) => ({ ...prev, showOptions: false }));
+            setShowOptions(false);
         }
-    }, [canSubmitVote]);
+    }, [canSubmitVote, setShowOptions]);
 
     return (
         <div className="flex flex-col gap-4">
-            {!voteState.showOptions && !latestVote && (
-                <Button className="w-fit" size="md" onClick={handleSubmitVoteGuard}>
+            {!showOptions && !latestVote && (
+                <Button className="w-fit" size="md" onClick={handleVoteClick}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
-            {!voteState.showOptions && latestVote && (
+            {!showOptions && latestVote && (
                 <div className="flex w-full flex-col items-center gap-4 md:flex-row">
                     <Button
                         href={latestVoteTxHref}
@@ -132,14 +132,14 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                             variant="tertiary"
                             className="w-full md:w-fit"
                             size="md"
-                            onClick={() => setVoteState((prev) => ({ ...prev, showOptions: true }))}
+                            onClick={() => setShowOptions(true)}
                         >
                             {t('app.plugins.token.tokenSubmitVote.buttons.change')}
                         </Button>
                     )}
                 </div>
             )}
-            {voteState.showOptions && (
+            {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <RadioGroup
                         label={t('app.plugins.token.tokenSubmitVote.options.label', {
@@ -147,8 +147,8 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                                 ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
                                 : t('app.plugins.token.tokenSubmitVote.options.approveLabel'),
                         })}
-                        value={voteState.selectedOption?.toString() ?? ''}
-                        onValueChange={(value) => setVoteState((prev) => ({ ...prev, selectedOption: value }))}
+                        value={selectedOption ?? ''}
+                        onValueChange={setSelectedOption}
                     >
                         {voteOptions.map(({ label, value }) => (
                             <RadioCard
@@ -161,14 +161,11 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                     </RadioGroup>
                 </Card>
             )}
-            {voteState.showOptions && (
+            {showOptions && (
                 <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
                     <Button
                         onClick={openTransactionDialog}
-                        disabled={
-                            !voteState.selectedOption ||
-                            voteState.selectedOption.toString() === latestVote?.voteOption.toString()
-                        }
+                        disabled={!selectedOption || selectedOption === latestVote?.voteOption.toString()}
                         size="md"
                         className="w-full md:w-fit"
                         variant="primary"
@@ -177,7 +174,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                             ? t('app.plugins.token.tokenSubmitVote.buttons.submitChange')
                             : t('app.plugins.token.tokenSubmitVote.buttons.submit')}
                     </Button>
-                    <Button size="md" variant="tertiary" className="w-full md:w-fit" onClick={onCancel}>
+                    <Button size="md" variant="tertiary" className="w-full md:w-fit" onClick={resetVoteOptions}>
                         {t('app.plugins.token.tokenSubmitVote.buttons.cancel')}
                     </Button>
                 </div>

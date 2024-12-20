@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 export interface IPermissionCheckGuardSetting {
     /**
      * Term of the permission setting.
@@ -8,7 +6,11 @@ export interface IPermissionCheckGuardSetting {
     /**
      * Definition of the permission setting.
      */
-    definition: ReactNode;
+    definition: string;
+    /**
+     * Additional content to be displayed.
+     */
+    href?: string;
 }
 
 export interface IPermissionCheckGuardResult {

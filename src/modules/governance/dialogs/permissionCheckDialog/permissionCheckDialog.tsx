@@ -2,7 +2,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { DefinitionList, Dialog, invariant, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import { DefinitionList, Dialog, IconType, invariant, Link, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 
 export interface IPermissionCheckDialogParams extends IPermissionCheckGuardParams {
@@ -30,7 +30,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     const { params } = props.location;
 
     invariant(params != null, 'PermissionCheckDialog: plugin is required for permission check dialog');
-    const { slotId, onSuccess, onError, permissionNamespace, plugin, daoId } = params;
+    const { slotId, onSuccess, onError, permissionNamespace, plugin, ...otherParams } = params;
 
     const { t } = useTranslations();
     const { close, updateOptions } = useDialogContext();
@@ -38,20 +38,20 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     const checkPermissions = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
         slotId: slotId,
         pluginId: plugin.subdomain,
-        params: { plugin, daoId },
+        params: { plugin, ...otherParams },
     }) ?? { hasPermission: true };
 
     const { settings, isLoading, hasPermission } = checkPermissions;
 
     const handleDialogClose = useCallback(() => {
-        close();
         onError?.();
+        close();
     }, [close, onError]);
 
     useEffect(() => {
         if (hasPermission) {
             onSuccess?.();
-            handleDialogClose();
+            close();
         }
     }, [hasPermission, onSuccess, close, handleDialogClose]);
 
@@ -81,7 +81,13 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                     <DefinitionList.Container>
                         {settings?.map((setting, index) => (
                             <DefinitionList.Item key={index} term={setting.term}>
-                                {setting.definition}
+                                {setting.href ? (
+                                    <Link href={setting.href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                                        {setting.definition}
+                                    </Link>
+                                ) : (
+                                    setting.definition
+                                )}
                             </DefinitionList.Item>
                         ))}
                     </DefinitionList.Container>
