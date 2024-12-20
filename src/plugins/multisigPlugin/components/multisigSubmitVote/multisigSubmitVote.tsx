@@ -63,15 +63,12 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
         if (canSubmitVote && !voted) {
             openTransactionDialog();
         }
-        if (voted) {
-            return undefined;
-        }
     };
 
     return (
         <div className="w-full">
             <Button
-                onClick={handleVoteClick}
+                onClick={!voted ? undefined : handleVoteClick}
                 href={voted ? voteTransactionHref : undefined}
                 target={voted ? '_blank' : undefined}
                 size="md"

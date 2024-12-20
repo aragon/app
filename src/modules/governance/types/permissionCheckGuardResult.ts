@@ -8,7 +8,7 @@ export interface IPermissionCheckGuardSetting {
      */
     definition: string;
     /**
-     * Additional content to be displayed.
+     * Displays the setting as link with the specified url when set.
      */
     href?: string;
 }

@@ -35,7 +35,9 @@ export interface ITokenSubmitVoteProps {
     isVeto?: boolean;
 }
 
-export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = ({ daoId, proposal, isVeto }) => {
+export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
+    const { daoId, proposal, isVeto } = props;
+
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
@@ -96,8 +98,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = ({ daoId, propos
     const handleVoteClick = () => {
         if (!canSubmitVote) {
             submitVoteGuard();
-        }
-        if (canSubmitVote && !latestVote) {
+        } else {
             setShowOptions(true);
         }
     };
@@ -110,12 +111,12 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = ({ daoId, propos
 
     return (
         <div className="flex flex-col gap-4">
-            {!showOptions && !latestVote && (
+            {!showOptions && (
                 <Button className="w-fit" size="md" onClick={handleVoteClick}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
-            {!showOptions && latestVote && (
+            {!showOption && (
                 <div className="flex w-full flex-col items-center gap-4 md:flex-row">
                     <Button
                         href={latestVoteTxHref}

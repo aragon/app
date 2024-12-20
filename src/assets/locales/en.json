@@ -488,7 +488,7 @@
         },
         "vote": {
           "description": "Not a member when proposal was created.",
-          "title": "You can't create"
+          "title": "You can't vote"
         }
       },
       "proposalExecutionStatus": {

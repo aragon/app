@@ -53,7 +53,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
             onSuccess?.();
             close();
         }
-    }, [hasPermission, onSuccess, close, handleDialogClose]);
+    }, [hasPermission, onSuccess, close]);
 
     useEffect(() => {
         updateOptions({ onClose: handleDialogClose });

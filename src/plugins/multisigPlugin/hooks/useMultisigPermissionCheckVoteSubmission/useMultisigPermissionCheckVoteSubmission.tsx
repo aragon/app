@@ -1,4 +1,4 @@
-import { useCanVote } from '@/modules/governance/api/governanceService/queries/useProposalCanVote';
+import { useCanVote } from '@/modules/governance/api/governanceService/queries/useCanVote';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';

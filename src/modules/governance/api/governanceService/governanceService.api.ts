@@ -75,7 +75,7 @@ export interface IGetProposalParams extends IRequestUrlParams<IGetProposalUrlPar
 
 export interface IGetCanVoteUrlParams {
     /**
-     * ID of the proposal to fetch.
+     * ID of the proposal to check voting permissions for.
      */
     id: string;
 }
