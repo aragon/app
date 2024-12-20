@@ -18,7 +18,12 @@ export interface IImageProps extends Omit<ComponentProps<'img'>, 'width' | 'heig
 }
 
 export const Image: React.FC<IImageProps> = (props) => {
-    const { src = '', alt = 'image', fill = true, ...otherProps } = props;
+    const { src = '', alt = 'image', fill = true, sizes, ...otherProps } = props;
 
-    return <NextImage src={src} fill={fill} alt={alt} {...otherProps} />;
+    // Set a default value to '50vw' for the sizes property (default value required by the Image component from NextJs)
+    // when fill is set to true and sizes property is not set. We currently uses fill set to true for gov-ui-kit images
+    // and these never exceed 50vw.
+    const processedSizes = sizes ?? (fill ? '50vw' : undefined);
+
+    return <NextImage src={src} fill={fill} alt={alt} sizes={processedSizes} {...otherProps} />;
 };
