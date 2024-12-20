@@ -46,11 +46,14 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                 errorState={errorState}
                 SkeletonElement={TransactionDataListItem.Skeleton}
             >
-                {transactionList?.map((transaction) => (
+                {transactionList?.map((transaction, index) => (
                     <TransactionDataListItem.Structure
+                        // Multiple transactions can have the same transaction hash
+                        // (e.g. one deposit and one withdraw on the same proposal)
+                        key={`${transaction.transactionHash}-${index.toString()}`}
                         chainId={networkDefinitions[transaction.network].chainId}
                         hash={transaction.transactionHash}
-                        key={transaction.transactionHash}
+                        target="_blank"
                         date={transaction.blockTimestamp * 1000}
                         type={transactionTypeToDataListType[transaction.type]}
                         status={TransactionStatus.SUCCESS}
