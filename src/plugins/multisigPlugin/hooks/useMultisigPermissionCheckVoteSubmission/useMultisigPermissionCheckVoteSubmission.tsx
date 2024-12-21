@@ -15,11 +15,9 @@ export const useMultisigPermissionCheckVoteSubmission = (
     const { proposal } = params;
 
     const { address } = useAccount();
-
     const { t } = useTranslations();
 
     const { id, blockTimestamp, network, transactionHash } = proposal!;
-
     const { data: hasPermission, isLoading } = useCanVote(
         { urlParams: { id }, queryParams: { userAddress: address as string } },
         { enabled: address != null },
@@ -30,14 +28,11 @@ export const useMultisigPermissionCheckVoteSubmission = (
     });
 
     const { chainId } = networkDefinitions[network];
-
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
     if (hasPermission) {
-        return {
-            hasPermission: true,
-        };
+        return { hasPermission: true };
     }
 
     return {

@@ -79,14 +79,13 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                 )}
                 {!isLoading && (
                     <DefinitionList.Container>
-                        {settings?.map((setting, index) => (
-                            <DefinitionList.Item key={index} term={setting.term}>
-                                {setting.href ? (
-                                    <Link href={setting.href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                        {setting.definition}
+                        {settings?.map(({ term, definition, href }, index) => (
+                            <DefinitionList.Item key={index} term={term}>
+                                {href == null && definition}
+                                {href != null && (
+                                    <Link href={href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                                        {definition}
                                     </Link>
-                                ) : (
-                                    setting.definition
                                 )}
                             </DefinitionList.Item>
                         ))}

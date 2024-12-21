@@ -35,22 +35,28 @@ export interface ITokenSubmitVoteProps {
     isVeto?: boolean;
 }
 
+const voteOptionToIndicator: Record<string, VoteIndicator> = {
+    [VoteOption.YES.toString()]: 'yes',
+    [VoteOption.ABSTAIN.toString()]: 'abstain',
+    [VoteOption.NO.toString()]: 'no',
+};
+
 export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const { daoId, proposal, isVeto } = props;
+    const { pluginAddress, network } = proposal;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
     const latestVote = useUserVote<ITokenVote>({ proposal });
+    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })![0];
+
+    const { chainId } = networkDefinitions[network];
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const latestVoteTxHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: latestVote?.transactionHash });
 
     const [showOptions, setShowOptions] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string | undefined>(latestVote?.voteOption.toString());
-
-    const voteOptionToIndicator: Record<string, VoteIndicator> = {
-        [VoteOption.YES.toString()]: 'yes',
-        [VoteOption.ABSTAIN.toString()]: 'abstain',
-        [VoteOption.NO.toString()]: 'no',
-    };
 
     const openTransactionDialog = () => {
         const voteLabel = voteOptionToIndicator[selectedOption ?? ''];
@@ -60,31 +66,10 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         open(GovernanceDialog.VOTE, { params });
     };
 
-    const chainId = networkDefinitions[proposal.network].chainId;
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const latestVoteTxHref = buildEntityUrl({
-        type: ChainEntityType.TRANSACTION,
-        id: latestVote?.transactionHash,
-    });
-
-    useEffect(() => {
-        setSelectedOption(latestVote?.voteOption.toString());
-    }, [latestVote]);
-
     const resetVoteOptions = useCallback(() => {
         setSelectedOption(latestVote?.voteOption.toString());
         setShowOptions(false);
     }, [latestVote]);
-
-    const currentTag = { variant: 'info' as const, label: t('app.plugins.token.tokenSubmitVote.options.current') };
-
-    const voteOptions = [
-        { label: t('app.plugins.token.tokenSubmitVote.options.yes'), value: VoteOption.YES.toString() },
-        { label: t('app.plugins.token.tokenSubmitVote.options.abstain'), value: VoteOption.ABSTAIN.toString() },
-        { label: t('app.plugins.token.tokenSubmitVote.options.no'), value: VoteOption.NO.toString() },
-    ];
-
-    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })![0];
 
     const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
         permissionNamespace: 'vote',
@@ -95,13 +80,18 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         onSuccess: () => setShowOptions(true),
     });
 
-    const handleVoteClick = () => {
-        if (!canSubmitVote) {
-            submitVoteGuard();
-        } else {
-            setShowOptions(true);
-        }
-    };
+    const handleVoteClick = () => (canSubmitVote ? setShowOptions(true) : submitVoteGuard());
+
+    const currentTag = { variant: 'info' as const, label: t('app.plugins.token.tokenSubmitVote.options.current') };
+    const voteOptions = [
+        { label: t('app.plugins.token.tokenSubmitVote.options.yes'), value: VoteOption.YES.toString() },
+        { label: t('app.plugins.token.tokenSubmitVote.options.abstain'), value: VoteOption.ABSTAIN.toString() },
+        { label: t('app.plugins.token.tokenSubmitVote.options.no'), value: VoteOption.NO.toString() },
+    ];
+
+    useEffect(() => {
+        setSelectedOption(latestVote?.voteOption.toString());
+    }, [latestVote]);
 
     useEffect(() => {
         if (!canSubmitVote) {
@@ -111,12 +101,12 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-4">
-            {!showOptions && (
+            {!showOptions && latestVote == null && (
                 <Button className="w-fit" size="md" onClick={handleVoteClick}>
                     {t('app.plugins.token.tokenSubmitVote.buttons.default')}
                 </Button>
             )}
-            {!showOptions && (
+            {!showOptions && latestVote != null && (
                 <div className="flex w-full flex-col items-center gap-4 md:flex-row">
                     <Button
                         href={latestVoteTxHref}

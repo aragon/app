@@ -27,6 +27,7 @@ export interface IMultisigSubmitVoteProps {
 
 export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) => {
     const { daoId, proposal, isVeto } = props;
+    const { pluginAddress, network } = proposal;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -34,7 +35,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const userVote = useUserVote<IMultisigVote>({ proposal });
     const voted = userVote != null;
 
-    const chainId = networkDefinitions[proposal.network].chainId;
+    const { chainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const voteTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: userVote?.transactionHash });
 
@@ -46,7 +47,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
 
-    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })![0];
+    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })![0];
 
     const { check: submitVoteGuard, result: canSubmitVote } = usePermissionCheckGuard({
         permissionNamespace: 'vote',
@@ -57,19 +58,12 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
         onSuccess: openTransactionDialog,
     });
 
-    const handleVoteClick = () => {
-        if (!canSubmitVote) {
-            submitVoteGuard();
-        }
-        if (canSubmitVote && !voted) {
-            openTransactionDialog();
-        }
-    };
+    const handleVoteClick = () => (canSubmitVote ? openTransactionDialog() : submitVoteGuard());
 
     return (
         <div className="w-full">
             <Button
-                onClick={!voted ? undefined : handleVoteClick}
+                onClick={voted ? undefined : handleVoteClick}
                 href={voted ? voteTransactionHref : undefined}
                 target={voted ? '_blank' : undefined}
                 size="md"
