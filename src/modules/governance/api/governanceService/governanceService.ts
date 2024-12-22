@@ -1,6 +1,7 @@
 import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IMember, IProposal, IVote } from './domain';
 import type {
+    IGetCanVoteParams,
     IGetMemberExistsParams,
     IGetMemberListParams,
     IGetMemberParams,
@@ -16,6 +17,7 @@ class GovernanceService extends AragonBackendService {
         memberExists: '/members/:memberAddress/:pluginAddress/exists',
         proposals: '/proposals',
         proposal: '/proposals/:id',
+        canVote: '/proposals/:id/can-vote',
         votes: '/votes',
     };
 
@@ -49,6 +51,12 @@ class GovernanceService extends AragonBackendService {
 
     getProposal = async <TProposal extends IProposal = IProposal>(params: IGetProposalParams): Promise<TProposal> => {
         const result = await this.request<TProposal>(this.urls.proposal, params);
+
+        return result;
+    };
+
+    getCanVote = async (params: IGetCanVoteParams): Promise<boolean> => {
+        const result = await this.request<boolean>(this.urls.canVote, params);
 
         return result;
     };

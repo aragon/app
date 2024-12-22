@@ -483,8 +483,12 @@
           "title": "You can't create"
         },
         "screenReader": {
-          "description": "You don't have the permissions require for that DAO action.",
+          "description": "You don't have the permissions required for that DAO action.",
           "title": "Permission denied"
+        },
+        "vote": {
+          "description": "Not a member when proposal was created.",
+          "title": "You can't vote"
         }
       },
       "proposalExecutionStatus": {
@@ -654,6 +658,11 @@
           "function": "Proposal creation",
           "pluginLabelName": "Name",
           "requirement": "Multisig member"
+        },
+        "multisigPermissionCheckVoteSubmission": {
+          "createdAt": "Created at",
+          "membership": "Your membership",
+          "nonMember": "Not a member"
         },
         "multisigProposalList": {
           "entity": "Proposals"
@@ -830,6 +839,10 @@
           "pluginNameLabel": "Name",
           "userTokenBalance": "Your balance",
           "userVotingPower": "Your voting power"
+        },
+        "tokenPermissionCheckVoteSubmission": {
+          "createdAt": "Created at",
+          "membership": "Your voting power"
         },
         "tokenProposalList": {
           "entity": "Proposals"

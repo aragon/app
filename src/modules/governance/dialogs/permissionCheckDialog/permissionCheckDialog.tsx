@@ -2,7 +2,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { DefinitionList, Dialog, invariant, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import { DefinitionList, Dialog, IconType, invariant, Link, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 
 export interface IPermissionCheckDialogParams extends IPermissionCheckGuardParams {
@@ -30,7 +30,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     const { params } = props.location;
 
     invariant(params != null, 'PermissionCheckDialog: plugin is required for permission check dialog');
-    const { slotId, onSuccess, onError, permissionNamespace, plugin, daoId } = params;
+    const { slotId, onSuccess, onError, permissionNamespace, plugin, ...otherParams } = params;
 
     const { t } = useTranslations();
     const { close, updateOptions } = useDialogContext();
@@ -38,14 +38,14 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     const checkPermissions = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
         slotId: slotId,
         pluginId: plugin.subdomain,
-        params: { plugin, daoId },
+        params: { plugin, ...otherParams },
     }) ?? { hasPermission: true };
 
     const { settings, isLoading, hasPermission } = checkPermissions;
 
     const handleDialogClose = useCallback(() => {
-        close();
         onError?.();
+        close();
     }, [close, onError]);
 
     useEffect(() => {
@@ -79,9 +79,14 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                 )}
                 {!isLoading && (
                     <DefinitionList.Container>
-                        {settings?.map((setting, index) => (
-                            <DefinitionList.Item key={index} term={setting.term}>
-                                {setting.definition}
+                        {settings?.map(({ term, definition, href }, index) => (
+                            <DefinitionList.Item key={index} term={term}>
+                                {href == null && definition}
+                                {href != null && (
+                                    <Link href={href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                                        {definition}
+                                    </Link>
+                                )}
                             </DefinitionList.Item>
                         ))}
                     </DefinitionList.Container>

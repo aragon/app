@@ -7,6 +7,10 @@ export interface IPermissionCheckGuardSetting {
      * Definition of the permission setting.
      */
     definition: string;
+    /**
+     * Displays the setting as link with the specified url when set.
+     */
+    href?: string;
 }
 
 export interface IPermissionCheckGuardResult {

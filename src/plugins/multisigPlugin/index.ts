@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { useMultisigPermissionCheckProposalCreation } from '@/plugins/multisigPlugin/hooks/useMultisigPermissionCheckProposalCreation';
+import { useMultisigPermissionCheckVoteSubmission } from '@/plugins/multisigPlugin/hooks/useMultisigPermissionCheckVoteSubmission';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 import { MultisigGovernanceInfo } from './components/multisigGovernanceInfo';
@@ -87,6 +88,11 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: plugin.id,
             function: useMultisigPermissionCheckProposalCreation,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
+            pluginId: plugin.id,
+            function: useMultisigPermissionCheckVoteSubmission,
         })
 
         // Settings module slots

@@ -9,7 +9,7 @@ import type { IPermissionCheckDialogParams } from '../../dialogs/permissionCheck
 export interface IUsePermissionCheckGuardParams extends IPermissionCheckDialogParams {}
 
 export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) => {
-    const { onSuccess, onError, slotId, permissionNamespace, plugin: pluginProp, daoId } = params;
+    const { onSuccess, onError, slotId, permissionNamespace, plugin: pluginProp, daoId, proposal } = params;
 
     const { open } = useDialogContext();
 
@@ -20,15 +20,24 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
     const { hasPermission } = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
         slotId: slotId,
         pluginId: plugin.subdomain,
-        params: { plugin, daoId },
+        params: { plugin, daoId, proposal },
     }) ?? { hasPermission: true };
 
     const checkUserPermission = useCallback(
         (functionParams?: Partial<IUsePermissionCheckGuardParams>) => {
-            const dialogParams = { slotId, onError, onSuccess, permissionNamespace, plugin, daoId, ...functionParams };
+            const dialogParams = {
+                slotId,
+                onError,
+                onSuccess,
+                permissionNamespace,
+                daoId,
+                proposal,
+                plugin,
+                ...functionParams,
+            };
             open(GovernanceDialog.PERMISSION_CHECK, { params: dialogParams });
         },
-        [slotId, onError, onSuccess, permissionNamespace, open, daoId, plugin],
+        [slotId, onError, onSuccess, permissionNamespace, daoId, proposal, plugin, open],
     );
 
     const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
