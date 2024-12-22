@@ -1,3 +1,5 @@
+import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateStepperResult } from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
@@ -24,11 +26,13 @@ describe('<TransactionDialog /> component', () => {
     const useMutationSpy = jest.spyOn(ReactQuery, 'useMutation');
     const useWaitForTransactionReceiptSpy = jest.spyOn(Wagmi, 'useWaitForTransactionReceipt');
     const useChainIdSpy = jest.spyOn(Wagmi, 'useChainId');
+    const useSwitchChainSpy = jest.spyOn(Wagmi, 'useSwitchChain');
 
     beforeEach(() => {
         useSendTransactionSpy.mockReturnValue({} as Wagmi.UseSendTransactionReturnType);
         useMutationSpy.mockReturnValue({} as ReactQuery.UseMutationResult);
         useWaitForTransactionReceiptSpy.mockReturnValue({} as Wagmi.UseWaitForTransactionReceiptReturnType);
+        useSwitchChainSpy.mockReturnValue({ switchChain: jest.fn() } as unknown as Wagmi.UseSwitchChainReturnType);
     });
 
     afterEach(() => {
@@ -36,6 +40,7 @@ describe('<TransactionDialog /> component', () => {
         useMutationSpy.mockReset();
         useChainIdSpy.mockReset();
         useWaitForTransactionReceiptSpy.mockReset();
+        useSwitchChainSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
@@ -171,17 +176,35 @@ describe('<TransactionDialog /> component', () => {
         await waitFor(() => expect(prepareTransaction).toHaveBeenCalled());
     });
 
-    it('approve transaction step sends the transaction to the user wallet', () => {
+    it('approve transaction step sends the transaction to the user wallet when network prop matches current chain', () => {
         const transaction = { from: '0x', data: '0x' };
         const sendTransaction = jest.fn();
+        const network = Network.POLYGON_MAINNET;
+        useChainIdSpy.mockReturnValue(networkDefinitions[network].chainId);
         useMutationSpy.mockReturnValue({ data: transaction } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
         const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
         const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
-        render(createTestComponent({ stepper }));
+        render(createTestComponent({ stepper, network }));
         const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(sendTransaction).toHaveBeenCalledWith(expect.objectContaining(transaction), expect.anything());
+    });
+
+    it('approve transaction step switches user network when network prop does not match current chain', () => {
+        const network = Network.BASE_MAINNET;
+        const switchChain = jest.fn();
+        useChainIdSpy.mockReturnValue(networkDefinitions[Network.ARBITRUM_MAINNET].chainId);
+        useSwitchChainSpy.mockReturnValue({ switchChain } as unknown as Wagmi.UseSwitchChainReturnType);
+        const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
+        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        render(createTestComponent({ stepper, network }));
+        const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
+        act(() => approveStepAction?.({ onError: jest.fn() }));
+        expect(switchChain).toHaveBeenCalledWith(
+            { chainId: networkDefinitions[network].chainId },
+            { onError: expect.any(Function) as unknown, onSuccess: expect.any(Function) as unknown },
+        );
     });
 
     it('does not send the transaction when transaction is not set at approve step', () => {

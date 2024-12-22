@@ -1,3 +1,4 @@
+import * as DaoService from '@/shared/api/daoService';
 import * as usePinJson from '@/shared/api/ipfsService/mutations';
 import { type IDialogLocation } from '@/shared/components/dialogProvider';
 import {
@@ -7,9 +8,11 @@ import {
 } from '@/shared/components/transactionDialog';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
+    generateDao,
     generateDaoPlugin,
     generateReactQueryMutationResultIdle,
     generateReactQueryMutationResultSuccess,
+    generateReactQueryResultSuccess,
     generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
@@ -34,6 +37,7 @@ jest.mock('@/shared/components/transactionDialog', () => ({
 
 describe('<PublishProposalDialog /> component', () => {
     const useAccountSpy = jest.spyOn(Wagmi, 'useAccount');
+    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const usePinJsonSpy = jest.spyOn(usePinJson, 'usePinJson');
     const prepareMetadataSpy = jest.spyOn(publishProposalDialogUtils, 'prepareMetadata');
@@ -42,6 +46,7 @@ describe('<PublishProposalDialog /> component', () => {
 
     beforeEach(() => {
         useAccountSpy.mockReturnValue({ address: '0x123' } as unknown as Wagmi.UseAccountReturnType);
+        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin()]);
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle());
         buildTransactionSpy.mockReturnValue({});
@@ -53,6 +58,7 @@ describe('<PublishProposalDialog /> component', () => {
         usePinJsonSpy.mockReset();
         prepareMetadataSpy.mockReset();
         getProposalIdSpy.mockReset();
+        useDaoSpy.mockReset();
         (TransactionDialog as jest.Mock).mockClear();
     });
 

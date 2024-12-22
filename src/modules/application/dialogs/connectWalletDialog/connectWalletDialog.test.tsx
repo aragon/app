@@ -1,28 +1,28 @@
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDialogContext } from '@/shared/testUtils';
+import * as AppKit from '@reown/appkit/react';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import * as web3Modal from '@web3modal/wagmi/react';
-import * as wagmi from 'wagmi';
+import * as Wagmi from 'wagmi';
 import { ConnectWalletDialog, type IConnectWalletDialogProps } from './connectWalletDialog';
 
 describe('<ConnectWalletDialog /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
-    const useWeb3ModalSpy = jest.spyOn(web3Modal, 'useWeb3Modal');
-    const useWeb3ModalState = jest.spyOn(web3Modal, 'useWeb3ModalState');
-    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useAppKitSpy = jest.spyOn(AppKit, 'useAppKit');
+    const useAppKitStateSpy = jest.spyOn(AppKit, 'useAppKitState');
+    const useAccountSpy = jest.spyOn(Wagmi, 'useAccount');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useWeb3ModalSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
-        useWeb3ModalState.mockReturnValue({ open: false, loading: false });
-        useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
+        useAppKitSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
+        useAppKitStateSpy.mockReturnValue({ open: false, loading: false, initialized: true });
+        useAccountSpy.mockReturnValue({} as Wagmi.UseAccountReturnType);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
-        useWeb3ModalSpy.mockReset();
-        useWeb3ModalState.mockReset();
+        useAppKitSpy.mockReset();
+        useAppKitStateSpy.mockReset();
         useAccountSpy.mockReset();
     });
 
@@ -61,7 +61,7 @@ describe('<ConnectWalletDialog /> component', () => {
     it('renders a connect button to trigger the wallet connection', async () => {
         const openWeb3Modal = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useWeb3ModalSpy.mockReturnValue({ open: openWeb3Modal, close: jest.fn() });
+        useAppKitSpy.mockReturnValue({ open: openWeb3Modal, close: jest.fn() });
         render(createTestComponent());
         const connectButton = screen.getByRole('button', { name: /connectWalletDialog.action.connect/ });
         expect(connectButton).toBeInTheDocument();
