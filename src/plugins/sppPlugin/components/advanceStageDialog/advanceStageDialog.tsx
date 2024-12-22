@@ -50,6 +50,7 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                 stepper={stepper}
                 prepareTransaction={handlePrepareTransaction}
                 onCancelClick={handleCloseDialog}
+                network={proposal.network}
                 successLink={{
                     label: t('app.plugins.spp.advanceStageDialog.button.success'),
                     onClick: onSuccessClick,

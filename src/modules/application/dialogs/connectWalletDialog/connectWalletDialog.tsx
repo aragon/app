@@ -1,7 +1,7 @@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AvatarIcon, Dialog, IconType, Link } from '@aragon/gov-ui-kit';
-import { useWeb3Modal, useWeb3ModalState } from '@web3modal/wagmi/react';
+import { useAppKit, useAppKitState } from '@reown/appkit/react';
 import { useCallback, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { AragonLogo } from '../../components/aragonLogo';
@@ -24,8 +24,8 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
     const { onSuccess, onError } = params ?? {};
 
     const { close, updateOptions } = useDialogContext();
-    const { open: openWeb3Modal } = useWeb3Modal();
-    const { open: isWeb3ModalOpen } = useWeb3ModalState();
+    const { open: openWeb3Modal } = useAppKit();
+    const { open: isAppKitModalOpen } = useAppKitState();
     const { isConnected, chainId } = useAccount();
     const { t } = useTranslations();
 
@@ -47,15 +47,15 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
     // Disable closing the dialog on outside click when web3Modal is open to keep the connect-wallet dialog open
     // and track the wallet-connection status
     useEffect(() => {
-        const disableOutsideClick = isWeb3ModalOpen;
+        const disableOutsideClick = isAppKitModalOpen;
         updateOptions({ disableOutsideClick });
-    }, [updateOptions, isWeb3ModalOpen]);
+    }, [updateOptions, isAppKitModalOpen]);
 
     useEffect(() => {
         updateOptions({ onClose: handleDialogClose });
     }, [handleDialogClose, updateOptions]);
 
-    if (isWeb3ModalOpen) {
+    if (isAppKitModalOpen) {
         return null;
     }
 

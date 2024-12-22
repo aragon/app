@@ -1,3 +1,4 @@
+import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -56,7 +57,9 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     const { t } = useTranslations();
     const { setIsBlocked } = useBlockNavigationContext();
+
     const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
@@ -130,6 +133,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
+            network={dao?.network}
         >
             <ProposalDataListItem.Structure
                 title={title}
