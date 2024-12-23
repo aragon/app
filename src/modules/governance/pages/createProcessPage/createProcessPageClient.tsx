@@ -6,7 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
 import type { ICreateProcessFormData, ICreateProcessFormStage } from '../../components/createProcessForm';
-import { GovernanceDialogs } from '../../constants/moduleDialogs';
+import { GovernanceDialog } from '../../constants/moduleDialogs';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
@@ -36,7 +36,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
         const dialogParams: IPrepareProcessDialogParams = { daoId, values };
-        open(GovernanceDialogs.PREPARE_PROCESS, { params: dialogParams });
+        open(GovernanceDialog.PREPARE_PROCESS, { params: dialogParams });
     };
 
     const processedSteps = useMemo(
