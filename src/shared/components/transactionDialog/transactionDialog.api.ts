@@ -89,7 +89,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      */
     onCancelClick?: () => void;
     /**
-     * Network to be checked before sending the transaction to the wallet.
+     * The Network the user must be connected to for the transaction.
      * @default Network.ETHEREUM_MAINNET
      */
     network?: Network;
