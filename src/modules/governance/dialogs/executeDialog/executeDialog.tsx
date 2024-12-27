@@ -42,7 +42,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { t } = useTranslations();
 
     const { proposal, status } = location.params;
-    const { title, summary, creator, proposalIndex, pluginAddress } = proposal;
+    const { title, summary, creator, proposalIndex, pluginAddress, network } = proposal;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
@@ -63,6 +63,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
+            network={network}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure

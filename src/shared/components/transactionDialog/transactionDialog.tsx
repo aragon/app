@@ -1,7 +1,9 @@
+import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, DialogContent, Heading, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useChainId, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
+import { useChainId, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
 import type { UseQueryReturnType } from 'wagmi/query';
 import {
     TransactionStatus,
@@ -28,13 +30,17 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         children,
         prepareTransaction,
         onCancelClick,
+        network = Network.ETHEREUM_MAINNET,
     } = props;
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
     const activeStepInfo = activeStep != null ? steps[activeStepIndex] : undefined;
 
     const { t } = useTranslations();
+    const { switchChain, status: switchChainStatus } = useSwitchChain();
+
     const chainId = useChainId();
+    const { chainId: requiredChainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const handleTransactionError = useCallback(() => {
@@ -69,27 +75,36 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         }
     }, [transaction, sendTransaction, handleTransactionError]);
 
+    const handleSwitchNetwork = useCallback(() => {
+        switchChain(
+            { chainId: requiredChainId },
+            { onError: handleTransactionError, onSuccess: handleSendTransaction },
+        );
+    }, [switchChain, requiredChainId, handleTransactionError, handleSendTransaction]);
+
     const handleRetryTransaction = useCallback(() => {
         updateActiveStep(TransactionDialogStep.APPROVE);
         handleSendTransaction();
     }, [updateActiveStep, handleSendTransaction]);
 
+    const approveStepAction = requiredChainId === chainId ? handleSendTransaction : handleSwitchNetwork;
     const transactionStepActions: Record<TransactionDialogStep, () => void> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
-            [TransactionDialogStep.APPROVE]: handleSendTransaction,
+            [TransactionDialogStep.APPROVE]: approveStepAction,
             [TransactionDialogStep.CONFIRM]: handleRetryTransaction,
         }),
-        [prepareTransactionMutate, handleSendTransaction, handleRetryTransaction],
+        [prepareTransactionMutate, approveStepAction, handleRetryTransaction],
     );
 
+    const approveStepStatus = chainId === requiredChainId ? approveTransactionStatus : switchChainStatus;
     const transactionStepStates: Record<TransactionDialogStep, TransactionStatusState> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
-            [TransactionDialogStep.APPROVE]: approveTransactionStatus,
+            [TransactionDialogStep.APPROVE]: approveStepStatus,
             [TransactionDialogStep.CONFIRM]: queryToStepState(waitTxStatus, waitTxFetchStatus),
         }),
-        [prepareTransactionStatus, approveTransactionStatus, waitTxStatus, waitTxFetchStatus],
+        [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus],
     );
 
     const transactionStepAddon: Record<TransactionDialogStep, ITransactionStatusStepMetaAddon | undefined> = useMemo(

@@ -1,3 +1,4 @@
+import type { Network } from '@/shared/api/daoService';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ReactNode } from 'react';
@@ -87,6 +88,11 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      * Callback called on cancel button click.
      */
     onCancelClick?: () => void;
+    /**
+     * The Network the user must be connected to for the transaction.
+     * @default Network.ETHEREUM_MAINNET
+     */
+    network?: Network;
     /**
      * Children of the component.
      */

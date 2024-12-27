@@ -24,8 +24,9 @@
   "dependencies": {
     "@aragon/gov-ui-kit": "^1.0.60",
     "@floating-ui/react": "^0.27.2",
+    "@reown/appkit": "^1.6.2",
+    "@reown/appkit-adapter-wagmi": "^1.6.2",
     "@tanstack/react-query": "^5.62.7",
-    "@web3modal/wagmi": "^5.1.11",
     "classnames": "^2.5.1",
     "luxon": "^3.5.0",
     "next": "^15.1.0",

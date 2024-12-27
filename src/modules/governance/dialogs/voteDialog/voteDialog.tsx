@@ -60,6 +60,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             successLink={{ label: t('app.governance.voteDialog.button.success'), onClick: () => router.refresh() }}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
+            network={proposal.network}
         >
             <VoteProposalDataListItemStructure
                 proposalId={proposal.proposalIndex}
