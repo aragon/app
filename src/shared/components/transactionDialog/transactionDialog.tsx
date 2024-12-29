@@ -3,7 +3,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, DialogContent, Heading, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useChainId, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
 import type { UseQueryReturnType } from 'wagmi/query';
 import {
     TransactionStatus,
@@ -39,7 +39,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const { t } = useTranslations();
     const { switchChain, status: switchChainStatus } = useSwitchChain();
 
-    const chainId = useChainId();
+    const { chainId } = useAccount();
     const { chainId: requiredChainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
