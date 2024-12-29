@@ -31,6 +31,7 @@ describe('<TransactionDialog /> component', () => {
     beforeEach(() => {
         useSendTransactionSpy.mockReturnValue({} as Wagmi.UseSendTransactionReturnType);
         useMutationSpy.mockReturnValue({} as ReactQuery.UseMutationResult);
+        useAccountSpy.mockReturnValue({} as unknown as Wagmi.UseAccountReturnType);
         useWaitForTransactionReceiptSpy.mockReturnValue({} as Wagmi.UseWaitForTransactionReceiptReturnType);
         useSwitchChainSpy.mockReturnValue({ switchChain: jest.fn() } as unknown as Wagmi.UseSwitchChainReturnType);
     });
