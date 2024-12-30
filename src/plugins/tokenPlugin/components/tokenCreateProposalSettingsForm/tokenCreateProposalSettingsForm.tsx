@@ -23,7 +23,7 @@ export const TokenCreateProposalSettingsForm: React.FC<ITokenCreateProposalSetti
     const startTimeFixed = useWatch<ICreateProposalEndDateForm, 'startTimeFixed'>({ name: 'startTimeFixed' });
 
     const minDuration = plugin.settings.minDuration;
-    const parsedMinDuration = dateUtils.secondsToDaysHoursMinutes(minDuration);
+    const parsedMinDuration = dateUtils.secondsToDuration(minDuration);
     const { days, hours, minutes } = parsedMinDuration;
 
     const minEndTime = startTimeFixed ? dateUtils.parseFixedDate(startTimeFixed) : DateTime.now();

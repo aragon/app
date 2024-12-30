@@ -1,6 +1,6 @@
-import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { invariant } from '@aragon/gov-ui-kit';
-import { DateTime, Duration } from 'luxon';
+import { DateTime } from 'luxon';
 import type { ICreateProposalEndDateForm, ICreateProposalStartDateForm } from './createProposalUtils.api';
 
 class CreateProposalUtils {
@@ -35,7 +35,7 @@ class CreateProposalUtils {
         // Return 0 when endTime is set as duration and equals to minimumDuration to let smart contract set the correct end
         // time when the transaction is executed, otherwise the end time will be set as a few seconds before the minimum
         // duration and the transaction would fail.
-        if (endTimeMode === 'duration' && this.compareTimeDuration(minimumDuration, endTimeDuration)) {
+        if (endTimeMode === 'duration' && dateUtils.compareDuration(minimumDuration, endTimeDuration)) {
             return 0;
         }
 
@@ -52,9 +52,6 @@ class CreateProposalUtils {
     };
 
     private dateToSeconds = (date: DateTime): number => Math.round(date.toMillis() / 1000);
-
-    private compareTimeDuration = (first?: IDateDuration, second?: IDateDuration) =>
-        Duration.fromObject(first ?? {}).equals(Duration.fromObject(second ?? {}));
 }
 
 export const createProposalUtils = new CreateProposalUtils();
