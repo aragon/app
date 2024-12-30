@@ -1,12 +1,25 @@
+export interface ICidToSrcOptions {
+    /**
+     * Size of the image to be loaded, used to optimise the loading of the image.
+     * @default 80
+     */
+    size?: number;
+}
+
 class IpfsUtils {
     private ipfsGateway = 'https://aragon-1.mypinata.cloud';
 
-    cidToSrc = (cid?: string | null): string | undefined => {
-        if (cid?.startsWith('ipfs://')) {
-            return `${this.ipfsGateway}/${cid.replace('://', '/')}`;
-        }
+    private ipfsPrefix = 'ipfs://';
 
-        return cid != null ? `${this.ipfsGateway}/ipfs/${cid}?img-width=80&img-height=80&img-onerror=redirect` : undefined;
+    cidToSrc = (cid?: string | null, options?: ICidToSrcOptions): string | undefined => {
+        const { size = 80 } = options ?? {};
+
+        const processedSize = size.toString();
+        const processedCid = cid?.startsWith(this.ipfsPrefix) ? cid.replace(this.ipfsPrefix, '') : cid;
+
+        const params = new URLSearchParams({ 'img-width': processedSize, 'img-height': processedSize });
+
+        return processedCid != null ? `${this.ipfsGateway}/ipfs/${processedCid}?${params.toString()}` : undefined;
     };
 }
 
