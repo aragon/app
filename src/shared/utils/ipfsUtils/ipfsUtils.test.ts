@@ -20,13 +20,11 @@ describe('ipfs utils', () => {
     it('adds the image size query params to the image src', () => {
         const size = 100;
         const src = ipfsUtils.cidToSrc('apt029', { size });
-        expect(src).toContain(`img-width=${size}`);
-        expect(src).toContain(`img-height=${size}`);
+        expect(src).toContain(`img-width=${size.toString()}&img-height=${size.toString()}`);
     });
 
     it('uses the default size of 80 when no size is provided', () => {
         const src = ipfsUtils.cidToSrc('800a');
-        expect(src).toContain('img-width=80');
-        expect(src).toContain('img-height=80');
+        expect(src).toContain('img-width=80&img-height=80');
     });
 });
