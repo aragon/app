@@ -8,7 +8,7 @@ describe('useApplicationVersion hook', () => {
         process.env = originalProcessEnv;
     });
 
-    test.each([
+    it.each([
         { env: 'development', label: 'DEV' },
         { env: 'staging', label: 'STG' },
         { env: 'local', label: 'LOC' },

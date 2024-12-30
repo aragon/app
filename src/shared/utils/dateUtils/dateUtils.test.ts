@@ -3,7 +3,7 @@ import { dateUtils } from './dateUtils';
 
 describe('dateUtils', () => {
     describe('secondsToDuration', () => {
-        test.each([
+        it.each([
             { seconds: 0, result: {} },
             { seconds: 60, result: { minutes: 1 } },
             { seconds: 3600, result: { hours: 1 } },
@@ -17,7 +17,7 @@ describe('dateUtils', () => {
     });
 
     describe('durationToSeconds', () => {
-        test.each([
+        it.each([
             { days: 0, hours: 0, minutes: 0, result: 0 },
             { days: 1, hours: 0, minutes: 0, result: 86400 },
             { days: 0, hours: 1, minutes: 0, result: 3600 },
