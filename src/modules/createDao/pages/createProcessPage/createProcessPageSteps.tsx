@@ -37,7 +37,7 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.description`)}
                 {...processesStep}
             >
-                Stages step
+                <CreateProcessForm.Stages />
             </Wizard.Step>
             <Wizard.Step
                 title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.title`)}
@@ -46,7 +46,7 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 )}
                 {...permissionsStep}
             >
-                Permissions step
+                <CreateProcessForm.Permissions />
             </Wizard.Step>
         </>
     );

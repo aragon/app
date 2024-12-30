@@ -1,9 +1,13 @@
 'use client';
 
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
+import type { ICreateProcessFormData, ICreateProcessFormStage } from '../../components/createProcessForm';
+import { CreateDaoDialog } from '../../constants/moduleDialogs';
+import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
 import { CreateProcessPageClientSteps } from './createProcessPageSteps';
 
@@ -14,10 +18,26 @@ export interface ICreateProcessPageClientProps {
     daoId: string;
 }
 
+const defaultStage: ICreateProcessFormStage = {
+    name: '',
+    type: 'normal',
+    votingPeriod: { days: 7, minutes: 0, hours: 0 },
+    earlyStageAdvance: false,
+    bodies: [],
+    requiredApprovals: 1,
+};
+
 export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
+
+    const { open } = useDialogContext();
+
+    const handleFormSubmit = (values: ICreateProcessFormData) => {
+        const dialogParams: IPrepareProcessDialogParams = { daoId, values };
+        open(CreateDaoDialog.PREPARE_PROCESS, { params: dialogParams });
+    };
 
     const processedSteps = useMemo(
         () => createProcessWizardSteps.map(({ meta, ...step }) => ({ ...step, meta: { ...meta, name: t(meta.name) } })),
@@ -30,6 +50,8 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
                 finalStep={t('app.createDao.createProcessPage.finalStep')}
                 submitLabel={t('app.createDao.createProcessPage.submitLabel')}
                 initialSteps={processedSteps}
+                onSubmit={handleFormSubmit}
+                defaultValues={{ stages: [defaultStage] }}
             >
                 <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
             </Wizard.Container>

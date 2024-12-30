@@ -33,9 +33,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { name, id, exitPath } = props;
 
     const { address, isConnected } = useAccount();
-
     const { t } = useTranslations();
-
     const { open } = useDialogContext();
 
     const handleWalletClick = () => {

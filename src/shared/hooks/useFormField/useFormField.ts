@@ -8,6 +8,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
     options?: IUseFormFieldOptions<TFieldValues, TName>,
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
+
     const { label, fieldPrefix, rules, trimOnBlur, ...otherOptions } = options ?? {};
 
     const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;

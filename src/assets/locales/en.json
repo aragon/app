@@ -127,215 +127,6 @@
       "createProcessForm": {
         "metadata": {
           "description": {
-            "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the {{type}} and will help members to understand.",
-            "label": "Summary",
-            "placeholder": "Type a summary"
-          },
-          "name": {
-            "helpText": "Give your {{type}} a name, so member can differentiate it.",
-            "label": "Name",
-            "placeholder": "Type a name"
-          },
-          "processKey": {
-            "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
-            "label": "Key",
-            "placeholder": "Type an key"
-          },
-          "resources": {
-            "helpText": "Add any additional external resources that help members understand the {{type}}."
-          },
-          "type": {
-            "plugin": "plugin",
-            "process": "governance process"
-          }
-        }
-      },
-      "createProcessPage": {
-        "finalStep": "Publish process",
-        "steps": {
-          "METADATA": {
-            "description": "The information you provide on this page will be displayed alongside proposals of this type. It is purely informational, used to help voters understand the governance process and make a more informed decision.",
-            "name": "Process description",
-            "title": "Describe new proposal type"
-          },
-          "PERMISSIONS": {
-            "description": "Define who is eligible to create proposals of this type.",
-            "name": "Proposal creation rules",
-            "title": "Set proposal creation rules"
-          },
-          "STAGES": {
-            "description": "Design the process for deciding whether or not a proposal of this type passes and its actions executed. The proposals can go through any number of sequential stages. Within each stage, governing bodies can either approve or veto the proposal.",
-            "name": "Governance design",
-            "title": "Design the governance process"
-          }
-        },
-        "submitLabel": "Publish process"
-      },
-      "layoutWizardCreateProcess": {
-        "name": "Create process"
-      },
-      "publishDaoDialog": {
-        "button": {
-          "submit": "Create DAO",
-          "success": "View DAO"
-        },
-        "description": "To publish the DAO you have to confirm the onchain transaction with your wallet.",
-        "step": {
-          "PIN_METADATA": {
-            "errorLabel": "Unable to pin data on IPFS",
-            "label": "Pin data on IPFS"
-          }
-        },
-        "title": "Publish DAO"
-      }
-    },
-    "dashboard": {
-      "daoDashboardPage": {
-        "aside": {
-          "details": {
-            "address": "Contract address",
-            "blockchain": "Blockchain",
-            "ens": "ENS name",
-            "launched": "Launched at",
-            "title": "Details"
-          },
-          "links": "Links"
-        },
-        "header": {
-          "stat": {
-            "members": "Members",
-            "proposals": "Proposals",
-            "treasury": "Treasury value"
-          }
-        },
-        "main": {
-          "assets": {
-            "title": "Top assets"
-          },
-          "members": {
-            "title": "Members"
-          },
-          "proposals": {
-            "title": "Latest proposals"
-          },
-          "viewAll": "View all"
-        }
-      }
-    },
-    "explore": {
-      "daoList": {
-        "emptyState": {
-          "description": "This will show relevant DAOs when available.",
-          "heading": "No DAOs found"
-        },
-        "entity": "DAOs",
-        "errorState": {
-          "description": "There was an error loading the DAOs. Please try again later.",
-          "heading": "Error loading DAOs"
-        }
-      },
-      "exploreDaosPage": {
-        "createDao": "DAO",
-        "filter": {
-          "all": "All DAOs",
-          "member": "Member"
-        }
-      }
-    },
-    "finance": {
-      "assetInput": {
-        "maxButtonLabel": "Max",
-        "triggerLabelDefault": "Select"
-      },
-      "assetList": {
-        "emptyState": {
-          "description": "This will show the DAO's onchain assets when available.",
-          "heading": "No assets found"
-        },
-        "entity": "Assets",
-        "errorState": {
-          "description": "There was an error loading the assets. Please try again later.",
-          "heading": "Error loading assets"
-        },
-        "searchPlaceholder": "Search assets..."
-      },
-      "assetSelectionDialog": {
-        "description": "Select the asset from the list below",
-        "heading": "Select an asset"
-      },
-      "daoAssetsPage": {
-        "aside": {
-          "details": {
-            "blockchain": "Blockchain",
-            "title": "Details"
-          }
-        },
-        "main": {
-          "title": "Assets"
-        }
-      },
-      "daoTransactionsPage": {
-        "aside": {
-          "details": {
-            "blockchain": "Blockchain",
-            "title": "Details"
-          }
-        },
-        "main": {
-          "title": "Transactions"
-        }
-      },
-      "financeDetailsList": {
-        "blockchain": "Blockchain",
-        "title": "Details",
-        "vaultAddress": "Vault address",
-        "vaultEns": "Vault ENS"
-      },
-      "transactionList": {
-        "emptyState": {
-          "description": "This will show the DAO's onchain actions when available.",
-          "heading": "No transactions found"
-        },
-        "entity": "Transactions",
-        "errorState": {
-          "description": "There was an error loading the transactions. Please try again later.",
-          "heading": "Error loading transactions"
-        }
-      },
-      "transferAssetForm": {
-        "amount": {
-          "label": "Amount",
-          "placeholder": "0"
-        },
-        "receiver": {
-          "helpText": "The wallet that receives the tokens",
-          "label": "Recipient",
-          "placeholder": "ENS or 0x …"
-        }
-      }
-    },
-    "governance": {
-      "actionComposer": {
-        "customItem": {
-          "ADD_CONTRACT": "Add new address",
-          "RAW_CALLDATA": "Enter raw calldata"
-        },
-        "nativeGroup": {
-          "OSX": "DAO"
-        },
-        "nativeItem": {
-          "MetadataPluginUpdate": "Set metadata",
-          "MetadataUpdate": "Set metadata",
-          "Transfer": "Transfer"
-        },
-        "placeholder": "Filter by action, contract name or address",
-        "rawCalldataFunction": "Unknown",
-        "selectItem": "Add action"
-      },
-
-      "createProcessForm": {
-        "metadata": {
-          "description": {
             "helpText": "Summarize your governance process and its role in your organization in 2-3 sentences. This summary will be shown on the Proposals page, transparently describing how proposals of this type are governed.",
             "label": "Summary",
             "placeholder": "Type a summary"
@@ -493,6 +284,188 @@
           }
         },
         "submitLabel": "Publish process"
+      },
+      "layoutWizardCreateProcess": {
+        "name": "Create process"
+      },
+      "prepareProcessDialog": {
+        "button": {
+          "submit": "Prepare installation",
+          "success": "Finalize installation"
+        },
+        "description": "To prepare your process you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Prepare governance process"
+      },
+      "publishDaoDialog": {
+        "button": {
+          "submit": "Create DAO",
+          "success": "View DAO"
+        },
+        "description": "To publish the DAO you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Publish DAO"
+      },
+      "publishProcessDialog": {
+        "button": {
+          "submit": "Finalize installation",
+          "success": "View proposal"
+        },
+        "description": "To finalize your process you have to confirm the onchain transaction with your wallet.",
+        "step": {
+          "PIN_METADATA": {
+            "errorLabel": "Unable to pin data on IPFS",
+            "label": "Pin data on IPFS"
+          }
+        },
+        "title": "Finalize governance process"
+      }
+    },
+    "dashboard": {
+      "daoDashboardPage": {
+        "aside": {
+          "details": {
+            "address": "Contract address",
+            "blockchain": "Blockchain",
+            "ens": "ENS name",
+            "launched": "Launched at",
+            "title": "Details"
+          },
+          "links": "Links"
+        },
+        "header": {
+          "stat": {
+            "members": "Members",
+            "proposals": "Proposals",
+            "treasury": "Treasury value"
+          }
+        },
+        "main": {
+          "assets": {
+            "title": "Top assets"
+          },
+          "members": {
+            "title": "Members"
+          },
+          "proposals": {
+            "title": "Latest proposals"
+          },
+          "viewAll": "View all"
+        }
+      }
+    },
+    "explore": {
+      "daoList": {
+        "emptyState": {
+          "description": "This will show relevant DAOs when available.",
+          "heading": "No DAOs found"
+        },
+        "entity": "DAOs",
+        "errorState": {
+          "description": "There was an error loading the DAOs. Please try again later.",
+          "heading": "Error loading DAOs"
+        }
+      }
+    },
+    "finance": {
+      "assetInput": {
+        "maxButtonLabel": "Max",
+        "triggerLabelDefault": "Select"
+      },
+      "assetList": {
+        "emptyState": {
+          "description": "This will show the DAO's onchain assets when available.",
+          "heading": "No assets found"
+        },
+        "entity": "Assets",
+        "errorState": {
+          "description": "There was an error loading the assets. Please try again later.",
+          "heading": "Error loading assets"
+        },
+        "searchPlaceholder": "Search assets..."
+      },
+      "assetSelectionDialog": {
+        "description": "Select the asset from the list below",
+        "heading": "Select an asset"
+      },
+      "daoAssetsPage": {
+        "aside": {
+          "details": {
+            "blockchain": "Blockchain",
+            "title": "Details"
+          }
+        },
+        "main": {
+          "title": "Assets"
+        }
+      },
+      "daoTransactionsPage": {
+        "aside": {
+          "details": {
+            "blockchain": "Blockchain",
+            "title": "Details"
+          }
+        },
+        "main": {
+          "title": "Transactions"
+        }
+      },
+      "financeDetailsList": {
+        "blockchain": "Blockchain",
+        "title": "Details",
+        "vaultAddress": "Vault address",
+        "vaultEns": "Vault ENS"
+      },
+      "transactionList": {
+        "emptyState": {
+          "description": "This will show the DAO's onchain actions when available.",
+          "heading": "No transactions found"
+        },
+        "entity": "Transactions",
+        "errorState": {
+          "description": "There was an error loading the transactions. Please try again later.",
+          "heading": "Error loading transactions"
+        }
+      },
+      "transferAssetForm": {
+        "amount": {
+          "label": "Amount",
+          "placeholder": "0"
+        },
+        "receiver": {
+          "helpText": "The wallet that receives the tokens",
+          "label": "Recipient",
+          "placeholder": "ENS or 0x …"
+        }
+      }
+    },
+    "governance": {
+      "actionComposer": {
+        "customItem": {
+          "ADD_CONTRACT": "Add new address",
+          "RAW_CALLDATA": "Enter raw calldata"
+        },
+        "nativeGroup": {
+          "OSX": "DAO"
+        },
+        "nativeItem": {
+          "MetadataPluginUpdate": "Set metadata",
+          "MetadataUpdate": "Set metadata",
+          "Transfer": "Transfer"
+        },
+        "placeholder": "Filter by action, contract name or address",
+        "rawCalldataFunction": "Unknown",
+        "selectItem": "Add action"
       },
       "createProposalForm": {
         "actions": {
@@ -690,9 +663,6 @@
       "layoutWizardCreateDao": {
         "name": "Create DAO"
       },
-      "layoutWizardCreateProcess": {
-        "name": "Create process"
-      },
       "layoutWizardCreateProposal": {
         "name": "Create Proposal",
         "namePlugin": "{{plugin}}: Create Proposal"
@@ -713,20 +683,6 @@
           "title": "Not eligible to vote"
         }
       },
-      "prepareProcessDialog": {
-        "button": {
-          "submit": "Prepare installation",
-          "success": "Finalize installation"
-        },
-        "description": "To prepare your process you have to confirm the onchain transaction with your wallet.",
-        "step": {
-          "PIN_METADATA": {
-            "errorLabel": "Unable to pin data on IPFS",
-            "label": "Pin data on IPFS"
-          }
-        },
-        "title": "Prepare governance process"
-      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",
@@ -735,20 +691,6 @@
           "tryAgain": "Try again"
         },
         "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
-      },
-      "publishProcessDialog": {
-        "button": {
-          "submit": "Finalize installation",
-          "success": "View proposal"
-        },
-        "description": "To finalize your process you have to confirm the onchain transaction with your wallet.",
-        "step": {
-          "PIN_METADATA": {
-            "errorLabel": "Unable to pin data on IPFS",
-            "label": "Pin data on IPFS"
-          }
-        },
-        "title": "Finalize governance process"
       },
       "publishProposalDialog": {
         "button": {
