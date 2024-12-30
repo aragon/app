@@ -1,13 +1,15 @@
 'use client';
 
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import type { ICreateProcessInfoDialogParams } from '@/modules/createDao/dialogs/createProcessInfoDialog';
 import { DaoGovernanceInfo } from '@/modules/settings/components/daoGovernanceInfo';
 import { DaoMembersInfo } from '@/modules/settings/components/daoMembersInfo';
 import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Button, Card, Dialog, Heading, IllustrationObject } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { Card } from '@aragon/gov-ui-kit';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
 
@@ -20,14 +22,19 @@ export interface IDaoSettingsPageClientProps {
 
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (props) => {
     const { daoId } = props;
-    const [dialogOpen, setDialogOpen] = useState(false);
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
+
+    const handleCreateProcess = () => {
+        const params: ICreateProcessInfoDialogParams = { daoId };
+        open(CreateDaoDialog.CREATE_PROCESS_INFO, { params });
+    };
 
     if (!dao) {
         return null;
@@ -37,7 +44,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
         <>
             <Page.Main
                 title={t('app.settings.daoSettingsPage.main.title')}
-                action={{ label: 'Process', onClick: () => setDialogOpen(true) }}
+                action={{ label: 'Process', onClick: handleCreateProcess }}
             >
                 <Page.Section title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />
@@ -62,57 +69,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                     <DaoVersionInfo dao={dao} />
                 </Page.Section>
             </Page.Aside>
-            <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
-                <Dialog.Content className="flex flex-col gap-y-6 py-10">
-                    <div className="px-4">
-                        <div className="flex flex-col gap-y-3">
-                            <Heading size="h3">Create governance process</Heading>
-                            <p className="text-base font-normal leading-normal text-neutral-500">
-                                Define any kind of governance process to help your onchain organisation making great
-                                decisions and only allow to execute what it’s right for certain decisions 😉
-                            </p>
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-x-6 py-4">
-                                <IllustrationObject
-                                    className="size-16 rounded-full border border-neutral-100"
-                                    object="LABELS"
-                                />
-                                <p className="grow py-4 font-normal leading-normal text-neutral-800">
-                                    Describe governance process
-                                </p>
-                                <p className="text-base font-normal leading-normal text-neutral-500">Step 1</p>
-                            </div>
-                            <div className="flex items-center gap-x-6 py-4">
-                                <IllustrationObject
-                                    className="size-16 rounded-full border border-neutral-100"
-                                    object="USERS"
-                                />
-                                <p className="grow py-4 font-normal leading-normal text-neutral-800">
-                                    Setup governance process
-                                </p>
-                                <p className="text-base font-normal leading-normal text-neutral-500">Step 2</p>
-                            </div>
-                            <div className="flex items-center gap-x-6 py-4">
-                                <IllustrationObject
-                                    className="size-16 rounded-full border border-neutral-100"
-                                    object="SETTINGS"
-                                />
-                                <p className="grow py-4 font-normal leading-normal text-neutral-800">
-                                    Manage permissions
-                                </p>
-                                <p className="text-base font-normal leading-normal text-neutral-500">Step 3</p>
-                            </div>
-                        </div>
-                        <div className="flex gap-x-4 pt-6">
-                            <Button href={`/dao/${daoId}/create/process`}>Create new</Button>
-                            <Button variant="tertiary" onClick={() => setDialogOpen(false)}>
-                                Cancel
-                            </Button>
-                        </div>
-                    </div>
-                </Dialog.Content>
-            </Dialog.Root>
         </>
     );
 };

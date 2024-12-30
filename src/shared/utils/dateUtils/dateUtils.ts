@@ -50,14 +50,6 @@ class DateUtils {
         return isoDate == null ? null : { date: isoDate, time: isoTime };
     };
 
-    durationToSeconds = (duration: IDateDuration) => {
-        const { days, hours, minutes } = duration;
-        const durationMillis = Duration.fromObject({ days, hours, minutes }).toMillis();
-        const durationSeconds = BigInt(Math.round(durationMillis / 1000));
-
-        return durationSeconds;
-    };
-
     validateDuration = ({ value, minDuration }: IValidateDurationParams) =>
         minDuration ? Duration.fromObject(value) >= Duration.fromObject(minDuration) : true;
 
