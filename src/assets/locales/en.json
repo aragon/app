@@ -183,6 +183,13 @@
           "description": "There was an error loading the DAOs. Please try again later.",
           "heading": "Error loading DAOs"
         }
+      },
+      "exploreDaosPage": {
+        "createDao": "DAO",
+        "filter": {
+          "all": "All DAOs",
+          "member": "Member"
+        }
       }
     },
     "finance": {
