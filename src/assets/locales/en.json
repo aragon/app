@@ -124,6 +124,9 @@
         },
         "submitLabel": "Publish DAO"
       },
+      "layoutWizardCreateProcess": {
+        "name": "Create process"
+      },
       "publishDaoDialog": {
         "button": {
           "submit": "Create DAO",
