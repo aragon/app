@@ -28,13 +28,14 @@ export interface IValidateFixedTimeParams {
 }
 
 class DateUtils {
-    secondsToDaysHoursMinutes = (totalSeconds: number) => {
-        const days = Math.floor(totalSeconds / (24 * 60 * 60));
-        const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
-        const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    secondsToDuration = (seconds: number) => {
+        const duration = Duration.fromObject({ seconds }).shiftTo('days', 'hours', 'minutes');
+        const { days, hours, minutes } = duration;
 
         return { days, hours, minutes };
     };
+
+    durationToSeconds = (duration: IDateDuration) => Duration.fromObject(duration).as('seconds');
 
     parseFixedDate = ({ date, time }: IDateFixed): DateTime => {
         const { hour, minute } = DateTime.fromISO(time);
@@ -67,6 +68,9 @@ class DateUtils {
 
         return isMinTimeValid && isMinDurationValid;
     };
+
+    compareDuration = (first?: IDateDuration, second?: IDateDuration) =>
+        Duration.fromObject(first ?? {}).equals(Duration.fromObject(second ?? {}));
 }
 
 export const dateUtils = new DateUtils();

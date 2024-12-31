@@ -28,7 +28,7 @@ jest.mock('@/shared/components/forms/advancedDateInput', () => ({
 }));
 
 describe('<TokenCreateProposalSettingsForm /> component', () => {
-    const secondsToDaysHoursMinutesSpy = jest.spyOn(dateUtils, 'secondsToDaysHoursMinutes');
+    const secondsToDaysHoursMinutesSpy = jest.spyOn(dateUtils, 'secondsToDuration');
     const useWatchSpy = jest.spyOn(ReactHookForm, 'useWatch');
 
     beforeEach(() => {

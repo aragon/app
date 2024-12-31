@@ -104,21 +104,4 @@ describe('createProposal utils', () => {
             expect(createProposalUtils['dateToSeconds'](date)).toEqual(1464167314);
         });
     });
-
-    describe('compareTimeDuration', () => {
-        it('returns true when time durations are equal', () => {
-            const first = { days: 4, hours: 0, minutes: 2 };
-            const second = { days: 4, hours: 0, minutes: 2 };
-            expect(createProposalUtils['compareTimeDuration'](first, second)).toBeTruthy();
-        });
-
-        it('returns false when time durations are not equal', () => {
-            const compare = createProposalUtils['compareTimeDuration'];
-            expect(compare({ days: 1, hours: 10, minutes: 3 }, { days: 1, hours: 10, minutes: 2 })).toBeFalsy();
-            expect(compare({ days: 1, hours: 10, minutes: 3 }, { days: 1, hours: 0, minutes: 3 })).toBeFalsy();
-            expect(compare({ days: 1, hours: 10, minutes: 3 }, { days: 10, hours: 10, minutes: 3 })).toBeFalsy();
-            expect(compare({ days: 1, hours: 10, minutes: 3 }, undefined)).toBeFalsy();
-            expect(compare(undefined, { days: 1, hours: 10, minutes: 3 })).toBeFalsy();
-        });
-    });
 });

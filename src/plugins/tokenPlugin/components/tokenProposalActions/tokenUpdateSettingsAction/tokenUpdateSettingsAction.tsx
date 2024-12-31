@@ -8,7 +8,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { AlertCard, Card, InputContainer, Switch, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { Duration } from 'luxon';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, parseUnits } from 'viem';
@@ -91,7 +90,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     When the user does not change the minDuration it will already be in seconds. However once this value is changed
     it will be an object. Therefore we need to check if the value is an object and convert it to seconds if needed */
     const minDurationInSeconds =
-        typeof minDuration === 'object' ? Duration.fromObject(minDuration).as('seconds') : minDuration;
+        typeof minDuration === 'object' ? dateUtils.durationToSeconds(minDuration) : minDuration;
 
     const minDurationAlert = {
         message: t('app.plugins.token.tokenUpdateSettingsAction.minDuration.alert.message'),
@@ -125,7 +124,7 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
 
         const newData = encodeFunctionData({ abi: [updateTokenSettingsAbi], args: [updateSettingsParams] });
         const paramValues = Object.values(updateSettingsParams).map((value) => value.toString());
-        const minDuration = dateUtils.secondsToDaysHoursMinutes(minDurationInSeconds);
+        const minDuration = dateUtils.secondsToDuration(minDurationInSeconds);
 
         setValue(`${actionFieldName}.data`, newData);
         setValue(`${actionFieldName}.inputData.parameters[0].value`, paramValues);

@@ -2,32 +2,34 @@ import { DateTime } from 'luxon';
 import { dateUtils } from './dateUtils';
 
 describe('dateUtils', () => {
-    describe('secondsToDaysHoursMinutes', () => {
-        test('converts 0 seconds correctly', () => {
-            expect(dateUtils.secondsToDaysHoursMinutes(0)).toEqual({ days: 0, hours: 0, minutes: 0 });
+    describe('secondsToDuration', () => {
+        it.each([
+            { seconds: 0, result: {} },
+            { seconds: 60, result: { minutes: 1 } },
+            { seconds: 3600, result: { hours: 1 } },
+            { seconds: 86400, result: { days: 1 } },
+            { seconds: 2 * 86400 + 3 * 3600 + 45 * 60, result: { days: 2, hours: 3, minutes: 45 } },
+            { seconds: 100 * 86400 + 23 * 3600 + 59 * 60, result: { days: 100, hours: 23, minutes: 59 } },
+        ])('correctly converts $seconds seconds', ({ seconds, result }) => {
+            const expectedResult = { days: 0, hours: 0, minutes: 0, ...result };
+            expect(dateUtils.secondsToDuration(seconds)).toEqual(expectedResult);
         });
+    });
 
-        test('converts 60 seconds to 1 minute', () => {
-            expect(dateUtils.secondsToDaysHoursMinutes(60)).toEqual({ days: 0, hours: 0, minutes: 1 });
-        });
-
-        test('converts 3600 seconds to 1 hour', () => {
-            expect(dateUtils.secondsToDaysHoursMinutes(3600)).toEqual({ days: 0, hours: 1, minutes: 0 });
-        });
-
-        test('converts 86400 seconds to 1 day', () => {
-            expect(dateUtils.secondsToDaysHoursMinutes(86400)).toEqual({ days: 1, hours: 0, minutes: 0 });
-        });
-
-        test('converts a complex time correctly', () => {
-            const seconds = 2 * 86400 + 3 * 3600 + 45 * 60;
-            expect(dateUtils.secondsToDaysHoursMinutes(seconds)).toEqual({ days: 2, hours: 3, minutes: 45 });
-        });
-
-        test('handles large numbers of seconds', () => {
-            const seconds = 100 * 86400 + 23 * 3600 + 59 * 60;
-            expect(dateUtils.secondsToDaysHoursMinutes(seconds)).toEqual({ days: 100, hours: 23, minutes: 59 });
-        });
+    describe('durationToSeconds', () => {
+        it.each([
+            { days: 0, hours: 0, minutes: 0, result: 0 },
+            { days: 1, hours: 0, minutes: 0, result: 86400 },
+            { days: 0, hours: 1, minutes: 0, result: 3600 },
+            { days: 0, hours: 0, minutes: 1, result: 60 },
+            { days: 10, hours: 2, minutes: 55, result: 874500 },
+        ])(
+            'correctly converts $days days, $hours hours, $minutes minutes to $result seconds',
+            ({ days, hours, minutes, result }) => {
+                const duration = { days, hours, minutes };
+                expect(dateUtils.durationToSeconds(duration)).toEqual(result);
+            },
+        );
     });
 
     describe('parseFixedDate', () => {
@@ -122,6 +124,24 @@ describe('dateUtils', () => {
                 minDuration: { days: 0, hours: 2, minutes: 0 },
             });
             expect(result).toBe(false);
+        });
+    });
+
+    describe('compareDuration', () => {
+        it('returns true when time durations are equal', () => {
+            const first = { days: 4, hours: 0, minutes: 2 };
+            const second = { days: 4, hours: 0, minutes: 2 };
+            expect(dateUtils.compareDuration(first, second)).toBeTruthy();
+        });
+
+        it.each([
+            { durationOne: { days: 1, hours: 10, minutes: 3 }, durationTwo: { days: 1, hours: 10, minutes: 2 } },
+            { durationOne: { days: 1, hours: 10, minutes: 3 }, durationTwo: { days: 1, hours: 0, minutes: 3 } },
+            { durationOne: { days: 1, hours: 10, minutes: 3 }, durationTwo: { days: 10, hours: 10, minutes: 3 } },
+            { durationOne: { days: 1, hours: 10, minutes: 3 }, durationTwo: undefined },
+            { durationOne: undefined, durationTwo: { days: 1, hours: 10, minutes: 3 } },
+        ])('returns false when time durations are not equal', ({ durationOne, durationTwo }) => {
+            expect(dateUtils.compareDuration(durationOne, durationTwo)).toBeFalsy();
         });
     });
 });

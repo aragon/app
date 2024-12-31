@@ -1,8 +1,8 @@
 import { type IDaoSettingTermAndDefinition } from '@/modules/settings/types';
 import { DaoTokenVotingMode, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type TranslationFunction } from '@/shared/components/translationsProvider';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { Duration } from 'luxon';
 import { formatUnits } from 'viem';
 
 export interface IParseTokenSettingsParams {
@@ -60,7 +60,7 @@ class TokenSettingsUtils {
             format: NumberFormat.TOKEN_AMOUNT_SHORT,
         });
 
-        const duration = Duration.fromObject({ seconds: minDuration }).shiftTo('days', 'hours', 'minutes');
+        const duration = dateUtils.secondsToDuration(minDuration);
         const formattedDuration = t('app.plugins.token.tokenGovernanceSettings.duration', {
             days: duration.days,
             hours: duration.hours,
