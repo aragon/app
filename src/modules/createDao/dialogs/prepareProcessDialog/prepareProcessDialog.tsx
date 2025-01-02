@@ -136,6 +136,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
+            network={dao?.network}
         />
     );
 };
