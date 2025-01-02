@@ -27,8 +27,8 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
     return (
         <Page.Main fullWidth={true}>
             <Wizard.Container
-                finalStep={t('app.governance.createProcessPage.finalStep')}
-                submitLabel={t('app.governance.createProcessPage.submitLabel')}
+                finalStep={t('app.createDao.createProcessPage.finalStep')}
+                submitLabel={t('app.createDao.createProcessPage.submitLabel')}
                 initialSteps={processedSteps}
             >
                 <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
