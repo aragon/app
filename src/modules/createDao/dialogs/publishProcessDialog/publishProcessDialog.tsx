@@ -119,6 +119,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
             stepper={stepper}
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
+            network={dao?.network}
         />
     );
 };

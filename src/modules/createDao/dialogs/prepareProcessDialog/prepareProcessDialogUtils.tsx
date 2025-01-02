@@ -122,7 +122,7 @@ class PrepareProcessDialogUtils {
     };
 
     prepareSppMetadata = (values: ICreateProcessFormData) => {
-        const { name, description, resources: links, key: processKey } = values;
+        const { name, description, resources: links, processKey } = values;
         const stageNames = values.stages.map((stage) => stage.name);
 
         return { name, description, links, processKey, stageNames };

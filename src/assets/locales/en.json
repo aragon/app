@@ -127,22 +127,26 @@
       "createProcessForm": {
         "metadata": {
           "description": {
-            "helpText": "Summarize your governance process and its role in your organization in 2-3 sentences. This summary will be shown on the Proposals page, transparently describing how proposals of this type are governed.",
+            "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the {{type}} and will help members to understand.",
             "label": "Summary",
             "placeholder": "Type a summary"
           },
-          "key": {
-            "helpText": "Define a unique and recognizable prefix for this governance process so that each proposal has a unique ID. For example, CORE would be identifiable as CORE-1, CORE-2, etc.",
-            "label": "Key",
-            "placeholder": "Type an key"
-          },
           "name": {
-            "helpText": "Give your governance process a short and easily identifiable name. Examples: Protocol Upgrades, Grants, Metagovernance, etc.",
+            "helpText": "Give your {{type}} a name, so member can differentiate it.",
             "label": "Name",
             "placeholder": "Type a name"
           },
+          "processKey": {
+            "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
+            "label": "Key",
+            "placeholder": "Type an key"
+          },
           "resources": {
-            "helpText": "You can add additional external resources that helps give extra context about this type of proposal and its governance process."
+            "helpText": "Add any additional external resources that help members understand the {{type}}."
+          },
+          "type": {
+            "plugin": "plugin",
+            "process": "governance process"
           }
         },
         "permissions": {
