@@ -15,7 +15,7 @@ describe('<LayoutWizardCreateDao /> component', () => {
         return <LayoutWizardCreateDao {...completeProps} />;
     };
 
-    it('renders and passes the create-proposal wizard name prop to children', () => {
+    it('renders and passes the create-dao wizard name prop to children', () => {
         render(createTestComponent());
         expect(screen.getByTestId('layout-wizard-mock')).toBeInTheDocument();
         expect(screen.getByText(/layoutWizardCreateDao.name/)).toBeInTheDocument();

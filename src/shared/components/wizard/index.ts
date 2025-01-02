@@ -7,4 +7,5 @@ export const Wizard = {
 };
 
 export * from './wizardContainer';
+export * from './wizardProvider';
 export * from './wizardStep';

@@ -124,6 +124,30 @@
         },
         "submitLabel": "Publish DAO"
       },
+      "createProcessPage": {
+        "finalStep": "Publish process",
+        "steps": {
+          "METADATA": {
+            "description": "The information you provide on this page will be displayed alongside proposals of this type. It is purely informational, used to help voters understand the governance process and make a more informed decision.",
+            "name": "Process description",
+            "title": "Describe new proposal type"
+          },
+          "PERMISSIONS": {
+            "description": "Define who is eligible to create proposals of this type.",
+            "name": "Proposal creation rules",
+            "title": "Set proposal creation rules"
+          },
+          "STAGES": {
+            "description": "Design the process for deciding whether or not a proposal of this type passes and its actions executed. The proposals can go through any number of sequential stages. Within each stage, governing bodies can either approve or veto the proposal.",
+            "name": "Governance design",
+            "title": "Design the governance process"
+          }
+        },
+        "submitLabel": "Publish process"
+      },
+      "layoutWizardCreateProcess": {
+        "name": "Create process"
+      },
       "publishDaoDialog": {
         "button": {
           "submit": "Create DAO",

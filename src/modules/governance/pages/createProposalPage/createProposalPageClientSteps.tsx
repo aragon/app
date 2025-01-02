@@ -1,8 +1,8 @@
 'use client';
 
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IWizardStepperStep } from '@/shared/components/wizard';
 import { Wizard } from '@/shared/components/wizard';
-import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { useWatch } from 'react-hook-form';
