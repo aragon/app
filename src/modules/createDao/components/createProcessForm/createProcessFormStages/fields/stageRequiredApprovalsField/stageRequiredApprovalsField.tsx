@@ -29,7 +29,7 @@ export const StageRequiredApprovalsField: React.FC<IStageRequiredApprovalsFieldP
         fieldPrefix,
     });
 
-    const approvalsLabelNamespace = 'app.createDao.createProcessForm.stage.bodies.threshold';
+    const approvalsLabelNamespace = 'app.createDao.createProcessForm.stages.bodies.threshold';
     const approvalsLabelContext = isOptimisticStage ? 'vetoing' : 'voting';
     const requiredApprovalsLabel = t(`${approvalsLabelNamespace}.label.${approvalsLabelContext}`);
     const requiredApprovalsHelpText = t(`${approvalsLabelNamespace}.helpText.${approvalsLabelContext}`);
@@ -47,7 +47,7 @@ export const StageRequiredApprovalsField: React.FC<IStageRequiredApprovalsFieldP
                     <Progress value={(requiredApprovalsField.value / stageBodiesCount) * 100} />
                     <p className="text-right">
                         {requiredApprovalsField.value} of {stageBodiesCount}{' '}
-                        {t('app.createDao.createProcessForm.stage.bodies.threshold.bodies')}
+                        {t('app.createDao.createProcessForm.stages.bodies.threshold.bodies')}
                     </p>
                 </div>
             </div>

@@ -7,7 +7,11 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex, keccak256, toBytes, zeroHash } from 'viem';
 import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../../governance/types';
-import { type ICreateProcessFormData, ProposalCreationMode } from '../../components/createProcessForm';
+import {
+    type ICreateProcessFormData,
+    ProcessStageType,
+    ProposalCreationMode,
+} from '../../components/createProcessForm';
 import { type IPluginSetupData, prepareProcessDialogUtils } from '../prepareProcessDialog/prepareProcessDialogUtils';
 import { daoAbi } from './abi/daoAbi';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
@@ -225,7 +229,7 @@ class PublishProcessDialogUtils {
         const [sppAddress, ...bodyAddresses] = pluginAddresses;
 
         const processedStages = stages.map((stage) => {
-            const isTimelockStage = stage.type === 'timelock';
+            const isTimelockStage = stage.type === ProcessStageType.TIMELOCK;
 
             const bodies = stage.bodies.map(() => {
                 const pluginAddress = bodyAddresses.shift()!;
@@ -234,7 +238,8 @@ class PublishProcessDialogUtils {
                     addr: pluginAddress,
                     isManual: false,
                     tryAdvance: true,
-                    resultType: stage.type === 'normal' ? SppProposalType.APPROVAL : SppProposalType.VETO,
+                    resultType:
+                        stage.type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO,
                 };
             });
 
@@ -252,8 +257,8 @@ class PublishProcessDialogUtils {
                 minAdvance: stage.earlyStageAdvance ? BigInt(0) : votingPeriod,
                 maxAdvance: maxAdvance ?? this.defaultMaxAdvance,
                 voteDuration,
-                approvalThreshold: stage.type === 'normal' ? stage.requiredApprovals : 0,
-                vetoThreshold: stage.type === 'optimistic' ? stage.requiredApprovals : 0,
+                approvalThreshold: stage.type === ProcessStageType.NORMAL ? stage.requiredApprovals : 0,
+                vetoThreshold: stage.type === ProcessStageType.OPTIMISTIC ? stage.requiredApprovals : 0,
                 cancelable: false,
                 editable: false,
             };

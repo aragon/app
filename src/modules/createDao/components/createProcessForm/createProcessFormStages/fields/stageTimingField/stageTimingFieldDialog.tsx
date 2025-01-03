@@ -2,7 +2,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/gov-ui-kit';
 import { useFormContext, useWatch } from 'react-hook-form';
-import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
+import { ProcessStageType, type ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 
 export interface IStageTimingFieldDialogProps {
     /**
@@ -29,16 +29,16 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
     const { t } = useTranslations();
     const { setValue } = useFormContext();
 
-    const isOptimisticStage = stageType === 'optimistic';
-    const isTimelockStage = stageType === 'timelock';
+    const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
+    const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
     const periodLabel = isTimelockStage
-        ? t('app.createDao.createProcessForm.stage.timing.dialog.timelockPeriod.label')
-        : t('app.createDao.createProcessForm.stage.timing.dialog.votingPeriod.label');
+        ? t('app.createDao.createProcessForm.stages.timing.dialog.timelockPeriod.label')
+        : t('app.createDao.createProcessForm.stages.timing.dialog.votingPeriod.label');
 
     const periodHelpText = isTimelockStage
-        ? t('app.createDao.createProcessForm.stage.timing.dialog.timelockPeriod.helpText')
-        : t('app.createDao.createProcessForm.stage.timing.dialog.votingPeriod.helpText');
+        ? t('app.createDao.createProcessForm.stages.timing.dialog.timelockPeriod.helpText')
+        : t('app.createDao.createProcessForm.stages.timing.dialog.votingPeriod.helpText');
 
     const votingPeriodField = useFormField<ICreateProcessFormStage, 'votingPeriod'>('votingPeriod', {
         label: periodLabel,
@@ -46,7 +46,7 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
     });
 
     const earlyStageField = useFormField<ICreateProcessFormStage, 'earlyStageAdvance'>('earlyStageAdvance', {
-        label: t('app.createDao.createProcessForm.stage.timing.dialog.earlyAdvance.label'),
+        label: t('app.createDao.createProcessForm.stages.timing.dialog.earlyAdvance.label'),
         fieldPrefix: stageFieldName,
     });
 
@@ -71,7 +71,7 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
             open={isTimingDialogOpen}
             onOpenChange={() => setIsTimingDialogOpen(false)}
         >
-            <Dialog.Header title={t('app.createDao.createProcessForm.stage.timing.dialog.title')} />
+            <Dialog.Header title={t('app.createDao.createProcessForm.stages.timing.dialog.title')} />
             <Dialog.Content className="flex flex-col gap-6 py-4">
                 <InputContainer
                     id={votingPeriodField.name}
@@ -118,16 +118,16 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                         />
                     </div>
                     {!isTimelockStage && (
-                        <AlertInline message={t('app.createDao.createProcessForm.stage.timing.dialog.helpInfo')} />
+                        <AlertInline message={t('app.createDao.createProcessForm.stages.timing.dialog.helpInfo')} />
                     )}
                 </div>
                 {!isOptimisticStage && !isTimelockStage && (
                     <Switch
-                        helpText={t('app.createDao.createProcessForm.stage.timing.dialog.earlyAdvance.helpText')}
+                        helpText={t('app.createDao.createProcessForm.stages.timing.dialog.earlyAdvance.helpText')}
                         inlineLabel={
                             earlyStageField.value
-                                ? t('app.createDao.createProcessForm.stage.timing.dialog.yes')
-                                : t('app.createDao.createProcessForm.stage.timing.dialog.no')
+                                ? t('app.createDao.createProcessForm.stages.timing.dialog.yes')
+                                : t('app.createDao.createProcessForm.stages.timing.dialog.no')
                         }
                         onCheckedChanged={(checked) => setValue(earlyStageField.name, checked)}
                         checked={earlyStageField.value}
@@ -135,10 +135,10 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                     />
                 )}
                 <Switch
-                    label={t('app.createDao.createProcessForm.stage.timing.dialog.expiration.label')}
-                    helpText={t('app.createDao.createProcessForm.stage.timing.dialog.expiration.helpText')}
+                    label={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.label')}
+                    helpText={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.helpText')}
                     inlineLabel={t(
-                        `app.createDao.createProcessForm.stage.timing.dialog.${stageExpiration ? 'yes' : 'no'}`,
+                        `app.createDao.createProcessForm.stages.timing.dialog.${stageExpiration ? 'yes' : 'no'}`,
                     )}
                     onCheckedChanged={handleExpirationCheckChange}
                     checked={stageExpiration != null}
@@ -181,7 +181,7 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                                 onChange={(e) => setValue(stageExpirationName, { ...stageExpiration, days: Number(e) })}
                             />
                         </div>
-                        <AlertInline message={t('app.createDao.createProcessForm.stage.timing.dialog.helpInfo')} />
+                        <AlertInline message={t('app.createDao.createProcessForm.stages.timing.dialog.helpInfo')} />
                     </div>
                 )}
             </Dialog.Content>
