@@ -107,10 +107,10 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                 id={bodyFieldName}
                 label={
                     isOptimisticStage
-                        ? t('app.createDao.createProcessForm.stage.bodies.label.vetoing')
-                        : t('app.createDao.createProcessForm.stage.bodies.label.voting')
+                        ? t('app.createDao.createProcessForm.stages.bodies.label.vetoing')
+                        : t('app.createDao.createProcessForm.stages.bodies.label.voting')
                 }
-                helpText={t('app.createDao.createProcessForm.stage.bodies.helpText')}
+                helpText={t('app.createDao.createProcessForm.stages.bodies.helpText')}
                 useCustomWrapper={true}
                 alert={bodyFieldAlert}
             >
@@ -128,29 +128,29 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                 <>
                                                     <DefinitionList.Item
                                                         term={t(
-                                                            'app.createDao.createProcessForm.stage.bodies.summary.tokenVoting.token',
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.token',
                                                         )}
                                                     >
                                                         {field.tokenName} (${field.tokenSymbol})
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
-                                                            'app.createDao.createProcessForm.stage.bodies.summary.tokenVoting.distribution',
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.distribution',
                                                         )}
                                                     >
                                                         {field.members.length}{' '}
                                                         {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                                                         {(field.members.length ?? 0) > 1
                                                             ? t(
-                                                                  'app.createDao.createProcessForm.stage.bodies.summary.tokenVoting.plural',
+                                                                  'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.plural',
                                                               )
                                                             : t(
-                                                                  'app.createDao.createProcessForm.stage.bodies.summary.tokenVoting.single',
+                                                                  'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.single',
                                                               )}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
-                                                            'app.createDao.createProcessForm.stage.bodies.summary.tokenVoting.supply',
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.supply',
                                                         )}
                                                     >
                                                         {formatterUtils.formatNumber(
@@ -166,31 +166,31 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
-                                                            'app.createDao.createProcessForm.stage.bodies.summary.tokenVoting.support',
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.support',
                                                         )}
                                                     >
                                                         {`> ${field.supportThreshold.toString()}%`}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
-                                                            'app.createDao.createProcessForm.stage.bodies.summary.tokenVoting.minimum',
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.minimum',
                                                         )}
                                                     >
                                                         {`≥ ${field.minimumParticipation.toString()}%`}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
-                                                            'app.createDao.createProcessForm.stage.bodies.summary.tokenVoting.voteChange',
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.voteChange',
                                                         )}
                                                     >
                                                         <Tag
                                                             label={
                                                                 field.voteChange
                                                                     ? t(
-                                                                          'app.createDao.createProcessForm.stage.bodies.summary.no',
+                                                                          'app.createDao.createProcessForm.stages.bodies.summary.no',
                                                                       )
                                                                     : t(
-                                                                          'app.createDao.createProcessForm.stage.bodies.summary.no',
+                                                                          'app.createDao.createProcessForm.stages.bodies.summary.no',
                                                                       )
                                                             }
                                                             variant={field.voteChange ? 'primary' : 'neutral'}
@@ -204,22 +204,22 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                 <>
                                                     <DefinitionList.Item
                                                         term={t(
-                                                            'app.createDao.createProcessForm.stage.bodies.summary.multisig.members',
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.multisig.members',
                                                         )}
                                                     >
                                                         {field.members.length}{' '}
                                                         {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                                                         {(field.members.length ?? 0) > 1
                                                             ? t(
-                                                                  'app.createDao.createProcessForm.stage.bodies.summary.multisig.plural',
+                                                                  'app.createDao.createProcessForm.stages.bodies.summary.multisig.plural',
                                                               )
                                                             : t(
-                                                                  'app.createDao.createProcessForm.stage.bodies.summary.multisig.single',
+                                                                  'app.createDao.createProcessForm.stages.bodies.summary.multisig.single',
                                                               )}
                                                     </DefinitionList.Item>
                                                     <DefinitionList.Item
                                                         term={t(
-                                                            'app.createDao.createProcessForm.stage.bodies.summary.multisig.threshold',
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.multisig.threshold',
                                                         )}
                                                     >
                                                         {field.multisigThreshold} of {field.members.length}
@@ -234,7 +234,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                 size="md"
                                                 onClick={() => handleEditBody(index)}
                                             >
-                                                {t('app.createDao.createProcessForm.stage.bodies.summary.edit')}
+                                                {t('app.createDao.createProcessForm.stages.bodies.summary.edit')}
                                             </Button>
                                             <Dropdown.Container
                                                 constrainContentWidth={false}
@@ -246,7 +246,9 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                                         size="md"
                                                         iconRight={IconType.DOTS_VERTICAL}
                                                     >
-                                                        {t('app.createDao.createProcessForm.stage.bodies.summary.more')}
+                                                        {t(
+                                                            'app.createDao.createProcessForm.stages.bodies.summary.more',
+                                                        )}
                                                     </Button>
                                                 }
                                             >
@@ -267,7 +269,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                         iconLeft={IconType.PLUS}
                         onClick={handleAddBody}
                     >
-                        {t('app.createDao.createProcessForm.stage.bodies.add')}
+                        {t('app.createDao.createProcessForm.stages.bodies.add')}
                     </Button>
                     {bodyDialogState.isOpen && (
                         <StageBodiesFieldDialog

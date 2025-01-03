@@ -7,6 +7,12 @@ export enum ProposalCreationMode {
     ANY_WALLET = 'ANY_WALLET',
 }
 
+export enum ProcessStageType {
+    NORMAL = 'NORMAL',
+    OPTIMISTIC = 'OPTIMISTIC',
+    TIMELOCK = 'TIMELOCK',
+}
+
 export interface ICreateProcessFormData {
     /**
      * Name of the process.
@@ -42,7 +48,7 @@ export interface ICreateProcessFormStage {
     /**
      * Type of the stage.
      */
-    type: 'normal' | 'optimistic' | 'timelock';
+    type: ProcessStageType;
     /**
      * The period of time the stage is open for voting.
      */

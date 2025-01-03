@@ -167,7 +167,7 @@
             "placeholder": "≥ 1"
           }
         },
-        "stage": {
+        "stages": {
           "add": "Add stage",
           "bodies": {
             "add": "Add",
@@ -176,8 +176,6 @@
               "vetoing": "Vetoing bodies",
               "voting": "Voting bodies"
             },
-            "more": "More",
-            "remove": "Remove stage",
             "summary": {
               "edit": "Edit",
               "more": "More",
@@ -212,11 +210,13 @@
               }
             }
           },
+          "more": "More",
           "name": {
             "helpText": "Give the stage a name that describes its role in the process. Examples: Community Review, Guardian Veto, Founder Signoff, etc.",
             "label": "Name",
             "placeholder": "Type a name"
           },
+          "remove": "Remove stage",
           "timing": {
             "dialog": {
               "earlyAdvance": {
@@ -252,7 +252,7 @@
           },
           "type": {
             "helpText": "Specify the role that governance plays. In a normal stage, a proposal will only pass if it approved. However, an optimistic stage reverses it this - it will pass unless vetoed.",
-            "label": "What kind of stage is this?",
+            "label": "Type",
             "normal": {
               "description": "Proposals pass this stage only if approved.",
               "label": "Normal"
