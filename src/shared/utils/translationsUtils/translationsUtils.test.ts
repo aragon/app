@@ -20,6 +20,16 @@ describe('translations utils', () => {
             );
         });
 
+        it('replaces all occurrences of the given value on the translation string', () => {
+            const key = 'app.test';
+            const string = 'First {{value}} and second {{value}}';
+            const values = { value: 'my-value' };
+            const translations = { app: { test: string } } as unknown as Translations;
+            expect(translationUtils.t(translations)(key, { ...values })).toEqual(
+                `First ${values.value} and second ${values.value}`,
+            );
+        });
+
         it('returns the translation as is when values to replace are not found', () => {
             const key = 'app.key';
             const string = 'Not found values {{first}} and {{second}}';

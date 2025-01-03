@@ -28,7 +28,8 @@ class TranslationsUtils {
             const valueKeys = Object.keys(options);
 
             return valueKeys.reduce<string>(
-                (acc: string, current: string) => acc.replace(new RegExp(`{{${current}}}`), options[current] as string),
+                (acc: string, current: string) =>
+                    acc.replace(new RegExp(`{{${current}}}`, 'g'), options[current] as string),
                 value,
             );
         };

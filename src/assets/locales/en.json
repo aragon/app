@@ -124,6 +124,32 @@
         },
         "submitLabel": "Publish DAO"
       },
+      "createProcessForm": {
+        "metadata": {
+          "description": {
+            "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the {{type}} and will help members to understand.",
+            "label": "Summary",
+            "placeholder": "Type a summary"
+          },
+          "name": {
+            "helpText": "Give your {{type}} a name, so member can differentiate it.",
+            "label": "Name",
+            "placeholder": "Type a name"
+          },
+          "processKey": {
+            "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
+            "label": "Key",
+            "placeholder": "Type an key"
+          },
+          "resources": {
+            "helpText": "Add any additional external resources that help members understand the {{type}}."
+          },
+          "type": {
+            "plugin": "plugin",
+            "process": "governance process"
+          }
+        }
+      },
       "createProcessPage": {
         "finalStep": "Publish process",
         "steps": {
@@ -321,8 +347,8 @@
         },
         "metadata": {
           "actions": {
-            "helpText": "If enabled, this proposal will have binding on-chain actions, which will be executed as soon as the governance parameters are met.",
-            "label": "Binding onchain actions",
+            "helpText": "You may add actions to this proposal, which are onchain transactions that can only be executed if the proposal passes.",
+            "label": "Yes",
             "title": "Would you like to add actions to this proposal?"
           },
           "body": {
@@ -552,28 +578,6 @@
         },
         "description": "Select the proposal type that you'd like to create.",
         "title": "Create proposal"
-      },
-      "updatePluginMetadataAction": {
-        "nameField": {
-          "helpText": "Give your {{type}} a name, so member can differentiate it.",
-          "label": "Name",
-          "placeholder": "Type a name"
-        },
-        "plugin": "plugin",
-        "process": "governance process",
-        "processKeyField": {
-          "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
-          "label": "Key",
-          "placeholder": "Type a key"
-        },
-        "resourcesField": {
-          "helpText": "Add any additional external resources that help members understand the {{type}}."
-        },
-        "summaryField": {
-          "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the governance process and will help members to understand.",
-          "label": "Summary",
-          "placeholder": "Type a summary"
-        }
       },
       "verifySmartContractDialog": {
         "action": {
