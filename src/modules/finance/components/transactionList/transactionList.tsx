@@ -32,6 +32,8 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, transactionList } =
         useTransactionListData(initialParams);
 
+    console.log('transactionList', transactionList[0].token.amountUsd);
+
     return (
         <DataListRoot
             entityLabel={t('app.finance.transactionList.entity')}
@@ -59,7 +61,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                         status={TransactionStatus.SUCCESS}
                         tokenSymbol={transaction.token.symbol}
                         tokenAmount={transaction.value}
-                        tokenPrice={transaction.token.priceUsd}
+                        tokenPrice={transaction.amountUsd}
                     />
                 ))}
             </DataListContainer>
