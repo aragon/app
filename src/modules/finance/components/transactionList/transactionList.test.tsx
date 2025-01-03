@@ -52,8 +52,9 @@ describe('<TransactionList /> component', () => {
 
     it('renders the correct token amount in usd', () => {
         const transaction = generateTransaction({
-            token: generateToken({ symbol: 'AAA', priceUsd: '12.5' }),
+            token: generateToken({ symbol: 'AAA' }),
             value: '150',
+            amountUsd: '12.5', // TODO: Update the expectation to this value after GovKit is updated
         });
 
         useTransactionListDataSpy.mockReturnValue({
