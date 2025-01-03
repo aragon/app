@@ -20,7 +20,6 @@ import type {
     ICreateProcessFormData,
     ITokenVotingMember,
 } from '../../../createProcessFormDefinitions';
-import { StageRequiredApprovalsField } from '../stageRequiredApprovalsField';
 import { StageBodiesFieldDialog } from './stageBodiesFieldDialog';
 
 export interface IStageBodiesFieldProps {
@@ -282,13 +281,6 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                     )}
                 </div>
             </InputContainer>
-            {controlledBodyField.length > 0 && (
-                <StageRequiredApprovalsField
-                    fieldPrefix={stageFieldName}
-                    stageBodiesCount={controlledBodyField.length}
-                    isOptimisticStage={isOptimisticStage}
-                />
-            )}
         </>
     );
 };

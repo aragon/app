@@ -268,17 +268,19 @@
           "type": {
             "helpText": "Specify the role that governance plays. In a normal stage, a proposal will only pass if it approved. However, an optimistic stage reverses it this - it will pass unless vetoed.",
             "label": "Type",
-            "normal": {
-              "description": "Proposals pass this stage only if approved.",
-              "label": "Normal"
-            },
-            "optimistic": {
-              "description": "Proposals pass this stage unless vetoed.",
-              "label": "Optimistic"
-            },
-            "timelock": {
-              "description": "Proposals pass the stage after the timelock period.",
-              "label": "Timelock"
+            "list": {
+              "NORMAL": {
+                "description": "Proposals pass this stage only if approved.",
+                "label": "Normal"
+              },
+              "OPTIMISTIC": {
+                "description": "Proposals pass this stage unless vetoed.",
+                "label": "Optimistic"
+              },
+              "TIMELOCK": {
+                "description": "Proposals pass the stage after the timelock period.",
+                "label": "Timelock"
+              }
             }
           }
         }
