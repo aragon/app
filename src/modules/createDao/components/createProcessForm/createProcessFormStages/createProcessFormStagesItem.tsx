@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { useWatch } from 'react-hook-form';
 import { ProcessStageType, type ICreateProcessFormStage } from '../createProcessFormDefinitions';
 import { StageBodiesField } from './fields/stageBodiesField';
+import { StageRequiredApprovalsField } from './fields/stageRequiredApprovalsField';
 import { StageTimingField } from './fields/stageTimingField';
 import { StageTypeField } from './fields/stageTypeField';
 
@@ -32,6 +33,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
     const { t } = useTranslations();
 
     const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${name}.type` });
+    const stageBodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({ name: `${name}.bodies` });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -56,6 +58,13 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
             <StageTimingField stageFieldName={name} stageType={stageType} />
             {!isTimelockStage && (
                 <StageBodiesField index={index} isOptimisticStage={isOptimisticStage} stageFieldName={name} />
+            )}
+            {stageBodies.length > 0 && (
+                <StageRequiredApprovalsField
+                    fieldPrefix={name}
+                    stageBodiesCount={stageBodies.length}
+                    isOptimisticStage={isOptimisticStage}
+                />
             )}
             {children}
         </Card>
