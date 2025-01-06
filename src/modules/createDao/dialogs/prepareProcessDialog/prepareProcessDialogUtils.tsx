@@ -258,11 +258,12 @@ class PrepareProcessDialogUtils {
             tokenSymbol,
             members,
         } = body;
+        const { earlyStageAdvance, votingPeriod } = stage.timing;
         const { minVotingPower } = permissionSettings ?? {};
 
         const votingMode = voteChange
             ? DaoTokenVotingMode.VOTE_REPLACEMENT
-            : stage.earlyStageAdvance
+            : earlyStageAdvance
               ? DaoTokenVotingMode.EARLY_EXECUTION
               : DaoTokenVotingMode.STANDARD;
 
@@ -271,7 +272,7 @@ class PrepareProcessDialogUtils {
             votingMode,
             supportThreshold: supportThreshold * 10 ** 4,
             minParticipation: minimumParticipation * 10 ** 4,
-            minDuration: BigInt(dateUtils.durationToSeconds(stage.votingPeriod)),
+            minDuration: BigInt(dateUtils.durationToSeconds(votingPeriod)),
             minProposerVotingPower: minProposerVotingPower,
         };
 

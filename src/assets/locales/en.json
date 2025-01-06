@@ -225,10 +225,9 @@
               },
               "expiration": {
                 "helpText": "Should there be a limited amount of time in which the proposal is eligible to be advanced to the next stage?",
+                "infoText": "Recommended minimum expiration time is 7 days.",
                 "label": "Stage expiration"
               },
-              "helpInfo": "Recommended minimum expiration time is 7 days.",
-              "no": "No",
               "timelockPeriod": {
                 "helpText": "The period of time that must pass before the proposal can be advanced.",
                 "label": "Timelock period"
@@ -236,19 +235,20 @@
               "title": "Edit timing",
               "votingPeriod": {
                 "helpText": "The amount of time that the bodies in this stage have to vote on proposals.",
+                "infoText": "Recommended minimum voting period is 7 days.",
                 "label": "Voting period"
-              },
-              "yes": "Yes"
+              }
             },
+            "earlyAdvance": "Early stage advance",
+            "edit": "Edit timing",
+            "expiration": "Stage expiration",
+            "expirationPeriod": "Expiration period",
             "helpText": "Configure the stage's timing settings, such as the amount of time available to vote.",
             "label": "Timing",
-            "summary": {
-              "earlyAdvance": "Early stage advance",
-              "edit": "Edit timing",
-              "expiration": "Stage expiration",
-              "timelockPeriod": "Timelock period",
-              "votingPeriod": "Voting period"
-            }
+            "no": "No",
+            "timelockPeriod": "Timelock period",
+            "votingPeriod": "Voting period",
+            "yes": "Yes"
           },
           "type": {
             "helpText": "Specify the role that governance plays. In a normal stage, a proposal will only pass if it approved. However, an optimistic stage reverses it this - it will pass unless vetoed.",

@@ -13,6 +13,17 @@ export enum ProcessStageType {
     TIMELOCK = 'TIMELOCK',
 }
 
+export const defaultStage: ICreateProcessFormStage = {
+    name: '',
+    type: ProcessStageType.NORMAL,
+    timing: {
+        votingPeriod: { days: 7, minutes: 0, hours: 0 },
+        earlyStageAdvance: false,
+    },
+    requiredApprovals: 1,
+    bodies: [],
+};
+
 export interface ICreateProcessFormData {
     /**
      * Name of the process.
@@ -40,15 +51,7 @@ export interface ICreateProcessFormData {
     permissions: ICreateProcessFormPermissions;
 }
 
-export interface ICreateProcessFormStage {
-    /**
-     * Name of the stage.
-     */
-    name: string;
-    /**
-     * Type of the stage.
-     */
-    type: ProcessStageType;
+export interface ICreateProcessFormStageTiming {
     /**
      * The period of time the stage is open for voting.
      */
@@ -61,6 +64,21 @@ export interface ICreateProcessFormStage {
      * The amount of time that the stage will be eligible to be advanced.
      */
     stageExpiration?: IDateDuration;
+}
+
+export interface ICreateProcessFormStage {
+    /**
+     * Name of the stage.
+     */
+    name: string;
+    /**
+     * Type of the stage.
+     */
+    type: ProcessStageType;
+    /**
+     * Values related to the timing of the stage.
+     */
+    timing: ICreateProcessFormStageTiming;
     /**
      * Number of bodies required to veto (for optimistic type) or approve.
      */

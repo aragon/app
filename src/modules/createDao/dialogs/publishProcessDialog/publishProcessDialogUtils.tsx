@@ -243,18 +243,18 @@ class PublishProcessDialogUtils {
                 };
             });
 
-            const votingPeriod = BigInt(dateUtils.durationToSeconds(stage.votingPeriod));
+            const votingPeriod = BigInt(dateUtils.durationToSeconds(stage.timing.votingPeriod));
 
             const voteDuration = isTimelockStage ? BigInt(0) : votingPeriod;
 
             const maxAdvance =
-                stage.stageExpiration != null
-                    ? BigInt(dateUtils.durationToSeconds(stage.stageExpiration)) + voteDuration
+                stage.timing.stageExpiration != null
+                    ? BigInt(dateUtils.durationToSeconds(stage.timing.stageExpiration)) + voteDuration
                     : undefined;
 
             return {
                 bodies,
-                minAdvance: stage.earlyStageAdvance ? BigInt(0) : votingPeriod,
+                minAdvance: stage.timing.earlyStageAdvance ? BigInt(0) : votingPeriod,
                 maxAdvance: maxAdvance ?? this.defaultMaxAdvance,
                 voteDuration,
                 approvalThreshold: stage.type === ProcessStageType.NORMAL ? stage.requiredApprovals : 0,

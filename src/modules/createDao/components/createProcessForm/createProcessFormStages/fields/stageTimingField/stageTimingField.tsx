@@ -1,112 +1,120 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import { Button, DefinitionList, InputContainer, Tag } from '@aragon/gov-ui-kit';
-import { useId, useState } from 'react';
-import { useWatch } from 'react-hook-form';
-import { ProcessStageType, type ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
+import { Duration } from 'luxon';
+import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { type ICreateProcessFormStageTiming, ProcessStageType } from '../../../createProcessFormDefinitions';
 import { StageTimingFieldDialog } from './stageTimingFieldDialog';
 
 export interface IStageTimingFieldProps {
     /**
-     * Name of the current stage field.
+     * Prefix to be prepended to the form field.
      */
-    stageFieldName: string;
+    fieldPrefix: string;
     /**
-     * Type of the stage (normal, optimistic, timelock).
+     * Type of the stage.
      */
-    stageType: ICreateProcessFormStage['type'];
+    stageType: ProcessStageType;
 }
 
 export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
-    const { stageFieldName, stageType } = props;
+    const { fieldPrefix, stageType } = props;
 
     const { t } = useTranslations();
-    const inputId = useId();
+    const { setValue } = useFormContext();
 
     const [isTimingDialogOpen, setIsTimingDialogOpen] = useState(false);
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
-    const votingPeriod = useWatch<Record<string, ICreateProcessFormStage['votingPeriod']>>({
-        name: `${stageFieldName}.votingPeriod`,
+    const { value: votingPeriod } = useFormField<ICreateProcessFormStageTiming, 'votingPeriod'>('votingPeriod', {
+        fieldPrefix,
     });
 
-    const earlyStageAdvance = useWatch<Record<string, ICreateProcessFormStage['earlyStageAdvance']>>({
-        name: `${stageFieldName}.earlyStageAdvance`,
-    });
+    const { value: earlyStageAdvance } = useFormField<ICreateProcessFormStageTiming, 'earlyStageAdvance'>(
+        'earlyStageAdvance',
+        { fieldPrefix },
+    );
 
-    const stageExpiration = useWatch<Record<string, ICreateProcessFormStage['stageExpiration']>>({
-        name: `${stageFieldName}.stageExpiration`,
-    });
+    const { value: stageExpiration } = useFormField<ICreateProcessFormStageTiming, 'stageExpiration'>(
+        'stageExpiration',
+        { fieldPrefix },
+    );
 
-    const formatDuration = (duration: IDateDuration): string => {
-        const units = [
-            { value: duration.days, label: 'days' },
-            { value: duration.hours, label: 'hours' },
-            { value: duration.minutes, label: 'minutes' },
-        ];
-
-        while (units.length > 0 && units[0].value === 0) {
-            units.shift();
-        }
-
-        while (units.length > 0 && units[units.length - 1].value === 0) {
-            units.pop();
-        }
-
-        if (units.length === 0) {
-            return '0 minutes';
-        }
-
-        return units.map((unit) => `${unit.value.toString()} ${unit.label}`).join(', ');
+    const handleDialogSubmit = (values: ICreateProcessFormStageTiming) => {
+        const { votingPeriod, earlyStageAdvance, stageExpiration } = values;
+        setValue(`${fieldPrefix}.votingPeriod`, votingPeriod);
+        setValue(`${fieldPrefix}.earlyStageAdvance`, earlyStageAdvance);
+        setValue(`${fieldPrefix}.stageExpiration`, stageExpiration);
+        setIsTimingDialogOpen(false);
     };
 
-    const periodLabel = isTimelockStage
-        ? t('app.createDao.createProcessForm.stages.timing.summary.timelockPeriod')
-        : t('app.createDao.createProcessForm.stages.timing.summary.votingPeriod');
+    const formatDuration = (duration: IDateDuration): string => {
+        const parsedDuration = Object.fromEntries(Object.entries(duration).filter(([, value]) => value !== 0));
+
+        if (Object.keys(parsedDuration).length === 0) {
+            parsedDuration.minutes = 0;
+        }
+
+        return Duration.fromObject(parsedDuration).toHuman();
+    };
+
+    const votingPeriodLabel = isTimelockStage
+        ? t('app.createDao.createProcessForm.stages.timing.timelockPeriod')
+        : t('app.createDao.createProcessForm.stages.timing.votingPeriod');
+
+    const earlyStageTagValue = earlyStageAdvance ? 'yes' : 'no';
+    const earlyStageTagLabel = t(`app.createDao.createProcessForm.stages.timing.${earlyStageTagValue}`);
+
+    const expirationTagValue = stageExpiration != null ? 'yes' : 'no';
+    const expirationTagLabel = t(`app.createDao.createProcessForm.stages.timing.${expirationTagValue}`);
 
     return (
         <InputContainer
-            id={inputId}
+            id="stageTiming"
             useCustomWrapper={true}
             label={t('app.createDao.createProcessForm.stages.timing.label')}
-            className="flex w-full flex-col items-start gap-y-3"
             helpText={t('app.createDao.createProcessForm.stages.timing.helpText')}
+            className="flex flex-col items-start gap-3"
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                <DefinitionList.Item term={periodLabel}>{formatDuration(votingPeriod)}</DefinitionList.Item>
+                <DefinitionList.Item term={votingPeriodLabel}>{formatDuration(votingPeriod)}</DefinitionList.Item>
                 {!isOptimisticStage && !isTimelockStage && (
-                    <DefinitionList.Item term={t('app.createDao.createProcessForm.stages.timing.summary.earlyAdvance')}>
+                    <DefinitionList.Item term={t('app.createDao.createProcessForm.stages.timing.earlyAdvance')}>
                         <Tag
                             className="w-fit"
-                            label={earlyStageAdvance ? 'Yes' : 'No'}
+                            label={earlyStageTagLabel}
                             variant={earlyStageAdvance ? 'primary' : 'neutral'}
                         />
                     </DefinitionList.Item>
                 )}
-                <DefinitionList.Item term={t('app.createDao.createProcessForm.stages.timing.summary.expiration')}>
+                <DefinitionList.Item term={t('app.createDao.createProcessForm.stages.timing.expiration')}>
                     <Tag
                         className="w-fit"
-                        label={stageExpiration != null ? 'Yes' : 'No'}
+                        label={expirationTagLabel}
                         variant={stageExpiration != null ? 'primary' : 'neutral'}
                     />
                 </DefinitionList.Item>
-                {stageExpiration && (
-                    <DefinitionList.Item term="Expiration period">
+                {stageExpiration != null && (
+                    <DefinitionList.Item term={t('app.createDao.createProcessForm.stages.timing.expirationPeriod')}>
                         {formatDuration(stageExpiration)}
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
-            <Button onClick={() => setIsTimingDialogOpen(true)} variant="tertiary" size="md" className="w-fit">
-                {t('app.createDao.createProcessForm.stages.timing.summary.edit')}
+            <Button onClick={() => setIsTimingDialogOpen(true)} variant="tertiary" size="md">
+                {t('app.createDao.createProcessForm.stages.timing.edit')}
             </Button>
-            <StageTimingFieldDialog
-                stageFieldName={stageFieldName}
-                isTimingDialogOpen={isTimingDialogOpen}
-                setIsTimingDialogOpen={setIsTimingDialogOpen}
-                stageType={stageType}
-            />
+            {isTimingDialogOpen && (
+                <StageTimingFieldDialog
+                    onClose={() => setIsTimingDialogOpen(false)}
+                    onSubmit={handleDialogSubmit}
+                    stageType={stageType}
+                    defaultValues={{ votingPeriod, earlyStageAdvance, stageExpiration }}
+                />
+            )}
         </InputContainer>
     );
 };
