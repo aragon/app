@@ -1,21 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
-import {
-    ProcessStageType,
-    type ICreateProcessFormData,
-    type ICreateProcessFormStage,
-} from '../createProcessFormDefinitions';
+import { defaultStage, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { CreateProcessFormStagesItem } from './createProcessFormStagesItem';
-
-const defaultStage: ICreateProcessFormStage = {
-    name: '',
-    type: ProcessStageType.NORMAL,
-    votingPeriod: { days: 7, minutes: 0, hours: 0 },
-    earlyStageAdvance: false,
-    requiredApprovals: 1,
-    bodies: [],
-};
 
 export interface ICreateProcessFormStagesProps {}
 

@@ -5,11 +5,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Wizard } from '@/shared/components/wizard';
 import { useMemo } from 'react';
-import {
-    ProcessStageType,
-    type ICreateProcessFormData,
-    type ICreateProcessFormStage,
-} from '../../components/createProcessForm';
+import { defaultStage, type ICreateProcessFormData } from '../../components/createProcessForm';
 import { CreateDaoDialog } from '../../constants/moduleDialogs';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
@@ -21,15 +17,6 @@ export interface ICreateProcessPageClientProps {
      */
     daoId: string;
 }
-
-const defaultStage: ICreateProcessFormStage = {
-    name: '',
-    type: ProcessStageType.NORMAL,
-    votingPeriod: { days: 7, minutes: 0, hours: 0 },
-    earlyStageAdvance: false,
-    bodies: [],
-    requiredApprovals: 1,
-};
 
 export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = (props) => {
     const { daoId } = props;

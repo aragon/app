@@ -1,194 +1,140 @@
+import { DialogRootHiddenElement } from '@/shared/components/dialogRoot';
+import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AlertInline, Dialog, InputContainer, InputNumber, Switch } from '@aragon/gov-ui-kit';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { ProcessStageType, type ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
+import { Card, Dialog, InputContainer, Switch } from '@aragon/gov-ui-kit';
+import { useState, type FormEvent } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { ProcessStageType, type ICreateProcessFormStageTiming } from '../../../createProcessFormDefinitions';
 
 export interface IStageTimingFieldDialogProps {
     /**
-     * Whether the dialog is open or not.
+     * Callback triggered when dialog is closed.
      */
-    isTimingDialogOpen: boolean;
+    onClose: () => void;
     /**
-     * Callback to set the dialog open state.
+     * Callback called on form submit.
      */
-    setIsTimingDialogOpen: (value: boolean) => void;
+    onSubmit: (values: ICreateProcessFormStageTiming) => void;
     /**
-     * The name of the current stage.
+     * Default values for the dialog form.
      */
-    stageFieldName: string;
+    defaultValues: ICreateProcessFormStageTiming;
     /**
-     * Type of the stage (normal, optimistic, timelock).
+     * Type of the stage.
      */
-    stageType: ICreateProcessFormStage['type'];
+    stageType: ProcessStageType;
 }
 
+const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
+
 export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (props) => {
-    const { isTimingDialogOpen, setIsTimingDialogOpen, stageFieldName, stageType } = props;
+    const { onClose, stageType, defaultValues, onSubmit } = props;
 
     const { t } = useTranslations();
-    const { setValue } = useFormContext();
+
+    const [displayExpiration, setDisplayExpiration] = useState(defaultValues.stageExpiration != null);
+
+    const formMethods = useForm<ICreateProcessFormStageTiming>({ mode: 'onTouched', defaultValues });
+    const { control, handleSubmit, setValue } = formMethods;
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
-    const periodLabel = isTimelockStage
-        ? t('app.createDao.createProcessForm.stages.timing.dialog.timelockPeriod.label')
-        : t('app.createDao.createProcessForm.stages.timing.dialog.votingPeriod.label');
-
-    const periodHelpText = isTimelockStage
-        ? t('app.createDao.createProcessForm.stages.timing.dialog.timelockPeriod.helpText')
-        : t('app.createDao.createProcessForm.stages.timing.dialog.votingPeriod.helpText');
-
-    const votingPeriodField = useFormField<ICreateProcessFormStage, 'votingPeriod'>('votingPeriod', {
-        label: periodLabel,
-        fieldPrefix: stageFieldName,
-    });
-
-    const earlyStageField = useFormField<ICreateProcessFormStage, 'earlyStageAdvance'>('earlyStageAdvance', {
+    const {
+        value: earlyStage,
+        onChange: onEarlyStageChange,
+        ...earlyStageField
+    } = useFormField<ICreateProcessFormStageTiming, 'earlyStageAdvance'>('earlyStageAdvance', {
         label: t('app.createDao.createProcessForm.stages.timing.dialog.earlyAdvance.label'),
-        fieldPrefix: stageFieldName,
+        control,
     });
 
-    const { onChange: onStageExpirationChange } = useFormField<ICreateProcessFormStage, 'stageExpiration'>(
-        'stageExpiration',
-        { fieldPrefix: stageFieldName },
-    );
-
-    const stageExpirationName = `${stageFieldName}.stageExpiration`;
-    const stageExpiration = useWatch<Record<string, ICreateProcessFormStage['stageExpiration']>>({
-        name: stageExpirationName,
-    });
-
-    const handleExpirationCheckChange = (checked: boolean) => {
-        const newValue = checked ? { days: 7, minutes: 0, hours: 0 } : undefined;
-        onStageExpirationChange(newValue);
+    const handleToggleExpiration = (checked: boolean) => {
+        setDisplayExpiration(checked);
+        // The timeout here is needed because the advanced-date component needs to be rendered and the form field to be
+        // registered before we can set its value on the form.
+        setTimeout(() => setValue('stageExpiration', checked ? defaultExpiration : undefined), 0);
     };
 
-    return (
-        <Dialog.Root
-            containerClassName="!max-w-[640px]"
-            open={isTimingDialogOpen}
-            onOpenChange={() => setIsTimingDialogOpen(false)}
-        >
-            <Dialog.Header title={t('app.createDao.createProcessForm.stages.timing.dialog.title')} />
-            <Dialog.Content className="flex flex-col gap-6 py-4">
-                <InputContainer
-                    id={votingPeriodField.name}
-                    useCustomWrapper={true}
-                    helpText={periodHelpText}
-                    {...votingPeriodField}
-                />
-                <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
-                    <div className="flex flex-col justify-between gap-4 md:flex-row">
-                        <InputNumber
-                            label={t('app.shared.advancedDateInput.duration.minutes')}
-                            min={0}
-                            max={59}
-                            className="w-full md:w-1/3"
-                            placeholder="0 min"
-                            suffix="m"
-                            value={votingPeriodField.value.minutes}
-                            onChange={(e) =>
-                                setValue(votingPeriodField.name, { ...votingPeriodField.value, minutes: Number(e) })
-                            }
-                        />
-                        <InputNumber
-                            label={t('app.shared.advancedDateInput.duration.hours')}
-                            min={0}
-                            max={23}
-                            className="w-full md:w-1/3"
-                            placeholder="0 h"
-                            suffix="h"
-                            value={votingPeriodField.value.hours}
-                            onChange={(e) =>
-                                setValue(votingPeriodField.name, { ...votingPeriodField.value, hours: Number(e) })
-                            }
-                        />
-                        <InputNumber
-                            label={t('app.shared.advancedDateInput.duration.days')}
-                            min={0}
-                            className="w-full md:w-1/3"
-                            placeholder="7 d"
-                            suffix="d"
-                            value={votingPeriodField.value.days}
-                            onChange={(e) =>
-                                setValue(votingPeriodField.name, { ...votingPeriodField.value, days: Number(e) })
-                            }
-                        />
-                    </div>
-                    {!isTimelockStage && (
-                        <AlertInline message={t('app.createDao.createProcessForm.stages.timing.dialog.helpInfo')} />
-                    )}
-                </div>
-                {!isOptimisticStage && !isTimelockStage && (
-                    <Switch
-                        helpText={t('app.createDao.createProcessForm.stages.timing.dialog.earlyAdvance.helpText')}
-                        inlineLabel={
-                            earlyStageField.value
-                                ? t('app.createDao.createProcessForm.stages.timing.dialog.yes')
-                                : t('app.createDao.createProcessForm.stages.timing.dialog.no')
-                        }
-                        onCheckedChanged={(checked) => setValue(earlyStageField.name, checked)}
-                        checked={earlyStageField.value}
-                        {...earlyStageField}
-                    />
-                )}
-                <Switch
-                    label={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.label')}
-                    helpText={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.helpText')}
-                    inlineLabel={t(
-                        `app.createDao.createProcessForm.stages.timing.dialog.${stageExpiration ? 'yes' : 'no'}`,
-                    )}
-                    onCheckedChanged={handleExpirationCheckChange}
-                    checked={stageExpiration != null}
-                />
+    const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        void handleSubmit(onSubmit)(event);
+    };
 
-                {stageExpiration != null && (
-                    <div className="flex flex-col space-y-6 rounded-xl border border-neutral-100 p-6">
-                        <div className="flex flex-col justify-between gap-4 md:flex-row">
-                            <InputNumber
-                                label={t('app.shared.advancedDateInput.duration.minutes')}
-                                min={0}
-                                max={59}
-                                className="w-full md:w-1/3"
-                                value={stageExpiration.minutes}
-                                placeholder="0 m"
-                                suffix="m"
-                                onChange={(e) =>
-                                    setValue(stageExpirationName, { ...stageExpiration, minutes: Number(e) })
-                                }
+    const context = isTimelockStage ? 'timelockPeriod' : 'votingPeriod';
+    const votingPeriodInfoText = !isTimelockStage
+        ? t('app.createDao.createProcessForm.stages.timing.dialog.votingPeriod.infoText')
+        : undefined;
+
+    return (
+        <Dialog.Root containerClassName="!max-w-[640px]" open={true} onOpenChange={onClose}>
+            <FormProvider {...formMethods}>
+                <form onSubmit={handleFormSubmit}>
+                    <DialogRootHiddenElement
+                        type="description"
+                        labelKey="app.createDao.createProcessForm.stages.timing.dialog.title"
+                    />
+                    <Dialog.Header title={t('app.createDao.createProcessForm.stages.timing.dialog.title')} />
+                    <Dialog.Content className="flex flex-col gap-6 py-4">
+                        <InputContainer
+                            className="flex flex-col"
+                            id="minDuration"
+                            useCustomWrapper={true}
+                            helpText={t(`app.createDao.createProcessForm.stages.timing.dialog.${context}.helpText`)}
+                            label={t(`app.createDao.createProcessForm.stages.timing.dialog.${context}.label`)}
+                        >
+                            <Card className="border border-neutral-100">
+                                <AdvancedDateInputDuration
+                                    field="votingPeriod"
+                                    label={t(`app.createDao.createProcessForm.stages.timing.dialog.${context}.label`)}
+                                    infoDisplay="inline"
+                                    infoText={votingPeriodInfoText}
+                                />
+                            </Card>
+                        </InputContainer>
+                        {!isOptimisticStage && !isTimelockStage && (
+                            <Switch
+                                helpText={t(
+                                    'app.createDao.createProcessForm.stages.timing.dialog.earlyAdvance.helpText',
+                                )}
+                                inlineLabel={t(
+                                    `app.createDao.createProcessForm.stages.timing.${earlyStage ? 'yes' : 'no'}`,
+                                )}
+                                onCheckedChanged={(checked) => onEarlyStageChange(checked)}
+                                checked={earlyStage}
+                                {...earlyStageField}
                             />
-                            <InputNumber
-                                label={t('app.shared.advancedDateInput.duration.hours')}
-                                min={0}
-                                max={23}
-                                className="w-full md:w-1/3"
-                                value={stageExpiration.hours}
-                                placeholder="0 h"
-                                suffix="h"
-                                onChange={(e) =>
-                                    setValue(stageExpirationName, { ...stageExpiration, hours: Number(e) })
-                                }
-                            />
-                            <InputNumber
-                                label={t('app.shared.advancedDateInput.duration.days')}
-                                min={0}
-                                className="w-full md:w-1/3"
-                                value={stageExpiration.days}
-                                placeholder="0 d"
-                                suffix="d"
-                                onChange={(e) => setValue(stageExpirationName, { ...stageExpiration, days: Number(e) })}
-                            />
-                        </div>
-                        <AlertInline message={t('app.createDao.createProcessForm.stages.timing.dialog.helpInfo')} />
-                    </div>
-                )}
-            </Dialog.Content>
-            <Dialog.Footer
-                primaryAction={{ label: 'Save', onClick: () => setIsTimingDialogOpen(false) }}
-                secondaryAction={{ label: 'Cancel', onClick: () => setIsTimingDialogOpen(false) }}
-            />
+                        )}
+                        <Switch
+                            label={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.label')}
+                            helpText={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.helpText')}
+                            inlineLabel={t(
+                                `app.createDao.createProcessForm.stages.timing.${displayExpiration ? 'yes' : 'no'}`,
+                            )}
+                            onCheckedChanged={handleToggleExpiration}
+                            checked={displayExpiration}
+                        />
+                        {displayExpiration && (
+                            <Card className="border border-neutral-100">
+                                <AdvancedDateInputDuration
+                                    field="stageExpiration"
+                                    label={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.label')}
+                                    infoText={t(
+                                        'app.createDao.createProcessForm.stages.timing.dialog.expiration.infoText',
+                                    )}
+                                    infoDisplay="inline"
+                                />
+                            </Card>
+                        )}
+                    </Dialog.Content>
+                    <Dialog.Footer
+                        primaryAction={{ label: 'Save', type: 'submit' }}
+                        secondaryAction={{ label: 'Cancel', onClick: onClose }}
+                    />
+                </form>
+            </FormProvider>
         </Dialog.Root>
     );
 };

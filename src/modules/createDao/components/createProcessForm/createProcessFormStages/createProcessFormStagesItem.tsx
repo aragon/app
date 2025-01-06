@@ -55,7 +55,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                 {...stageNameField}
             />
             <StageTypeField fieldPrefix={name} />
-            <StageTimingField stageFieldName={name} stageType={stageType} />
+            <StageTimingField fieldPrefix={`${name}.timing`} stageType={stageType} />
             {!isTimelockStage && (
                 <StageBodiesField index={index} isOptimisticStage={isOptimisticStage} stageFieldName={name} />
             )}
