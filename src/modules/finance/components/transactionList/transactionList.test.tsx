@@ -69,6 +69,6 @@ describe('<TransactionList /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('$1.88K')).toBeInTheDocument(); // TODO: Update the assertion to 'amountUsd' after GovKit is updated
+        expect(screen.getByText('$1.88K')).toBeInTheDocument(); // TODO: Update the assertion to 'amountUsd' after GovKit is updated (PR: fix(APP-3845-kit))
     });
 });
