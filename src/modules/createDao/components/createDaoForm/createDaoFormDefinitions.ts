@@ -7,6 +7,10 @@ export interface ICreateDaoFormMetadataData {
      */
     name: string;
     /**
+     * Logo of the DAO.
+     */
+    logo?: File;
+    /**
      * Description of the DAO.
      */
     description: string;
