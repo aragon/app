@@ -21,14 +21,16 @@ import type { INormalizeActionsParams } from '../../types';
 
 class ProposalActionUtils {
     normalizeActions = (proposal: IProposal, dao: IDao): IGukProposalAction[] => {
-        const normalizeFunction = pluginRegistryUtils.getSlotFunction<INormalizeActionsParams, IProposalAction[]>({
-            slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
-            pluginId: proposal.pluginSubdomain,
-        });
+        const { actions, settings } = proposal;
 
-        const pluginNormalizedActions =
-            normalizeFunction?.({ actions: proposal.actions, daoId: dao.id, settings: proposal.settings }) ??
-            proposal.actions;
+        const normalizeFunctions = pluginRegistryUtils.getSlotFunctions<INormalizeActionsParams, IProposalAction[]>(
+            GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
+        );
+
+        const pluginNormalizedActions = (normalizeFunctions ?? []).reduce<IProposalAction[]>(
+            (current, normalizeFunction) => normalizeFunction({ actions: current, daoId: dao.id, settings }),
+            actions,
+        );
 
         return pluginNormalizedActions.map((action) => {
             if (this.isWithdrawTokenAction(action)) {
