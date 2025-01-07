@@ -66,7 +66,7 @@ export const useTokenPermissionCheckProposalCreation = (
             },
             {
                 term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
-                definition: minTokenRequired,
+                definition: `≥${minTokenRequired}`,
             },
             {
                 term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
