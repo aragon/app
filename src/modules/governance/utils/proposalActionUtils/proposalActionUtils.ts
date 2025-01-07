@@ -26,6 +26,8 @@ class ProposalActionUtils {
     normalizeActions = (proposal: IProposal, dao: IDao): IGukProposalAction[] => {
         const { actions, settings } = proposal;
 
+        // Use all registered normalization functions to make sure we render the native action correctly even if a DAO
+        // does not have the related plugin (e.g. a Multisig DAO updating the settings of a Token-based DAO)
         const normalizeFunctions = pluginRegistryUtils.getSlotFunctions<INormalizeActionsParams, IProposalAction[]>(
             GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
         );
