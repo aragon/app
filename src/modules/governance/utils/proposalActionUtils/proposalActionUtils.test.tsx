@@ -1,101 +1,228 @@
+import { generateToken } from '@/modules/finance/testUtils';
 import {
+    generateProposal,
+    generateProposalAction,
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
     generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
-import * as Viem from 'viem';
-import { formatUnits } from 'viem';
+import { generateDao } from '@/shared/testUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import {
+    type IProposalActionUpdateMetadata,
+    type IProposalActionWithdrawToken,
+    ProposalActionType as GukProposalActionType,
+} from '@aragon/gov-ui-kit';
+import { ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
-// Needed to spy formatUnits usage
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
-
 describe('proposalActionUtils', () => {
-    const formatUnitsSpy = jest.spyOn(Viem, 'formatUnits');
+    const getSlotFunctionsSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunctions');
 
     afterEach(() => {
-        formatUnitsSpy.mockReset();
+        getSlotFunctionsSpy.mockReset();
     });
 
-    it('normalizes a transfer action', () => {
-        const baseAction = generateProposalActionWithdrawToken();
+    describe('normalizeActions', () => {
+        const normalizeDefaultActionSpy = jest.spyOn(proposalActionUtils, 'normalizeDefaultAction');
 
-        const action = {
-            ...baseAction,
-            amount: '1000000000000000000',
-            token: { ...baseAction.token, decimals: 18, symbol: 'DAI' },
-            sender: { address: '0x9939393939234234234233' },
-            receiver: { address: '0x9939393939334242342332' },
-        };
+        afterEach(() => {
+            normalizeDefaultActionSpy.mockReset();
+        });
 
-        formatUnitsSpy.mockReturnValue('1.0');
+        afterAll(() => {
+            normalizeDefaultActionSpy.mockRestore();
+        });
 
-        const result = proposalActionUtils.normalizeTransferAction(action);
+        it('retrieves and triggers all plugin-specific normalization functions to normalize the proposal actions', () => {
+            const proposal = generateProposal({ actions: [generateProposalAction()] });
+            const dao = generateDao({ id: 'test' });
+            const normalizationFunctionOne = jest.fn(() => proposal.actions);
+            const normalizationFunctionTwo = jest.fn(() => proposal.actions);
+            getSlotFunctionsSpy.mockReturnValue([normalizationFunctionOne, normalizationFunctionTwo]);
+            proposalActionUtils.normalizeActions(proposal, dao);
+            const expectedParams = { actions: proposal.actions, daoId: dao.id, settings: proposal.settings };
+            expect(normalizationFunctionOne).toHaveBeenCalledWith(expectedParams);
+            expect(normalizationFunctionTwo).toHaveBeenCalledWith(expectedParams);
+        });
 
-        expect(result).toEqual({ ...action, type: 'WITHDRAW_TOKEN', amount: '1.0' });
-        expect(formatUnits).toHaveBeenCalledWith(BigInt(action.amount), action.token.decimals);
-    });
-
-    it('normalizes an update metadata action', () => {
-        const baseAction = generateProposalActionUpdateMetadata();
-        const { proposedMetadata, existingMetadata } = baseAction;
-
-        const action = {
-            ...baseAction,
-            proposedMetadata: { ...proposedMetadata, links: [{ name: 'Link1', url: 'https://link1.com' }] },
-            existingMetadata: {
-                ...existingMetadata,
-                logo: 'test.png',
-                links: [{ name: 'Link2', url: 'https://link2.com' }],
-            },
-        };
-
-        const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
-
-        expect(result).toEqual({
-            ...action,
-            type: 'UPDATE_METADATA',
-            proposedMetadata: {
-                ...action.proposedMetadata,
-                logo: '',
-                links: [{ label: 'Link1', href: 'https://link1.com' }],
-            },
-            existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
+        it('triggers the default normalization function with the result of the plugin-specific normalization function', () => {
+            const proposal = generateProposal();
+            const normalizedActions = [generateProposalAction({ type: '1' }), generateProposalAction({ type: '2' })];
+            const pluginNormalizationFunction = () => normalizedActions;
+            getSlotFunctionsSpy.mockReturnValue([pluginNormalizationFunction]);
+            proposalActionUtils.normalizeActions(proposal, generateDao());
+            expect(normalizeDefaultActionSpy).toHaveBeenNthCalledWith(1, normalizedActions[0]);
+            expect(normalizeDefaultActionSpy).toHaveBeenNthCalledWith(2, normalizedActions[1]);
         });
     });
 
-    it('normalizes an update metadata action for plugin', () => {
-        const baseAction = generateProposalActionUpdatePluginMetadata();
-        const { proposedMetadata, existingMetadata } = baseAction;
+    describe('normalizeDefaultAction', () => {
+        const normalizeTransferActionSpy = jest.spyOn(proposalActionUtils, 'normalizeTransferAction');
+        const normalizeUpdateMetaDataActionSpy = jest.spyOn(proposalActionUtils, 'normalizeUpdateMetaDataAction');
 
-        const action = {
-            ...baseAction,
-            proposedMetadata: {
-                ...proposedMetadata,
-                name: 'Updated name',
-                description: 'Updated description',
-                links: [{ name: 'Link1', url: 'https://link1.com' }],
-            },
-            existingMetadata: {
-                ...existingMetadata,
-                name: '',
-                description: '',
-                links: [{ name: 'Link2', url: 'https://link2.com' }],
-            },
-        };
+        afterEach(() => {
+            normalizeTransferActionSpy.mockReset();
+            normalizeUpdateMetaDataActionSpy.mockReset();
+        });
 
-        const result = proposalActionUtils.normalizeUpdateMetaDataAction(action);
+        afterAll(() => {
+            normalizeTransferActionSpy.mockRestore();
+            normalizeUpdateMetaDataActionSpy.mockRestore();
+        });
 
-        expect(result).toEqual({
-            ...action,
-            type: 'UPDATE_PLUGIN_METADATA',
-            proposedMetadata: {
-                ...action.proposedMetadata,
-                name: 'Updated name',
-                description: 'Updated description',
-                links: [{ label: 'Link1', href: 'https://link1.com' }],
-            },
-            existingMetadata: { ...action.existingMetadata, links: [{ label: 'Link2', href: 'https://link2.com' }] },
+        it('uses the transfer-action normalization function when action is of transfer type', () => {
+            const action = generateProposalAction({ type: ProposalActionType.TRANSFER });
+            const normalizedAction = generateProposalAction({ type: 'normalized' });
+            normalizeTransferActionSpy.mockReturnValue(normalizedAction as IProposalActionWithdrawToken);
+            expect(proposalActionUtils.normalizeDefaultAction(action)).toEqual(normalizedAction);
+            expect(normalizeTransferActionSpy).toHaveBeenCalledWith(action);
+        });
+
+        it('uses the update-metadata-action normalization function when action is of update-metadata type', () => {
+            const action = generateProposalAction({ type: ProposalActionType.METADATA_UPDATE });
+            const normalizedAction = generateProposalAction({ type: 'normalized' });
+            normalizeUpdateMetaDataActionSpy.mockReturnValue(normalizedAction as IProposalActionUpdateMetadata);
+            expect(proposalActionUtils.normalizeDefaultAction(action)).toEqual(normalizedAction);
+            expect(normalizeUpdateMetaDataActionSpy).toHaveBeenCalledWith(action);
+        });
+
+        it('returns the action as it is when type does not match any handled type', () => {
+            const action = generateProposalAction({ type: 'plugin-action' });
+            expect(proposalActionUtils.normalizeDefaultAction(action)).toEqual(action);
+        });
+    });
+
+    describe('normalizeTransferAction', () => {
+        it('correctly normalizes a transfer action', () => {
+            const token = generateToken({ decimals: 18 });
+            const transferAction = generateProposalActionWithdrawToken({ amount: '1000000000000000', token });
+            const normalizedAction = proposalActionUtils.normalizeTransferAction(transferAction);
+            expect(normalizedAction.type).toEqual(GukProposalActionType.WITHDRAW_TOKEN);
+            expect(normalizedAction.amount).toEqual('0.001');
+            expect(normalizedAction.sender).toEqual(transferAction.sender);
+        });
+    });
+
+    describe('normalizeUpdateMetaDataAction', () => {
+        const normalizeActionMetadataSpy = jest.spyOn(proposalActionUtils, 'normalizeActionMetadata');
+
+        afterEach(() => {
+            normalizeActionMetadataSpy.mockReset();
+        });
+
+        afterAll(() => {
+            normalizeActionMetadataSpy.mockRestore();
+        });
+
+        it('correctly normalizes a update-dao-metadata action', () => {
+            const action = generateProposalActionUpdateMetadata();
+            const normalizedMetadata = { name: 'test-name', description: 'test-description', links: [] };
+            normalizeActionMetadataSpy.mockReturnValue(normalizedMetadata);
+            const normalizedAction = proposalActionUtils.normalizeUpdateMetaDataAction(action);
+            expect(normalizedAction.type).toEqual(GukProposalActionType.UPDATE_METADATA);
+            expect(normalizedAction.existingMetadata).toEqual(normalizedMetadata);
+            expect(normalizedAction.proposedMetadata).toEqual(normalizedMetadata);
+        });
+
+        it('correctly normalizes a update-plugin-metadata action', () => {
+            const action = generateProposalActionUpdatePluginMetadata();
+            const normalizedMetadata = { name: 'test-name', description: 'test-description', links: [] };
+            normalizeActionMetadataSpy.mockReturnValue(normalizedMetadata);
+            const normalizedAction = proposalActionUtils.normalizeUpdateMetaDataAction(action);
+            expect(normalizedAction.type).toEqual(GukProposalActionType.UPDATE_PLUGIN_METADATA);
+            expect(normalizedAction.existingMetadata).toEqual(normalizedMetadata);
+            expect(normalizedAction.proposedMetadata).toEqual(normalizedMetadata);
+        });
+    });
+
+    describe('normalizeActionMetadata', () => {
+        const normalizeActionMetadataLinksSpy = jest.spyOn(proposalActionUtils, 'normalizeActionMetadataLinks');
+
+        afterEach(() => {
+            normalizeActionMetadataLinksSpy.mockReset();
+        });
+
+        afterAll(() => {
+            normalizeActionMetadataLinksSpy.mockRestore();
+        });
+
+        it('sets default values for metadata when missing on the action metadata object', () => {
+            const metadata = {};
+            const normalizedMetadata = proposalActionUtils.normalizeActionMetadata(metadata);
+            normalizeActionMetadataLinksSpy.mockReturnValue([]);
+            expect(normalizedMetadata.name).toEqual('');
+            expect(normalizedMetadata.description).toEqual('');
+            expect(normalizedMetadata.links).toEqual([]);
+        });
+
+        it('correctly normalizes DAO metadata object', () => {
+            const metadata = { name: 'dao-name', description: 'dao-description', logo: 'test.png', links: [] };
+            const normalizedLinks = [{ label: 'test', href: 'href' }];
+            normalizeActionMetadataLinksSpy.mockReturnValue(normalizedLinks);
+            const normalizedMetadata = proposalActionUtils.normalizeActionMetadata(metadata);
+            expect(normalizeActionMetadataLinksSpy).toHaveBeenCalledWith(metadata.links);
+            expect(normalizedMetadata.name).toEqual(metadata.name);
+            expect(normalizedMetadata.description).toEqual(metadata.description);
+            expect(normalizedMetadata.logo).toEqual(metadata.logo);
+            expect(normalizedMetadata.links).toEqual(normalizedLinks);
+        });
+
+        it('correctly normalizes plugin metadata object', () => {
+            const metadata = { name: 'plugin-name', processKey: 'TEST', links: [] };
+            const normalizedLinks = [{ label: 'test', href: 'href' }];
+            normalizeActionMetadataLinksSpy.mockReturnValue(normalizedLinks);
+            const normalizedMetadata = proposalActionUtils.normalizeActionMetadata(metadata);
+            expect(normalizeActionMetadataLinksSpy).toHaveBeenCalledWith(metadata.links);
+            expect(normalizedMetadata.name).toEqual(metadata.name);
+            expect(normalizedMetadata.processKey).toEqual(metadata.processKey);
+            expect(normalizedMetadata.links).toEqual(normalizedLinks);
+        });
+    });
+
+    describe('normalizeActionMetadataLinks', () => {
+        it('returns empty array when input is not defined', () => {
+            expect(proposalActionUtils.normalizeActionMetadataLinks()).toEqual([]);
+        });
+
+        it('correctly normalizes the metadata links', () => {
+            const links = [
+                { name: 'name-1', url: 'url-1' },
+                { name: 'name-2', url: 'url-2' },
+            ];
+            expect(proposalActionUtils.normalizeActionMetadataLinks(links)).toEqual([
+                { label: links[0].name, href: links[0].url },
+                { label: links[1].name, href: links[1].url },
+            ]);
+        });
+    });
+
+    describe('isWithdrawTokenAction', () => {
+        it('returns true when action is of transfer type', () => {
+            const action = generateProposalAction({ type: ProposalActionType.TRANSFER });
+            expect(proposalActionUtils.isWithdrawTokenAction(action)).toBeTruthy();
+        });
+
+        it('returns false when action is not of transfer type', () => {
+            const action = generateProposalAction({ type: ProposalActionType.METADATA_UPDATE });
+            expect(proposalActionUtils.isWithdrawTokenAction(action)).toBeFalsy();
+        });
+    });
+
+    describe('isUpdateMetadataAction', () => {
+        it('returns true when action is of update-dao-metadata type', () => {
+            const action = generateProposalAction({ type: ProposalActionType.METADATA_UPDATE });
+            expect(proposalActionUtils.isUpdateMetadataAction(action)).toBeTruthy();
+        });
+
+        it('returns true when action is of update-plugin-metadata type', () => {
+            const action = generateProposalAction({ type: ProposalActionType.METADATA_PLUGIN_UPDATE });
+            expect(proposalActionUtils.isUpdateMetadataAction(action)).toBeTruthy();
+        });
+
+        it('returns false when action is not of update-metadata type', () => {
+            const action = generateProposalAction({ type: ProposalActionType.TRANSFER });
+            expect(proposalActionUtils.isUpdateMetadataAction(action)).toBeFalsy();
         });
     });
 });
