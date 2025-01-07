@@ -104,7 +104,7 @@ export class PluginRegistryUtils {
 
     getSlotFunctions = <TParams = unknown, TResult = unknown>(
         slotId: SlotId,
-    ): Array<PluginFunction<TParams, TResult>> | undefined => {
+    ): Array<PluginFunction<TParams, TResult>> => {
         const functions = this.pluginRegistry.slotFunctions[slotId] ?? {};
 
         return Object.values(functions) as Array<PluginFunction<TParams, TResult>>;

@@ -3,7 +3,9 @@ import {
     type IProposal,
     type IProposalAction,
     type IProposalActionUpdateMetadata,
+    type IProposalActionUpdateMetadataObject,
     type IProposalActionUpdatePluginMetadata,
+    type IProposalActionUpdatePluginMetadataObject,
     type IProposalActionWithdrawToken,
 } from '@/modules/governance/api/governanceService';
 import type { IDao, IResource } from '@/shared/api/daoService';
@@ -13,6 +15,7 @@ import {
     type IProposalAction as IGukProposalAction,
     type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
     type IProposalActionWithdrawToken as IGukProposalActionWithdrawToken,
+    type IProposalActionUpdateMetadataDaoMetadata,
     type IProposalActionUpdateMetadataDaoMetadataLink,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
@@ -27,20 +30,22 @@ class ProposalActionUtils {
             GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,
         );
 
-        const pluginNormalizedActions = (normalizeFunctions ?? []).reduce<IProposalAction[]>(
+        const pluginNormalizedActions = normalizeFunctions.reduce(
             (current, normalizeFunction) => normalizeFunction({ actions: current, daoId: dao.id, settings }),
             actions,
         );
 
-        return pluginNormalizedActions.map((action) => {
-            if (this.isWithdrawTokenAction(action)) {
-                return this.normalizeTransferAction(action);
-            } else if (this.isUpdateMetadataAction(action)) {
-                return this.normalizeUpdateMetaDataAction(action);
-            }
+        return pluginNormalizedActions.map((action) => this.normalizeDefaultAction(action));
+    };
 
-            return action;
-        });
+    normalizeDefaultAction = (action: IProposalAction): IGukProposalAction => {
+        if (this.isWithdrawTokenAction(action)) {
+            return this.normalizeTransferAction(action);
+        } else if (this.isUpdateMetadataAction(action)) {
+            return this.normalizeUpdateMetaDataAction(action);
+        }
+
+        return action;
     };
 
     normalizeTransferAction = (action: IProposalActionWithdrawToken): IGukProposalActionWithdrawToken => {
@@ -55,46 +60,36 @@ class ProposalActionUtils {
     ): IGukProposalActionUpdateMetadata => {
         const { type, proposedMetadata, existingMetadata, ...otherValues } = action;
 
-        const normalizeLinks = (links: IResource[]): IProposalActionUpdateMetadataDaoMetadataLink[] =>
-            links.map(({ name, url }) => ({ label: name, href: url }));
-
         const isPluginMetadata = type === ProposalActionType.METADATA_PLUGIN_UPDATE;
-        const isProcess = isPluginMetadata && action.existingMetadata.processKey !== undefined;
+        const processedType = isPluginMetadata
+            ? GukProposalActionType.UPDATE_PLUGIN_METADATA
+            : GukProposalActionType.UPDATE_METADATA;
 
         return {
             ...otherValues,
-            type: isPluginMetadata
-                ? GukProposalActionType.UPDATE_PLUGIN_METADATA
-                : GukProposalActionType.UPDATE_METADATA,
-            proposedMetadata: {
-                ...proposedMetadata,
-                name: proposedMetadata.name ?? '',
-                description: proposedMetadata.description ?? '',
-                links: normalizeLinks(proposedMetadata.links ?? []),
-                ...(isProcess && { processKey: proposedMetadata.processKey }),
-                ...(!isPluginMetadata && { logo: proposedMetadata.logo ?? '' }),
-            },
-            existingMetadata: {
-                ...existingMetadata,
-                name: existingMetadata.name ?? '',
-                description: existingMetadata.description ?? '',
-                links: normalizeLinks(existingMetadata.links ?? []),
-                ...(isProcess && { processKey: existingMetadata.processKey }),
-                ...(!isPluginMetadata && { logo: existingMetadata.logo ?? '' }),
-            },
+            type: processedType,
+            proposedMetadata: this.normalizeActionMetadata(proposedMetadata),
+            existingMetadata: this.normalizeActionMetadata(existingMetadata),
         };
     };
 
-    isWithdrawTokenAction = (action: Partial<IProposalAction>): action is IProposalActionWithdrawToken => {
-        return action.type === ProposalActionType.TRANSFER;
-    };
+    normalizeActionMetadata = (
+        metadata: IProposalActionUpdateMetadataObject | IProposalActionUpdatePluginMetadataObject,
+    ): IProposalActionUpdateMetadataDaoMetadata => ({
+        ...metadata,
+        name: metadata.name ?? '',
+        description: metadata.description ?? '',
+        links: this.normalizeActionMetadataLinks(metadata.links),
+    });
 
-    isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata => {
-        return (
-            action.type === ProposalActionType.METADATA_UPDATE ||
-            action.type === ProposalActionType.METADATA_PLUGIN_UPDATE
-        );
-    };
+    normalizeActionMetadataLinks = (links: IResource[] = []): IProposalActionUpdateMetadataDaoMetadataLink[] =>
+        links.map(({ name, url }) => ({ label: name, href: url }));
+
+    isWithdrawTokenAction = (action: Partial<IProposalAction>): action is IProposalActionWithdrawToken =>
+        action.type === ProposalActionType.TRANSFER;
+
+    isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata =>
+        action.type === ProposalActionType.METADATA_UPDATE || action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;
 }
 
 export const proposalActionUtils = new ProposalActionUtils();

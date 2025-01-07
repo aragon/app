@@ -1,7 +1,7 @@
-import { ProposalActionType, type IProposalAction } from '../../api/governanceService';
+import type { IProposalAction } from '../../api/governanceService';
 
 export const generateProposalAction = (action?: Partial<IProposalAction>): IProposalAction => ({
-    type: ProposalActionType.TRANSFER,
+    type: 'unknown',
     from: '0x123',
     to: '0x456',
     data: '0x',

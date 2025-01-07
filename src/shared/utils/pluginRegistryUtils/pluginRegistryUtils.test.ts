@@ -115,6 +115,21 @@ describe('pluginRegistry utils', () => {
         });
     });
 
+    describe('getSlotFunctions', () => {
+        it('returns all the functions registered for the giver slot', () => {
+            const slotId = 'test-slot-id';
+            pluginRegistryUtils.registerSlotFunction({ slotId, pluginId: '1', function: () => '1' });
+            pluginRegistryUtils.registerSlotFunction({ slotId, pluginId: '2', function: () => '2' });
+            expect(pluginRegistryUtils.getSlotFunctions(slotId)).toHaveLength(2);
+        });
+
+        it('returns empty array when no functions are registered for the given slot id', () => {
+            const slotId = 'test-slot-id';
+            pluginRegistryUtils.registerSlotFunction({ slotId: 'another-slot', pluginId: '1', function: () => null });
+            expect(pluginRegistryUtils.getSlotFunctions(slotId)).toHaveLength(0);
+        });
+    });
+
     describe('getSlotFunction', () => {
         it('returns undefined when no function is registered for the given plugin id', () => {
             const slotId = 'slot-id';
