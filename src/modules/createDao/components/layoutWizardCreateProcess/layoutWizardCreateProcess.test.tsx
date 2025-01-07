@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { type ILayoutWizardCreateProcessProps, LayoutWizardCreateProcess } from './layoutWizardCreateProcess';
 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
-    LayoutWizard: (props: ILayoutWizardProps) => <div data-testid="layout-wizard-mock">{props.name.toString()}</div>,
+    LayoutWizard: (props: ILayoutWizardProps) => <div data-testid="layout-wizard-mock">{props.name as string}</div>,
 }));
 
 describe('<LayoutWizardCreateProcess /> component', () => {
