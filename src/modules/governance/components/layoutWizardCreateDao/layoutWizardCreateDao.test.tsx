@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { type ILayoutWizardCreateDaoProps, LayoutWizardCreateDao } from './layoutWizardCreateDao';
 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
-    LayoutWizard: (props: ILayoutWizardProps) => <div data-testid="layout-wizard-mock">{props.name.toString()}</div>,
+    LayoutWizard: (props: ILayoutWizardProps) => <div data-testid="layout-wizard-mock">{props.name as string}</div>,
 }));
 
 describe('<LayoutWizardCreateDao /> component', () => {
