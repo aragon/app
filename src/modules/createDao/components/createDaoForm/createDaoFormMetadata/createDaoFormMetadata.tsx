@@ -24,36 +24,21 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     const maxFileSize = 3 * 1024 * 1024; // 3 MB in bytes
 
-    const handleFileError = (error: InputFileAvatarError) => {
-        let message = '';
-        switch (error) {
-            case InputFileAvatarError.SQUARE_ONLY:
-                message = t('app.createDao.createDaoForm.metadata.logo.error.squareOnly');
-                break;
-            case InputFileAvatarError.WRONG_DIMENSION:
-                message = t('app.createDao.createDaoForm.metadata.logo.error.wrongDimension');
-                break;
-            case InputFileAvatarError.FILE_INVALID_TYPE:
-                message = t('app.createDao.createDaoForm.metadata.logo.error.invalidType');
-                break;
-            case InputFileAvatarError.TOO_MANY_FILES:
-                message = t('app.createDao.createDaoForm.metadata.logo.error.tooManyFiles');
-                break;
-            case InputFileAvatarError.FILE_TOO_LARGE:
-                message = t('app.createDao.createDaoForm.metadata.logo.error.tooLarge');
-                break;
-            default:
-                message = t('app.createDao.createDaoForm.metadata.logo.error.unknownError');
-        }
+    // Map error types to translations
+    const errorMessages: Record<InputFileAvatarError, string> = {
+        [InputFileAvatarError.SQUARE_ONLY]: t('app.createDao.createDaoForm.metadata.logo.error.squareOnly'),
+        [InputFileAvatarError.WRONG_DIMENSION]: t('app.createDao.createDaoForm.metadata.logo.error.wrongDimension'),
+        [InputFileAvatarError.FILE_INVALID_TYPE]: t('app.createDao.createDaoForm.metadata.logo.error.invalidType'),
+        [InputFileAvatarError.TOO_MANY_FILES]: t('app.createDao.createDaoForm.metadata.logo.error.tooManyFiles'),
+        [InputFileAvatarError.FILE_TOO_LARGE]: t('app.createDao.createDaoForm.metadata.logo.error.tooLarge'),
+        [InputFileAvatarError.UNKNOWN_ERROR]: t('app.createDao.createDaoForm.metadata.logo.error.unknownError'),
+    };
 
+    const handleFileError = (error: InputFileAvatarError) => {
+        const message = errorMessages[error];
         setLogoAlert({ message, variant: 'warning' });
     };
 
-    const handleFileSuccess = () => {
-        // Clear the alert when there's no error
-        setLogoAlert(undefined);
-        //TODO: handle ipfs pinning
-    };
     const nameField = useFormField<ICreateDaoFormData, 'name'>('name', {
         label: t('app.createDao.createDaoForm.metadata.name.label'),
         fieldPrefix,
@@ -89,7 +74,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 maxFileSize={maxFileSize}
                 isOptional={true}
                 onFileError={handleFileError}
-                onFileSelect={handleFileSuccess}
+                onFileSelect={() => setLogoAlert(undefined)}
                 alert={logoAlert}
                 {...logoField}
             />
