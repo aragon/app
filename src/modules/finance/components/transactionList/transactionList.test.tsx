@@ -54,7 +54,7 @@ describe('<TransactionList /> component', () => {
         const transaction = generateTransaction({
             token: generateToken({ symbol: 'AAA' }),
             value: '150',
-            amountUsd: '12.5',
+            amountUsd: '1462.5',
         });
 
         useTransactionListDataSpy.mockReturnValue({
@@ -69,6 +69,6 @@ describe('<TransactionList /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('$1.88K')).toBeInTheDocument(); // TODO: Update the assertion to 'amountUsd' after GovKit is updated (PR: fix(APP-3845-kit))
+        expect(screen.getByText('$1.46K')).toBeInTheDocument();
     });
 });
