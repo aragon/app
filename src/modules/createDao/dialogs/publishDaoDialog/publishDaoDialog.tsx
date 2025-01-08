@@ -17,6 +17,7 @@ import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
+import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 
 export enum PublishDaoStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -52,12 +53,28 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
 
     const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
-    const handlePinJson = useCallback(
+    const { mutate: pinFile } = usePinFile();
+
+    const handlePinData = useCallback(
         (params: ITransactionDialogActionParams) => {
-            const daoMetadata = publishDaoDialogUtils.prepareMetadata(values);
-            pinJson({ body: daoMetadata }, params);
+            if (values.logo) {
+                pinFile(
+                    { body: values.logo },
+                    {
+                        onSuccess: (fileResult) => {
+                            const logoCid = fileResult.IpfsHash;
+                            const daoMetadata = publishDaoDialogUtils.prepareMetadata(values, logoCid);
+                            pinJson({ body: daoMetadata }, params);
+                        },
+                        ...params,
+                    },
+                );
+            } else {
+                const daoMetadata = publishDaoDialogUtils.prepareMetadata(values);
+                pinJson({ body: daoMetadata }, params);
+            }
         },
-        [pinJson, values],
+        [pinFile, pinJson, values],
     );
 
     const handlePrepareTransaction = () => {
@@ -85,12 +102,12 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
                     label: t(`app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.label`),
                     errorLabel: t(`app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.errorLabel`),
                     state: status,
-                    action: handlePinJson,
+                    action: handlePinData,
                     auto: true,
                 },
             },
         ],
-        [status, handlePinJson, t],
+        [status, handlePinData, t],
     );
 
     return (

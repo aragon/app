@@ -4,6 +4,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { InputFileAvatar, InputFileAvatarError, InputText, TextArea } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export interface ICreateDaoFormMetadataProps {
     /**
@@ -17,6 +18,8 @@ const descriptionMaxLength = 480;
 
 export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
     const { fieldPrefix } = props;
+
+    const { setValue } = useFormContext();
 
     const { t } = useTranslations();
 
@@ -74,7 +77,11 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 maxFileSize={maxFileSize}
                 isOptional={true}
                 onFileError={handleFileError}
-                onFileSelect={() => setLogoAlert(undefined)}
+                onFileSelect={(value) => {
+                    // clear previous error if there was one
+                    setLogoAlert(undefined);
+                    setValue('logo', value);
+                }}
                 alert={logoAlert}
                 {...logoField}
             />

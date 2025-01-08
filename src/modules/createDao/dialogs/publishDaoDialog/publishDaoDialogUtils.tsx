@@ -29,10 +29,14 @@ export interface IBuildTransactionParams {
 }
 
 class PublishDaoDialogUtils {
-    prepareMetadata = (formValues: ICreateDaoFormData) => {
+    prepareMetadata = (formValues: ICreateDaoFormData, logoCid?: string) => {
         const { name, description, resources } = formValues;
-
-        return { name, description, links: resources };
+        return {
+            name,
+            description,
+            links: resources,
+            avatar: logoCid ? `ipfs://${logoCid}` : undefined,
+        };
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
