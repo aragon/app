@@ -93,22 +93,22 @@
           }
         },
         "metadata": {
-          "description": {
-            "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
-            "label": "Description",
-            "placeholder": "Description of the DAO"
-          },
-          "logo": {
+          "avatar": {
             "error": {
-              "invalidType": "The selected file type is not supported. Please upload a valid image file (e.g., PNG, JPG).",
-              "squareOnly": "The image must be square. Please upload a square image.",
+              "invalidType": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, GIF).",
+              "squareOnly": "The image must be square. Upload a square image.",
               "tooLarge": "The file size exceeds the maximum allowed limit of 3 MB.",
-              "tooManyFiles": "Only one file can be uploaded at a time. Please remove additional files.",
+              "tooManyFiles": "Only one file can be uploaded at a time",
               "unknownError": "Unable to upload image",
               "wrongDimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
             },
             "helpText": "JPG, PNG or GIF of no more than 3MB and less than 1024x1024px.",
             "label": "Logo"
+          },
+          "description": {
+            "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+            "label": "Description",
+            "placeholder": "Description of the DAO"
           },
           "name": {
             "helpText": "Give the DAO a name that it will be recognized by.",
