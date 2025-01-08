@@ -22,7 +22,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.0.61",
+    "@aragon/gov-ui-kit": "^1.0.62",
     "@floating-ui/react": "^0.27.2",
     "@reown/appkit": "^1.6.3",
     "@reown/appkit-adapter-wagmi": "^1.6.3",
