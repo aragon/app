@@ -548,16 +548,16 @@
         "action": "OK",
         "loading": "Checking permissions",
         "proposal": {
-          "description": "Not a member of this voting body",
-          "title": "You can't create"
+          "description": "You don’t meet the proposal creation requirements.",
+          "title": "Not eligible to create a proposal"
         },
         "screenReader": {
           "description": "You don't have the permissions required for that DAO action.",
           "title": "Permission denied"
         },
         "vote": {
-          "description": "Not a member when proposal was created.",
-          "title": "You can't vote"
+          "description": "You didn’t meet the voting requirements at the block that the proposal was created.",
+          "title": "Not eligible to vote"
         }
       },
       "proposalExecutionStatus": {

@@ -59,7 +59,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                         status={TransactionStatus.SUCCESS}
                         tokenSymbol={transaction.token.symbol}
                         tokenAmount={transaction.value}
-                        tokenPrice={transaction.token.priceUsd}
+                        amountUsd={transaction.amountUsd}
                     />
                 ))}
             </DataListContainer>

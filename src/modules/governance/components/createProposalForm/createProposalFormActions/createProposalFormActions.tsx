@@ -7,6 +7,7 @@ import type { IActionComposerPluginData } from '@/modules/governance/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     Button,
@@ -165,6 +166,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             dropdownItems={getActionDropdownItems(index)}
                             editMode={true}
                             formPrefix={`actions.${index.toString()}`}
+                            chainId={networkDefinitions[dao!.network].chainId}
                         />
                     ))}
                 </ProposalActions.Container>

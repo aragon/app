@@ -52,8 +52,9 @@ describe('<TransactionList /> component', () => {
 
     it('renders the correct token amount in usd', () => {
         const transaction = generateTransaction({
-            token: generateToken({ symbol: 'AAA', priceUsd: '12.5' }),
+            token: generateToken({ symbol: 'AAA' }),
             value: '150',
+            amountUsd: '1462.5',
         });
 
         useTransactionListDataSpy.mockReturnValue({
@@ -68,6 +69,6 @@ describe('<TransactionList /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('$1.88K')).toBeInTheDocument();
+        expect(screen.getByText('$1.46K')).toBeInTheDocument();
     });
 });
