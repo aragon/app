@@ -19,7 +19,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
 
     const vote = useUserVote({ proposal });
 
-    const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
+    const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate!) * 1000;
 
     return (
         <ProposalDataListItem.Structure
@@ -36,10 +36,6 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
                 address: proposal.creator.address,
                 name: proposal.creator.ens ?? undefined,
                 link: `members/${proposal.creator.address}`,
-            }}
-            result={{
-                approvalAmount: proposal.metrics.totalVotes,
-                approvalThreshold: proposal.settings.minApprovals,
             }}
         />
     );

@@ -39,7 +39,7 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
     /**
      * Timestamp of the end date of the proposal.
      */
-    endDate: number;
+    endDate?: number;
     /**
      * Creator of the proposal.
      */

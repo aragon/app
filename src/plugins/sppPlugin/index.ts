@@ -1,5 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { SppProposalList } from '@/plugins/sppPlugin/components/sppProposalList';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SppCreateProposalSettingsForm } from './components/sppCreateProposalSettingsForm';
 import { SppGovernanceInfo } from './components/sppGovernanceInfo';
@@ -14,7 +15,11 @@ export const initialiseSppPlugin = () => {
     pluginRegistryUtils
         // Plugin definitions
         .registerPlugin(plugin)
-
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
+            pluginId: plugin.id,
+            component: SppProposalList,
+        })
         // Governance module slots
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL,

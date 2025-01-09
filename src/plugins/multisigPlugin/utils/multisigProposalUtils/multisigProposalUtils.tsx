@@ -7,7 +7,7 @@ class MultisigProposalUtils {
         const now = DateTime.utc();
 
         const startDate = DateTime.fromMillis(proposal.startDate * 1000).toUTC();
-        const endDate = DateTime.fromMillis(proposal.endDate * 1000).toUTC();
+        const endDate = DateTime.fromMillis(proposal.endDate! * 1000).toUTC();
 
         const approvalReached = this.isApprovalReached(proposal);
         const isSignalingProposal = proposal.actions.length === 0;
