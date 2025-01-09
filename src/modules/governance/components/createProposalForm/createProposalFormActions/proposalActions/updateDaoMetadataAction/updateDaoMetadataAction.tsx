@@ -12,6 +12,7 @@ import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
+import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 
 export interface IUpdateDaoMetadataAction extends Omit<IProposalActionUpdateMetadata, 'proposedMetadata'> {
     /**
@@ -34,6 +35,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
     const { index } = props;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
+    const { mutateAsync: pinFileAsync } = usePinFile();
     const { addPrepareAction } = useCreateProposalFormContext();
 
     const fieldName = `actions.[${index.toString()}]`;
@@ -41,17 +43,19 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
 
     const prepareAction = useCallback(
         async (action: IProposalAction) => {
-            const { name, description, resources } = (action as IUpdateDaoMetadataAction).proposedMetadata;
-            const proposedMetadata = { name, description, links: resources };
+            const { name, description, resources, logo } = (action as IUpdateDaoMetadataAction).proposedMetadata;
+            const proposedMetadata = { name, description, links: resources, logo };
 
-            const ipfsResult = await pinJsonAsync({ body: proposedMetadata });
+            const logoResult = logo ? await pinFileAsync({ body: logo }) : undefined;
+            const avatar = logoResult ? `ipfs://${logoResult.IpfsHash}` : undefined;
+
+            const ipfsResult = await pinJsonAsync({ body: { ...proposedMetadata, avatar } });
             const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
-
             const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
 
             return data;
         },
-        [pinJsonAsync],
+        [pinFileAsync, pinJsonAsync],
     );
 
     useEffect(() => {

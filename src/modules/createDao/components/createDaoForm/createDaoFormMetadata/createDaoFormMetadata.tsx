@@ -4,7 +4,6 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { InputFileAvatar, InputFileAvatarError, InputText, TextArea } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 
 export interface ICreateDaoFormMetadataProps {
     /**
@@ -19,27 +18,25 @@ const descriptionMaxLength = 480;
 export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
     const { fieldPrefix } = props;
 
-    const { setValue } = useFormContext();
-
     const { t } = useTranslations();
 
-    const [avatarAlert, setAvatarAlert] = useState<{ message: string; variant: 'warning' } | undefined>(undefined);
+    const [logoAlert, setLogoAlert] = useState<{ message: string; variant: 'warning' } | undefined>(undefined);
 
     const maxFileSize = 3 * 1024 * 1024; // 3 MB in bytes
 
     // Map error types to translations
     const errorMessages: Record<InputFileAvatarError, string> = {
-        [InputFileAvatarError.SQUARE_ONLY]: t('app.createDao.createDaoForm.metadata.avatar.error.squareOnly'),
-        [InputFileAvatarError.WRONG_DIMENSION]: t('app.createDao.createDaoForm.metadata.avatar.error.wrongDimension'),
-        [InputFileAvatarError.FILE_INVALID_TYPE]: t('app.createDao.createDaoForm.metadata.avatar.error.invalidType'),
-        [InputFileAvatarError.TOO_MANY_FILES]: t('app.createDao.createDaoForm.metadata.avatar.error.tooManyFiles'),
-        [InputFileAvatarError.FILE_TOO_LARGE]: t('app.createDao.createDaoForm.metadata.avatar.error.tooLarge'),
-        [InputFileAvatarError.UNKNOWN_ERROR]: t('app.createDao.createDaoForm.metadata.avatar.error.unknownError'),
+        [InputFileAvatarError.SQUARE_ONLY]: t('app.createDao.createDaoForm.metadata.logo.error.squareOnly'),
+        [InputFileAvatarError.WRONG_DIMENSION]: t('app.createDao.createDaoForm.metadata.logo.error.wrongDimension'),
+        [InputFileAvatarError.FILE_INVALID_TYPE]: t('app.createDao.createDaoForm.metadata.logo.error.invalidType'),
+        [InputFileAvatarError.TOO_MANY_FILES]: t('app.createDao.createDaoForm.metadata.logo.error.tooManyFiles'),
+        [InputFileAvatarError.FILE_TOO_LARGE]: t('app.createDao.createDaoForm.metadata.logo.error.tooLarge'),
+        [InputFileAvatarError.UNKNOWN_ERROR]: t('app.createDao.createDaoForm.metadata.logo.error.unknownError'),
     };
 
     const handleFileError = (error: InputFileAvatarError) => {
         const message = errorMessages[error];
-        setAvatarAlert({ message, variant: 'warning' });
+        setLogoAlert({ message, variant: 'warning' });
     };
 
     const nameField = useFormField<ICreateDaoFormData, 'name'>('name', {
@@ -50,8 +47,13 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         defaultValue: '',
     });
 
-    const avatarField = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
-        label: t('app.createDao.createDaoForm.metadata.avatar.label'),
+    const {
+        value,
+        label,
+        onChange: onFileChange,
+        ...logoField
+    } = useFormField<ICreateDaoFormData, 'logo'>('logo', {
+        label: t('app.createDao.createDaoForm.metadata.logo.label'),
         fieldPrefix,
     });
 
@@ -72,18 +74,18 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 {...nameField}
             />
             <InputFileAvatar
-                helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
+                helpText={t('app.createDao.createDaoForm.metadata.logo.helpText')}
                 maxDimension={1024}
                 maxFileSize={maxFileSize}
                 isOptional={true}
                 onFileError={handleFileError}
                 onFileSelect={(value) => {
                     // clear previous error if there was one
-                    setAvatarAlert(undefined);
-                    setValue('avatar', value);
+                    setLogoAlert(undefined);
+                    onFileChange(value);
                 }}
-                alert={avatarAlert}
-                {...avatarField}
+                alert={logoAlert}
+                {...logoField}
             />
             <TextArea
                 helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}

@@ -57,9 +57,9 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
 
     const handlePinData = useCallback(
         (params: ITransactionDialogActionParams) => {
-            if (values.avatar) {
+            if (values.logo) {
                 pinFile(
-                    { body: values.avatar },
+                    { body: values.logo },
                     {
                         onSuccess: (fileResult) => {
                             const logoCid = fileResult.IpfsHash;
