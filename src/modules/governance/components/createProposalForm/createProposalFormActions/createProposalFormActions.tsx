@@ -1,8 +1,9 @@
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import { type IProposalAction, ProposalActionType } from '@/modules/governance/api/governanceService';
 import type { ISmartContractAbi } from '@/modules/governance/api/smartContractService';
 import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVerifySmartContractDialogParams } from '@/modules/governance/dialogs/verifySmartContractDialog';
+import type { IWalletConnectActionDialogParams } from '@/modules/governance/dialogs/walletConnectActionDialog';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -100,6 +101,19 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         }
     };
 
+    const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
+        const parsedActions = actions.map((action) => ({ ...action, daoId, meta: undefined }));
+        addAction(parsedActions);
+    };
+
+    const displayWalletConnectDialog = () => {
+        const params: IWalletConnectActionDialogParams = {
+            onAddActionsClick: handleAddWalletConnectActions,
+            daoAddress: dao!.address,
+        };
+        open(GovernanceDialog.WALLET_CONNECT_ACTION, { params });
+    };
+
     const handleItemSelected = (action: IActionComposerItem) => {
         const { id, defaultValue, meta } = action;
 
@@ -182,6 +196,14 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     onClick={handleAddCustomAction}
                 >
                     {t('app.governance.createProposalForm.actions.addAction.custom')}
+                </Button>
+                <Button
+                    variant="secondary"
+                    size="md"
+                    iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
+                    onClick={displayWalletConnectDialog}
+                >
+                    {t('app.governance.createProposalForm.actions.addAction.walletConnect')}
                 </Button>
             </div>
             <ActionComposer
