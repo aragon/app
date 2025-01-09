@@ -46,7 +46,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
             const { name, description, resources, logo } = (action as IUpdateDaoMetadataAction).proposedMetadata;
             const proposedMetadata = { name, description, links: resources, logo };
 
-            const logoResult = logo ? await pinFileAsync({ body: logo }) : undefined;
+            const logoResult = logo && typeof logo !== 'string' ? await pinFileAsync({ body: logo }) : undefined;
             const avatar = logoResult ? `ipfs://${logoResult.IpfsHash}` : undefined;
 
             const ipfsResult = await pinJsonAsync({ body: { ...proposedMetadata, avatar } });

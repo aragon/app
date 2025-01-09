@@ -56,25 +56,28 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     const { mutate: pinFile } = usePinFile();
 
     const handlePinData = useCallback(
-        (params: ITransactionDialogActionParams) => {
-            if (values.logo) {
-                pinFile(
-                    { body: values.logo },
-                    {
-                        onSuccess: (fileResult) => {
-                            const logoCid = fileResult.IpfsHash;
-                            const daoMetadata = publishDaoDialogUtils.prepareMetadata(values, logoCid);
-                            pinJson({ body: daoMetadata }, params);
-                        },
-                        ...params,
-                    },
-                );
-            } else {
-                const daoMetadata = publishDaoDialogUtils.prepareMetadata(values);
-                pinJson({ body: daoMetadata }, params);
-            }
+        (params: ITransactionDialogActionParams, logoCid?: string) => {
+            const daoMetadata = publishDaoDialogUtils.prepareMetadata(values, logoCid);
+            pinJson({ body: daoMetadata }, params);
         },
-        [pinFile, pinJson, values],
+        [pinJson, values],
+    );
+
+    const handlePinFile = useCallback(
+        (params: ITransactionDialogActionParams) => {
+            invariant(values.logo !== undefined && typeof values.logo !== 'string', 'Logo must be a file.');
+            pinFile(
+                { body: values.logo },
+                {
+                    onSuccess: (fileResult) => {
+                        const logoCid = fileResult.IpfsHash;
+                        handlePinData(params, logoCid);
+                    },
+                    ...params,
+                },
+            );
+        },
+        [pinFile, handlePinData, values],
     );
 
     const handlePrepareTransaction = () => {
@@ -93,6 +96,8 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         return `/dao/${daoId}`;
     };
 
+    const metadataPinAction = values.logo ? handlePinFile : handlePinData;
+
     const customSteps: Array<ITransactionDialogStep<PublishDaoStep>> = useMemo(
         () => [
             {
@@ -102,12 +107,12 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
                     label: t(`app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.label`),
                     errorLabel: t(`app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.errorLabel`),
                     state: status,
-                    action: handlePinData,
+                    action: metadataPinAction,
                     auto: true,
                 },
             },
         ],
-        [status, handlePinData, t],
+        [t, status, metadataPinAction],
     );
 
     return (

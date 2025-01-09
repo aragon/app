@@ -48,8 +48,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
     });
 
     const {
-        value,
-        label,
+        value: logoValue,
         onChange: onFileChange,
         ...logoField
     } = useFormField<ICreateDaoFormData, 'logo'>('logo', {

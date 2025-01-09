@@ -9,7 +9,7 @@ export interface ICreateDaoFormMetadataData {
     /**
      * Logo of the DAO.
      */
-    logo?: File;
+    logo?: File | string;
     /**
      * Description of the DAO.
      */
