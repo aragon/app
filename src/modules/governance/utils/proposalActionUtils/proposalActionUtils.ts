@@ -21,6 +21,7 @@ import {
 import { formatUnits } from 'viem';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { INormalizeActionsParams } from '../../types';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 class ProposalActionUtils {
     normalizeActions = (proposal: IProposal, dao: IDao): IGukProposalAction[] => {
@@ -77,12 +78,18 @@ class ProposalActionUtils {
 
     normalizeActionMetadata = (
         metadata: IProposalActionUpdateMetadataObject | IProposalActionUpdatePluginMetadataObject,
-    ): IProposalActionUpdateMetadataDaoMetadata => ({
-        ...metadata,
-        name: metadata.name ?? '',
-        description: metadata.description ?? '',
-        links: this.normalizeActionMetadataLinks(metadata.links),
-    });
+    ): IProposalActionUpdateMetadataDaoMetadata => {
+        console.log(metadata);
+        const logo = 'logo' in metadata && metadata.logo ? ipfsUtils.cidToSrc(metadata.logo) : '';
+
+        return {
+            ...metadata,
+            name: metadata.name ?? '',
+            description: metadata.description ?? '',
+            links: this.normalizeActionMetadataLinks(metadata.links),
+            logo,
+        };
+    };
 
     normalizeActionMetadataLinks = (links: IResource[] = []): IProposalActionUpdateMetadataDaoMetadataLink[] =>
         links.map(({ name, url }) => ({ label: name, href: url }));
