@@ -67,8 +67,9 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
             disconnectApp({ session: appSession });
         }
 
+        resetAppSession();
         close();
-    }, [appSession, disconnectApp, close]);
+    }, [appSession, resetAppSession, disconnectApp, close]);
 
     const handleAddActions = () => {
         onAddActionsClick(actions);
@@ -87,7 +88,11 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
         };
     }, [appSession, resetAppSession]);
 
-    const handleFormSubmit = ({ uri }: IWalletConnectActionFormData) => connectApp({ uri, address: daoAddress });
+    const handleFormSubmit = ({ uri }: IWalletConnectActionFormData) => {
+        // Reset previous errors in case of retry
+        resetAppSession();
+        connectApp({ uri, address: daoAddress });
+    };
 
     if (appSession == null) {
         return <WalletConnectActionDialogConnect onFormSubmit={handleFormSubmit} status={connectionStatus} />;

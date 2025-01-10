@@ -1,7 +1,7 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Dialog, InputText } from '@aragon/gov-ui-kit';
+import { Dialog, IconType, InputText } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
 
 export interface IWalletConnectActionFormData {
@@ -36,6 +36,12 @@ export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDial
         defaultValue: '',
     });
 
+    const primaryActionLabel = status === 'error' ? 'retry' : 'connect';
+    const alertMessage =
+        status === 'error'
+            ? ({ message: t('app.governance.walletConnectActionDialog.connect.error'), variant: 'critical' } as const)
+            : undefined;
+
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <Dialog.Header
@@ -50,14 +56,16 @@ export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDial
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.governance.walletConnectActionDialog.connect.action.connect'),
+                    label: t(`app.governance.walletConnectActionDialog.connect.action.${primaryActionLabel}`),
                     type: 'submit',
                     isLoading: status === 'pending',
+                    iconRight: status === 'error' ? IconType.RELOAD : undefined,
                 }}
                 secondaryAction={{
                     label: t('app.governance.walletConnectActionDialog.connect.action.cancel'),
                     onClick: () => close(),
                 }}
+                alert={alertMessage}
             />
         </form>
     );

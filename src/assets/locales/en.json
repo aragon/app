@@ -627,9 +627,11 @@
         "connect": {
           "action": {
             "cancel": "Cancel",
-            "connect": "Connect dApp"
+            "connect": "Connect dApp",
+            "retry": "Retry"
           },
           "description": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
+          "error": "Error while connecting dApp, please try again.",
           "title": "Connect new dApp",
           "uriField": {
             "placeholder": "wc: …"
