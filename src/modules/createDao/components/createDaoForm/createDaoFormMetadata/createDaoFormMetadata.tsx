@@ -84,6 +84,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         name: getFieldName('avatar'),
     });
 
+    // This is needed to get the existing DAO logo for the image preview
     const parsedAvatarValue = typeof avatarValue === 'string' ? { url: ipfsUtils.cidToSrc(avatarValue) } : avatarValue;
 
     return (
