@@ -1,8 +1,14 @@
-import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { invariant } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { fromHex, isHex } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
-import { type ISessionRequest, type ISessionRequestParams, useConnectApp } from '../../api/walletConnectService';
+import {
+    useConnectApp,
+    useDisconnectApp,
+    type ISessionRequest,
+    type ISessionRequestParams,
+} from '../../api/walletConnectService';
 import { walletConnectService } from '../../api/walletConnectService/walletConnectService';
 import { WalletConnectActionDialogConnect } from './walletConnectActionDialogConnect';
 import { WalletConnectActionDialogListener } from './walletConnectActionDialogListener';
@@ -33,7 +39,11 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
     invariant(location.params != null, 'WalletConnectActionDialog: params must be defined');
     const { daoAddress, onAddActionsClick } = location.params;
 
+    const { close } = useDialogContext();
     const [actions, setActions] = useState<IProposalAction[]>([]);
+
+    const { data: appSession, mutate: connectApp, status: connectionStatus, reset: resetAppSession } = useConnectApp();
+    const { mutate: disconnectApp } = useDisconnectApp();
 
     const handleSessionRequest = (sessionRequest: ISessionRequest) => {
         const { request } = sessionRequest.params;
@@ -43,31 +53,51 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
             return;
         }
 
-        const { from, to, data, value } = (request.params as ISessionRequestParams[typeof request.method])[0];
-        const newAction: IProposalAction = { from, to, data, value, type: 'unknown', inputData: null };
+        const { from, to, data, value = '0' } = (request.params as ISessionRequestParams[typeof request.method])[0];
+
+        // Parse value from request as it can be set as hex instead of string
+        const parsedValue = isHex(value) ? fromHex(value, 'bigint').toString() : value;
+        const newAction: IProposalAction = { from, to, data, value: parsedValue, type: 'unknown', inputData: null };
 
         setActions((current) => [...current, newAction]);
     };
 
-    const handleConnectionSuccess = () =>
-        walletConnectService.attachListener({ event: 'session_request', callback: handleSessionRequest });
+    const handleCloseDialog = useCallback(() => {
+        if (appSession) {
+            disconnectApp({ session: appSession });
+        }
 
-    const {
-        data: appMetadata,
-        mutate: connectApp,
-        status: connectionStatus,
-    } = useConnectApp({ onSuccess: handleConnectionSuccess });
+        close();
+    }, [appSession, disconnectApp, close]);
+
+    const handleAddActions = () => {
+        onAddActionsClick(actions);
+        handleCloseDialog();
+    };
+
+    useEffect(() => {
+        if (appSession) {
+            walletConnectService.attachListener({ event: 'session_request', callback: handleSessionRequest });
+            walletConnectService.attachListener({ event: 'session_delete', callback: resetAppSession });
+        }
+
+        return () => {
+            walletConnectService.removeListener({ event: 'session_request', callback: handleSessionRequest });
+            walletConnectService.removeListener({ event: 'session_delete', callback: resetAppSession });
+        };
+    }, [appSession, resetAppSession]);
 
     const handleFormSubmit = ({ uri }: IWalletConnectActionFormData) => connectApp({ uri, address: daoAddress });
 
-    if (appMetadata == null) {
+    if (appSession == null) {
         return <WalletConnectActionDialogConnect onFormSubmit={handleFormSubmit} status={connectionStatus} />;
     } else {
         return (
             <WalletConnectActionDialogListener
-                appMetadata={appMetadata}
+                appMetadata={appSession.peer.metadata}
                 actions={actions}
-                onAddActionsClick={onAddActionsClick}
+                onAddActionsClick={handleAddActions}
+                onClose={handleCloseDialog}
             />
         );
     }

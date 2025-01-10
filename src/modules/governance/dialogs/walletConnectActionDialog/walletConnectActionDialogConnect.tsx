@@ -32,7 +32,7 @@ export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDial
 
     const uriField = useFormField<IWalletConnectActionFormData, 'uri'>('uri', {
         control,
-        rules: { required: true, pattern: /wc:.+/ },
+        rules: { required: true, pattern: /wc:[a-f0-9]{64}@2\?.*/ },
         defaultValue: '',
     });
 

@@ -10,7 +10,7 @@ export interface ISessionRequestSendTransactionParams {
     /**
      * Value of the transaction.
      */
-    value: string;
+    value?: string;
     /**
      * Data of the transaction.
      */

@@ -1,6 +1,7 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Avatar, Dialog, Heading, IconType, Link, Spinner } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
 import type { IProposalAction } from '../../api/governanceService';
 import type { IAppMetadata } from '../../api/walletConnectService';
 
@@ -16,22 +17,21 @@ export interface IWalletConnectActionDialogListenerProps {
     /**
      * Callback called on add actions click.
      */
-    onAddActionsClick: (actions: IProposalAction[]) => void;
+    onAddActionsClick: () => void;
+    /**
+     * Callback called on dialog close.
+     */
+    onClose: () => void;
 }
 
 export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDialogListenerProps> = (props) => {
-    const { appMetadata, actions, onAddActionsClick } = props;
+    const { appMetadata, actions, onAddActionsClick, onClose } = props;
 
-    const { close } = useDialogContext();
     const { t } = useTranslations();
+    const { updateOptions } = useDialogContext();
 
     const { name, icons, url } = appMetadata;
     const hasActions = actions.length > 0;
-
-    const handleAddActions = () => {
-        onAddActionsClick(actions);
-        close();
-    };
 
     const primaryActionLink = {
         label: t('app.governance.walletConnectActionDialog.listener.action.open'),
@@ -42,8 +42,13 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
 
     const primaryActionButton = {
         label: t('app.governance.walletConnectActionDialog.listener.action.addActions', { count: actions.length }),
-        onClick: handleAddActions,
+        onClick: onAddActionsClick,
     };
+
+    // Update the default close dialog handler to use the onClose property and cleanup the WalletConnect session.
+    useEffect(() => {
+        updateOptions({ onClose });
+    }, [updateOptions, onClose]);
 
     return (
         <>
@@ -79,7 +84,7 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
                 primaryAction={hasActions ? primaryActionButton : primaryActionLink}
                 secondaryAction={{
                     label: t('app.governance.walletConnectActionDialog.listener.action.cancel'),
-                    onClick: () => close(),
+                    onClick: onClose,
                 }}
             />
         </>

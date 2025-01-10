@@ -1,4 +1,4 @@
-import type { IAppMetadata, ISessionEvent, ISessionEventArguments, ISessionProposal } from './domain';
+import type { ISession, ISessionEvent, ISessionEventArguments, ISessionProposal } from './domain';
 
 export interface IConnectAppParams {
     /**
@@ -9,6 +9,13 @@ export interface IConnectAppParams {
      * Address of the connecting user.
      */
     address: string;
+}
+
+export interface IDisconnectAppParams {
+    /**
+     * Active session to be disconnected.
+     */
+    session: ISession;
 }
 
 export interface IApproveSessionParams {
@@ -24,9 +31,9 @@ export interface IApproveSessionParams {
 
 export interface IHandleSessionProposalParams extends IApproveSessionParams {
     /**
-     * Callback called with the connected App metadata when the session is correctly established.
+     * Callback called with the initiated session.
      */
-    onSuccess: (metadata: IAppMetadata) => void;
+    onSuccess: (session: ISession) => void;
     /**
      * Callback called when an error occours when establishing the connection.
      */
