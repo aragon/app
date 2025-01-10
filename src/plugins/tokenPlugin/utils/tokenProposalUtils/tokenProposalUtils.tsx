@@ -65,6 +65,23 @@ class TokenProposalUtils {
         return isMinParticipationReached && isSupportReached;
     };
 
+    hasSucceeded = (proposal: ITokenProposal) => {
+        const isApprovalReached = this.isApprovalReached(proposal);
+        const isApprovalReachedEarly = this.isApprovalReached(proposal, true);
+
+        const now = DateTime.utc();
+        const startDate = DateTime.fromMillis(proposal.startDate * 1000);
+        const endDate = DateTime.fromMillis(proposal.endDate * 1000);
+
+        const isProposalOpen = now > startDate && now < endDate;
+
+        if (isProposalOpen) {
+            return proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION && isApprovalReachedEarly;
+        }
+
+        return isApprovalReached;
+    };
+
     isMinParticipationReached = (proposal: ITokenProposal): boolean => {
         const { minParticipation, historicalTotalSupply } = proposal.settings;
 
