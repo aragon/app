@@ -6,7 +6,7 @@ import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../t
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): ProposalVotingStatus => {
-        const { stageIndex: currentStageIndex, actions, settings } = proposal;
+        const { stageIndex: currentStageIndex, actions } = proposal;
         const { stageIndex } = stage;
 
         const now = DateTime.now();
@@ -19,7 +19,11 @@ class SppStageUtils {
         const approvalReached = this.isApprovalReached(proposal, stage);
 
         // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
-        const isSignalingProposal = actions.length === 0 && stageIndex === settings.stages.length - 1;
+        const isSignalingProposal = actions.length === 0 && this.isFinalStage(proposal, stage);
+
+        if (stageIndex < currentStageIndex && approvalReached) {
+            return ProposalVotingStatus.ADVANCED;
+        }
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalVotingStatus.VETOED;
@@ -47,7 +51,7 @@ class SppStageUtils {
         const isExpired =
             maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal && stageIndex === currentStageIndex;
 
-        return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
+        return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ADVANCEABLE;
     };
 
     isStagedUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
@@ -129,6 +133,15 @@ class SppStageUtils {
 
     isVeto = (stage: ISppStage): boolean => {
         return stage.vetoThreshold > 0;
+    };
+
+    isExecuted = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const now = DateTime.now();
+        return now < DateTime.fromSeconds(stage.maxAdvance) && this.isApprovalReached(proposal, stage);
+    };
+
+    isFinalStage = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        return proposal.settings.stages.length - 1 === stage.stageIndex;
     };
 }
 

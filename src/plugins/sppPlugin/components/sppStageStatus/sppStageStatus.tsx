@@ -56,11 +56,15 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
     // to hide executable info text.
     const displayAdvanceButton =
-        (stageStatus === ProposalVotingStatus.ACCEPTED ||
-            (stageStatus === ProposalVotingStatus.ACTIVE &&
-                sppStageUtils.isApprovalReached(proposal, stage) &&
-                !sppStageUtils.isVeto(stage))) &&
-        !(isSignalingProposal && isLastStage);
+        (stageStatus === ProposalVotingStatus.ADVANCEABLE && !(isSignalingProposal && isLastStage)) ||
+        (stageStatus === ProposalVotingStatus.ACCEPTED && sppStageUtils.isFinalStage(proposal, stage));
+
+    console.log(
+        'true enough',
+        stageStatus === ProposalVotingStatus.ACCEPTED && sppStageUtils.isFinalStage(proposal, stage),
+    );
+
+    console.log('stageStatus', stageStatus);
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);

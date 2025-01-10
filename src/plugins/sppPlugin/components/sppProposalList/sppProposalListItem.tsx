@@ -1,7 +1,12 @@
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
-import { ProposalDataListItem, proposalDataListItemUtils } from '@aragon/gov-ui-kit';
+import {
+    ProposalDataListItem,
+    proposalDataListItemUtils,
+    ProposalStatus,
+    votingStatusToProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
 
 export interface ISppProposalListItemProps {
@@ -21,20 +26,28 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const proposalDate =
         (proposal.executed.blockTimestamp ?? proposal.subProposals[proposal.stageIndex].endDate!) * 1000;
 
+    console.log('proposalDate', proposalDate);
     const stageStatus = sppStageUtils.getStageStatus(proposal, proposal.settings.stages[proposal.stageIndex]);
-    const proposalStatus = sppProposalUtils.getProposalStatus(proposal);
 
-    const isNotFinalStage = proposal.stageIndex !== proposal.settings.stages.length - 1;
-    const isOngoing = proposalDataListItemUtils.isOngoingStatus(stageStatus);
+    console.log('stageStatus', stageStatus);
 
-    const getProcessStatus = () => {
-        if (isNotFinalStage) {
-            return stageStatus;
-        }
-        return proposalStatus;
-    };
+    const isFinalStage = sppStageUtils.isFinalStage(proposal, proposal.settings.stages[proposal.stageIndex]);
+
+    console.log('isFinalStage', isFinalStage);
+
+    const processedStatus = isFinalStage
+        ? sppProposalUtils.getProposalStatus(proposal)
+        : votingStatusToProposalStatus[stageStatus];
+
+    console.log('processedStatus', processedStatus);
+
+    const isOngoing = proposalDataListItemUtils.isOngoingStatus(processedStatus);
+
+    console.log('isOngoing', isOngoing);
 
     const vote = useUserVote({ proposal: proposal.subProposals[proposal.stageIndex] });
+
+    const showStatusContext = !(isFinalStage && processedStatus !== ProposalStatus.ACTIVE) && isOngoing;
 
     return (
         <ProposalDataListItem.Structure
@@ -44,10 +57,8 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
             summary={proposal.summary}
             date={proposalDate}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
-            status={getProcessStatus()}
-            statusContext={
-                isNotFinalStage && isOngoing ? proposal.settings.stages[proposal.stageIndex].name : undefined
-            }
+            status={processedStatus}
+            statusContext={showStatusContext ? proposal.settings.stages[proposal.stageIndex].name : undefined}
             type="approvalThreshold"
             voted={vote != null}
             publisher={{

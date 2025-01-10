@@ -56,10 +56,17 @@ class SppProposalUtils {
 
     getCurrentStage = (proposal: ISppProposal): ISppStage => proposal.settings.stages[proposal.stageIndex];
 
-    areAllStagesAccepted = (proposal: ISppProposal): boolean =>
-        proposal.settings.stages.every(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
-        );
+    areAllStagesAccepted = (proposal: ISppProposal): boolean => {
+        const stagesAccepted = proposal.settings.stages.reduce((count, stage) => {
+            const status = sppStageUtils.getStageStatus(proposal, stage);
+
+            return (
+                count + (status === ProposalVotingStatus.ACCEPTED || status === ProposalVotingStatus.ADVANCED ? 1 : 0)
+            );
+        }, 0);
+
+        return stagesAccepted === proposal.settings.stages.length;
+    };
 }
 
 export const sppProposalUtils = new SppProposalUtils();
