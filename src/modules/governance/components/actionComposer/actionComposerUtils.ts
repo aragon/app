@@ -213,7 +213,7 @@ class ActionComposerUtils {
 
     private buildDefaultActionMetadata = (dao: IDao) => {
         const { avatar, address, name, description, links: resources } = dao;
-        const existingMetadata = { logo: avatar ?? undefined, name, description, resources };
+        const existingMetadata = { avatar: avatar ?? undefined, name, description, resources };
 
         return {
             type: ProposalActionType.METADATA_UPDATE,

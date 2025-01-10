@@ -9,6 +9,7 @@ import {
     type IProposalActionWithdrawToken,
 } from '@/modules/governance/api/governanceService';
 import type { IDao, IResource } from '@/shared/api/daoService';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     ProposalActionType as GukProposalActionType,
@@ -21,7 +22,6 @@ import {
 import { formatUnits } from 'viem';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { INormalizeActionsParams } from '../../types';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 class ProposalActionUtils {
     normalizeActions = (proposal: IProposal, dao: IDao): IGukProposalAction[] => {
@@ -79,15 +79,14 @@ class ProposalActionUtils {
     normalizeActionMetadata = (
         metadata: IProposalActionUpdateMetadataObject | IProposalActionUpdatePluginMetadataObject,
     ): IProposalActionUpdateMetadataDaoMetadata => {
-        console.log(metadata);
-        const logo = 'logo' in metadata && metadata.logo ? ipfsUtils.cidToSrc(metadata.logo) : '';
-
+        const hasAvatar = 'avatar' in metadata && metadata.avatar?.startsWith('ipfs://');
+        const avatar = hasAvatar ? ipfsUtils.cidToSrc(metadata.avatar) : undefined;
         return {
             ...metadata,
             name: metadata.name ?? '',
             description: metadata.description ?? '',
             links: this.normalizeActionMetadataLinks(metadata.links),
-            logo,
+            avatar,
         };
     };
 

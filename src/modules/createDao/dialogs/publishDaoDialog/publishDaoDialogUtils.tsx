@@ -29,13 +29,13 @@ export interface IBuildTransactionParams {
 }
 
 class PublishDaoDialogUtils {
-    prepareMetadata = (formValues: ICreateDaoFormData, logoCid?: string) => {
+    prepareMetadata = (formValues: ICreateDaoFormData, avatarCid?: string) => {
         const { name, description, resources } = formValues;
         return {
             name,
             description,
             links: resources,
-            avatar: logoCid ? `ipfs://${logoCid}` : undefined,
+            avatar: avatarCid ? `ipfs://${avatarCid}` : undefined,
         };
     };
 

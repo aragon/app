@@ -1,4 +1,5 @@
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
+import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -17,7 +18,6 @@ import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
-import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 
 export enum PublishDaoStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -56,8 +56,8 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     const { mutate: pinFile } = usePinFile();
 
     const handlePinData = useCallback(
-        (params: ITransactionDialogActionParams, logoCid?: string) => {
-            const daoMetadata = publishDaoDialogUtils.prepareMetadata(values, logoCid);
+        (params: ITransactionDialogActionParams, avatarCid?: string) => {
+            const daoMetadata = publishDaoDialogUtils.prepareMetadata(values, avatarCid);
             pinJson({ body: daoMetadata }, params);
         },
         [pinJson, values],
@@ -65,13 +65,13 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
 
     const handlePinFile = useCallback(
         (params: ITransactionDialogActionParams) => {
-            invariant(values.logo !== undefined && typeof values.logo !== 'string', 'Logo must be a file.');
+            invariant(values.avatar?.file !== undefined, 'Logo must be a file.');
             pinFile(
-                { body: values.logo },
+                { body: values.avatar.file },
                 {
                     onSuccess: (fileResult) => {
-                        const logoCid = fileResult.IpfsHash;
-                        handlePinData(params, logoCid);
+                        const avatarCid = fileResult.IpfsHash;
+                        handlePinData(params, avatarCid);
                     },
                     ...params,
                 },
@@ -96,7 +96,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         return `/dao/${daoId}`;
     };
 
-    const metadataPinAction = values.logo ? handlePinFile : handlePinData;
+    const metadataPinAction = values.avatar ? handlePinFile : handlePinData;
 
     const customSteps: Array<ITransactionDialogStep<PublishDaoStep>> = useMemo(
         () => [
