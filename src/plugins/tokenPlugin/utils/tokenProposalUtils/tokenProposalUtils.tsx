@@ -9,7 +9,7 @@ class TokenProposalUtils {
         const now = DateTime.utc();
 
         const startDate = DateTime.fromMillis(proposal.startDate * 1000);
-        const endDate = DateTime.fromMillis(proposal.endDate * 1000);
+        const endDate = DateTime.fromMillis(proposal.endDate! * 1000);
 
         const approvalReached = this.isApprovalReached(proposal);
         const approvalReachedEarly = this.isApprovalReached(proposal, true);

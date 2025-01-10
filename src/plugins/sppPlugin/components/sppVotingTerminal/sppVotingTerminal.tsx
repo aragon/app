@@ -28,8 +28,6 @@ export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
         index,
     }));
 
-    console.log('processedStages', processedStages);
-
     return (
         <ProposalVoting.Container activeStage={activeStage} onStageClick={setActiveStage}>
             {processedStages.map(({ stage, subProposals, index }) => (

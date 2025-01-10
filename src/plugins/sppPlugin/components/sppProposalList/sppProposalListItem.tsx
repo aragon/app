@@ -26,24 +26,15 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const proposalDate =
         (proposal.executed.blockTimestamp ?? proposal.subProposals[proposal.stageIndex].endDate!) * 1000;
 
-    console.log('proposalDate', proposalDate);
     const stageStatus = sppStageUtils.getStageStatus(proposal, proposal.settings.stages[proposal.stageIndex]);
 
-    console.log('stageStatus', stageStatus);
-
     const isFinalStage = sppStageUtils.isFinalStage(proposal, proposal.settings.stages[proposal.stageIndex]);
-
-    console.log('isFinalStage', isFinalStage);
 
     const processedStatus = isFinalStage
         ? sppProposalUtils.getProposalStatus(proposal)
         : votingStatusToProposalStatus[stageStatus];
 
-    console.log('processedStatus', processedStatus);
-
     const isOngoing = proposalDataListItemUtils.isOngoingStatus(processedStatus);
-
-    console.log('isOngoing', isOngoing);
 
     const vote = useUserVote({ proposal: proposal.subProposals[proposal.stageIndex] });
 

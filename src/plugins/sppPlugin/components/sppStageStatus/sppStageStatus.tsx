@@ -59,13 +59,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         (stageStatus === ProposalVotingStatus.ADVANCEABLE && !(isSignalingProposal && isLastStage)) ||
         (stageStatus === ProposalVotingStatus.ACCEPTED && sppStageUtils.isFinalStage(proposal, stage));
 
-    console.log(
-        'true enough',
-        stageStatus === ProposalVotingStatus.ACCEPTED && sppStageUtils.isFinalStage(proposal, stage),
-    );
-
-    console.log('stageStatus', stageStatus);
-
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
 
