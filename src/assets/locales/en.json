@@ -835,12 +835,12 @@
           "earlyExecution": "Early execution",
           "minimumDuration": "Minimum duration",
           "minimumParticipation": "Minimum participation",
-          "no": "No",
+          "no": "Disabled",
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalThreshold": "Proposal threshold",
           "voteChange": "Vote change",
-          "yes": "Yes"
+          "yes": "Enabled"
         },
         "tokenMemberInfo": {
           "distribution": "Distribution",
