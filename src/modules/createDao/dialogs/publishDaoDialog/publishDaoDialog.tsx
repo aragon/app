@@ -1,3 +1,4 @@
+import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
@@ -51,9 +52,9 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         initialActiveStep: PublishDaoStep.PIN_METADATA,
     });
 
-    const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
+    const { data: pinJsonData, status: pinJsonStatus, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
-    const { mutate: pinFile } = usePinFile();
+    const { mutate: pinFile, status: pinFileStatus } = usePinFile();
 
     const handlePinData = useCallback(
         (params: ITransactionDialogActionParams, avatarCid?: string) => {
@@ -63,22 +64,43 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         [pinJson, values],
     );
 
+    const handlePinFileSuccess = useCallback(
+        (params: ITransactionDialogActionParams, fileResult: IPinResult) => {
+            const avatarCid = fileResult.IpfsHash;
+            handlePinData(params, avatarCid);
+        },
+        [handlePinData],
+    );
+
     const handlePinFile = useCallback(
         (params: ITransactionDialogActionParams) => {
             invariant(values.avatar?.file !== undefined, 'Logo must be a file.');
             pinFile(
                 { body: values.avatar.file },
                 {
-                    onSuccess: (fileResult) => {
-                        const avatarCid = fileResult.IpfsHash;
-                        handlePinData(params, avatarCid);
-                    },
+                    onSuccess: (fileResult) => handlePinFileSuccess(params, fileResult),
                     ...params,
                 },
             );
         },
-        [pinFile, handlePinData, values],
+        [pinFile, values, handlePinFileSuccess],
     );
+
+    const pinningStatus = useMemo(() => {
+        if (values.avatar) {
+            if (pinFileStatus === 'error' || pinJsonStatus === 'error') {
+                return 'error';
+            }
+            if (pinFileStatus === 'pending' || pinJsonStatus === 'pending') {
+                return 'pending';
+            }
+            if (pinFileStatus === 'idle' || pinJsonStatus === 'idle') {
+                return 'idle';
+            }
+            return 'success';
+        }
+        return pinJsonStatus;
+    }, [values.avatar, pinFileStatus, pinJsonStatus]);
 
     const handlePrepareTransaction = () => {
         invariant(pinJsonData != null, 'PublishDaoDialog: metadata not pinned for prepare transaction step.');
@@ -106,13 +128,13 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
                 meta: {
                     label: t(`app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.label`),
                     errorLabel: t(`app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.errorLabel`),
-                    state: status,
+                    state: pinningStatus,
                     action: metadataPinAction,
                     auto: true,
                 },
             },
         ],
-        [t, status, metadataPinAction],
+        [t, metadataPinAction, pinningStatus],
     );
 
     return (
