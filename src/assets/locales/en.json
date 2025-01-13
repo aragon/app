@@ -1137,6 +1137,12 @@
           },
           "next": "Next"
         }
+      },
+      "wizardDetailsDialog": {
+        "footer": {
+          "cancel": "Cancel"
+        },
+        "step": "Step {{number}}"
       }
     }
   }
