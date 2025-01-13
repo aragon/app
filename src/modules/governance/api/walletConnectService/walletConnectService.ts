@@ -1,6 +1,6 @@
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { walletConnectDefinitions } from '@/shared/constants/walletConnectDefinitions';
-import { type IWalletKit, WalletKit, type WalletKitTypes } from '@reown/walletkit';
+import { WalletKit, type WalletKitTypes } from '@reown/walletkit';
 import { Core } from '@walletconnect/core';
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 import type { ISession, ISessionEvent } from './domain';
@@ -12,21 +12,49 @@ import type {
     IHandleSessionProposalParams,
 } from './walletConnectService.api';
 
-class WalletConnectService {
+export class WalletConnectService {
     private core = new Core({ projectId: walletConnectDefinitions.projectId });
 
-    private client: IWalletKit | undefined;
+    private client: InstanceType<typeof WalletKit> | undefined;
 
     // Disable request queue on signer client as otherwise the WalletConnect controller would not emit events if the
     // web UI does not respond to the initial session request.
     // See https://github.com/WalletConnect/walletconnect-monorepo/blob/v2.0/packages/sign-client/src/controllers/engine.ts#L2138
     private signConfig: WalletKitTypes.Options['signConfig'] = { disableRequestQueue: true };
 
+    // Specify all methods and events to always establish a connection with dApps even if some of the methods (e.g. sign)
+    // are not supported (see https://docs.reown.com/walletkit/web/usage#evm-methods--events)
+    private supportedMethods = [
+        'eth_accounts',
+        'eth_requestAccounts',
+        'eth_sendRawTransaction',
+        'eth_sign',
+        'eth_signTransaction',
+        'eth_signTypedData',
+        'eth_signTypedData_v3',
+        'eth_signTypedData_v4',
+        'eth_sendTransaction',
+        'personal_sign',
+        'wallet_switchEthereumChain',
+        'wallet_addEthereumChain',
+        'wallet_getPermissions',
+        'wallet_requestPermissions',
+        'wallet_registerOnboarding',
+        'wallet_watchAsset',
+        'wallet_scanQRCode',
+        'wallet_sendCalls',
+        'wallet_getCallsStatus',
+        'wallet_showCallsStatus',
+        'wallet_getCapabilities',
+    ];
+
+    private supportedEvents = ['chainChanged', 'accountsChanged', 'message', 'disconnect', 'connect'];
+
     constructor() {
         void this.initialize();
     }
 
-    private initialize = async () => {
+    private initialize = async (): Promise<void> => {
         const { metadata } = walletConnectDefinitions;
         this.client = await WalletKit.init({ core: this.core, metadata, signConfig: this.signConfig });
     };
@@ -36,9 +64,10 @@ class WalletConnectService {
 
         return new Promise((resolve, reject) => {
             const handlers = { onError: reject, onSuccess: resolve };
-            this.client?.on('session_proposal', (sessionProposal) =>
-                this.handleSessionProposal({ sessionProposal, address, ...handlers }),
-            );
+            this.attachListener({
+                event: 'session_proposal',
+                callback: (sessionProposal) => this.handleSessionProposal({ sessionProposal, address, ...handlers }),
+            });
             this.client?.pair({ uri }).catch((error: unknown) => reject(this.parseError(error)));
         });
     };
@@ -79,9 +108,6 @@ class WalletConnectService {
         return session;
     };
 
-    private parseError = (error: unknown): Error =>
-        error instanceof Error ? error : typeof error === 'string' ? new Error(error) : new Error('unknown error');
-
     private getSupportedNamespaces = (account: string) => {
         const supportedChainIds = Object.values(networkDefinitions).map((definition) => definition.chainId);
 
@@ -91,34 +117,15 @@ class WalletConnectService {
         return {
             eip155: {
                 chains: chainIdNamespaces,
-                methods: [
-                    'eth_accounts',
-                    'eth_requestAccounts',
-                    'eth_sendRawTransaction',
-                    'eth_sign',
-                    'eth_signTransaction',
-                    'eth_signTypedData',
-                    'eth_signTypedData_v3',
-                    'eth_signTypedData_v4',
-                    'eth_sendTransaction',
-                    'personal_sign',
-                    'wallet_switchEthereumChain',
-                    'wallet_addEthereumChain',
-                    'wallet_getPermissions',
-                    'wallet_requestPermissions',
-                    'wallet_registerOnboarding',
-                    'wallet_watchAsset',
-                    'wallet_scanQRCode',
-                    'wallet_sendCalls',
-                    'wallet_getCallsStatus',
-                    'wallet_showCallsStatus',
-                    'wallet_getCapabilities',
-                ],
-                events: ['chainChanged', 'accountsChanged', 'message', 'disconnect', 'connect'],
+                methods: this.supportedMethods,
+                events: this.supportedEvents,
                 accounts: accountNamespaces,
             },
         };
     };
+
+    private parseError = (error: unknown): Error =>
+        error instanceof Error ? error : typeof error === 'string' ? new Error(error) : new Error('unknown error');
 }
 
 export const walletConnectService = new WalletConnectService();
