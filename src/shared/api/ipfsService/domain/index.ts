@@ -1,2 +1,1 @@
-export type { IPinFileResult } from './pinFileResult';
-export type { IPinJsonResult } from './pinJsonResult';
+export type { IPinResult } from './pinResult';
