@@ -8,12 +8,12 @@ import { sppProposalUtils } from './sppProposalUtils';
 
 describe('SppProposalUtils', () => {
     const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
-    const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
+    const getStageMaxVoteSpy = jest.spyOn(sppStageUtils, 'getStageMaxVote');
     const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
 
     afterEach(() => {
         getStageStatusSpy.mockReset();
-        getStageEndDateSpy.mockReset();
+        getStageMaxVoteSpy.mockReset();
         getStageMaxAdvanceSpy.mockReset();
     });
 
@@ -89,7 +89,7 @@ describe('SppProposalUtils', () => {
             });
 
             timeUtils.setTime(now);
-            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxVoteSpy.mockReturnValue(endDate);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACTIVE);
         });
@@ -105,7 +105,7 @@ describe('SppProposalUtils', () => {
 
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACTIVE);
             timeUtils.setTime(now);
-            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxVoteSpy.mockReturnValue(endDate);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACTIVE);
         });
@@ -122,7 +122,7 @@ describe('SppProposalUtils', () => {
 
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
             timeUtils.setTime(now);
-            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxVoteSpy.mockReturnValue(endDate);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACCEPTED);
         });
@@ -139,7 +139,7 @@ describe('SppProposalUtils', () => {
 
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
             timeUtils.setTime(now);
-            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxVoteSpy.mockReturnValue(endDate);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.EXPIRED);
         });

@@ -11,14 +11,18 @@ class SppProposalUtils {
         const stagesCount = proposal.settings.stages.length;
         const lastStage = stagesCount > 0 ? proposal.settings.stages[stagesCount - 1] : undefined;
 
-        const endDate = lastStage ? sppStageUtils.getStageEndDate(proposal, lastStage) : undefined;
+        const endDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
         const endExecutionDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
 
         const approvalReached = this.areAllStagesAccepted(proposal);
+
         const isSignalingProposal = proposal.actions.length === 0;
 
         const isExecutable =
             approvalReached && endExecutionDate != null && now <= endExecutionDate && !isSignalingProposal;
+
+        const isAdvanceable =
+            sppStageUtils.getStageStatus(proposal, this.getCurrentStage(proposal)) === ProposalVotingStatus.ADVANCEABLE;
 
         if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;
@@ -34,6 +38,10 @@ class SppProposalUtils {
 
         if (this.hasAnyStageStatus(proposal, ProposalVotingStatus.EXPIRED)) {
             return ProposalStatus.EXPIRED;
+        }
+
+        if (isAdvanceable) {
+            return ProposalStatus.ADVANCEABLE;
         }
 
         if (isExecutable) {
@@ -61,7 +69,8 @@ class SppProposalUtils {
             const status = sppStageUtils.getStageStatus(proposal, stage);
 
             return (
-                count + (status === ProposalVotingStatus.ACCEPTED || status === ProposalVotingStatus.ADVANCED ? 1 : 0)
+                count +
+                (status === ProposalVotingStatus.ADVANCEABLE || status === ProposalVotingStatus.ACCEPTED ? 1 : 0)
             );
         }, 0);
 

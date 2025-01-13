@@ -36,7 +36,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const { stage, daoId, subProposals, index, proposal } = props;
 
     const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
-    const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
+    const processedEndDate = sppStageUtils.getStageMaxVote(proposal, stage)?.toMillis();
 
     // Keep stage status updated for statuses that are time dependent
     const { ACTIVE, PENDING, ACCEPTED } = ProposalVotingStatus;

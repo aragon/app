@@ -1,12 +1,7 @@
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
-import {
-    ProposalDataListItem,
-    proposalDataListItemUtils,
-    ProposalStatus,
-    votingStatusToProposalStatus,
-} from '@aragon/gov-ui-kit';
+import { ProposalDataListItem, proposalDataListItemUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
 
 export interface ISppProposalListItemProps {
@@ -26,13 +21,9 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const proposalDate =
         (proposal.executed.blockTimestamp ?? proposal.subProposals[proposal.stageIndex].endDate!) * 1000;
 
-    const stageStatus = sppStageUtils.getStageStatus(proposal, proposal.settings.stages[proposal.stageIndex]);
-
     const isFinalStage = sppStageUtils.isFinalStage(proposal, proposal.settings.stages[proposal.stageIndex]);
 
-    const processedStatus = isFinalStage
-        ? sppProposalUtils.getProposalStatus(proposal)
-        : votingStatusToProposalStatus[stageStatus];
+    const processedStatus = sppProposalUtils.getProposalStatus(proposal);
 
     const isOngoing = proposalDataListItemUtils.isOngoingStatus(processedStatus);
 

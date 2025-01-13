@@ -4,7 +4,7 @@ import { generateMultisigVote } from '@/plugins/multisigPlugin/testUtils';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateSppProposal } from '../../testUtils';
+import { generateSppProposal, generateSppSubProposal } from '../../testUtils';
 import { SppProposalList, type ISppProposalListProps } from './sppProposalList';
 
 describe('<SppProposalList /> component', () => {
@@ -44,8 +44,16 @@ describe('<SppProposalList /> component', () => {
 
     it('fetches and renders the Spp proposal list', () => {
         const proposals = [
-            generateSppProposal({ title: 'First', id: '1' }),
-            generateSppProposal({ title: 'Second', id: '2' }),
+            generateSppProposal({
+                title: 'First',
+                id: '1',
+                subProposals: [generateSppSubProposal(), generateSppSubProposal()],
+            }),
+            generateSppProposal({
+                title: 'Second',
+                id: '2',
+                subProposals: [generateSppSubProposal(), generateSppSubProposal()],
+            }),
         ];
         useProposalListDataSpy.mockReturnValue({
             proposalList: proposals,
