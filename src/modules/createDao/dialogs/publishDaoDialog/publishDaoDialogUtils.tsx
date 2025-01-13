@@ -1,4 +1,5 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import {
     encodeAbiParameters,
@@ -35,7 +36,7 @@ class PublishDaoDialogUtils {
             name,
             description,
             links: resources,
-            avatar: avatarCid ? `ipfs://${avatarCid}` : undefined,
+            avatar: ipfsUtils.cidToUri(avatarCid),
         };
     };
 

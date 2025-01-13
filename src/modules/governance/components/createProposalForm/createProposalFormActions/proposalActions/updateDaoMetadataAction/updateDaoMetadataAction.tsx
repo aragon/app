@@ -7,6 +7,7 @@ import {
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
@@ -44,10 +45,10 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
     const prepareAction = useCallback(
         async (action: IProposalAction) => {
             const { name, description, resources, avatar } = (action as IUpdateDaoMetadataAction).proposedMetadata;
-            const proposedMetadata = { name, description, links: resources, avatar };
+            const proposedMetadata = { name, description, links: resources };
 
             const avatarResult = avatar?.file ? await pinFileAsync({ body: avatar.file }) : undefined;
-            const avatarField = avatarResult ? `ipfs://${avatarResult.IpfsHash}` : undefined;
+            const avatarField = ipfsUtils.cidToUri(avatarResult?.IpfsHash);
 
             const ipfsResult = await pinJsonAsync({ body: { ...proposedMetadata, avatar: avatarField } });
             const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);

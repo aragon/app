@@ -21,6 +21,10 @@ class IpfsUtils {
 
         return processedCid != null ? `${this.ipfsGateway}/ipfs/${processedCid}?${params.toString()}` : undefined;
     };
+
+    cidToUri = (cid?: string | null): string | undefined => {
+        return cid ? `${this.ipfsPrefix}${cid}` : undefined;
+    };
 }
 
 export const ipfsUtils = new IpfsUtils();
