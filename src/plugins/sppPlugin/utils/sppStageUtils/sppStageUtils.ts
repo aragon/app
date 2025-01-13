@@ -9,9 +9,6 @@ class SppStageUtils {
         const { stageIndex: currentStageIndex, actions, settings } = proposal;
         const { stageIndex } = stage;
 
-        const isVetoReached = this.isVetoReached(proposal, stage);
-        const isUnreached = this.isStageUnreached(proposal, currentStageIndex);
-
         const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal, stage);
         const stageMaxVote = this.getStageMaxVote(proposal, stage);
@@ -31,11 +28,11 @@ class SppStageUtils {
         const isExpired =
             maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal && stageIndex === currentStageIndex;
 
-        if (isVetoReached) {
+        if (this.isVetoReached(proposal, stage)) {
             return ProposalVotingStatus.VETOED;
         }
 
-        if (isUnreached) {
+        if (this.isStagedUnreached(proposal, stageIndex)) {
             return ProposalVotingStatus.UNREACHED;
         }
 
@@ -46,7 +43,8 @@ class SppStageUtils {
         if (isAdvanceable && canAdvance) {
             return ProposalVotingStatus.ADVANCEABLE;
         }
-        if (stageMaxVote != null && now < stageMaxVote && !isAdvanceable) {
+
+        if (stageMaxVote != null && now < stageMaxVote) {
             return ProposalVotingStatus.ACTIVE;
         }
 
@@ -57,7 +55,7 @@ class SppStageUtils {
         return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
     };
 
-    isStageUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
+    isStagedUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
         return proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
             const status = this.getStageStatus(proposal, stage);
             const { VETOED, REJECTED, EXPIRED } = ProposalVotingStatus;
