@@ -777,6 +777,9 @@
         "sppGovernanceSettings": {
           "numberOfStages": "Number of stages"
         },
+        "sppProposalList": {
+          "entity": "Proposals"
+        },
         "sppStageStatus": {
           "button": {
             "advance": "Advance proposal",
