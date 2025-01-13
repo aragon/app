@@ -1,2 +1,2 @@
 export { WizardDetailsDialog } from './wizardDetailsDialog';
-export type { IWizardDetailsDialogParams } from './wizardDetailsDialog.api';
+export type { IWizardDetailsDialogProps, IWizardDetailsDialogStep } from './wizardDetailsDialog.api';

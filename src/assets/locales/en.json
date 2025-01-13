@@ -75,6 +75,20 @@
       }
     },
     "createDao": {
+      "createDaoDetailsDialog": {
+        "description": "Start simple and learn as you go. You can always evolve your DAO in the future.",
+        "link": {
+          "label": "Learn more"
+        },
+        "primaryButton": {
+          "label": "Get started"
+        },
+        "steps": {
+          "describe": "Describe your DAO",
+          "network": "Select blockchain"
+        },
+        "title": "Create new DAO"
+      },
       "createDaoForm": {
         "debug": {
           "adminPluginRepo": {

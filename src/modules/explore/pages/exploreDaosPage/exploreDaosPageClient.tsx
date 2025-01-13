@@ -9,6 +9,7 @@ import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoList } from '../../components/daoList';
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 
 export interface IExploreDaosPageClientProps {
     /**
@@ -37,6 +38,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
         open(dialog);
     };
 
+    const handleCreateDaoClick = () => {
+        open(CreateDaoDialog.CREATE_DAO_DETAILS);
+    };
+
     return (
         <div className="flex grow flex-col gap-5">
             <div className="flex items-center justify-between">
@@ -53,10 +58,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                 <div className="flex items-center gap-x-2 md:gap-x-3">
                     <Button
                         iconLeft={IconType.PLUS}
-                        href="/create/dao"
                         className="!rounded-full"
                         variant="primary"
                         size="md"
+                        onClick={handleCreateDaoClick}
                     >
                         {t('app.explore.exploreDaosPage.createDao')}
                     </Button>

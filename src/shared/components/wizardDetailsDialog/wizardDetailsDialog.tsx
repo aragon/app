@@ -1,20 +1,13 @@
-import { Button, Dialog, Heading, IllustrationObject, invariant } from '@aragon/gov-ui-kit';
-import { type IDialogComponentProps, useDialogContext } from '../dialogProvider';
+import { Button, Dialog, Heading, IconType, IllustrationObject, Link } from '@aragon/gov-ui-kit';
+import { useDialogContext } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
-import type { IWizardDetailsDialogParams } from './wizardDetailsDialog.api';
+import type { IWizardDetailsDialogProps } from './wizardDetailsDialog.api';
 
-export interface ICreateProcessInfoDialogProps extends IDialogComponentProps<IWizardDetailsDialogParams> {}
-
-export const WizardDetailsDialog: React.FC<ICreateProcessInfoDialogProps> = (props) => {
-    const { location } = props;
-
-    invariant(location.params != null, 'WizardDetailsDialog: required parameters must be set.');
+export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) => {
+    const { title, description, steps, primaryButton, link } = props;
 
     const { t } = useTranslations();
-
-    const { title, description, steps, primaryButton } = location.params;
-
-    const { href, onPrimaryButtonClick, label: primaryButtonLabel } = primaryButton;
+    const { href: primaryButtonHref, onPrimaryButtonClick, label: primaryButtonLabel } = primaryButton;
 
     const { close } = useDialogContext();
     return (
@@ -23,6 +16,11 @@ export const WizardDetailsDialog: React.FC<ICreateProcessInfoDialogProps> = (pro
                 <div className="flex flex-col gap-y-3">
                     <Heading size="h3">{title}</Heading>
                     <p className="text-base font-normal leading-normal text-neutral-500">{description}</p>
+                    {link && (
+                        <Link iconRight={IconType.LINK_EXTERNAL} href={link.href}>
+                            {link.label}
+                        </Link>
+                    )}
                 </div>
                 <div className="flex flex-col">
                     {steps.map((step, index) => (
@@ -40,7 +38,7 @@ export const WizardDetailsDialog: React.FC<ICreateProcessInfoDialogProps> = (pro
                 </div>
                 <div className="flex gap-x-4 pt-6">
                     <Button
-                        href={href}
+                        href={primaryButtonHref}
                         onClick={() => {
                             onPrimaryButtonClick?.();
                             close();

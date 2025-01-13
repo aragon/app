@@ -1,6 +1,6 @@
-import type { IIllustrationObjectProps } from '@aragon/gov-ui-kit';
+import type { IllustrationObjectType } from '@aragon/gov-ui-kit';
 
-interface IWizardDetailsDialogStep {
+export interface IWizardDetailsDialogStep {
     /**
      * Label of the step.
      */
@@ -8,7 +8,7 @@ interface IWizardDetailsDialogStep {
     /**
      * Icon of the step.
      */
-    icon: IIllustrationObjectProps['object'];
+    icon: IllustrationObjectType;
 }
 
 interface IButtonConfig {
@@ -26,7 +26,18 @@ interface IButtonConfig {
     href?: string;
 }
 
-export interface IWizardDetailsDialogParams {
+interface ILink {
+    /**
+     * Label of the link.
+     */
+    label: string;
+    /**
+     * URL of the link.
+     */
+    href: string;
+}
+
+export interface IWizardDetailsDialogProps {
     /**
      * Title of the dialog.
      */
@@ -43,4 +54,8 @@ export interface IWizardDetailsDialogParams {
      * Primary button config
      */
     primaryButton: IButtonConfig;
+    /**
+     * Link for further information.
+     */
+    link?: ILink;
 }
