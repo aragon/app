@@ -32,11 +32,13 @@ export interface IBuildTransactionParams {
 class PublishDaoDialogUtils {
     prepareMetadata = (formValues: ICreateDaoFormData, avatarCid?: string) => {
         const { name, description, resources } = formValues;
+        const processedAvatar = ipfsUtils.cidToUri(avatarCid);
+
         return {
             name,
             description,
             links: resources,
-            avatar: ipfsUtils.cidToUri(avatarCid),
+            avatar: processedAvatar,
         };
     };
 
