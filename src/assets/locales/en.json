@@ -95,12 +95,12 @@
         "metadata": {
           "avatar": {
             "error": {
-              "invalidType": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, GIF).",
-              "squareOnly": "The image must be square. Upload a square image.",
-              "tooLarge": "The file size exceeds the maximum allowed limit of 3 MB.",
-              "tooManyFiles": "Only one file can be uploaded at a time",
-              "unknownError": "Unable to upload image",
-              "wrongDimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
+              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, GIF).",
+              "file-too-large": "The file size exceeds the maximum allowed limit of 3 MB.",
+              "square-only": "The image must be square. Upload a square image.",
+              "too-many-files": "Only one file can be uploaded at a time",
+              "unknown-file-error": "Unable to upload image",
+              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
             },
             "helpText": "JPG, PNG or GIF of no more than 3MB and less than 1024x1024px.",
             "label": "Logo"

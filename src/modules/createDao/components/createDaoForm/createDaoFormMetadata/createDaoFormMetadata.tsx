@@ -6,12 +6,11 @@ import {
     type IInputContainerAlert,
     type IInputFileAvatarValue,
     InputFileAvatar,
-    InputFileAvatarError,
+    type InputFileAvatarError,
     InputText,
     TextArea,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormMetadataProps {
@@ -23,38 +22,23 @@ export interface ICreateDaoFormMetadataProps {
 
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
-const maxFileSize = 3 * 1024 * 1024; // 3 MB in bytes
+const maxAvatarFileSize = 3 * 1024 * 1024; // 3 MB in bytes
+const maxAvatarDimension = 1024;
 
 export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
 
-    const { setValue } = useFormContext();
-
     const [avatarAlert, setAvatarAlert] = useState<IInputContainerAlert | undefined>(undefined);
 
-    const getFieldName = (field: string): string => {
-        return fieldPrefix ? `${fieldPrefix}.${field}` : field;
-    };
-
-    // Map error types to translations
-    const errorMessages: Record<InputFileAvatarError, string> = {
-        [InputFileAvatarError.SQUARE_ONLY]: t('app.createDao.createDaoForm.metadata.avatar.error.squareOnly'),
-        [InputFileAvatarError.WRONG_DIMENSION]: t('app.createDao.createDaoForm.metadata.avatar.error.wrongDimension'),
-        [InputFileAvatarError.FILE_INVALID_TYPE]: t('app.createDao.createDaoForm.metadata.avatar.error.invalidType'),
-        [InputFileAvatarError.TOO_MANY_FILES]: t('app.createDao.createDaoForm.metadata.avatar.error.tooManyFiles'),
-        [InputFileAvatarError.FILE_TOO_LARGE]: t('app.createDao.createDaoForm.metadata.avatar.error.tooLarge'),
-        [InputFileAvatarError.UNKNOWN_ERROR]: t('app.createDao.createDaoForm.metadata.avatar.error.unknownError'),
-    };
-
     const handleAvatarError = (error: InputFileAvatarError) => {
-        const message = errorMessages[error];
+        const message = t(`app.createDao.createDaoForm.metadata.avatar.error.${error}`);
         setAvatarAlert({ message, variant: 'critical' });
     };
 
     const onFileChange = (newFile?: IInputFileAvatarValue) => {
-        setValue(getFieldName('avatar'), { url: newFile?.url, file: newFile?.file });
+        onAvatarChange({ url: newFile?.url, file: newFile?.file });
         setAvatarAlert(undefined);
     };
 
@@ -66,7 +50,11 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         defaultValue: '',
     });
 
-    const avatarField = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
+    const {
+        value: avatarValue,
+        onChange: onAvatarChange,
+        ...avatarField
+    } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
         label: t('app.createDao.createDaoForm.metadata.avatar.label'),
         fieldPrefix,
     });
@@ -77,11 +65,6 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         rules: { maxLength: descriptionMaxLength },
         trimOnBlur: true,
         defaultValue: '',
-    });
-
-    // @ts-expect-error complaining because LocalInputFileAvatarValue can be undefined
-    const avatarValue = useWatch<ICreateDaoFormData['avatar']>({
-        name: getFieldName('avatar'),
     });
 
     // This is needed to get the existing DAO logo for the image preview
@@ -100,8 +83,8 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 value={parsedAvatarValue}
                 onChange={onFileChange}
                 helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
-                maxDimension={1024}
-                maxFileSize={maxFileSize}
+                maxDimension={maxAvatarDimension}
+                maxFileSize={maxAvatarFileSize}
                 isOptional={true}
                 onFileError={handleAvatarError}
                 alert={avatarAlert}
