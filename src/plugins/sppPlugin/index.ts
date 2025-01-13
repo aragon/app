@@ -29,7 +29,7 @@ export const initialiseSppPlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
             pluginId: plugin.id,
-            function: sppProposalUtils.getProposalStatus,
+            function: sppProposalUtils.checkOngoingStatus,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM,

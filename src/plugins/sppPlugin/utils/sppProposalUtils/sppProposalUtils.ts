@@ -64,6 +64,18 @@ class SppProposalUtils {
 
     getCurrentStage = (proposal: ISppProposal): ISppStage => proposal.settings.stages[proposal.stageIndex];
 
+    checkOngoingStatus = (proposal: ISppProposal) => {
+        if (this.getProposalStatus(proposal) === ProposalStatus.EXECUTED) {
+            return ProposalStatus.EXECUTED;
+        }
+
+        if (this.getProposalStatus(proposal) === ProposalStatus.EXECUTABLE) {
+            return ProposalStatus.EXECUTABLE;
+        }
+
+        return sppStageUtils.getStageStatus(proposal, this.getCurrentStage(proposal));
+    };
+
     areAllStagesAccepted = (proposal: ISppProposal): boolean => {
         const stagesAccepted = proposal.settings.stages.reduce((count, stage) => {
             const status = sppStageUtils.getStageStatus(proposal, stage);
