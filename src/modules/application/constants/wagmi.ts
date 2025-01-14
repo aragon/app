@@ -1,8 +1,8 @@
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { createAppKit } from '@reown/appkit/react';
 import { type Chain, createClient } from 'viem';
 import { cookieStorage, createStorage, http } from 'wagmi';
-import { arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
 
 // Metadata used during wallet connection process.
 const appMetadata = {
@@ -13,7 +13,8 @@ const appMetadata = {
 };
 
 // Supported chains by the Application.
-const chains: [Chain, ...Chain[]] = [arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet];
+// casting is needed to fix error of potentially network definitions being an empty array after Object.values
+const chains = Object.values(networkDefinitions).map((network) => network.wagmiChain) as [Chain, ...Chain[]];
 
 // WalletConnect project ID.
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!;
