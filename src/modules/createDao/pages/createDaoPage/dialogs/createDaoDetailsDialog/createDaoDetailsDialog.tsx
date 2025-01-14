@@ -25,8 +25,6 @@ export const CreateDaoDetailsDialog: React.FC<ICreateDaoDetailsDialogProps> = ()
                 label: t('app.createDao.createDaoDetailsDialog.primaryButton.label'),
                 href: '/create/dao',
             }}
-            //TODO: add button link for learn more or omit it
-            link={{ label: t('app.createDao.createDaoDetailsDialog.link.label'), href: '/create/dao' }}
         />
     );
 };

@@ -37,6 +37,8 @@ export interface INetworkDefinition {
     adminPluginRepo: string;
 }
 
+//TODO: Update the factoryAddress and adminPluginRepo for each network after 1.4 deployment
+
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.ETHEREUM_MAINNET]: {
         chainId: 1,
