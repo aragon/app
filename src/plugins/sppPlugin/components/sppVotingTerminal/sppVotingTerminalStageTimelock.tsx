@@ -24,7 +24,7 @@ const getTimelockInfo = (stage: ISppStage, proposal: ISppProposal, stageStatus: 
     const isTimelockComplete = isTimelockExpired || stage.stageIndex < proposal.stageIndex;
 
     const timelockCompletedDate =
-        formatterUtils.formatDate(sppStageUtils.getStageMaxVote(proposal, stage), {
+        formatterUtils.formatDate(sppStageUtils.getStageEndDate(proposal, stage), {
             format: DateFormat.YEAR_MONTH_DAY_TIME,
         }) ?? '';
 

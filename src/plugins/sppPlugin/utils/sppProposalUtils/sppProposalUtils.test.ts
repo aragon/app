@@ -10,16 +10,20 @@ describe('SppProposalUtils', () => {
     const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
     const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
     const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
+    const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
 
     afterEach(() => {
         getStageStatusSpy.mockReset();
         getStageEndDateSpy.mockReset();
         getStageMaxAdvanceSpy.mockReset();
+        getStageMinAdvanceSpy.mockReset();
     });
 
     describe('getProposalStatus', () => {
         it('returns executed when proposal is executed', () => {
-            const proposal = generateSppProposal({ executed: { status: true } });
+            const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
+            const settings = generateSppPluginSettings({ stages });
+            const proposal = generateSppProposal({ executed: { status: true }, settings });
             const result = sppProposalUtils.getProposalStatus(proposal);
             expect(result).toBe(ProposalStatus.EXECUTED);
         });
@@ -58,10 +62,12 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ hours: 1 }).toSeconds();
             const endExecutionDate = DateTime.fromISO(now).plus({ hours: 10 });
+            const settings = generateSppPluginSettings({ stages: [generateSppStage()] });
+            const actions = [generateProposalAction()];
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
+                settings,
                 startDate,
-                actions: [{ ...generateProposalAction() }],
+                actions,
             });
 
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
@@ -74,7 +80,8 @@ describe('SppProposalUtils', () => {
         it('returns pending when proposal has not started yet', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).plus({ days: 1 }).toSeconds();
-            const proposal = generateSppProposal({ startDate });
+            const settings = generateSppPluginSettings({ stages: [generateSppStage()] });
+            const proposal = generateSppProposal({ startDate, settings });
             timeUtils.setTime(now);
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.PENDING);
         });
@@ -83,8 +90,9 @@ describe('SppProposalUtils', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 1 }).toSeconds();
             const endDate = undefined;
+            const settings = generateSppPluginSettings({ stages: [generateSppStage()] });
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
+                settings,
                 startDate,
             });
 
@@ -127,14 +135,40 @@ describe('SppProposalUtils', () => {
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACCEPTED);
         });
 
+        it('returns advanceable for a non-final stage which reaches approval within the advance window', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
+            const minAdvanceDate = DateTime.fromISO(now).minus({ hours: 2 });
+            const maxAdvanceDate = DateTime.fromISO(now).plus({ hours: 2 });
+            const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
+            const settings = generateSppPluginSettings({ stages });
+            const actions = [generateProposalAction()];
+            const proposal = generateSppProposal({
+                settings,
+                startDate,
+                actions,
+            });
+
+            getStageStatusSpy.mockImplementation((_, stage) => {
+                return stage.stageIndex === 0 ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
+            });
+            timeUtils.setTime(now);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
+
+            expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ADVANCEABLE);
+        });
+
         it('returns expired is approval is reached, proposal has actions and has ended', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
+            const settings = generateSppPluginSettings({ stages: [generateSppStage()] });
+            const actions = [generateProposalAction()];
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
+                settings,
                 startDate,
-                actions: [generateProposalAction()],
+                actions,
             });
 
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);

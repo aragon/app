@@ -1,5 +1,5 @@
-import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
 
@@ -22,7 +22,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
 
     const processedStatus = sppProposalUtils.getProposalStatus(proposal);
 
-    const vote = useUserVote({ proposal: proposal.subProposals[proposal.stageIndex] });
+    const voted = sppStageUtils.hasUserVotedInStage(proposal, proposal.stageIndex);
 
     const statusContext =
         proposal.settings.stages.length > 1 ? proposal.settings.stages[proposal.stageIndex].name : undefined;
@@ -38,7 +38,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
             status={processedStatus}
             statusContext={statusContext}
             type="approvalThreshold"
-            voted={vote != null}
+            voted={voted}
             publisher={{
                 address: proposal.creator.address,
                 name: proposal.creator.ens ?? undefined,

@@ -104,7 +104,7 @@ __metadata:
 
 "@aragon/gov-ui-kit@file:../gov-ui-kit::locator=%40aragon%2Fapp-next%40workspace%3A.":
   version: 1.0.62
-  resolution: "@aragon/gov-ui-kit@file:../gov-ui-kit#../gov-ui-kit::hash=f02d7a&locator=%40aragon%2Fapp-next%40workspace%3A."
+  resolution: "@aragon/gov-ui-kit@file:../gov-ui-kit#../gov-ui-kit::hash=7e7711&locator=%40aragon%2Fapp-next%40workspace%3A."
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -130,7 +130,7 @@ __metadata:
     "@tiptap/starter-kit": "npm:^2.11.0"
     blockies-ts: "npm:^1.0.0"
     classnames: "npm:^2.5.0"
-    framer-motion: "npm:^11.16.0"
+    framer-motion: "npm:^11.17.0"
     luxon: "npm:^3.5.0"
     react-dropzone: "npm:^14.3.0"
     react-imask: "npm:^7.6.0"
@@ -138,14 +138,14 @@ __metadata:
     tiptap-markdown: "npm:^0.8.10"
   peerDependencies:
     "@tailwindcss/typography": ^0.5.0
-    "@tanstack/react-query": ^5.62.0
+    "@tanstack/react-query": ^5.64.0
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
     react-hook-form: ^7.54.0
     tailwindcss: ^3.4.0
-    viem: ^2.21.0
+    viem: ^2.22.0
     wagmi: ^2.14.0
-  checksum: 10c0/4732075e3c6763e065f52543114d064d4173d827a9eae9df81ca71a604e83988eb0477af312ce43e48ff8bda6c35cd9bc82a488606aa16051c57c26429d9a1a1
+  checksum: 10c0/237daf92f511b543bf532a7ab5d1325b11b44321b0b35188e405ab6559771f982a2fba16fe399fd9693634aab4f197acf0a8e56071fb415c3208bfa007f5ebcb
   languageName: node
   linkType: hard
 
@@ -8649,11 +8649,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.16.0":
-  version: 11.16.0
-  resolution: "framer-motion@npm:11.16.0"
+"framer-motion@npm:^11.17.0":
+  version: 11.18.0
+  resolution: "framer-motion@npm:11.18.0"
   dependencies:
-    motion-dom: "npm:^11.16.0"
+    motion-dom: "npm:^11.16.4"
     motion-utils: "npm:^11.16.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8667,7 +8667,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/badfeb01f1c23e1ae7e796981e9244877a30f072876f7339bbd3e3413fca5a61ffc9913d4389d52b0d33ea3367afbc6dde6fef4786fc1b041abc0a1d5afd542b
+  checksum: 10c0/7f3c1e420bca2d920b7f48dfb54b072938771f9237feed02d576884398f4a68ccb2d1ae36b28cf2410dbfe2db6edb4c03429a1d896e789d08a972360c6ad82b1
   languageName: node
   linkType: hard
 
@@ -11400,12 +11400,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@npm:^11.16.0":
-  version: 11.16.0
-  resolution: "motion-dom@npm:11.16.0"
+"motion-dom@npm:^11.16.4":
+  version: 11.16.4
+  resolution: "motion-dom@npm:11.16.4"
   dependencies:
     motion-utils: "npm:^11.16.0"
-  checksum: 10c0/0271c9ff69a12f04c75e2377fd47f525d63f8d9bfa3f1ef2c158431a98e35abeefdc18d4d27487a05e13927afb95deb87aa8adf3c4cfef8e70a48471465f1081
+  checksum: 10c0/66de6d40aef59d3004aaf17e39c7c2d2c679306207fdb28c73917d6a05e8c962747fea53d2e516c25d994109d38e127943a759fed18a0fadfc2572a3335fc0d2
   languageName: node
   linkType: hard
 

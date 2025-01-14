@@ -1,4 +1,5 @@
-import { generateProposalAction } from '@/modules/governance/testUtils';
+import * as useUserVote from '@/modules/governance/hooks/useUserVote';
+import { generateProposalAction, generateVote } from '@/modules/governance/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
@@ -15,6 +16,7 @@ import { sppStageUtils } from './sppStageUtils';
 
 describe('SppStageUtils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
+    const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
@@ -392,6 +394,50 @@ describe('SppStageUtils', () => {
         it('returns false when veto threshold is 0', () => {
             const stage = generateSppStage({ vetoThreshold: 0 });
             expect(sppStageUtils.isVeto(stage)).toBeFalsy();
+        });
+    });
+
+    describe('isFinalStage', () => {
+        it('returns true for the last stage of the proposal', () => {
+            const stage = generateSppStage({ stageIndex: 2 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
+                }),
+            });
+
+            expect(sppStageUtils.isLastStage(proposal, stage)).toBeTruthy();
+        });
+
+        it('returns false for non-final stages of the proposal', () => {
+            const stage = generateSppStage({ stageIndex: 1 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
+                }),
+            });
+
+            expect(sppStageUtils.isLastStage(proposal, stage)).toBeFalsy();
+        });
+    });
+
+    describe('hasUserVotedInStage', () => {
+        it('returns true if user has voted in the stage', () => {
+            useUserVoteSpy.mockReturnValue(generateVote());
+
+            const subProposal = generateSppSubProposal({ stageIndex: 0 });
+            const proposal = generateSppProposal({ subProposals: [subProposal] });
+
+            expect(sppStageUtils.hasUserVotedInStage(proposal, 0)).toBeTruthy();
+        });
+
+        it('returns false if user has not voted in the stage', () => {
+            useUserVoteSpy.mockReturnValue(undefined);
+
+            const subProposal = generateSppSubProposal({ stageIndex: 0 });
+            const proposal = generateSppProposal({ subProposals: [subProposal] });
+
+            expect(sppStageUtils.hasUserVotedInStage(proposal, 0)).toBeFalsy();
         });
     });
 });

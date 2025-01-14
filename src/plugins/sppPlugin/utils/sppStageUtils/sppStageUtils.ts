@@ -1,4 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
@@ -129,6 +130,21 @@ class SppStageUtils {
 
     isVeto = (stage: ISppStage): boolean => {
         return stage.vetoThreshold > 0;
+    };
+
+    isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        return proposal.settings.stages.length - 1 === stage.stageIndex;
+    };
+
+    hasUserVotedInStage = (proposal: ISppProposal, stageIndex: number): boolean => {
+        const stageSubProposals = proposal.subProposals.filter((sub) => sub.stageIndex === stageIndex);
+
+        const votes = stageSubProposals.map((subProposal) => {
+            const vote = useUserVote({ proposal: subProposal });
+            return vote != null;
+        });
+
+        return votes.some((hasVoted) => hasVoted);
     };
 }
 
