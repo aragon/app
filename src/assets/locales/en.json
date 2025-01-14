@@ -77,9 +77,6 @@
     "createDao": {
       "createDaoDetailsDialog": {
         "description": "Start simple and learn as you go. You can always evolve your DAO in the future.",
-        "link": {
-          "label": "Learn more"
-        },
         "primaryButton": {
           "label": "Get started"
         },
