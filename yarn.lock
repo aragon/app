@@ -104,7 +104,7 @@ __metadata:
 
 "@aragon/gov-ui-kit@file:../gov-ui-kit::locator=%40aragon%2Fapp-next%40workspace%3A.":
   version: 1.0.62
-  resolution: "@aragon/gov-ui-kit@file:../gov-ui-kit#../gov-ui-kit::hash=7e7711&locator=%40aragon%2Fapp-next%40workspace%3A."
+  resolution: "@aragon/gov-ui-kit@file:../gov-ui-kit#../gov-ui-kit::hash=578fea&locator=%40aragon%2Fapp-next%40workspace%3A."
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -145,7 +145,7 @@ __metadata:
     tailwindcss: ^3.4.0
     viem: ^2.22.0
     wagmi: ^2.14.0
-  checksum: 10c0/237daf92f511b543bf532a7ab5d1325b11b44321b0b35188e405ab6559771f982a2fba16fe399fd9693634aab4f197acf0a8e56071fb415c3208bfa007f5ebcb
+  checksum: 10c0/818f6e30e7ba2daef7ec0094c6bdc39da00ffd2f38b0d8e2ff78340dc504d0c926bfa1438a9154b512546a41ade48b567fec1809a5238e091ebd57d0b68bb073
   languageName: node
   linkType: hard
 

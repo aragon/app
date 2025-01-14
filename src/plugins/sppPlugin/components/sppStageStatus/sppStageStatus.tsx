@@ -55,9 +55,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     // Only display the advance button if stage has been accepted or non veto stage is still active but approval has already
     // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
     // to hide executable info text.
-    // Only display the advance button if stage has been accepted or non veto stage is still active but approval has already
-    // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
-    // to hide executable info text.
     const displayAdvanceButton =
         (stageStatus === ProposalVotingStatus.ACCEPTED ||
             (stageStatus === ProposalVotingStatus.ACTIVE &&

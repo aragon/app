@@ -59,6 +59,7 @@ class SppProposalUtils {
 
         if (endDate == null || now < endDate) {
             const canAdvance =
+                stagesCount > 0 &&
                 currentStageStatus === ProposalVotingStatus.ACCEPTED &&
                 minAdvanceDate &&
                 maxAdvanceDate &&
