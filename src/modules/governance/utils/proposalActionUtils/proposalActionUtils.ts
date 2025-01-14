@@ -89,7 +89,7 @@ class ProposalActionUtils {
     normalizeActionMetadataAvatar = (
         metadata: IProposalActionUpdateMetadataObject | IProposalActionUpdatePluginMetadataObject,
     ): string | undefined => {
-        if ('avatar' in metadata && metadata.avatar) {
+        if ('avatar' in metadata && typeof metadata.avatar === 'string') {
             return ipfsUtils.cidToSrc(metadata.avatar);
         }
         return undefined;
