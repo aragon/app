@@ -1,5 +1,5 @@
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
-import { usePinJson, usePinFile } from '@/shared/api/ipfsService/mutations';
+import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {

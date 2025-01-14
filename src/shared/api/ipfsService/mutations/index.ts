@@ -1,2 +1,2 @@
-export * from './usePinJson';
 export * from './usePinFile';
+export * from './usePinJson';
