@@ -1,6 +1,7 @@
 'use client';
 
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, Toggle, ToggleGroup, Wallet } from '@aragon/gov-ui-kit';
@@ -9,7 +10,6 @@ import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoList } from '../../components/daoList';
-import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 
 export interface IExploreDaosPageClientProps {
     /**

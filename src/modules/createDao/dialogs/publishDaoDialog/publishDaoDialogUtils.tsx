@@ -1,4 +1,5 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import {
     encodeAbiParameters,
@@ -12,7 +13,6 @@ import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { adminPluginSetupAbi } from './adminPluginSetupAbi';
 import { daoFactoryAbi } from './daoFactoryAbi';
 import { daoRegistryAbi } from './daoRegistryAbi';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 export interface IBuildTransactionParams {
     /**
