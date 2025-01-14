@@ -6,10 +6,10 @@ import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 import type { ISession, ISessionEvent } from './domain';
 import type {
     IApproveSessionParams,
-    IAttachClientListenerParams,
     IConnectAppParams,
     IDisconnectAppParams,
     IHandleSessionProposalParams,
+    ISetClientListenerParams,
 } from './walletConnectService.api';
 
 export class WalletConnectService {
@@ -77,12 +77,12 @@ export class WalletConnectService {
         await this.client?.disconnectSession({ topic: session.topic, reason: getSdkError('USER_DISCONNECTED') });
     };
 
-    attachListener = <TEvent extends ISessionEvent>(params: IAttachClientListenerParams<TEvent>) => {
+    attachListener = <TEvent extends ISessionEvent>(params: ISetClientListenerParams<TEvent>) => {
         const { event, callback } = params;
         this.client?.on(event, callback);
     };
 
-    removeListener = <TEvent extends ISessionEvent>(params: IAttachClientListenerParams<TEvent>) => {
+    removeListener = <TEvent extends ISessionEvent>(params: ISetClientListenerParams<TEvent>) => {
         const { event, callback } = params;
         this.client?.off(event, callback);
     };

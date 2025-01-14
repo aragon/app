@@ -12,6 +12,7 @@ describe('walletConnect service', () => {
 
     const createTestService = async () => {
         const testService = new WalletConnectService();
+        // Simple workaround to make sure the client is set after creating a new instance of the service
         await Promise.resolve();
         return testService;
     };

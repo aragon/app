@@ -3,19 +3,19 @@ import { useDialogContext, type IDialogComponentProps } from '@/shared/component
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import type { IProposalAction } from '../../api/governanceService';
-import { useDecodeTransaction } from '../../api/smartContractService/mutations/useDecodeTransaction';
-import { useConnectApp, useDisconnectApp, type ISessionRequest } from '../../api/walletConnectService';
-import { walletConnectService } from '../../api/walletConnectService/walletConnectService';
-import { WalletConnectActionDialogConnect } from './walletConnectActionDialogConnect';
+import { useDecodeTransaction } from '../../api/smartContractService';
+import {
+    useConnectApp,
+    useDisconnectApp,
+    walletConnectService,
+    type ISessionRequest,
+} from '../../api/walletConnectService';
+import {
+    WalletConnectActionDialogConnect,
+    type IWalletConnectActionFormData,
+} from './walletConnectActionDialogConnect';
 import { WalletConnectActionDialogListener } from './walletConnectActionDialogListener';
 import { walletConnectActionDialogUtils } from './walletConnectActionDialogUtils';
-
-export interface IWalletConnectActionFormData {
-    /**
-     * URI to be used for the wallet-connect connection.
-     */
-    uri: string;
-}
 
 export interface IWalletConnectActionDialogParams {
     /**
@@ -97,14 +97,14 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
 
     if (appSession == null) {
         return <WalletConnectActionDialogConnect onFormSubmit={handleFormSubmit} status={connectionStatus} />;
-    } else {
-        return (
-            <WalletConnectActionDialogListener
-                appMetadata={appSession.peer.metadata}
-                actions={actions}
-                onAddActionsClick={handleAddActions}
-                onClose={handleCloseDialog}
-            />
-        );
     }
+
+    return (
+        <WalletConnectActionDialogListener
+            appMetadata={appSession.peer.metadata}
+            actions={actions}
+            onAddActionsClick={handleAddActions}
+            onClose={handleCloseDialog}
+        />
+    );
 };

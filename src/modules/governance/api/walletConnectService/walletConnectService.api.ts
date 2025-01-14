@@ -40,7 +40,7 @@ export interface IHandleSessionProposalParams extends IApproveSessionParams {
     onError: (error: Error) => void;
 }
 
-export interface IAttachClientListenerParams<TEvent extends ISessionEvent> {
+export interface ISetClientListenerParams<TEvent extends ISessionEvent> {
     /**
      * Event to listen to.
      */
