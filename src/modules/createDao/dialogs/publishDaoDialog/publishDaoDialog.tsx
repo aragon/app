@@ -1,6 +1,5 @@
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
-import { usePinJson } from '@/shared/api/ipfsService/mutations';
-import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
+import { usePinJson, usePinFile } from '@/shared/api/ipfsService/mutations';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -87,19 +86,23 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     );
 
     const pinningStatus = useMemo(() => {
-        if (values.avatar) {
-            if (pinFileStatus === 'error' || pinJsonStatus === 'error') {
-                return 'error';
-            }
-            if (pinFileStatus === 'pending' || pinJsonStatus === 'pending') {
-                return 'pending';
-            }
-            if (pinFileStatus === 'idle' || pinJsonStatus === 'idle') {
-                return 'idle';
-            }
-            return 'success';
+        if (!values.avatar) {
+            return pinJsonStatus;
         }
-        return pinJsonStatus;
+
+        if (pinFileStatus === 'error' || pinJsonStatus === 'error') {
+            return 'error';
+        }
+
+        if (pinFileStatus === 'pending' || pinJsonStatus === 'pending') {
+            return 'pending';
+        }
+
+        if (pinFileStatus === 'idle' || pinJsonStatus === 'idle') {
+            return 'idle';
+        }
+
+        return 'success';
     }, [values.avatar, pinFileStatus, pinJsonStatus]);
 
     const handlePrepareTransaction = () => {
