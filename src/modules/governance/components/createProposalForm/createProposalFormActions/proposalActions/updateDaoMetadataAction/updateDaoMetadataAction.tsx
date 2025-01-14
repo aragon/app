@@ -47,10 +47,16 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
             const { name, description, resources, avatar } = (action as IUpdateDaoMetadataAction).proposedMetadata;
             const proposedMetadata = { name, description, links: resources };
 
-            const avatarResult = avatar?.file ? await pinFileAsync({ body: avatar.file }) : undefined;
-            const avatarField = ipfsUtils.cidToUri(avatarResult?.IpfsHash);
+            let avatarField;
 
-            const ipfsResult = await pinJsonAsync({ body: { ...proposedMetadata, avatar: avatarField } });
+            if (avatar?.file) {
+                const avatarResult = await pinFileAsync({ body: avatar.file });
+                avatarField = ipfsUtils.cidToUri(avatarResult.IpfsHash);
+            }
+
+            const finalMetadata = avatarField ? { ...proposedMetadata, avatar: avatarField } : { ...proposedMetadata };
+
+            const ipfsResult = await pinJsonAsync({ body: finalMetadata });
             const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
             const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
 
