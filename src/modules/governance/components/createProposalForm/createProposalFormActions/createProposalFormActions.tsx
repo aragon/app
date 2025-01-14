@@ -110,6 +110,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         const params: IWalletConnectActionDialogParams = {
             onAddActionsClick: handleAddWalletConnectActions,
             daoAddress: dao!.address,
+            daoNetwork: dao!.network,
         };
         open(GovernanceDialog.WALLET_CONNECT_ACTION, { params });
     };

@@ -1,17 +1,14 @@
+import type { Network } from '@/shared/api/daoService';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
-import { fromHex, isHex } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
-import {
-    useConnectApp,
-    useDisconnectApp,
-    type ISessionRequest,
-    type ISessionRequestParams,
-} from '../../api/walletConnectService';
+import { useDecodeTransaction } from '../../api/smartContractService/mutations/useDecodeTransaction';
+import { useConnectApp, useDisconnectApp, type ISessionRequest } from '../../api/walletConnectService';
 import { walletConnectService } from '../../api/walletConnectService/walletConnectService';
 import { WalletConnectActionDialogConnect } from './walletConnectActionDialogConnect';
 import { WalletConnectActionDialogListener } from './walletConnectActionDialogListener';
+import { walletConnectActionDialogUtils } from './walletConnectActionDialogUtils';
 
 export interface IWalletConnectActionFormData {
     /**
@@ -26,6 +23,10 @@ export interface IWalletConnectActionDialogParams {
      */
     daoAddress: string;
     /**
+     * Network of the DAO.
+     */
+    daoNetwork: Network;
+    /**
      * Callback called when user clicks on add actions button.
      */
     onAddActionsClick: (actions: IProposalAction[]) => void;
@@ -37,30 +38,30 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
     const { location } = props;
 
     invariant(location.params != null, 'WalletConnectActionDialog: params must be defined');
-    const { daoAddress, onAddActionsClick } = location.params;
+    const { daoAddress, daoNetwork, onAddActionsClick } = location.params;
 
     const { close } = useDialogContext();
     const [actions, setActions] = useState<IProposalAction[]>([]);
 
     const { data: appSession, mutate: connectApp, status: connectionStatus, reset: resetAppSession } = useConnectApp();
     const { mutate: disconnectApp } = useDisconnectApp();
+    const { mutateAsync: decodeTransactionAsync } = useDecodeTransaction();
 
-    const handleSessionRequest = (sessionRequest: ISessionRequest) => {
-        const { request } = sessionRequest.params;
+    const handleSessionRequest = useCallback(
+        async (sessionRequest: ISessionRequest) => {
+            const proposalAction = await walletConnectActionDialogUtils.sessionRequestToAction({
+                sessionRequest,
+                daoAddress,
+                daoNetwork,
+                decodeTransactionAsync,
+            });
 
-        // Only sendTransaction session requests are currently supported
-        if (request.method !== 'eth_sendTransaction') {
-            return;
-        }
-
-        const { from, to, data, value = '0' } = (request.params as ISessionRequestParams[typeof request.method])[0];
-
-        // Parse value from request as it can be set as hex instead of string
-        const parsedValue = isHex(value) ? fromHex(value, 'bigint').toString() : value;
-        const newAction: IProposalAction = { from, to, data, value: parsedValue, type: 'unknown', inputData: null };
-
-        setActions((current) => [...current, newAction]);
-    };
+            if (proposalAction) {
+                setActions((current) => [...current, proposalAction]);
+            }
+        },
+        [decodeTransactionAsync, daoAddress, daoNetwork],
+    );
 
     const handleCloseDialog = useCallback(() => {
         if (appSession) {
@@ -86,7 +87,7 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
             walletConnectService.removeListener({ event: 'session_request', callback: handleSessionRequest });
             walletConnectService.removeListener({ event: 'session_delete', callback: resetAppSession });
         };
-    }, [appSession, resetAppSession]);
+    }, [appSession, handleSessionRequest, resetAppSession]);
 
     const handleFormSubmit = ({ uri }: IWalletConnectActionFormData) => {
         // Reset previous errors in case of retry
