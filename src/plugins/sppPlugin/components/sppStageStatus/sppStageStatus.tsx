@@ -49,17 +49,15 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         id: execution?.transactionHash,
     });
 
-    const isLastStage = sppStageUtils.isFinalStage(proposal, stage);
+    const isLastStage = sppStageUtils.isLastStage(proposal, stage);
     const isSignalingProposal = proposal.actions.length === 0;
 
     // Only display the advance button if stage has been accepted or non veto stage is still active but approval has already
     // been reached (to display min-advance time). Hide the button/info for the last stage when proposal is signaling
     // to hide executable info text.
     const displayAdvanceButton =
-        (stageStatus === ProposalVotingStatus.ADVANCEABLE && !(isSignalingProposal && isLastStage)) ||
-        (stageStatus === ProposalVotingStatus.ACCEPTED &&
-            !(isSignalingProposal && isLastStage) &&
-            !sppStageUtils.isFinalStage(proposal, stage));
+        (stageStatus === ProposalVotingStatus.ADVANCEABLE || stageStatus === ProposalVotingStatus.ACCEPTED) &&
+        !(isSignalingProposal && isLastStage);
 
     const maxAdvanceTime = sppStageUtils.getStageMaxAdvance(proposal, stage);
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);

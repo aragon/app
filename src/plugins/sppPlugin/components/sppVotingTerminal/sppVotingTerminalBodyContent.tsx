@@ -64,7 +64,7 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
                 <>
                     <PluginSingleComponent
                         slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
-                        pluginId={processedSubProposal.pluginSubdomain}
+                        pluginId={plugin.subdomain}
                         proposal={subProposal}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">

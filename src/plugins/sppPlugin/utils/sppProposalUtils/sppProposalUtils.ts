@@ -11,18 +11,14 @@ class SppProposalUtils {
         const stagesCount = proposal.settings.stages.length;
         const lastStage = stagesCount > 0 ? proposal.settings.stages[stagesCount - 1] : undefined;
 
-        const endDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
+        const endDate = lastStage ? sppStageUtils.getStageEndDate(proposal, lastStage) : undefined;
         const endExecutionDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
 
         const approvalReached = this.areAllStagesAccepted(proposal);
-
         const isSignalingProposal = proposal.actions.length === 0;
 
         const isExecutable =
             approvalReached && endExecutionDate != null && now <= endExecutionDate && !isSignalingProposal;
-
-        const isAdvanceable =
-            sppStageUtils.getStageStatus(proposal, this.getCurrentStage(proposal)) === ProposalVotingStatus.ADVANCEABLE;
 
         if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;
@@ -38,10 +34,6 @@ class SppProposalUtils {
 
         if (this.hasAnyStageStatus(proposal, ProposalVotingStatus.EXPIRED)) {
             return ProposalStatus.EXPIRED;
-        }
-
-        if (isAdvanceable) {
-            return ProposalStatus.ADVANCEABLE;
         }
 
         if (isExecutable) {
@@ -64,30 +56,10 @@ class SppProposalUtils {
 
     getCurrentStage = (proposal: ISppProposal): ISppStage => proposal.settings.stages[proposal.stageIndex];
 
-    checkOngoingStatus = (proposal: ISppProposal) => {
-        if (this.getProposalStatus(proposal) === ProposalStatus.EXECUTED) {
-            return ProposalStatus.EXECUTED;
-        }
-
-        if (this.getProposalStatus(proposal) === ProposalStatus.EXECUTABLE) {
-            return ProposalStatus.EXECUTABLE;
-        }
-
-        return sppStageUtils.getStageStatus(proposal, this.getCurrentStage(proposal));
-    };
-
-    areAllStagesAccepted = (proposal: ISppProposal): boolean => {
-        const stagesAccepted = proposal.settings.stages.reduce((count, stage) => {
-            const status = sppStageUtils.getStageStatus(proposal, stage);
-
-            return (
-                count +
-                (status === ProposalVotingStatus.ADVANCEABLE || status === ProposalVotingStatus.ACCEPTED ? 1 : 0)
-            );
-        }, 0);
-
-        return stagesAccepted === proposal.settings.stages.length;
-    };
+    areAllStagesAccepted = (proposal: ISppProposal): boolean =>
+        proposal.settings.stages.every(
+            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
+        );
 }
 
 export const sppProposalUtils = new SppProposalUtils();

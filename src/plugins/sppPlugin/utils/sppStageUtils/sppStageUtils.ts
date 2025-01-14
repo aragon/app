@@ -11,29 +11,15 @@ class SppStageUtils {
 
         const now = DateTime.now();
         const stageStartDate = this.getStageStartDate(proposal, stage);
-        const stageMaxVote = this.getStageMaxVote(proposal, stage);
+        const stageEndDate = this.getStageEndDate(proposal, stage);
 
         const minAdvanceDate = this.getStageMinAdvance(proposal, stage);
         const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
+
         const approvalReached = this.isApprovalReached(proposal, stage);
-        const isFinalStage = this.isFinalStage(proposal, stage);
 
         // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
         const isSignalingProposal = actions.length === 0 && stageIndex === settings.stages.length - 1;
-
-        const isAdvanceable = maxAdvanceDate && now < maxAdvanceDate && !isFinalStage;
-
-        console.log('maxAdvanceDate', maxAdvanceDate, now < maxAdvanceDate!);
-        console.log('isFinalStage', isFinalStage);
-
-        console.log('isAdvanceable', isAdvanceable);
-
-        const canAdvance = approvalReached && minAdvanceDate && now > minAdvanceDate && !isSignalingProposal;
-
-        console.log('canAdvance', canAdvance);
-
-        const isExpired =
-            maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal && stageIndex === currentStageIndex;
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalVotingStatus.VETOED;
@@ -47,17 +33,19 @@ class SppStageUtils {
             return ProposalVotingStatus.PENDING;
         }
 
-        if (isAdvanceable && canAdvance) {
-            return ProposalVotingStatus.ADVANCEABLE;
+        if (stageEndDate != null && now < stageEndDate) {
+            const canAdvance =
+                approvalReached && minAdvanceDate != null && now > minAdvanceDate && !isSignalingProposal;
+
+            return canAdvance ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
         }
 
-        if (stageMaxVote != null && now < stageMaxVote && !canAdvance) {
-            return ProposalVotingStatus.ACTIVE;
-        }
-
-        if (!approvalReached && stageMaxVote != null && now > stageMaxVote) {
+        if (!approvalReached) {
             return ProposalVotingStatus.REJECTED;
         }
+
+        const isExpired =
+            maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal && stageIndex === currentStageIndex;
 
         return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
     };
@@ -88,7 +76,7 @@ class SppStageUtils {
         return stageSubProposal != null ? DateTime.fromSeconds(stageSubProposal.startDate) : undefined;
     };
 
-    getStageMaxVote = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
+    getStageEndDate = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         const startDate = this.getStageStartDate(proposal, stage);
 
         return startDate?.plus({ seconds: stage.voteDuration });
@@ -141,10 +129,6 @@ class SppStageUtils {
 
     isVeto = (stage: ISppStage): boolean => {
         return stage.vetoThreshold > 0;
-    };
-
-    isFinalStage = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        return proposal.stageIndex === proposal.settings.stages.length - 1 && proposal.stageIndex === stage.stageIndex;
     };
 }
 

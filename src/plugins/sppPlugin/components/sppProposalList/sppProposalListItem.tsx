@@ -1,7 +1,6 @@
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
-import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
-import { ProposalDataListItem, proposalDataListItemUtils, ProposalStatus } from '@aragon/gov-ui-kit';
+import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
 
 export interface ISppProposalListItemProps {
@@ -19,17 +18,14 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const { proposal, daoId } = props;
 
     const proposalDate =
-        (proposal.executed.blockTimestamp ?? proposal.subProposals[proposal.stageIndex].endDate!) * 1000;
-
-    const isFinalStage = sppStageUtils.isFinalStage(proposal, proposal.settings.stages[proposal.stageIndex]);
+        (proposal.executed.blockTimestamp ?? proposal.subProposals[proposal.stageIndex].endDate) * 1000;
 
     const processedStatus = sppProposalUtils.getProposalStatus(proposal);
 
-    const isOngoing = proposalDataListItemUtils.isOngoingStatus(processedStatus);
-
     const vote = useUserVote({ proposal: proposal.subProposals[proposal.stageIndex] });
 
-    const showStatusContext = !(isFinalStage && processedStatus !== ProposalStatus.ACTIVE) && isOngoing;
+    const statusContext =
+        proposal.settings.stages.length > 1 ? proposal.settings.stages[proposal.stageIndex].name : undefined;
 
     return (
         <ProposalDataListItem.Structure
@@ -40,7 +36,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
             date={proposalDate}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={processedStatus}
-            statusContext={showStatusContext ? proposal.settings.stages[proposal.stageIndex].name : undefined}
+            statusContext={statusContext}
             type="approvalThreshold"
             voted={vote != null}
             publisher={{

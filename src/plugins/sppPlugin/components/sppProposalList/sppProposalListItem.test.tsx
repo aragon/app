@@ -4,7 +4,12 @@ import {
 } from '@/plugins/sppPlugin/components/sppProposalList/sppProposalListItem';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
+import {
+    generateSppPluginSettings,
+    generateSppProposal,
+    generateSppStage,
+    generateSppSubProposal,
+} from '../../testUtils';
 
 describe('<SppProposalListItem /> component', () => {
     const createTestComponent = (props?: Partial<ISppProposalListItemProps>) => {
@@ -22,7 +27,11 @@ describe('<SppProposalListItem /> component', () => {
     };
 
     it('renders the spp proposal', () => {
-        const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [generateSppStage()] }) });
+        const proposal = generateSppProposal({
+            id: 'proposal-id',
+            subProposals: [generateSppSubProposal()],
+            settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
+        });
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
@@ -30,6 +39,7 @@ describe('<SppProposalListItem /> component', () => {
     it('sets the correct link for proposal page', () => {
         const proposal = generateSppProposal({
             id: 'proposal-id',
+            subProposals: [generateSppSubProposal()],
             settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
         });
         const daoId = 'dao-id';

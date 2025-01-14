@@ -19,7 +19,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
 
     const vote = useUserVote({ proposal });
 
-    const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate!) * 1000;
+    const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
     return (
         <ProposalDataListItem.Structure

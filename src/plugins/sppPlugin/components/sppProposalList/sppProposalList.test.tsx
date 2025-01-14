@@ -51,12 +51,14 @@ describe('<SppProposalList /> component', () => {
     it('fetches and renders the Spp proposal list', () => {
         const proposals: ISppProposal[] = [
             generateSppProposal({
+                endDate: 0,
                 title: 'Proposal 1',
                 id: '1',
                 subProposals: [generateSppSubProposal({ endDate: 0 }), generateSppSubProposal({ endDate: 0 })],
                 settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
             generateSppProposal({
+                endDate: 0,
                 title: 'Proposal 2',
                 id: '2',
                 subProposals: [generateSppSubProposal({ endDate: 0 }), generateSppSubProposal({ endDate: 0 })],
@@ -79,12 +81,16 @@ describe('<SppProposalList /> component', () => {
     });
 
     it('does not render the data-list pagination when hidePagination is set to true', () => {
-        const proposals: ISppProposal[] = [
+        const proposals = [
             generateSppProposal({
                 id: '1',
+                subProposals: [generateSppSubProposal({ endDate: 0 })],
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
             generateSppProposal({
                 id: '2',
+                subProposals: [generateSppSubProposal({ endDate: 0 })],
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
         ];
         const hidePagination = true;
