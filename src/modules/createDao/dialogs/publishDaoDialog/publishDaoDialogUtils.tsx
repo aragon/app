@@ -12,6 +12,7 @@ import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { adminPluginSetupAbi } from './adminPluginSetupAbi';
 import { daoFactoryAbi } from './daoFactoryAbi';
 import { daoRegistryAbi } from './daoRegistryAbi';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 export interface IBuildTransactionParams {
     /**
@@ -37,7 +38,9 @@ class PublishDaoDialogUtils {
 
     buildTransaction = (params: IBuildTransactionParams) => {
         const { values, metadataCid, connectedAddress } = params;
-        const { adminPluginRepo, factoryAddress } = values;
+        const { network } = values;
+
+        const { factoryAddress, adminPluginRepo } = networkDefinitions[network];
 
         const daoSettings = this.buildDaoSettingsParams(metadataCid);
         const pluginSettings = this.buildPluginSettingsParams(adminPluginRepo, connectedAddress);
