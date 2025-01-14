@@ -120,6 +120,11 @@
           "resources": {
             "helpText": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers."
           }
+        },
+        "network": {
+          "helpText": "The chain you choose is where your tokens and assets are stored. ",
+          "label": "Select blockchain",
+          "testnetLabel": "Testnet"
         }
       },
       "createDaoPage": {
@@ -134,6 +139,11 @@
             "description": "Name and define your DAO so members know they've come to the right place. This information will be displayed at the top of your dashboard and can be changed with a vote.",
             "name": "Describe your DAO",
             "title": "Describe your DAO"
+          },
+          "NETWORK": {
+            "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later.",
+            "name": "Select blockchain",
+            "title": "Select blockchain"
           }
         },
         "submitLabel": "Publish DAO"

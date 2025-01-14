@@ -17,6 +17,10 @@ export interface INetworkDefinition {
      * URL of the RPC endpoint to use.
      */
     rpc: string;
+    /**
+     * Flag to determine if the network is testnet
+     */
+    isTestnet?: boolean;
 }
 
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
@@ -31,6 +35,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         name: 'Ethereum Sepolia',
         logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
         rpc: 'https://eth-sepolia.g.alchemy.com/v2/',
+        isTestnet: true,
     },
     [Network.POLYGON_MAINNET]: {
         chainId: 137,
@@ -61,5 +66,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         name: 'zkSync Sepolia',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
         rpc: 'https://zksync-sepolia.g.alchemy.com/v2/',
+        isTestnet: true,
     },
 };

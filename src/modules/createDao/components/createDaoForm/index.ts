@@ -1,11 +1,12 @@
-import { CreateDaoFormDebug } from './createDaoFormDebug';
 import { CreateDaoFormMetadata } from './createDaoFormMetadata';
+import { CreateDaoFormNetwork } from './createDaoFormNetwork';
 
 export const CreateDaoForm = {
     Metadata: CreateDaoFormMetadata,
-    Debug: CreateDaoFormDebug,
+    Network: CreateDaoFormNetwork,
 };
 
 export * from './createDaoFormDebug';
 export type * from './createDaoFormDefinitions';
 export * from './createDaoFormMetadata';
+export * from './createDaoFormNetwork';
