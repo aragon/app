@@ -1,10 +1,16 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
 import { generateMultisigVote } from '@/plugins/multisigPlugin/testUtils';
+import { ISppProposal } from '@/plugins/sppPlugin/types';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateSppProposal, generateSppSubProposal } from '../../testUtils';
+import {
+    generateSppPluginSettings,
+    generateSppProposal,
+    generateSppStage,
+    generateSppSubProposal,
+} from '../../testUtils';
 import { SppProposalList, type ISppProposalListProps } from './sppProposalList';
 
 describe('<SppProposalList /> component', () => {
@@ -43,16 +49,18 @@ describe('<SppProposalList /> component', () => {
     };
 
     it('fetches and renders the Spp proposal list', () => {
-        const proposals = [
+        const proposals: ISppProposal[] = [
             generateSppProposal({
-                title: 'First',
+                title: 'Proposal 1',
                 id: '1',
-                subProposals: [generateSppSubProposal(), generateSppSubProposal()],
+                subProposals: [generateSppSubProposal({ endDate: 0 }), generateSppSubProposal({ endDate: 0 })],
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
             generateSppProposal({
-                title: 'Second',
+                title: 'Proposal 2',
                 id: '2',
-                subProposals: [generateSppSubProposal(), generateSppSubProposal()],
+                subProposals: [generateSppSubProposal({ endDate: 0 }), generateSppSubProposal({ endDate: 0 })],
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
         ];
         useProposalListDataSpy.mockReturnValue({
@@ -71,9 +79,17 @@ describe('<SppProposalList /> component', () => {
     });
 
     it('does not render the data-list pagination when hidePagination is set to true', () => {
+        const proposals: ISppProposal[] = [
+            generateSppProposal({
+                id: '1',
+            }),
+            generateSppProposal({
+                id: '2',
+            }),
+        ];
         const hidePagination = true;
         useProposalListDataSpy.mockReturnValue({
-            proposalList: [generateSppProposal()],
+            proposalList: proposals,
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,

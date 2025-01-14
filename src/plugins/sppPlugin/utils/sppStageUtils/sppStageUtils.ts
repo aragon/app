@@ -21,9 +21,16 @@ class SppStageUtils {
         // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
         const isSignalingProposal = actions.length === 0 && stageIndex === settings.stages.length - 1;
 
-        const isAdvanceable = maxAdvanceDate && now < maxAdvanceDate && !isSignalingProposal && !isFinalStage;
+        const isAdvanceable = maxAdvanceDate && now < maxAdvanceDate && !isFinalStage;
+
+        console.log('maxAdvanceDate', maxAdvanceDate, now < maxAdvanceDate!);
+        console.log('isFinalStage', isFinalStage);
+
+        console.log('isAdvanceable', isAdvanceable);
 
         const canAdvance = approvalReached && minAdvanceDate && now > minAdvanceDate && !isSignalingProposal;
+
+        console.log('canAdvance', canAdvance);
 
         const isExpired =
             maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal && stageIndex === currentStageIndex;
@@ -44,7 +51,7 @@ class SppStageUtils {
             return ProposalVotingStatus.ADVANCEABLE;
         }
 
-        if (stageMaxVote != null && now < stageMaxVote) {
+        if (stageMaxVote != null && now < stageMaxVote && !canAdvance) {
             return ProposalVotingStatus.ACTIVE;
         }
 

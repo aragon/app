@@ -19,7 +19,10 @@ describe('SppProposalUtils', () => {
 
     describe('getProposalStatus', () => {
         it('returns executed when proposal is executed', () => {
-            const proposal = generateSppProposal({ executed: { status: true } });
+            const proposal = generateSppProposal({
+                executed: { status: true },
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
+            });
             const result = sppProposalUtils.getProposalStatus(proposal);
             expect(result).toBe(ProposalStatus.EXECUTED);
         });
@@ -115,19 +118,18 @@ describe('SppProposalUtils', () => {
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
                 actions: [],
             });
 
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
             timeUtils.setTime(now);
-            getStageMaxVoteSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(endDate);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACCEPTED);
         });
 
-        it('returns expired is approval is reached, proposal has actions and has ended', () => {
+        it('returns expired if approval is reached, proposal has actions and has ended', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
@@ -139,7 +141,7 @@ describe('SppProposalUtils', () => {
 
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
             timeUtils.setTime(now);
-            getStageMaxVoteSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(endDate);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.EXPIRED);
         });
