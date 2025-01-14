@@ -42,34 +42,33 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
     const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
 
-const prepareAction = useCallback(
-    async (action: IProposalAction) => {
-        const { name, description, resources, avatar } = (action as IUpdateDaoMetadataAction).proposedMetadata;
-        const proposedMetadata = { name, description, links: resources };
+    const prepareAction = useCallback(
+        async (action: IProposalAction) => {
+            const { name, description, resources, avatar } = (action as IUpdateDaoMetadataAction).proposedMetadata;
+            const proposedMetadata = { name, description, links: resources };
 
-        let daoAvatar: string | undefined;
+            let daoAvatar: string | undefined;
 
-        if (typeof avatar === 'string') {
-            daoAvatar = avatar;
-        } else if (avatar?.file != null) {
-            const avatarResult = await pinFileAsync({ body: avatar.file });
-            daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
-        }
+            if (typeof avatar === 'string') {
+                daoAvatar = avatar;
+            } else if (avatar?.file != null) {
+                const avatarResult = await pinFileAsync({ body: avatar.file });
+                daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
+            }
 
-        const metadata = daoAvatar ? { ...proposedMetadata, avatar: daoAvatar } : proposedMetadata;
+            const metadata = daoAvatar ? { ...proposedMetadata, avatar: daoAvatar } : proposedMetadata;
 
-        const ipfsResult = await pinJsonAsync({ body: metadata });
-        const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
-        const data = encodeFunctionData({
-            abi: [setMetadataAbi],
-            args: [hexResult],
-        });
+            const ipfsResult = await pinJsonAsync({ body: metadata });
+            const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
+            const data = encodeFunctionData({
+                abi: [setMetadataAbi],
+                args: [hexResult],
+            });
 
-        return data;
-    },
-    [pinFileAsync, pinJsonAsync],
-);
-
+            return data;
+        },
+        [pinFileAsync, pinJsonAsync],
+    );
 
     useEffect(() => {
         addPrepareAction(ProposalActionType.METADATA_UPDATE, prepareAction);

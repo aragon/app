@@ -1,8 +1,8 @@
 import { type ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum';
 import { type IResource } from '@/shared/api/daoService';
 import type {
-    IInputFileAvatarValue,
     IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
+    IInputFileAvatarValue,
 } from '@aragon/gov-ui-kit';
 
 export interface IProposalActionUpdateMetadataObject {
