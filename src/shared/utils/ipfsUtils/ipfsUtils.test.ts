@@ -29,17 +29,17 @@ describe('ipfs utils', () => {
             expect(src).toContain('img-width=80&img-height=80');
         });
     });
-});
 
-describe('cidToUri', () => {
-    it('returns a valid ipfs:// URI when a CID is provided', () => {
-        const cid = 'bafybeigdyrztgvdrx3nldjbk8m7';
-        const result = ipfsUtils.cidToUri(cid);
-        expect(result).toEqual(`ipfs://${cid}`);
-    });
+    describe('cidToUri', () => {
+        it('returns a valid ipfs:// URI when a CID is provided', () => {
+            const cid = 'bafybeigdyrztgvdrx3nldjbk8m7';
+            const result = ipfsUtils.cidToUri(cid);
+            expect(result).toEqual(`ipfs://${cid}`);
+        });
 
-    it('returns undefined when CID is null or undefined', () => {
-        expect(ipfsUtils.cidToUri(null)).toBeUndefined();
-        expect(ipfsUtils.cidToUri(undefined)).toBeUndefined();
+        it('returns undefined when CID is null or undefined', () => {
+            expect(ipfsUtils.cidToUri(null)).toBeUndefined();
+            expect(ipfsUtils.cidToUri(undefined)).toBeUndefined();
+        });
     });
 });

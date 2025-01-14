@@ -19,6 +19,7 @@ import { proposalActionUtils } from './proposalActionUtils';
 
 describe('proposalActionUtils', () => {
     const getSlotFunctionsSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunctions');
+    const ipfsCidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
 
     afterEach(() => {
         getSlotFunctionsSpy.mockReset();
@@ -139,16 +140,14 @@ describe('proposalActionUtils', () => {
 
     describe('normalizeActionMetadata', () => {
         const normalizeActionMetadataLinksSpy = jest.spyOn(proposalActionUtils, 'normalizeActionMetadataLinks');
-        const ipfsUtilsSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
 
         afterEach(() => {
             normalizeActionMetadataLinksSpy.mockReset();
-            ipfsUtilsSpy.mockReset();
+            ipfsCidToSrcSpy.mockReset();
         });
 
         afterAll(() => {
             normalizeActionMetadataLinksSpy.mockRestore();
-            ipfsUtilsSpy.mockRestore();
         });
 
         it('sets default values for metadata when missing on the action metadata object', () => {
@@ -171,7 +170,7 @@ describe('proposalActionUtils', () => {
             normalizeActionMetadataLinksSpy.mockReturnValue(normalizedLinks);
 
             const expectedAvatarUrl = 'https://aragon-1.mypinata.cloud/ipfs/valid-cid?img-width=80&img-height=80';
-            ipfsUtilsSpy.mockReturnValue(expectedAvatarUrl);
+            ipfsCidToSrcSpy.mockReturnValue(expectedAvatarUrl);
             const normalizedMetadata = proposalActionUtils.normalizeActionMetadata(metadata);
             expect(normalizeActionMetadataLinksSpy).toHaveBeenCalledWith(metadata.links);
             expect(normalizedMetadata.name).toEqual(metadata.name);
@@ -239,25 +238,18 @@ describe('proposalActionUtils', () => {
     });
 
     describe('normalizeActionMetadataAvatar', () => {
-        const ipfsUtilsSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
-
         afterEach(() => {
-            ipfsUtilsSpy.mockReset();
+            ipfsCidToSrcSpy.mockReset();
         });
 
-        afterAll(() => {
-            ipfsUtilsSpy.mockRestore();
-        });
         it('returns the correct avatar URL when metadata has a valid IPFS avatar', () => {
             const metadata = {
                 name: 'dao-name',
-                description: 'dao-description',
-                links: [],
                 avatar: 'ipfs://valid-cid',
             };
 
             const expectedAvatarUrl = 'https://aragon-1.mypinata.cloud/ipfs/valid-cid?img-width=80&img-height=80';
-            ipfsUtilsSpy.mockReturnValue(expectedAvatarUrl);
+            ipfsCidToSrcSpy.mockReturnValue(expectedAvatarUrl);
 
             const result = proposalActionUtils.normalizeActionMetadataAvatar(metadata);
             expect(result).toEqual(expectedAvatarUrl);

@@ -5,7 +5,7 @@ import type { IPinFileParams } from '../../ipfsService.api';
 
 export const usePinFile = (options?: MutationOptions<IPinResult, unknown, IPinFileParams>) => {
     return useMutation({
-        mutationFn: (params: IPinFileParams) => pinFileAction(params),
+        mutationFn: (params) => pinFileAction(params),
         ...options,
     });
 };

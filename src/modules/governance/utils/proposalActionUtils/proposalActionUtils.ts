@@ -78,20 +78,18 @@ class ProposalActionUtils {
 
     normalizeActionMetadata = (
         metadata: IProposalActionUpdateMetadataObject | IProposalActionUpdatePluginMetadataObject,
-    ): IProposalActionUpdateMetadataDaoMetadata => {
-        return {
-            ...metadata,
-            name: metadata.name ?? '',
-            description: metadata.description ?? '',
-            links: this.normalizeActionMetadataLinks(metadata.links),
-            avatar: this.normalizeActionMetadataAvatar(metadata),
-        };
-    };
+    ): IProposalActionUpdateMetadataDaoMetadata => ({
+        ...metadata,
+        name: metadata.name ?? '',
+        description: metadata.description ?? '',
+        links: this.normalizeActionMetadataLinks(metadata.links),
+        avatar: this.normalizeActionMetadataAvatar(metadata),
+    });
 
     normalizeActionMetadataAvatar = (
         metadata: IProposalActionUpdateMetadataObject | IProposalActionUpdatePluginMetadataObject,
     ): string | undefined => {
-        if ('avatar' in metadata && metadata.avatar?.startsWith('ipfs://')) {
+        if ('avatar' in metadata && metadata.avatar) {
             return ipfsUtils.cidToSrc(metadata.avatar);
         }
         return undefined;
