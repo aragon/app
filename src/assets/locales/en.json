@@ -75,23 +75,16 @@
       }
     },
     "createDao": {
-      "createDaoForm": {
-        "debug": {
-          "adminPluginRepo": {
-            "helpText": "Address of the Admin Plugin contract",
-            "label": "Admin Plugin",
-            "placeholder": "Insert address"
-          },
-          "factoryAddress": {
-            "helpText": "Address of the DAO Factory contract",
-            "label": "DAO Factory",
-            "placeholder": "Insert address"
-          },
-          "network": {
-            "helpText": "The chain you choose is where your tokens and assets are stored. ",
-            "label": "Select blockchain"
-          }
+      "createDaoDetailsDialog": {
+        "actionLabel": "Get started",
+        "description": "Start simple and learn as you go. You can always evolve your DAO in the future.",
+        "steps": {
+          "describe": "Describe your DAO",
+          "network": "Select blockchain"
         },
+        "title": "Create new DAO"
+      },
+      "createDaoForm": {
         "metadata": {
           "avatar": {
             "error": {
@@ -118,6 +111,11 @@
           "resources": {
             "helpText": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers."
           }
+        },
+        "network": {
+          "helpText": "The chain you choose is where your tokens and assets are stored.",
+          "label": "Select blockchain",
+          "testnetLabel": "Testnet"
         }
       },
       "createDaoPage": {
@@ -132,6 +130,11 @@
             "description": "Name and define your DAO so members know they've come to the right place. This information will be displayed at the top of your dashboard and can be changed with a vote.",
             "name": "Describe your DAO",
             "title": "Describe your DAO"
+          },
+          "NETWORK": {
+            "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later.",
+            "name": "Select blockchain",
+            "title": "Select blockchain"
           }
         },
         "submitLabel": "Publish DAO"
@@ -348,7 +351,8 @@
         "actions": {
           "addAction": {
             "custom": "Custom",
-            "default": "Action"
+            "default": "Action",
+            "walletConnect": "Connect"
           },
           "editAction": {
             "down": "Move down",
@@ -632,6 +636,32 @@
         "error": {
           "description": "There was an error loading the votes. Please try again later.",
           "title": "Error loading votes"
+        }
+      },
+      "walletConnectActionDialog": {
+        "connect": {
+          "action": {
+            "cancel": "Cancel",
+            "connect": "Connect dApp",
+            "retry": "Retry"
+          },
+          "description": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
+          "error": "Error while connecting dApp, please try again.",
+          "title": "Connect new dApp",
+          "uriField": {
+            "placeholder": "wc: …"
+          }
+        },
+        "listener": {
+          "action": {
+            "addActions": "Add {{count}} actions",
+            "cancel": "Cancel",
+            "open": "Open dApp"
+          },
+          "helpLink": "Having issues?",
+          "info_1": "You can now interact with ",
+          "info_2": " on behalf of your DAO. Instead of going to your wallet, transactions will be made available to add as actions to the proposal.",
+          "progress": "Listening to dApp"
         }
       }
     },
@@ -1149,6 +1179,13 @@
           },
           "next": "Next"
         }
+      },
+      "wizardDetailsDialog": {
+        "footer": {
+          "cancel": "Cancel"
+        },
+        "infoLabel": "Learn more",
+        "step": "Step {{number}}"
       }
     }
   }
