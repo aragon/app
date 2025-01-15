@@ -5,6 +5,7 @@ import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
 import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
 import { VerifySmartContractDialog } from '../dialogs/verifySmartContractDialog';
 import { VoteDialog } from '../dialogs/voteDialog';
+import { WalletConnectActionDialog } from '../dialogs/walletConnectActionDialog';
 
 export enum GovernanceDialog {
     PUBLISH_PROPOSAL = 'PUBLISH_PROPOSAL',
@@ -13,6 +14,7 @@ export enum GovernanceDialog {
     SELECT_PLUGIN = 'SELECT_PLUGIN',
     VERIFY_SMART_CONTRACT = 'VERIFY_SMART_CONTRACT',
     PERMISSION_CHECK = 'PERMISSION_CHECK',
+    WALLET_CONNECT_ACTION = 'WALLET_CONNECT_ACTION',
 }
 
 export const governanceDialogs: Record<GovernanceDialog, IDialogComponentDefinitions> = {
@@ -42,5 +44,10 @@ export const governanceDialogs: Record<GovernanceDialog, IDialogComponentDefinit
         Component: PermissionCheckDialog,
         title: 'app.governance.permissionCheckDialog.screenReader.title',
         description: 'app.governance.permissionCheckDialog.screenReader.description',
+    },
+    [GovernanceDialog.WALLET_CONNECT_ACTION]: {
+        Component: WalletConnectActionDialog,
+        title: 'app.governance.walletConnectActionDialog.connect.title',
+        description: 'app.governance.walletConnectActionDialog.connect.description',
     },
 };

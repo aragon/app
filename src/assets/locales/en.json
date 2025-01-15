@@ -339,7 +339,8 @@
         "actions": {
           "addAction": {
             "custom": "Custom",
-            "default": "Action"
+            "default": "Action",
+            "walletConnect": "Connect"
           },
           "editAction": {
             "down": "Move down",
@@ -623,6 +624,32 @@
         "error": {
           "description": "There was an error loading the votes. Please try again later.",
           "title": "Error loading votes"
+        }
+      },
+      "walletConnectActionDialog": {
+        "connect": {
+          "action": {
+            "cancel": "Cancel",
+            "connect": "Connect dApp",
+            "retry": "Retry"
+          },
+          "description": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
+          "error": "Error while connecting dApp, please try again.",
+          "title": "Connect new dApp",
+          "uriField": {
+            "placeholder": "wc: …"
+          }
+        },
+        "listener": {
+          "action": {
+            "addActions": "Add {{count}} actions",
+            "cancel": "Cancel",
+            "open": "Open dApp"
+          },
+          "helpLink": "Having issues?",
+          "info_1": "You can now interact with ",
+          "info_2": " on behalf of your DAO. Instead of going to your wallet, transactions will be made available to add as actions to the proposal.",
+          "progress": "Listening to dApp"
         }
       }
     },
