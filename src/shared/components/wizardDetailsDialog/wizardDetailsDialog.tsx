@@ -4,7 +4,7 @@ import { useTranslations } from '../translationsProvider';
 import type { IWizardDetailsDialogProps } from './wizardDetailsDialog.api';
 
 export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) => {
-    const { title, description, steps, infoLink, actionLabel, wizardLink } = props;
+    const { title, description, steps, infoLink, actionLabel, wizardLink, onPrimaryButtonClick } = props;
 
     const { t } = useTranslations();
 
@@ -36,7 +36,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
                 ))}
             </div>
             <div className="flex gap-x-4 pt-6">
-                <Button href={wizardLink} onClick={() => close()}>
+                <Button href={wizardLink} onClick={onPrimaryButtonClick}>
                     {actionLabel}
                 </Button>
                 <Button variant="tertiary" onClick={() => close()}>
