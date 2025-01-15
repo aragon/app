@@ -38,10 +38,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
         open(dialog);
     };
 
-    const handleCreateDaoClick = () => {
-        open(CreateDaoDialog.CREATE_DAO_DETAILS);
-    };
-
     return (
         <div className="flex grow flex-col gap-5">
             <div className="flex items-center justify-between">
@@ -61,7 +57,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                         className="!rounded-full"
                         variant="primary"
                         size="md"
-                        onClick={handleCreateDaoClick}
+                        onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
                     >
                         {t('app.explore.exploreDaosPage.createDao')}
                     </Button>

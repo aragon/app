@@ -7,9 +7,11 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
     const { title, description, steps, primaryButton, link } = props;
 
     const { t } = useTranslations();
+
     const { href: primaryButtonHref, onPrimaryButtonClick, label: primaryButtonLabel } = primaryButton;
 
     const { close } = useDialogContext();
+
     return (
         <Dialog.Content className="flex flex-col gap-y-6 py-10">
             <div className="px-4">

@@ -18,18 +18,16 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
     const testnetTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.testnetLabel') };
 
     return (
-        <div className="flex flex-col gap-10">
-            <RadioGroup onValueChange={onNetworkChange} {...networkField}>
-                {Object.entries(networkDefinitions).map(([key, network]) => (
-                    <RadioCard
-                        tag={network.isTestnet ? testnetTag : undefined}
-                        key={key}
-                        value={key}
-                        label={network.name}
-                        avatar={network.logo}
-                    />
-                ))}
-            </RadioGroup>
-        </div>
+        <RadioGroup onValueChange={onNetworkChange} {...networkField}>
+            {Object.entries(networkDefinitions).map(([key, network]) => (
+                <RadioCard
+                    tag={network.isTestnet ? testnetTag : undefined}
+                    key={key}
+                    value={key}
+                    label={network.name}
+                    avatar={network.logo}
+                />
+            ))}
+        </RadioGroup>
     );
 };
