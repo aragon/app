@@ -41,7 +41,7 @@ class PublishDaoDialogUtils {
         const { network } = values;
 
         const { addresses } = networkDefinitions[network];
-        const { factoryAddress, adminPluginRepo } = addresses;
+        const { daoFactory, adminPluginRepo } = addresses;
 
         const daoSettings = this.buildDaoSettingsParams(metadataCid);
         const pluginSettings = this.buildPluginSettingsParams(adminPluginRepo, connectedAddress);
@@ -53,7 +53,7 @@ class PublishDaoDialogUtils {
         });
 
         const transaction: TransactionDialogPrepareReturn = {
-            to: factoryAddress,
+            to: daoFactory,
             data: transactionData,
         };
 

@@ -33,10 +33,6 @@ export interface IWizardDetailsDialogProps {
      */
     actionLabel: string;
     /**
-     * Callback of the button.
-     */
-    onPrimaryButtonClick?: () => void;
-    /**
      * Href of where the wizard should link to.
      */
     wizardLink?: string;

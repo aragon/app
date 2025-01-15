@@ -16,6 +16,7 @@ export const CreateDaoDetailsDialog: React.FC<ICreateDaoDetailsDialogProps> = ()
             icon: 'DATABASE',
         },
     ];
+
     return (
         <WizardDetailsDialog
             title={t('app.createDao.createDaoDetailsDialog.title')}
