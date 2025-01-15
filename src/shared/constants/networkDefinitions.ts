@@ -6,7 +6,7 @@ export interface INetworkDefinitionAddresses {
     /**
      * Factory address used for deploying DAOs.
      */
-    factoryAddress: Hex;
+    daoFactory: Hex;
     /**
      * Admin plugin repository address.
      */
@@ -54,7 +54,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         rpc: 'https://eth-mainnet.g.alchemy.com/v2/',
         wagmiChain: mainnet,
         addresses: {
-            factoryAddress: zeroAddress,
+            daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
         },
     },
@@ -66,7 +66,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         isTestnet: true,
         wagmiChain: sepolia,
         addresses: {
-            factoryAddress: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
+            daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
             adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
         },
     },
@@ -77,7 +77,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         rpc: 'https://polygon-mainnet.g.alchemy.com/v2/',
         wagmiChain: polygon,
         addresses: {
-            factoryAddress: zeroAddress,
+            daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
         },
     },
@@ -88,7 +88,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         rpc: 'https://base-mainnet.g.alchemy.com/v2/',
         wagmiChain: base,
         addresses: {
-            factoryAddress: zeroAddress,
+            daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
         },
     },
@@ -99,7 +99,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         rpc: 'https://arb-mainnet.g.alchemy.com/v2/',
         wagmiChain: arbitrum,
         addresses: {
-            factoryAddress: zeroAddress,
+            daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
         },
     },
@@ -110,7 +110,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         rpc: 'https://zksync-mainnet.g.alchemy.com/v2/',
         wagmiChain: zksync,
         addresses: {
-            factoryAddress: zeroAddress,
+            daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
         },
     },
@@ -122,7 +122,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         isTestnet: true,
         wagmiChain: zksyncSepoliaTestnet,
         addresses: {
-            factoryAddress: zeroAddress,
+            daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
         },
     },
