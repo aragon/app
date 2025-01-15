@@ -1,6 +1,6 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import {
     encodeAbiParameters,
