@@ -1,5 +1,4 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
@@ -26,7 +25,7 @@ class SppStageUtils {
             return ProposalVotingStatus.VETOED;
         }
 
-        if (this.isStagedUnreached(proposal, stageIndex)) {
+        if (this.isStageUnreached(proposal, stageIndex)) {
             return ProposalVotingStatus.UNREACHED;
         }
 
@@ -51,13 +50,34 @@ class SppStageUtils {
         return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
     };
 
-    isStagedUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
+    canStageAdvance = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const now = DateTime.now();
+        const minAdvanceDate = this.getStageMinAdvance(proposal, stage);
+        const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
+        const approvalReached = this.isApprovalReached(proposal, stage);
+        const isSignalingProposal = proposal.actions.length === 0 && this.isLastStage(proposal, stage);
+
+        return (
+            approvalReached &&
+            minAdvanceDate != null &&
+            maxAdvanceDate != null &&
+            now > minAdvanceDate &&
+            now < maxAdvanceDate &&
+            !isSignalingProposal
+        );
+    };
+
+    isStageUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
         return proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
             const status = this.getStageStatus(proposal, stage);
             const { VETOED, REJECTED, EXPIRED } = ProposalVotingStatus;
 
             return [VETOED, REJECTED, EXPIRED].includes(status);
         });
+    };
+
+    getCurrentStage = (proposal: ISppProposal): ISppStage => {
+        return proposal.settings.stages[proposal.stageIndex];
     };
 
     getStageStartDate = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
@@ -134,17 +154,6 @@ class SppStageUtils {
 
     isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean => {
         return proposal.settings.stages.length - 1 === stage.stageIndex;
-    };
-
-    hasUserVotedInStage = (proposal: ISppProposal, stageIndex: number): boolean => {
-        const stageSubProposals = proposal.subProposals.filter((sub) => sub.stageIndex === stageIndex);
-
-        const votes = stageSubProposals.map((subProposal) => {
-            const vote = useUserVote({ proposal: subProposal });
-            return vote != null;
-        });
-
-        return votes.some((hasVoted) => hasVoted);
     };
 }
 

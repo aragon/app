@@ -6,7 +6,6 @@ import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
 
 describe('<TokenProposalListItem /> component', () => {
-    const getWinningOptionSpy = jest.spyOn(tokenProposalUtils, 'getWinningOption');
     const getTotalVotesSpy = jest.spyOn(tokenProposalUtils, 'getTotalVotes');
     const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');
     const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
@@ -16,7 +15,6 @@ describe('<TokenProposalListItem /> component', () => {
     });
 
     afterEach(() => {
-        getWinningOptionSpy.mockReset();
         getTotalVotesSpy.mockReset();
         getProposalStatusSpy.mockReset();
         useUserVoteSpy.mockReset();

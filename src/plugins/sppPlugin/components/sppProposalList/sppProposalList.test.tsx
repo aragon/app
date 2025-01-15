@@ -1,7 +1,6 @@
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
 import { generateMultisigVote } from '@/plugins/multisigPlugin/testUtils';
-import { ISppProposal } from '@/plugins/sppPlugin/types';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
@@ -48,20 +47,18 @@ describe('<SppProposalList /> component', () => {
         );
     };
 
-    it('fetches and renders the Spp proposal list', () => {
-        const proposals: ISppProposal[] = [
+    it('fetches and renders the spp proposal list', () => {
+        const proposals = [
             generateSppProposal({
-                endDate: 0,
                 title: 'Proposal 1',
                 id: '1',
-                subProposals: [generateSppSubProposal({ endDate: 0 }), generateSppSubProposal({ endDate: 0 })],
+                subProposals: [generateSppSubProposal()],
                 settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
             generateSppProposal({
-                endDate: 0,
                 title: 'Proposal 2',
                 id: '2',
-                subProposals: [generateSppSubProposal({ endDate: 0 }), generateSppSubProposal({ endDate: 0 })],
+                subProposals: [generateSppSubProposal()],
                 settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
         ];
@@ -84,12 +81,12 @@ describe('<SppProposalList /> component', () => {
         const proposals = [
             generateSppProposal({
                 id: '1',
-                subProposals: [generateSppSubProposal({ endDate: 0 })],
+                subProposals: [generateSppSubProposal()],
                 settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
             generateSppProposal({
                 id: '2',
-                subProposals: [generateSppSubProposal({ endDate: 0 })],
+                subProposals: [generateSppSubProposal()],
                 settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
             }),
         ];

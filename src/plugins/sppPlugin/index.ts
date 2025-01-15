@@ -15,11 +15,6 @@ export const initialiseSppPlugin = () => {
     pluginRegistryUtils
         // Plugin definitions
         .registerPlugin(plugin)
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
-            pluginId: plugin.id,
-            component: SppProposalList,
-        })
         // Governance module slots
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL,
@@ -45,6 +40,11 @@ export const initialiseSppPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: plugin.id,
             function: useSppActions,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
+            pluginId: plugin.id,
+            component: SppProposalList,
         })
 
         // Settings module slots

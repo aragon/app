@@ -1,5 +1,5 @@
+import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
-import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
 
@@ -20,9 +20,9 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const proposalDate =
         (proposal.executed.blockTimestamp ?? proposal.subProposals[proposal.stageIndex].endDate) * 1000;
 
-    const processedStatus = sppProposalUtils.getProposalStatus(proposal);
+    const proposalStatus = sppProposalUtils.getProposalStatus(proposal);
 
-    const voted = sppStageUtils.hasUserVotedInStage(proposal, proposal.stageIndex);
+    const voted = useUserVote({ proposal });
 
     const statusContext =
         proposal.settings.stages.length > 1 ? proposal.settings.stages[proposal.stageIndex].name : undefined;
@@ -35,10 +35,9 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
             summary={proposal.summary}
             date={proposalDate}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
-            status={processedStatus}
+            status={proposalStatus}
             statusContext={statusContext}
-            type="approvalThreshold"
-            voted={voted}
+            voted={voted != null}
             publisher={{
                 address: proposal.creator.address,
                 name: proposal.creator.ens ?? undefined,

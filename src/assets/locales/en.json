@@ -885,11 +885,6 @@
         "tokenProposalList": {
           "entity": "Proposals"
         },
-        "tokenProposalListItem": {
-          "abstain": "Abstain",
-          "no": "No",
-          "yes": "Yes"
-        },
         "tokenProposalVotingSummary": {
           "approved": "approved",
           "notApproved": "did not approve",
