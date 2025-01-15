@@ -37,10 +37,6 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
                 name: proposal.creator.ens ?? undefined,
                 link: `members/${proposal.creator.address}`,
             }}
-            result={{
-                approvalAmount: proposal.metrics.totalVotes,
-                approvalThreshold: proposal.settings.minApprovals,
-            }}
         />
     );
 };
