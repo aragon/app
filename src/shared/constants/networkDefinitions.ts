@@ -58,18 +58,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             adminPluginRepo: zeroAddress,
         },
     },
-    [Network.ETHEREUM_SEPOLIA]: {
-        chainId: 11155111,
-        name: 'Ethereum Sepolia',
-        logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-        rpc: 'https://eth-sepolia.g.alchemy.com/v2/',
-        isTestnet: true,
-        wagmiChain: sepolia,
-        addresses: {
-            daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
-            adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
-        },
-    },
     [Network.POLYGON_MAINNET]: {
         chainId: 137,
         name: 'Polygon Mainnet',
@@ -112,6 +100,18 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+        },
+    },
+    [Network.ETHEREUM_SEPOLIA]: {
+        chainId: 11155111,
+        name: 'Ethereum Sepolia',
+        logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
+        rpc: 'https://eth-sepolia.g.alchemy.com/v2/',
+        isTestnet: true,
+        wagmiChain: sepolia,
+        addresses: {
+            daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
+            adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
