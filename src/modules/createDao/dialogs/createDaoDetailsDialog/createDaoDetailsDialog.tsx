@@ -1,8 +1,8 @@
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IWizardDetailsDialogStep, WizardDetailsDialog } from '@/shared/components/wizardDetailsDialog';
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useRouter } from 'next/navigation';
-import { useDialogContext } from '@/shared/components/dialogProvider';
 
 export interface ICreateDaoDetailsDialogProps {}
 
