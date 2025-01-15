@@ -1,5 +1,6 @@
 'use client';
 
+import { VoteListFallback } from '@/modules/governance/components/voteListFallback';
 import { PluginTabComponent } from '@/shared/components/pluginTabComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
@@ -36,6 +37,11 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
     });
 
     return (
-        <PluginTabComponent slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST} plugins={processedPlugins} daoId={daoId} />
+        <PluginTabComponent
+            slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
+            plugins={processedPlugins}
+            daoId={daoId}
+            Fallback={VoteListFallback}
+        />
     );
 };
