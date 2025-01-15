@@ -21,7 +21,7 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
         open(CreateDaoDialog.PUBLISH_DAO, { params });
     };
 
-    const [debugStep, metadataStep] = createDaoWizardSteps;
+    const [networkStep, metadataStep] = createDaoWizardSteps;
 
     const processedSteps = useMemo(
         () =>
@@ -41,11 +41,11 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
                 onSubmit={handleFormSubmit}
             >
                 <Wizard.Step
-                    title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.DEBUG}.title`)}
-                    description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.DEBUG}.description`)}
-                    {...debugStep}
+                    title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.title`)}
+                    description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.description`)}
+                    {...networkStep}
                 >
-                    <CreateDaoForm.Debug />
+                    <CreateDaoForm.Network />
                 </Wizard.Step>
                 <Wizard.Step
                     title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.METADATA}.title`)}
