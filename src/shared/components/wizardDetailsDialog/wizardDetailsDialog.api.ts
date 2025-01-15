@@ -11,32 +11,6 @@ export interface IWizardDetailsDialogStep {
     icon: IllustrationObjectType;
 }
 
-interface IButtonConfig {
-    /**
-     * Label of the button.
-     */
-    label: string;
-    /**
-     * Callback of the button.
-     */
-    onPrimaryButtonClick?: () => void;
-    /**
-     * URL of the button.
-     */
-    href?: string;
-}
-
-interface ILink {
-    /**
-     * Label of the link.
-     */
-    label: string;
-    /**
-     * URL of the link.
-     */
-    href: string;
-}
-
 export interface IWizardDetailsDialogProps {
     /**
      * Title of the dialog.
@@ -51,11 +25,19 @@ export interface IWizardDetailsDialogProps {
      */
     steps: IWizardDetailsDialogStep[];
     /**
-     * Primary button config
-     */
-    primaryButton: IButtonConfig;
-    /**
      * Link for further information.
      */
-    link?: ILink;
+    infoLink?: string;
+    /**
+     * Label of the button.
+     */
+    actionLabel: string;
+    /**
+     * Callback of the button.
+     */
+    onPrimaryButtonClick?: () => void;
+    /**
+     * Href of where the wizard should link to.
+     */
+    wizardLink?: string;
 }

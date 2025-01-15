@@ -21,10 +21,8 @@ export const CreateDaoDetailsDialog: React.FC<ICreateDaoDetailsDialogProps> = ()
             title={t('app.createDao.createDaoDetailsDialog.title')}
             description={t('app.createDao.createDaoDetailsDialog.description')}
             steps={steps}
-            primaryButton={{
-                label: t('app.createDao.createDaoDetailsDialog.primaryButton.label'),
-                href: '/create/dao',
-            }}
+            actionLabel={t('app.createDao.createDaoDetailsDialog.actionLabel')}
+            wizardLink="/create/dao"
         />
     );
 };

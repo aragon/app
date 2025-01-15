@@ -6,7 +6,6 @@ export const CreateDaoForm = {
     Network: CreateDaoFormNetwork,
 };
 
-export * from './createDaoFormDebug';
 export type * from './createDaoFormDefinitions';
 export * from './createDaoFormMetadata';
 export * from './createDaoFormNetwork';

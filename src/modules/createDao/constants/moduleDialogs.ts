@@ -1,6 +1,6 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { CreateDaoDetailsDialog } from '../dialogs/createDaoDetailsDialog';
 import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
-import { CreateDaoDetailsDialog } from '../pages/createDaoPage/dialogs/createDaoDetailsDialog';
 
 export enum CreateDaoDialog {
     PUBLISH_DAO = ' PUBLISH_DAO',

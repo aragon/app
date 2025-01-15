@@ -76,10 +76,8 @@
     },
     "createDao": {
       "createDaoDetailsDialog": {
+        "actionLabel": "Get started",
         "description": "Start simple and learn as you go. You can always evolve your DAO in the future.",
-        "primaryButton": {
-          "label": "Get started"
-        },
         "steps": {
           "describe": "Describe your DAO",
           "network": "Select blockchain"
@@ -87,22 +85,6 @@
         "title": "Create new DAO"
       },
       "createDaoForm": {
-        "debug": {
-          "adminPluginRepo": {
-            "helpText": "Address of the Admin Plugin contract",
-            "label": "Admin Plugin",
-            "placeholder": "Insert address"
-          },
-          "factoryAddress": {
-            "helpText": "Address of the DAO Factory contract",
-            "label": "DAO Factory",
-            "placeholder": "Insert address"
-          },
-          "network": {
-            "helpText": "The chain you choose is where your tokens and assets are stored. ",
-            "label": "Select blockchain"
-          }
-        },
         "metadata": {
           "description": {
             "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
@@ -119,7 +101,7 @@
           }
         },
         "network": {
-          "helpText": "The chain you choose is where your tokens and assets are stored. ",
+          "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select blockchain",
           "testnetLabel": "Testnet"
         }
@@ -1163,6 +1145,7 @@
         "footer": {
           "cancel": "Cancel"
         },
+        "infoLabel": "Learn more",
         "step": "Step {{number}}"
       }
     }

@@ -13,7 +13,6 @@ const appMetadata = {
 };
 
 // Supported chains by the Application.
-// casting is needed to fix error of potentially network definitions being an empty array after Object.values
 const chains = Object.values(networkDefinitions).map((network) => network.wagmiChain) as [Chain, ...Chain[]];
 
 // WalletConnect project ID.
