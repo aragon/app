@@ -25,6 +25,12 @@ class IpfsUtils {
     cidToUri = (cid?: string | null): string | undefined => {
         return cid ? `${this.ipfsPrefix}${cid}` : undefined;
     };
+
+    srcToUri = (src: string): string | undefined => {
+        const hash = src.split('/').pop();
+
+        return this.cidToUri(hash);
+    };
 }
 
 export const ipfsUtils = new IpfsUtils();

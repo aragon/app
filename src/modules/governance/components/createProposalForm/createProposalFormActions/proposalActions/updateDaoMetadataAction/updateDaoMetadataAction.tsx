@@ -49,12 +49,12 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
 
             let daoAvatar: string | undefined;
 
-            if (typeof avatar === 'string') {
-                daoAvatar = avatar;
-            } else if (avatar?.file != null) {
-                const avatarResult = await pinFileAsync({ body: avatar.file });
-                daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
-            }
+           if (avatar?.file != null) {
+               const avatarResult = await pinFileAsync({ body: avatar.file });
+               daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
+           } else if (avatar?.url) {
+               daoAvatar = ipfsUtils.srcToUri(avatar.url);
+           }
 
             const metadata = daoAvatar ? { ...proposedMetadata, avatar: daoAvatar } : proposedMetadata;
 

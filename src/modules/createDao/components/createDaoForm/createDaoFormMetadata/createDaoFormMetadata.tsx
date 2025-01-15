@@ -1,16 +1,7 @@
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import {
-    type IInputContainerAlert,
-    type IInputFileAvatarValue,
-    InputFileAvatar,
-    type InputFileAvatarError,
-    InputText,
-    TextArea,
-} from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormMetadataProps {
@@ -30,18 +21,6 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     const { t } = useTranslations();
 
-    const [avatarAlert, setAvatarAlert] = useState<IInputContainerAlert | undefined>(undefined);
-
-    const handleAvatarError = (error: InputFileAvatarError) => {
-        const message = t(`app.createDao.createDaoForm.metadata.avatar.error.${error}`);
-        setAvatarAlert({ message, variant: 'critical' });
-    };
-
-    const onFileChange = (newFile?: IInputFileAvatarValue) => {
-        onAvatarChange({ url: newFile?.url, file: newFile?.file });
-        setAvatarAlert(undefined);
-    };
-
     const nameField = useFormField<ICreateDaoFormData, 'name'>('name', {
         label: t('app.createDao.createDaoForm.metadata.name.label'),
         fieldPrefix,
@@ -50,13 +29,13 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         defaultValue: '',
     });
 
-    const {
-        value: avatarValue,
-        onChange: onAvatarChange,
-        ...avatarField
-    } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
+    const { value: avatarValue, ...avatarField } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
         label: t('app.createDao.createDaoForm.metadata.avatar.label'),
         fieldPrefix,
+        rules: {
+            validate: (value) =>
+                value?.error ? `app.createDao.createDaoForm.metadata.avatar.error.${value.error}` : undefined,
+        },
     });
 
     const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
@@ -66,9 +45,6 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         trimOnBlur: true,
         defaultValue: '',
     });
-
-    // This is needed to get the existing DAO logo for the image preview
-    const parsedAvatarValue = typeof avatarValue === 'string' ? { url: ipfsUtils.cidToSrc(avatarValue) } : avatarValue;
 
     return (
         <div className="flex flex-col gap-10">
@@ -80,14 +56,11 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
             />
             <InputFileAvatar
                 {...avatarField}
-                value={parsedAvatarValue}
-                onChange={onFileChange}
+                value={avatarValue}
                 helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
                 maxDimension={maxAvatarDimension}
                 maxFileSize={maxAvatarFileSize}
                 isOptional={true}
-                onFileError={handleAvatarError}
-                alert={avatarAlert}
             />
             <TextArea
                 helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}

@@ -10,6 +10,7 @@ import {
 } from '../../api/governanceService';
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
 import type { IActionComposerItem } from './actionComposer.api';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',
@@ -213,7 +214,7 @@ class ActionComposerUtils {
 
     private buildDefaultActionMetadata = (dao: IDao) => {
         const { avatar, address, name, description, links: resources } = dao;
-        const existingMetadata = { avatar: avatar ?? undefined, name, description, resources };
+        const existingMetadata = { avatar: { url: ipfsUtils.cidToSrc(avatar) }, name, description, resources };
 
         return {
             type: ProposalActionType.METADATA_UPDATE,
