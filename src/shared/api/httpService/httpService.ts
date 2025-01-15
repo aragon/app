@@ -16,11 +16,22 @@ export class HttpService {
     ): Promise<TData> => {
         const completeUrl = this.buildUrl(url, params);
         const processedOptions = this.buildOptions(options);
-        const response = await fetch(completeUrl, {
-            cache: 'no-store',
-            body: JSON.stringify(params.body) as BodyInit,
-            ...processedOptions,
-        });
+
+        let response: Response;
+
+        if (params.body instanceof FormData) {
+            response = await fetch(completeUrl, {
+                cache: 'no-store',
+                body: params.body as BodyInit,
+                ...options,
+            });
+        } else {
+            response = await fetch(completeUrl, {
+                cache: 'no-store',
+                body: JSON.stringify(params.body),
+                ...processedOptions,
+            });
+        }
 
         if (!response.ok) {
             const defaultError = new Error(response.statusText);
