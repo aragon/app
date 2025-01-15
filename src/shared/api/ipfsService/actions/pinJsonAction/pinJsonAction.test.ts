@@ -10,12 +10,9 @@ describe('usePinJson action', () => {
 
     it('triggers the IPFS request with correct params', async () => {
         const body = { key: 'value' };
-        const expectedBody = JSON.stringify({ pinataContent: body });
+        const expectedBody = { pinataContent: body };
         const expectedOptions = {
-            headers: {
-                Authorization: expect.stringContaining('Bearer') as unknown,
-                'Content-Type': 'application/json',
-            },
+            headers: { Authorization: expect.stringContaining('Bearer') as unknown },
             method: 'POST',
         };
         await pinJsonAction({ body });
