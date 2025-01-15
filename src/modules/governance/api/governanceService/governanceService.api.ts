@@ -107,10 +107,6 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
      */
     includeInfo?: boolean;
     /**
-     * Option to show extra parent proposal information.
-     */
-    includeParentInfo?: boolean;
-    /**
      * Plugin address to fetch the votes from.
      */
     pluginAddress: string;
