@@ -27,7 +27,7 @@ class IpfsUtils {
     };
 
     srcToUri = (src: string): string | undefined => {
-        const hash = src.split('/').pop();
+        const hash = new URL(src).pathname.split('/').pop();
 
         return this.cidToUri(hash);
     };

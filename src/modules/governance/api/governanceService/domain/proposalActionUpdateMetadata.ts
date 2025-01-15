@@ -9,7 +9,7 @@ export interface IProposalActionUpdateMetadataObject {
     /**
      * The logo of the DAO.
      */
-    avatar?: string | IInputFileAvatarValue;
+    avatar?: IInputFileAvatarValue;
     /**
      * The name of the DAO.
      */

@@ -1,6 +1,7 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
 import {
@@ -10,7 +11,6 @@ import {
 } from '../../api/governanceService';
 import type { ISmartContractAbi, ISmartContractAbiFunction } from '../../api/smartContractService';
 import type { IActionComposerItem } from './actionComposer.api';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',
