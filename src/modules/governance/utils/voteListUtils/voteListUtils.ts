@@ -1,4 +1,4 @@
-import { type IVote } from '@/modules/governance/api/governanceService';
+import type { IVote } from '@/modules/governance/api/governanceService';
 
 class VoteListUtils {
     getProcessedProposalLink = (vote: IVote, daoId: string) => {
