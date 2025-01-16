@@ -40,4 +40,8 @@ export interface IWizardDetailsDialogProps {
      * Callback on button click.
      */
     onActionClick?: () => void;
+    /**
+     * Dialog ID.
+     */
+    dialogId: string;
 }

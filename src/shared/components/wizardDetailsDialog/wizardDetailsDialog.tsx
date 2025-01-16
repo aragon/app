@@ -1,11 +1,10 @@
-import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { Button, Dialog, Heading, IconType, IllustrationObject, Link } from '@aragon/gov-ui-kit';
 import { useDialogContext } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
 import type { IWizardDetailsDialogProps } from './wizardDetailsDialog.api';
 
 export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) => {
-    const { title, description, steps, infoLink, actionLabel, wizardLink, onActionClick } = props;
+    const { title, description, steps, infoLink, actionLabel, wizardLink, onActionClick, dialogId } = props;
 
     const { t } = useTranslations();
 
@@ -13,7 +12,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
 
     const handleActionClick = () => {
         onActionClick?.();
-        close(CreateDaoDialog.CREATE_DAO_DETAILS);
+        close(dialogId);
     };
 
     return (
