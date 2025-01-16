@@ -69,4 +69,21 @@ describe('<SppProposalListItem /> component', () => {
         render(createTestComponent({ proposal }));
         expect(screen.getByText('stage-name')).toBeInTheDocument();
     });
+
+    it('displays "Stage N" in status context when proposal is multistage and no stage name is returned', () => {
+        const subProposals = [generateSppSubProposal(), generateSppSubProposal(), generateSppSubProposal()];
+        const settings = generateSppPluginSettings({
+            stages: [generateSppStage(), generateSppStage({ name: undefined }), generateSppStage()],
+        });
+        const proposal = generateSppProposal({
+            subProposals,
+            settings,
+            stageIndex: 1,
+            endDate: 0,
+        });
+        getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+        render(createTestComponent({ proposal }));
+
+        expect(screen.getByText('Stage 2')).toBeInTheDocument(); // Expects "Stage 2" since `stageIndex + 1 = 2`
+    });
 });
