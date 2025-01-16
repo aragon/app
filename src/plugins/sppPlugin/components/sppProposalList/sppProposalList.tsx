@@ -2,7 +2,6 @@ import type { IDaoProposalListDefaultProps } from '@/modules/governance/componen
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
-import type { ISppProposal } from '../../types';
 import { SppProposalListItem } from './sppProposalListItem';
 
 export interface ISppProposalListProps extends IDaoProposalListDefaultProps {}
@@ -14,7 +13,7 @@ export const SppProposalList: React.FC<ISppProposalListProps> = (props) => {
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
-        useProposalListData<ISppProposal>(initialParams);
+        useProposalListData(initialParams);
 
     return (
         <DataListRoot

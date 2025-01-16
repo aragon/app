@@ -79,7 +79,6 @@ describe('<SppProposalListItem /> component', () => {
             subProposals,
             settings,
             stageIndex: 1,
-            endDate: 0,
         });
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
         render(createTestComponent({ proposal }));

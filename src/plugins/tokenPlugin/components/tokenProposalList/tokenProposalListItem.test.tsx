@@ -2,12 +2,9 @@ import * as useUserVote from '@/modules/governance/hooks/useUserVote';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenPluginSettings, generateTokenProposal, generateTokenVote } from '../../testUtils';
-import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
 
 describe('<TokenProposalListItem /> component', () => {
-    const getTotalVotesSpy = jest.spyOn(tokenProposalUtils, 'getTotalVotes');
-    const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');
     const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
 
     beforeEach(() => {
@@ -15,8 +12,6 @@ describe('<TokenProposalListItem /> component', () => {
     });
 
     afterEach(() => {
-        getTotalVotesSpy.mockReset();
-        getProposalStatusSpy.mockReset();
         useUserVoteSpy.mockReset();
     });
 

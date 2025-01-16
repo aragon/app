@@ -1,4 +1,3 @@
-import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
@@ -17,19 +16,14 @@ export interface ISppProposalListItemProps {
 export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
-    const proposalDate =
-        (proposal.executed.blockTimestamp ?? proposal.subProposals[proposal.stageIndex].endDate) * 1000;
+    const proposalDate = sppProposalUtils.getRelevantProposalDate(proposal);
 
     const proposalStatus = sppProposalUtils.getProposalStatus(proposal);
 
-    const voted = useUserVote({ proposal });
-
     const statusContext =
-        proposal.settings.stages.length > 1 && proposal.settings.stages[proposal.stageIndex].name
-            ? proposal.settings.stages[proposal.stageIndex].name
-            : proposal.settings.stages.length > 1
-              ? `Stage ${String(proposal.stageIndex + 1)}`
-              : undefined;
+        proposal.settings.stages.length > 1
+            ? (proposal.settings.stages[proposal.stageIndex]?.name ?? `Stage ${String(proposal.stageIndex + 1)}`)
+            : undefined;
 
     return (
         <ProposalDataListItem.Structure
@@ -41,7 +35,6 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={proposalStatus}
             statusContext={statusContext}
-            voted={voted != null}
             publisher={{
                 address: proposal.creator.address,
                 name: proposal.creator.ens ?? undefined,

@@ -3,7 +3,7 @@ import type { ISppPluginSettings } from './sppPluginSettings';
 import type { ISppProposalExecution } from './sppProposalExecution';
 import type { ISppSubProposal } from './sppSubProposal';
 
-export interface ISppProposal extends IProposal<ISppPluginSettings> {
+export interface ISppProposal extends Omit<IProposal<ISppPluginSettings>, 'endDate'> {
     /**
      * Index of the current active stage.
      */

@@ -60,6 +60,20 @@ class SppProposalUtils {
 
     getCurrentStage = (proposal: ISppProposal): ISppStage => proposal.settings.stages[proposal.stageIndex];
 
+    getRelevantProposalDate = (proposal: ISppProposal): number => {
+        const currentStage = sppStageUtils.getCurrentStage(proposal);
+        const executedTimestamp = proposal.executed.blockTimestamp;
+
+        if (executedTimestamp != null) {
+            return executedTimestamp * 1000;
+        }
+
+        const stageMinAdvance = sppStageUtils.getStageMinAdvance(proposal, currentStage);
+        const voteDuration = currentStage.voteDuration;
+
+        return (stageMinAdvance?.toSeconds() ?? 0 + voteDuration) * 1000;
+    };
+
     areAllStagesAccepted = (proposal: ISppProposal): boolean =>
         proposal.settings.stages.every(
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
