@@ -25,7 +25,11 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const voted = useUserVote({ proposal });
 
     const statusContext =
-        proposal.settings.stages.length > 1 ? proposal.settings.stages[proposal.stageIndex].name : undefined;
+        proposal.settings.stages.length > 1 && proposal.settings.stages[proposal.stageIndex].name
+            ? proposal.settings.stages[proposal.stageIndex].name
+            : proposal.settings.stages.length > 1
+              ? `Stage ${String(proposal.stageIndex + 1)}`
+              : undefined;
 
     return (
         <ProposalDataListItem.Structure
