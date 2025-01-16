@@ -91,7 +91,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             return 'error';
         } else if (pinFileStatus === 'pending' || pinJsonStatus === 'pending') {
             return 'pending';
-        } else if (pinFileStatus === 'success' && pinFileStatus === 'success') {
+        } else if (pinFileStatus === 'success' && pinJsonStatus === 'success') {
             return 'success';
         }
 
