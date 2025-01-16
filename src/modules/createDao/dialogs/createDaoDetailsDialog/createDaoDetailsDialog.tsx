@@ -8,7 +8,9 @@ export interface ICreateDaoDetailsDialogProps extends IDialogComponentProps {}
 
 export const CreateDaoDetailsDialog: React.FC<ICreateDaoDetailsDialogProps> = (props) => {
     const { id } = props.location;
+
     const { t } = useTranslations();
+
     const router = useRouter();
 
     const { check: checkWalletConnection, result: isConnected } = useConnectedWalletGuard({
