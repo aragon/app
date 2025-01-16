@@ -47,6 +47,7 @@ export interface INetworkDefinition {
 //TODO: Update the factoryAddress and adminPluginRepo for each network after 1.4 deployment
 
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
+    // Mainnets
     [Network.ETHEREUM_MAINNET]: {
         chainId: 1,
         name: 'Ethereum Mainnet',
@@ -56,18 +57,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
-        },
-    },
-    [Network.ETHEREUM_SEPOLIA]: {
-        chainId: 11155111,
-        name: 'Ethereum Sepolia',
-        logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-        rpc: 'https://eth-sepolia.g.alchemy.com/v2/',
-        isTestnet: true,
-        wagmiChain: sepolia,
-        addresses: {
-            daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
-            adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
         },
     },
     [Network.POLYGON_MAINNET]: {
@@ -112,6 +101,19 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+        },
+    },
+    // Testnets
+    [Network.ETHEREUM_SEPOLIA]: {
+        chainId: 11155111,
+        name: 'Ethereum Sepolia',
+        logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
+        rpc: 'https://eth-sepolia.g.alchemy.com/v2/',
+        isTestnet: true,
+        wagmiChain: sepolia,
+        addresses: {
+            daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
+            adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
