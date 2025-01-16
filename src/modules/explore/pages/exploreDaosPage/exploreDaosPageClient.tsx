@@ -1,6 +1,7 @@
 'use client';
 
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, Toggle, ToggleGroup, Wallet } from '@aragon/gov-ui-kit';
@@ -53,10 +54,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                 <div className="flex items-center gap-x-2 md:gap-x-3">
                     <Button
                         iconLeft={IconType.PLUS}
-                        href="/create/dao"
                         className="!rounded-full"
                         variant="primary"
                         size="md"
+                        onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
                     >
                         {t('app.explore.exploreDaosPage.createDao')}
                     </Button>

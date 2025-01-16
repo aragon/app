@@ -40,6 +40,11 @@ export type IRequestParams<TUrlParams, TQueryParams, TBody> = Partial<
     IRequestUrlQueryBodyParams<TUrlParams, TQueryParams, TBody>
 >;
 
-export interface IRequestOptions extends Omit<RequestInit, 'cache' | 'body'> {}
+export interface IRequestOptions extends Omit<RequestInit, 'cache' | 'body' | 'headers'> {
+    /**
+     * Additional headers for the request.
+     */
+    headers?: Record<string, string>;
+}
 
 export type HttpServiceErrorHandler = (response: Response) => Promise<Error>;

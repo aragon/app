@@ -60,10 +60,8 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
         defaultValue: '',
     });
 
-    const handleKeyFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const upperValue = event.target.value.toUpperCase();
-        onProcessKeyChange({ ...event, target: { ...event.target, value: upperValue } });
-    };
+    const handleKeyFieldChange = (event: ChangeEvent<HTMLInputElement>) =>
+        onProcessKeyChange(event.target.value.toUpperCase());
 
     const typeLabel = t(`app.createDao.createProcessForm.metadata.type.${pluginType}`);
 

@@ -26,6 +26,23 @@ describe('Http service', () => {
             expect(fetchSpy).toHaveBeenCalledWith(`${baseUrl}${url}`, expect.anything());
         });
 
+        it('forwards eventual request options to the fetch request', async () => {
+            fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
+            const options = { keepalive: true };
+            await serviceTest.request('/', undefined, options);
+            expect(fetchSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining(options));
+        });
+
+        it('forwards the request body as string', async () => {
+            fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
+            const body = { key: 'value' };
+            await serviceTest.request('/', { body });
+            expect(fetchSpy).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({ body: JSON.stringify(body) }),
+            );
+        });
+
         it('does not cache the request', async () => {
             fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
             const url = '/entity';
@@ -85,6 +102,20 @@ describe('Http service', () => {
             const expectedUrl = `${baseUrl}/dao/${urlParams.daoId}?includeProposals=true&another=yes`;
             serviceTest = generateHttpService(baseUrl);
             expect(serviceTest['buildUrl'](url, { queryParams, urlParams })).toEqual(expectedUrl);
+        });
+    });
+
+    describe('buildOptions', () => {
+        it('appends content-type header when request type is POST', () => {
+            const options = { method: 'POST', headers: { key: 'value' } };
+            const processedOptions = generateHttpService()['buildOptions'](options);
+            expect(processedOptions.headers).toEqual({ 'Content-type': 'application/json', ...options.headers });
+        });
+
+        it('returns default options when parameter is not defined', () => {
+            const processedOptions = generateHttpService()['buildOptions']({});
+            expect(processedOptions.headers).toBeUndefined();
+            expect(processedOptions.method).toBeUndefined();
         });
     });
 
