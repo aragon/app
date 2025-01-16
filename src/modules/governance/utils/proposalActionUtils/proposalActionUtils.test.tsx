@@ -23,6 +23,7 @@ describe('proposalActionUtils', () => {
 
     afterEach(() => {
         getSlotFunctionsSpy.mockReset();
+        ipfsCidToSrcSpy.mockReset();
     });
 
     describe('normalizeActions', () => {
@@ -143,7 +144,6 @@ describe('proposalActionUtils', () => {
 
         afterEach(() => {
             normalizeActionMetadataLinksSpy.mockReset();
-            ipfsCidToSrcSpy.mockReset();
         });
 
         afterAll(() => {
@@ -238,10 +238,6 @@ describe('proposalActionUtils', () => {
     });
 
     describe('normalizeActionMetadataAvatar', () => {
-        afterEach(() => {
-            ipfsCidToSrcSpy.mockReset();
-        });
-
         it('returns the correct avatar URL when metadata has a valid IPFS avatar', () => {
             const metadata = {
                 name: 'dao-name',

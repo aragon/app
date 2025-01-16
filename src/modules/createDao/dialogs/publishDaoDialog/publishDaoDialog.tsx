@@ -121,7 +121,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         return `/dao/${daoId}`;
     };
 
-    const metadataPinAction = typeof values.avatar !== 'string' && values.avatar?.file ? handlePinFile : handlePinData;
+    const metadataPinAction = values.avatar?.file ? handlePinFile : handlePinData;
 
     const customSteps: Array<ITransactionDialogStep<PublishDaoStep>> = useMemo(
         () => [

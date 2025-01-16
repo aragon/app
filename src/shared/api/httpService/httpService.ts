@@ -17,21 +17,14 @@ export class HttpService {
         const completeUrl = this.buildUrl(url, params);
         const processedOptions = this.buildOptions(options);
 
-        let response: Response;
+        const isFormData = params.body instanceof FormData;
+        const fetchOptions: RequestInit = {
+            cache: 'no-store',
+            body: isFormData ? (params.body as BodyInit) : JSON.stringify(params.body),
+            ...(isFormData ? options : processedOptions),
+        };
 
-        if (params.body instanceof FormData) {
-            response = await fetch(completeUrl, {
-                cache: 'no-store',
-                body: params.body as BodyInit,
-                ...options,
-            });
-        } else {
-            response = await fetch(completeUrl, {
-                cache: 'no-store',
-                body: JSON.stringify(params.body),
-                ...processedOptions,
-            });
-        }
+        const response = await fetch(completeUrl, fetchOptions);
 
         if (!response.ok) {
             const defaultError = new Error(response.statusText);

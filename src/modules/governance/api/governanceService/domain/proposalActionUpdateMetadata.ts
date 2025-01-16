@@ -1,15 +1,12 @@
 import { type ProposalActionType } from '@/modules/governance/api/governanceService/domain/enum';
 import { type IResource } from '@/shared/api/daoService';
-import type {
-    IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
-    IInputFileAvatarValue,
-} from '@aragon/gov-ui-kit';
+import type { IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata } from '@aragon/gov-ui-kit';
 
 export interface IProposalActionUpdateMetadataObject {
     /**
      * The logo of the DAO.
      */
-    avatar?: IInputFileAvatarValue;
+    avatar?: string;
     /**
      * The name of the DAO.
      */
