@@ -164,7 +164,7 @@ describe('proposalActionUtils', () => {
             expect(normalizeActionMetadataLinksSpy).toHaveBeenCalledWith(metadata.links);
             expect(normalizedMetadata.name).toEqual(metadata.name);
             expect(normalizedMetadata.description).toEqual(metadata.description);
-            expect(normalizedMetadata.logo).toEqual(metadata.logo);
+            expect(normalizedMetadata.avatar).toEqual(metadata.logo);
             expect(normalizedMetadata.links).toEqual(normalizedLinks);
         });
 
