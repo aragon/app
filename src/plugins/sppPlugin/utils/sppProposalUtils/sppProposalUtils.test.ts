@@ -11,12 +11,14 @@ describe('SppProposalUtils', () => {
     const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
     const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
     const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
+    const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
 
     afterEach(() => {
         getStageStatusSpy.mockReset();
         getStageEndDateSpy.mockReset();
         getStageMaxAdvanceSpy.mockReset();
         getStageMinAdvanceSpy.mockReset();
+        isApprovalReachedSpy.mockReset();
     });
 
     describe('getProposalStatus', () => {
@@ -155,6 +157,7 @@ describe('SppProposalUtils', () => {
             timeUtils.setTime(now);
             getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
+            isApprovalReachedSpy.mockReturnValue(true);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ADVANCEABLE);
         });
