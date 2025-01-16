@@ -24,7 +24,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
         rules: { validate: validateDuration },
         label,
         shouldUnregister: true,
-        defaultValue: minDuration,
+        defaultValue: minDuration ?? { minutes: 0, hours: 0, days: 0 },
     });
 
     const handleDurationChange = (type: string) => (value: string) => {
