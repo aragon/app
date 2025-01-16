@@ -73,36 +73,29 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
 
     const handlePinFile = useCallback(
         (params: ITransactionDialogActionParams) => {
-            invariant(typeof values.avatar !== 'string' && values.avatar?.file != null, 'Logo must be a file.');
+            invariant(values.avatar?.file != null, 'PublishDaoDialog: avatar.file must be defined.');
             pinFile(
                 { body: values.avatar.file },
-                {
-                    onSuccess: (fileResult) => handlePinFileSuccess(params, fileResult),
-                    ...params,
-                },
+                { onSuccess: (fileResult) => handlePinFileSuccess(params, fileResult), ...params },
             );
         },
         [pinFile, values, handlePinFileSuccess],
     );
 
     const pinningStatus = useMemo(() => {
-        if (!values.avatar) {
+        if (!values.avatar?.file) {
             return pinJsonStatus;
         }
 
         if (pinFileStatus === 'error' || pinJsonStatus === 'error') {
             return 'error';
-        }
-
-        if (pinFileStatus === 'pending' || pinJsonStatus === 'pending') {
+        } else if (pinFileStatus === 'pending' || pinJsonStatus === 'pending') {
             return 'pending';
+        } else if (pinFileStatus === 'success' && pinFileStatus === 'success') {
+            return 'success';
         }
 
-        if (pinFileStatus === 'idle' || pinJsonStatus === 'idle') {
-            return 'idle';
-        }
-
-        return 'success';
+        return 'idle';
     }, [values.avatar, pinFileStatus, pinJsonStatus]);
 
     const handlePrepareTransaction = () => {

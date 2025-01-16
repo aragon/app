@@ -50,9 +50,11 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
             let daoAvatar: string | undefined;
 
             if (avatar?.file != null) {
+                // Pin the avatar set on the form when the file property is set, meaning that the user changed the DAO avatar
                 const avatarResult = await pinFileAsync({ body: avatar.file });
                 daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
             } else if (avatar?.url) {
+                // Set previous avatar URL if user did not change the DAO avatar and DAO already has an avatar
                 daoAvatar = ipfsUtils.srcToUri(avatar.url);
             }
 
@@ -60,10 +62,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
 
             const ipfsResult = await pinJsonAsync({ body: metadata });
             const hexResult = transactionUtils.cidToHex(ipfsResult.IpfsHash);
-            const data = encodeFunctionData({
-                abi: [setMetadataAbi],
-                args: [hexResult],
-            });
+            const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
 
             return data;
         },

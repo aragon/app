@@ -88,12 +88,8 @@ class ProposalActionUtils {
 
     normalizeActionMetadataAvatar = (
         metadata: IProposalActionUpdateMetadataObject | IProposalActionUpdatePluginMetadataObject,
-    ): string | undefined => {
-        if ('avatar' in metadata && typeof metadata.avatar === 'string') {
-            return ipfsUtils.cidToSrc(metadata.avatar);
-        }
-        return undefined;
-    };
+    ): string | undefined =>
+        'avatar' in metadata && metadata.avatar != null ? ipfsUtils.cidToSrc(metadata.avatar) : undefined;
 
     normalizeActionMetadataLinks = (links: IResource[] = []): IProposalActionUpdateMetadataDaoMetadataLink[] =>
         links.map(({ name, url }) => ({ label: name, href: url }));
