@@ -39,5 +39,5 @@ export interface IWizardDetailsDialogProps {
     /**
      * Callback on button click.
      */
-    onPrimaryButtonClick?: () => void;
+    onActionClick?: () => void;
 }

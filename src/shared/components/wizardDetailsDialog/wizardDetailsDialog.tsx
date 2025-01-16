@@ -1,14 +1,20 @@
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { Button, Dialog, Heading, IconType, IllustrationObject, Link } from '@aragon/gov-ui-kit';
 import { useDialogContext } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
 import type { IWizardDetailsDialogProps } from './wizardDetailsDialog.api';
 
 export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) => {
-    const { title, description, steps, infoLink, actionLabel, wizardLink, onPrimaryButtonClick } = props;
+    const { title, description, steps, infoLink, actionLabel, wizardLink, onActionClick } = props;
 
     const { t } = useTranslations();
 
     const { close } = useDialogContext();
+
+    const handleActionClick = () => {
+        onActionClick?.();
+        close(CreateDaoDialog.CREATE_DAO_DETAILS);
+    };
 
     return (
         <Dialog.Content className="flex flex-col gap-y-6 !px-12 py-10">
@@ -36,7 +42,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
                 ))}
             </div>
             <div className="flex gap-x-4 pt-6">
-                <Button href={wizardLink} onClick={onPrimaryButtonClick}>
+                <Button href={wizardLink} onClick={handleActionClick}>
                     {actionLabel}
                 </Button>
                 <Button variant="tertiary" onClick={() => close()}>

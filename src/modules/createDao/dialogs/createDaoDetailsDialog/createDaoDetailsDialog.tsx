@@ -1,5 +1,4 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type IWizardDetailsDialogStep, WizardDetailsDialog } from '@/shared/components/wizardDetailsDialog';
 import { useRouter } from 'next/navigation';
@@ -8,10 +7,11 @@ export interface ICreateDaoDetailsDialogProps {}
 
 export const CreateDaoDetailsDialog: React.FC<ICreateDaoDetailsDialogProps> = () => {
     const { t } = useTranslations();
-    const { check, result: isConnected } = useConnectedWalletGuard();
-    const { close } = useDialogContext();
-
     const router = useRouter();
+
+    const { check: checkWalletConnection, result: isConnected } = useConnectedWalletGuard({
+        onSuccess: () => router.push('/create/dao'),
+    });
 
     const steps: IWizardDetailsDialogStep[] = [
         {
@@ -24,29 +24,14 @@ export const CreateDaoDetailsDialog: React.FC<ICreateDaoDetailsDialogProps> = ()
         },
     ];
 
-    const onPrimaryButtonClick = () => {
-        if (!isConnected) {
-            check({
-                onSuccess: () => {
-                    router.push('/create/dao');
-                },
-                onError: () => {
-                    router.push('/');
-                },
-            });
-        } else {
-            router.push('/create/dao');
-            close();
-        }
-    };
-
     return (
         <WizardDetailsDialog
             title={t('app.createDao.createDaoDetailsDialog.title')}
             description={t('app.createDao.createDaoDetailsDialog.description')}
             steps={steps}
             actionLabel={t('app.createDao.createDaoDetailsDialog.actionLabel')}
-            onPrimaryButtonClick={onPrimaryButtonClick}
+            onActionClick={!isConnected ? checkWalletConnection : undefined}
+            wizardLink={isConnected ? '/create/dao' : undefined}
         />
     );
 };

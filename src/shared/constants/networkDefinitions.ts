@@ -47,6 +47,7 @@ export interface INetworkDefinition {
 //TODO: Update the factoryAddress and adminPluginRepo for each network after 1.4 deployment
 
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
+    // Mainnets
     [Network.ETHEREUM_MAINNET]: {
         chainId: 1,
         name: 'Ethereum Mainnet',
@@ -102,6 +103,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             adminPluginRepo: zeroAddress,
         },
     },
+    // Testnets
     [Network.ETHEREUM_SEPOLIA]: {
         chainId: 11155111,
         name: 'Ethereum Sepolia',
