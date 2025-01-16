@@ -15,6 +15,7 @@ export const initialiseSppPlugin = () => {
     pluginRegistryUtils
         // Plugin definitions
         .registerPlugin(plugin)
+
         // Governance module slots
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL,
