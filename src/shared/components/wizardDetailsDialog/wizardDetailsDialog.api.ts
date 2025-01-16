@@ -41,7 +41,7 @@ export interface IWizardDetailsDialogProps {
      */
     onActionClick?: () => void;
     /**
-     * Dialog ID.
+     * Dialog ID. Needed to determine the specific dialog to close onActionClick to avoid closing all dialogs.
      */
     dialogId: string;
 }
