@@ -68,7 +68,7 @@ describe('<DaoSettingsInfo /> component', () => {
         render(createTestComponent({ dao: dao }));
 
         expect(screen.getByText('Some DAO')).toBeInTheDocument();
-        expect(screen.getByText('Ethereum Mainnet')).toBeInTheDocument();
+        expect(screen.getByText('Ethereum')).toBeInTheDocument();
         expect(screen.getByText('somedao.dao.eth')).toBeInTheDocument();
         expect(screen.getByText('This is a test DAO.')).toBeInTheDocument();
         expect(screen.getByText('Test Link')).toBeInTheDocument();
