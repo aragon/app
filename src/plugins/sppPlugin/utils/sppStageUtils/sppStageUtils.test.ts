@@ -418,4 +418,98 @@ describe('SppStageUtils', () => {
             expect(sppStageUtils.isLastStage(proposal, stage)).toBeFalsy();
         });
     });
+
+    describe('canStageAdvance', () => {
+        const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
+        const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
+        const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
+        const isLastStageSpy = jest.spyOn(sppStageUtils, 'isLastStage');
+
+        afterEach(() => {
+            isApprovalReachedSpy.mockReset();
+            getStageMinAdvanceSpy.mockReset();
+            getStageMaxAdvanceSpy.mockReset();
+            isLastStageSpy.mockReset();
+        });
+
+        it('returns true when all conditions are met', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
+            const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+
+            timeUtils.setTime(now);
+            isApprovalReachedSpy.mockReturnValue(true);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
+            isLastStageSpy.mockReturnValue(false);
+
+            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeTruthy();
+        });
+
+        it('returns false when approval is not reached', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
+            const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+
+            timeUtils.setTime(now);
+            isApprovalReachedSpy.mockReturnValue(false);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
+            isLastStageSpy.mockReturnValue(false);
+
+            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false when the current time is before minAdvanceDate', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const minAdvanceDate = DateTime.fromISO(now).plus({ minutes: 5 });
+            const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+
+            timeUtils.setTime(now);
+            isApprovalReachedSpy.mockReturnValue(true);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
+            isLastStageSpy.mockReturnValue(false);
+
+            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false when the current time is after maxAdvanceDate', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
+            const maxAdvanceDate = DateTime.fromISO(now).minus({ minutes: 1 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+
+            timeUtils.setTime(now);
+            isApprovalReachedSpy.mockReturnValue(true);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
+            isLastStageSpy.mockReturnValue(false);
+
+            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false when the proposal is a signaling proposal (last stage, no actions)', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
+            const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal({ actions: [] });
+
+            timeUtils.setTime(now);
+            isApprovalReachedSpy.mockReturnValue(true);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
+            isLastStageSpy.mockReturnValue(true);
+
+            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
+        });
+    });
 });

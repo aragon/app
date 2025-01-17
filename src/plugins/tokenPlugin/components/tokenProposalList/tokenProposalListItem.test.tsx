@@ -1,17 +1,21 @@
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateTokenPluginSettings, generateTokenProposal, generateTokenVote } from '../../testUtils';
+import { generateTokenProposal, generateTokenVote } from '../../testUtils';
+import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
 
 describe('<TokenProposalListItem /> component', () => {
+    const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');
     const useUserVoteSpy = jest.spyOn(useUserVote, 'useUserVote');
 
     beforeEach(() => {
+        getProposalStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
         useUserVoteSpy.mockReturnValue(generateTokenVote());
     });
 
     afterEach(() => {
+        getProposalStatusSpy.mockReset();
         useUserVoteSpy.mockReset();
     });
 
@@ -30,9 +34,7 @@ describe('<TokenProposalListItem /> component', () => {
     };
 
     it('renders the token proposal', () => {
-        const proposal = generateTokenProposal({
-            settings: generateTokenPluginSettings({ historicalTotalSupply: '0' }),
-        });
+        const proposal = generateTokenProposal({ title: 'my-proposal' });
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });

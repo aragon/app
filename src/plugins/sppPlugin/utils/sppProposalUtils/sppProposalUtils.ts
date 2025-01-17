@@ -78,6 +78,9 @@ class SppProposalUtils {
         proposal.settings.stages.every(
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
+
+    isSignalingProposal = (proposal: ISppProposal): boolean =>
+        proposal.actions.length === 0 && sppStageUtils.isLastStage(proposal, sppStageUtils.getCurrentStage(proposal));
 }
 
 export const sppProposalUtils = new SppProposalUtils();
