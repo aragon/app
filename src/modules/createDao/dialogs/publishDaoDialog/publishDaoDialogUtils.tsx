@@ -1,5 +1,6 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import {
     encodeAbiParameters,
@@ -30,10 +31,16 @@ export interface IBuildTransactionParams {
 }
 
 class PublishDaoDialogUtils {
-    prepareMetadata = (formValues: ICreateDaoFormData) => {
+    prepareMetadata = (formValues: ICreateDaoFormData, avatarCid?: string) => {
         const { name, description, resources } = formValues;
+        const processedAvatar = ipfsUtils.cidToUri(avatarCid);
 
-        return { name, description, links: resources };
+        return {
+            name,
+            description,
+            links: resources,
+            avatar: processedAvatar,
+        };
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {

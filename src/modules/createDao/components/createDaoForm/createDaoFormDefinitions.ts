@@ -1,11 +1,16 @@
 import type { Network } from '@/shared/api/daoService';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
+import type { IInputFileAvatarValue } from '@aragon/gov-ui-kit';
 
 export interface ICreateDaoFormMetadataData {
     /**
      * Name of the DAO.
      */
     name: string;
+    /**
+     * Avatar of the DAO.
+     */
+    avatar?: IInputFileAvatarValue;
     /**
      * Description of the DAO.
      */

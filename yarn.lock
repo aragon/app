@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:^1.0.62"
+    "@aragon/gov-ui-kit": "npm:^1.0.63"
     "@floating-ui/react": "npm:^0.27.3"
     "@hookform/devtools": "npm:^4.3.3"
     "@next/bundle-analyzer": "npm:^15.1.4"
@@ -105,9 +105,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:^1.0.62":
-  version: 1.0.62
-  resolution: "@aragon/gov-ui-kit@npm:1.0.62"
+"@aragon/gov-ui-kit@npm:^1.0.63":
+  version: 1.0.63
+  resolution: "@aragon/gov-ui-kit@npm:1.0.63"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -133,7 +133,7 @@ __metadata:
     "@tiptap/starter-kit": "npm:^2.11.0"
     blockies-ts: "npm:^1.0.0"
     classnames: "npm:^2.5.0"
-    framer-motion: "npm:^11.16.0"
+    framer-motion: "npm:^11.17.0"
     luxon: "npm:^3.5.0"
     react-dropzone: "npm:^14.3.0"
     react-imask: "npm:^7.6.0"
@@ -141,14 +141,14 @@ __metadata:
     tiptap-markdown: "npm:^0.8.10"
   peerDependencies:
     "@tailwindcss/typography": ^0.5.0
-    "@tanstack/react-query": ^5.62.0
+    "@tanstack/react-query": ^5.64.0
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
     react-hook-form: ^7.54.0
     tailwindcss: ^3.4.0
-    viem: ^2.21.0
+    viem: ^2.22.0
     wagmi: ^2.14.0
-  checksum: 10c0/c8137667c6007ef9ed05d66c24d4922d96b592f58e6e3d515607c1c8c3577aed7cb698869b092f67aea60169d2454327fbabf93d1e464efefe8c3af9b63cd258
+  checksum: 10c0/6e6041a1da69e5bc8cf37fabae2c9639512d39936e7f01d67591f05ba869dcaf8ca9991fce6ee4dbebfa7459e3498b04dad30bfc86a050350418e267086a84fe
   languageName: node
   linkType: hard
 
@@ -8781,11 +8781,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.16.0":
-  version: 11.16.0
-  resolution: "framer-motion@npm:11.16.0"
+"framer-motion@npm:^11.17.0":
+  version: 11.18.0
+  resolution: "framer-motion@npm:11.18.0"
   dependencies:
-    motion-dom: "npm:^11.16.0"
+    motion-dom: "npm:^11.16.4"
     motion-utils: "npm:^11.16.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -8799,7 +8799,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/badfeb01f1c23e1ae7e796981e9244877a30f072876f7339bbd3e3413fca5a61ffc9913d4389d52b0d33ea3367afbc6dde6fef4786fc1b041abc0a1d5afd542b
+  checksum: 10c0/7f3c1e420bca2d920b7f48dfb54b072938771f9237feed02d576884398f4a68ccb2d1ae36b28cf2410dbfe2db6edb4c03429a1d896e789d08a972360c6ad82b1
   languageName: node
   linkType: hard
 
@@ -11532,12 +11532,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@npm:^11.16.0":
-  version: 11.16.0
-  resolution: "motion-dom@npm:11.16.0"
+"motion-dom@npm:^11.16.4":
+  version: 11.16.4
+  resolution: "motion-dom@npm:11.16.4"
   dependencies:
     motion-utils: "npm:^11.16.0"
-  checksum: 10c0/0271c9ff69a12f04c75e2377fd47f525d63f8d9bfa3f1ef2c158431a98e35abeefdc18d4d27487a05e13927afb95deb87aa8adf3c4cfef8e70a48471465f1081
+  checksum: 10c0/66de6d40aef59d3004aaf17e39c7c2d2c679306207fdb28c73917d6a05e8c962747fea53d2e516c25d994109d38e127943a759fed18a0fadfc2572a3335fc0d2
   languageName: node
   linkType: hard
 
@@ -15291,12 +15291,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:1.4.0, use-sync-external-store@npm:^1":
+"use-sync-external-store@npm:1.4.0":
   version: 1.4.0
   resolution: "use-sync-external-store@npm:1.4.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 10c0/ec011a5055962c0f6b509d6e78c0b143f8cd069890ae370528753053c55e3b360d3648e76cfaa854faa7a59eb08d6c5fb1015e60ffde9046d32f5b2a295acea5
+  languageName: node
+  linkType: hard
+
+"use-sync-external-store@npm:^1":
+  version: 1.2.2
+  resolution: "use-sync-external-store@npm:1.2.2"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 10c0/23b1597c10adf15b26ade9e8c318d8cc0abc9ec0ab5fc7ca7338da92e89c2536abd150a5891bf076836c352fdfa104fc7231fb48f806fd9960e0cbe03601abaf
   languageName: node
   linkType: hard
 
