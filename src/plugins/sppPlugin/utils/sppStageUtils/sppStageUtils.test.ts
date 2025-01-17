@@ -419,6 +419,56 @@ describe('SppStageUtils', () => {
         });
     });
 
+    describe('isSignalingProposal', () => {
+        it('returns true when the proposal has no actions and the stage is the last stage', () => {
+            const stage = generateSppStage({ stageIndex: 2 });
+            const proposal = generateSppProposal({
+                actions: [],
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
+                }),
+            });
+
+            expect(sppStageUtils.isSignalingProposal(proposal, stage)).toBeTruthy();
+        });
+
+        it('returns false when the proposal has actions', () => {
+            const stage = generateSppStage({ stageIndex: 2 });
+            const proposal = generateSppProposal({
+                actions: [generateProposalAction()],
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
+                }),
+            });
+
+            expect(sppStageUtils.isSignalingProposal(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false when the stage is not the last stage', () => {
+            const stage = generateSppStage({ stageIndex: 1 });
+            const proposal = generateSppProposal({
+                actions: [],
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
+                }),
+            });
+
+            expect(sppStageUtils.isSignalingProposal(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false when the proposal has actions and the stage is not the last stage', () => {
+            const stage = generateSppStage({ stageIndex: 1 });
+            const proposal = generateSppProposal({
+                actions: [generateProposalAction()],
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
+                }),
+            });
+
+            expect(sppStageUtils.isSignalingProposal(proposal, stage)).toBeFalsy();
+        });
+    });
+
     describe('canStageAdvance', () => {
         const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
         const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');

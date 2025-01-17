@@ -6,7 +6,7 @@ import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../t
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): ProposalVotingStatus => {
-        const { stageIndex: currentStageIndex, actions, settings } = proposal;
+        const { stageIndex: currentStageIndex } = proposal;
         const { stageIndex } = stage;
 
         const now = DateTime.now();

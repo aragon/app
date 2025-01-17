@@ -195,4 +195,59 @@ describe('SppProposalUtils', () => {
             expect(sppProposalUtils.areAllStagesAccepted(proposal)).toBeFalsy();
         });
     });
+
+    describe('getRelevantProposalDate', () => {
+        const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
+        const getCurrentStageSpy = jest.spyOn(sppStageUtils, 'getCurrentStage');
+
+        afterEach(() => {
+            getStageMinAdvanceSpy.mockReset();
+            getCurrentStageSpy.mockReset();
+        });
+
+        it('returns the executed block timestamp when the proposal has been executed', () => {
+            const executedTimestamp = 1672531200;
+            const proposal = generateSppProposal({
+                executed: { blockTimestamp: executedTimestamp, status: true },
+            });
+
+            const result = sppProposalUtils.getRelevantProposalDate(proposal);
+            expect(result).toBe(executedTimestamp * 1000);
+        });
+
+        it('returns the calculated date using stageMinAdvance and voteDuration when the proposal has not been executed', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const stageMinAdvance = DateTime.fromISO(now).minus({ minutes: 5 });
+            const voteDuration = 3600;
+            const stage = generateSppStage({ voteDuration });
+
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
+
+            getCurrentStageSpy.mockReturnValue(stage);
+            getStageMinAdvanceSpy.mockReturnValue(stageMinAdvance);
+
+            const result = sppProposalUtils.getRelevantProposalDate(proposal);
+            const expectedDate = (stageMinAdvance.toSeconds() + voteDuration) * 1000;
+
+            expect(result).toBe(expectedDate);
+        });
+
+        it('returns only voteDuration when stageMinAdvance is undefined', () => {
+            const voteDuration = 7200;
+            const stage = generateSppStage({ voteDuration });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
+
+            getCurrentStageSpy.mockReturnValue(stage);
+            getStageMinAdvanceSpy.mockReturnValue(undefined);
+
+            const result = sppProposalUtils.getRelevantProposalDate(proposal);
+            const expectedDate = voteDuration * 1000;
+
+            expect(result).toBe(expectedDate);
+        });
+    });
 });

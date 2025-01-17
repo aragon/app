@@ -69,18 +69,16 @@ class SppProposalUtils {
         }
 
         const stageMinAdvance = sppStageUtils.getStageMinAdvance(proposal, currentStage);
-        const voteDuration = currentStage.voteDuration;
 
-        return (stageMinAdvance?.toSeconds() ?? 0 + voteDuration) * 1000;
+        const stageMinAdvanceSeconds = stageMinAdvance?.toSeconds() ?? 0;
+
+        return (stageMinAdvanceSeconds + currentStage.voteDuration) * 1000;
     };
 
     areAllStagesAccepted = (proposal: ISppProposal): boolean =>
         proposal.settings.stages.every(
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
-
-    isSignalingProposal = (proposal: ISppProposal): boolean =>
-        proposal.actions.length === 0 && sppStageUtils.isLastStage(proposal, sppStageUtils.getCurrentStage(proposal));
 }
 
 export const sppProposalUtils = new SppProposalUtils();
