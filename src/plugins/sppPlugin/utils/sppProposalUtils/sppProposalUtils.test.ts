@@ -132,16 +132,12 @@ describe('SppProposalUtils', () => {
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
             const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
             const settings = generateSppPluginSettings({ stages });
-            const actions = [generateProposalAction()];
             const proposal = generateSppProposal({
                 settings,
                 startDate,
-                actions,
             });
 
-            getStageStatusSpy.mockImplementation((_, stage) => {
-                return stage.stageIndex === 0 ? ProposalVotingStatus.ACCEPTED : ProposalVotingStatus.ACTIVE;
-            });
+            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
             timeUtils.setTime(now);
             canStageAdvanceSpy.mockReturnValue(true);
 
@@ -197,16 +193,16 @@ describe('SppProposalUtils', () => {
     });
 
     describe('getRelevantProposalDate', () => {
-        const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
-        const getCurrentStageSpy = jest.spyOn(sppStageUtils, 'getCurrentStage');
+        const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
+        const getCurrentStageSpy = jest.spyOn(sppProposalUtils, 'getCurrentStage');
 
         afterEach(() => {
-            getStageMinAdvanceSpy.mockReset();
+            getStageEndDateSpy.mockReset();
             getCurrentStageSpy.mockReset();
         });
 
         it('returns the executed block timestamp when the proposal has been executed', () => {
-            const executedTimestamp = 1672531200;
+            const executedTimestamp = 1672531200; // Mocked block timestamp
             const proposal = generateSppProposal({
                 executed: { blockTimestamp: executedTimestamp, status: true },
             });
@@ -215,39 +211,33 @@ describe('SppProposalUtils', () => {
             expect(result).toBe(executedTimestamp * 1000);
         });
 
-        it('returns the calculated date using stageMinAdvance and voteDuration when the proposal has not been executed', () => {
-            const now = '2023-01-01T12:00:00.000Z';
-            const stageMinAdvance = DateTime.fromISO(now).minus({ minutes: 5 });
-            const voteDuration = 3600;
-            const stage = generateSppStage({ voteDuration });
-
+        it('returns the stageEndDate when the proposal has not been executed and stageEndDate is defined', () => {
+            const stageEndDate = DateTime.fromISO('2023-01-01T12:00:00.000Z');
+            const stage = generateSppStage();
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [stage] }),
             });
 
             getCurrentStageSpy.mockReturnValue(stage);
-            getStageMinAdvanceSpy.mockReturnValue(stageMinAdvance);
+            getStageEndDateSpy.mockReturnValue(stageEndDate);
 
             const result = sppProposalUtils.getRelevantProposalDate(proposal);
-            const expectedDate = (stageMinAdvance.toSeconds() + voteDuration) * 1000;
+            const expectedDate = stageEndDate.toSeconds() * 1000;
 
             expect(result).toBe(expectedDate);
         });
 
-        it('returns only voteDuration when stageMinAdvance is undefined', () => {
-            const voteDuration = 7200;
-            const stage = generateSppStage({ voteDuration });
+        it('returns 0 when stageEndDate is undefined and the proposal has not been executed', () => {
+            const stage = generateSppStage();
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [stage] }),
             });
 
             getCurrentStageSpy.mockReturnValue(stage);
-            getStageMinAdvanceSpy.mockReturnValue(undefined);
+            getStageEndDateSpy.mockReturnValue(undefined);
 
             const result = sppProposalUtils.getRelevantProposalDate(proposal);
-            const expectedDate = voteDuration * 1000;
-
-            expect(result).toBe(expectedDate);
+            expect(result).toBe(0);
         });
     });
 });

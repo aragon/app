@@ -14,7 +14,7 @@ class SppProposalUtils {
         const endDate = lastStage ? sppStageUtils.getStageEndDate(proposal, lastStage) : undefined;
         const endExecutionDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
 
-        const currentStage = sppStageUtils.getCurrentStage(proposal);
+        const currentStage = sppProposalUtils.getCurrentStage(proposal);
 
         const approvalReached = this.areAllStagesAccepted(proposal);
         const isSignalingProposal = proposal.actions.length === 0;
@@ -61,18 +61,16 @@ class SppProposalUtils {
     getCurrentStage = (proposal: ISppProposal): ISppStage => proposal.settings.stages[proposal.stageIndex];
 
     getRelevantProposalDate = (proposal: ISppProposal): number => {
-        const currentStage = sppStageUtils.getCurrentStage(proposal);
+        const currentStage = sppProposalUtils.getCurrentStage(proposal);
         const executedTimestamp = proposal.executed.blockTimestamp;
 
         if (executedTimestamp != null) {
             return executedTimestamp * 1000;
         }
 
-        const stageMinAdvance = sppStageUtils.getStageMinAdvance(proposal, currentStage);
+        const stageEndDate = sppStageUtils.getStageEndDate(proposal, currentStage)?.toSeconds();
 
-        const stageMinAdvanceSeconds = stageMinAdvance?.toSeconds() ?? 0;
-
-        return (stageMinAdvanceSeconds + currentStage.voteDuration) * 1000;
+        return stageEndDate ? stageEndDate * 1000 : 0;
     };
 
     areAllStagesAccepted = (proposal: ISppProposal): boolean =>

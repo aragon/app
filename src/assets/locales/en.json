@@ -822,6 +822,9 @@
         "sppProposalList": {
           "entity": "Proposals"
         },
+        "sppProposalListItem": {
+          "stage": "Stage {{stageIndex}}"
+        },
         "sppStageStatus": {
           "button": {
             "advance": "Advance proposal",

@@ -18,7 +18,6 @@ class SppStageUtils {
 
         const approvalReached = this.isApprovalReached(proposal, stage);
 
-        // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
         const isSignalingProposal = this.isSignalingProposal(proposal, stage);
 
         if (this.isVetoReached(proposal, stage)) {
@@ -67,6 +66,7 @@ class SppStageUtils {
         );
     };
 
+    // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
     isSignalingProposal = (proposal: ISppProposal, stage: ISppStage): boolean => {
         return proposal.actions.length === 0 && this.isLastStage(proposal, stage);
     };
@@ -78,10 +78,6 @@ class SppStageUtils {
 
             return [VETOED, REJECTED, EXPIRED].includes(status);
         });
-    };
-
-    getCurrentStage = (proposal: ISppProposal): ISppStage => {
-        return proposal.settings.stages[proposal.stageIndex];
     };
 
     getStageStartDate = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {

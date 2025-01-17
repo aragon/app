@@ -83,6 +83,6 @@ describe('<SppProposalListItem /> component', () => {
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
         render(createTestComponent({ proposal }));
 
-        expect(screen.getByText('Stage 2')).toBeInTheDocument();
+        expect(screen.getByText(/spp.sppProposalListItem.stage \(stageIndex=2/)).toBeInTheDocument();
     });
 });

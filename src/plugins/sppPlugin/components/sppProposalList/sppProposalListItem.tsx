@@ -1,4 +1,5 @@
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
 
@@ -16,13 +17,16 @@ export interface ISppProposalListItemProps {
 export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) => {
     const { proposal, daoId } = props;
 
+    const { t } = useTranslations();
+
     const proposalDate = sppProposalUtils.getRelevantProposalDate(proposal);
 
     const proposalStatus = sppProposalUtils.getProposalStatus(proposal);
 
     const statusContext =
         proposal.settings.stages.length > 1
-            ? (proposal.settings.stages[proposal.stageIndex]?.name ?? `Stage ${String(proposal.stageIndex + 1)}`)
+            ? (sppProposalUtils.getCurrentStage(proposal).name ??
+              t('app.plugins.spp.sppProposalListItem.stage', { stageIndex: proposal.stageIndex + 1 }))
             : undefined;
 
     return (
