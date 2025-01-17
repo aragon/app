@@ -47,9 +47,10 @@ export interface INetworkDefinition {
 //TODO: Update the factoryAddress and adminPluginRepo for each network after 1.4 deployment
 
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
+    // Mainnets
     [Network.ETHEREUM_MAINNET]: {
         chainId: 1,
-        name: 'Ethereum Mainnet',
+        name: 'Ethereum',
         logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
         rpc: 'https://eth-mainnet.g.alchemy.com/v2/',
         wagmiChain: mainnet,
@@ -58,21 +59,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             adminPluginRepo: zeroAddress,
         },
     },
-    [Network.ETHEREUM_SEPOLIA]: {
-        chainId: 11155111,
-        name: 'Ethereum Sepolia',
-        logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-        rpc: 'https://eth-sepolia.g.alchemy.com/v2/',
-        isTestnet: true,
-        wagmiChain: sepolia,
-        addresses: {
-            daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
-            adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
-        },
-    },
     [Network.POLYGON_MAINNET]: {
         chainId: 137,
-        name: 'Polygon Mainnet',
+        name: 'Polygon',
         logo: 'https://assets.coingecko.com/coins/images/4713/large/polygon.png',
         rpc: 'https://polygon-mainnet.g.alchemy.com/v2/',
         wagmiChain: polygon,
@@ -83,7 +72,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     },
     [Network.BASE_MAINNET]: {
         chainId: 8453,
-        name: 'Base Mainnet',
+        name: 'Base',
         logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
         rpc: 'https://base-mainnet.g.alchemy.com/v2/',
         wagmiChain: base,
@@ -94,7 +83,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     },
     [Network.ARBITRUM_MAINNET]: {
         chainId: 42161,
-        name: 'Arbitrum Mainnet',
+        name: 'Arbitrum',
         logo: 'https://docs.arbitrum.io/img/logo.svg',
         rpc: 'https://arb-mainnet.g.alchemy.com/v2/',
         wagmiChain: arbitrum,
@@ -105,13 +94,26 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     },
     [Network.ZKSYNC_MAINNET]: {
         chainId: 324,
-        name: 'zkSync Mainnet',
+        name: 'zkSync',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
         rpc: 'https://zksync-mainnet.g.alchemy.com/v2/',
         wagmiChain: zksync,
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+        },
+    },
+    // Testnets
+    [Network.ETHEREUM_SEPOLIA]: {
+        chainId: 11155111,
+        name: 'Ethereum Sepolia',
+        logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
+        rpc: 'https://eth-sepolia.g.alchemy.com/v2/',
+        isTestnet: true,
+        wagmiChain: sepolia,
+        addresses: {
+            daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
+            adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {

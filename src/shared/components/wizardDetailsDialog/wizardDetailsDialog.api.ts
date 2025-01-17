@@ -36,4 +36,12 @@ export interface IWizardDetailsDialogProps {
      * Href of where the wizard should link to.
      */
     wizardLink?: string;
+    /**
+     * Callback on button click.
+     */
+    onActionClick?: () => void;
+    /**
+     * Dialog ID. Needed to determine the specific dialog to close onActionClick to avoid closing all dialogs.
+     */
+    dialogId: string;
 }

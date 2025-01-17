@@ -30,7 +30,6 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
             date={proposalDate}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={multisigProposalUtils.getProposalStatus(proposal)}
-            type="approvalThreshold"
             voted={vote != null}
             publisher={{
                 address: proposal.creator.address,

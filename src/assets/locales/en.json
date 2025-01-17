@@ -86,6 +86,18 @@
       },
       "createDaoForm": {
         "metadata": {
+          "avatar": {
+            "error": {
+              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, GIF).",
+              "file-too-large": "The file size exceeds the maximum allowed limit of 3 MB.",
+              "square-only": "The image must be square. Upload a square image.",
+              "too-many-files": "Only one file can be uploaded at a time",
+              "unknown-file-error": "Unable to upload image",
+              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
+            },
+            "helpText": "JPG, PNG or GIF of no more than 3MB and less than 1024x1024px.",
+            "label": "Logo"
+          },
           "description": {
             "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
             "label": "Description",
@@ -199,7 +211,7 @@
             "address": "Contract address",
             "blockchain": "Blockchain",
             "ens": "ENS name",
-            "launched": "Launched at",
+            "launched": "Launched",
             "title": "Details"
           },
           "links": "Links"
@@ -1005,7 +1017,7 @@
     "settings": {
       "daoPluginInfo": {
         "bodyName": "Body name",
-        "launchedAt": "Launched at",
+        "launchedAt": "Launched",
         "plugin": "Plugin",
         "pluginVersionInfo": "{{name}} v{{release}}.{{build}}",
         "processKey": "Process key",

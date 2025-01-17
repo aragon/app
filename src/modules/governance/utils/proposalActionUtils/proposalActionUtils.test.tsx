@@ -7,6 +7,7 @@ import {
     generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
 import { generateDao } from '@/shared/testUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     type IProposalActionUpdateMetadata,
@@ -18,9 +19,11 @@ import { proposalActionUtils } from './proposalActionUtils';
 
 describe('proposalActionUtils', () => {
     const getSlotFunctionsSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunctions');
+    const ipfsCidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
 
     afterEach(() => {
         getSlotFunctionsSpy.mockReset();
+        ipfsCidToSrcSpy.mockReset();
     });
 
     describe('normalizeActions', () => {
@@ -157,14 +160,22 @@ describe('proposalActionUtils', () => {
         });
 
         it('correctly normalizes DAO metadata object', () => {
-            const metadata = { name: 'dao-name', description: 'dao-description', logo: 'test.png', links: [] };
+            const metadata = {
+                name: 'dao-name',
+                description: 'dao-description',
+                avatar: 'ipfs://valid-cid',
+                links: [],
+            };
             const normalizedLinks = [{ label: 'test', href: 'href' }];
             normalizeActionMetadataLinksSpy.mockReturnValue(normalizedLinks);
+
+            const expectedAvatarUrl = 'https://aragon-1.mypinata.cloud/ipfs/valid-cid?img-width=80&img-height=80';
+            ipfsCidToSrcSpy.mockReturnValue(expectedAvatarUrl);
             const normalizedMetadata = proposalActionUtils.normalizeActionMetadata(metadata);
             expect(normalizeActionMetadataLinksSpy).toHaveBeenCalledWith(metadata.links);
             expect(normalizedMetadata.name).toEqual(metadata.name);
             expect(normalizedMetadata.description).toEqual(metadata.description);
-            expect(normalizedMetadata.avatar).toEqual(metadata.logo);
+            expect(normalizedMetadata.avatar).toEqual(expectedAvatarUrl);
             expect(normalizedMetadata.links).toEqual(normalizedLinks);
         });
 
@@ -223,6 +234,27 @@ describe('proposalActionUtils', () => {
         it('returns false when action is not of update-metadata type', () => {
             const action = generateProposalAction({ type: ProposalActionType.TRANSFER });
             expect(proposalActionUtils.isUpdateMetadataAction(action)).toBeFalsy();
+        });
+    });
+
+    describe('normalizeActionMetadataAvatar', () => {
+        it('returns the correct avatar URL when metadata has a valid IPFS avatar', () => {
+            const metadata = {
+                name: 'dao-name',
+                avatar: 'ipfs://valid-cid',
+            };
+
+            const expectedAvatarUrl = 'https://aragon-1.mypinata.cloud/ipfs/valid-cid?img-width=80&img-height=80';
+            ipfsCidToSrcSpy.mockReturnValue(expectedAvatarUrl);
+
+            const result = proposalActionUtils.normalizeActionMetadataAvatar(metadata);
+            expect(result).toEqual(expectedAvatarUrl);
+        });
+
+        it('returns undefined when metadata does not have an avatar', () => {
+            const metadata = { name: 'test-name' };
+            const result = proposalActionUtils.normalizeActionMetadataAvatar(metadata);
+            expect(result).toBeUndefined();
         });
     });
 });

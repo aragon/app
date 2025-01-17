@@ -5,6 +5,7 @@ class IpfsService extends HttpService {
 
     urls = {
         pinJson: '/pinning/pinJSONToIPFS',
+        pinFile: '/pinning/pinFileToIPFS',
     };
 
     constructor() {

@@ -28,7 +28,6 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
             date={proposal.executed.blockTimestamp ? proposal.executed.blockTimestamp * 1000 : proposal.endDate * 1000}
             href={`/dao/${daoId}/proposals/${proposal.id}`}
             status={tokenProposalUtils.getProposalStatus(proposal)}
-            type="majorityVoting"
             voted={vote != null}
             publisher={{
                 address: proposal.creator.address,
