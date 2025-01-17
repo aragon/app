@@ -1,5 +1,6 @@
 import type { IDaoProposalListDefaultProps } from '@/modules/governance/components/daoProposalList';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
+import type { ISppProposal } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DataListContainer, DataListPagination, DataListRoot, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { SppProposalListItem } from './sppProposalListItem';
@@ -13,7 +14,7 @@ export const SppProposalList: React.FC<ISppProposalListProps> = (props) => {
     const { t } = useTranslations();
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, proposalList } =
-        useProposalListData(initialParams);
+        useProposalListData<ISppProposal>(initialParams);
 
     return (
         <DataListRoot
