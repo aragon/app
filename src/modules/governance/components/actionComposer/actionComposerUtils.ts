@@ -1,6 +1,7 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
 import {
@@ -213,7 +214,7 @@ class ActionComposerUtils {
 
     private buildDefaultActionMetadata = (dao: IDao) => {
         const { avatar, address, name, description, links: resources } = dao;
-        const existingMetadata = { logo: avatar ?? undefined, name, description, resources };
+        const existingMetadata = { avatar: { url: ipfsUtils.cidToSrc(avatar) }, name, description, resources };
 
         return {
             type: ProposalActionType.METADATA_UPDATE,
