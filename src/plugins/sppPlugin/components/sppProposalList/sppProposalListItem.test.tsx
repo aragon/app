@@ -70,7 +70,7 @@ describe('<SppProposalListItem /> component', () => {
         expect(screen.getByText('stage-name')).toBeInTheDocument();
     });
 
-    it('displays "Stage N" in status context when proposal is multistage and no stage name is returned', () => {
+    it('displays "Stage" with number in status context when proposal is multistage and no stage name is returned', () => {
         const subProposals = [generateSppSubProposal(), generateSppSubProposal(), generateSppSubProposal()];
         const settings = generateSppPluginSettings({
             stages: [generateSppStage(), generateSppStage({ name: undefined }), generateSppStage()],
