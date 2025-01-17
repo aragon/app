@@ -25,7 +25,8 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
 
     const statusContext =
         proposal.settings.stages.length > 1
-            ? (sppProposalUtils.getCurrentStage(proposal).name ??
+            ? // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+              (sppProposalUtils.getCurrentStage(proposal).name ??
               t('app.plugins.spp.sppProposalListItem.stage', { stageIndex: proposal.stageIndex + 1 }))
             : undefined;
 
