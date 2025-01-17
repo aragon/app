@@ -55,4 +55,29 @@ describe('VoteListUtils', () => {
             expect(title).toBe(subTitle);
         });
     });
+
+    describe('getProcessedProposalId', () => {
+        it('returns parent proposal id when parentProposal is defined', () => {
+            const parentId = 'parent-id';
+            const parentTitle = 'Parent Proposal';
+            const subId = 'sub-id';
+            const subTitle = 'Sub Proposal';
+            const vote: IVote = generateVote({
+                parentProposal: { id: parentId, title: parentTitle },
+                proposal: generateProposal({ id: subId, title: subTitle }),
+            });
+            const id = voteListUtils.getProcessedProposalId(vote);
+            expect(id).toBe(parentId);
+        });
+
+        it('returns child proposal id when parentProposal is not defined', () => {
+            const subId = 'sub-id';
+            const subTitle = 'Sub Proposal';
+            const vote: IVote = generateVote({
+                proposal: generateProposal({ id: subId, title: subTitle }),
+            });
+            const id = voteListUtils.getProcessedProposalId(vote);
+            expect(id).toBe(subId);
+        });
+    });
 });
