@@ -1,6 +1,6 @@
 import type { IVote } from '@/modules/governance/api/governanceService';
 import { generateProposal, generateVote } from '@/modules/governance/testUtils';
-import { voteListUtils } from '@/modules/governance/utils/voteListUtils/voteListUtils';
+import { voteListUtils } from '@/modules/governance/utils/voteListUtils';
 
 describe('VoteListUtils', () => {
     describe('getProcessedProposalLink', () => {
