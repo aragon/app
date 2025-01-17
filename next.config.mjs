@@ -38,20 +38,6 @@ const webFunctionalities = [
     'xr-spatial-tracking=()',
 ];
 
-const contentSecurityPolicies = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    'img-src * blob: data:',
-    'connect-src *',
-    "font-src 'self' https://fonts.gstatic.com",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-    'upgrade-insecure-requests',
-];
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     async redirects() {
@@ -79,8 +65,6 @@ const nextConfig = {
                     { key: 'X-Content-Type-Options', value: 'nosniff' },
                     // Allow browsers to proactively perform domain name resolution on extenal resources (links, CSS, ..)
                     { key: 'X-DNS-Prefetch-Control', value: 'on' },
-                    // Apply content security policies
-                    { key: 'Content-Security-Policy', value: contentSecurityPolicies.join('; ') },
                 ],
             },
             // CORS headers for api routes
