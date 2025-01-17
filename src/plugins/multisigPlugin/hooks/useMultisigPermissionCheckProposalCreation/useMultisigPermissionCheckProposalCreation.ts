@@ -1,5 +1,5 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IProposalPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
@@ -10,7 +10,7 @@ export interface IUseMultisigPermissionCheckProposalCreationParams
 
 export const useMultisigPermissionCheckProposalCreation = (
     params: IUseMultisigPermissionCheckProposalCreationParams,
-): IPermissionCheckGuardResult => {
+): IProposalPermissionCheckGuardResult => {
     const { plugin } = params;
 
     const { address } = useAccount();
@@ -27,22 +27,24 @@ export const useMultisigPermissionCheckProposalCreation = (
 
     const hasPermission = memberExists === true || !onlyListed;
 
-    if (hasPermission) {
-        return { hasPermission: true };
-    }
+    const settings = !hasPermission
+        ? [
+              {
+                  term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
+                  definition: pluginName,
+              },
+              {
+                  term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
+                  definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
+              },
+          ]
+        : [];
 
     return {
-        hasPermission: false,
-        settings: [
-            {
-                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
-                definition: pluginName,
-            },
-            {
-                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
-                definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
-            },
-        ],
+        hasPermission,
+        permissionSettings: onlyListed,
+        isRestricted: onlyListed,
+        settings: [settings],
         isLoading,
     };
 };

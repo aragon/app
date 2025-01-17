@@ -1,5 +1,5 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IProposalPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { useCallback, useRef } from 'react';
@@ -17,7 +17,7 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
     // the property is not stable we break the rules of hooks (see https://react.dev/warnings/invalid-hook-call-warning)
     const plugin = useRef(pluginProp).current;
 
-    const { hasPermission } = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
+    const { hasPermission } = useSlotSingleFunction<IPermissionCheckGuardParams, IProposalPermissionCheckGuardResult>({
         slotId: slotId,
         pluginId: plugin.subdomain,
         params: { plugin, daoId, proposal },

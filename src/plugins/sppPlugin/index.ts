@@ -9,6 +9,7 @@ import { useSppActions } from './hooks/useSppActions';
 import { useSppGovernanceSettings } from './hooks/useSppGovernanceSettings';
 import { sppProposalUtils } from './utils/sppProposalUtils';
 import { sppTransactionUtils } from './utils/sppTransactionUtils';
+import { useSppPermissionCheckProposalCreation } from './hooks/useSppPermissionCheckProposalCreation';
 
 export const initialiseSppPlugin = () => {
     pluginRegistryUtils
@@ -40,6 +41,11 @@ export const initialiseSppPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: plugin.id,
             function: useSppActions,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            pluginId: plugin.id,
+            function: useSppPermissionCheckProposalCreation,
         })
 
         // Settings module slots

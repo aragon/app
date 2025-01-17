@@ -1,5 +1,5 @@
 import { useMember } from '@/modules/governance/api/governanceService';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IProposalPermissionCheckGuardResult } from '@/modules/governance/types';
 import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -12,7 +12,7 @@ export interface ITokenPermissionCheckProposalCreationParams
 
 export const useTokenPermissionCheckProposalCreation = (
     params: ITokenPermissionCheckProposalCreationParams,
-): IPermissionCheckGuardResult => {
+): IProposalPermissionCheckGuardResult => {
     const { plugin, daoId } = params;
 
     const { address } = useAccount();
@@ -53,30 +53,32 @@ export const useTokenPermissionCheckProposalCreation = (
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
 
-    if (hasPermission) {
-        return { hasPermission: true };
-    }
+    const settings = !hasPermission
+        ? [
+              {
+                  term: t('app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel'),
+                  definition: pluginName,
+              },
+              {
+                  term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
+                  definition: `≥${minTokenRequired}`,
+              },
+              {
+                  term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
+                  definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
+              },
+              {
+                  term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
+                  definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
+              },
+          ]
+        : [];
 
     return {
-        hasPermission: false,
-        settings: [
-            {
-                term: t('app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel'),
-                definition: pluginName,
-            },
-            {
-                term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
-                definition: `≥${minTokenRequired}`,
-            },
-            {
-                term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
-                definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
-            },
-            {
-                term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
-                definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
-            },
-        ],
+        hasPermission,
+        permissionSettings: Number(minProposerVotingPower),
+        isRestricted: Number(minProposerVotingPower) > 0,
+        settings: [settings],
         isLoading,
     };
 };
