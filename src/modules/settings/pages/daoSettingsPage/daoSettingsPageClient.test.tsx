@@ -4,6 +4,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { DaoSettingsPageClient, type IDaoSettingsPageClientProps } from './daoSettingsPageClient';
+import { DialogProvider } from '@/shared/components/dialogProvider';
 
 jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
     DaoGovernanceInfo: () => <div data-testid="governance-info-mock" />,
@@ -33,7 +34,9 @@ describe('<DaoSettingsPageClient /> component', () => {
 
         return (
             <GukModulesProvider>
-                <DaoSettingsPageClient {...completeProps} />
+                <DialogProvider>
+                    <DaoSettingsPageClient {...completeProps} />
+                </DialogProvider>
             </GukModulesProvider>
         );
     };
