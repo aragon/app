@@ -1,5 +1,9 @@
 import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import type { IPermissionCheckGuardParams, IProposalPermissionCheckGuardResult } from '@/modules/governance/types';
+import type {
+    IPermissionCheckGuardParams,
+    IPermissionCheckGuardSetting,
+    IProposalPermissionCheckGuardResult,
+} from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
@@ -27,24 +31,26 @@ export const useMultisigPermissionCheckProposalCreation = (
 
     const hasPermission = memberExists === true || !onlyListed;
 
-    const settings = !hasPermission
-        ? [
-              {
-                  term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
-                  definition: pluginName,
-              },
-              {
-                  term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
-                  definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
-              },
-          ]
-        : [];
+        const settings: Record<string, IPermissionCheckGuardSetting[]> = {};
+
+        if (!hasPermission) {
+            settings[pluginName] = [
+                {
+                    term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
+                    definition: pluginName,
+                },
+                {
+                    term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
+                    definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
+                },
+            ];
+        }
 
     return {
         hasPermission,
         permissionSettings: onlyListed,
         isRestricted: onlyListed,
-        settings: [settings],
+        settings: Object.keys(settings).length ? settings : undefined,
         isLoading,
     };
 };

@@ -1,6 +1,9 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import type { IPermissionCheckGuardParams, IProposalPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { ITokenPermissionCheckProposalCreationParams } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
+import type {
+    IPermissionCheckGuardParams,
+    IPermissionCheckGuardSetting,
+    IProposalPermissionCheckGuardResult,
+} from '@/modules/governance/types';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { invariant } from '@aragon/gov-ui-kit';
@@ -20,13 +23,10 @@ export const useSppPermissionCheckProposalCreation = (
     const subPlugins = plugins.filter((plugin) => plugin.meta.isSubPlugin);
 
     const pluginProposalCreationGuardResults = subPlugins.map(({ meta: plugin }) =>
-        pluginRegistryUtils.getSlotFunction<
-            ITokenPermissionCheckProposalCreationParams,
-            IProposalPermissionCheckGuardResult
-        >({
+        pluginRegistryUtils.getSlotFunction<IPermissionCheckGuardParams, IProposalPermissionCheckGuardResult>({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: plugin.subdomain,
-        })?.({ plugin: plugin }),
+        })?.({ plugin, daoId }),
     );
 
     // Allow proposal creation if either:
@@ -36,17 +36,33 @@ export const useSppPermissionCheckProposalCreation = (
         pluginProposalCreationGuardResults.every((result) => !result?.isRestricted) ||
         pluginProposalCreationGuardResults.some((result) => result?.isRestricted && result.hasPermission);
 
-    const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
+    invariant(
+        pluginProposalCreationGuardResults.every((result) => result !== undefined),
+        'useSppPermissionCheckProposalCreation: Some plugin results are undefined',
+    );
 
-    const settings = pluginProposalCreationGuardResults.map((result) => result?.settings);
+    const isLoading = pluginProposalCreationGuardResults.some((result) => result.isLoading);
 
-    console.log('permissionGranted', permissionGranted, pluginProposalCreationGuardResults);
+    // Settings object with plugin name as key
+
+    // Using reduce to accumulate all the settings into a single object
+    const settings = pluginProposalCreationGuardResults.reduce<Record<string, IPermissionCheckGuardSetting[]>>(
+        (acc, result) => {
+            if (result.settings) {
+                Object.entries(result.settings).forEach(([key, value]) => {
+                    acc[key] = value;
+                });
+            }
+            return acc;
+        },
+        {},
+    );
 
     return {
         isRestricted: !permissionGranted,
         hasPermission: permissionGranted,
         isLoading,
         permissionSettings: false,
-        settings: settings ?? undefined,
+        settings: Object.keys(settings).length ? settings : undefined,
     };
 };

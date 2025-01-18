@@ -3,7 +3,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { ChainEntityType, DateFormat, formatterUtils, invariant, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 
 export interface IUseMultisigPermissionCheckVoteSubmissionParams
@@ -14,10 +14,12 @@ export const useMultisigPermissionCheckVoteSubmission = (
 ): IPermissionCheckGuardResult => {
     const { proposal } = params;
 
+    invariant(proposal != null, 'useMultisigPermissionCheckVoteSubmission: proposal is required');
+
     const { address } = useAccount();
     const { t } = useTranslations();
 
-    const { id, blockTimestamp, network, transactionHash } = proposal!;
+    const { id, blockTimestamp, network, transactionHash } = proposal;
     const { data: hasPermission, isLoading } = useCanVote(
         { urlParams: { id }, queryParams: { userAddress: address as string } },
         { enabled: address != null },
@@ -37,17 +39,19 @@ export const useMultisigPermissionCheckVoteSubmission = (
 
     return {
         hasPermission: false,
-        settings: [
-            {
-                term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.createdAt'),
-                definition: formattedCreationDate!,
-                href: proposalCreationUrl,
-            },
-            {
-                term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.membership'),
-                definition: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.nonMember'),
-            },
-        ],
+        settings: {
+            [proposal.title]: [
+                {
+                    term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.createdAt'),
+                    definition: formattedCreationDate!,
+                    href: proposalCreationUrl,
+                },
+                {
+                    term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.membership'),
+                    definition: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.nonMember'),
+                },
+            ],
+        },
         isLoading,
     };
 };
