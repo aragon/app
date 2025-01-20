@@ -8,7 +8,7 @@ export interface ISppStage {
     /**
      * Name of the stage.
      */
-    name: string;
+    name: string | null;
     /**
      * List of plugins for this stage.
      */

@@ -237,7 +237,7 @@ describe('SppProposalUtils', () => {
             getStageEndDateSpy.mockReturnValue(undefined);
 
             const result = sppProposalUtils.getRelevantProposalDate(proposal);
-            expect(result).toBe(0);
+            expect(result).toBe(undefined);
         });
     });
 });
