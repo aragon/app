@@ -51,8 +51,8 @@ export const useTokenPermissionCheckVoteSubmission = (
 
     return {
         hasPermission: !!hasPermission,
-        isRestricted: true,
         settings: [settings],
         isLoading,
+        isRestricted: true,
     };
 };

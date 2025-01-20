@@ -40,8 +40,8 @@ export const useMultisigPermissionCheckProposalCreation = (
 
     return {
         hasPermission,
-        isRestricted: onlyListed,
         settings: [settings],
         isLoading,
+        isRestricted: onlyListed,
     };
 };

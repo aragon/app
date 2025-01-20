@@ -74,8 +74,8 @@ export const useTokenPermissionCheckProposalCreation = (
 
     return {
         hasPermission,
-        isRestricted: Number(minProposerVotingPower) > 0,
         settings: [settings],
         isLoading,
+        isRestricted: Number(minProposerVotingPower) > 0,
     };
 };

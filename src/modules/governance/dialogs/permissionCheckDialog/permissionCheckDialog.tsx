@@ -75,6 +75,9 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
         ? undefined
         : { label: t('app.governance.permissionCheckDialog.action'), onClick: handleDialogClose };
 
+    const shouldRenderSettings = !isLoading && settings.length > 0;
+    const hasSettingsGroups = settings.length > 1;
+
     return (
         <>
             <Dialog.Header title={title} description={description} />
@@ -85,7 +88,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                         <StateSkeletonBar width="65%" size="lg" />
                     </div>
                 )}
-                {!isLoading && (
+                {shouldRenderSettings && (
                     <>
                         {settings.map((settingsGroup, groupIndex) => (
                             <div key={groupIndex} className="flex flex-col gap-y-1">
@@ -101,7 +104,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                                         </DefinitionList.Item>
                                     ))}
                                 </DefinitionListContainer>
-                                {settings.length > 1 && groupIndex < settings.length - 1 && (
+                                {hasSettingsGroups && groupIndex < settings.length - 1 && (
                                     <div className="my-2 flex items-center">
                                         <div className="grow border-t border-neutral-100" />
                                         <span className="mx-2 text-neutral-500">or</span>

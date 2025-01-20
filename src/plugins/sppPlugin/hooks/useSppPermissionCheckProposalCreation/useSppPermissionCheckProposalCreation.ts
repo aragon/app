@@ -52,9 +52,9 @@ export const useSppPermissionCheckProposalCreation = (
     }, []);
 
     return {
-        isRestricted: !permissionGranted,
         hasPermission: permissionGranted,
-        isLoading,
         settings,
+        isLoading,
+        isRestricted: !permissionGranted,
     };
 };
