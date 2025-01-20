@@ -1,1 +1,1 @@
-export { VoteListItem, type IVoteListItemProps } from './voteListItem';
+export { VoteProposalListItem, type IVoteProposalListItemProps } from './voteProposalListItem';

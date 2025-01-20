@@ -1,7 +1,7 @@
 import { type IVote } from '@/modules/governance/api/governanceService';
 import { VoteProposalDataListItem } from '@aragon/gov-ui-kit';
 
-export interface IVoteListItemProps {
+export interface IVoteProposalListItemProps {
     /**
      * Relevant vote data.
      */
@@ -12,7 +12,7 @@ export interface IVoteListItemProps {
     daoId: string;
 }
 
-export const VoteListItem: React.FC<IVoteListItemProps> = (props) => {
+export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props) => {
     const { vote, daoId } = props;
 
     const getProcessedProposal = (vote: IVote) => {

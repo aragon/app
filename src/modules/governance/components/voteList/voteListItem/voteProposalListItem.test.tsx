@@ -1,17 +1,17 @@
 import { generateProposal, generateVote } from '@/modules/governance/testUtils';
 import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { type IVoteListItemProps, VoteListItem } from './voteListItem';
+import { type IVoteProposalListItemProps, VoteProposalListItem } from './voteProposalListItem';
 
 describe('<VoteListItem /> component', () => {
-    const createTestComponent = (props?: Partial<IVoteListItemProps>) => {
+    const createTestComponent = (props?: Partial<IVoteProposalListItemProps>) => {
         const completeProps = {
             vote: generateVote(),
             daoId: 'dao-test',
             ...props,
         };
 
-        return <VoteListItem {...completeProps} />;
+        return <VoteProposalListItem {...completeProps} />;
     };
 
     it('renders the parent proposal info when parentProposal is defined', () => {
