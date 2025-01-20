@@ -1,8 +1,8 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type {
     IPermissionCheckGuardParams,
-    IPermissionCheckGuardSetting,
     IPermissionCheckGuardResult,
+    IPermissionCheckGuardSetting,
 } from '@/modules/governance/types';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';

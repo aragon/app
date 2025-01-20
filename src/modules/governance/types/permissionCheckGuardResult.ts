@@ -32,5 +32,3 @@ export interface IPermissionCheckGuardResult {
      */
     isRestricted: boolean;
 }
-
-

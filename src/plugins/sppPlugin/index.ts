@@ -8,9 +8,9 @@ import { SppVotingTerminal } from './components/sppVotingTerminal';
 import { plugin } from './constants/plugin';
 import { useSppActions } from './hooks/useSppActions';
 import { useSppGovernanceSettings } from './hooks/useSppGovernanceSettings';
+import { useSppPermissionCheckProposalCreation } from './hooks/useSppPermissionCheckProposalCreation';
 import { sppProposalUtils } from './utils/sppProposalUtils';
 import { sppTransactionUtils } from './utils/sppTransactionUtils';
-import { useSppPermissionCheckProposalCreation } from './hooks/useSppPermissionCheckProposalCreation';
 
 export const initialiseSppPlugin = () => {
     pluginRegistryUtils
