@@ -33,19 +33,17 @@ export const useMultisigPermissionCheckVoteSubmission = (
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
-    const settings = hasPermission
-        ? []
-        : [
-              {
-                  term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.createdAt'),
-                  definition: formattedCreationDate!,
-                  href: proposalCreationUrl,
-              },
-              {
-                  term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.membership'),
-                  definition: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.nonMember'),
-              },
-          ];
+    const settings = [
+        {
+            term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.createdAt'),
+            definition: formattedCreationDate!,
+            href: proposalCreationUrl,
+        },
+        {
+            term: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.membership'),
+            definition: t('app.plugins.multisig.multisigPermissionCheckVoteSubmission.nonMember'),
+        },
+    ];
 
     return {
         hasPermission: !!hasPermission,

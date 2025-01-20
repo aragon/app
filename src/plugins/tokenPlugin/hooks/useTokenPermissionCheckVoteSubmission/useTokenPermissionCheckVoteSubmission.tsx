@@ -37,19 +37,17 @@ export const useTokenPermissionCheckVoteSubmission = (
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
 
-    const settings = hasPermission
-        ? []
-        : [
-              {
-                  term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.createdAt'),
-                  definition: formattedCreationDate!,
-                  href: proposalCreationUrl,
-              },
-              {
-                  term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.membership'),
-                  definition: `0 ${tokenSymbol}`,
-              },
-          ];
+    const settings = [
+        {
+            term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.createdAt'),
+            definition: formattedCreationDate!,
+            href: proposalCreationUrl,
+        },
+        {
+            term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.membership'),
+            definition: `0 ${tokenSymbol}`,
+        },
+    ];
 
     return {
         hasPermission: !!hasPermission,

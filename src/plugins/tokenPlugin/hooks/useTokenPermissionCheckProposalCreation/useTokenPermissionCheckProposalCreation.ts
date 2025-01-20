@@ -53,26 +53,24 @@ export const useTokenPermissionCheckProposalCreation = (
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
 
-    const settings = !hasPermission
-        ? [
-              {
-                  term: t('app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel'),
-                  definition: pluginName,
-              },
-              {
-                  term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
-                  definition: `≥${minTokenRequired}`,
-              },
-              {
-                  term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
-                  definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
-              },
-              {
-                  term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
-                  definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
-              },
-          ]
-        : [];
+    const settings = [
+        {
+            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel'),
+            definition: pluginName,
+        },
+        {
+            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
+            definition: `≥${minTokenRequired}`,
+        },
+        {
+            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
+            definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
+        },
+        {
+            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
+            definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
+        },
+    ];
 
     return {
         hasPermission,

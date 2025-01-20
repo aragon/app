@@ -27,18 +27,16 @@ export const useMultisigPermissionCheckProposalCreation = (
 
     const hasPermission = memberExists === true || !onlyListed;
 
-    const settings = !hasPermission
-        ? [
-              {
-                  term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
-                  definition: pluginName,
-              },
-              {
-                  term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
-                  definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
-              },
-          ]
-        : [];
+    const settings = [
+        {
+            term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
+            definition: pluginName,
+        },
+        {
+            term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
+            definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
+        },
+    ];
 
     return {
         hasPermission,
