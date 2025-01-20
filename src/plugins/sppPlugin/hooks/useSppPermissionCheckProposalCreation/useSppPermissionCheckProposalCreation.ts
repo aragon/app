@@ -22,7 +22,7 @@ export const useSppPermissionCheckProposalCreation = (
 
     const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
 
-    // Find the sub-plugins that are part of the DAO plugins, filter out any potential undefined values
+    // Find the sub plugins that are part of the DAO and filter out any potential undefined values
     const subPlugins = sppPlugins
         .map((sppPlugin) => daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(meta.address, sppPlugin.address)))
         .filter((p) => p != undefined);

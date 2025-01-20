@@ -2,15 +2,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import {
-    DefinitionList,
-    DefinitionListContainer,
-    Dialog,
-    IconType,
-    invariant,
-    Link,
-    StateSkeletonBar,
-} from '@aragon/gov-ui-kit';
+import { DefinitionList, Dialog, IconType, invariant, Link, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 
 export interface IPermissionCheckDialogParams extends IPermissionCheckGuardParams {
@@ -92,7 +84,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                     <>
                         {settings.map((settingsGroup, groupIndex) => (
                             <div key={groupIndex} className="flex flex-col gap-y-1">
-                                <DefinitionListContainer>
+                                <DefinitionList.Container>
                                     {settingsGroup.map(({ term, definition, href }, settingIndex) => (
                                         <DefinitionList.Item key={settingIndex} term={term}>
                                             {href == null && definition}
@@ -103,7 +95,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                                             )}
                                         </DefinitionList.Item>
                                     ))}
-                                </DefinitionListContainer>
+                                </DefinitionList.Container>
                                 {hasSettingsGroups && groupIndex < settings.length - 1 && (
                                     <div className="my-2 flex items-center">
                                         <div className="grow border-t border-neutral-100" />

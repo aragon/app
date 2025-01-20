@@ -45,6 +45,7 @@ export const useMultisigPermissionCheckVoteSubmission = (
 
     return {
         hasPermission: !!hasPermission,
+        // Settings as a nested array to support either or conditions in the dialog
         settings: [settings],
         isLoading,
         isRestricted: true,
