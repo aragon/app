@@ -3,7 +3,7 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, DateFormat, formatterUtils, invariant, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { ChainEntityType, DateFormat, formatterUtils, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 
 export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams<ITokenPluginSettings> {}
@@ -19,9 +19,7 @@ export const useTokenPermissionCheckVoteSubmission = (
 
     const tokenSymbol = plugin.settings.token.symbol;
 
-    invariant(proposal != null, 'useTokenPermissionCheckVoteSubmission: proposal is required');
-
-    const { id, blockTimestamp, network, transactionHash } = proposal;
+    const { id, blockTimestamp, network, transactionHash } = proposal!;
 
     const { data: hasPermission, isLoading } = useCanVote(
         { urlParams: { id }, queryParams: { userAddress: address as string } },
