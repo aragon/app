@@ -48,7 +48,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     };
 
     const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
-        onSuccess: handleAdvanceStage,
+        onSuccess: () => setIsAdvanceDialogOpen(true),
     });
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
