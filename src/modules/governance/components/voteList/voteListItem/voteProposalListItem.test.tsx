@@ -3,11 +3,12 @@ import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { type IVoteProposalListItemProps, VoteProposalListItem } from './voteProposalListItem';
 
-describe('<VoteListItem /> component', () => {
+describe('<VoteProposalListItem /> component', () => {
     const createTestComponent = (props?: Partial<IVoteProposalListItemProps>) => {
         const completeProps = {
             vote: generateVote(),
             daoId: 'dao-test',
+            voteIndicator: 'approve' as const,
             ...props,
         };
 
@@ -63,5 +64,17 @@ describe('<VoteListItem /> component', () => {
 
         expect(screen.getByText('Fallback Proposal')).toBeInTheDocument();
         expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/fallback-id`);
+    });
+
+    it('renders the correct vote indicator', () => {
+        const vote = generateVote({
+            proposal: generateProposal({ id: 'child-id', title: 'Child Proposal' }),
+        });
+        const daoId = 'dao-test';
+        const voteIndicator = 'yes';
+
+        render(createTestComponent({ vote, daoId, voteIndicator }));
+
+        expect(screen.getByText(voteIndicator)).toBeInTheDocument();
     });
 });
