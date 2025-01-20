@@ -2,28 +2,33 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardSetting,
-    IProposalPermissionCheckGuardResult,
+    IPermissionCheckGuardResult,
 } from '@/modules/governance/types';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { invariant } from '@aragon/gov-ui-kit';
+import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import type { ISppPluginSettings } from '../../types';
 
 export interface IUseSppPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams<ISppPluginSettings> {}
 
 export const useSppPermissionCheckProposalCreation = (
     params: IUseSppPermissionCheckProposalCreationParams,
-): IProposalPermissionCheckGuardResult => {
-    const { daoId } = params;
+): IPermissionCheckGuardResult => {
+    const { daoId, plugin } = params;
 
-    const plugins = useDaoPlugins({ daoId, includeSubPlugins: true });
+    const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true });
 
-    invariant(plugins != null, 'useSppPermissionCheckProposalCreation: plugins are required');
+    invariant(daoPlugins != null, 'useSppPermissionCheckProposalCreation: Plugins are required');
 
-    const subPlugins = plugins.filter((plugin) => plugin.meta.isSubPlugin);
+    const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
+
+    // TODO: addressUtils are address equal
+    const subPlugins = sppPlugins
+        .map((sppPlugin) => daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(meta.address, sppPlugin.address)))
+        .filter((p) => p != undefined);
 
     const pluginProposalCreationGuardResults = subPlugins.map(({ meta: plugin }) =>
-        pluginRegistryUtils.getSlotFunction<IPermissionCheckGuardParams, IProposalPermissionCheckGuardResult>({
+        pluginRegistryUtils.getSlotFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: plugin.subdomain,
         })?.({ plugin, daoId }),
@@ -36,33 +41,20 @@ export const useSppPermissionCheckProposalCreation = (
         pluginProposalCreationGuardResults.every((result) => !result?.isRestricted) ||
         pluginProposalCreationGuardResults.some((result) => result?.isRestricted && result.hasPermission);
 
-    invariant(
-        pluginProposalCreationGuardResults.every((result) => result !== undefined),
-        'useSppPermissionCheckProposalCreation: Some plugin results are undefined',
-    );
+    const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
-    const isLoading = pluginProposalCreationGuardResults.some((result) => result.isLoading);
-
-    // Settings object with plugin name as key
-
-    // Using reduce to accumulate all the settings into a single object
-    const settings = pluginProposalCreationGuardResults.reduce<Record<string, IPermissionCheckGuardSetting[]>>(
-        (acc, result) => {
-            if (result.settings) {
-                Object.entries(result.settings).forEach(([key, value]) => {
-                    acc[key] = value;
-                });
-            }
-            return acc;
-        },
-        {},
-    );
+    // Flatten each plugin's settings to extract the nested array
+    const settings = pluginProposalCreationGuardResults.reduce<IPermissionCheckGuardSetting[][]>((acc, result) => {
+        if (result?.settings) {
+            acc.push(result.settings.flat());
+        }
+        return acc;
+    }, []);
 
     return {
         isRestricted: !permissionGranted,
         hasPermission: permissionGranted,
         isLoading,
-        permissionSettings: false,
-        settings: Object.keys(settings).length ? settings : undefined,
+        settings,
     };
 };

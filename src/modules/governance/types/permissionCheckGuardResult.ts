@@ -20,23 +20,17 @@ export interface IPermissionCheckGuardResult {
     hasPermission: boolean;
     /**
      * Settings to be displayed as reason on why the user does not have the specified permission.
-     * The settings are grouped by the plugin in order to support multiple plugins.
+     * The settings are grouped by condition.
      */
-    settings?: Record<string, IPermissionCheckGuardSetting[]>;
+    settings: IPermissionCheckGuardSetting[][];
     /**
      * Indicates if the slot-function is loading the data needed to check the specific permission.
      */
     isLoading?: boolean;
-}
-
-export interface IProposalPermissionCheckGuardResult extends IPermissionCheckGuardResult {
     /**
-     * The permission setting of the plugin (onlYListed/isMember/minProposerVotingPower).
-     */
-    permissionSettings: boolean | number;
-    /**
-     * Indicates if there are restrictions on proposal creation.
+     * Indicates if there are restrictions on the action.
      */
     isRestricted: boolean;
 }
+
 

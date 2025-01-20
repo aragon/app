@@ -2,8 +2,15 @@ import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { DefinitionList, Dialog, IconType, invariant, Link, StateSkeletonBar } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
+import {
+    DefinitionList,
+    DefinitionListContainer,
+    Dialog,
+    IconType,
+    invariant,
+    Link,
+    StateSkeletonBar,
+} from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 
 export interface IPermissionCheckDialogParams extends IPermissionCheckGuardParams {
@@ -40,7 +47,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
         slotId: slotId,
         pluginId: plugin.subdomain,
         params: { plugin, ...otherParams },
-    }) ?? { hasPermission: true };
+    }) ?? { hasPermission: true, isLoading: false, settings: [] };
 
     const { settings, isLoading, hasPermission } = checkPermissions;
 
@@ -78,27 +85,23 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                         <StateSkeletonBar width="65%" size="lg" />
                     </div>
                 )}
-                {!isLoading && settings && (
+                {!isLoading && (
                     <>
-                        {Object.keys(settings).map((pluginKey, pluginIndex) => (
-                            <div key={pluginKey} className="flex flex-col gap-y-1">
-                                {settings[pluginKey].map(({ term, definition, href }, settingIndex) => (
-                                    <DefinitionList.Item
-                                        className={classNames({
-                                            'border-b-0': settingIndex === settings[pluginKey].length - 1,
-                                        })}
-                                        key={settingIndex}
-                                        term={term}
-                                    >
-                                        {href == null && definition}
-                                        {href != null && (
-                                            <Link href={href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                                {definition}
-                                            </Link>
-                                        )}
-                                    </DefinitionList.Item>
-                                ))}
-                                {Object.keys(settings).length > 1 && pluginIndex < Object.keys(settings).length - 1 && (
+                        {settings.map((settingsGroup, groupIndex) => (
+                            <div key={groupIndex} className="flex flex-col gap-y-1">
+                                <DefinitionListContainer>
+                                    {settingsGroup.map(({ term, definition, href }, settingIndex) => (
+                                        <DefinitionList.Item key={settingIndex} term={term}>
+                                            {href == null && definition}
+                                            {href != null && (
+                                                <Link href={href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                                                    {definition}
+                                                </Link>
+                                            )}
+                                        </DefinitionList.Item>
+                                    ))}
+                                </DefinitionListContainer>
+                                {settings.length > 1 && groupIndex < settings.length - 1 && (
                                     <div className="my-2 flex items-center">
                                         <div className="grow border-t border-neutral-100" />
                                         <span className="mx-2 text-neutral-500">or</span>
