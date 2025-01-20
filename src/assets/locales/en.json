@@ -819,6 +819,12 @@
         "sppGovernanceSettings": {
           "numberOfStages": "Number of stages"
         },
+        "sppProposalList": {
+          "entity": "Proposals"
+        },
+        "sppProposalListItem": {
+          "stage": "Stage {{stageIndex}}"
+        },
         "sppStageStatus": {
           "button": {
             "advance": "Advance proposal",
@@ -923,11 +929,6 @@
         },
         "tokenProposalList": {
           "entity": "Proposals"
-        },
-        "tokenProposalListItem": {
-          "abstain": "Abstain",
-          "no": "No",
-          "yes": "Yes"
         },
         "tokenProposalVotingSummary": {
           "approved": "approved",

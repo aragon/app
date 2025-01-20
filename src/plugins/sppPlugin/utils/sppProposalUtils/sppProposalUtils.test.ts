@@ -10,6 +10,7 @@ describe('SppProposalUtils', () => {
     const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
     const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
     const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
+    const canStageAdvanceSpy = jest.spyOn(sppStageUtils, 'canStageAdvance');
 
     afterEach(() => {
         getStageStatusSpy.mockReset();
@@ -87,7 +88,6 @@ describe('SppProposalUtils', () => {
                 settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
             });
-
             timeUtils.setTime(now);
             getStageEndDateSpy.mockReturnValue(endDate);
 
@@ -127,6 +127,23 @@ describe('SppProposalUtils', () => {
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACCEPTED);
         });
 
+        it('returns advanceable for a non-final stage which reaches approval within the advance window', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
+            const stages = [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })];
+            const settings = generateSppPluginSettings({ stages });
+            const proposal = generateSppProposal({
+                settings,
+                startDate,
+            });
+
+            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
+            timeUtils.setTime(now);
+            canStageAdvanceSpy.mockReturnValue(true);
+
+            expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ADVANCEABLE);
+        });
+
         it('returns expired is approval is reached, proposal has actions and has ended', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
@@ -140,7 +157,6 @@ describe('SppProposalUtils', () => {
             getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
             timeUtils.setTime(now);
             getStageEndDateSpy.mockReturnValue(endDate);
-
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.EXPIRED);
         });
     });

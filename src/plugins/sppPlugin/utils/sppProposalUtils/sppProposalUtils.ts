@@ -14,6 +14,8 @@ class SppProposalUtils {
         const endDate = lastStage ? sppStageUtils.getStageEndDate(proposal, lastStage) : undefined;
         const endExecutionDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
 
+        const currentStage = sppProposalUtils.getCurrentStage(proposal);
+
         const approvalReached = this.areAllStagesAccepted(proposal);
         const isSignalingProposal = proposal.actions.length === 0;
 
@@ -45,7 +47,9 @@ class SppProposalUtils {
         }
 
         if (endDate == null || now < endDate) {
-            return ProposalStatus.ACTIVE;
+            const canAdvance = sppStageUtils.canStageAdvance(proposal, currentStage);
+
+            return canAdvance ? ProposalStatus.ADVANCEABLE : ProposalStatus.ACTIVE;
         }
 
         return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.EXPIRED;
