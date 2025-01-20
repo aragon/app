@@ -1,1 +1,0 @@
-export { VoteListFallback } from './voteListFallback';

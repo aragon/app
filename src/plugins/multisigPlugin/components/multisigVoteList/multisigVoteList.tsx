@@ -1,7 +1,7 @@
 import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
+import { VoteListItem } from '@/modules/governance/components/voteList/voteListItem';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
-import { voteListUtils } from '@/modules/governance/utils/voteListUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     DataListContainer,
@@ -46,14 +46,7 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
             >
                 {voteList?.map((vote) =>
                     initialParams.queryParams.includeInfo === true ? (
-                        <VoteProposalDataListItem.Structure
-                            key={vote.transactionHash}
-                            href={voteListUtils.getProcessedProposalLink(vote, daoId)}
-                            voteIndicator="approve"
-                            proposalId={voteListUtils.getProcessedProposalId(vote)}
-                            proposalTitle={voteListUtils.getProcessedProposalTitle(vote)}
-                            date={vote.blockTimestamp * 1000}
-                        />
+                        <VoteListItem key={vote.transactionHash} vote={vote} daoId={daoId} />
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
