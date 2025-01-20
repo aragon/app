@@ -1,9 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import type {
-    IPermissionCheckGuardParams,
-    IPermissionCheckGuardResult,
-    IPermissionCheckGuardSetting,
-} from '@/modules/governance/types';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
@@ -25,7 +21,7 @@ export const useSppPermissionCheckProposalCreation = (
     // Find the sub plugins that are part of the DAO and filter out any potential undefined values
     const subPlugins = sppPlugins
         .map((sppPlugin) => daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(meta.address, sppPlugin.address)))
-        .filter((p) => p != undefined);
+        .filter((plugin) => plugin != undefined);
 
     const pluginProposalCreationGuardResults = subPlugins.map(({ meta: plugin }) =>
         pluginRegistryUtils.getSlotFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
@@ -44,14 +40,8 @@ export const useSppPermissionCheckProposalCreation = (
     const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
     // Individual settings are returned as a nested array, so we need to flatten them
-    const settings = pluginProposalCreationGuardResults.reduce<IPermissionCheckGuardSetting[][]>(
-        (groupedSettings, pluginSettings) => {
-            if (pluginSettings?.settings) {
-                groupedSettings.push(pluginSettings.settings.flat());
-            }
-            return groupedSettings;
-        },
-        [],
+    const settings = pluginProposalCreationGuardResults.flatMap((result) =>
+        result?.isRestricted ? result.settings : [],
     );
 
     return {

@@ -72,11 +72,12 @@ export const useTokenPermissionCheckProposalCreation = (
         },
     ];
 
+    const isRestricted = BigInt(minProposerVotingPower) > 0;
+
     return {
         hasPermission,
-        // Settings as a nested array to support either or conditions in the dialog
         settings: [settings],
         isLoading,
-        isRestricted: Number(minProposerVotingPower) > 0,
+        isRestricted,
     };
 };

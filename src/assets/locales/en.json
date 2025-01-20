@@ -551,6 +551,7 @@
       "permissionCheckDialog": {
         "action": "OK",
         "loading": "Checking permissions",
+        "or": "or",
         "proposal": {
           "description": "You don’t meet the proposal creation requirements.",
           "title": "Not eligible to create a proposal"
