@@ -16,6 +16,7 @@ import { useState } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 import { AdvanceStageDialog } from '../advanceStageDialog';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 
 export interface ISppStageStatusProps {
     /**
@@ -38,7 +39,17 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const [isAdvanceDialogOpen, setIsAdvanceDialogOpen] = useState(false);
 
-    const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
+    const handleAdvanceStage = () => {
+        if (isConnected) {
+            handleAdvanceStage();
+        } else {
+            promptWalletConnection();
+        }
+    };
+
+    const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
+        onSuccess: handleAdvanceStage,
+    });
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
