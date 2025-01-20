@@ -22,7 +22,7 @@ export const useSppPermissionCheckProposalCreation = (
 
     const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
 
-    // TODO: addressUtils are address equal
+    // Find the sub-plugins that are part of the DAO plugins, filter out any potential undefined values
     const subPlugins = sppPlugins
         .map((sppPlugin) => daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(meta.address, sppPlugin.address)))
         .filter((p) => p != undefined);
@@ -43,13 +43,16 @@ export const useSppPermissionCheckProposalCreation = (
 
     const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
-    // Flatten each plugin's settings to extract the nested array
-    const settings = pluginProposalCreationGuardResults.reduce<IPermissionCheckGuardSetting[][]>((acc, result) => {
-        if (result?.settings) {
-            acc.push(result.settings.flat());
-        }
-        return acc;
-    }, []);
+    // Individual settings are returned as a nested array, so we need to flatten them
+    const settings = pluginProposalCreationGuardResults.reduce<IPermissionCheckGuardSetting[][]>(
+        (groupedSettings, pluginSettings) => {
+            if (pluginSettings?.settings) {
+                groupedSettings.push(pluginSettings.settings.flat());
+            }
+            return groupedSettings;
+        },
+        [],
+    );
 
     return {
         hasPermission: permissionGranted,
