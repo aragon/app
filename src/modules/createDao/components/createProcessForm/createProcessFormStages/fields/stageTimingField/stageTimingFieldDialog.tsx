@@ -51,10 +51,12 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
     });
 
     const handleToggleExpiration = (checked: boolean) => {
-        setDisplayExpiration(checked);
         // The timeout here is needed because the advanced-date component needs to be rendered and the form field to be
         // registered before we can set its value on the form.
-        setTimeout(() => setValue('stageExpiration', checked ? defaultExpiration : undefined), 0);
+        setTimeout(() => {
+            setValue('stageExpiration', checked ? defaultExpiration : undefined);
+            setDisplayExpiration(checked);
+        }, 0);
     };
 
     const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
