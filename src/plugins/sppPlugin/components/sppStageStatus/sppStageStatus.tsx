@@ -49,7 +49,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         id: execution?.transactionHash,
     });
 
-    const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
+    const isLastStage = sppStageUtils.isLastStage(proposal, stage);
     const isSignalingProposal = proposal.actions.length === 0;
 
     // Only display the advance button if stage has been accepted or non veto stage is still active but approval has already

@@ -39,25 +39,6 @@ class TokenProposalUtils {
         return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.REJECTED;
     };
 
-    getWinningOption = (proposal: ITokenProposal): VoteOption | undefined => {
-        const { votesByOption } = proposal.metrics;
-
-        if (!votesByOption.length) {
-            return undefined;
-        }
-
-        const abstainVotes = tokenProposalUtils.getVoteByType(votesByOption, VoteOption.ABSTAIN);
-        const noVotes = tokenProposalUtils.getVoteByType(votesByOption, VoteOption.NO);
-
-        const winningOption = tokenProposalUtils.isSupportReached(proposal)
-            ? VoteOption.YES
-            : abstainVotes > noVotes
-              ? VoteOption.ABSTAIN
-              : VoteOption.NO;
-
-        return winningOption;
-    };
-
     isApprovalReached = (proposal: ITokenProposal, early?: boolean): boolean => {
         const isMinParticipationReached = this.isMinParticipationReached(proposal);
         const isSupportReached = this.isSupportReached(proposal, early);

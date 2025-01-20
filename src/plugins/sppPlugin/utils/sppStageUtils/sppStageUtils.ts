@@ -6,7 +6,7 @@ import { type ISppProposal, type ISppStage, type ISppSubProposal } from '../../t
 
 class SppStageUtils {
     getStageStatus = (proposal: ISppProposal, stage: ISppStage): ProposalVotingStatus => {
-        const { stageIndex: currentStageIndex, actions, settings } = proposal;
+        const { stageIndex: currentStageIndex } = proposal;
         const { stageIndex } = stage;
 
         const now = DateTime.now();
@@ -18,14 +18,13 @@ class SppStageUtils {
 
         const approvalReached = this.isApprovalReached(proposal, stage);
 
-        // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
-        const isSignalingProposal = actions.length === 0 && stageIndex === settings.stages.length - 1;
+        const isSignalingProposal = this.isSignalingProposal(proposal, stage);
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalVotingStatus.VETOED;
         }
 
-        if (this.isStagedUnreached(proposal, stageIndex)) {
+        if (this.isStageUnreached(proposal, stageIndex)) {
             return ProposalVotingStatus.UNREACHED;
         }
 
@@ -50,7 +49,29 @@ class SppStageUtils {
         return isExpired ? ProposalVotingStatus.EXPIRED : ProposalVotingStatus.ACCEPTED;
     };
 
-    isStagedUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
+    canStageAdvance = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const now = DateTime.now();
+        const minAdvanceDate = this.getStageMinAdvance(proposal, stage);
+        const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
+        const approvalReached = this.isApprovalReached(proposal, stage);
+        const isSignalingProposal = this.isSignalingProposal(proposal, stage);
+
+        return (
+            approvalReached &&
+            minAdvanceDate != null &&
+            maxAdvanceDate != null &&
+            now > minAdvanceDate &&
+            now < maxAdvanceDate &&
+            !isSignalingProposal
+        );
+    };
+
+    // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
+    isSignalingProposal = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        return proposal.actions.length === 0 && this.isLastStage(proposal, stage);
+    };
+
+    isStageUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
         return proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
             const status = this.getStageStatus(proposal, stage);
             const { VETOED, REJECTED, EXPIRED } = ProposalVotingStatus;
@@ -129,6 +150,10 @@ class SppStageUtils {
 
     isVeto = (stage: ISppStage): boolean => {
         return stage.vetoThreshold > 0;
+    };
+
+    isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        return proposal.settings.stages.length - 1 === stage.stageIndex;
     };
 }
 
