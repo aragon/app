@@ -47,9 +47,9 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
         slotId: slotId,
         pluginId: plugin.subdomain,
         params: { plugin, ...otherParams },
-    }) ?? { hasPermission: true, isLoading: false, isRestricted: false, settings: [] };
+    }) ?? { hasPermission: true, isLoading: false, settings: [] };
 
-    const { settings, isLoading, hasPermission } = checkPermissions;
+    const { hasPermission, isLoading, settings } = checkPermissions;
 
     const handleDialogClose = useCallback(() => {
         onError?.();
