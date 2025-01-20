@@ -23,22 +23,22 @@ export const useAdminPermissionCheckProposalCreation = (
 
     const pluginName = daoUtils.getPluginName(plugin);
 
-    if (hasPermission) {
-        return { hasPermission: true };
-    }
+    const settings = [
+        {
+            term: t('app.plugins.admin.adminPermissionCheckProposalCreation.pluginLabelName'),
+            definition: pluginName,
+        },
+        {
+            term: t('app.plugins.admin.adminPermissionCheckProposalCreation.function'),
+            definition: t('app.plugins.admin.adminPermissionCheckProposalCreation.requirement'),
+        },
+    ];
 
     return {
-        hasPermission: false,
-        settings: [
-            {
-                term: t('app.plugins.admin.adminPermissionCheckProposalCreation.pluginLabelName'),
-                definition: pluginName,
-            },
-            {
-                term: t('app.plugins.admin.adminPermissionCheckProposalCreation.function'),
-                definition: t('app.plugins.admin.adminPermissionCheckProposalCreation.requirement'),
-            },
-        ],
+        hasPermission: !!hasPermission,
+        // Settings as a nested array to support either or conditions in the dialog
+        settings: [settings],
         isLoading,
+        isRestricted: true,
     };
 };
