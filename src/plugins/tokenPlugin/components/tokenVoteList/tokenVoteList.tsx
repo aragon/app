@@ -1,6 +1,7 @@
 import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
-import { VoteListItem } from '@/modules/governance/components/voteList/voteListItem';
+
+import { VoteProposalListItem } from '@/modules/governance/components/voteList/voteListItem';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -54,7 +55,12 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
             >
                 {voteList?.map((vote) =>
                     initialParams.queryParams.includeInfo === true ? (
-                        <VoteListItem key={vote.transactionHash} vote={vote} daoId={daoId} />
+                        <VoteProposalListItem
+                            key={vote.transactionHash}
+                            vote={vote}
+                            daoId={daoId}
+                            voteIndicator={voteOptionToIndicator[vote.voteOption]}
+                        />
                     ) : (
                         <VoteDataListItem.Structure
                             key={vote.transactionHash}
