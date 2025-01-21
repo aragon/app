@@ -1,7 +1,6 @@
 import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
 import type { IVoteListProps } from '@/modules/governance/components/voteList';
-
-import { VoteProposalListItem } from '@/modules/governance/components/voteList/voteListItem';
+import { VoteProposalListItem } from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {

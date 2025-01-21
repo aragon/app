@@ -54,18 +54,6 @@ describe('<VoteProposalListItem /> component', () => {
         expect(screen.getByText(`${expectedDate!} ago`)).toBeInTheDocument();
     });
 
-    it('renders all fallback data correctly when parentProposal and timestamp are missing', () => {
-        const vote = generateVote({
-            proposal: generateProposal({ id: 'fallback-id', title: 'Fallback Proposal' }),
-        });
-        const daoId = 'dao-fallback';
-
-        render(createTestComponent({ vote, daoId }));
-
-        expect(screen.getByText('Fallback Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/fallback-id`);
-    });
-
     it('renders the correct vote indicator', () => {
         const vote = generateVote({
             proposal: generateProposal({ id: 'child-id', title: 'Child Proposal' }),

@@ -1,12 +1,13 @@
 import { type IVote } from '@/modules/governance/api/governanceService';
 import { VoteProposalDataListItem, type VoteIndicator } from '@aragon/gov-ui-kit';
+
 export interface IVoteProposalListItemProps {
     /**
      * Relevant vote data.
      */
     vote: IVote;
     /**
-     * voteIndicator
+     * Vote option.
      */
     voteIndicator: VoteIndicator;
     /**
@@ -18,11 +19,7 @@ export interface IVoteProposalListItemProps {
 export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props) => {
     const { vote, daoId, voteIndicator } = props;
 
-    const getProcessedProposal = (vote: IVote) => {
-        return vote.parentProposal ?? vote.proposal!;
-    };
-
-    const proposal = getProcessedProposal(vote);
+    const proposal = vote.parentProposal ?? vote.proposal!;
 
     return (
         <VoteProposalDataListItem.Structure

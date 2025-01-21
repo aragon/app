@@ -1,2 +1,2 @@
 export { VoteList, type IVoteListProps } from './voteList';
-export { VoteListFallback } from './voteListFallback';
+export { VoteProposalListItem, type IVoteProposalListItemProps } from './voteProposalListItem';
