@@ -1,3 +1,4 @@
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -14,7 +15,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 
 export interface IProposalExecutionStatusProps {
     /**
