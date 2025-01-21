@@ -79,31 +79,32 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                         <StateSkeletonBar width="65%" size="lg" />
                     </div>
                 )}
-                {settings.map((settingsGroup, groupIndex) => (
-                    <div key={groupIndex} className="flex flex-col gap-y-1">
-                        <DefinitionList.Container>
-                            {settingsGroup.map(({ term, definition, href }, settingIndex) => (
-                                <DefinitionList.Item key={settingIndex} term={term}>
-                                    {href == null && definition}
-                                    {href != null && (
-                                        <Link href={href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                            {definition}
-                                        </Link>
-                                    )}
-                                </DefinitionList.Item>
-                            ))}
-                        </DefinitionList.Container>
-                        {hasSettingsGroups && groupIndex < settings.length - 1 && (
-                            <div className="my-2 flex items-center">
-                                <div className="grow border-t border-neutral-100" />
-                                <span className="mx-2 text-neutral-500">
-                                    {t('app.governance.permissionCheckDialog.or')}
-                                </span>
-                                <div className="grow border-t border-neutral-100" />
-                            </div>
-                        )}
-                    </div>
-                ))}
+                {!isLoading &&
+                    settings.map((settingsGroup, groupIndex) => (
+                        <div key={groupIndex} className="flex flex-col gap-y-1">
+                            <DefinitionList.Container>
+                                {settingsGroup.map(({ term, definition, href }, settingIndex) => (
+                                    <DefinitionList.Item key={settingIndex} term={term}>
+                                        {href == null && definition}
+                                        {href != null && (
+                                            <Link href={href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                                                {definition}
+                                            </Link>
+                                        )}
+                                    </DefinitionList.Item>
+                                ))}
+                            </DefinitionList.Container>
+                            {hasSettingsGroups && groupIndex < settings.length - 1 && (
+                                <div className="my-2 flex items-center">
+                                    <div className="grow border-t border-neutral-100" />
+                                    <span className="mx-2 text-neutral-500">
+                                        {t('app.governance.permissionCheckDialog.or')}
+                                    </span>
+                                    <div className="grow border-t border-neutral-100" />
+                                </div>
+                            )}
+                        </div>
+                    ))}
             </Dialog.Content>
             <Dialog.Footer secondaryAction={footerAction} />
         </>
