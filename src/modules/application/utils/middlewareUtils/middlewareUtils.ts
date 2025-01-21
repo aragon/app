@@ -1,25 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 class MiddlewareUtils {
-    /*
-     * (From https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy)
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/(static|image) (static and image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    config = {
-        matcher: [
-            {
-                source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
-                missing: [
-                    { type: 'header', key: 'next-router-prefetch' },
-                    { type: 'header', key: 'purpose', value: 'prefetch' },
-                ],
-            },
-        ],
-    };
-
     middleware = (request: NextRequest): NextResponse => {
         const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
         const cspHeader = this.getContentSecurityPolicies(nonce, process.env.NEXT_PUBLIC_ENV!).join('; ');
