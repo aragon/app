@@ -17,7 +17,7 @@ class MiddlewareUtils {
 
     private getContentSecurityPolicies = (nonce: string, env: string): string[] => [
         "default-src 'self'",
-        `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: ${env === 'production' ? '' : "'unsafe-eval'"}`,
+        `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: ${env !== 'local' ? '' : "'unsafe-eval'"}`,
         `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
         'img-src * blob: data:',
         'connect-src *',
