@@ -14,6 +14,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import type { IProposal } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 
 export interface IProposalExecutionStatusProps {
     /**
@@ -53,6 +54,18 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         open(GovernanceDialog.EXECUTE, { params });
     };
 
+    const handleExecuteButtonClicked = () => {
+        if (isConnected) {
+            openTransactionDialog();
+        } else {
+            promptWalletConnection();
+        }
+    };
+
+    const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
+        onSuccess: openTransactionDialog,
+    });
+
     const buttonConfigs: Partial<Record<ProposalStatus, IButtonProps>> = {
         [ProposalStatus.EXECUTED]: {
             children: t('app.governance.proposalExecutionStatus.buttons.executed'),
@@ -64,7 +77,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         [ProposalStatus.EXECUTABLE]: {
             children: t('app.governance.proposalExecutionStatus.buttons.execute'),
             variant: 'primary',
-            onClick: openTransactionDialog,
+            onClick: handleExecuteButtonClicked,
         },
     };
 
