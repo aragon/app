@@ -41,7 +41,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     invariant(address != null, 'PublishDaoDialog: user must be connected.');
 
     const { values } = location.params;
-    const { name, description, network } = values;
+    const { name, description, network, avatar } = values;
     const { name: networkName } = networkDefinitions[network];
 
     const { t } = useTranslations();
@@ -144,7 +144,12 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             network={network}
         >
-            <DaoDataListItem.Structure name={name} description={description} network={networkName} />
+            <DaoDataListItem.Structure
+                name={name}
+                logoSrc={avatar?.url}
+                description={description}
+                network={networkName}
+            />
         </TransactionDialog>
     );
 };
