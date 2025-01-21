@@ -41,7 +41,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const handleAdvanceStage = () => {
         if (isConnected) {
-            handleAdvanceStage();
+            setIsAdvanceDialogOpen(true);
         } else {
             promptWalletConnection();
         }
