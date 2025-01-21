@@ -35,7 +35,7 @@ export const useSppPermissionCheckProposalCreation = (
     // - At least one plugin is restricted and hasPermission = true.
     const permissionGranted =
         pluginProposalCreationGuardResults.every((result) => !result?.isRestricted) ||
-        pluginProposalCreationGuardResults.some((result) => result?.isRestricted && result.hasPermission);
+        pluginProposalCreationGuardResults.some((result) => result?.hasPermission);
 
     const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
