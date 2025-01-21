@@ -8,6 +8,7 @@ import { SppVotingTerminal } from './components/sppVotingTerminal';
 import { plugin } from './constants/plugin';
 import { useSppActions } from './hooks/useSppActions';
 import { useSppGovernanceSettings } from './hooks/useSppGovernanceSettings';
+import { useSppPermissionCheckProposalCreation } from './hooks/useSppPermissionCheckProposalCreation';
 import { sppProposalUtils } from './utils/sppProposalUtils';
 import { sppTransactionUtils } from './utils/sppTransactionUtils';
 
@@ -46,6 +47,11 @@ export const initialiseSppPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
             pluginId: plugin.id,
             component: SppProposalList,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            pluginId: plugin.id,
+            function: useSppPermissionCheckProposalCreation,
         })
 
         // Settings module slots

@@ -27,22 +27,21 @@ export const useMultisigPermissionCheckProposalCreation = (
 
     const hasPermission = memberExists === true || !onlyListed;
 
-    if (hasPermission) {
-        return { hasPermission: true };
-    }
+    const settings = [
+        {
+            term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
+            definition: pluginName,
+        },
+        {
+            term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
+            definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
+        },
+    ];
 
     return {
-        hasPermission: false,
-        settings: [
-            {
-                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
-                definition: pluginName,
-            },
-            {
-                term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
-                definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
-            },
-        ],
+        hasPermission,
+        settings: [settings],
         isLoading,
+        isRestricted: onlyListed,
     };
 };
