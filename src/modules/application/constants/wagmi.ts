@@ -35,6 +35,7 @@ createAppKit({
     features: {
         email: false,
         socials: false,
+        analytics: true,
     },
     themeVariables: {
         '--w3m-font-family': 'var(--guk-font-family)',
