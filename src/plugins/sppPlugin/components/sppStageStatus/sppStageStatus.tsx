@@ -1,3 +1,4 @@
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
@@ -38,7 +39,9 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const [isAdvanceDialogOpen, setIsAdvanceDialogOpen] = useState(false);
 
-    const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
+    const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
+        onSuccess: () => setIsAdvanceDialogOpen(true),
+    });
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
@@ -82,7 +85,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
           }
         : {
               label: 'advance',
-              onClick: handleAdvanceStage,
+              onClick: () => (isConnected ? setIsAdvanceDialogOpen(true) : promptWalletConnection()),
               variant: 'primary' as const,
               disabled: displayMinAdvanceTime,
           };

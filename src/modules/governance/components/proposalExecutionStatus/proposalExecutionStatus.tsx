@@ -1,3 +1,4 @@
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -53,6 +54,10 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         open(GovernanceDialog.EXECUTE, { params });
     };
 
+    const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
+        onSuccess: openTransactionDialog,
+    });
+
     const buttonConfigs: Partial<Record<ProposalStatus, IButtonProps>> = {
         [ProposalStatus.EXECUTED]: {
             children: t('app.governance.proposalExecutionStatus.buttons.executed'),
@@ -64,7 +69,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         [ProposalStatus.EXECUTABLE]: {
             children: t('app.governance.proposalExecutionStatus.buttons.execute'),
             variant: 'primary',
-            onClick: openTransactionDialog,
+            onClick: () => (isConnected ? openTransactionDialog() : promptWalletConnection()),
         },
     };
 
