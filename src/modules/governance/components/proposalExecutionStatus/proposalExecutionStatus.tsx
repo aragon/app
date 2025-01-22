@@ -54,14 +54,6 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         open(GovernanceDialog.EXECUTE, { params });
     };
 
-    const handleExecuteButtonClicked = () => {
-        if (isConnected) {
-            openTransactionDialog();
-        } else {
-            promptWalletConnection();
-        }
-    };
-
     const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
         onSuccess: openTransactionDialog,
     });
@@ -77,7 +69,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
         [ProposalStatus.EXECUTABLE]: {
             children: t('app.governance.proposalExecutionStatus.buttons.execute'),
             variant: 'primary',
-            onClick: handleExecuteButtonClicked,
+            onClick: () => (isConnected ? openTransactionDialog() : promptWalletConnection()),
         },
     };
 

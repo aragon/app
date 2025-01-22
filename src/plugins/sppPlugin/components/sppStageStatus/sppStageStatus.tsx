@@ -39,14 +39,6 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const [isAdvanceDialogOpen, setIsAdvanceDialogOpen] = useState(false);
 
-    const handleAdvanceStage = () => {
-        if (isConnected) {
-            setIsAdvanceDialogOpen(true);
-        } else {
-            promptWalletConnection();
-        }
-    };
-
     const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
         onSuccess: () => setIsAdvanceDialogOpen(true),
     });
@@ -93,7 +85,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
           }
         : {
               label: 'advance',
-              onClick: handleAdvanceStage,
+              onClick: () => (isConnected ? setIsAdvanceDialogOpen(true) : promptWalletConnection()),
               variant: 'primary' as const,
               disabled: displayMinAdvanceTime,
           };
