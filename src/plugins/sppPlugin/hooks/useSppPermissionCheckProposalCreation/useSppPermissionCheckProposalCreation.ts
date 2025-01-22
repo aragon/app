@@ -32,10 +32,10 @@ export const useSppPermissionCheckProposalCreation = (
 
     // Allow proposal creation if either:
     // - All plugins are unrestricted.
-    // - At least one plugin is restricted and hasPermission = true.
+    // - User has permission on at least one restricted plugin.
     const permissionGranted =
         pluginProposalCreationGuardResults.every((result) => !result?.isRestricted) ||
-        pluginProposalCreationGuardResults.some((result) => result?.hasPermission);
+        pluginProposalCreationGuardResults.some((result) => result?.isRestricted && result.hasPermission);
 
     const isLoading = pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
