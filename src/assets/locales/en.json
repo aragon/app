@@ -75,24 +75,29 @@
       }
     },
     "createDao": {
-      "createDaoForm": {
-        "debug": {
-          "adminPluginRepo": {
-            "helpText": "Address of the Admin Plugin contract",
-            "label": "Admin Plugin",
-            "placeholder": "Insert address"
-          },
-          "factoryAddress": {
-            "helpText": "Address of the DAO Factory contract",
-            "label": "DAO Factory",
-            "placeholder": "Insert address"
-          },
-          "network": {
-            "helpText": "The chain you choose is where your tokens and assets are stored. ",
-            "label": "Select blockchain"
-          }
+      "createDaoDetailsDialog": {
+        "actionLabel": "Get started",
+        "description": "Start simple and learn as you go. You can always evolve your DAO in the future.",
+        "steps": {
+          "describe": "Describe your DAO",
+          "network": "Select blockchain"
         },
+        "title": "Create new DAO"
+      },
+      "createDaoForm": {
         "metadata": {
+          "avatar": {
+            "error": {
+              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, GIF).",
+              "file-too-large": "The file size exceeds the maximum allowed limit of 3 MB.",
+              "square-only": "The image must be square. Upload a square image.",
+              "too-many-files": "Only one file can be uploaded at a time",
+              "unknown-file-error": "Unable to upload image",
+              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
+            },
+            "helpText": "JPG, PNG or GIF of no more than 3MB and less than 1024x1024px.",
+            "label": "Logo"
+          },
           "description": {
             "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
             "label": "Description",
@@ -106,6 +111,11 @@
           "resources": {
             "helpText": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers."
           }
+        },
+        "network": {
+          "helpText": "The chain you choose is where your tokens and assets are stored.",
+          "label": "Select blockchain",
+          "testnetLabel": "Testnet"
         }
       },
       "createDaoPage": {
@@ -120,6 +130,11 @@
             "description": "Name and define your DAO so members know they've come to the right place. This information will be displayed at the top of your dashboard and can be changed with a vote.",
             "name": "Describe your DAO",
             "title": "Describe your DAO"
+          },
+          "NETWORK": {
+            "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later.",
+            "name": "Select blockchain",
+            "title": "Select blockchain"
           }
         },
         "submitLabel": "Publish DAO"
@@ -196,7 +211,7 @@
             "address": "Contract address",
             "blockchain": "Blockchain",
             "ens": "ENS name",
-            "launched": "Launched at",
+            "launched": "Launched",
             "title": "Details"
           },
           "links": "Links"
@@ -336,7 +351,8 @@
         "actions": {
           "addAction": {
             "custom": "Custom",
-            "default": "Action"
+            "default": "Action",
+            "walletConnect": "Connect"
           },
           "editAction": {
             "down": "Move down",
@@ -535,6 +551,7 @@
       "permissionCheckDialog": {
         "action": "OK",
         "loading": "Checking permissions",
+        "or": "or",
         "proposal": {
           "description": "You don’t meet the proposal creation requirements.",
           "title": "Not eligible to create a proposal"
@@ -620,6 +637,32 @@
         "error": {
           "description": "There was an error loading the votes. Please try again later.",
           "title": "Error loading votes"
+        }
+      },
+      "walletConnectActionDialog": {
+        "connect": {
+          "action": {
+            "cancel": "Cancel",
+            "connect": "Connect dApp",
+            "retry": "Retry"
+          },
+          "description": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
+          "error": "Error while connecting dApp, please try again.",
+          "title": "Connect new dApp",
+          "uriField": {
+            "placeholder": "wc: …"
+          }
+        },
+        "listener": {
+          "action": {
+            "addActions": "Add {{count}} actions",
+            "cancel": "Cancel",
+            "open": "Open dApp"
+          },
+          "helpLink": "Having issues?",
+          "info_1": "You can now interact with ",
+          "info_2": " on behalf of your DAO. Instead of going to your wallet, transactions will be made available to add as actions to the proposal.",
+          "progress": "Listening to dApp"
         }
       }
     },
@@ -777,6 +820,12 @@
         "sppGovernanceSettings": {
           "numberOfStages": "Number of stages"
         },
+        "sppProposalList": {
+          "entity": "Proposals"
+        },
+        "sppProposalListItem": {
+          "stage": "Stage {{stageIndex}}"
+        },
         "sppStageStatus": {
           "button": {
             "advance": "Advance proposal",
@@ -882,11 +931,6 @@
         "tokenProposalList": {
           "entity": "Proposals"
         },
-        "tokenProposalListItem": {
-          "abstain": "Abstain",
-          "no": "No",
-          "yes": "Yes"
-        },
         "tokenProposalVotingSummary": {
           "approved": "approved",
           "notApproved": "did not approve",
@@ -975,7 +1019,7 @@
     "settings": {
       "daoPluginInfo": {
         "bodyName": "Body name",
-        "launchedAt": "Launched at",
+        "launchedAt": "Launched",
         "plugin": "Plugin",
         "pluginVersionInfo": "{{name}} v{{release}}.{{build}}",
         "processKey": "Process key",
@@ -1137,6 +1181,13 @@
           },
           "next": "Next"
         }
+      },
+      "wizardDetailsDialog": {
+        "footer": {
+          "cancel": "Cancel"
+        },
+        "infoLabel": "Learn more",
+        "step": "Step {{number}}"
       }
     }
   }

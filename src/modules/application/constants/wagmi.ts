@@ -1,29 +1,19 @@
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { walletConnectDefinitions } from '@/shared/constants/walletConnectDefinitions';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { createAppKit } from '@reown/appkit/react';
 import { type Chain, createClient } from 'viem';
 import { cookieStorage, createStorage, http } from 'wagmi';
-import { arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
-
-// Metadata used during wallet connection process.
-const appMetadata = {
-    name: 'Aragon App',
-    description: 'Aragon App',
-    url: 'https://dev-app-next.vercel.app/',
-    icons: ['https://dev-app-next.vercel.app/icon.svg'],
-};
 
 // Supported chains by the Application.
-const chains: [Chain, ...Chain[]] = [arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet];
-
-// WalletConnect project ID.
-const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!;
+const chains = Object.values(networkDefinitions).map((network) => network.wagmiChain) as [Chain, ...Chain[]];
 
 // Wagmi configuration for the Application.
 const wagmiAdapter = new WagmiAdapter({
     networks: chains,
     ssr: true,
     client: ({ chain }) => createClient({ chain, transport: http(`/api/rpc/${chain.id.toString()}`) }),
-    projectId,
+    projectId: walletConnectDefinitions.projectId,
     storage: createStorage({ storage: cookieStorage }),
 });
 
@@ -32,9 +22,9 @@ export const wagmiConfig = wagmiAdapter.wagmiConfig;
 // Initialize web3-modal for wallet connection.
 createAppKit({
     adapters: [wagmiAdapter],
-    metadata: appMetadata,
+    metadata: walletConnectDefinitions.metadata,
     networks: chains,
-    projectId,
+    projectId: walletConnectDefinitions.projectId,
     allowUnsupportedChain: true,
     themeMode: 'light',
     featuredWalletIds: [
@@ -45,6 +35,7 @@ createAppKit({
     features: {
         email: false,
         socials: false,
+        analytics: true,
     },
     themeVariables: {
         '--w3m-font-family': 'var(--guk-font-family)',

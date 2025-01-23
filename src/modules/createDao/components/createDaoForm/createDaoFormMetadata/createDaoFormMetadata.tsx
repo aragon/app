@@ -1,7 +1,7 @@
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { InputText, TextArea } from '@aragon/gov-ui-kit';
+import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormMetadataProps {
@@ -13,6 +13,8 @@ export interface ICreateDaoFormMetadataProps {
 
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
+const maxAvatarFileSize = 3 * 1024 * 1024; // 3 MB in bytes
+const maxAvatarDimension = 1024;
 
 export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
     const { fieldPrefix } = props;
@@ -25,6 +27,15 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         rules: { required: true, maxLength: nameMaxLength },
         trimOnBlur: true,
         defaultValue: '',
+    });
+
+    const { value: avatarValue, ...avatarField } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
+        label: t('app.createDao.createDaoForm.metadata.avatar.label'),
+        fieldPrefix,
+        rules: {
+            validate: (value) =>
+                value?.error ? `app.createDao.createDaoForm.metadata.avatar.error.${value.error}` : undefined,
+        },
     });
 
     const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
@@ -42,6 +53,14 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 placeholder={t('app.createDao.createDaoForm.metadata.name.placeholder')}
                 maxLength={nameMaxLength}
                 {...nameField}
+            />
+            <InputFileAvatar
+                {...avatarField}
+                value={avatarValue}
+                helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
+                maxDimension={maxAvatarDimension}
+                maxFileSize={maxAvatarFileSize}
+                isOptional={true}
             />
             <TextArea
                 helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}

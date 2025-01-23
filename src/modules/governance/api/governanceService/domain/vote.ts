@@ -22,4 +22,8 @@ export interface IVote {
      * Extra information about the proposal if includeInfo is true on the query.
      */
     proposal?: IProposal;
+    /**
+     * Extra information about the parent proposal of the vote if includeInfo is true on the query.
+     */
+    parentProposal?: Pick<IProposal, 'id' | 'title'>;
 }

@@ -1,3 +1,4 @@
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
@@ -38,7 +39,9 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const [isAdvanceDialogOpen, setIsAdvanceDialogOpen] = useState(false);
 
-    const handleAdvanceStage = () => setIsAdvanceDialogOpen(true);
+    const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
+        onSuccess: () => setIsAdvanceDialogOpen(true),
+    });
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
@@ -49,7 +52,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         id: execution?.transactionHash,
     });
 
-    const isLastStage = stage.stageIndex === proposal.settings.stages.length - 1;
+    const isLastStage = sppStageUtils.isLastStage(proposal, stage);
     const isSignalingProposal = proposal.actions.length === 0;
 
     // Only display the advance button if stage has been accepted or non veto stage is still active but approval has already
@@ -82,7 +85,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
           }
         : {
               label: 'advance',
-              onClick: handleAdvanceStage,
+              onClick: () => (isConnected ? setIsAdvanceDialogOpen(true) : promptWalletConnection()),
               variant: 'primary' as const,
               disabled: displayMinAdvanceTime,
           };

@@ -9,6 +9,7 @@ import {
     type IProposalActionWithdrawToken,
 } from '@/modules/governance/api/governanceService';
 import type { IDao, IResource } from '@/shared/api/daoService';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     ProposalActionType as GukProposalActionType,
@@ -82,7 +83,13 @@ class ProposalActionUtils {
         name: metadata.name ?? '',
         description: metadata.description ?? '',
         links: this.normalizeActionMetadataLinks(metadata.links),
+        avatar: this.normalizeActionMetadataAvatar(metadata),
     });
+
+    normalizeActionMetadataAvatar = (
+        metadata: IProposalActionUpdateMetadataObject | IProposalActionUpdatePluginMetadataObject,
+    ): string | undefined =>
+        'avatar' in metadata && metadata.avatar != null ? ipfsUtils.cidToSrc(metadata.avatar) : undefined;
 
     normalizeActionMetadataLinks = (links: IResource[] = []): IProposalActionUpdateMetadataDaoMetadataLink[] =>
         links.map(({ name, url }) => ({ label: name, href: url }));

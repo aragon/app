@@ -20,10 +20,15 @@ export interface IPermissionCheckGuardResult {
     hasPermission: boolean;
     /**
      * Settings to be displayed as reason on why the user does not have the specified permission.
+     * The settings are grouped by condition.
      */
-    settings?: IPermissionCheckGuardSetting[];
+    settings: IPermissionCheckGuardSetting[][];
     /**
      * Indicates if the slot-function is loading the data needed to check the specific permission.
      */
     isLoading?: boolean;
+    /**
+     * Indicates if there are restrictions on the action.
+     */
+    isRestricted: boolean;
 }

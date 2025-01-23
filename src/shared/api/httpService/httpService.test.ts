@@ -26,6 +26,13 @@ describe('Http service', () => {
             expect(fetchSpy).toHaveBeenCalledWith(`${baseUrl}${url}`, expect.anything());
         });
 
+        it('forwards eventual request options to the fetch request', async () => {
+            fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
+            const options = { keepalive: true };
+            await serviceTest.request('/', undefined, options);
+            expect(fetchSpy).toHaveBeenCalledWith(expect.anything(), expect.objectContaining(options));
+        });
+
         it('does not cache the request', async () => {
             fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
             const url = '/entity';
@@ -85,6 +92,45 @@ describe('Http service', () => {
             const expectedUrl = `${baseUrl}/dao/${urlParams.daoId}?includeProposals=true&another=yes`;
             serviceTest = generateHttpService(baseUrl);
             expect(serviceTest['buildUrl'](url, { queryParams, urlParams })).toEqual(expectedUrl);
+        });
+    });
+
+    describe('buildOptions', () => {
+        it('appends content-type header when request type is POST and body is not FormData', () => {
+            const options = { method: 'POST', headers: { key: 'value' } };
+            const body = { key: 'value' };
+            const processedOptions = generateHttpService()['buildOptions'](options, body);
+            expect(processedOptions.headers).toEqual({ 'Content-type': 'application/json', ...options.headers });
+        });
+
+        it('does not append content-type header when request type is POST and body is FormData', () => {
+            const options = { method: 'POST' };
+            const body = new FormData();
+            const processedOptions = generateHttpService()['buildOptions'](options, body);
+            expect(processedOptions.headers).toBeUndefined();
+        });
+
+        it('returns default options when parameter is not defined', () => {
+            const processedOptions = generateHttpService()['buildOptions']({});
+            expect(processedOptions.headers).toBeUndefined();
+            expect(processedOptions.method).toBeUndefined();
+        });
+    });
+
+    describe('parseBody', () => {
+        it('returns undefined when body is not defined', () => {
+            expect(generateHttpService()['parseBody']()).toBeUndefined();
+        });
+
+        it('returns the body as string when body is not FormData', () => {
+            const body = { key: 'value' };
+            expect(generateHttpService()['parseBody'](body)).toEqual(JSON.stringify(body));
+        });
+
+        it('does not process the body when body is FormData', () => {
+            const body = new FormData();
+            body.append('name', 'value');
+            expect(generateHttpService()['parseBody'](body)).toEqual(body);
         });
     });
 

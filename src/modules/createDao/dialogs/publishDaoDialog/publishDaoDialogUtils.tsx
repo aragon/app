@@ -1,4 +1,6 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import {
     encodeAbiParameters,
@@ -29,15 +31,24 @@ export interface IBuildTransactionParams {
 }
 
 class PublishDaoDialogUtils {
-    prepareMetadata = (formValues: ICreateDaoFormData) => {
+    prepareMetadata = (formValues: ICreateDaoFormData, avatarCid?: string) => {
         const { name, description, resources } = formValues;
+        const processedAvatar = ipfsUtils.cidToUri(avatarCid);
 
-        return { name, description, links: resources };
+        return {
+            name,
+            description,
+            links: resources,
+            avatar: processedAvatar,
+        };
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
         const { values, metadataCid, connectedAddress } = params;
-        const { adminPluginRepo, factoryAddress } = values;
+        const { network } = values;
+
+        const { addresses } = networkDefinitions[network];
+        const { daoFactory, adminPluginRepo } = addresses;
 
         const daoSettings = this.buildDaoSettingsParams(metadataCid);
         const pluginSettings = this.buildPluginSettingsParams(adminPluginRepo, connectedAddress);
@@ -49,7 +60,7 @@ class PublishDaoDialogUtils {
         });
 
         const transaction: TransactionDialogPrepareReturn = {
-            to: factoryAddress as Hex,
+            to: daoFactory,
             data: transactionData,
         };
 
@@ -82,7 +93,7 @@ class PublishDaoDialogUtils {
         return createDaoParams;
     };
 
-    private buildPluginSettingsParams = (adminPluginRepo: string, connectedAddress: string) => {
+    private buildPluginSettingsParams = (adminPluginRepo: Hex, connectedAddress: string) => {
         const pluginSettingsData = encodeAbiParameters(adminPluginSetupAbi, [
             connectedAddress as Hex,
             { target: zeroAddress, operation: 0 },
@@ -90,7 +101,7 @@ class PublishDaoDialogUtils {
 
         const pluginSettingsParams = {
             pluginSetupRef: {
-                pluginSetupRepo: adminPluginRepo as Hex,
+                pluginSetupRepo: adminPluginRepo,
                 versionTag: { release: 1, build: 6 },
             },
             data: pluginSettingsData,

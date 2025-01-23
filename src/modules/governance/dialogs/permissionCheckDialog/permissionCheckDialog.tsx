@@ -39,9 +39,9 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
         slotId: slotId,
         pluginId: plugin.subdomain,
         params: { plugin, ...otherParams },
-    }) ?? { hasPermission: true };
+    }) ?? { hasPermission: true, isLoading: false, settings: [] };
 
-    const { settings, isLoading, hasPermission } = checkPermissions;
+    const { hasPermission, isLoading, settings } = checkPermissions;
 
     const handleDialogClose = useCallback(() => {
         onError?.();
@@ -67,6 +67,8 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
         ? undefined
         : { label: t('app.governance.permissionCheckDialog.action'), onClick: handleDialogClose };
 
+    const hasSettingsGroups = settings.length > 1;
+
     return (
         <>
             <Dialog.Header title={title} description={description} />
@@ -77,20 +79,32 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                         <StateSkeletonBar width="65%" size="lg" />
                     </div>
                 )}
-                {!isLoading && (
-                    <DefinitionList.Container>
-                        {settings?.map(({ term, definition, href }, index) => (
-                            <DefinitionList.Item key={index} term={term}>
-                                {href == null && definition}
-                                {href != null && (
-                                    <Link href={href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                                        {definition}
-                                    </Link>
-                                )}
-                            </DefinitionList.Item>
-                        ))}
-                    </DefinitionList.Container>
-                )}
+                {!isLoading &&
+                    settings.map((settingsGroup, groupIndex) => (
+                        <div key={groupIndex} className="flex flex-col gap-y-1">
+                            <DefinitionList.Container>
+                                {settingsGroup.map(({ term, definition, href }, settingIndex) => (
+                                    <DefinitionList.Item key={settingIndex} term={term}>
+                                        {href == null && definition}
+                                        {href != null && (
+                                            <Link href={href} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
+                                                {definition}
+                                            </Link>
+                                        )}
+                                    </DefinitionList.Item>
+                                ))}
+                            </DefinitionList.Container>
+                            {hasSettingsGroups && groupIndex < settings.length - 1 && (
+                                <div className="my-2 flex items-center">
+                                    <div className="grow border-t border-neutral-100" />
+                                    <span className="mx-2 text-neutral-500">
+                                        {t('app.governance.permissionCheckDialog.or')}
+                                    </span>
+                                    <div className="grow border-t border-neutral-100" />
+                                </div>
+                            )}
+                        </div>
+                    ))}
             </Dialog.Content>
             <Dialog.Footer secondaryAction={footerAction} />
         </>

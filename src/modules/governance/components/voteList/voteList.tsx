@@ -6,6 +6,7 @@ import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { IGetVoteListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { VoteListFallback } from './voteListFallback';
 
 export interface IVoteListProps {
     /**
@@ -25,7 +26,7 @@ export interface IVoteListProps {
 export const VoteList: React.FC<IVoteListProps> = (props) => {
     const { initialParams, daoId, pluginAddress } = props;
 
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, pluginAddress, includeSubPlugins: true });
+    const processPlugins = useDaoPlugins({ daoId, type: PluginType.BODY, pluginAddress, includeSubPlugins: true });
 
     const processedPlugins = processPlugins?.map((plugin) => {
         const pluginInitialParams = {
@@ -36,6 +37,11 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
     });
 
     return (
-        <PluginTabComponent slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST} plugins={processedPlugins} daoId={daoId} />
+        <PluginTabComponent
+            slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
+            plugins={processedPlugins}
+            daoId={daoId}
+            Fallback={VoteListFallback}
+        />
     );
 };

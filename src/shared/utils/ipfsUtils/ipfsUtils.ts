@@ -21,6 +21,14 @@ class IpfsUtils {
 
         return processedCid != null ? `${this.ipfsGateway}/ipfs/${processedCid}?${params.toString()}` : undefined;
     };
+
+    cidToUri = (cid?: string | null): string | undefined => (cid ? `${this.ipfsPrefix}${cid}` : undefined);
+
+    srcToUri = (src: string): string | undefined => {
+        const hash = new URL(src).pathname.split('/').pop();
+
+        return this.cidToUri(hash);
+    };
 }
 
 export const ipfsUtils = new IpfsUtils();

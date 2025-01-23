@@ -28,7 +28,7 @@ export const Banner: React.FC<IBannerProps> = (props) => {
             <Container className="flex w-full grow flex-col justify-between gap-3 py-6 lg:flex-row" inset={true}>
                 <div className="flex gap-x-3 lg:items-center">
                     <Icon icon={IconType.WARNING} className="mt-1 text-warning-500 lg:mt-0" />
-                    <p className="self-start justify-self-start text-warning-800 lg:self-center">
+                    <p className="place-self-start text-warning-800 lg:self-center">
                         {t(`app.shared.banner.${bannerContent.type}.message`)}
                     </p>
                 </div>

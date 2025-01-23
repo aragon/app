@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { generateSmartContractAbi } from '../../testUtils';
+import { generateProposalAction, generateSmartContractAbi } from '../../testUtils';
 import { smartContractService } from './smartContractService';
 
 describe('smartContract service', () => {
@@ -18,5 +18,21 @@ describe('smartContract service', () => {
 
         expect(requestSpy).toHaveBeenCalledWith(smartContractService['urls'].abi, params);
         expect(result).toEqual(abi);
+    });
+
+    it('decodeTransaction decodes the given raw transaction and returns a proposal action', async () => {
+        const proposalAction = generateProposalAction();
+        const urlParams = { network: Network.ETHEREUM_MAINNET, address: '0x123' };
+        const body = { data: '0x001', value: '10000', from: '0x456' };
+
+        requestSpy.mockResolvedValue(proposalAction);
+        const result = await smartContractService.decodeTransaction({ urlParams, body });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            smartContractService['urls'].decodeTransaction,
+            { urlParams, body },
+            { method: 'POST' },
+        );
+        expect(result).toEqual(proposalAction);
     });
 });

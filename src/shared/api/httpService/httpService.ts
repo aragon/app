@@ -15,7 +15,10 @@ export class HttpService {
         options?: IRequestOptions,
     ): Promise<TData> => {
         const completeUrl = this.buildUrl(url, params);
-        const response = await fetch(completeUrl, { cache: 'no-store', body: params.body as BodyInit, ...options });
+        const processedOptions = this.buildOptions(options, params.body);
+        const parsedBody = this.parseBody(params.body);
+
+        const response = await fetch(completeUrl, { cache: 'no-store', body: parsedBody, ...processedOptions });
 
         if (!response.ok) {
             const defaultError = new Error(response.statusText);
@@ -37,6 +40,24 @@ export class HttpService {
         const fullUrl = `${this.baseUrl}${parsedUrl}`;
 
         return parsedParams != null ? `${fullUrl}?${parsedParams.toString()}` : fullUrl;
+    };
+
+    private buildOptions = (options?: IRequestOptions, body?: unknown) => {
+        const { method, headers, ...otherOptions } = options ?? {};
+        const processedHeaders =
+            method === 'POST' && !(body instanceof FormData)
+                ? { 'Content-type': 'application/json', ...headers }
+                : headers;
+
+        return { method, headers: processedHeaders, ...otherOptions };
+    };
+
+    private parseBody = (body?: unknown) => {
+        if (body == null) {
+            return undefined;
+        }
+
+        return body instanceof FormData ? body : JSON.stringify(body);
     };
 
     private replaceUrlParams = (url: string, params?: Record<string, string>): string => {

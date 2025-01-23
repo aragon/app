@@ -60,18 +60,6 @@ describe('rpcRequest utils', () => {
             );
         });
 
-        it('returns error when referer is not allowed', async () => {
-            process.env.NEXT_PUBLIC_RPC_ALLOWED_DOMAIN = 'aragon.org';
-            const referer = 'https://domain.org';
-            headersSpy.mockReturnValue(Promise.resolve({ get: () => referer } as unknown as ReadonlyHeaders));
-            const testClass = createTestClass();
-            await testClass.request(generateRequest(), createTestOptions('1'));
-            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
-                { error: expect.stringMatching(/not authorized/) as unknown },
-                { status: 401 },
-            );
-        });
-
         it('calls the rpc endpoint with the specified parameters, parses and returns the result', async () => {
             const testClass = createTestClass();
             const parsedResponse = { result: 'test' };
@@ -81,38 +69,6 @@ describe('rpcRequest utils', () => {
             expect(fetchSpy).toHaveBeenCalled();
             expect(fetchReturn.json).toHaveBeenCalled();
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
-        });
-    });
-
-    describe('checkReferer', () => {
-        it('returns true when allowed-domain variable is not defined', () => {
-            const testClass = createTestClass();
-            expect(
-                testClass['checkReferer']({ get: () => 'http://localhost' } as unknown as ReadonlyHeaders),
-            ).toBeTruthy();
-        });
-
-        it('returns true when referer hostname ends with allowed-domain variable', () => {
-            process.env.NEXT_PUBLIC_RPC_ALLOWED_DOMAIN = 'aragon.org';
-            const testClass = createTestClass();
-            const subdomain = { get: () => 'https://stg.app-next.aragon.org/' } as unknown as ReadonlyHeaders;
-            expect(testClass['checkReferer'](subdomain)).toBeTruthy();
-            const exact = { get: () => 'https://aragon.org/' } as unknown as ReadonlyHeaders;
-            expect(testClass['checkReferer'](exact)).toBeTruthy();
-        });
-
-        it('returns false when referrer does not match allowed-domain variable', () => {
-            process.env.NEXT_PUBLIC_RPC_ALLOWED_DOMAIN = 'aragon.org';
-            const testClass = createTestClass();
-            const subdomain = { get: () => 'http://another-domain.test.com' } as unknown as ReadonlyHeaders;
-            expect(testClass['checkReferer'](subdomain)).toBeFalsy();
-        });
-
-        it('returns false when referrer is not set and allowed-domain variable is defined', () => {
-            process.env.NEXT_PUBLIC_RPC_ALLOWED_DOMAIN = 'aragon.org';
-            const testClass = createTestClass();
-            const subdomain = { get: () => null } as unknown as ReadonlyHeaders;
-            expect(testClass['checkReferer'](subdomain)).toBeFalsy();
         });
     });
 
