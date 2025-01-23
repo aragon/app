@@ -17,5 +17,6 @@ export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitio
         Component: CreateDaoDetailsDialog,
         title: 'app.createDao.createDaoDetailsDialog.title',
         description: 'app.createDao.createDaoDetailsDialog.description',
+        size: 'lg',
     },
 };
