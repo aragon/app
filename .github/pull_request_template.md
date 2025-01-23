@@ -15,12 +15,13 @@ Task: [APP-0000](https://aragonassociation.atlassian.net/browse/APP-0000)
 
 ## Checklist:
 
-- [ ] I have tested my code locally.
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code.
-- [ ] I have commented my code, particularly in hard-to-understand areas.
-- [ ] I have made corresponding changes to the documentation.
-- [ ] My changes generate no new warnings.
-- [ ] I have selected the correct base branch.
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] Any dependent changes have been merged and published in downstream modules.
+- [ ] Manually smoke tested the functionality locally
+- [ ] Confirmed there are no new warnings or errors in the browser console
+- [ ] (For User Stories only) Double-checked that all Acceptance Criteria are satisified
+- [ ] Confirmed there are no new warnings on automated tests
+- [ ] Merged and published any dependent changes in downstream modules
+- [ ] Selected the correct base branch
+- [ ] Commented the code in hard-to-understand areas
+- [ ] Followed the code style guidelines of this project
+- [ ] Reviewed that the Files Changed in Github’s UI reflect my intended changes
+- [ ] Confirmed the pipeline checks are not failing
