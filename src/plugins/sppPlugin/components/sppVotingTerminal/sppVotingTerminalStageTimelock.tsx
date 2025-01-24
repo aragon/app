@@ -1,5 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { CardEmptyState, DateFormat, formatterUtils, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { DateTime } from 'luxon';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
@@ -19,14 +21,10 @@ export interface ISppVotingTerminalStageTimelockProps {
 }
 
 const getTimelockInfo = (stage: ISppStage, proposal: ISppProposal, stageStatus: ProposalVotingStatus) => {
-    const isTimelockExpired = stageStatus === ProposalVotingStatus.EXPIRED;
+    const endDatePassed = DateTime.now() > sppStageUtils.getStageMinAdvance(proposal, stage)!;
+    const isTimelockExpired = stageStatus === ProposalVotingStatus.EXPIRED || endDatePassed;
     const isTimelockActive = !isTimelockExpired && stage.stageIndex === proposal.stageIndex;
     const isTimelockComplete = isTimelockExpired || stage.stageIndex < proposal.stageIndex;
-
-    const timelockCompletedDate =
-        formatterUtils.formatDate(sppStageUtils.getStageEndDate(proposal, stage), {
-            format: DateFormat.YEAR_MONTH_DAY_TIME,
-        }) ?? '';
 
     const timelockEndsDate =
         formatterUtils.formatDate(sppStageUtils.getStageMinAdvance(proposal, stage), {
@@ -45,7 +43,7 @@ const getTimelockInfo = (stage: ISppStage, proposal: ISppProposal, stageStatus: 
         return {
             heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.heading',
             description: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.description',
-            date: timelockCompletedDate,
+            date: timelockEndsDate,
         };
     }
 
@@ -60,7 +58,11 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
 
     const { t } = useTranslations();
 
-    const { heading, description, date } = getTimelockInfo(stage, proposal, stageStatus);
+    const timelockInfo = useDynamicValue({
+        callback: () => getTimelockInfo(stage, proposal, stageStatus),
+    });
+
+    const { heading, description, date } = timelockInfo;
 
     return (
         <CardEmptyState

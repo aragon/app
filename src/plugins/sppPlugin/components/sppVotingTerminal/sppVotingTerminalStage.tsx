@@ -61,7 +61,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
     const getBodySubProposal = (address: string) =>
         subProposals?.find((subProposal) => subProposal.pluginAddress === address);
 
-    const isTimelockStage = !stage.plugins.length;
+    const isTimelockStage = sppStageUtils.isTimeLockStage(stage);
 
     return (
         <ProposalVoting.Stage
