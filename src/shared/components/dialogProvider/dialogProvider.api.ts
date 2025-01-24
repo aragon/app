@@ -73,4 +73,8 @@ export interface IDialogComponentDefinitions<TParams extends DialogComponentProp
      * Overrides the focus-trap property for the specific dialog when set.
      */
     useFocusTrap?: IDialogRootProps['useFocusTrap'];
+    /**
+     * Overrides the size property for the specific dialog when set.
+     */
+    size?: IDialogRootProps['size'];
 }

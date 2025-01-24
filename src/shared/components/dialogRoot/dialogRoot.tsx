@@ -38,6 +38,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
             onOpenChange={handleOpenChange}
             onInteractOutside={handleInteractOutside}
             useFocusTrap={activeDialog?.useFocusTrap}
+            size={activeDialog?.size}
         >
             {activeDialog && (
                 <>
