@@ -17,7 +17,7 @@ Task: [APP-0000](https://aragonassociation.atlassian.net/browse/APP-0000)
 
 - [ ] Manually smoke tested the functionality locally
 - [ ] Confirmed there are no new warnings or errors in the browser console
-- [ ] (For User Stories only) Double-checked that all Acceptance Criteria are satisified
+- [ ] (For User Stories only) Double-checked that all Acceptance Criteria are satisfied
 - [ ] Confirmed there are no new warnings on automated tests
 - [ ] Merged and published any dependent changes in downstream modules
 - [ ] Selected the correct base branch
