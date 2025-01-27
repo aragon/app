@@ -16,10 +16,6 @@ describe('tokenProposal utils', () => {
             isApprovalReachedSpy.mockReset();
         });
 
-        afterAll(() => {
-            isApprovalReachedSpy.mockRestore();
-        });
-
         it('returns executed status when proposal has been executed', () => {
             const proposal = generateTokenProposal({
                 executed: { status: true },
@@ -84,6 +80,66 @@ describe('tokenProposal utils', () => {
             isApprovalReachedSpy.mockReturnValue(false);
             timeUtils.setTime(now);
             expect(tokenProposalUtils.getProposalStatus(proposal)).toEqual(ProposalStatus.REJECTED);
+        });
+    });
+
+    describe('hasSucceeded', () => {
+        const isApprovalReachedSpy = jest.spyOn(tokenProposalUtils, 'isApprovalReached');
+
+        afterEach(() => {
+            isApprovalReachedSpy.mockReset();
+        });
+
+        afterAll(() => {
+            isApprovalReachedSpy.mockRestore();
+        });
+
+        it('returns true if proposal is open, early execution is enabled, and approval is reached early', () => {
+            const now = '2025-01-24T10:00:00.000Z';
+            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
+            const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toMillis() / 1000;
+
+            isApprovalReachedSpy.mockReturnValue(true);
+            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
+            const proposal = generateTokenProposal({ startDate, endDate, settings });
+            timeUtils.setTime(now);
+            expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(true);
+        });
+
+        it('returns false if proposal is open, early execute is enabled and approval is not reached early', () => {
+            const now = '2025-01-24T10:00:00.000Z';
+            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
+            const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toMillis() / 1000;
+
+            isApprovalReachedSpy.mockReturnValue(false);
+            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
+            const proposal = generateTokenProposal({ startDate, endDate, settings });
+            timeUtils.setTime(now);
+            expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(false);
+        });
+
+        it('returns true if proposal is ended and approval is reached', () => {
+            const now = '2025-01-24T10:00:00.000Z';
+            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
+            const endDate = DateTime.fromISO('2025-01-22T10:00:00.000Z').toMillis() / 1000;
+
+            isApprovalReachedSpy.mockReturnValue(true);
+            const proposal = generateTokenProposal({ startDate, endDate });
+            timeUtils.setTime(now);
+
+            expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(true);
+        });
+
+        it('returns false if proposal is ended and approval is not reached', () => {
+            const now = '2025-01-24T10:00:00.000Z';
+            const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
+            const endDate = DateTime.fromISO('2025-01-22T10:00:00.000Z').toMillis() / 1000;
+
+            isApprovalReachedSpy.mockReturnValue(false);
+            const proposal = generateTokenProposal({ startDate, endDate });
+            timeUtils.setTime(now);
+
+            expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(false);
         });
     });
 

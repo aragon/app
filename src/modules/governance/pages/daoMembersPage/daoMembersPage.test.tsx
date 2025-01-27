@@ -57,7 +57,7 @@ describe('<DaoMembersPage /> component', () => {
         render(await createTestComponent({ params: Promise.resolve(params) }));
 
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: params }).queryKey);
-        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.BODY });
+        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.BODY, includeSubPlugins: true });
 
         const memberListParams = { daoId: params.id, pageSize: daoMembersCount, pluginAddress: bodyPlugin.address };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
