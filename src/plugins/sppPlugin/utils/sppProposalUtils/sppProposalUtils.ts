@@ -19,15 +19,8 @@ class SppProposalUtils {
         const approvalReached = this.areAllStagesAccepted(proposal);
         const isSignalingProposal = proposal.actions.length === 0;
 
-        const isTimelockFinalStage =
-            sppStageUtils.isTimeLockStage(currentStage) && sppStageUtils.isLastStage(proposal, currentStage);
-
         const isExecutable =
-            approvalReached &&
-            endExecutionDate != null &&
-            now <= endExecutionDate &&
-            !isSignalingProposal &&
-            !isTimelockFinalStage;
+            approvalReached && endExecutionDate != null && now <= endExecutionDate && !isSignalingProposal;
 
         if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;
@@ -43,12 +36,6 @@ class SppProposalUtils {
 
         if (this.hasAnyStageStatus(proposal, ProposalVotingStatus.EXPIRED)) {
             return ProposalStatus.EXPIRED;
-        }
-
-        if (isTimelockFinalStage) {
-            const canExecute = now > sppStageUtils.getStageMinAdvance(proposal, currentStage)!;
-
-            return canExecute ? ProposalStatus.EXECUTABLE : ProposalStatus.ACTIVE;
         }
 
         if (isExecutable) {
