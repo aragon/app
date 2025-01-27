@@ -104,6 +104,7 @@ jobs:
 
       # Step 10: Install Playwright browsers
       - name: Install Playwright Browsers
+        working-directory: ./app-qa
         run: npx playwright install chromium --with-deps
 
       # Step 11: Run E2E tests with preview link
