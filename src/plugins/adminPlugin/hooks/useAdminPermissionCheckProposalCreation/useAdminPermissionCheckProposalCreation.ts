@@ -1,6 +1,5 @@
-import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
-import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { IPermissionCheckGuardParams } from '@/modules/governance/types/permissionCheckGuardParams';
+import { useMemberExists } from '@/modules/governance/api/governanceService';
+import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useAccount } from 'wagmi';
