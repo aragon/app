@@ -1,137 +1,150 @@
 name: App E2E Tests
 
 on:
-    workflow_dispatch:
-    pull_request:
-        branches:
-            - develop
-            - feat/e2e-test-workflow
-        types:
-            - opened
-            - synchronize
-            - reopened
-    push:
-        branches:
-            - develop
-            - main
-            - feat/e2e-test-workflow
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - develop
+      - feat/e2e-test-workflow
+    types:
+      - opened
+      - synchronize
+      - reopened
+  push:
+    branches:
+      - develop
+      - main
+      - feat/e2e-test-workflow
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
-    NODE_VERSION: 20
-    NODE_CACHE: 'yarn'
-    APP_ENV: 'preview'
-    VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-    VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  NODE_VERSION: 20
+  NODE_CACHE: "yarn"
+  APP_ENV: "preview"
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
-    deploy-and-test:
-        runs-on: ubuntu-latest
-        timeout-minutes: 60
+  deploy-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
 
-        # if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
+    # if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
 
-        steps:
-            # Step 1: Checkout app-next repository
-            - name: Checkout app-next Repository
-              uses: actions/checkout@v4.2.2
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@v2.0.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION_BACKUPS_TEMP }}
+          GH_APP_QA: op://apikeys_production/gh-app-qa/credential
 
-            # Step 2: Set up Node.js
-            - name: Setup Node.js
-              uses: actions/setup-node@v4.1.0
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
-                  cache: ${{ env.NODE_CACHE }}
+      # Step 1: Checkout app-next repository
+      - name: Checkout app-next Repository
+        uses: actions/checkout@v4.2.2
 
-            # Step 3: Install dependencies for app-next
-            - name: Install dependencies
-              run: yarn install --frozen-lockfile
+      # Step 2: Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: ${{ env.NODE_CACHE }}
 
-            # Step 4: Prepare build for app-next
-            - name: Prepare Build
-              run: yarn setup ${{ env.APP_ENV }}
+      # Step 3: Install dependencies for app-next
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-            # Step 5: Set secrets for app-next
-            - name: Prepare secrets
-              run: |
-                  echo "NEXT_SECRET_IPFS_JWT=${{ secrets.NEXT_SECRET_IPFS_JWT }}" >> .env
-                  echo "NEXT_SECRET_RPC_KEY=${{ secrets.NEXT_SECRET_RPC_KEY }}" >> .env
+      # Step 4: Prepare build for app-next
+      - name: Prepare Build
+        run: yarn setup ${{ env.APP_ENV }}
 
-            # Step 6: Build and deploy app-next to generate preview link
-            - name: Deploy app-next to Vercel
-              run: |
-                  yarn vercel build --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
-                  yarn vercel deploy --prebuilt --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
-              env:
-                  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      # Step 5: Set secrets for app-next
+      - name: Prepare secrets
+        run: |
+          echo "NEXT_SECRET_IPFS_JWT=${{ secrets.NEXT_SECRET_IPFS_JWT }}" >> .env
+          echo "NEXT_SECRET_RPC_KEY=${{ secrets.NEXT_SECRET_RPC_KEY }}" >> .env
 
-            # Step 7: Extract and display preview URL
-            - name: Extract Preview URL
-              id: preview_url
-              run: echo "::set-output name=url::$(cat deployment-url.txt | grep -o 'https://.*')"
-              env:
-                  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      # Step 6: Build and deploy app-next to generate preview link
+      - name: Deploy app-next to Vercel
+        run: |
+          yarn vercel build --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
+          yarn vercel deploy --prebuilt --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-            # Step 8: Checkout app-qa repository
-            - name: Checkout app-qa Repository
-              uses: actions/checkout@v4
-              with:
-                  repository: your-org/app-qa
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  path: ./app-qa
+      # Step 7: Extract and display preview URL
+      - name: Extract Preview URL
+        id: preview_url
+        run: |
+          PREVIEW_URL=$(cat deployment-url.txt | grep -o 'https://.*')
+          echo "::set-output name=url::$PREVIEW_URL"
+          echo "Preview URL: $PREVIEW_URL"
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-            # Step 9: Install dependencies for app-qa
-            - name: Install app-qa Dependencies
-              working-directory: ./app-qa
-              run: yarn install --frozen-lockfile
+      # Step 8: Checkout app-qa repository
+      - name: Checkout app-qa Repository
+        uses: actions/checkout@v4
+        with:
+          repository: aragon/app-qa
+          # token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.load-secrets.outputs.GH_APP_QA }}
+          path: ./app-qa
 
-            # Step 10: Install Playwright browsers
-            - name: Install Playwright Browsers
-              run: npx playwright install chromium --with-deps
+      # Step 9: Install dependencies for app-qa
+      - name: Install app-qa Dependencies
+        working-directory: ./app-qa
+        run: yarn install --frozen-lockfile
 
-            # Step 11: Run E2E tests with preview link
-            - name: Run E2E Tests
-              working-directory: ./app-qa
-              run: xvfb-run yarn playwright test ./tests/ --project=chromium --base-url=${{ steps.preview_url.outputs.url }}
-              env:
-                  METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
-                  METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
-                  NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
+      # Step 10: Install Playwright browsers
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium --with-deps
 
-            # Step 12: Upload Playwright report as artifact
-            - name: Upload Playwright Report
-              if: always()
-              uses: actions/upload-artifact@v4
-              with:
-                  name: playwright-report
-                  path: ./app-qa/playwright-report/
-                  retention-days: 30
+      # Step 11: Run E2E tests with preview link
+      - name: Run E2E Tests
+        working-directory: ./app-qa
+        run: xvfb-run yarn playwright test ./tests/ --project=chromium --base-url=${{ steps.preview_url.outputs.url }}
+        env:
+          METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
+          METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
+          NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
 
-            # Step 13: Notify Discord on failure
-            - name: Notify Discord
-              if: failure()
-              env:
-                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-              run: |
-                  echo "Sending Discord failure notification..."
-                  curl -X POST -H "Content-Type: application/json" -d @- $DISCORD_WEBHOOK_URL <<EOF
-                  {
-                    "embeds": [{
-                      "title": "❌ E2E Tests Failed",
-                      "color": 15158332,
-                      "fields": [
-                        { "name": "Repository", "value": "${{ github.repository }}", "inline": false },
-                        { "name": "Branch", "value": "${{ github.ref }}", "inline": false },
-                        { "name": "Preview URL", "value": "${{ steps.preview_url.outputs.url }}", "inline": false },
-                        { "name": "Details", "value": "[View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false }
-                      ]
-                    }]
-                  }
-                  EOF
+      # Step 12: Upload Playwright report as artifact
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: ./app-qa/playwright-report/
+          retention-days: 30
 
-            # Step 14: Cleanup
-            - name: Cleanup
-              run: rm -rf ./app-next ./app-qa
+      # Step 13: Notify Discord on failure
+      - name: Notify Discord
+        if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          echo "Sending Discord failure notification..."
+          curl -X POST -H "Content-Type: application/json" -d @- $DISCORD_WEBHOOK_URL <<EOF
+          {
+            "embeds": [{
+              "title": "❌ E2E Tests Failed",
+              "color": 15158332,
+              "fields": [
+                { "name": "Repository", "value": "${{ github.repository }}", "inline": false },
+                { "name": "Branch", "value": "${{ github.ref }}", "inline": false },
+                { "name": "Preview URL", "value": "${{ steps.preview_url.outputs.url }}", "inline": false },
+                { "name": "Details", "value": "[View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false }
+              ]
+            }]
+          }
+          EOF
+
+      # Step 14: Cleanup
+      - name: Cleanup
+        run: rm -rf ./app-next ./app-qa
