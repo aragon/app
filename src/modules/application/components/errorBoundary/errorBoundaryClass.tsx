@@ -1,4 +1,5 @@
 import { ErrorFeedback } from '@/shared/components/errorFeedback';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { Component, type ReactNode } from 'react';
 
 export interface IErrorBoundaryClassState {
@@ -42,7 +43,7 @@ export class ErrorBoundaryClass extends Component<IErrorBoundaryClassProps, IErr
     }
 
     componentDidCatch() {
-        // TODO: Report the error to an error reporting service (APP-3107)
+        monitoringUtils.logError(this.state.error);
     }
 
     render() {

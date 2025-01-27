@@ -1,5 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -43,9 +44,13 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const { chainId: requiredChainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
-    const handleTransactionError = useCallback(() => {
-        // TODO: Report the error to an error reporting service (APP-3107)
-    }, []);
+    const handleTransactionError = useCallback(
+        (stepId?: string) => (error: unknown, context?: Record<string, unknown>) => {
+            const processedContext = { stepId, ...context };
+            monitoringUtils.logError(error, { context: processedContext });
+        },
+        [],
+    );
 
     const {
         mutate: prepareTransactionMutate,
@@ -68,19 +73,19 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     });
 
     const handleSendTransaction = useCallback(() => {
+        const errorHandler = handleTransactionError(TransactionDialogStep.APPROVE);
+
         if (transaction == null) {
-            handleTransactionError();
+            errorHandler(new Error('TransactionDialog: transaction must be defined.'));
         } else {
-            sendTransaction(transaction, { onError: handleTransactionError });
+            sendTransaction(transaction, { onError: errorHandler });
         }
     }, [transaction, sendTransaction, handleTransactionError]);
 
-    const handleSwitchNetwork = useCallback(() => {
-        switchChain(
-            { chainId: requiredChainId },
-            { onError: handleTransactionError, onSuccess: handleSendTransaction },
-        );
-    }, [switchChain, requiredChainId, handleTransactionError, handleSendTransaction]);
+    const handleSwitchNetwork = useCallback(
+        () => switchChain({ chainId: requiredChainId }, { onSuccess: handleSendTransaction }),
+        [switchChain, requiredChainId, handleSendTransaction],
+    );
 
     const handleRetryTransaction = useCallback(() => {
         updateActiveStep(TransactionDialogStep.APPROVE);
@@ -151,7 +156,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
         // Use setTimeout to avoid double mutation on dev + StrictMode
         // (see https://github.com/TanStack/query/issues/5341)
-        const timeout = setTimeout(() => action({ onError: handleTransactionError }), 100);
+        const timeout = setTimeout(() => action({ onError: handleTransactionError(activeStepInfo?.id) }), 100);
         return () => clearTimeout(timeout);
     }, [activeStepInfo, handleTransactionError]);
 
@@ -178,7 +183,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 successLink={successLink}
                 txReceipt={txReceipt}
                 activeStep={activeStepInfo}
-                onError={handleTransactionError}
+                onError={handleTransactionError(activeStepInfo?.id)}
                 onCancelClick={onCancelClick}
             />
         </>
