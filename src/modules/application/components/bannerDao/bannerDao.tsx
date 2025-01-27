@@ -2,7 +2,7 @@
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import type { ICreateProcessInfoDialogParams } from '@/modules/createDao/dialogs/createProcessInfoDialog';
-import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
+import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
