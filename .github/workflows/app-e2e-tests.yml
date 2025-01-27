@@ -102,6 +102,18 @@ jobs:
         run: yarn install --mode update-lockfile
         # run: yarn install
 
+      # Step 10: List Installed Dependencies
+      - name: List Installed Dependencies
+        working-directory: ./app-qa
+        run: |
+          echo "Installed dependencies in node_modules:"
+          ls -la node_modules
+
+      # Step 11: Yarn List Installed Dependencies
+      - name: Yarn List Installed Dependencies
+        working-directory: ./app-qa
+        run: yarn list --depth=0
+
       # Step 10: Install Playwright browsers
       - name: Install Playwright Browsers
         working-directory: ./app-qa
