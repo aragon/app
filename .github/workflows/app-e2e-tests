@@ -26,7 +26,7 @@ jobs:
         if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
 
         steps:
-            # Step 1: Checkout app-next repository
+            # Step 1: Checkout app-next repository #test workflow
             - name: Checkout app-next Repository
               uses: actions/checkout@v4.2.2
 
