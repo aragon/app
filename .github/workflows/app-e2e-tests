@@ -2,10 +2,16 @@ name: App E2E Tests
 
 on:
     pull_request:
+        branches:
+            - develop
         types:
-            - labeled
+            - opened
             - synchronize
-    workflow_dispatch:
+            - reopened
+    push:
+        branches:
+            - develop
+            - main
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
