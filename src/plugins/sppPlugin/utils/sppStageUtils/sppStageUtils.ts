@@ -71,10 +71,6 @@ class SppStageUtils {
         return proposal.actions.length === 0 && this.isLastStage(proposal, stage);
     };
 
-    isTimeLockStage = (stage: ISppStage): boolean => {
-        return !stage.plugins.length;
-    };
-
     isStageUnreached = (proposal: ISppProposal, currentStageIndex: number): boolean => {
         return proposal.settings.stages.slice(0, currentStageIndex).some((stage) => {
             const status = this.getStageStatus(proposal, stage);
