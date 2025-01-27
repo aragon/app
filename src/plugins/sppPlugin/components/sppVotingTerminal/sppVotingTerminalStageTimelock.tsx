@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
-import { CardEmptyState, DateFormat, formatterUtils, ProposalVotingStatus } from '@aragon/gov-ui-kit';
+import { CardEmptyState, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
@@ -14,36 +14,30 @@ export interface ISppVotingTerminalStageTimelockProps {
      * Parent Proposal of the stage.
      */
     proposal: ISppProposal;
-    /**
-     * Status of the stage
-     */
-    stageStatus: ProposalVotingStatus;
 }
 
-const getTimelockInfo = (stage: ISppStage, proposal: ISppProposal, stageStatus: ProposalVotingStatus) => {
-    const endDatePassed = DateTime.now() > sppStageUtils.getStageMinAdvance(proposal, stage)!;
-    const isTimelockExpired = stageStatus === ProposalVotingStatus.EXPIRED || endDatePassed;
-    const isTimelockActive = !isTimelockExpired && stage.stageIndex === proposal.stageIndex;
-    const isTimelockComplete = isTimelockExpired || stage.stageIndex < proposal.stageIndex;
+const useTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
+    const stageMinAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)!;
+    const now = DateTime.now();
 
-    const timelockEndsDate =
-        formatterUtils.formatDate(sppStageUtils.getStageMinAdvance(proposal, stage), {
-            format: DateFormat.YEAR_MONTH_DAY_TIME,
-        }) ?? '';
+    const didEnd = stage.stageIndex < proposal.stageIndex || now > stageMinAdvance;
+    const isActive = stage.stageIndex === proposal.stageIndex && now < stageMinAdvance;
 
-    if (isTimelockActive) {
+    return { didEnd, isActive, stageMinAdvance };
+};
+
+const getTimelockInfo = (didEnd: boolean, isActive: boolean) => {
+    if (isActive) {
         return {
             heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.heading',
             description: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.description',
-            date: timelockEndsDate,
         };
     }
 
-    if (isTimelockComplete) {
+    if (didEnd) {
         return {
             heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.heading',
             description: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.description',
-            date: timelockEndsDate,
         };
     }
 
@@ -54,15 +48,19 @@ const getTimelockInfo = (stage: ISppStage, proposal: ISppProposal, stageStatus: 
 };
 
 export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTimelockProps> = (props) => {
-    const { stage, proposal, stageStatus } = props;
-
+    const { stage, proposal } = props;
     const { t } = useTranslations();
 
+    const { didEnd, isActive, stageMinAdvance } = useTimelockStatus(stage, proposal);
+
     const timelockInfo = useDynamicValue({
-        callback: () => getTimelockInfo(stage, proposal, stageStatus),
+        callback: () => getTimelockInfo(didEnd, isActive),
+        enabled: isActive,
     });
 
-    const { heading, description, date } = timelockInfo;
+    const { heading, description } = timelockInfo;
+
+    const date = formatterUtils.formatDate(stageMinAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) ?? '';
 
     return (
         <CardEmptyState
