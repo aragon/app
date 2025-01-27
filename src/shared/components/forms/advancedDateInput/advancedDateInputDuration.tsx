@@ -10,22 +10,37 @@ import { AdvancedDateInputInfoText } from './advancedDateInputInfoText';
 
 export interface IAdvancedDateInputDurationProps
     extends Omit<IAdvancedDateInputBaseProps, 'minTime'>,
-        ComponentProps<'div'> {}
+        Omit<ComponentProps<'div'>, 'defaultValue'> {
+    /**
+     * Default value for the duration date. Defaults to minDuration or 0 days, 0 hours, 0 minutes.
+     */
+    defaultValue?: IDateDuration;
+}
 
 export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
-    const { minDuration, field, label, infoText, infoDisplay, validateMinDuration, className, ...otherProps } = props;
+    const {
+        minDuration,
+        field,
+        label,
+        infoText,
+        infoDisplay,
+        validateMinDuration,
+        className,
+        defaultValue,
+        ...otherProps
+    } = props;
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
     const validateDuration = (value: IDateDuration) =>
         validateMinDuration ? dateUtils.validateDuration({ value, minDuration }) : true;
 
+    const processedDefaultValue = minDuration ?? { days: 0, hours: 0, minutes: 0 };
     const durationField = useFormField<Record<string, IDateDuration>, typeof field>(field, {
         rules: { validate: validateDuration },
         label,
         shouldUnregister: true,
-        // Supply defaults if minDuration is undefined to prevent InputNumber from throwing an error
-        defaultValue: minDuration ?? { minutes: 0, hours: 0, days: 0 },
+        defaultValue: processedDefaultValue,
     });
 
     const handleDurationChange = (type: string) => (value: string) => {
