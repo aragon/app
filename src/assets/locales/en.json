@@ -4,6 +4,16 @@
       "applicationTags": {
         "beta": "Beta"
       },
+      "bannerDao": {
+        "adminMember": {
+          "buttonLabel": "Add Governance",
+          "message": "Your DAO is under construction. You can create any number of custom governance processes for your DAO."
+        },
+        "adminPlugin": {
+          "buttonLabel": "View Admins",
+          "message": "This DAO is under construction. One or more admins can make any change to the DAO without a proposal."
+        }
+      },
       "connectWalletDialog": {
         "action": {
           "cancel": "Cancel",
@@ -1188,6 +1198,7 @@
           "versionInfoTitle": "Version Info"
         },
         "main": {
+          "action": "Process",
           "governanceInfoTitle": "Governance",
           "membersInfoTitle": "Members",
           "settingsInfoTitle": "DAO",
@@ -1221,16 +1232,6 @@
       "autocompleteInput": {
         "menu": {
           "select": "Select"
-        }
-      },
-      "banner": {
-        "ADMIN_MEMBER": {
-          "buttonLabel": "Add Governance",
-          "message": "Your DAO is under construction. You can create any number of custom governance processes for your DAO."
-        },
-        "ADMIN_PLUGIN": {
-          "buttonLabel": "View Admins",
-          "message": "This DAO is under construction. One or more admins can make any change to the DAO without a proposal."
         }
       },
       "confirmWizardExit": {
