@@ -17,16 +17,16 @@ export interface ISppVotingTerminalStageTimelockProps {
 }
 
 const useTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
-    const stageMinAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)!;
+    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)!;
     const now = DateTime.now();
 
-    const didEnd = stage.stageIndex < proposal.stageIndex || now > stageMinAdvance;
-    const isActive = stage.stageIndex === proposal.stageIndex && now < stageMinAdvance;
+    const hasEnded = stage.stageIndex < proposal.stageIndex || now > minAdvance;
+    const isActive = stage.stageIndex === proposal.stageIndex && now < minAdvance;
 
-    return { didEnd, isActive, stageMinAdvance };
+    return { hasEnded, isActive, minAdvance };
 };
 
-const getTimelockInfo = (didEnd: boolean, isActive: boolean) => {
+const getTimelockInfo = (hasEnded: boolean, isActive: boolean) => {
     if (isActive) {
         return {
             heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.heading',
@@ -34,7 +34,7 @@ const getTimelockInfo = (didEnd: boolean, isActive: boolean) => {
         };
     }
 
-    if (didEnd) {
+    if (hasEnded) {
         return {
             heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.heading',
             description: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.description',
@@ -51,16 +51,16 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
     const { stage, proposal } = props;
     const { t } = useTranslations();
 
-    const { didEnd, isActive, stageMinAdvance } = useTimelockStatus(stage, proposal);
+    const { hasEnded, isActive, minAdvance } = useTimelockStatus(stage, proposal);
 
     const timelockInfo = useDynamicValue({
-        callback: () => getTimelockInfo(didEnd, isActive),
+        callback: () => getTimelockInfo(hasEnded, isActive),
         enabled: isActive,
     });
 
     const { heading, description } = timelockInfo;
 
-    const date = formatterUtils.formatDate(stageMinAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) ?? '';
+    const date = formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) ?? '';
 
     return (
         <CardEmptyState
