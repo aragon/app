@@ -48,4 +48,10 @@ describe('<Page.Main /> component', () => {
         await userEvent.click(actionButton);
         expect(action.onClick).toHaveBeenCalled();
     });
+
+    it('does not render the action when hidden property is set to true', () => {
+        const action = { label: 'hidden-action', onClick: jest.fn(), hidden: true };
+        render(createTestComponent({ action }));
+        expect(screen.queryByRole('button', { name: action.label })).not.toBeInTheDocument();
+    });
 });

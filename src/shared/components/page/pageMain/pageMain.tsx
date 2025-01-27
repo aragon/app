@@ -16,6 +16,10 @@ export interface IPageMainAction {
      * Link to navigate to on action click.
      */
     href?: string;
+    /**
+     * Hides the action when set to true.
+     */
+    hidden?: boolean;
 }
 
 export interface IPageMainProps extends ComponentProps<'main'> {
@@ -54,7 +58,7 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
                 {title && (
                     <header className="flex flex-row justify-between gap-6">
                         <Heading size="h1">{title}</Heading>
-                        {action && (
+                        {action && !action.hidden && (
                             <Button
                                 variant="primary"
                                 size="md"

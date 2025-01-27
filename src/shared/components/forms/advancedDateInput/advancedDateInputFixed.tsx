@@ -1,18 +1,20 @@
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateFixed } from '@/shared/utils/dateUtils';
 import { dateUtils } from '@/shared/utils/dateUtils/dateUtils';
-import { AlertCard, Card, InputDate, InputText, InputTime } from '@aragon/gov-ui-kit';
+import { Card, InputDate, InputText, InputTime } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import type { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
+import { AdvancedDateInputInfoText } from './advancedDateInputInfoText';
 
 export interface IAdvancedDateInputFixedProps extends IAdvancedDateInputBaseProps, ComponentProps<'div'> {}
 
 export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (props) => {
-    const { field, label, infoText, minDuration, minTime, validateMinDuration, className, ...otherProps } = props;
+    const { field, label, infoText, minDuration, minTime, validateMinDuration, className, infoDisplay, ...otherProps } =
+        props;
     const { t } = useTranslations();
 
     const { setValue, trigger } = useFormContext();
@@ -36,9 +38,6 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     };
 
     const handleInputBlur = () => trigger(field);
-
-    const alertDescription = fixedDateField.alert?.message ?? infoText;
-    const alertVariant = fixedDateField.alert != null ? 'critical' : 'info';
 
     return (
         <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
@@ -65,7 +64,7 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
                     disabled={true}
                 />
             </div>
-            {alertDescription && <AlertCard message={label} description={alertDescription} variant={alertVariant} />}
+            <AdvancedDateInputInfoText field={fixedDateField} infoText={infoText} infoDisplay={infoDisplay} />
         </Card>
     );
 };

@@ -1,4 +1,4 @@
-import { useMemberExists } from '@/modules/governance/api/governanceService/queries/useMemberExists';
+import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {

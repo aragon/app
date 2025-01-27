@@ -1,8 +1,11 @@
 'use client';
 
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import type { ICreateProcessInfoDialogParams } from '@/modules/createDao/dialogs/createProcessInfoDialog';
 import { DaoGovernanceInfo } from '@/modules/settings/components/daoGovernanceInfo';
 import { DaoMembersInfo } from '@/modules/settings/components/daoMembersInfo';
 import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -21,11 +24,17 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     const { daoId } = props;
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
+
+    const handleCreateProcess = () => {
+        const params: ICreateProcessInfoDialogParams = { daoId };
+        open(CreateDaoDialog.CREATE_PROCESS_INFO, { params });
+    };
 
     if (!dao) {
         return null;
@@ -33,7 +42,14 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     return (
         <>
-            <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
+            <Page.Main
+                title={t('app.settings.daoSettingsPage.main.title')}
+                action={{
+                    label: t('app.settings.daoSettingsPage.main.action'),
+                    onClick: handleCreateProcess,
+                    hidden: process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER !== 'true',
+                }}
+            >
                 <Page.Section title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />
                 </Page.Section>
