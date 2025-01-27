@@ -4,6 +4,7 @@ on:
     pull_request:
         branches:
             - develop
+            - feat/e2e-test-workflow
         types:
             - opened
             - synchronize
@@ -12,6 +13,7 @@ on:
         branches:
             - develop
             - main
+            - feat/e2e-test-workflow
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
