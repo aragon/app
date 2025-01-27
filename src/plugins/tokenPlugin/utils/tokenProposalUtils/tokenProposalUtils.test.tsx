@@ -100,14 +100,8 @@ describe('tokenProposal utils', () => {
             const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toMillis() / 1000;
 
             isApprovalReachedSpy.mockReturnValue(true);
-            const proposal = generateTokenProposal({
-                startDate,
-                endDate,
-                settings: generateTokenPluginSettings({
-                    votingMode: DaoTokenVotingMode.EARLY_EXECUTION,
-                    historicalTotalSupply: '1000',
-                }),
-            });
+            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
+            const proposal = generateTokenProposal({ startDate, endDate, settings });
             timeUtils.setTime(now);
             expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(true);
         });
@@ -118,14 +112,8 @@ describe('tokenProposal utils', () => {
             const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toMillis() / 1000;
 
             isApprovalReachedSpy.mockReturnValue(false);
-            const proposal = generateTokenProposal({
-                startDate,
-                endDate,
-                settings: generateTokenPluginSettings({
-                    votingMode: DaoTokenVotingMode.EARLY_EXECUTION,
-                    historicalTotalSupply: '1000',
-                }),
-            });
+            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
+            const proposal = generateTokenProposal({ startDate, endDate, settings });
             timeUtils.setTime(now);
             expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(false);
         });
@@ -136,11 +124,7 @@ describe('tokenProposal utils', () => {
             const endDate = DateTime.fromISO('2025-01-22T10:00:00.000Z').toMillis() / 1000;
 
             isApprovalReachedSpy.mockReturnValue(true);
-            const proposal = generateTokenProposal({
-                startDate,
-                endDate,
-                settings: generateTokenPluginSettings({ historicalTotalSupply: '1000' }),
-            });
+            const proposal = generateTokenProposal({ startDate, endDate });
             timeUtils.setTime(now);
 
             expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(true);
@@ -152,11 +136,7 @@ describe('tokenProposal utils', () => {
             const endDate = DateTime.fromISO('2025-01-22T10:00:00.000Z').toMillis() / 1000;
 
             isApprovalReachedSpy.mockReturnValue(false);
-            const proposal = generateTokenProposal({
-                startDate,
-                endDate,
-                settings: generateTokenPluginSettings({ historicalTotalSupply: '1000' }),
-            });
+            const proposal = generateTokenProposal({ startDate, endDate });
             timeUtils.setTime(now);
 
             expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(false);
