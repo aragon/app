@@ -99,7 +99,7 @@ jobs:
       # Step 9: Install dependencies for app-qa
       - name: Install app-qa Dependencies
         working-directory: ./app-qa
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       # Step 10: Install Playwright browsers
       - name: Install Playwright Browsers
