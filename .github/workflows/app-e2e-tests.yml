@@ -102,22 +102,30 @@ jobs:
         run: yarn install --mode update-lockfile
         # run: yarn install
 
-      # Step 10: List Installed Dependencies
-      - name: List Installed Dependencies
-        working-directory: ./app-qa
-        run: |
-          echo "Installed dependencies in node_modules:"
-          ls -la node_modules
+      # # Step 10: List Installed Dependencies
+      # - name: List Installed Dependencies
+      #   working-directory: ./app-qa
+      #   run: |
+      #     echo "Installed dependencies in node_modules:"
+      #     ls -la node_modules
 
       # Step 11: Yarn List Installed Dependencies
       - name: Yarn List Installed Dependencies
         working-directory: ./app-qa
-        run: yarn list --depth=0
+        run: yarn list
 
       # Step 10: Install Playwright browsers
       - name: Install Playwright Browsers
         working-directory: ./app-qa
         run: npx playwright install chromium --with-deps
+
+      # Build Synpress dependencies
+      - name: Build Synpress Depencies
+        if: steps.synpress-cache.outputs.cache-hit != 'true'
+        run: xvfb-run npx synpress ./tests/
+        env:
+          METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
+          METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
 
       # Step 11: Run E2E tests with preview link
       - name: Run E2E Tests
