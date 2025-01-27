@@ -59,7 +59,7 @@ export const initialiseTokenPlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
             pluginId: plugin.id,
-            function: tokenProposalUtils.isApprovalReached,
+            function: tokenProposalUtils.hasSucceeded,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM,
