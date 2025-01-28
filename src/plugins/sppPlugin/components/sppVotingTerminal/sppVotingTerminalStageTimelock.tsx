@@ -22,7 +22,8 @@ export interface ISppVotingTerminalStageTimelockProps {
     proposal: ISppProposal;
 }
 
-const getTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
+// callback for getting currentStage status in real time when active
+export const getTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
     const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
 
     if (!minAdvance) {
@@ -42,7 +43,8 @@ const getTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
     return { status: TimelockStatus.PENDING, minAdvance };
 };
 
-const getTimelockInfo = (status: TimelockStatus) => {
+// get proper info for the timelock status to display
+export const getTimelockInfo = (status: TimelockStatus) => {
     if (status === TimelockStatus.ACTIVE) {
         return {
             heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.heading',
