@@ -1,4 +1,3 @@
-import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { CardEmptyState, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
@@ -66,15 +65,14 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
     const { stage, proposal } = props;
     const { t } = useTranslations();
 
-    const currentStageIndex = sppProposalUtils.getCurrentStage(proposal).stageIndex;
     const stageIndex = stage.stageIndex;
-
+    const currentStageIndex = proposal.stageIndex;
     const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
 
     const enableDynamicTimelockStatus =
-        getTimelockStatus(currentStageIndex, stageIndex, minAdvance) === TimelockStatus.ACTIVE;
+        getTimelockStatus(stageIndex, currentStageIndex, minAdvance) === TimelockStatus.ACTIVE;
     const status = useDynamicValue({
-        callback: () => getTimelockStatus(currentStageIndex, stageIndex, minAdvance),
+        callback: () => getTimelockStatus(stageIndex, currentStageIndex, minAdvance),
         enabled: enableDynamicTimelockStatus,
     });
 
