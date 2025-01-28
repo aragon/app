@@ -2,7 +2,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { CardEmptyState, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { useMemo } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
@@ -17,7 +16,7 @@ export interface ISppVotingTerminalStageTimelockProps {
     proposal: ISppProposal;
 }
 
-export interface ITimelockInfo {
+interface ITimelockInfo {
     /**
      * Heading of the timelock info.
      */
@@ -28,39 +27,39 @@ export interface ITimelockInfo {
     description: string;
 }
 
-type CurrentTimelock = 'isComplete' | 'isActive' | 'isPending';
+enum CurrentTimelockState {
+    IS_COMPLETE = 'IS_COMPLETE',
+    IS_ACTIVE = 'IS_ACTIVE',
+    IS_PENDING = 'IS_PENDING',
+}
 
-const timelockInfoMap: Record<CurrentTimelock, ITimelockInfo> = {
-    isComplete: {
+const timelockInfoMap: Record<CurrentTimelockState, ITimelockInfo> = {
+    [CurrentTimelockState.IS_COMPLETE]: {
         heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.heading',
         description: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.description',
     },
-    isActive: {
+    [CurrentTimelockState.IS_ACTIVE]: {
         heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.heading',
         description: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.description',
     },
-    isPending: {
+    [CurrentTimelockState.IS_PENDING]: {
         heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.pending.heading',
         description: 'app.plugins.spp.sppVotingTerminalStageTimelock.pending.description',
     },
 };
 
-const getTimelockInfo = (
-    stageIndex: number,
-    currentStageIndex: number,
-    minAdvance: DateTime,
-): { heading: string; description: string } => {
+const getTimelockInfo = (stageIndex: number, currentStageIndex: number, minAdvance: DateTime): ITimelockInfo => {
     const now = DateTime.now();
 
     if (now > minAdvance || stageIndex < currentStageIndex) {
-        return timelockInfoMap.isComplete;
+        return timelockInfoMap[CurrentTimelockState.IS_COMPLETE];
     }
 
     if (stageIndex === currentStageIndex && now < minAdvance) {
-        return timelockInfoMap.isActive;
+        return timelockInfoMap[CurrentTimelockState.IS_ACTIVE];
     }
 
-    return timelockInfoMap.isPending;
+    return timelockInfoMap[CurrentTimelockState.IS_PENDING];
 };
 
 export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTimelockProps> = ({ stage, proposal }) => {
@@ -69,12 +68,9 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
     const stageIndex = stage.stageIndex;
     const currentStageIndex = proposal.stageIndex;
     const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)!;
+    const now = DateTime.now();
 
-    const enableDynamicTimelockStatus = useMemo(() => {
-        const now = DateTime.now();
-
-        return stageIndex === currentStageIndex && now < minAdvance;
-    }, [stageIndex, currentStageIndex, minAdvance]);
+    const enableDynamicTimelockStatus = stageIndex === currentStageIndex && now < minAdvance;
 
     const timelockInfo = useDynamicValue({
         callback: () => getTimelockInfo(stageIndex, currentStageIndex, minAdvance),
