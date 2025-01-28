@@ -133,10 +133,10 @@ jobs:
       #     echo "Installed dependencies in node_modules:"
       #     ls -la node_modules
 
-      # Step 11: Yarn List Installed Dependencies
-      - name: Yarn List Installed Dependencies
-        working-directory: ./app-qa
-        run: yarn list
+      # # Step 11: Yarn List Installed Dependencies
+      # - name: Yarn List Installed Dependencies
+      #   working-directory: ./app-qa
+      #   run: yarn list
 
       # Step 10: Install Playwright browsers
       - name: Install Playwright Browsers
