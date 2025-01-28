@@ -3,7 +3,7 @@ import { generateStepperResult } from '@/shared/testUtils';
 import { Button } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { type IWizardContainerProps, WizardContainer } from './wizardContainer';
+import { type IWizardContainerProps, WizardContainer } from './wizardForm';
 
 describe('<WizardContainer /> component', () => {
     const useStepperSpy = jest.spyOn(useStepper, 'useStepper');

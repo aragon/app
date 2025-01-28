@@ -100,17 +100,21 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     return (
         <Page.Main fullWidth={true}>
-            <Wizard.Container
-                finalStep={t('app.governance.createProposalPage.finalStep')}
+            <Wizard.Root
                 submitLabel={t('app.governance.createProposalPage.submitLabel')}
                 initialSteps={processedSteps}
-                onSubmit={handleFormSubmit}
                 defaultValues={{ actions: [] }}
             >
-                <CreateProposalForm.Provider value={contextValues}>
-                    <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
-                </CreateProposalForm.Provider>
-            </Wizard.Container>
+                <Wizard.Form finalStep={t('app.governance.createProposalPage.finalStep')} onSubmit={handleFormSubmit}>
+                    <CreateProposalForm.Provider value={contextValues}>
+                        <CreateProposalPageClientSteps
+                            steps={processedSteps}
+                            daoId={daoId}
+                            pluginAddress={pluginAddress}
+                        />
+                    </CreateProposalForm.Provider>
+                </Wizard.Form>
+            </Wizard.Root>
         </Page.Main>
     );
 };

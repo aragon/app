@@ -40,7 +40,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
 
     return (
         <>
-            <Wizard.Step
+            <Wizard.StepPage
                 title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.METADATA}.title`)}
                 description={t(
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.METADATA}.description`,
@@ -48,8 +48,8 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 {...metadataStep}
             >
                 <CreateProposalForm.Metadata />
-            </Wizard.Step>
-            <Wizard.Step
+            </Wizard.StepPage>
+            <Wizard.StepPage
                 title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.title`)}
                 description={t(
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`,
@@ -58,8 +58,8 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 {...actionsStep}
             >
                 <CreateProposalForm.Actions daoId={daoId} />
-            </Wizard.Step>
-            <Wizard.Step
+            </Wizard.StepPage>
+            <Wizard.StepPage
                 title={t(`app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.title`)}
                 description={t(
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.SETTINGS}.description`,
@@ -68,7 +68,7 @@ export const CreateProposalPageClientSteps: React.FC<ICreateProposalPageClientSt
                 {...settingsStep}
             >
                 <CreateProposalForm.Settings daoId={daoId} pluginAddress={pluginAddress} />
-            </Wizard.Step>
+            </Wizard.StepPage>
         </>
     );
 };

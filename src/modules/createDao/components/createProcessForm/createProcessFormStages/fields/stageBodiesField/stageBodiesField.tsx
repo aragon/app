@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useAccount } from 'wagmi';
 import type { ICreateProcessFormBody, ICreateProcessFormData } from '../../../createProcessFormDefinitions';
-import { StageBodiesFieldDialog } from './stageBodiesFieldDialog';
 
 export interface IStageBodiesFieldProps {
     /**
@@ -74,7 +73,6 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
     const {
         fields: bodyField,
         remove: removeBody,
-        update: updateBody,
         append: appendBody,
     } = useFieldArray<Record<string, ICreateProcessFormBody[]>>({ name: bodyFieldName });
     const watchBodyField = watch(bodyFieldName as `stages.${number}.bodies`);
@@ -158,12 +156,10 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                         {t('app.createDao.createProcessForm.stages.bodies.add')}
                     </Button>
                     {bodyDialogState.isOpen && (
-                        <StageBodiesFieldDialog
-                            stageFieldName={stageFieldName}
-                            removeBody={removeBody}
-                            updateBody={updateBody}
+                        <StageBodiesFieldDialogNew
                             onClose={() => setBodyDialogState({ isOpen: false, bodyIndex: 0 })}
-                            {...bodyDialogState}
+                            onSubmit={() => null}
+                            submitLabel="Save"
                         />
                     )}
                 </div>

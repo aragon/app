@@ -25,21 +25,21 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
 
     return (
         <>
-            <Wizard.Step
+            <Wizard.StepPage
                 title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.METADATA}.title`)}
                 description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.METADATA}.description`)}
                 {...metadataStep}
             >
                 <CreateProcessForm.Metadata />
-            </Wizard.Step>
-            <Wizard.Step
+            </Wizard.StepPage>
+            <Wizard.StepPage
                 title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.title`)}
                 description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.description`)}
                 {...processesStep}
             >
                 <CreateProcessForm.Stages />
-            </Wizard.Step>
-            <Wizard.Step
+            </Wizard.StepPage>
+            <Wizard.StepPage
                 title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.title`)}
                 description={t(
                     `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.description`,
@@ -47,7 +47,7 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 {...permissionsStep}
             >
                 <CreateProcessForm.Permissions />
-            </Wizard.Step>
+            </Wizard.StepPage>
         </>
     );
 };

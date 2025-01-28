@@ -37,15 +37,15 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
 
     return (
         <Page.Main fullWidth={true}>
-            <Wizard.Container
-                finalStep={t('app.createDao.createProcessPage.finalStep')}
+            <Wizard.Root
                 submitLabel={t('app.createDao.createProcessPage.submitLabel')}
                 initialSteps={processedSteps}
-                onSubmit={handleFormSubmit}
                 defaultValues={{ stages: [defaultStage] }}
             >
-                <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
-            </Wizard.Container>
+                <Wizard.Form finalStep={t('app.createDao.createProcessPage.finalStep')} onSubmit={handleFormSubmit}>
+                    <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
+                </Wizard.Form>
+            </Wizard.Root>
         </Page.Main>
     );
 };

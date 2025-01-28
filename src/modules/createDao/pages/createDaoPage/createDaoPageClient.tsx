@@ -34,27 +34,24 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
 
     return (
         <Page.Main fullWidth={true}>
-            <Wizard.Container
-                finalStep={t('app.createDao.createDaoPage.finalStep')}
-                submitLabel={t('app.createDao.createDaoPage.submitLabel')}
-                initialSteps={processedSteps}
-                onSubmit={handleFormSubmit}
-            >
-                <Wizard.Step
-                    title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.title`)}
-                    description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.description`)}
-                    {...networkStep}
-                >
-                    <CreateDaoForm.Network />
-                </Wizard.Step>
-                <Wizard.Step
-                    title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.METADATA}.title`)}
-                    description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.METADATA}.description`)}
-                    {...metadataStep}
-                >
-                    <CreateDaoForm.Metadata />
-                </Wizard.Step>
-            </Wizard.Container>
+            <Wizard.Root submitLabel={t('app.createDao.createDaoPage.submitLabel')} initialSteps={processedSteps}>
+                <Wizard.Form finalStep={t('app.createDao.createDaoPage.finalStep')} onSubmit={handleFormSubmit}>
+                    <Wizard.StepPage
+                        title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.title`)}
+                        description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.NETWORK}.description`)}
+                        {...networkStep}
+                    >
+                        <CreateDaoForm.Network />
+                    </Wizard.StepPage>
+                    <Wizard.StepPage
+                        title={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.METADATA}.title`)}
+                        description={t(`app.createDao.createDaoPage.steps.${CreateDaoWizardStep.METADATA}.description`)}
+                        {...metadataStep}
+                    >
+                        <CreateDaoForm.Metadata />
+                    </Wizard.StepPage>
+                </Wizard.Form>
+            </Wizard.Root>
         </Page.Main>
     );
 };
