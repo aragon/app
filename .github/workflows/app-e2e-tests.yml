@@ -35,6 +35,12 @@ jobs:
     # if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
 
     steps:
+      # Step 1: Install Yarn 1.22.22
+      - name: Install Yarn 1.22.22
+        run: |
+          npm install -g yarn@1.22.22
+          yarn --version
+
       - name: Check Yarn version
         run: yarn --version
 
@@ -123,7 +129,8 @@ jobs:
       # Install dependencies for app-next if cache is missing
       - name: Install app-qa dependencies
         working-directory: ./app-qa
-        run: yarn install --frozen-lockfile
+        # run: yarn install --frozen-lockfile
+        run: yarn install --immutable --verbose
 
       # # Step 10: List Installed Dependencies
       # - name: List Installed Dependencies
