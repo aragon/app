@@ -4,7 +4,7 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Wizard } from '@/shared/components/wizard';
+import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
@@ -100,21 +100,17 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     return (
         <Page.Main fullWidth={true}>
-            <Wizard.Root
+            <WizardPage.Container
+                finalStep={t('app.governance.createProposalPage.finalStep')}
                 submitLabel={t('app.governance.createProposalPage.submitLabel')}
                 initialSteps={processedSteps}
+                onSubmit={handleFormSubmit}
                 defaultValues={{ actions: [] }}
             >
-                <Wizard.Form finalStep={t('app.governance.createProposalPage.finalStep')} onSubmit={handleFormSubmit}>
-                    <CreateProposalForm.Provider value={contextValues}>
-                        <CreateProposalPageClientSteps
-                            steps={processedSteps}
-                            daoId={daoId}
-                            pluginAddress={pluginAddress}
-                        />
-                    </CreateProposalForm.Provider>
-                </Wizard.Form>
-            </Wizard.Root>
+                <CreateProposalForm.Provider value={contextValues}>
+                    <CreateProposalPageClientSteps steps={processedSteps} daoId={daoId} pluginAddress={pluginAddress} />
+                </CreateProposalForm.Provider>
+            </WizardPage.Container>
         </Page.Main>
     );
 };

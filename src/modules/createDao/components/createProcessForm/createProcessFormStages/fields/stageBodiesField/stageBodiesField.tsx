@@ -155,13 +155,12 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                     >
                         {t('app.createDao.createProcessForm.stages.bodies.add')}
                     </Button>
-                    {bodyDialogState.isOpen && (
-                        <StageBodiesFieldDialogNew
-                            onClose={() => setBodyDialogState({ isOpen: false, bodyIndex: 0 })}
-                            onSubmit={() => null}
-                            submitLabel="Save"
-                        />
-                    )}
+                    <StageBodiesFieldDialogNew
+                        isOpen={bodyDialogState.isOpen}
+                        onClose={() => setBodyDialogState({ isOpen: false, bodyIndex: 0 })}
+                        onSubmit={() => null}
+                        submitLabel="Save"
+                    />
                 </div>
             </InputContainer>
         </>
