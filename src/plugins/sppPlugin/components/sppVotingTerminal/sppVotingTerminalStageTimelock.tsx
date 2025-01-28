@@ -16,7 +16,7 @@ export interface ISppVotingTerminalStageTimelockProps {
     proposal: ISppProposal;
 }
 
-const useTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
+const getTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
     const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)!;
     const now = DateTime.now();
 
@@ -51,14 +51,13 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
     const { stage, proposal } = props;
     const { t } = useTranslations();
 
-    const { hasEnded, isActive, minAdvance } = useTimelockStatus(stage, proposal);
-
-    const timelockInfo = useDynamicValue({
-        callback: () => getTimelockInfo(hasEnded, isActive),
-        enabled: isActive,
+    const timelockStatus = useDynamicValue({
+        callback: () => getTimelockStatus(stage, proposal),
     });
 
-    const { heading, description } = timelockInfo;
+    const { hasEnded, isActive, minAdvance } = timelockStatus;
+
+    const { heading, description } = getTimelockInfo(hasEnded, isActive);
 
     const date = formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) ?? '';
 
