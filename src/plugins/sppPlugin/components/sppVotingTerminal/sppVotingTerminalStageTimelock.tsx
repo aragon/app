@@ -5,6 +5,12 @@ import { DateTime } from 'luxon';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
+export enum TimelockStatus {
+    ACTIVE = 'ACTIVE',
+    PENDING = 'PENDING',
+    COMPLETE = 'COMPLETE',
+}
+
 export interface ISppVotingTerminalStageTimelockProps {
     /**
      * Timelock stage to display the info for.
@@ -17,24 +23,34 @@ export interface ISppVotingTerminalStageTimelockProps {
 }
 
 const getTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
-    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)!;
+    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
+
+    if (!minAdvance) {
+        return { status: TimelockStatus.PENDING, minAdvance: undefined };
+    }
+
     const now = DateTime.now();
 
-    const hasEnded = stage.stageIndex < proposal.stageIndex || now > minAdvance;
-    const isActive = stage.stageIndex === proposal.stageIndex && now < minAdvance;
+    if (stage.stageIndex < proposal.stageIndex || now > minAdvance) {
+        return { status: TimelockStatus.COMPLETE, minAdvance };
+    }
 
-    return { hasEnded, isActive, minAdvance };
+    if (stage.stageIndex === proposal.stageIndex && now < minAdvance) {
+        return { status: TimelockStatus.ACTIVE, minAdvance };
+    }
+
+    return { status: TimelockStatus.PENDING, minAdvance };
 };
 
-const getTimelockInfo = (hasEnded: boolean, isActive: boolean) => {
-    if (isActive) {
+const getTimelockInfo = (status: TimelockStatus) => {
+    if (status === TimelockStatus.ACTIVE) {
         return {
             heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.heading',
             description: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.description',
         };
     }
 
-    if (hasEnded) {
+    if (status === TimelockStatus.COMPLETE) {
         return {
             heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.heading',
             description: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.description',
@@ -53,13 +69,14 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
 
     const timelockStatus = useDynamicValue({
         callback: () => getTimelockStatus(stage, proposal),
+        enabled: stage.stageIndex === proposal.stageIndex,
     });
 
-    const { hasEnded, isActive, minAdvance } = timelockStatus;
+    const { status, minAdvance } = timelockStatus;
 
-    const { heading, description } = getTimelockInfo(hasEnded, isActive);
+    const { heading, description } = getTimelockInfo(status);
 
-    const date = formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) ?? '';
+    const date = minAdvance ? formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) : '';
 
     return (
         <CardEmptyState
