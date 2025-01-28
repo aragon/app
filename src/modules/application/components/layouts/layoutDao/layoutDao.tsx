@@ -1,9 +1,9 @@
 import { daoOptions } from '@/shared/api/daoService';
-import { Banner } from '@/shared/components/banner';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import { BannerDao } from '../../bannerDao';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationDao } from '../../navigations/navigationDao';
 
@@ -40,7 +40,7 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <NavigationDao id={id} />
-            <Banner id={id} />
+            <BannerDao id={id} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );
