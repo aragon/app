@@ -1,3 +1,4 @@
+import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { CardEmptyState, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
@@ -22,28 +23,24 @@ export interface ISppVotingTerminalStageTimelockProps {
     proposal: ISppProposal;
 }
 
-// callback for getting currentStage status in real time when active
-export const getTimelockStatus = (stage: ISppStage, proposal: ISppProposal) => {
-    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
-
+export const getTimelockStatus = (stageIndex: number, currentStageIndex: number, minAdvance: DateTime | undefined) => {
     if (!minAdvance) {
-        return { status: TimelockStatus.PENDING, minAdvance: undefined };
+        return TimelockStatus.PENDING;
     }
 
     const now = DateTime.now();
 
-    if (stage.stageIndex < proposal.stageIndex || now > minAdvance) {
-        return { status: TimelockStatus.COMPLETE, minAdvance };
+    if (stageIndex < currentStageIndex || now > minAdvance) {
+        return TimelockStatus.COMPLETE;
     }
 
-    if (stage.stageIndex === proposal.stageIndex && now < minAdvance) {
-        return { status: TimelockStatus.ACTIVE, minAdvance };
+    if (stageIndex === currentStageIndex && now < minAdvance) {
+        return TimelockStatus.ACTIVE;
     }
 
-    return { status: TimelockStatus.PENDING, minAdvance };
+    return TimelockStatus.PENDING;
 };
 
-// get proper info for the timelock status to display
 export const getTimelockInfo = (status: TimelockStatus) => {
     if (status === TimelockStatus.ACTIVE) {
         return {
@@ -69,12 +66,17 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
     const { stage, proposal } = props;
     const { t } = useTranslations();
 
-    const timelockStatus = useDynamicValue({
-        callback: () => getTimelockStatus(stage, proposal),
-        enabled: stage.stageIndex === proposal.stageIndex,
-    });
+    const currentStageIndex = sppProposalUtils.getCurrentStage(proposal).stageIndex;
+    const stageIndex = stage.stageIndex;
 
-    const { status, minAdvance } = timelockStatus;
+    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
+
+    const enableDynamicTimelockStatus =
+        getTimelockStatus(currentStageIndex, stageIndex, minAdvance) === TimelockStatus.ACTIVE;
+    const status = useDynamicValue({
+        callback: () => getTimelockStatus(currentStageIndex, stageIndex, minAdvance),
+        enabled: enableDynamicTimelockStatus,
+    });
 
     const { heading, description } = getTimelockInfo(status);
 

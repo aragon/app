@@ -3,32 +3,35 @@ import {
     getTimelockStatus,
     TimelockStatus,
 } from '@/plugins/sppPlugin/components/sppVotingTerminal/sppVotingTerminalStageTimelock';
-import { generateSppProposal, generateSppStage } from '@/plugins/sppPlugin/testUtils';
+import { DateTime } from 'luxon';
 
 describe('getTimelockStatus', () => {
     it('returns COMPLETE if the stage has ended', () => {
-        const stage = generateSppStage({ stageIndex: 2, minAdvance: 2020202 });
-        const proposal = generateSppProposal({ stageIndex: 2, lastStageTransition: 2020202 });
+        const stageIndex = 0;
+        const currentStageIndex = 1;
+        const minAdvance = DateTime.now().minus({ days: 1 });
 
-        const { status } = getTimelockStatus(stage, proposal);
+        const status = getTimelockStatus(stageIndex, currentStageIndex, minAdvance);
 
         expect(status).toBe(TimelockStatus.COMPLETE);
     });
 
     it('returns ACTIVE if the stage is the current stage and has not ended', () => {
-        const stage = generateSppStage({ stageIndex: 1, minAdvance: Date.now() + 10000 });
-        const proposal = generateSppProposal({ stageIndex: 1, lastStageTransition: Date.now() });
+        const stageIndex = 1;
+        const currentStageIndex = 1;
+        const minAdvance = DateTime.now().plus({ days: 1 });
 
-        const { status } = getTimelockStatus(stage, proposal);
+        const status = getTimelockStatus(stageIndex, currentStageIndex, minAdvance);
 
         expect(status).toBe(TimelockStatus.ACTIVE);
     });
 
     it('returns PENDING if the stage is neither active nor complete therefore upcoming', () => {
-        const stage = generateSppStage({ stageIndex: 2, minAdvance: Date.now() + 10000 });
-        const proposal = generateSppProposal({ stageIndex: 1, lastStageTransition: Date.now() });
+        const stageIndex = 2;
+        const currentStageIndex = 1;
+        const minAdvance = DateTime.now().plus({ days: 1 });
 
-        const { status } = getTimelockStatus(stage, proposal);
+        const status = getTimelockStatus(stageIndex, currentStageIndex, minAdvance);
 
         expect(status).toBe(TimelockStatus.PENDING);
     });
