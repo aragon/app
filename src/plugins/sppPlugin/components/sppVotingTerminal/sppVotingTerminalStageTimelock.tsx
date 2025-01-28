@@ -48,14 +48,19 @@ const timelockInfoMap: Record<CurrentTimelockState, ITimelockInfo> = {
     },
 };
 
-const getTimelockInfo = (stageIndex: number, currentStageIndex: number, minAdvance: DateTime): ITimelockInfo => {
+const getTimelockInfo = (
+    stageIndex: number,
+    currentStageIndex: number,
+    minAdvance: DateTime | undefined,
+    stageIsActive: boolean | undefined,
+): ITimelockInfo => {
     const now = DateTime.now();
 
-    if (now > minAdvance || stageIndex < currentStageIndex) {
+    if ((minAdvance && now > minAdvance) || stageIndex < currentStageIndex) {
         return timelockInfoMap[CurrentTimelockState.IS_COMPLETE];
     }
 
-    if (stageIndex === currentStageIndex && now < minAdvance) {
+    if (stageIsActive) {
         return timelockInfoMap[CurrentTimelockState.IS_ACTIVE];
     }
 
@@ -67,19 +72,19 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
 
     const stageIndex = stage.stageIndex;
     const currentStageIndex = proposal.stageIndex;
-    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)!;
+    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
     const now = DateTime.now();
 
-    const enableDynamicTimelockStatus = stageIndex === currentStageIndex && now < minAdvance;
+    const stageIsActive = stageIndex === currentStageIndex && minAdvance && now < minAdvance;
 
     const timelockInfo = useDynamicValue({
-        callback: () => getTimelockInfo(stageIndex, currentStageIndex, minAdvance),
-        enabled: enableDynamicTimelockStatus,
+        callback: () => getTimelockInfo(stageIndex, currentStageIndex, minAdvance, stageIsActive),
+        enabled: stageIsActive,
     });
 
-    const date = formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME });
-
     const { heading, description } = timelockInfo;
+
+    const date = formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) ?? '';
 
     return (
         <CardEmptyState
