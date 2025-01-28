@@ -35,6 +35,9 @@ jobs:
     # if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
 
     steps:
+      - name: Check Yarn version
+        run: yarn --version
+
       - name: Load secrets
         id: load-secrets
         uses: 1password/load-secrets-action@v2.0.0
@@ -97,6 +100,10 @@ jobs:
       #     path: ./app-qa
 
       # Step 8: Initialize app-qa submodule for local environment
+
+      - name: Check Yarn version
+        run: yarn --version
+
       - name: Initialize app-qa submodule
         run: |
           git submodule add https://$GITHUB_ACTOR:${{ steps.load-secrets.outputs.GH_APP_QA }}@github.com/aragon/app-qa.git ./app-qa || true
@@ -114,7 +121,7 @@ jobs:
       #   run: yarn
 
       # Install dependencies for app-next if cache is missing
-      - name: Install app-next dependencies
+      - name: Install app-qa dependencies
         working-directory: ./app-qa
         run: yarn install --frozen-lockfile
 
