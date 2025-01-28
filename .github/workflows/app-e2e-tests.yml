@@ -87,14 +87,25 @@ jobs:
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      # Step 8: Checkout app-qa repository
-      - name: Checkout app-qa Repository
-        uses: actions/checkout@v4
-        with:
-          repository: aragon/app-qa
-          # token: ${{ secrets.GITHUB_TOKEN }}
-          token: ${{ steps.load-secrets.outputs.GH_APP_QA }}
-          path: ./app-qa
+      # # Step 8: Checkout app-qa repository
+      # - name: Checkout app-qa Repository
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: aragon/app-qa
+      #     # token: ${{ secrets.GITHUB_TOKEN }}
+      #     token: ${{ steps.load-secrets.outputs.GH_APP_QA }}
+      #     path: ./app-qa
+
+      # Step 8: Initialize app-qa submodule for local environment
+      - name: Initialize app-qa submodule
+        run: |
+          git submodule add https://$GITHUB_ACTOR:${{ steps.load-secrets.outputs.GH_APP_QA }}@github.com/aragon/app-qa.git ./app-qa || true
+          cd ./app-qa
+          git checkout main
+          git pull origin main
+          cd ..
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
 
       # Step 9: Install dependencies for app-qa
       - name: Install app-qa Dependencies
