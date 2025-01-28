@@ -2,14 +2,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import { CardEmptyState, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { useMemo } from 'react';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
-
-export enum TimelockStatus {
-    ACTIVE = 'ACTIVE',
-    PENDING = 'PENDING',
-    COMPLETE = 'COMPLETE',
-}
 
 export interface ISppVotingTerminalStageTimelockProps {
     /**
@@ -22,63 +17,73 @@ export interface ISppVotingTerminalStageTimelockProps {
     proposal: ISppProposal;
 }
 
-export const getTimelockStatus = (stageIndex: number, currentStageIndex: number, minAdvance: DateTime | undefined) => {
-    if (!minAdvance) {
-        return TimelockStatus.PENDING;
-    }
+export interface ITimelockInfo {
+    /**
+     * Heading of the timelock info.
+     */
+    heading: string;
+    /**
+     * Description of the timelock info.
+     */
+    description: string;
+}
 
+type CurrentTimelock = 'isComplete' | 'isActive' | 'isPending';
+
+const timelockInfoMap: Record<CurrentTimelock, ITimelockInfo> = {
+    isComplete: {
+        heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.heading',
+        description: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.description',
+    },
+    isActive: {
+        heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.heading',
+        description: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.description',
+    },
+    isPending: {
+        heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.pending.heading',
+        description: 'app.plugins.spp.sppVotingTerminalStageTimelock.pending.description',
+    },
+};
+
+const getTimelockInfo = (
+    stageIndex: number,
+    currentStageIndex: number,
+    minAdvance: DateTime,
+): { heading: string; description: string } => {
     const now = DateTime.now();
 
-    if (stageIndex < currentStageIndex || now > minAdvance) {
-        return TimelockStatus.COMPLETE;
+    if (now > minAdvance || stageIndex < currentStageIndex) {
+        return timelockInfoMap.isComplete;
     }
 
     if (stageIndex === currentStageIndex && now < minAdvance) {
-        return TimelockStatus.ACTIVE;
+        return timelockInfoMap.isActive;
     }
 
-    return TimelockStatus.PENDING;
+    return timelockInfoMap.isPending;
 };
 
-export const getTimelockInfo = (status: TimelockStatus) => {
-    if (status === TimelockStatus.ACTIVE) {
-        return {
-            heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.heading',
-            description: 'app.plugins.spp.sppVotingTerminalStageTimelock.active.description',
-        };
-    }
-
-    if (status === TimelockStatus.COMPLETE) {
-        return {
-            heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.heading',
-            description: 'app.plugins.spp.sppVotingTerminalStageTimelock.complete.description',
-        };
-    }
-
-    return {
-        heading: 'app.plugins.spp.sppVotingTerminalStageTimelock.pending.heading',
-        description: 'app.plugins.spp.sppVotingTerminalStageTimelock.pending.description',
-    };
-};
-
-export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTimelockProps> = (props) => {
-    const { stage, proposal } = props;
+export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTimelockProps> = ({ stage, proposal }) => {
     const { t } = useTranslations();
 
     const stageIndex = stage.stageIndex;
     const currentStageIndex = proposal.stageIndex;
-    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
+    const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage)!;
 
-    const enableDynamicTimelockStatus =
-        getTimelockStatus(stageIndex, currentStageIndex, minAdvance) === TimelockStatus.ACTIVE;
-    const status = useDynamicValue({
-        callback: () => getTimelockStatus(stageIndex, currentStageIndex, minAdvance),
+    const enableDynamicTimelockStatus = useMemo(() => {
+        const now = DateTime.now();
+
+        return stageIndex === currentStageIndex && now < minAdvance;
+    }, [stageIndex, currentStageIndex, minAdvance]);
+
+    const timelockInfo = useDynamicValue({
+        callback: () => getTimelockInfo(stageIndex, currentStageIndex, minAdvance),
         enabled: enableDynamicTimelockStatus,
     });
 
-    const { heading, description } = getTimelockInfo(status);
+    const date = formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME });
 
-    const date = minAdvance ? formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) : '';
+    const { heading, description } = timelockInfo;
 
     return (
         <CardEmptyState
