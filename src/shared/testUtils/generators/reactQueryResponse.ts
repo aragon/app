@@ -53,6 +53,7 @@ export const generateReactQueryResultSuccess = <TData, TError>(
     isLoading: false,
     isLoadingError: false,
     isRefetchError: false,
+    isPlaceholderData: false,
     isSuccess: true,
     status: 'success',
 });
@@ -68,6 +69,7 @@ export const generateReactQueryResultError = <TData, TError>(
     isLoading: false,
     isLoadingError: true,
     isRefetchError: false,
+    isPlaceholderData: false,
     isSuccess: false,
     status: 'error',
 });
@@ -101,6 +103,7 @@ export const generateReactQueryInfiniteResultSuccess = <TData, TError>(
     isSuccess: true,
     isFetchNextPageError: false,
     isFetchPreviousPageError: false,
+    isPlaceholderData: false,
     status: 'success',
 });
 
@@ -118,6 +121,7 @@ export const generateReactQueryInfiniteResultError = <TData, TError>(
     isSuccess: false,
     isFetchNextPageError: false,
     isFetchPreviousPageError: false,
+    isPlaceholderData: false,
     status: 'error',
 });
 
@@ -135,6 +139,7 @@ export const generateReactQueryInfiniteResultLoading = <TData, TError>(
     isSuccess: false,
     isFetchNextPageError: false,
     isFetchPreviousPageError: false,
+    isPlaceholderData: false,
     status: 'pending',
 });
 
