@@ -145,7 +145,8 @@ jobs:
 
       # Build Synpress dependencies
       - name: Build Synpress Depencies
-        if: steps.synpress-cache.outputs.cache-hit != 'true'
+        working-directory: ./app-qa
+        # if: steps.synpress-cache.outputs.cache-hit != 'true'
         run: xvfb-run npx synpress ./tests/
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
