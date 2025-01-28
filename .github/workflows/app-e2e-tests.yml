@@ -107,11 +107,16 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ github.actor }}
 
-      # Step 9: Install dependencies for app-qa
-      - name: Install app-qa Dependencies
+      # # Step 9: Install dependencies for app-qa
+      # - name: Install app-qa Dependencies
+      #   working-directory: ./app-qa
+      #   # run: yarn install --mode update-lockfile
+      #   run: yarn
+
+      # Install dependencies for app-next if cache is missing
+      - name: Install app-next dependencies
         working-directory: ./app-qa
-        # run: yarn install --mode update-lockfile
-        run: yarn
+        run: yarn install --frozen-lockfile
 
       # # Step 10: List Installed Dependencies
       # - name: List Installed Dependencies
