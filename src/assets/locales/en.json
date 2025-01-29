@@ -149,6 +149,17 @@
         },
         "submitLabel": "Publish DAO"
       },
+      "createProcessDetailsDialog": {
+        "actionLabel": "Get started",
+        "cancelLabel": "Cancel",
+        "description": "Governance should match your organization's needs. Whether it's for managing funds, upgrading your protocol, or coordinating between teams, you can always add a new governance process to your DAO.",
+        "steps": {
+          "describe": "Describe new proposal type",
+          "design": "Design the governance process",
+          "designate": "Set proposal creation rules"
+        },
+        "title": "Create governance process"
+      },
       "createProcessForm": {
         "metadata": {
           "description": {
