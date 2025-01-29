@@ -43,6 +43,7 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
             steps={steps}
             actionLabel={t('app.createDao.createProcessDetailsDialog.actionLabel')}
             wizardLink={`/dao/${daoId}/create/process`}
+            infoLink="https://docs.aragon.org/spp/1.x/index.html#staged_governance_processes"
             dialogId={id}
         />
     );
