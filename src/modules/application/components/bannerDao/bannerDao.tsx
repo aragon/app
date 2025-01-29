@@ -1,7 +1,7 @@
 'use client';
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
-import { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
+import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
