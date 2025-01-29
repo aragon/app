@@ -16,7 +16,7 @@ export const CreateProcessDetailsDialog: React.FC<ICreateProcessDetailsDialogPro
     const { location } = props;
     const { id } = location;
 
-    invariant(location.params != null, 'CreateProcessInfoDialog: required parameters must be set.');
+    invariant(location.params != null, 'CreateProcessDetailsDialog: required parameters must be set.');
     const { daoId } = location.params;
 
     const { t } = useTranslations();

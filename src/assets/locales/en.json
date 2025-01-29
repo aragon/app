@@ -1208,7 +1208,6 @@
           "versionInfoTitle": "Version Info"
         },
         "main": {
-          "action": "Process",
           "governanceInfoTitle": "Governance",
           "membersInfoTitle": "Members",
           "settingsInfoTitle": "DAO",
