@@ -24,7 +24,7 @@ const getTimelockState = (proposal: ISppProposal, stage: ISppStage) => {
     const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
 
     const isActive = stageIndex === currentStageIndex && minAdvance && now < minAdvance;
-    const isComplete = (minAdvance && now > minAdvance) ?? stageIndex < currentStageIndex;
+    const isComplete = stageIndex < currentStageIndex || (minAdvance && now > minAdvance);
 
     return isComplete ? 'complete' : isActive ? 'active' : 'pending';
 };
