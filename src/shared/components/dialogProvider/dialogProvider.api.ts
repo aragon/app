@@ -54,27 +54,10 @@ export interface IDialogComponentProps<TParams extends DialogComponentProps = Di
     location: IDialogLocation<TParams>;
 }
 
-export interface IDialogComponentDefinitions<TParams extends DialogComponentProps = DialogComponentProps> {
+export interface IDialogComponentDefinitions<TParams extends DialogComponentProps = DialogComponentProps>
+    extends Pick<IDialogRootProps, 'hiddenTitle' | 'hiddenDescription' | 'useFocusTrap' | 'size'> {
     /**
      * Component to be rendered.
      */
     Component: ComponentType<IDialogComponentProps<TParams>>;
-    /**
-     * Optional hidden title (as translation key) for screen readers, usually used for Dialogs without a Dialog.Header
-     * component.
-     */
-    title?: string;
-    /**
-     * Optional hidden description (as translation key) for screen readers, usually used for Dialogs without a
-     * description on the relative Dialog.Header component.
-     */
-    description?: string;
-    /**
-     * Overrides the focus-trap property for the specific dialog when set.
-     */
-    useFocusTrap?: IDialogRootProps['useFocusTrap'];
-    /**
-     * Overrides the size property for the specific dialog when set.
-     */
-    size?: IDialogRootProps['size'];
 }

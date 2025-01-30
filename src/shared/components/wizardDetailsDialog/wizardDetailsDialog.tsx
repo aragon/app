@@ -1,4 +1,5 @@
 import { Button, Dialog, Heading, IconType, IllustrationObject, Link } from '@aragon/gov-ui-kit';
+import { Description, Title } from '@radix-ui/react-dialog';
 import { useDialogContext } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
 import type { IWizardDetailsDialogProps } from './wizardDetailsDialog.api';
@@ -16,10 +17,14 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
     };
 
     return (
-        <Dialog.Content className="flex flex-col gap-y-6 !px-12 py-10">
+        <Dialog.Content className="flex flex-col gap-y-6 px-12 py-10" noInset={true}>
             <div className="flex flex-col gap-y-3">
-                <Heading size="h3">{title}</Heading>
-                <p className="text-base font-normal leading-normal text-neutral-500">{description}</p>
+                <Title asChild={true}>
+                    <Heading size="h3">{title}</Heading>
+                </Title>
+                <Description className="text-base font-normal leading-normal text-neutral-500">
+                    {description}
+                </Description>
                 {infoLink && (
                     <Link iconRight={IconType.LINK_EXTERNAL} href={infoLink}>
                         {t('app.shared.wizardDetailsDialog.infoLabel')}
