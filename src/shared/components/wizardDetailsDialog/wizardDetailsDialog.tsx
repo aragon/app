@@ -26,7 +26,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (props) 
                     {description}
                 </Description>
                 {infoLink && (
-                    <Link iconRight={IconType.LINK_EXTERNAL} href={infoLink}>
+                    <Link iconRight={IconType.LINK_EXTERNAL} href={infoLink} target="_blank">
                         {t('app.shared.wizardDetailsDialog.infoLabel')}
                     </Link>
                 )}
