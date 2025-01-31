@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { generateTokenProposal, generateTokenVote } from '../../testUtils';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
+import { generateDaoPlugin } from '@/shared/testUtils';
 
 describe('<TokenProposalListItem /> component', () => {
     const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');
@@ -23,6 +24,7 @@ describe('<TokenProposalListItem /> component', () => {
         const completeProps: ITokenProposalListItemProps = {
             proposal: generateTokenProposal(),
             daoId: 'dao-id',
+            plugin: generateDaoPlugin(),
             ...props,
         };
 
@@ -34,15 +36,17 @@ describe('<TokenProposalListItem /> component', () => {
     };
 
     it('renders the token proposal', () => {
+        const plugin = generateDaoPlugin({ slug: 'tokenvoting' });
         const proposal = generateTokenProposal({ title: 'my-proposal' });
-        render(createTestComponent({ proposal }));
+        render(createTestComponent({ proposal, plugin }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
 
     it('sets the correct link for proposal page', () => {
-        const proposal = generateTokenProposal({ id: 'proposal-id' });
+        const plugin = generateDaoPlugin({ slug: 'tokenvoting' });
+        const proposal = generateTokenProposal({ incrementalId: 3 });
         const daoId = 'dao-id';
-        render(createTestComponent({ proposal }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/${proposal.id}`);
+        render(createTestComponent({ proposal, plugin }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/tokenvoting-3`);
     });
 });

@@ -11,6 +11,7 @@ import {
     generateSppSubProposal,
 } from '../../testUtils';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
+import { generateDaoPlugin } from '@/shared/testUtils';
 
 describe('<SppProposalListItem /> component', () => {
     const getProposalStatusSpy = jest.spyOn(sppProposalUtils, 'getProposalStatus');
@@ -23,6 +24,7 @@ describe('<SppProposalListItem /> component', () => {
         const completeProps: ISppProposalListItemProps = {
             proposal: generateSppProposal(),
             daoId: 'dao-id',
+            plugin: generateDaoPlugin(),
             ...props,
         };
 
@@ -45,6 +47,7 @@ describe('<SppProposalListItem /> component', () => {
     });
 
     it('sets the correct link for proposal page', () => {
+        const plugin = generateDaoPlugin({ slug: 'spp' });
         const subProposals = [generateSppSubProposal()];
         const settings = generateSppPluginSettings({ stages: [generateSppStage()] });
         const proposal = generateSppProposal({
@@ -52,8 +55,8 @@ describe('<SppProposalListItem /> component', () => {
             settings,
         });
         const daoId = 'dao-id';
-        render(createTestComponent({ proposal }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/${proposal.id}`);
+        render(createTestComponent({ plugin, proposal }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/spp-1`);
     });
 
     it('displays the stage name in status context when proposal is multistage and appropriate for status', () => {
@@ -71,6 +74,7 @@ describe('<SppProposalListItem /> component', () => {
     });
 
     it('displays "Stage" with number in status context when proposal is multistage and no stage name is returned', () => {
+        const plugin = generateDaoPlugin();
         const subProposals = [generateSppSubProposal(), generateSppSubProposal(), generateSppSubProposal()];
         const settings = generateSppPluginSettings({
             stages: [generateSppStage(), generateSppStage({ name: undefined }), generateSppStage()],
@@ -81,7 +85,7 @@ describe('<SppProposalListItem /> component', () => {
             stageIndex: 1,
         });
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
-        render(createTestComponent({ proposal }));
+        render(createTestComponent({ plugin, proposal }));
 
         expect(screen.getByText(/spp.sppProposalListItem.stage \(stageIndex=2/)).toBeInTheDocument();
     });

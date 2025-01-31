@@ -31,6 +31,8 @@ import {
 import { type IProposal, useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -51,8 +53,11 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const { copy } = useGukModulesContext();
     const pageUrl = useCurrentUrl();
 
-    const proposalUrlParams = { id: proposalId };
-    const proposalParams = { urlParams: proposalUrlParams };
+    const proposalUrlParams = { slug: proposalId };
+    const proposalParams = {
+        urlParams: proposalUrlParams,
+        queryParams: { daoId },
+    };
     const { data: proposal } = useProposal(proposalParams);
 
     const daoParams = { id: daoId };
@@ -64,9 +69,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         pluginId: proposal?.pluginSubdomain ?? '',
     })!;
 
+    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal?.pluginAddress })?.[0];
+
     if (proposal == null || dao == null) {
         return null;
     }
+
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 
@@ -91,7 +100,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             href: `/dao/${daoId}/proposals`,
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
-        { label: proposal.proposalIndex },
+        { label: slug },
     ];
 
     return (
@@ -153,8 +162,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
-                            <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
+                            <DefinitionList.Item
+                                term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
+                            >
                                 <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
+                            </DefinitionList.Item>
+                            <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
+                                <p className="truncate text-neutral-500">{slug}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}

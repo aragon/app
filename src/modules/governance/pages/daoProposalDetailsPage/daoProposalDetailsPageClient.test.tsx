@@ -9,14 +9,17 @@ import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateAddressInfo,
     generateDao,
+    generateDaoPlugin,
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
+    generateTabComponentPlugin,
 } from '@/shared/testUtils';
 import { clipboardUtils, GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 
 jest.mock('../../components/proposalVotingTerminal', () => ({
     ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,
@@ -31,10 +34,14 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoPluginsSpy.mockReturnValue([
+            generateTabComponentPlugin({ id: 'plugin', meta: generateDaoPlugin({ slug: 'test-slug' }) }),
+        ]);
     });
 
     afterEach(() => {
@@ -42,6 +49,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {
@@ -63,7 +71,10 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent({ proposalId: proposal.id }));
 
-        expect(useProposalSpy).toHaveBeenCalledWith({ urlParams: { id: proposal.id } });
+        expect(useProposalSpy).toHaveBeenCalledWith({
+            urlParams: { slug: proposal.id },
+            queryParams: { daoId: 'dao-id' },
+        });
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
         expect(screen.getByText(proposal.summary)).toBeInTheDocument();
     });
@@ -89,7 +100,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const proposalsLink = screen.getByRole('link', { name: /daoProposalDetailsPage.header.breadcrumb.proposals/ });
         expect(proposalsLink).toBeInTheDocument();
         expect(proposalsLink.getAttribute('href')).toEqual(`/dao/${daoId}/proposals`);
-        expect(within(breadcrumbsContainer).getByText(proposal.proposalIndex)).toBeInTheDocument();
+        expect(within(breadcrumbsContainer).getByText('TEST-SLUG-1')).toBeInTheDocument();
     });
 
     it('uses the plugin-specific function to process and render the proposal status', () => {

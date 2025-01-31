@@ -2,7 +2,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
+import { type Hex } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
 import type {
     ICreateProposalFormData,
@@ -11,7 +11,6 @@ import type {
 } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../types';
-import { proposalAbi } from './proposalAbi';
 
 export interface IBuildTransactionParams {
     /**
@@ -66,18 +65,6 @@ class PublishProposalDialogUtils {
         };
 
         return transaction;
-    };
-
-    getProposalId = (receipt: TransactionReceipt, creator: string) => {
-        const { logs } = receipt;
-
-        const proposalCreatedLogs = parseEventLogs({ abi: proposalAbi, eventName: 'ProposalCreated', logs });
-
-        // Make sure to retrieve the main-proposal creation log as plugins might create sub-proposals
-        const mainProposalLog = proposalCreatedLogs.find((log) => log.args.creator === creator);
-        const decodedProposalId = mainProposalLog?.args.proposalId.toString();
-
-        return decodedProposalId;
     };
 
     prepareActions = async (params: IPrepareActionsParams) => {

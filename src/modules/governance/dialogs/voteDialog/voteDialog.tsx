@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { voteDialogUtils } from './voteDialogUtils';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IVoteDialogParams {
     /**
@@ -44,13 +46,21 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { address } = useAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
 
-    const { vote, proposal, isVeto } = location.params;
+    const { vote, proposal, isVeto, daoId } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
     const handlePrepareTransaction = () => voteDialogUtils.buildTransaction({ proposal, voteValue: vote.value });
+
+    const plugin = useDaoPlugins({
+        daoId,
+        pluginAddress: proposal.parentProposal?.pluginAddress,
+        includeSubPlugins: true,
+    })?.[0];
+
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     return (
         <TransactionDialog
@@ -63,7 +73,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             network={proposal.network}
         >
             <VoteProposalDataListItemStructure
-                proposalId={proposal.proposalIndex}
+                proposalId={slug}
                 proposalTitle={proposal.title}
                 voteIndicator={vote.label}
                 confirmationLabel={

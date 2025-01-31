@@ -5,18 +5,21 @@ import { governanceService } from '../../governanceService';
 import { useProposal } from './useProposal';
 
 describe('useProposal query', () => {
-    const getProposalSpy = jest.spyOn(governanceService, 'getProposal');
+    const getProposalBySlugSpy = jest.spyOn(governanceService, 'getProposalBySlug');
 
     afterEach(() => {
-        getProposalSpy.mockReset();
+        getProposalBySlugSpy.mockReset();
     });
 
     it('fetches the specified proposal', async () => {
         const proposal = generateProposal();
-        getProposalSpy.mockResolvedValue(proposal);
+        getProposalBySlugSpy.mockResolvedValue(proposal);
 
-        const urlParams = { id: proposal.id };
-        const { result } = renderHook(() => useProposal({ urlParams }), { wrapper: ReactQueryWrapper });
+        const urlParams = {
+            urlParams: { slug: proposal.id },
+            queryParams: { daoId: 'test-id' },
+        };
+        const { result } = renderHook(() => useProposal(urlParams), { wrapper: ReactQueryWrapper });
 
         await waitFor(() => expect(result.current.data).toEqual(proposal));
     });

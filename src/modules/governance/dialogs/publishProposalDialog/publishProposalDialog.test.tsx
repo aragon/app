@@ -42,7 +42,6 @@ describe('<PublishProposalDialog /> component', () => {
     const usePinJsonSpy = jest.spyOn(usePinJson, 'usePinJson');
     const prepareMetadataSpy = jest.spyOn(publishProposalDialogUtils, 'prepareMetadata');
     const buildTransactionSpy = jest.spyOn(publishProposalDialogUtils, 'buildTransaction');
-    const getProposalIdSpy = jest.spyOn(publishProposalDialogUtils, 'getProposalId');
 
     beforeEach(() => {
         useAccountSpy.mockReturnValue({ address: '0x123' } as unknown as Wagmi.UseAccountReturnType);
@@ -57,7 +56,6 @@ describe('<PublishProposalDialog /> component', () => {
         useDaoPluginsSpy.mockReset();
         usePinJsonSpy.mockReset();
         prepareMetadataSpy.mockReset();
-        getProposalIdSpy.mockReset();
         useDaoSpy.mockReset();
         (TransactionDialog as jest.Mock).mockClear();
     });
@@ -180,24 +178,5 @@ describe('<PublishProposalDialog /> component', () => {
             metadataCid: ipfsResult.IpfsHash,
             plugin: daoPlugin,
         });
-    });
-
-    it('correctly builds the proposal-link from the transaction receipt', () => {
-        const txReceipt = { transactionHash: '0xhash' };
-        const proposalId = '5';
-        const pluginAddress = '0x47283974';
-        const daoId = 'my-dao';
-        getProposalIdSpy.mockReturnValue(proposalId);
-
-        const location = generateDialogLocation({ daoId, pluginAddress });
-        render(createTestComponent({ location }));
-
-        const { successLink } = (
-            TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
-        ).mock.calls[0][0];
-        const proposalLink = (successLink.href as (receipt: unknown) => string)(txReceipt);
-        expect(proposalLink).toEqual(
-            `/dao/${daoId}/proposals/${txReceipt.transactionHash}-${pluginAddress}-${proposalId}`,
-        );
     });
 });

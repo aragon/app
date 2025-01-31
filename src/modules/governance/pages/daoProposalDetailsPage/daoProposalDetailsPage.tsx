@@ -17,8 +17,10 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
 
     const queryClient = new QueryClient();
 
-    const proposalUrlParams = { id: proposalId };
-    const proposalParams = { urlParams: proposalUrlParams };
+  const proposalParams = {
+      urlParams: { slug: proposalId },
+      queryParams: { daoId: id },
+  };
 
     try {
         await queryClient.fetchQuery(proposalOptions(proposalParams));

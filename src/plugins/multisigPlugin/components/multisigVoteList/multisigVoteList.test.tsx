@@ -1,16 +1,19 @@
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
-import { generateAddressInfo } from '@/shared/testUtils';
+import { generateAddressInfo, generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigVote } from '../../testUtils';
 import { type IMultisigVoteListProps, MultisigVoteList } from './multisigVoteList';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 
 describe('<MultisigVoteList /> component', () => {
     const useVoteListDataSpy = jest.spyOn(useVoteListData, 'useVoteListData');
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     afterEach(() => {
         useVoteListDataSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IMultisigVoteListProps>) => {
@@ -62,15 +65,19 @@ describe('<MultisigVoteList /> component', () => {
     });
 
     it('renders a data list with VoteProposalDataListItem when includeInfo is true', () => {
+        const daoPlugin = generateDaoPlugin({ address: '0x123', slug: 'multisig' });
+        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
+        useDaoPluginsSpy.mockReturnValue(plugins);
+
         const votes = [
             generateMultisigVote({
                 transactionHash: '0x123',
-                proposal: generateProposal({ id: 'network-0x123-1', title: 'Test Proposal 1' }),
+                proposal: generateProposal({ title: 'Test Proposal 1', incrementalId: 4 }),
                 blockTimestamp: 1234567890,
             }),
             generateMultisigVote({
                 transactionHash: '0x456',
-                proposal: generateProposal({ id: 'network-0x456-2', title: 'Test Proposal 2' }),
+                proposal: generateProposal({ title: 'Test Proposal 2', incrementalId: 5 }),
                 blockTimestamp: 1234567890,
             }),
         ];
@@ -89,8 +96,8 @@ describe('<MultisigVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[0].proposal!.id}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[1].proposal!.id}`);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/multisig-4`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/multisig-5`);
 
         expect(screen.getByText(votes[0].proposal!.title)).toBeInTheDocument();
         expect(screen.getByText(votes[1].proposal!.title)).toBeInTheDocument();

@@ -10,7 +10,7 @@ export const proposalOptions = <TProposal extends IProposal = IProposal>(
     options?: QueryOptions<TProposal>,
 ): SharedQueryOptions<TProposal> => ({
     queryKey: governanceServiceKeys.proposal(params),
-    queryFn: () => governanceService.getProposal(params),
+    queryFn: () => governanceService.getProposalBySlug(params),
     ...options,
 });
 
