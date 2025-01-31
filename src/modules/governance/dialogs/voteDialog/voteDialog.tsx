@@ -5,14 +5,14 @@ import {
     TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
-import { voteDialogUtils } from './voteDialogUtils';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { proposalUtils } from '../../utils/proposalUtils';
+import { voteDialogUtils } from './voteDialogUtils';
 
 export interface IVoteDialogParams {
     /**

@@ -42,10 +42,10 @@ describe('<DaoProposalDetailsPage /> component', () => {
     it('prefetches the proposal from the given proposal ID', async () => {
         const params = { id: 'dao-id', proposalId: 'test-proposal-id' };
 
-          const proposalParams = {
-              urlParams: { slug: params.proposalId },
-              queryParams: { daoId: params.id },
-          };
+        const proposalParams = {
+            urlParams: { slug: params.proposalId },
+            queryParams: { daoId: params.id },
+        };
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalOptions(proposalParams).queryKey);
     });

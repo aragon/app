@@ -1,9 +1,9 @@
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type IMultisigProposal } from '../../types';
 import { multisigProposalUtils } from '../../utils/multisigProposalUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 
 export interface IMultisigProposalListItemProps {
     /**

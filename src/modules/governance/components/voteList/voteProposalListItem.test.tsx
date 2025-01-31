@@ -1,9 +1,9 @@
 import { generateProposal, generateVote } from '@/modules/governance/testUtils';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { type IVoteProposalListItemProps, VoteProposalListItem } from './voteProposalListItem';
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 
 describe('<VoteProposalListItem /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');

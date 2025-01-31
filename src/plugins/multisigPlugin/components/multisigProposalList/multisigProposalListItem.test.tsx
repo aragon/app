@@ -1,8 +1,8 @@
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigProposal } from '../../testUtils';
 import { type IMultisigProposalListItemProps, MultisigProposalListItem } from './multisigProposalListItem';
-import { generateDaoPlugin } from '@/shared/testUtils';
 
 describe('<MultisigProposalListItem /> component', () => {
     const createTestComponent = (props?: Partial<IMultisigProposalListItemProps>) => {

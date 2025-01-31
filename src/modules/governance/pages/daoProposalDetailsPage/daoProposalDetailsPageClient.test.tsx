@@ -5,6 +5,7 @@ import {
 import { generateProposal } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateAddressInfo,
@@ -19,7 +20,6 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 
 jest.mock('../../components/proposalVotingTerminal', () => ({
     ProposalVotingTerminal: () => <div data-testid="voting-terminal-mock" />,

@@ -1,10 +1,10 @@
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 
 export interface ISppProposalListItemProps {
     /**

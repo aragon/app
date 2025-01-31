@@ -2,6 +2,7 @@ import {
     type ISppProposalListItemProps,
     SppProposalListItem,
 } from '@/plugins/sppPlugin/components/sppProposalList/sppProposalListItem';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import {
@@ -11,7 +12,6 @@ import {
     generateSppSubProposal,
 } from '../../testUtils';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
-import { generateDaoPlugin } from '@/shared/testUtils';
 
 describe('<SppProposalListItem /> component', () => {
     const getProposalStatusSpy = jest.spyOn(sppProposalUtils, 'getProposalStatus');

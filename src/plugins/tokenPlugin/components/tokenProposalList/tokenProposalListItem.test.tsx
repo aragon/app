@@ -1,10 +1,10 @@
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenProposal, generateTokenVote } from '../../testUtils';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { type ITokenProposalListItemProps, TokenProposalListItem } from './tokenProposalListItem';
-import { generateDaoPlugin } from '@/shared/testUtils';
 
 describe('<TokenProposalListItem /> component', () => {
     const getProposalStatusSpy = jest.spyOn(tokenProposalUtils, 'getProposalStatus');

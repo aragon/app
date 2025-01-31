@@ -8,6 +8,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import {
     addressUtils,
@@ -31,7 +32,6 @@ import {
 import { type IProposal, useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IDaoProposalDetailsPageClientProps {

@@ -1,11 +1,11 @@
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateAddressInfo, generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateMultisigVote } from '../../testUtils';
 import { type IMultisigVoteListProps, MultisigVoteList } from './multisigVoteList';
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 
 describe('<MultisigVoteList /> component', () => {
     const useVoteListDataSpy = jest.spyOn(useVoteListData, 'useVoteListData');
