@@ -81,6 +81,7 @@ describe('<TokenVoteList /> component', () => {
         const daoPlugin = generateDaoPlugin({ address: '0x123', slug: 'tokenvoting' });
         const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
         useDaoPluginsSpy.mockReturnValue(plugins);
+
         const token = generateToken({ symbol: 'ABC', decimals: 18 });
         const votes = [
             generateTokenVote({

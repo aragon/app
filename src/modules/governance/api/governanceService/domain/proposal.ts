@@ -13,7 +13,7 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
      */
     parentProposal?: IProposal;
     /**
-     * Incremental index of the proposal.
+     * Incremental index of the proposal used to identify the proposal and make the human readable ID throughout the app.
      */
     proposalIndex: string;
     /**

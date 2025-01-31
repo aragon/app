@@ -8,6 +8,12 @@ import { type IVoteProposalListItemProps, VoteProposalListItem } from './votePro
 describe('<VoteProposalListItem /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
+    beforeEach(() => {
+        useDaoPluginsSpy.mockReturnValue([
+            generateTabComponentPlugin({ id: 'test-id', meta: generateDaoPlugin({ address: '0x123' }) }),
+        ]);
+    });
+
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
     });
@@ -28,10 +34,6 @@ describe('<VoteProposalListItem /> component', () => {
     };
 
     it('renders the parent proposal info when parentProposal is defined', () => {
-        const daoPlugin = generateDaoPlugin({ address: '0x123' });
-        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
-        useDaoPluginsSpy.mockReturnValue(plugins);
-
         const vote = generateVote({
             parentProposal: { id: 'parent-id', title: 'Parent Proposal', incrementalId: 1, pluginAddress: '0x123' },
             proposal: generateProposal({
@@ -49,9 +51,6 @@ describe('<VoteProposalListItem /> component', () => {
     });
 
     it('renders the child proposal info when parentProposal is not defined', () => {
-        const daoPlugin = generateDaoPlugin({ address: '0x123' });
-        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
-        useDaoPluginsSpy.mockReturnValue(plugins);
         const vote = generateVote({
             proposal: generateProposal({
                 title: 'Child Proposal',
@@ -68,9 +67,6 @@ describe('<VoteProposalListItem /> component', () => {
     });
 
     it('renders the correct timestamp as a date', () => {
-        const daoPlugin = generateDaoPlugin({ address: '0x123' });
-        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
-        useDaoPluginsSpy.mockReturnValue(plugins);
         const blockTimestamp = 1672531200;
         const vote = generateVote({
             proposal: generateProposal({ title: 'Proposal with Date', incrementalId: 1, pluginAddress: '0x123' }),
@@ -85,9 +81,6 @@ describe('<VoteProposalListItem /> component', () => {
     });
 
     it('renders the correct vote indicator', () => {
-        const daoPlugin = generateDaoPlugin({ address: '0x123' });
-        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
-        useDaoPluginsSpy.mockReturnValue(plugins);
         const vote = generateVote({
             proposal: generateProposal({
                 title: 'Child Proposal',
