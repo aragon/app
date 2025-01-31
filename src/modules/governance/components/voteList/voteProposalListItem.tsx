@@ -25,12 +25,12 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
 
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })?.[0];
 
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta).toLowerCase();
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     return (
         <VoteProposalDataListItem.Structure
             key={vote.transactionHash}
-            href={`/dao/${daoId}/proposals/${slug}`}
+            href={`/dao/${daoId}/proposals/${slug.toLowerCase()}`}
             voteIndicator={voteIndicator}
             proposalId={slug}
             proposalTitle={proposal.title}
