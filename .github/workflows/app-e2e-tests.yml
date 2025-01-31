@@ -170,7 +170,7 @@ jobs:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
           NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
-          APP_ENV: preview # Set the environment to 'preview'
+          TEST_ENV: preview # Set the environment to 'preview'
           PREVIEW_URL: ${{ env.PREVIEW_URL }} # Pass the dynamically extracted URL
 
       # Step 12: Upload Playwright report as artifact
@@ -189,7 +189,7 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           echo "Sending Discord failure notification..."
-          curl -X POST -H "Content-Type: application/json" -d @- $DISCORD_WEBHOOK_URL <<EOF
+          curl -X POST -H "Content-Type: application/json" -d @- https://discord.com/api/webhooks/1309183202719699084/7iigCapTmyIHtgkqcLfXY9j557T_YChm7bv9h-BBU37ZhPDIIZYt34Z0KkqQGCBGic1M <<EOF
           {
             "embeds": [{
               "title": "❌ E2E Tests Failed",
