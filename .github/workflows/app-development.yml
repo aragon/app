@@ -1,7 +1,10 @@
-name: App Test
+name: App Development
 
 on:
   pull_request:
+  push:
+    branches:
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -10,6 +13,10 @@ concurrency:
 env:
   NODE_VERSION: 20
   NODE_CACHE: "yarn"
+  APP_ENV: "development"
+  APP_DOMAIN: "dev.app-next.aragon.org"
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   prepare:
@@ -17,8 +24,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
-      - name: Setup Node
-        uses: actions/setup-node@v4.2.0
+      - uses: actions/setup-node@v4.2.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.NODE_CACHE }}
@@ -33,7 +39,7 @@ jobs:
         run: yarn install --immutable
       - name: Build DEV application
         run: |
-          yarn setup development
+          yarn setup ${{ env.APP_ENV }}
           yarn build
       - name: Cache NextJs build
         uses: actions/cache@v4.2.0
@@ -75,3 +81,40 @@ jobs:
         run: |
           set -eo pipefail
           yarn test:coverage
+      - name: Check changeset
+        if: github.ref != 'refs/heads/main'
+        run: changeset status --since=main
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.2.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: ${{ env.NODE_CACHE }}
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Restore cached NextJs build
+        uses: actions/cache@v4.2.0
+        with:
+          path: |
+            ${{ github.workspace }}/.next
+            ${{ github.workspace }}/.env.local
+            ${{ github.workspace }}/next-env.d.ts
+          key: ${{ github.ref }}-${{ github.sha }}
+      - name: Prepare secrets
+        run: |
+          echo "NEXT_SECRET_IPFS_JWT=${{secrets.NEXT_SECRET_IPFS_JWT}}" >> .env
+          echo "NEXT_SECRET_RPC_KEY=${{secrets.NEXT_SECRET_RPC_KEY}}" >> .env
+      - name: Bundle Vercel application
+        run: yarn vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
+      - name: Vercel deployment
+        run: yarn vercel deploy --prebuilt --prod --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
+      - name: Set deployment alias
+        run: |
+          DEPLOYMENT_URL=`cat deployment-url.txt`
+          yarn vercel alias $DEPLOYMENT_URL ${{ env.APP_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}

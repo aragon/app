@@ -1,10 +1,7 @@
-name: App Deploy
+name: App Release
 
 on:
-  push:
-    branches:
-      - main
-      - develop
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,12 +10,28 @@ concurrency:
 env:
   NODE_VERSION: 20
   NODE_CACHE: "yarn"
-  APP_ENV: ${{ (github.ref == 'refs/heads/main' && 'production') || 'development' }}
-  APP_DOMAIN: ${{ (github.ref == 'refs/heads/main' && 'app-next.aragon.org') || 'dev.app-next.aragon.org'  }}
+  APP_ENV: "production"
+  APP_DOMAIN: "app-next.aragon.org"
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Update version and changelog
+        run: yarn changeset version
+      - name: Create tag
+        run: yarn changeset tag
+      - name: Commit updates
+        run: |
+          git config --global user.name "Arabot-1"
+          git config --global user.email "arabot-1@users.noreply.github.com"
+          git add --all
+          git commit -am "Release v${{ steps.package-version.outputs.current-version}}"
+          git push --follow-tags
+
   prepare:
     runs-on: ubuntu-latest
     steps:
@@ -37,7 +50,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Build DEV or PROD application
+      - name: Build PROD application
         run: |
           yarn setup ${{ env.APP_ENV }}
           yarn build
@@ -50,40 +63,8 @@ jobs:
             ${{ github.workspace }}/next-env.d.ts
           key: ${{ github.ref }}-${{ github.sha }}
 
-  test:
-    needs: prepare
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.2
-      - name: Setup Node
-        uses: actions/setup-node@v4.2.0
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: ${{ env.NODE_CACHE }}
-      - name: Install dependencies
-        run: yarn install --immutable
-      - name: Restore cached NextJs build
-        uses: actions/cache@v4.2.0
-        with:
-          path: |
-            ${{ github.workspace }}/.next
-            ${{ github.workspace }}/.env.local
-            ${{ github.workspace }}/next-env.d.ts
-          key: ${{ github.ref }}-${{ github.sha }}
-      - name: Check types
-        run: yarn type-check
-      - name: Check linter
-        run: yarn lint
-      - name: Check prettier
-        run: yarn prettify
-      - name: Run tests with coverage
-        run: |
-          set -eo pipefail
-          yarn test:coverage
-
   deploy:
-    needs: test
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -114,3 +95,23 @@ jobs:
         run: |
           DEPLOYMENT_URL=`cat deployment-url.txt`
           yarn vercel alias $DEPLOYMENT_URL ${{ env.APP_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
+
+  release:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Get package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+      - name: Read changelog updates
+        id: read-changelog
+        uses: mindsers/changelog-reader-action@v2.2.3
+        with:
+          version: "${{ steps.package-version.outputs.current-version }}"
+          path: ./CHANGELOG.md
+      - name: Create release
+        uses: softprops/action-gh-release@v2.2.1
+        with:
+          prerelease: false
+          body: ${{ steps.read-changelog.outputs.changes }}
