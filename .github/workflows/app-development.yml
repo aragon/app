@@ -56,6 +56,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
       - name: Setup Node
         uses: actions/setup-node@v4.2.0
         with:
@@ -83,7 +85,7 @@ jobs:
           yarn test:coverage
       - name: Check changeset
         if: github.ref != 'refs/heads/main'
-        run: changeset status --since=main
+        run: yarn changeset status --since origin/main
 
   deploy:
     needs: test

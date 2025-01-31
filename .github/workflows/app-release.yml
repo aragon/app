@@ -28,6 +28,9 @@ jobs:
         run: yarn changeset version
       - name: Create tag
         run: yarn changeset tag
+      - name: Get package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: Commit changes
         run: |
           git config --global user.name "Arabot-1"
@@ -106,6 +109,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
       - name: Get package version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
