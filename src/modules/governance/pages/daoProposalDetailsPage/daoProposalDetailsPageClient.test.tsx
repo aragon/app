@@ -142,6 +142,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
             creator: generateAddressInfo({ address: '0x123' }),
             network: Network.ETHEREUM_SEPOLIA,
             transactionHash: '0x4654',
+            incrementalId: 3,
         });
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
         render(createTestComponent());
@@ -151,8 +152,10 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const detailsContainer = detailsTitle.parentElement!.parentElement!;
 
         expect(detailsTitle).toBeInTheDocument();
-        expect(screen.getByText(/daoProposalDetailsPage.aside.details.id/)).toBeInTheDocument();
+        expect(screen.getByText(/daoProposalDetailsPage.aside.details.onChainId/)).toBeInTheDocument();
         expect(within(detailsContainer).getByText(proposal.proposalIndex)).toBeInTheDocument();
+        expect(screen.getByText(/daoProposalDetailsPage.aside.details.id/)).toBeInTheDocument();
+        expect(within(detailsContainer).getByText('TEST-SLUG-3')).toBeInTheDocument();
 
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.published/)).toBeInTheDocument();
         const creationBlockLink = screen.getByRole('link', { name: 'July 26, 2023' });
