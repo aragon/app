@@ -80,13 +80,23 @@ jobs:
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
+      # # Step 7: Extract and display preview URL
+      # - name: Extract Preview URL
+      #   id: preview_url
+      #   run: |
+      #     PREVIEW_URL=$(cat deployment-url.txt | grep -o 'https://.*')
+      #     echo "::set-output name=url::$PREVIEW_URL"
+      #     echo "Preview URL: $PREVIEW_URL"
+      #   env:
+      #     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
       # Step 7: Extract and display preview URL
       - name: Extract Preview URL
         id: preview_url
         run: |
           PREVIEW_URL=$(cat deployment-url.txt | grep -o 'https://.*')
-          echo "::set-output name=url::$PREVIEW_URL"
           echo "Preview URL: $PREVIEW_URL"
+          echo "PREVIEW_URL=$PREVIEW_URL" >> $GITHUB_ENV
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
@@ -155,11 +165,13 @@ jobs:
       # Step 11: Run E2E tests with preview link
       - name: Run E2E Tests
         working-directory: ./app-qa
-        run: xvfb-run yarn playwright test ./tests/ --project=chromium --base-url=${{ steps.preview_url.outputs.url }}
+        run: xvfb-run yarn playwright test ./tests/ --project=chromium
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
           NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
+          APP_ENV: preview # Set the environment to 'preview'
+          PREVIEW_URL: ${{ env.PREVIEW_URL }} # Pass the dynamically extracted URL
 
       # Step 12: Upload Playwright report as artifact
       - name: Upload Playwright Report
