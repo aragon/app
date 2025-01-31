@@ -20,11 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          token: ${{ secrets.ARABOT_PAT_TRIGGER_WORKFLOW }}
       - name: Update version and changelog
         run: yarn changeset version
       - name: Create tag
         run: yarn changeset tag
-      - name: Commit updates
+      - name: Commit changes
         run: |
           git config --global user.name "Arabot-1"
           git config --global user.email "arabot-1@users.noreply.github.com"
