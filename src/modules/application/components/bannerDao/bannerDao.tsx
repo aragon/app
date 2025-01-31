@@ -1,7 +1,7 @@
 'use client';
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
-import type { ICreateProcessInfoDialogParams } from '@/modules/createDao/dialogs/createProcessInfoDialog';
+import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -35,8 +35,8 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     );
 
     const handleBannerActionClick = () => {
-        const params: ICreateProcessInfoDialogParams = { daoId: id };
-        open(CreateDaoDialog.CREATE_PROCESS_INFO, { params });
+        const params: ICreateProcessDetailsDialogParams = { daoId: id };
+        open(CreateDaoDialog.CREATE_PROCESS_DETAILS, { params });
     };
 
     const displayAdminMemberBanner = isAdminMember && process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';

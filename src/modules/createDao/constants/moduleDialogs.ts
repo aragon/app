@@ -1,6 +1,6 @@
 import { type IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { CreateDaoDetailsDialog } from '../dialogs/createDaoDetailsDialog';
-import { CreateProcessInfoDialog } from '../dialogs/createProcessInfoDialog';
+import { CreateProcessDetailsDialog } from '../dialogs/createProcessDetailsDialog';
 import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
 import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { PublishProcessDialog } from '../dialogs/publishProcessDialog';
@@ -8,7 +8,7 @@ import { PublishProcessDialog } from '../dialogs/publishProcessDialog';
 export enum CreateDaoDialog {
     PUBLISH_DAO = ' PUBLISH_DAO',
     CREATE_DAO_DETAILS = 'CREATE_DAO_DETAILS',
-    CREATE_PROCESS_INFO = 'CREATE_PROCESS_INFO',
+    CREATE_PROCESS_DETAILS = 'CREATE_PROCESS_DETAILS',
     PREPARE_PROCESS = 'PREPARE_PROCESS',
     PUBLISH_PROCESS = 'PUBLISH_PROCESS',
 }
@@ -25,10 +25,11 @@ export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitio
         description: 'app.createDao.createDaoDetailsDialog.description',
         size: 'lg',
     },
-    [CreateDaoDialog.CREATE_PROCESS_INFO]: {
-        Component: CreateProcessInfoDialog,
-        title: 'app.createDao.createProcessInfoDialog.title',
-        description: 'app.createDao.createProcessInfoDialog.description',
+    [CreateDaoDialog.CREATE_PROCESS_DETAILS]: {
+        Component: CreateProcessDetailsDialog,
+        title: 'app.createDao.createProcessDetailsDialog.title',
+        description: 'app.createDao.createProcessDetailsDialog.description',
+        size: 'lg',
     },
     [CreateDaoDialog.PREPARE_PROCESS]: {
         Component: PrepareProcessDialog,
