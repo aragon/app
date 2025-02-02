@@ -38,6 +38,24 @@ class SppProposalUtils {
             return ProposalStatus.EXPIRED;
         }
 
+        if (currentStage.plugins.length === 0) {
+            const stageMaxAdvance = sppStageUtils.getStageMaxAdvance(proposal, currentStage);
+            const stageMinAdvance = sppStageUtils.getStageMinAdvance(proposal, currentStage);
+
+            if (stageMinAdvance && stageMaxAdvance) {
+                if (now < stageMinAdvance) {
+                    return ProposalStatus.ACTIVE;
+                }
+                if (now > stageMinAdvance && now < stageMaxAdvance) {
+                    return ProposalStatus.EXECUTABLE;
+                }
+
+                if (now > stageMaxAdvance) {
+                    return ProposalStatus.EXPIRED;
+                }
+            }
+        }
+
         if (isExecutable) {
             return ProposalStatus.EXECUTABLE;
         }

@@ -22,12 +22,14 @@ import {
     IconType,
     Link,
     ProposalActions,
-    type ProposalStatus,
+    ProposalStatus,
     proposalStatusToTagVariant,
+    Rerender,
     Tag,
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
+import { useEffect, useState } from 'react';
 import { type IProposal, useProposal } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -46,6 +48,8 @@ export interface IDaoProposalDetailsPageClientProps {
 export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClientProps> = (props) => {
     const { daoId, proposalId } = props;
 
+    const [latestProposalStatus, setLatestProposalStatus] = useState<ProposalStatus>(ProposalStatus.PENDING);
+
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useGukModulesContext();
@@ -63,6 +67,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginId: proposal?.pluginSubdomain ?? '',
     })!;
+
+    useEffect(() => {
+        setLatestProposalStatus(proposalStatus);
+    }, [proposalStatus]);
 
     if (proposal == null || dao == null) {
         return null;
@@ -83,8 +91,8 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
     const statusTag = {
-        label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],
-        variant: proposalStatusToTagVariant[proposalStatus],
+        label: copy.proposalDataListItemStatus.statusLabel[latestProposalStatus],
+        variant: proposalStatusToTagVariant[latestProposalStatus],
     };
     const pageBreadcrumbs = [
         {
@@ -125,7 +133,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
                             pluginId={proposal.pluginSubdomain}
                             proposal={proposal}
-                            status={proposalStatus}
+                            status={latestProposalStatus}
                             daoId={daoId}
                             Fallback={ProposalVotingTerminal}
                         />
@@ -144,7 +152,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
                                 {normalizedProposalActions.length > 0 && (
-                                    <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
+                                    <Rerender>
+                                        {() => <ProposalExecutionStatus daoId={daoId} proposal={proposal} />}
+                                    </Rerender>
                                 )}
                             </ProposalActions.Footer>
                         </ProposalActions.Root>
