@@ -12,7 +12,8 @@ class SppProposalUtils {
         const lastStage = stagesCount > 0 ? proposal.settings.stages[stagesCount - 1] : undefined;
 
         const endDate = lastStage ? sppStageUtils.getStageEndDate(proposal, lastStage) : undefined;
-        const endExecutionDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
+        const minExecutionDate = lastStage ? sppStageUtils.getStageMinAdvance(proposal, lastStage) : undefined;
+        const maxExecutionDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
 
         const currentStage = sppProposalUtils.getCurrentStage(proposal);
 
@@ -20,7 +21,12 @@ class SppProposalUtils {
         const isSignalingProposal = proposal.actions.length === 0;
 
         const isExecutable =
-            approvalReached && endExecutionDate != null && now <= endExecutionDate && !isSignalingProposal;
+            approvalReached &&
+            maxExecutionDate != null &&
+            minExecutionDate != null &&
+            minExecutionDate < now &&
+            now < maxExecutionDate &&
+            !isSignalingProposal;
 
         if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;

@@ -19,7 +19,6 @@ class SppStageUtils {
         const approvalReached = this.isApprovalReached(proposal, stage);
 
         const isSignalingProposal = this.isSignalingProposal(proposal, stage);
-        const isTimelockStage = stage.plugins.length === 0;
 
         if (this.isVetoReached(proposal, stage)) {
             return ProposalVotingStatus.VETOED;
@@ -31,16 +30,6 @@ class SppStageUtils {
 
         if ((stageStartDate != null && stageStartDate > now) || stageIndex > currentStageIndex) {
             return ProposalVotingStatus.PENDING;
-        }
-
-        if (isTimelockStage) {
-            if (maxAdvanceDate != null && now > maxAdvanceDate && !isSignalingProposal) {
-                return ProposalVotingStatus.EXPIRED;
-            }
-
-            return (minAdvanceDate != null && now > minAdvanceDate) || stageIndex < currentStageIndex
-                ? ProposalVotingStatus.ACCEPTED
-                : ProposalVotingStatus.ACTIVE;
         }
 
         if (stageEndDate != null && now < stageEndDate) {
@@ -93,7 +82,6 @@ class SppStageUtils {
 
     getStageStartDate = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         const { startDate, stageIndex: currentStageIndex, lastStageTransition, subProposals } = proposal;
-
         const { stageIndex } = stage;
 
         if (stageIndex === 0) {
