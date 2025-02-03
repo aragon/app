@@ -31,7 +31,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
 
     const createTestComponent = async (props?: Partial<IDaoProposalDetailsPageProps>) => {
         const completeProps: IDaoProposalDetailsPageProps = {
-            params: Promise.resolve({ proposalId: 'proposal-id', id: 'dao-id' }),
+            params: Promise.resolve({ proposalSlug: 'proposal-id', id: 'dao-id' }),
             ...props,
         };
         const Component = await DaoProposalDetailsPage(completeProps);
@@ -40,10 +40,10 @@ describe('<DaoProposalDetailsPage /> component', () => {
     };
 
     it('prefetches the proposal from the given proposal ID', async () => {
-        const params = { id: 'dao-id', proposalId: 'test-proposal-id' };
+        const params = { id: 'dao-id', proposalSlug: 'test-proposal-id' };
 
         const proposalParams = {
-            urlParams: { slug: params.proposalId },
+            urlParams: { slug: params.proposalSlug },
             queryParams: { daoId: params.id },
         };
         render(await createTestComponent({ params: Promise.resolve(params) }));
@@ -57,7 +57,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
 
     it('renders error with a link to proposal list page on fetch proposal error', async () => {
         const daoId = 'test-dao-id';
-        const params = { id: daoId, proposalId: '' };
+        const params = { id: daoId, proposalSlug: '' };
         fetchQuerySpy.mockRejectedValue('error');
         render(await createTestComponent({ params: Promise.resolve(params) }));
         const errorLink = screen.getByRole('link', { name: /daoProposalDetailsPage.notFound.action/ });

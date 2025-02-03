@@ -96,8 +96,8 @@ describe('<MultisigVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/multisig-4`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/multisig-5`);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/MULTISIG-4`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/MULTISIG-5`);
 
         expect(screen.getByText(votes[0].proposal!.title)).toBeInTheDocument();
         expect(screen.getByText(votes[1].proposal!.title)).toBeInTheDocument();

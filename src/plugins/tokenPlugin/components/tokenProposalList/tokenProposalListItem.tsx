@@ -27,7 +27,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
-    const slug = proposalUtils.getProposalUrlBySlug(proposal.incrementalId, plugin).toLowerCase();
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin);
 
     return (
         <ProposalDataListItem.Structure

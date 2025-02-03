@@ -114,8 +114,8 @@ describe('<TokenVoteList /> component', () => {
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/tokenvoting-2`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/tokenvoting-3`);
+        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/TOKENVOTING-2`);
+        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/TOKENVOTING-3`);
 
         expect(screen.getByText(votes[0].proposal!.title)).toBeInTheDocument();
         expect(screen.getByText(votes[1].proposal!.title)).toBeInTheDocument();

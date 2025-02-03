@@ -5,8 +5,8 @@ import type {
     IGetMemberExistsParams,
     IGetMemberListParams,
     IGetMemberParams,
+    IGetProposalBySlugParams,
     IGetProposalListParams,
-    IGetProposalParams,
     IGetVoteListParams,
 } from './governanceService.api';
 
@@ -16,7 +16,7 @@ class GovernanceService extends AragonBackendService {
         member: '/members/:address',
         memberExists: '/members/:memberAddress/:pluginAddress/exists',
         proposals: '/proposals',
-        proposal: '/proposals/slug/:slug',
+        proposalBySlug: '/proposals/slug/:slug',
         canVote: '/proposals/:id/can-vote',
         votes: '/votes',
     };
@@ -50,9 +50,9 @@ class GovernanceService extends AragonBackendService {
     };
 
     getProposalBySlug = async <TProposal extends IProposal = IProposal>(
-        params: IGetProposalParams,
+        params: IGetProposalBySlugParams,
     ): Promise<TProposal> => {
-        const result = await this.request<TProposal>(this.urls.proposal, params);
+        const result = await this.request<TProposal>(this.urls.proposalBySlug, params);
 
         return result;
     };

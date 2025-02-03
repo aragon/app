@@ -21,9 +21,8 @@ describe('<MultisigProposalListItem /> component', () => {
     };
 
     it('renders the multisig proposal', () => {
-        const plugin = generateDaoPlugin({ slug: 'multisig' });
         const proposal = generateMultisigProposal();
-        render(createTestComponent({ plugin, proposal }));
+        render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
 
@@ -32,6 +31,6 @@ describe('<MultisigProposalListItem /> component', () => {
         const proposal = generateMultisigProposal({ id: 'proposal-id' });
         const daoId = 'dao-id';
         render(createTestComponent({ plugin, proposal }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/multisig-1`);
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/MULTISIG-1`);
     });
 });

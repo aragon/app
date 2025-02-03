@@ -47,7 +47,7 @@ describe('<VoteProposalListItem /> component', () => {
         render(createTestComponent({ vote, daoId }));
 
         expect(screen.getByText('Parent Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/slug-1`);
+        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/SLUG-1`);
     });
 
     it('renders the child proposal info when parentProposal is not defined', () => {
@@ -63,7 +63,7 @@ describe('<VoteProposalListItem /> component', () => {
         render(createTestComponent({ vote, daoId }));
 
         expect(screen.getByText('Child Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/slug-1`);
+        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/SLUG-1`);
     });
 
     it('renders the correct timestamp as a date', () => {

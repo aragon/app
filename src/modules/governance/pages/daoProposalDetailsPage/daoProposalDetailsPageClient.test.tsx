@@ -30,7 +30,7 @@ jest.mock('../../components/proposalExecutionStatus', () => ({
 }));
 
 describe('<DaoProposalDetailsPageClient /> component', () => {
-    const useProposalSpy = jest.spyOn(governanceService, 'useProposal');
+    const useProposalSpy = jest.spyOn(governanceService, 'useProposalBySlug');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
@@ -55,7 +55,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     const createTestComponent = (props?: Partial<IDaoProposalDetailsPageClientProps>) => {
         const completeProps: IDaoProposalDetailsPageClientProps = {
             daoId: 'dao-id',
-            proposalId: 'proposal-id',
+            proposalSlug: 'proposal-id',
             ...props,
         };
 
@@ -69,7 +69,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     it('fetches and renders the proposal title and summary', () => {
         const proposal = generateProposal({ id: 'test-id', title: 'test-title', summary: 'my-summary' });
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
-        render(createTestComponent({ proposalId: proposal.id }));
+        render(createTestComponent({ proposalSlug: proposal.id }));
 
         expect(useProposalSpy).toHaveBeenCalledWith({
             urlParams: { slug: proposal.id },

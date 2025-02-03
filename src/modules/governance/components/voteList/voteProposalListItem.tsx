@@ -25,14 +25,13 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
 
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })?.[0];
 
-    const slug = proposalUtils.getProposalUrlBySlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     return (
         <VoteProposalDataListItem.Structure
             key={vote.transactionHash}
-            href={`/dao/${daoId}/proposals/${slug.toLowerCase()}`}
+            href={`/dao/${daoId}/proposals/${slug}`}
             voteIndicator={voteIndicator}
-            //TODO: Rename prop on gov-kit [APP-3921]
             proposalId={slug}
             proposalTitle={proposal.title}
             date={vote.blockTimestamp * 1000}

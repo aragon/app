@@ -13,7 +13,7 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
      */
     parentProposal?: Pick<IProposal, 'id' | 'title' | 'pluginAddress' | 'incrementalId'>;
     /**
-     * Incremental index of the proposal used to identify the proposal and make the human readable ID throughout the app.
+     * The onchain index of the proposal.
      */
     proposalIndex: string;
     /**

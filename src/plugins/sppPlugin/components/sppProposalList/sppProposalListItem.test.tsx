@@ -53,10 +53,11 @@ describe('<SppProposalListItem /> component', () => {
         const proposal = generateSppProposal({
             subProposals,
             settings,
+            incrementalId: 5,
         });
         const daoId = 'dao-id';
         render(createTestComponent({ plugin, proposal }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/spp-1`);
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/SPP-5`);
     });
 
     it('displays the stage name in status context when proposal is multistage and appropriate for status', () => {

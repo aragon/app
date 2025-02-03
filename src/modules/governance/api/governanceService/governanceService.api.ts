@@ -64,7 +64,7 @@ export interface IGetMemberExistsUrlParams {
 
 export interface IGetMemberExistsParams extends IRequestUrlParams<IGetMemberExistsUrlParams> {}
 
-export interface IGetProposalUrlParams {
+export interface IGetProposalBySlugUrlParams {
     /**
      * Slug of the proposal to fetch.
      * (`key + incrementalId` -- see IProposal)
@@ -72,7 +72,7 @@ export interface IGetProposalUrlParams {
     slug: string;
 }
 
-export interface IGetProposalParams extends IRequestUrlParams<IGetProposalUrlParams> {}
+export interface IGetProposalBySlugParams extends IRequestUrlParams<IGetProposalBySlugUrlParams> {}
 
 export interface IGetCanVoteUrlParams {
     /**

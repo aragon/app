@@ -36,9 +36,8 @@ describe('<TokenProposalListItem /> component', () => {
     };
 
     it('renders the token proposal', () => {
-        const plugin = generateDaoPlugin({ slug: 'tokenvoting' });
         const proposal = generateTokenProposal({ title: 'my-proposal' });
-        render(createTestComponent({ proposal, plugin }));
+        render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
 
@@ -47,6 +46,6 @@ describe('<TokenProposalListItem /> component', () => {
         const proposal = generateTokenProposal({ incrementalId: 3 });
         const daoId = 'dao-id';
         render(createTestComponent({ proposal, plugin }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/tokenvoting-3`);
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/TOKENVOTING-3`);
     });
 });

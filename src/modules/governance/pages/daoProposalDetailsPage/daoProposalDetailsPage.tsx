@@ -13,12 +13,12 @@ export interface IDaoProposalDetailsPageProps {
 
 export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = async (props) => {
     const { params } = props;
-    const { id, proposalId } = await params;
+    const { id, proposalSlug } = await params;
 
     const queryClient = new QueryClient();
 
     const proposalParams = {
-        urlParams: { slug: proposalId },
+        urlParams: { slug: proposalSlug },
         queryParams: { daoId: id },
     };
 
@@ -36,7 +36,7 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoProposalDetailsPageClient daoId={id} proposalId={proposalId} />
+            <DaoProposalDetailsPageClient daoId={id} proposalSlug={proposalSlug} />
         </Page.Container>
     );
 };

@@ -38,7 +38,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const defaultStageName = t('app.plugins.spp.sppProposalListItem.stage', { stageIndex: stageIndex + 1 });
     const statusContext = settings.stages.length > 1 ? (currentStage.name ?? defaultStageName) : undefined;
 
-    const slug = proposalUtils.getProposalUrlBySlug(proposal.incrementalId, plugin).toLowerCase();
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin);
 
     return (
         <ProposalDataListItem.Structure

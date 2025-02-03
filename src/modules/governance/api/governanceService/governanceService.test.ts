@@ -41,7 +41,7 @@ describe('governance service', () => {
         expect(result).toEqual(proposals);
     });
 
-    it('getProposal fetches the proposal with the specified ID', async () => {
+    it('getProposalBySlug fetches the proposal with the correct slug and incremental ID', async () => {
         const proposal = generateProposal({ id: '001', incrementalId: 1 });
         const proposalParams = {
             urlParams: { slug: proposal.id },
@@ -51,7 +51,7 @@ describe('governance service', () => {
         requestSpy.mockResolvedValue(proposal);
         const result = await governanceService.getProposalBySlug(proposalParams);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposal, proposalParams);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposalBySlug, proposalParams);
         expect(result).toEqual(proposal);
     });
 

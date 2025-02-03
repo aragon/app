@@ -29,7 +29,7 @@ import {
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
-import { type IProposal, useProposal } from '../../api/governanceService';
+import { type IProposal, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalUtils } from '../../utils/proposalUtils';
@@ -40,25 +40,25 @@ export interface IDaoProposalDetailsPageClientProps {
      */
     daoId: string;
     /**
-     * The ID of the proposal.
+     * The slug of the proposal.
      */
-    proposalId: string;
+    proposalSlug: string;
 }
 
 export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClientProps> = (props) => {
-    const { daoId, proposalId } = props;
+    const { daoId, proposalSlug } = props;
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useGukModulesContext();
     const pageUrl = useCurrentUrl();
 
-    const proposalUrlParams = { slug: proposalId };
+    const proposalUrlParams = { slug: proposalSlug };
     const proposalParams = {
         urlParams: proposalUrlParams,
         queryParams: { daoId },
     };
-    const { data: proposal } = useProposal(proposalParams);
+    const { data: proposal } = useProposalBySlug(proposalParams);
 
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
@@ -75,7 +75,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         return null;
     }
 
-    const slug = proposalUtils.getProposalUrlBySlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 

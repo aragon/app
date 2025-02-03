@@ -56,11 +56,11 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     const plugin = useDaoPlugins({
         daoId,
-        pluginAddress: proposal.parentProposal?.pluginAddress,
+        pluginAddress: proposal.parentProposal ? proposal.parentProposal.pluginAddress : proposal.pluginAddress,
         includeSubPlugins: true,
     })?.[0];
 
-    const slug = proposalUtils.getProposalUrlBySlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     return (
         <TransactionDialog
