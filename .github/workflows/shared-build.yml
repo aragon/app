@@ -1,0 +1,45 @@
+# The "Shared Build" workflow builds the application for the specified environment by restoring cache, running the
+# build, and storing the Next.js build artifacts under the "nextjs-build" name. It is triggered by a `workflow_call`
+# and uses the environment variable specified in the input to configure the build.
+
+name: Shared Build App
+
+on:
+  workflow_call:
+    inputs:
+      checkout-ref:
+        description: "The Git reference (e.g., branch or commit) to checkout"
+        required: false
+        type: string
+      env:
+        description: "Used to setup the correct environment variables for the build"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup
+        uses: aragon/app-next/.github/actions/setup@main
+        with:
+          checkout-ref: ${{ inputs.checkout-ref }}
+      - name: Restore NextJs cache
+        uses: actions/cache@v4.2.0
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
+      - name: Build ${{ inputs.env }} application
+        run: |
+          yarn setup ${{ inputs.env }}
+          yarn build
+      - name: Store NextJs build
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: nextjs-build
+          path: |
+            ${{ github.workspace }}/.next/
+            ${{ github.workspace }}/.env.local
+            ${{ github.workspace }}/next-env.d.ts
