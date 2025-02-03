@@ -63,7 +63,7 @@ export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings>
      */
     transactionHash: string;
     /**
-     * Human readable slug of the proposal.
+     * Human readable slug of the proposal, composed of a process key and an incremental ID.
      */
     slug: string;
 }

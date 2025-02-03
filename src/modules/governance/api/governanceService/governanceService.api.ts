@@ -66,7 +66,8 @@ export interface IGetMemberExistsParams extends IRequestUrlParams<IGetMemberExis
 
 export interface IGetProposalUrlParams {
     /**
-     * slug of the proposal to fetch (key + incrementalID).
+     * Slug of the proposal to fetch.
+     * (`key + incrementalId` -- see IProposal)
      */
     slug: string;
 }

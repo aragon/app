@@ -93,8 +93,8 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         });
     };
 
-    // Needed to make sure we clear the navigation blocking warning
-    // so we can't simply just pass the href to the TransactionDialog
+    // Handler function to disable the navigation block when the transaction is needed.
+    // We can't simply just pass the href to the TransactionDialog
     const getProposalsLink = () => {
         setIsBlocked(false);
         return `/dao/${daoId}/proposals`;
