@@ -22,6 +22,8 @@ export interface IWalletConnectActionDialogConnectProps {
     status: 'idle' | 'pending' | 'error';
 }
 
+const formId = 'dappConnectForm';
+
 export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDialogConnectProps> = (props) => {
     const { onFormSubmit, status } = props;
 
@@ -37,36 +39,32 @@ export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDial
     });
 
     const primaryActionLabel = status === 'error' ? 'retry' : 'connect';
-    const alertMessage =
-        status === 'error'
-            ? ({ message: t('app.governance.walletConnectActionDialog.connect.error'), variant: 'critical' } as const)
-            : undefined;
 
     return (
-        <form onSubmit={handleSubmit(onFormSubmit)}>
-            <Dialog.Header
-                title={t('app.governance.walletConnectActionDialog.connect.title')}
-                description={t('app.governance.walletConnectActionDialog.connect.description')}
-            />
-            <Dialog.Content className="py-4">
-                <InputText
-                    placeholder={t('app.governance.walletConnectActionDialog.connect.uriField.placeholder')}
-                    {...uriField}
-                />
+        <>
+            <Dialog.Header title={t('app.governance.walletConnectActionDialog.connect.title')} />
+            <Dialog.Content description={t('app.governance.walletConnectActionDialog.connect.description')}>
+                <form onSubmit={handleSubmit(onFormSubmit)} id={formId} className="py-2">
+                    <InputText
+                        placeholder={t('app.governance.walletConnectActionDialog.connect.uriField.placeholder')}
+                        {...uriField}
+                    />
+                </form>
             </Dialog.Content>
             <Dialog.Footer
+                hasError={status === 'error'}
                 primaryAction={{
                     label: t(`app.governance.walletConnectActionDialog.connect.action.${primaryActionLabel}`),
                     type: 'submit',
                     isLoading: status === 'pending',
                     iconRight: status === 'error' ? IconType.RELOAD : undefined,
+                    form: formId,
                 }}
                 secondaryAction={{
                     label: t('app.governance.walletConnectActionDialog.connect.action.cancel'),
                     onClick: () => close(),
                 }}
-                alert={alertMessage}
             />
-        </form>
+        </>
     );
 };

@@ -124,14 +124,12 @@ export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (p
 
     return (
         <Dialog.Root
-            containerClassName="!max-w-[640px]"
+            size="lg"
             open={isOpen}
             onPointerDownOutside={(e) => e.preventDefault()}
-            role="dialog"
-            aria-labelledby="dialog-title"
-            aria-modal="true"
+            hiddenDescription="Add voting body"
         >
-            <Dialog.Header id="dialog-title" title="Add voting body" onCloseClick={handleCancel} />
+            <Dialog.Header title="Add voting body" onClose={handleCancel} />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 pb-1.5 pt-6">
                     {currentStepComponent}

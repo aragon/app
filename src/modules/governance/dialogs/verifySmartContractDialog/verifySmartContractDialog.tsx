@@ -33,6 +33,8 @@ export interface IVerifySmartContractFormData {
     abi?: ISmartContractAbi;
 }
 
+const formId = 'verifySmartContactForm';
+
 export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps> = (props) => {
     const { location } = props;
 
@@ -104,42 +106,42 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
 
     return (
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
-            <Dialog.Header
-                title={t('app.governance.verifySmartContractDialog.title')}
-                description={t('app.governance.verifySmartContractDialog.description')}
-            />
-            <Dialog.Content className="flex flex-col gap-3 pb-2 pt-4 md:pb-4 md:pt-6">
-                <AddressInput
-                    placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
-                    chainId={1}
-                    value={addressInput}
-                    onChange={setAddressInput}
-                    onAccept={onSmartContractChange}
-                    {...smartContractField}
-                />
-                {smartContractValue?.address != null && (
-                    <TransactionStatus.Container steps={verificationSteps}>
-                        <Heading size="h4" className="truncate">
-                            {contractName}
-                        </Heading>
-                        {verificationSteps.map((step) => (
-                            <TransactionStatus.Step key={step.id} {...step} />
-                        ))}
-                    </TransactionStatus.Container>
-                )}
+        <>
+            <Dialog.Header title={t('app.governance.verifySmartContractDialog.title')} />
+            <Dialog.Content description={t('app.governance.verifySmartContractDialog.description')}>
+                <form className="flex flex-col gap-3 py-2" onSubmit={handleSubmit(handleFormSubmit)} id={formId}>
+                    <AddressInput
+                        placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
+                        chainId={1}
+                        value={addressInput}
+                        onChange={setAddressInput}
+                        onAccept={onSmartContractChange}
+                        {...smartContractField}
+                    />
+                    {smartContractValue?.address != null && (
+                        <TransactionStatus.Container steps={verificationSteps}>
+                            <Heading size="h4" className="truncate">
+                                {contractName}
+                            </Heading>
+                            {verificationSteps.map((step) => (
+                                <TransactionStatus.Step key={step.id} {...step} />
+                            ))}
+                        </TransactionStatus.Container>
+                    )}
+                </form>
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
                     label: t(`app.governance.verifySmartContractDialog.action.${buttonLabel}`),
                     type: 'submit',
                     isLoading: isLoadingAbi,
+                    form: formId,
                 }}
                 secondaryAction={{
                     label: t('app.governance.verifySmartContractDialog.action.cancel'),
                     onClick: () => close(),
                 }}
             />
-        </form>
+        </>
     );
 };

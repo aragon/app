@@ -2,7 +2,7 @@ import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateStepperResult } from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
+import { Dialog, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import * as ReactQuery from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { polygon } from 'viem/chains';
@@ -57,7 +57,9 @@ describe('<TransactionDialog /> component', () => {
 
         return (
             <GukModulesProvider>
-                <TransactionDialog {...completeProps} />
+                <Dialog.Root open={true}>
+                    <TransactionDialog {...completeProps} />
+                </Dialog.Root>
             </GukModulesProvider>
         );
     };

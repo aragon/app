@@ -2,7 +2,7 @@
 
 import { Dialog, type IDialogRootProps as IGukDialogRootProps } from '@aragon/gov-ui-kit';
 import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
-import { DialogRootHiddenElement } from './dialogRootHiddenElement';
+import { useTranslations } from '../translationsProvider';
 
 export interface IDialogRootProps extends IGukDialogRootProps {
     /**
@@ -13,10 +13,19 @@ export interface IDialogRootProps extends IGukDialogRootProps {
 
 export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
     const { dialogs } = props;
+
+    const { t } = useTranslations();
     const { location, close } = useDialogContext();
 
     const isOpen = location != null;
     const activeDialog = location != null ? dialogs[location.id] : undefined;
+
+    const {
+        Component: ActiveDialogComponent,
+        hiddenTitle,
+        hiddenDescription,
+        ...activeDialogProps
+    } = activeDialog ?? {};
 
     const { disableOutsideClick, onClose } = location ?? {};
 
@@ -37,16 +46,11 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
             open={isOpen}
             onOpenChange={handleOpenChange}
             onInteractOutside={handleInteractOutside}
-            useFocusTrap={activeDialog?.useFocusTrap}
-            size={activeDialog?.size}
+            hiddenTitle={hiddenTitle ? t(hiddenTitle) : undefined}
+            hiddenDescription={hiddenDescription ? t(hiddenDescription) : undefined}
+            {...activeDialogProps}
         >
-            {activeDialog && (
-                <>
-                    <DialogRootHiddenElement labelKey={activeDialog.title} type="title" />
-                    <DialogRootHiddenElement labelKey={activeDialog.description} type="description" />
-                    <activeDialog.Component location={location!} />
-                </>
-            )}
+            {ActiveDialogComponent && <ActiveDialogComponent location={location!} />}
         </Dialog.Root>
     );
 };

@@ -14,31 +14,9 @@ export enum CreateDaoDialog {
 }
 
 export const createDaoDialogs: Record<CreateDaoDialog, IDialogComponentDefinitions> = {
-    [CreateDaoDialog.PUBLISH_DAO]: {
-        Component: PublishDaoDialog,
-        title: 'app.createDao.publishDaoDialog.title',
-        description: 'app.createDao.publishDaoDialog.description',
-    },
-    [CreateDaoDialog.CREATE_DAO_DETAILS]: {
-        Component: CreateDaoDetailsDialog,
-        title: 'app.createDao.createDaoDetailsDialog.title',
-        description: 'app.createDao.createDaoDetailsDialog.description',
-        size: 'lg',
-    },
-    [CreateDaoDialog.CREATE_PROCESS_DETAILS]: {
-        Component: CreateProcessDetailsDialog,
-        title: 'app.createDao.createProcessDetailsDialog.title',
-        description: 'app.createDao.createProcessDetailsDialog.description',
-        size: 'lg',
-    },
-    [CreateDaoDialog.PREPARE_PROCESS]: {
-        Component: PrepareProcessDialog,
-        title: 'app.createDao.prepareProcessDialog.title',
-        description: 'app.createDao.prepareProcessDialog.description',
-    },
-    [CreateDaoDialog.PUBLISH_PROCESS]: {
-        Component: PublishProcessDialog,
-        title: 'app.createDao.publishProcessDialog.title',
-        description: 'app.createDao.publishProcessDialog.description',
-    },
+    [CreateDaoDialog.PUBLISH_DAO]: { Component: PublishDaoDialog },
+    [CreateDaoDialog.CREATE_DAO_DETAILS]: { Component: CreateDaoDetailsDialog, size: 'lg' },
+    [CreateDaoDialog.CREATE_PROCESS_DETAILS]: { Component: CreateProcessDetailsDialog, size: 'lg' },
+    [CreateDaoDialog.PREPARE_PROCESS]: { Component: PrepareProcessDialog },
+    [CreateDaoDialog.PUBLISH_PROCESS]: { Component: PublishProcessDialog },
 };
