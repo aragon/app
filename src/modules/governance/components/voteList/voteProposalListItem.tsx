@@ -32,7 +32,7 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
             key={vote.transactionHash}
             href={`/dao/${daoId}/proposals/${slug.toLowerCase()}`}
             voteIndicator={voteIndicator}
-            //TODO: Rename prop on gov-kit
+            //TODO: Rename prop on gov-kit [APP-3921]
             proposalId={slug}
             proposalTitle={proposal.title}
             date={vote.blockTimestamp * 1000}
