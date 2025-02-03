@@ -59,7 +59,7 @@
       },
       "navigationDao": {
         "a11y": {
-          "description": "This dialog provides key DAO details and links to governance, treasury, and community pages.",
+          "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
           "title": "DAO navigation menu"
         },
         "link": {
@@ -259,7 +259,7 @@
           "timing": {
             "dialog": {
               "a11y": {
-                "description": "Configure the duration and expiration for the stage."
+                "description": "Configure the duration and expiration for the stage"
               },
               "action": {
                 "cancel": "Cancel",
