@@ -2,9 +2,6 @@ name: "Setup"
 description: "This action checks out the commit, sets up Node and installs the dependencies using yarn."
 
 inputs:
-  checkout-ref:
-    description: "The Git reference (e.g., branch or commit) to checkout"
-    required: false
   fetch-depth:
     description: "The number of commits to fetch when checking out the repository"
     required: false
@@ -30,14 +27,11 @@ runs:
       with:
         fetch-depth: ${{ inputs.fetch-depth }}
         token: ${{ inputs.token }}
-        ref: ${{ inputs.checkout-ref }}
-
     - name: Setup Node
       uses: actions/setup-node@v4.2.0
       with:
         node-version: ${{ inputs.node-version }}
         cache: ${{ inputs.node-cache }}
-
     - name: Install dependencies
       shell: bash
       run: yarn install --immutable

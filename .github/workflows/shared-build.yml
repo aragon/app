@@ -2,15 +2,11 @@
 # build, and storing the Next.js build artifacts under the "nextjs-build" name. It is triggered by a `workflow_call`
 # and uses the environment variable specified in the input to configure the build.
 
-name: Shared Build App
+name: App Shared Build
 
 on:
   workflow_call:
     inputs:
-      checkout-ref:
-        description: "The Git reference (e.g., branch or commit) to checkout"
-        required: false
-        type: string
       env:
         description: "Used to setup the correct environment variables for the build"
         required: true
@@ -22,8 +18,6 @@ jobs:
     steps:
       - name: Setup
         uses: aragon/app-next/.github/actions/setup@main
-        with:
-          checkout-ref: ${{ inputs.checkout-ref }}
       - name: Restore NextJs cache
         uses: actions/cache@v4.2.0
         with:
@@ -39,6 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4.6.0
         with:
           name: nextjs-build
+          include-hidden-files: true
           path: |
             ${{ github.workspace }}/.next/
             ${{ github.workspace }}/.env.local

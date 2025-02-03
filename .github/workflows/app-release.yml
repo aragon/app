@@ -1,7 +1,5 @@
-# The "App Release" workflow is manually triggered to release the application to production. It builds a production
-# version of the application and deploys it to the production environment. The workflow runs versioning and release
-# steps only when triggered on the main branch (default application release), allowing the workflow to also be used on
-# other branches for hotfix deployments.
+# The "App Release" workflow is manually triggered to release the application to production. It updates the version and
+# changelog, creates a new tag, commits the changes, and pushes them to the repository when triggered on the main branch.
 
 name: App Release
 
@@ -9,26 +7,27 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: app-release
   cancel-in-progress: true
 
 jobs:
   versioning:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      pull-requests: read
     steps:
       - name: Setup
         uses: aragon/app-next/.github/actions/setup@main
-        with:
-          token: ${{ secrets.ARABOT_PAT_TRIGGER_WORKFLOW }}
       - name: Setup Git config
         run: |
-          git config --global user.name "Arabot-1"
-          git config --global user.email "arabot-1@users.noreply.github.com"
+          git config --global user.name "Continuous Integration"
+          git config --global user.email "username@users.noreply.github.com"
       - name: Update version and changelog
         run: yarn changeset version
         env:
-          GITHUB_TOKEN: ${{ secrets.ARABOT_PAT_TRIGGER_WORKFLOW }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create tag
         run: yarn changeset tag
       - name: Get package version
@@ -39,37 +38,6 @@ jobs:
           git add --all
           git commit -am "Release v${{ steps.package-version.outputs.current-version}}"
           git push --follow-tags
-
-  build:
-    uses: ./.github/workflows/shared-build.yml
-    needs: versioning
-    if: ${{ always() }}
-    with:
-      env: "production"
-      # Checkout the main branch to ensure the latest commit with version bumps is used
-      checkout-ref: main
-
-  deploy:
-    uses: ./.github/workflows/shared-deploy.yml
-    needs: build
-    secrets: inherit
-    with:
-      domain: "app-next.aragon.org"
-      prod: true
-
-  release:
-    needs: deploy
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Setup
-        uses: aragon/app-next/.github/actions/setup@main
-        with:
-          # Checkout the main branch to ensure the latest commit with version bumps is used
-          checkout-ref: main
-      - name: Get package version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
       - name: Read changelog updates
         id: read-changelog
         uses: actions/github-script@v7.0.1
@@ -86,4 +54,3 @@ jobs:
           prerelease: false
           tag_name: "v${{ steps.package-version.outputs.current-version}}"
           body: ${{ steps.read-changelog.outputs.changes }}
-          token: ${{ secrets.ARABOT_PAT_TRIGGER_WORKFLOW }}

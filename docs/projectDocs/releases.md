@@ -32,7 +32,7 @@ For urgent fixes that need to be applied to the production environment, follow t
 
 3. **Deploying the Hotfix**:
 
-    - If the fix works as expected, trigger the **App Release** workflow on the `HOTFIX-{{version}}` branch.
+    - If the fix works as expected, trigger the **App Release** workflow on the `HOTFIX-v{{version}}` branch.
     - This workflow will:
         - Deploy the fix directly to production.
         - Skip the version bump and GitHub release steps.
