@@ -44,14 +44,14 @@ describe('<DialogRoot /> component', () => {
 
     it('renders the specified dialog title and description as hidden', () => {
         const dialogId = 'connect-wallet';
-        const title = 'test-title';
-        const description = 'test-description';
-        const dialogs = { [dialogId]: { Component: () => 'test', title, description } };
+        const hiddenTitle = 'test-title';
+        const hiddenDescription = 'test-description';
+        const dialogs = { [dialogId]: { Component: () => 'test', hiddenTitle, hiddenDescription } };
         const location = { id: dialogId };
         useDialogContextSpy.mockReturnValue(generateDialogContext({ location }));
         render(createTestComponent({ dialogs }));
-        expect(screen.getByText(title)).toBeInTheDocument();
-        expect(screen.getByText(description)).toBeInTheDocument();
+        expect(screen.getByText(hiddenTitle)).toBeInTheDocument();
+        expect(screen.getByText(hiddenDescription)).toBeInTheDocument();
     });
 
     it('calls the close function set on the dialog-provider on dialog close', async () => {

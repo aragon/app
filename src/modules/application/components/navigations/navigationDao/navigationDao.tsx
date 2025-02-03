@@ -3,6 +3,7 @@
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { Button, DaoAvatar, IconType, Wallet, addressUtils, clipboardUtils } from '@aragon/gov-ui-kit';
@@ -23,6 +24,7 @@ export interface INavigationDaoProps extends INavigationContainerProps {
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const { id, containerClasses, ...otherProps } = props;
 
+    const { t } = useTranslations();
     const { address, isConnected } = useAccount();
     const { open } = useDialogContext();
 
@@ -66,7 +68,13 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 </div>
             </div>
             <Navigation.Links className="hidden md:flex xl:pl-14" links={links} variant="columns" />
-            <Navigation.Dialog links={links} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Navigation.Dialog
+                links={links}
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                hiddenTitle={t('app.application.navigationDao.a11y.title')}
+                hiddenDescription={t('app.application.navigationDao.a11y.description')}
+            >
                 <div className="flex flex-col gap-4 px-4">
                     <div className="flex grow flex-row justify-between">
                         <DaoAvatar src={daoAvatar} name={dao.name} size="md" responsiveSize={{ sm: 'lg' }} />

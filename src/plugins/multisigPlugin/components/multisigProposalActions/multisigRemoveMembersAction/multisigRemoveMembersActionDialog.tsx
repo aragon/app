@@ -36,7 +36,7 @@ export const MultisigRemoveMembersActionDialog: React.FC<IMultisigRemoveMembersA
         <Dialog.Root open={open} onOpenChange={onOpenChange}>
             <Dialog.Header
                 title={t('app.plugins.multisig.multisigRemoveMembersAction.dialog.heading')}
-                onCloseClick={close}
+                onClose={close}
             />
             <Dialog.Content className="pb-4">
                 <DaoMemberList.Default
