@@ -75,7 +75,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         return null;
     }
 
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalUrlBySlug(proposal.incrementalId, plugin?.meta);
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 

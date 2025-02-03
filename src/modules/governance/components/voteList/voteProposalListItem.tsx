@@ -25,7 +25,7 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
 
     const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })?.[0];
 
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalUrlBySlug(proposal.incrementalId, plugin?.meta);
 
     return (
         <VoteProposalDataListItem.Structure
