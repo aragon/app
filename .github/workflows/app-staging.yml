@@ -22,3 +22,4 @@ jobs:
     secrets: inherit
     with:
       domain: "stg.app-next.aragon.org"
+      env: "staging"

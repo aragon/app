@@ -11,10 +11,10 @@ on:
         description: "Assign the new deployment URL to the speficied input when set"
         required: false
         type: string
-      prod:
-        description: "Build and deploys a production application when set"
-        required: false
-        type: boolean
+      env:
+        description: "Environment to get the Github secrets and variables from"
+        required: true
+        type: string
     outputs:
       deploymentUrl:
         description: "The URL of the Vercel deployment"
@@ -24,11 +24,12 @@ env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEL_SCOPE: aragon-app
-  VERCEL_ARGS: ${{ (inputs.prod == true && '--prod') || '' }}
+  VERCEL_ARGS: ${{ (inputs.env == 'production' && '--prod') || '' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env }}
     outputs:
       deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
     steps:

@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  versioning:
+  release:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     permissions:

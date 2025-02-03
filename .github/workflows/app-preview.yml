@@ -24,6 +24,8 @@ jobs:
     uses: ./.github/workflows/shared-deploy.yml
     needs: build
     secrets: inherit
+    with:
+      env: "preview"
 
   comment:
     runs-on: ubuntu-latest

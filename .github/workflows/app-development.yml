@@ -54,3 +54,4 @@ jobs:
     secrets: inherit
     with:
       domain: "dev.app-next.aragon.org"
+      env: "development"
