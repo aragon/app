@@ -1,0 +1,55 @@
+# The "Shared Deploy" workflow deploys the application to Vercel, either in production or preview mode based on the
+# `prod` input. It retrieves the build artifacts, prepares secrets, bundles the Vercel application, and deploys it.
+# If a custom domain is specified, it assigns the deployment URL to that domain.
+
+name: App Shared Deploy
+
+on:
+  workflow_call:
+    inputs:
+      domain:
+        description: "Assign the new deployment URL to the speficied input when set"
+        required: false
+        type: string
+      env:
+        description: "Environment to get the Github secrets and variables from"
+        required: true
+        type: string
+    outputs:
+      deploymentUrl:
+        description: "The URL of the Vercel deployment"
+        value: ${{ jobs.deploy.outputs.deploymentUrl }}
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_SCOPE: aragon-app
+  VERCEL_ARGS: ${{ (inputs.env == 'production' && '--prod') || '' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.env }}
+    outputs:
+      deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
+    steps:
+      - name: Setup
+        uses: aragon/app-next/.github/actions/setup@main
+      - name: Retrieve NextJs build
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: nextjs-build
+      - name: Prepare secrets
+        run: |
+          echo "NEXT_SECRET_IPFS_JWT=${{secrets.NEXT_SECRET_IPFS_JWT}}" >> .env
+          echo "NEXT_SECRET_RPC_KEY=${{secrets.NEXT_SECRET_RPC_KEY}}" >> .env
+      - name: Bundle Vercel application
+        run: yarn vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+      - name: Vercel deployment
+        run: yarn vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
+      - name: Set output
+        id: set-deployment-url
+        run: echo "deploymentUrl=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
+      - name: Set deployment alias
+        if: ${{ inputs.domain != '' }}
+        run: yarn vercel alias ${{ steps.set-deployment-url.outputs.deploymentUrl }} ${{ inputs.domain }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
