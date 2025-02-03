@@ -27,7 +27,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
 
     const proposalDate = (proposal.executed.blockTimestamp ?? proposal.endDate) * 1000;
 
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin).toLowerCase();
+    const slug = proposalUtils.getProposalUrlBySlug(proposal.incrementalId, plugin).toLowerCase();
 
     return (
         <ProposalDataListItem.Structure
