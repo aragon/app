@@ -71,8 +71,8 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
 
     return (
         <>
-            <Dialog.Header title={title} description={description} />
-            <Dialog.Content className="pb-4 pt-1 md:pb-6 md:pt-2">
+            <Dialog.Header title={title} />
+            <Dialog.Content description={description} className="pb-4 md:pb-6">
                 {isLoading && (
                     <div className="flex w-full flex-col gap-y-2">
                         <StateSkeletonBar width="40%" size="lg" />
@@ -106,7 +106,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                         </div>
                     ))}
             </Dialog.Content>
-            <Dialog.Footer secondaryAction={footerAction} />
+            <Dialog.Footer primaryAction={footerAction} />
         </>
     );
 };

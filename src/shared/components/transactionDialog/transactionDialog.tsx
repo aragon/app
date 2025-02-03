@@ -1,6 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ChainEntityType, DialogContent, Heading, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
+import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
@@ -162,18 +162,17 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     return (
         <>
-            <DialogContent className="flex flex-col gap-6 pb-4 pt-6">
-                <div className="flex flex-col gap-2">
-                    <Heading size="h2">{title}</Heading>
-                    <p className="text-sm font-normal leading-normal text-neutral-800">{description}</p>
+            <Dialog.Header title={title} />
+            <Dialog.Content description={description}>
+                <div className="flex flex-col gap-6 pb-3 md:pb-4">
+                    {children}
+                    <TransactionStatus.Container steps={steps}>
+                        {steps.map((step) => (
+                            <TransactionStatus.Step key={step.id} {...step} />
+                        ))}
+                    </TransactionStatus.Container>
                 </div>
-                {children}
-                <TransactionStatus.Container steps={steps}>
-                    {steps.map((step) => (
-                        <TransactionStatus.Step key={step.id} {...step} />
-                    ))}
-                </TransactionStatus.Container>
-            </DialogContent>
+            </Dialog.Content>
             <TransactionDialogFooter
                 submitLabel={submitLabel}
                 successLink={successLink}

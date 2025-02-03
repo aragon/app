@@ -10,12 +10,12 @@ export enum ApplicationDialog {
 export const applicationDialogs: Record<ApplicationDialog, IDialogComponentDefinitions> = {
     [ApplicationDialog.CONNECT_WALLET]: {
         Component: ConnectWalletDialog,
-        title: 'app.application.connectWalletDialog.screenReader.title',
-        description: 'app.application.connectWalletDialog.screenReader.description',
+        hiddenTitle: 'app.application.connectWalletDialog.a11y.title',
+        hiddenDescription: 'app.application.connectWalletDialog.a11y.description',
     },
     [ApplicationDialog.USER]: {
         Component: UserDialog,
-        title: 'app.application.userDialog.screenReader.title',
-        description: 'app.application.userDialog.screenReader.description',
+        hiddenTitle: 'app.application.userDialog.a11y.title',
+        hiddenDescription: 'app.application.userDialog.a11y.description',
     },
 };

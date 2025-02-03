@@ -1,4 +1,3 @@
-import { DialogRootHiddenElement } from '@/shared/components/dialogRoot';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -27,6 +26,8 @@ export interface IStageTimingFieldDialogProps {
 }
 
 const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
+
+const formId = 'stageTimingForm';
 
 export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (props) => {
     const { onClose, stageType, defaultValues, onSubmit } = props;
@@ -69,15 +70,16 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
         : undefined;
 
     return (
-        <Dialog.Root containerClassName="!max-w-[640px]" open={true} onOpenChange={onClose}>
+        <Dialog.Root
+            size="lg"
+            hiddenDescription={t('app.createDao.createProcessForm.stages.timing.dialog.a11y.description')}
+            open={true}
+            onOpenChange={onClose}
+        >
             <FormProvider {...formMethods}>
-                <form onSubmit={handleFormSubmit}>
-                    <DialogRootHiddenElement
-                        type="description"
-                        labelKey="app.createDao.createProcessForm.stages.timing.dialog.title"
-                    />
-                    <Dialog.Header title={t('app.createDao.createProcessForm.stages.timing.dialog.title')} />
-                    <Dialog.Content className="flex flex-col gap-6 py-4">
+                <Dialog.Header title={t('app.createDao.createProcessForm.stages.timing.dialog.title')} />
+                <Dialog.Content>
+                    <form className="flex flex-col gap-6 py-4" onSubmit={handleFormSubmit} id={formId}>
                         <InputContainer
                             className="flex flex-col"
                             id="minDuration"
@@ -128,12 +130,19 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                                 />
                             </Card>
                         )}
-                    </Dialog.Content>
-                    <Dialog.Footer
-                        primaryAction={{ label: 'Save', type: 'submit' }}
-                        secondaryAction={{ label: 'Cancel', onClick: onClose }}
-                    />
-                </form>
+                    </form>
+                </Dialog.Content>
+                <Dialog.Footer
+                    primaryAction={{
+                        label: t('app.createDao.createProcessForm.stages.timing.dialog.action.save'),
+                        type: 'submit',
+                        form: formId,
+                    }}
+                    secondaryAction={{
+                        label: t('app.createDao.createProcessForm.stages.timing.dialog.action.cancel'),
+                        onClick: onClose,
+                    }}
+                />
             </FormProvider>
         </Dialog.Root>
     );

@@ -15,6 +15,10 @@
         }
       },
       "connectWalletDialog": {
+        "a11y": {
+          "description": "Connect your wallet to Aragon App",
+          "title": "Connect wallet"
+        },
         "action": {
           "cancel": "Cancel",
           "connect": "Connect"
@@ -26,10 +30,6 @@
           "permissions": "View only permissions",
           "smartContracts": "Audited Smart Contracts",
           "stats": "Trusted by +7,500 DAOs and +$27B"
-        },
-        "screenReader": {
-          "description": "Connect your wallet to Aragon App",
-          "title": "Connect wallet"
         }
       },
       "footer": {
@@ -58,6 +58,10 @@
         }
       },
       "navigationDao": {
+        "a11y": {
+          "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
+          "title": "DAO navigation menu"
+        },
         "link": {
           "assets": "Assets",
           "dashboard": "Dashboard",
@@ -78,7 +82,7 @@
         "title": "Page not found"
       },
       "userDialog": {
-        "screenReader": {
+        "a11y": {
           "description": "Information about the connected user",
           "title": "Connected user"
         }
@@ -254,6 +258,13 @@
           "remove": "Remove stage",
           "timing": {
             "dialog": {
+              "a11y": {
+                "description": "Configure the duration and expiration for the stage"
+              },
+              "action": {
+                "cancel": "Cancel",
+                "save": "Save"
+              },
               "earlyAdvance": {
                 "helpText": "Should the proposal be advanceable to subsequent stages early if it is approved prior to the end of the voting period?",
                 "label": "Early stage advance"
@@ -443,8 +454,10 @@
         "searchPlaceholder": "Search assets..."
       },
       "assetSelectionDialog": {
-        "description": "Select the asset from the list below",
-        "heading": "Select an asset"
+        "a11y": {
+          "description": "Select the asset from the list below"
+        },
+        "title": "Select an asset"
       },
       "daoAssetsPage": {
         "aside": {
@@ -725,10 +738,6 @@
           "description": "You don’t meet the proposal creation requirements.",
           "title": "Not eligible to create a proposal"
         },
-        "screenReader": {
-          "description": "You don't have the permissions required for that DAO action.",
-          "title": "Permission denied"
-        },
         "vote": {
           "description": "You didn’t meet the voting requirements at the block that the proposal was created.",
           "title": "Not eligible to vote"
@@ -816,7 +825,6 @@
             "retry": "Retry"
           },
           "description": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
-          "error": "Error while connecting dApp, please try again.",
           "title": "Connect new dApp",
           "uriField": {
             "placeholder": "wc: …"

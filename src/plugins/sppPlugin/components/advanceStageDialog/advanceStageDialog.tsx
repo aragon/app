@@ -1,4 +1,3 @@
-import { DialogRootHiddenElement } from '@/shared/components/dialogRoot';
 import {
     TransactionDialog,
     TransactionDialogStep,
@@ -56,8 +55,6 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                     onClick: onSuccessClick,
                 }}
             >
-                <DialogRootHiddenElement labelKey="app.plugins.spp.advanceStageDialog.title" type="title" />
-                <DialogRootHiddenElement labelKey="app.plugins.spp.advanceStageDialog.description" type="description" />
                 <ProposalDataListItem.Structure
                     title={proposal.title}
                     summary={proposal.summary}

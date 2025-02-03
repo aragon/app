@@ -46,33 +46,34 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
 
     return (
         <>
-            <Dialog.Header
-                title={t('app.governance.selectPluginDialog.title')}
-                description={t('app.governance.selectPluginDialog.description')}
-            />
-            <Dialog.Content className="flex flex-col gap-2 py-6">
-                {daoPlugins.map((plugin) => (
-                    <DataList.Item
-                        key={plugin.uniqueId}
-                        onClick={() => setSelectedPlugin(plugin)}
-                        className={classNames('px-4 py-3 md:p-6', {
-                            'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
-                                plugin.uniqueId === selectedPlugin.uniqueId,
-                        })}
-                    >
-                        <div className="flex flex-col gap-y-1">
-                            <div className="flex gap-x-4">
-                                <p className="line-clamp-1">{daoUtils.getPluginName(plugin.meta)}</p>
-                                {plugin.meta.processKey && (
-                                    <p className="text-right uppercase text-neutral-500">{plugin.meta.processKey}</p>
+            <Dialog.Header title={t('app.governance.selectPluginDialog.title')} onClose={close} />
+            <Dialog.Content description={t('app.governance.selectPluginDialog.description')}>
+                <div className="flex flex-col gap-2 py-2">
+                    {daoPlugins.map((plugin) => (
+                        <DataList.Item
+                            key={plugin.uniqueId}
+                            onClick={() => setSelectedPlugin(plugin)}
+                            className={classNames('px-4 py-3 md:p-6', {
+                                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
+                                    plugin.uniqueId === selectedPlugin.uniqueId,
+                            })}
+                        >
+                            <div className="flex flex-col gap-y-1">
+                                <div className="flex gap-x-4">
+                                    <p className="line-clamp-1">{daoUtils.getPluginName(plugin.meta)}</p>
+                                    {plugin.meta.processKey && (
+                                        <p className="text-right uppercase text-neutral-500">
+                                            {plugin.meta.processKey}
+                                        </p>
+                                    )}
+                                </div>
+                                {plugin.meta.description && (
+                                    <p className="line-clamp-2 text-neutral-500">{plugin.meta.description}</p>
                                 )}
                             </div>
-                            {plugin.meta.description && (
-                                <p className="line-clamp-2 text-neutral-500">{plugin.meta.description}</p>
-                            )}
-                        </div>
-                    </DataList.Item>
-                ))}
+                        </DataList.Item>
+                    ))}
+                </div>
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
