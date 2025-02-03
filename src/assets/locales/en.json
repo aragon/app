@@ -261,6 +261,10 @@
               "a11y": {
                 "description": "Configure the duration and expiration for the stage."
               },
+              "action": {
+                "cancel": "Cancel",
+                "save": "Save"
+              },
               "earlyAdvance": {
                 "helpText": "Should the proposal be advanceable to subsequent stages early if it is approved prior to the end of the voting period?",
                 "label": "Early stage advance"

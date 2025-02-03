@@ -133,8 +133,15 @@ export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (p
                     </form>
                 </Dialog.Content>
                 <Dialog.Footer
-                    primaryAction={{ label: 'Save', type: 'submit', form: formId }}
-                    secondaryAction={{ label: 'Cancel', onClick: onClose }}
+                    primaryAction={{
+                        label: t('app.createDao.createProcessForm.stages.timing.dialog.action.save'),
+                        type: 'submit',
+                        form: formId,
+                    }}
+                    secondaryAction={{
+                        label: t('app.createDao.createProcessForm.stages.timing.dialog.action.cancel'),
+                        onClick: onClose,
+                    }}
                 />
             </FormProvider>
         </Dialog.Root>
