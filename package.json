@@ -37,7 +37,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "server-only": "^0.0.1",
-    "viem": "^2.22.19",
+    "viem": "^2.22.21",
     "wagmi": "^2.14.9"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^22.13.0",
+    "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.20",
