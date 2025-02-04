@@ -4,7 +4,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { governanceService } from '../../governanceService';
 import { useProposalBySlug } from './useProposalBySlug';
 
-describe('useProposal query', () => {
+describe('useProposalBySlug query', () => {
     const getProposalBySlugSpy = jest.spyOn(governanceService, 'getProposalBySlug');
 
     afterEach(() => {
