@@ -58,7 +58,6 @@ describe('<VoteProposalListItem /> component', () => {
             proposal: generateProposal({
                 title: 'Child Proposal',
                 incrementalId: 4,
-                pluginAddress: '0x123',
             }),
         });
         const daoId = 'dao-test';
@@ -75,7 +74,7 @@ describe('<VoteProposalListItem /> component', () => {
     it('renders the correct timestamp as a date', () => {
         const blockTimestamp = 1672531200;
         const vote = generateVote({
-            proposal: generateProposal({ title: 'Proposal with Date', incrementalId: 1, pluginAddress: '0x123' }),
+            proposal: generateProposal({ title: 'Proposal with Date' }),
             blockTimestamp,
         });
         const daoId = 'dao-test';
@@ -90,7 +89,6 @@ describe('<VoteProposalListItem /> component', () => {
         const vote = generateVote({
             proposal: generateProposal({
                 title: 'Child Proposal',
-                pluginAddress: '0x123',
                 incrementalId: 2,
             }),
         });

@@ -28,9 +28,9 @@ describe('<MultisigProposalListItem /> component', () => {
 
     it('sets the correct link for proposal page', () => {
         const plugin = generateDaoPlugin({ slug: 'multisig' });
-        const proposal = generateMultisigProposal({ id: 'proposal-id' });
+        const proposal = generateMultisigProposal({ incrementalId: 3 });
         const daoId = 'dao-id';
         render(createTestComponent({ plugin, proposal }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/MULTISIG-1`);
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/MULTISIG-3`);
     });
 });

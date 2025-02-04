@@ -39,9 +39,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     beforeEach(() => {
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateProposal() }));
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
-        useDaoPluginsSpy.mockReturnValue([
-            generateTabComponentPlugin({ id: 'plugin', meta: generateDaoPlugin({ slug: 'test-slug' }) }),
-        ]);
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'plugin', meta: generateDaoPlugin() })]);
     });
 
     afterEach(() => {
@@ -89,9 +87,13 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     });
 
     it('renders the proposal page breadcrumbs', () => {
-        const proposal = generateProposal({ proposalIndex: 'incremental-index' });
+        const proposal = generateProposal({ proposalIndex: 'incremental-index', incrementalId: 3 });
         const daoId = 'test-id';
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+
+        const plugin = generateDaoPlugin({ slug: 'test-plugin-slug' });
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
+
         render(createTestComponent({ daoId }));
 
         const breadcrumbsContainer = screen.getByRole('navigation');
@@ -100,7 +102,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const proposalsLink = screen.getByRole('link', { name: /daoProposalDetailsPage.header.breadcrumb.proposals/ });
         expect(proposalsLink).toBeInTheDocument();
         expect(proposalsLink.getAttribute('href')).toEqual(`/dao/${daoId}/proposals`);
-        expect(within(breadcrumbsContainer).getByText('TEST-SLUG-1')).toBeInTheDocument();
+        expect(within(breadcrumbsContainer).getByText('TEST-PLUGIN-SLUG-3')).toBeInTheDocument();
     });
 
     it('uses the plugin-specific function to process and render the proposal status', () => {
@@ -145,6 +147,10 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
             incrementalId: 3,
         });
         useProposalSpy.mockReturnValue(generateReactQueryResultSuccess({ data: proposal }));
+
+        const plugin = generateDaoPlugin({ slug: 'test-slug' });
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
+
         render(createTestComponent());
 
         const detailsTitle = screen.getByText(/daoProposalDetailsPage.aside.details.title/);
