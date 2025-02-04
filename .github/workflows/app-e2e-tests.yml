@@ -20,7 +20,7 @@ env:
 jobs:
   deploy-and-test:
     runs-on: ubuntu-latest
-    #timeout-minutes: 60
+    timeout-minutes: 60
     if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
 
     steps:
@@ -60,7 +60,7 @@ jobs:
         run: yarn vercel deploy --prebuilt --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
         # env:
         #   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      - name: Extract Preview URL
+      - name: Extract preview URL
         id: preview_url
         run: |
           PREVIEW_URL=$(cat deployment-url.txt | grep -o 'https://.*')
