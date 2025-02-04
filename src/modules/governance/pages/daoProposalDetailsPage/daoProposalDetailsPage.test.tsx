@@ -2,7 +2,7 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { proposalOptions } from '../../api/governanceService';
+import { proposalBySlugOptions } from '../../api/governanceService';
 import { DaoProposalDetailsPage, type IDaoProposalDetailsPageProps } from './daoProposalDetailsPage';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -47,7 +47,7 @@ describe('<DaoProposalDetailsPage /> component', () => {
             queryParams: { daoId: params.id },
         };
         render(await createTestComponent({ params: Promise.resolve(params) }));
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalOptions(proposalParams).queryKey);
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(proposalBySlugOptions(proposalParams).queryKey);
     });
 
     it('renders the page client component', async () => {

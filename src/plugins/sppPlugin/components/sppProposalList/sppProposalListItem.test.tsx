@@ -75,7 +75,6 @@ describe('<SppProposalListItem /> component', () => {
     });
 
     it('displays "Stage" with number in status context when proposal is multistage and no stage name is returned', () => {
-        const plugin = generateDaoPlugin();
         const subProposals = [generateSppSubProposal(), generateSppSubProposal(), generateSppSubProposal()];
         const settings = generateSppPluginSettings({
             stages: [generateSppStage(), generateSppStage({ name: undefined }), generateSppStage()],
@@ -86,7 +85,7 @@ describe('<SppProposalListItem /> component', () => {
             stageIndex: 1,
         });
         getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
-        render(createTestComponent({ plugin, proposal }));
+        render(createTestComponent({ proposal }));
 
         expect(screen.getByText(/spp.sppProposalListItem.stage \(stageIndex=2/)).toBeInTheDocument();
     });

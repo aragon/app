@@ -1,1 +1,1 @@
-export { proposalOptions, useProposalBySlug } from './useProposalBySlug';
+export { proposalBySlugOptions, useProposalBySlug } from './useProposalBySlug';

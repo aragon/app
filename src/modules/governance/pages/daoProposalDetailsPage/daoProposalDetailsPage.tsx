@@ -1,6 +1,6 @@
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
-import { proposalOptions } from '../../api/governanceService';
+import { proposalBySlugOptions } from '../../api/governanceService';
 import { type IDaoProposalPageParams } from '../../types';
 import { DaoProposalDetailsPageClient } from './daoProposalDetailsPageClient';
 
@@ -23,7 +23,7 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
     };
 
     try {
-        await queryClient.fetchQuery(proposalOptions(proposalParams));
+        await queryClient.fetchQuery(proposalBySlugOptions(proposalParams));
     } catch (error: unknown) {
         return (
             <Page.Error

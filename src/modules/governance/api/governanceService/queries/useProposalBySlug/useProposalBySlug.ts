@@ -5,11 +5,11 @@ import { governanceService } from '../../governanceService';
 import type { IGetProposalBySlugParams } from '../../governanceService.api';
 import { governanceServiceKeys } from '../../governanceServiceKeys';
 
-export const proposalOptions = <TProposal extends IProposal = IProposal>(
+export const proposalBySlugOptions = <TProposal extends IProposal = IProposal>(
     params: IGetProposalBySlugParams,
     options?: QueryOptions<TProposal>,
 ): SharedQueryOptions<TProposal> => ({
-    queryKey: governanceServiceKeys.proposal(params),
+    queryKey: governanceServiceKeys.proposalBySlug(params),
     queryFn: () => governanceService.getProposalBySlug(params),
     ...options,
 });
@@ -18,5 +18,5 @@ export const useProposalBySlug = <TProposal extends IProposal = IProposal>(
     params: IGetProposalBySlugParams,
     options?: QueryOptions<TProposal>,
 ) => {
-    return useQuery(proposalOptions(params, options));
+    return useQuery(proposalBySlugOptions(params, options));
 };

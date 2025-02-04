@@ -20,7 +20,7 @@ export enum GovernanceServiceKey {
 
 export const governanceServiceKeys = {
     proposalList: (params: IGetProposalListParams) => [GovernanceServiceKey.PROPOSAL_LIST, params],
-    proposal: (params: IGetProposalBySlugParams) => [GovernanceServiceKey.PROPOSAL_BY_SLUG, params],
+    proposalBySlug: (params: IGetProposalBySlugParams) => [GovernanceServiceKey.PROPOSAL_BY_SLUG, params],
     canVote: (params: IGetCanVoteParams) => [GovernanceServiceKey.CAN_VOTE, params],
     memberList: (params: IGetMemberListParams) => [GovernanceServiceKey.MEMBER_LIST, params],
     member: (params: IGetMemberParams) => [GovernanceServiceKey.MEMBER, params],
