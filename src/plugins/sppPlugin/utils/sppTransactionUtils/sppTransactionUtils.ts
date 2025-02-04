@@ -9,9 +9,9 @@ import {
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
 import type { IPluginSetupData } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
-import { publishProcessDialogUtils } from '@/modules/createDao/dialogs/publishProcessDialog/publishProcessDialogUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { SppProposalType } from '../../types';
+import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
@@ -31,18 +31,6 @@ class SppTransactionUtils {
         });
 
         return data;
-    };
-
-    // Identifiers of rule conditions (see https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L12)
-    private ruleConditionId = {
-        condition: 202,
-        logicOperation: 203,
-    };
-
-    // Operations for conditions (see https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L43)
-    private ruleConditionOperator = {
-        eq: 1,
-        or: 10,
     };
 
     buildUpdateRulesTransaction = (values: ICreateProcessFormData, setupData: IPluginSetupData[]) => {
@@ -65,7 +53,7 @@ class SppTransactionUtils {
                 return isBodyAllowed ? [...current, setupData[bodyIndex + 1].preparedSetupData.helpers[0]] : current;
             }, []);
 
-        const conditionRules = publishProcessDialogUtils.buildCreateProposalRuleConditions(conditionAddresses, []);
+        const conditionRules = permissionTransactionUtils.buildCreateProposalRuleConditions(conditionAddresses, []);
 
         const transactionData = encodeFunctionData({
             abi: sppPluginAbi,
