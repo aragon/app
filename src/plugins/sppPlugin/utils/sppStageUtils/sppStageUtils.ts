@@ -99,11 +99,6 @@ class SppStageUtils {
 
     getStageEndDate = (proposal: ISppProposal, stage: ISppStage): DateTime | undefined => {
         const startDate = this.getStageStartDate(proposal, stage);
-        const minAdvance = this.getStageMinAdvance(proposal, stage);
-
-        if (!stage.plugins.length) {
-            return minAdvance;
-        }
 
         return startDate?.plus({ seconds: stage.voteDuration });
     };
