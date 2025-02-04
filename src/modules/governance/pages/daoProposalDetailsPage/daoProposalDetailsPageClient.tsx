@@ -69,7 +69,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         pluginId: proposal?.pluginSubdomain ?? '',
     })!;
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal?.pluginAddress })?.[0];
+    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal?.pluginAddress, includeSubPlugins: true })?.[0];
 
     if (proposal == null || dao == null) {
         return null;
