@@ -79,4 +79,7 @@ plugins include:
 - **`multisig`**: Manage a DAO through a list of wallets with the same voting power.
 - **`token`**: Manage a DAO through a governance token where an individual's voting power is directly proportional to
   the number of tokens they hold.
-- **`gasless`**: Manage a DAO through a gasless voting process.
+- **`admin`**: Grants execution permission on the DAO to a single address, typically used for setting up the DAO's
+  governance process.
+- **`spp`**: The Staged Proposal Processor plugin is a multi-stage proposal processor where proposals progress through
+  defined stages.
