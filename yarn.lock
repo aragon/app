@@ -64,7 +64,7 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.1"
     "@types/jest": "npm:^29.5.14"
     "@types/luxon": "npm:^3.4.2"
-    "@types/node": "npm:^22.13.0"
+    "@types/node": "npm:^22.13.1"
     "@types/react": "npm:^19.0.8"
     "@types/react-dom": "npm:^19.0.3"
     "@walletconnect/core": "npm:^2.18.0"
@@ -102,7 +102,7 @@ __metadata:
     typescript: "npm:^5.7.3"
     typescript-eslint: "npm:^8.23.0"
     vercel: "npm:^40.1.0"
-    viem: "npm:^2.22.19"
+    viem: "npm:^2.22.21"
     wagmi: "npm:^2.14.9"
   languageName: unknown
   linkType: soft
@@ -4662,12 +4662,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.13.0":
-  version: 22.13.0
-  resolution: "@types/node@npm:22.13.0"
+"@types/node@npm:*, @types/node@npm:^22.13.1":
+  version: 22.13.1
+  resolution: "@types/node@npm:22.13.1"
   dependencies:
     undici-types: "npm:~6.20.0"
-  checksum: 10c0/9cf6358b2863ae7bf9588ca1cc3d87f6a6289c3880e95a046a188760666870e2c12502df8b0a473bec8aa8ffee85e025d60382a6104b10f197120793235b2c22
+  checksum: 10c0/d4e56d41d8bd53de93da2651c0a0234e330bd7b1b6d071b1a94bd3b5ee2d9f387519e739c52a15c1faa4fb9d97e825b848421af4b2e50e6518011e7adb4a34b7
   languageName: node
   linkType: hard
 
@@ -15952,9 +15952,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:2.x, viem@npm:^2.1.1, viem@npm:^2.22.19":
-  version: 2.22.19
-  resolution: "viem@npm:2.22.19"
+"viem@npm:2.x, viem@npm:^2.1.1, viem@npm:^2.22.21":
+  version: 2.22.21
+  resolution: "viem@npm:2.22.21"
   dependencies:
     "@noble/curves": "npm:1.8.1"
     "@noble/hashes": "npm:1.7.1"
@@ -15969,7 +15969,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/1013e0325895ca2e1ae8916c454273ff7383699cf407136c1c34633120ff4edbc1eeeb643bfb0e8661521a384e2e2ed0945a28d785d578892fba8bbd441b07ab
+  checksum: 10c0/7d502ea91310556878eabe31bbfac56d0d87589a3f9f07608df26e0e044d049ca885c15554f3fae8dced66a2e7d8652d3cfc93c8878b754a44ec4d50ead4a3d3
   languageName: node
   linkType: hard
 
