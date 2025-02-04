@@ -1,4 +1,6 @@
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { type ISppProposal } from '../../types';
@@ -13,10 +15,14 @@ export interface ISppProposalListItemProps {
      * ID of the DAO for this proposal.
      */
     daoId: string;
+    /**
+     * Plugin of the proposal.
+     */
+    plugin: IDaoPlugin;
 }
 
 export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) => {
-    const { proposal, daoId } = props;
+    const { proposal, daoId, plugin } = props;
     const { stageIndex, settings, executed } = proposal;
 
     const { t } = useTranslations();
@@ -32,6 +38,8 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
     const defaultStageName = t('app.plugins.spp.sppProposalListItem.stage', { stageIndex: stageIndex + 1 });
     const statusContext = settings.stages.length > 1 ? (currentStage.name ?? defaultStageName) : undefined;
 
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin);
+
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
@@ -39,7 +47,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
             title={proposal.title}
             summary={proposal.summary}
             date={proposalDate}
-            href={`/dao/${daoId}/proposals/${proposal.id}`}
+            href={`/dao/${daoId}/proposals/${slug}`}
             status={proposalStatus}
             statusContext={statusContext}
             publisher={{

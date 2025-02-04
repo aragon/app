@@ -1,6 +1,6 @@
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
-import { proposalOptions } from '../../api/governanceService';
+import { proposalBySlugOptions } from '../../api/governanceService';
 import { type IDaoProposalPageParams } from '../../types';
 import { DaoProposalDetailsPageClient } from './daoProposalDetailsPageClient';
 
@@ -13,15 +13,17 @@ export interface IDaoProposalDetailsPageProps {
 
 export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = async (props) => {
     const { params } = props;
-    const { id, proposalId } = await params;
+    const { id, proposalSlug } = await params;
 
     const queryClient = new QueryClient();
 
-    const proposalUrlParams = { id: proposalId };
-    const proposalParams = { urlParams: proposalUrlParams };
+    const proposalParams = {
+        urlParams: { slug: proposalSlug },
+        queryParams: { daoId: id },
+    };
 
     try {
-        await queryClient.fetchQuery(proposalOptions(proposalParams));
+        await queryClient.fetchQuery(proposalBySlugOptions(proposalParams));
     } catch (error: unknown) {
         return (
             <Page.Error
@@ -34,7 +36,7 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoProposalDetailsPageClient daoId={id} proposalId={proposalId} />
+            <DaoProposalDetailsPageClient daoId={id} proposalSlug={proposalSlug} />
         </Page.Container>
     );
 };

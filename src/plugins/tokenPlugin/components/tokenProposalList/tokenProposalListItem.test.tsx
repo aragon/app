@@ -1,4 +1,5 @@
 import * as useUserVote from '@/modules/governance/hooks/useUserVote';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateTokenProposal, generateTokenVote } from '../../testUtils';
@@ -23,6 +24,7 @@ describe('<TokenProposalListItem /> component', () => {
         const completeProps: ITokenProposalListItemProps = {
             proposal: generateTokenProposal(),
             daoId: 'dao-id',
+            plugin: generateDaoPlugin(),
             ...props,
         };
 
@@ -40,9 +42,10 @@ describe('<TokenProposalListItem /> component', () => {
     });
 
     it('sets the correct link for proposal page', () => {
-        const proposal = generateTokenProposal({ id: 'proposal-id' });
+        const plugin = generateDaoPlugin({ slug: 'tokenvoting' });
+        const proposal = generateTokenProposal({ incrementalId: 3 });
         const daoId = 'dao-id';
-        render(createTestComponent({ proposal }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/${proposal.id}`);
+        render(createTestComponent({ proposal, plugin }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/TOKENVOTING-3`);
     });
 });

@@ -8,7 +8,7 @@ import { TokenProposalListItem } from './tokenProposalListItem';
 export interface ITokenProposalListProps extends IDaoProposalListDefaultProps {}
 
 export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
-    const { initialParams, hidePagination, children } = props;
+    const { initialParams, hidePagination, plugin, children } = props;
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
@@ -31,7 +31,7 @@ export const TokenProposalList: React.FC<ITokenProposalListProps> = (props) => {
                 layoutClassName="grid grid-cols-1"
             >
                 {proposalList?.map((proposal) => (
-                    <TokenProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} />
+                    <TokenProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} plugin={plugin} />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}

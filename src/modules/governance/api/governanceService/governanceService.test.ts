@@ -41,14 +41,17 @@ describe('governance service', () => {
         expect(result).toEqual(proposals);
     });
 
-    it('getProposal fetches the proposal with the specified ID', async () => {
-        const proposal = generateProposal({ id: '001' });
-        const params = { urlParams: { id: proposal.id } };
+    it('getProposalBySlug fetches the proposal with the correct slug and incremental ID', async () => {
+        const proposal = generateProposal({ id: '001', incrementalId: 1 });
+        const proposalParams = {
+            urlParams: { slug: proposal.id },
+            queryParams: { daoId: 'test-id' },
+        };
 
         requestSpy.mockResolvedValue(proposal);
-        const result = await governanceService.getProposal(params);
+        const result = await governanceService.getProposalBySlug(proposalParams);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposal, params);
+        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposalBySlug, proposalParams);
         expect(result).toEqual(proposal);
     });
 

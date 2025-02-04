@@ -8,6 +8,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import {
     addressUtils,
@@ -28,9 +29,10 @@ import {
     useBlockExplorer,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
-import { type IProposal, useProposal } from '../../api/governanceService';
+import { type IProposal, useProposalBySlug } from '../../api/governanceService';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -38,22 +40,25 @@ export interface IDaoProposalDetailsPageClientProps {
      */
     daoId: string;
     /**
-     * The ID of the proposal.
+     * The slug of the proposal.
      */
-    proposalId: string;
+    proposalSlug: string;
 }
 
 export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClientProps> = (props) => {
-    const { daoId, proposalId } = props;
+    const { daoId, proposalSlug } = props;
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
     const { copy } = useGukModulesContext();
     const pageUrl = useCurrentUrl();
 
-    const proposalUrlParams = { id: proposalId };
-    const proposalParams = { urlParams: proposalUrlParams };
-    const { data: proposal } = useProposal(proposalParams);
+    const proposalUrlParams = { slug: proposalSlug };
+    const proposalParams = {
+        urlParams: proposalUrlParams,
+        queryParams: { daoId },
+    };
+    const { data: proposal } = useProposalBySlug(proposalParams);
 
     const daoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoParams });
@@ -64,9 +69,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
         pluginId: proposal?.pluginSubdomain ?? '',
     })!;
 
+    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal?.pluginAddress })?.[0];
+
     if (proposal == null || dao == null) {
         return null;
     }
+
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     const { blockTimestamp, creator, transactionHash, summary, title, description, resources } = proposal;
 
@@ -91,7 +100,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             href: `/dao/${daoId}/proposals`,
             label: t('app.governance.daoProposalDetailsPage.header.breadcrumb.proposals'),
         },
-        { label: proposal.proposalIndex },
+        { label: slug },
     ];
 
     return (
@@ -153,8 +162,13 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                 <Page.Aside>
                     <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
                         <DefinitionList.Container>
-                            <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
+                            <DefinitionList.Item
+                                term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
+                            >
                                 <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
+                            </DefinitionList.Item>
+                            <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
+                                <p className="truncate text-neutral-500">{slug}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.published')}
