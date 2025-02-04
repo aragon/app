@@ -2,6 +2,7 @@ import {
     type ISppProposalListItemProps,
     SppProposalListItem,
 } from '@/plugins/sppPlugin/components/sppProposalList/sppProposalListItem';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import {
@@ -23,6 +24,7 @@ describe('<SppProposalListItem /> component', () => {
         const completeProps: ISppProposalListItemProps = {
             proposal: generateSppProposal(),
             daoId: 'dao-id',
+            plugin: generateDaoPlugin(),
             ...props,
         };
 
@@ -45,15 +47,17 @@ describe('<SppProposalListItem /> component', () => {
     });
 
     it('sets the correct link for proposal page', () => {
+        const plugin = generateDaoPlugin({ slug: 'spp' });
         const subProposals = [generateSppSubProposal()];
         const settings = generateSppPluginSettings({ stages: [generateSppStage()] });
         const proposal = generateSppProposal({
             subProposals,
             settings,
+            incrementalId: 5,
         });
         const daoId = 'dao-id';
-        render(createTestComponent({ proposal }));
-        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/${proposal.id}`);
+        render(createTestComponent({ plugin, proposal }));
+        expect(screen.getAllByRole('link')[0].getAttribute('href')).toEqual(`/dao/${daoId}/proposals/SPP-5`);
     });
 
     it('displays the stage name in status context when proposal is multistage and appropriate for status', () => {

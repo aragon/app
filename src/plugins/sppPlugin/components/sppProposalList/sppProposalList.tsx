@@ -8,7 +8,7 @@ import { SppProposalListItem } from './sppProposalListItem';
 export interface ISppProposalListProps extends IDaoProposalListDefaultProps {}
 
 export const SppProposalList: React.FC<ISppProposalListProps> = (props) => {
-    const { initialParams, hidePagination, children } = props;
+    const { initialParams, hidePagination, plugin, children } = props;
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
@@ -31,7 +31,7 @@ export const SppProposalList: React.FC<ISppProposalListProps> = (props) => {
                 emptyState={emptyState}
             >
                 {proposalList?.map((proposal) => (
-                    <SppProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} />
+                    <SppProposalListItem key={proposal.id} proposal={proposal} daoId={daoId} plugin={plugin} />
                 ))}
             </DataListContainer>
             {!hidePagination && <DataListPagination />}
