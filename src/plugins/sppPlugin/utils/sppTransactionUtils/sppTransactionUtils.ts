@@ -1,12 +1,34 @@
+import { sppPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/sppPluginSetupAbi';
+import { IPluginRepoInfo } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import { encodeFunctionData, type Hex } from 'viem';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPluginAbi } from './sppPluginAbi';
 
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
+export interface IPrepareProcessMetadata {
+    /**
+     * Metadata CID of the proposal.
+     */
+    proposal: string;
+    /**
+     * Metadata CID of all process plugins ordered by stage and order of body inside the stage.
+     */
+    plugins: string[];
+    /**
+     * Metadata CID for the SPP plugin.
+     */
+    spp: string;
+}
 class SppTransactionUtils {
+    private sppRepo: IPluginRepoInfo = {
+        address: '0xE67b8E026d190876704292442A38163Ce6945d6b',
+        version: { release: 1, build: 8 },
+    };
+
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateSppProposalFormData>): Hex => {
         const { metadata, actions, values } = params;
 
@@ -20,6 +42,19 @@ class SppTransactionUtils {
         });
 
         return data;
+    };
+
+    buildPrepareSppInstallData = (metadataCid: string, daoAddress: Hex) => {
+        const sppTarget = { target: daoAddress, operation: 0 };
+        const pluginSettingsData = encodeAbiParameters(sppPluginSetupAbi, [metadataCid as Hex, [], [], sppTarget]);
+
+        const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
+            this.sppRepo,
+            pluginSettingsData,
+            daoAddress,
+        );
+
+        return transactionData;
     };
 }
 
