@@ -35,7 +35,7 @@ describe('<VoteProposalListItem /> component', () => {
 
     it('renders the parent proposal info when parentProposal is defined', () => {
         const vote = generateVote({
-            parentProposal: { id: 'parent-id', title: 'Parent Proposal', incrementalId: 1, pluginAddress: '0x123' },
+            parentProposal: { id: 'parent-id', title: 'Parent Proposal', incrementalId: 3, pluginAddress: '0x123' },
             proposal: generateProposal({
                 title: 'Child Proposal',
                 incrementalId: 2,
@@ -44,26 +44,32 @@ describe('<VoteProposalListItem /> component', () => {
         });
         const daoId = 'dao-test';
 
+        const plugin = generateDaoPlugin({ slug: 'parent-slug' });
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
+
         render(createTestComponent({ vote, daoId }));
 
         expect(screen.getByText('Parent Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/SLUG-1`);
+        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/PARENT-SLUG-3`);
     });
 
     it('renders the child proposal info when parentProposal is not defined', () => {
         const vote = generateVote({
             proposal: generateProposal({
                 title: 'Child Proposal',
-                incrementalId: 1,
+                incrementalId: 4,
                 pluginAddress: '0x123',
             }),
         });
         const daoId = 'dao-test';
 
+        const plugin = generateDaoPlugin({ slug: 'child-slug' });
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
+
         render(createTestComponent({ vote, daoId }));
 
         expect(screen.getByText('Child Proposal')).toBeInTheDocument();
-        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/SLUG-1`);
+        expect(screen.getByRole('link')).toHaveAttribute('href', `/dao/${daoId}/proposals/CHILD-SLUG-4`);
     });
 
     it('renders the correct timestamp as a date', () => {
