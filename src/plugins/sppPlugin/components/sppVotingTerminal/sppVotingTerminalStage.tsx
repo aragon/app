@@ -35,12 +35,8 @@ export interface IProposalVotingTerminalStageProps {
 export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps> = (props) => {
     const { stage, daoId, subProposals, index, proposal } = props;
 
-    const isTimelockStage = !stage.plugins.length;
-
     const processedStartDate = sppStageUtils.getStageStartDate(proposal, stage)?.toMillis();
-    const processedEndDate = isTimelockStage
-        ? sppStageUtils.getStageMinAdvance(proposal, stage)?.toMillis()
-        : sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
+    const processedEndDate = sppStageUtils.getStageEndDate(proposal, stage)?.toMillis();
 
     // Keep stage status updated for statuses that are time dependent
     const { ACTIVE, PENDING, ACCEPTED } = ProposalVotingStatus;
@@ -64,6 +60,8 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
 
     const getBodySubProposal = (address: string) =>
         subProposals?.find((subProposal) => subProposal.pluginAddress === address);
+
+    const isTimelockStage = !stage.plugins.length;
 
     return (
         <ProposalVoting.Stage

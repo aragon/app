@@ -59,13 +59,24 @@ describe('SppStageUtils', () => {
     });
 
     describe('getStageEndDate', () => {
-        it('returns correct end date based on voteDuration', () => {
+        it('returns correct end date based on minAdvance if not a timelock stage', () => {
             const now = '2022-02-10T07:55:55.868Z';
             const startDate = DateTime.fromISO(now).toSeconds();
+            const minAdvance = 3600;
             const proposal = generateSppProposal({ startDate });
-            const stage = generateSppStage({ voteDuration: 86400 });
+            const stage = generateSppStage({ minAdvance, plugins: [] });
             const result = sppStageUtils.getStageEndDate(proposal, stage);
-            expect(result?.toSeconds()).toBe(startDate + 86400);
+            expect(result?.toSeconds()).toBe(startDate + minAdvance);
+        });
+
+        it('returns correct end date based on voteDuration if a timelock stage', () => {
+            const now = '2022-02-10T07:55:55.868Z';
+            const startDate = DateTime.fromISO(now).toSeconds();
+            const voteDuration = 3600;
+            const proposal = generateSppProposal({ startDate });
+            const stage = generateSppStage({ voteDuration, plugins: [generateSppStagePlugin()] });
+            const result = sppStageUtils.getStageEndDate(proposal, stage);
+            expect(result?.toSeconds()).toBe(startDate + voteDuration);
         });
     });
 
