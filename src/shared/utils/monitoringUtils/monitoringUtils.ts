@@ -23,6 +23,7 @@ class MonitoringUtils {
     serverActionWrapper = withServerActionInstrumentation;
 
     // Only enable error tracking for development, staging and production environments
+    // TODO: disable local
     isEnabled = () => ['development', 'staging', 'production', 'local'].includes(process.env.NEXT_PUBLIC_ENV!);
 
     getBaseConfig = (): Pick<ClientOptions, 'enabled' | 'dsn' | 'tracesSampleRate'> => ({
