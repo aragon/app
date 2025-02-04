@@ -1,51 +1,25 @@
+# The "App Staging" workflow is manually triggered to deploy the application to the staging environment. It builds the
+# staging version of the application and deploys it for testing before releasing to production.
+
 name: App Staging
 
 on:
   workflow_dispatch: {}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: staging-deployment
   cancel-in-progress: true
 
-env:
-  NODE_VERSION: 20
-  NODE_CACHE: "yarn"
-  APP_ENV: "staging"
-  APP_DOMAIN: "stg.app-next.aragon.org"
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
+  build:
+    uses: ./.github/workflows/shared-build.yml
+    with:
+      env: "staging"
+
   deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.2
-      - name: Setup Node
-        uses: actions/setup-node@v4.2.0
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: ${{ env.NODE_CACHE }}
-      - name: Restore NextJs cache
-        uses: actions/cache@v4.2.0
-        with:
-          path: ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.[jt]sx?') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
-      - name: Install dependencies
-        run: yarn install --immutable
-      - name: Prepare STG build
-        run: yarn setup ${{ env.APP_ENV }}
-      - name: Prepare secrets
-        run: |
-          echo "NEXT_SECRET_IPFS_JWT=${{secrets.NEXT_SECRET_IPFS_JWT}}" >> .env
-          echo "NEXT_SECRET_RPC_KEY=${{secrets.NEXT_SECRET_RPC_KEY}}" >> .env
-      - name: Bundle Vercel application
-        run: yarn vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
-      - name: Vercel deployment
-        run: yarn vercel deploy --prebuilt --prod --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
-      - name: Set deployment alias
-        run: |
-          DEPLOYMENT_URL=`cat deployment-url.txt`
-          yarn vercel alias $DEPLOYMENT_URL ${{ env.APP_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
+    uses: ./.github/workflows/shared-deploy.yml
+    needs: build
+    secrets: inherit
+    with:
+      domain: "stg.app-next.aragon.org"
+      env: "staging"

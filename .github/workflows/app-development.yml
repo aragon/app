@@ -1,0 +1,57 @@
+# The "App Development" workflow runs on pull requests and pushes to the main branch. It builds a development version
+# of the application, runs checks (type checking, linting, tests, etc.), and deploys the application only for pushes to
+# the main branch.
+
+name: App Development
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/shared-build.yml
+    with:
+      env: "development"
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup
+        uses: aragon/app-next/.github/actions/setup@main
+        with:
+          # Checkout full history to correclty check changeset status
+          fetch-depth: 0
+      - name: Retrieve NextJs build
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: nextjs-build
+      - name: Check types
+        run: yarn type-check
+      - name: Check linter
+        run: yarn lint
+      - name: Check prettier
+        run: yarn prettify
+      - name: Run tests with coverage
+        run: |
+          set -eo pipefail
+          yarn test:coverage
+      - name: Check changeset
+        if: github.event_name == 'pull_request'
+        run: yarn changeset status --since origin/main
+
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      domain: "dev.app-next.aragon.org"
+      env: "development"
