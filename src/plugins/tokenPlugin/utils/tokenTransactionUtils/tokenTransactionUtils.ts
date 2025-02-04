@@ -10,7 +10,8 @@ import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/mod
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { pluginTransactionUtils, type IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils';
+import { pluginInstallationUtils } from '@/shared/utils/pluginInstallationUtils';
+import type { IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroAddress, type Hex } from 'viem';
 import { tokenPluginAbi } from './tokenPluginAbi';
 
@@ -102,7 +103,7 @@ class TokenTransactionUtils {
             defaultMintSettings,
         );
 
-        const tokenTarget = { target: pluginTransactionUtils.globalExecutor, operation: 1 };
+        const tokenTarget = { target: pluginInstallationUtils.globalExecutor, operation: 1 };
         const pluginSettingsData = encodeAbiParameters(tokenPluginSetupAbi, [
             votingSettings,
             tokenSettings,
@@ -112,7 +113,7 @@ class TokenTransactionUtils {
             metadataCid as Hex,
         ]);
 
-        const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
+        const transactionData = pluginInstallationUtils.buildPrepareInstallationData(
             this.tokenRepo,
             pluginSettingsData,
             daoAddress,

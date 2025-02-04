@@ -3,7 +3,8 @@ import { sppPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDia
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { pluginInstallationUtils } from '@/shared/utils/pluginInstallationUtils';
+import { type IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPluginAbi } from './sppPluginAbi';
 
@@ -41,7 +42,7 @@ class SppTransactionUtils {
         const sppTarget = { target: daoAddress, operation: 0 };
         const pluginSettingsData = encodeAbiParameters(sppPluginSetupAbi, [metadataCid as Hex, [], [], sppTarget]);
 
-        const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
+        const transactionData = pluginInstallationUtils.buildPrepareInstallationData(
             this.sppRepo,
             pluginSettingsData,
             daoAddress,

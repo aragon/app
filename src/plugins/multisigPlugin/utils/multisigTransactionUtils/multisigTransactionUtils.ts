@@ -7,7 +7,8 @@ import type { ICreateProposalFormData } from '@/modules/governance/components/cr
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
-import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { pluginInstallationUtils } from '@/shared/utils/pluginInstallationUtils';
+import { type IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { multisigPluginAbi } from './multisigPluginAbi';
 
@@ -58,7 +59,7 @@ class MultisigTransactionUtils {
         const { members, multisigThreshold } = body;
 
         const memberAddresses = members.map((member) => member.address as Hex);
-        const multisigTarget = { target: pluginTransactionUtils.globalExecutor, operation: 1 };
+        const multisigTarget = { target: pluginInstallationUtils.globalExecutor, operation: 1 };
         const pluginSettings = { onlyListed: permissionSettings != null, minApprovals: multisigThreshold };
 
         const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [
@@ -68,7 +69,7 @@ class MultisigTransactionUtils {
             metadataCid as Hex,
         ]);
 
-        const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
+        const transactionData = pluginInstallationUtils.buildPrepareInstallationData(
             this.multisigRepo,
             pluginSettingsData,
             daoAddress,
