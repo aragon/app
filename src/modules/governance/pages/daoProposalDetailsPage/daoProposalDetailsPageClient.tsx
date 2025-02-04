@@ -24,7 +24,6 @@ import {
     ProposalActions,
     type ProposalStatus,
     proposalStatusToTagVariant,
-    Rerender,
     Tag,
     useBlockExplorer,
     useGukModulesContext,
@@ -145,9 +144,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             </ProposalActions.Container>
                             <ProposalActions.Footer>
                                 {normalizedProposalActions.length > 0 && (
-                                    <Rerender>
-                                        {() => <ProposalExecutionStatus daoId={daoId} proposal={proposal} />}
-                                    </Rerender>
+                                    <ProposalExecutionStatus daoId={daoId} proposal={proposal} />
                                 )}
                             </ProposalActions.Footer>
                         </ProposalActions.Root>
