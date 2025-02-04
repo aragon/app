@@ -3,27 +3,12 @@ import { sppPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDia
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import type { IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils/pluginTransactionUtils';
+import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPluginAbi } from './sppPluginAbi';
 
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
-export interface IPrepareProcessMetadata {
-    /**
-     * Metadata CID of the proposal.
-     */
-    proposal: string;
-    /**
-     * Metadata CID of all process plugins ordered by stage and order of body inside the stage.
-     */
-    plugins: string[];
-    /**
-     * Metadata CID for the SPP plugin.
-     */
-    spp: string;
-}
 class SppTransactionUtils {
     private sppRepo: IPluginRepoInfo = {
         address: '0xE67b8E026d190876704292442A38163Ce6945d6b',

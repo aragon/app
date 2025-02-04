@@ -10,8 +10,7 @@ import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/mod
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import type { IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils/pluginTransactionUtils';
+import { pluginTransactionUtils, type IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroAddress, type Hex } from 'viem';
 import { tokenPluginAbi } from './tokenPluginAbi';
 

@@ -7,8 +7,7 @@ import type { ICreateProposalFormData } from '@/modules/governance/components/cr
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import type { IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils/pluginTransactionUtils';
+import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { multisigPluginAbi } from './multisigPluginAbi';
 

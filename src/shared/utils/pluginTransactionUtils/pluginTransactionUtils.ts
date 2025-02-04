@@ -4,6 +4,7 @@ import {
     type ICreateProcessFormData,
 } from '@/modules/createDao/components/createProcessForm';
 import { pluginSetupProcessorAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/pluginSetupProcessorAbi';
+
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { multisigTransactionUtils } from '@/plugins/multisigPlugin/utils/multisigTransactionUtils';
@@ -75,7 +76,7 @@ export interface IPluginSetupData {
     preparedSetupData: { helpers: readonly Hex[]; permissions: readonly IPluginSetupDataPermission[] };
 }
 
-class PluginTransactionUtils {
+export class PluginTransactionUtils {
     pspRepoAddress: Hex = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
 
     globalExecutor: Hex = '0x67744773b8C29aaDc8a11010C09306c0029219Ff';
