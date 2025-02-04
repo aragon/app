@@ -36,11 +36,7 @@ describe('<VoteProposalListItem /> component', () => {
     it('renders the parent proposal info when parentProposal is defined', () => {
         const vote = generateVote({
             parentProposal: { id: 'parent-id', title: 'Parent Proposal', incrementalId: 3, pluginAddress: '0x123' },
-            proposal: generateProposal({
-                title: 'Child Proposal',
-                incrementalId: 2,
-                pluginAddress: '0x123',
-            }),
+            proposal: generateProposal({ title: 'Child Proposal', incrementalId: 2 }),
         });
         const daoId = 'dao-test';
 
@@ -55,10 +51,7 @@ describe('<VoteProposalListItem /> component', () => {
 
     it('renders the child proposal info when parentProposal is not defined', () => {
         const vote = generateVote({
-            proposal: generateProposal({
-                title: 'Child Proposal',
-                incrementalId: 4,
-            }),
+            proposal: generateProposal({ title: 'Child Proposal', incrementalId: 4 }),
         });
         const daoId = 'dao-test';
 
@@ -87,10 +80,7 @@ describe('<VoteProposalListItem /> component', () => {
 
     it('renders the correct vote indicator', () => {
         const vote = generateVote({
-            proposal: generateProposal({
-                title: 'Child Proposal',
-                incrementalId: 2,
-            }),
+            proposal: generateProposal({ title: 'Child Proposal', incrementalId: 2 }),
         });
         const daoId = 'dao-test';
         const voteIndicator = 'yes';
