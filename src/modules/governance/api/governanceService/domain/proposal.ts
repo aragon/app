@@ -9,10 +9,6 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
      */
     id: string;
     /**
-     * Parent proposal of the proposal.
-     */
-    parentProposal?: Pick<IProposal, 'id' | 'title' | 'pluginAddress' | 'incrementalId'>;
-    /**
      * The onchain index of the proposal.
      */
     proposalIndex: string;

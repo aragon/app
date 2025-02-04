@@ -31,6 +31,10 @@ export interface IVoteDialogParams {
      *  Defines if the vote to approve or veto the proposal.
      */
     isVeto?: boolean;
+    /**
+     * Plugin address to be used for slug
+     */
+    pluginAddress: string;
 }
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
@@ -46,7 +50,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { address } = useAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
 
-    const { vote, proposal, isVeto, daoId } = location.params;
+    const { vote, proposal, isVeto, daoId, pluginAddress } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
@@ -56,7 +60,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     const plugin = useDaoPlugins({
         daoId,
-        pluginAddress: proposal.parentProposal ? proposal.parentProposal.pluginAddress : proposal.pluginAddress,
+        pluginAddress,
         includeSubPlugins: true,
     })?.[0];
 
