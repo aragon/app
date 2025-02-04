@@ -1,20 +1,10 @@
-name: App E2E Tests #test
+name: App E2E Tests
 
 on:
-  workflow_dispatch:
   pull_request:
-    branches:
-      - develop
-      - feat/e2e-test-workflow
     types:
-      - opened
+      - labeled
       - synchronize
-      - reopened
-  push:
-    branches:
-      - develop
-      - main
-      - feat/e2e-test-workflow
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -30,14 +20,10 @@ env:
 jobs:
   deploy-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
-    # if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
+    #timeout-minutes: 60
+    if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
 
     steps:
-      - name: Check Yarn version
-        run: yarn --version
-
       - name: Load secrets
         id: load-secrets
         uses: 1password/load-secrets-action@v2.0.0
@@ -46,51 +32,34 @@ jobs:
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION_BACKUPS_TEMP }}
           GH_APP_QA: op://apikeys_production/gh-app-qa/credential
-
-      # Step 1: Checkout app-next repository
       - name: Checkout app-next Repository
         uses: actions/checkout@v4.2.2
-
-      # Step 2: Set up Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: ${{ env.NODE_CACHE }}
-
-      # Step 3: Install dependencies for app-next
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      # Step 4: Prepare build for app-next
-      - name: Prepare Build
+      - name: Restore NextJs cache
+        uses: actions/cache@v4.2.0
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.[jt]sx?') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
+      - name: Install app-next dependencies
+        run: yarn install --immutable
+      - name: Prepare PRE build
         run: yarn setup ${{ env.APP_ENV }}
-
-      # Step 5: Set secrets for app-next
-      - name: Prepare secrets
+      - name: Prepare app-next secrets
         run: |
           echo "NEXT_SECRET_IPFS_JWT=${{ secrets.NEXT_SECRET_IPFS_JWT }}" >> .env
           echo "NEXT_SECRET_RPC_KEY=${{ secrets.NEXT_SECRET_RPC_KEY }}" >> .env
-
-      # Step 6: Build and deploy app-next to generate preview link
-      - name: Deploy app-next to Vercel
-        run: |
-          yarn vercel build --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
-          yarn vercel deploy --prebuilt --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
-        env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      # # Step 7: Extract and display preview URL
-      # - name: Extract Preview URL
-      #   id: preview_url
-      #   run: |
-      #     PREVIEW_URL=$(cat deployment-url.txt | grep -o 'https://.*')
-      #     echo "::set-output name=url::$PREVIEW_URL"
-      #     echo "Preview URL: $PREVIEW_URL"
-      #   env:
-      #     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      # Step 7: Extract and display preview URL
+      - name: Bundle Vercel application
+        run: yarn vercel build --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
+      - name: Vercel deployment
+        run: yarn vercel deploy --prebuilt --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
+        # env:
+        #   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Extract Preview URL
         id: preview_url
         run: |
@@ -100,60 +69,30 @@ jobs:
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      # # Step 8: Checkout app-qa repository
-      # - name: Checkout app-qa Repository
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: aragon/app-qa
-      #     # token: ${{ secrets.GITHUB_TOKEN }}
-      #     token: ${{ steps.load-secrets.outputs.GH_APP_QA }}
-      #     path: ./app-qa
-
-      # Step 8: Initialize app-qa submodule for local environment
-
-      - name: Check Yarn version
-        run: yarn --version
-
-      - name: Initialize app-qa submodule
-        run: |
-          git submodule add https://$GITHUB_ACTOR:${{ steps.load-secrets.outputs.GH_APP_QA }}@github.com/aragon/app-qa.git ./app-qa || true
-          cd ./app-qa
-          git checkout main
-          git pull origin main
-          cd ..
-        env:
-          GITHUB_ACTOR: ${{ github.actor }}
-
-      # # Step 9: Install dependencies for app-qa
-      # - name: Install app-qa Dependencies
-      #   working-directory: ./app-qa
-      #   # run: yarn install --mode update-lockfile
-      #   run: yarn
-
-      # Install dependencies for app-next if cache is missing
+      # Step 8: Checkout app-qa repository
+      - name: Checkout app-qa Repository
+        uses: actions/checkout@v4
+        with:
+          repository: aragon/app-qa
+          # token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.load-secrets.outputs.GH_APP_QA }}
+          path: ./app-qa
+      # - name: Initialize app-qa submodule
+      #   run: |
+      #     git submodule add https://$GITHUB_ACTOR:${{ steps.load-secrets.outputs.GH_APP_QA }}@github.com/aragon/app-qa.git ./app-qa || true
+      #     cd ./app-qa
+      #     git checkout main
+      #     git pull origin main
+      #     cd ..
+      #   env:
+      #     GITHUB_ACTOR: ${{ github.actor }}
       - name: Install app-qa dependencies
         working-directory: ./app-qa
         # run: yarn install --frozen-lockfile
         run: yarn install --immutable
-
-      # # Step 10: List Installed Dependencies
-      # - name: List Installed Dependencies
-      #   working-directory: ./app-qa
-      #   run: |
-      #     echo "Installed dependencies in node_modules:"
-      #     ls -la node_modules
-
-      # # Step 11: Yarn List Installed Dependencies
-      # - name: Yarn List Installed Dependencies
-      #   working-directory: ./app-qa
-      #   run: yarn list
-
-      # Step 10: Install Playwright browsers
       - name: Install Playwright Browsers
         working-directory: ./app-qa
         run: npx playwright install chromium --with-deps
-
-      # Build Synpress dependencies
       - name: Build Synpress Depencies
         working-directory: ./app-qa
         # if: steps.synpress-cache.outputs.cache-hit != 'true'
@@ -161,8 +100,6 @@ jobs:
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
-
-      # Step 11: Run E2E tests with preview link
       - name: Run E2E Tests
         working-directory: ./app-qa
         run: xvfb-run yarn playwright test ./tests/ --project=chromium
@@ -170,10 +107,8 @@ jobs:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
           NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
-          TEST_ENV: preview # Set the environment to 'preview'
-          PREVIEW_URL: ${{ env.PREVIEW_URL }} # Pass the dynamically extracted URL
-
-      # Step 12: Upload Playwright report as artifact
+          TEST_ENV: preview
+          PREVIEW_URL: ${{ env.PREVIEW_URL }}
       - name: Upload Playwright Report
         if: always()
         uses: actions/upload-artifact@v4
@@ -181,8 +116,6 @@ jobs:
           name: playwright-report
           path: ./app-qa/playwright-report/
           retention-days: 30
-
-      # Step 13: Notify Discord on failure
       - name: Notify Discord
         if: failure()
         env:
@@ -205,7 +138,5 @@ jobs:
             }]
           }
           EOF
-
-      # Step 14: Cleanup
       - name: Cleanup
         run: rm -rf ./app-next ./app-qa
