@@ -1,21 +1,41 @@
 import { generateToken } from '@/modules/finance/testUtils';
+import { type IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateAddressInfo, generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { generateAddressInfo } from '@/shared/testUtils';
+import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
+import { render, screen, within } from '@testing-library/react';
 import { generateTokenVote } from '../../testUtils';
 import { VoteOption } from '../../types';
 import { type ITokenVoteListProps, TokenVoteList } from './tokenVoteList';
 
+jest.mock('../../../../modules/governance/components/voteList', () => ({
+    VoteProposalListItem: ({
+        vote,
+        daoId,
+        voteIndicator,
+    }: {
+        vote: IVote;
+        daoId: string;
+        voteIndicator: VoteIndicator;
+    }) => {
+        const slug = `TOKENVOTING-${vote.proposal!.incrementalId.toString()}`;
+        const href = `/dao/${daoId}/proposals/${slug}`;
+
+        return (
+            <a href={href} data-testid="vote-proposal-list-item-mock">
+                <span data-testid="proposal-title">{vote.proposal!.title}</span>
+                <span data-testid="vote-indicator">{voteIndicator.toLowerCase()}</span>
+            </a>
+        );
+    },
+}));
+
 describe('<TokenVoteList /> component', () => {
     const useVoteListDataSpy = jest.spyOn(useVoteListData, 'useVoteListData');
-    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     afterEach(() => {
         useVoteListDataSpy.mockReset();
-        useDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenVoteListProps>) => {
@@ -78,10 +98,6 @@ describe('<TokenVoteList /> component', () => {
     });
 
     it('renders a data list with VoteProposalDataListItem when includeInfo is true', () => {
-        const daoPlugin = generateDaoPlugin({ address: '0x123', slug: 'tokenvoting' });
-        const plugins = [generateTabComponentPlugin({ id: 'token', meta: daoPlugin })];
-        useDaoPluginsSpy.mockReturnValue(plugins);
-
         const token = generateToken({ symbol: 'ABC', decimals: 18 });
         const votes = [
             generateTokenVote({
@@ -112,15 +128,17 @@ describe('<TokenVoteList /> component', () => {
 
         render(createTestComponent({ initialParams: { queryParams: { includeInfo: true, pluginAddress: '0x123' } } }));
 
-        const links = screen.getAllByRole('link');
+        const links = screen.getAllByTestId('vote-proposal-list-item-mock');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/TOKENVOTING-2`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/TOKENVOTING-3`);
 
-        expect(screen.getByText(votes[0].proposal!.title)).toBeInTheDocument();
-        expect(screen.getByText(votes[1].proposal!.title)).toBeInTheDocument();
-        expect(screen.getAllByText('yes')).toHaveLength(1);
-        expect(screen.getAllByText('no')).toHaveLength(1);
+        expect(links[0]).toHaveAttribute('href', '/dao/test-id/proposals/TOKENVOTING-2');
+        expect(links[1]).toHaveAttribute('href', '/dao/test-id/proposals/TOKENVOTING-3');
+
+        expect(within(links[0]).getByTestId('proposal-title')).toHaveTextContent(votes[0].proposal!.title);
+        expect(within(links[1]).getByTestId('proposal-title')).toHaveTextContent(votes[1].proposal!.title);
+
+        expect(within(links[0]).getByTestId('vote-indicator')).toHaveTextContent('yes');
+        expect(within(links[1]).getByTestId('vote-indicator')).toHaveTextContent('no');
     });
 
     it('calls useVoteListData with the correct query initialParams', () => {
