@@ -1,3 +1,4 @@
+import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
@@ -11,13 +12,14 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import type { IPrepareProcessMetadata } from '@/shared/utils/pluginTransactionUtils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IPublishProcessDialogParams } from '../publishProcessDialog';
-import { type IPrepareProcessMetadata, prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 
 export enum PrepareProcessStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -64,23 +66,23 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
 
         const params = { values, processMetadata, plugin: adminPlugin.meta, dao };
-        const transaction = await prepareProcessDialogUtils.buildTransaction(params);
+        const transaction = await pluginTransactionUtils.buildTransaction(params);
 
         return transaction;
     };
 
     const handlePinJson = useCallback(
         async (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = prepareProcessDialogUtils.prepareProposalMetadata();
+            const proposalMetadata = pluginTransactionUtils.prepareProposalMetadata();
             const { IpfsHash: proposalMetadataHash } = await pinJson({ body: proposalMetadata }, params);
 
-            const sppMetadata = prepareProcessDialogUtils.prepareSppMetadata(values);
+            const sppMetadata = sppTransactionUtils.prepareSppMetadata(values);
             const { IpfsHash: sppMetadataHash } = await pinJson({ body: sppMetadata }, params);
 
             const pinPluginsMetadataPromises = values.stages
                 .flatMap((stage) => stage.bodies)
                 .map((plugin) => {
-                    const pluginMetadata = prepareProcessDialogUtils.preparePluginMetadata(plugin);
+                    const pluginMetadata = pluginTransactionUtils.preparePluginMetadata(plugin);
 
                     return pinJson({ body: pluginMetadata }, params);
                 });
@@ -101,7 +103,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     );
 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
-        const setupData = prepareProcessDialogUtils.getPluginSetupData(txReceipt);
+        const setupData = pluginTransactionUtils.getPluginSetupData(txReceipt);
         const params: IPublishProcessDialogParams = { values, daoId, setupData };
         open('PUBLISH_PROCESS', { params });
     };

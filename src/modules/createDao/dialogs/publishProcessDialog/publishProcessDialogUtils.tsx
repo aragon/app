@@ -3,6 +3,8 @@ import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex, keccak256, toBytes, zeroHash } from 'viem';
 import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
@@ -12,7 +14,6 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '../../components/createProcessForm';
-import { type IPluginSetupData, prepareProcessDialogUtils } from '../prepareProcessDialog/prepareProcessDialogUtils';
 import { daoAbi } from './abi/daoAbi';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { sppPluginAbi } from './abi/sppPluginAbi';
@@ -121,7 +122,7 @@ class PublishProcessDialogUtils {
 
         const grantMultiTargetPermissionAction = this.buildGrantPermissionTransaction({
             where: daoAddress,
-            who: prepareProcessDialogUtils.pspRepoAddress,
+            who: pluginTransactionUtils.pspRepoAddress,
             what: this.permissionIds.applyMultiTargetPermission,
             to: daoAddress,
         });
@@ -162,7 +163,7 @@ class PublishProcessDialogUtils {
 
         const revokeMultiTargetPermissionAction = this.buildRevokePermissionTransaction({
             where: daoAddress,
-            who: prepareProcessDialogUtils.pspRepoAddress,
+            who: pluginTransactionUtils.pspRepoAddress,
             what: this.permissionIds.applyMultiTargetPermission,
             to: daoAddress,
         });
@@ -218,7 +219,7 @@ class PublishProcessDialogUtils {
                 ],
             });
 
-            return { to: prepareProcessDialogUtils.pspRepoAddress, data: transactionData, value: '0' };
+            return { to: pluginTransactionUtils.pspRepoAddress, data: transactionData, value: '0' };
         });
 
         return installactionActions;

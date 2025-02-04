@@ -4,19 +4,31 @@ import {
     type ICreateProcessFormData,
 } from '@/modules/createDao/components/createProcessForm';
 import { pluginSetupProcessorAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/pluginSetupProcessorAbi';
-import {
-    type IPluginRepoInfo,
-    type IPluginSetupData,
-    type IPrepareProcessMetadata,
-} from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
+import { multisigTransactionUtils } from '@/plugins/multisigPlugin/utils/multisigTransactionUtils';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
+import { tokenTransactionUtils } from '@/plugins/tokenPlugin/utils/tokenTransactionUtils';
 import { type IDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
+
+export interface IPrepareProcessMetadata {
+    /**
+     * Metadata CID of the proposal.
+     */
+    proposal: string;
+    /**
+     * Metadata CID of all process plugins ordered by stage and order of body inside the stage.
+     */
+    plugins: string[];
+    /**
+     * Metadata CID for the SPP plugin.
+     */
+    spp: string;
+}
 
 export interface IBuildTransactionParams {
     /**
@@ -37,8 +49,36 @@ export interface IBuildTransactionParams {
     dao: IDao;
 }
 
+export interface IPluginRepoInfo {
+    /**
+     * Address of the plugin repo.
+     */
+    address: Hex;
+    /**
+     * Version of the plugin to be used.
+     */
+    version: { release: number; build: number };
+}
+
+export interface IPluginSetupDataPermission {
+    operation: number;
+    where: Hex;
+    who: Hex;
+    condition: Hex;
+    permissionId: Hex;
+}
+
+export interface IPluginSetupData {
+    pluginAddress: Hex;
+    pluginSetupRepo: Hex;
+    versionTag: { release: number; build: number };
+    preparedSetupData: { helpers: readonly Hex[]; permissions: readonly IPluginSetupDataPermission[] };
+}
+
 class PluginTransactionUtils {
     pspRepoAddress: Hex = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
+
+    globalExecutor: Hex = '0x67744773b8C29aaDc8a11010C09306c0029219Ff';
 
     preparePluginMetadata = (plugin: ICreateProcessFormBody) => {
         const { name, description, resources: links } = plugin;
@@ -74,8 +114,19 @@ class PluginTransactionUtils {
                         : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.id);
 
                 return body.governanceType === 'multisig'
-                    ? this.buildPrepareMultisigInstallData(body, pluginMetadata, daoAddress, permissionSettings)
-                    : this.buildPrepareTokenInstallData(body, pluginMetadata, daoAddress, stage, permissionSettings);
+                    ? multisigTransactionUtils.buildPrepareMultisigInstallData(
+                          body,
+                          pluginMetadata,
+                          daoAddress,
+                          permissionSettings,
+                      )
+                    : tokenTransactionUtils.buildPrepareTokenInstallData(
+                          body,
+                          pluginMetadata,
+                          daoAddress,
+                          stage,
+                          permissionSettings,
+                      );
             });
 
             return installData;
