@@ -8,6 +8,6 @@ export enum FinanceDialogs {
 export const financeDialogs: Record<FinanceDialogs, IDialogComponentDefinitions> = {
     [FinanceDialogs.ASSET_SELECTION]: {
         Component: AssetSelectionDialog,
-        description: 'app.finance.assetSelectionDialog.description',
+        hiddenDescription: 'app.finance.assetSelectionDialog.a11y.description',
     },
 };

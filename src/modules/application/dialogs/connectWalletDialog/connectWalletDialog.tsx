@@ -60,8 +60,8 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
     }
 
     return (
-        <div className="flex flex-col gap-4 pt-10 md:gap-8">
-            <Dialog.Content className="flex flex-col gap-6">
+        <>
+            <Dialog.Content className="flex flex-col gap-6 pb-4 pt-10 md:pb-8">
                 <div className="flex flex-col gap-3 md:gap-4">
                     <AragonLogo />
                     <p className="text-lg font-normal leading-tight text-neutral-500 md:text-xl">
@@ -103,6 +103,6 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
                     onClick: handleDialogClose,
                 }}
             />
-        </div>
+        </>
     );
 };

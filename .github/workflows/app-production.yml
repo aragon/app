@@ -1,0 +1,27 @@
+# The "App Production" workflow handles the production deployment process. It is triggered automatically when a release
+# is published or manually for pushing hotfixes. It builds the production version of the application and deploys it.
+
+name: App Production
+
+on:
+  workflow_dispatch: {}
+  release:
+    types: [published]
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/shared-build.yml
+    with:
+      env: "production"
+
+  deploy:
+    uses: ./.github/workflows/shared-deploy.yml
+    needs: build
+    secrets: inherit
+    with:
+      domain: "app-next.aragon.org"
+      env: "production"
