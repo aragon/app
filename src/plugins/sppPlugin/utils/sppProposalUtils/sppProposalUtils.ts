@@ -28,8 +28,6 @@ class SppProposalUtils {
             now < maxExecutionDate &&
             !isSignalingProposal;
 
-        const isLastStageTimelock = currentStage.stageIndex === lastStage?.stageIndex && !currentStage.plugins.length;
-
         if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;
         }
@@ -60,7 +58,7 @@ class SppProposalUtils {
             return canAdvance ? ProposalStatus.ADVANCEABLE : ProposalStatus.ACTIVE;
         }
 
-        return (approvalReached && isSignalingProposal) || isLastStageTimelock
+        return (approvalReached && isSignalingProposal) || this.isLastStageTimelock(proposal)
             ? ProposalStatus.ACCEPTED
             : ProposalStatus.EXPIRED;
     };
@@ -74,6 +72,11 @@ class SppProposalUtils {
         proposal.settings.stages.every(
             (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalVotingStatus.ACCEPTED,
         );
+
+    isLastStageTimelock = (proposal: ISppProposal): boolean => {
+        const lastStage = proposal.settings.stages[proposal.settings.stages.length - 1];
+        return lastStage.plugins.length === 0;
+    };
 }
 
 export const sppProposalUtils = new SppProposalUtils();

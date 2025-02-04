@@ -2,7 +2,12 @@ import { generateProposalAction } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
+import {
+    generateSppPluginSettings,
+    generateSppProposal,
+    generateSppStage,
+    generateSppStagePlugin,
+} from '../../testUtils';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 
@@ -144,12 +149,14 @@ describe('SppProposalUtils', () => {
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ADVANCEABLE);
         });
 
-        it('returns expired is approval is reached, proposal has actions and has ended', () => {
+        it('returns expired if approval is reached, has actions and plugins, and not executed before the max execution mark', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ plugins: [generateSppStagePlugin()] })],
+                }),
                 startDate,
                 actions: [generateProposalAction()],
             });
@@ -158,6 +165,42 @@ describe('SppProposalUtils', () => {
             timeUtils.setTime(now);
             getStageEndDateSpy.mockReturnValue(endDate);
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.EXPIRED);
+        });
+
+        it('returns accepted if the final stage is a timelock with no stage plugins and has no expiration', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
+            const endDate = DateTime.fromISO(now).minus({ days: 1 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage()],
+                }),
+                startDate,
+                actions: [generateProposalAction()],
+            });
+
+            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
+            timeUtils.setTime(now);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACCEPTED);
+        });
+
+        it('returns expired if the final stage is a timelock with no stage plugins and has an expiration', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
+            const endDate = DateTime.fromISO(now).minus({ days: 1 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ maxAdvance: endDate.toSeconds() })],
+                }),
+                startDate,
+                actions: [generateProposalAction()],
+            });
+
+            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
+            timeUtils.setTime(now);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACCEPTED);
         });
     });
 
