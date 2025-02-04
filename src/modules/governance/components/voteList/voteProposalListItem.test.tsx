@@ -9,9 +9,7 @@ describe('<VoteProposalListItem /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([
-            generateTabComponentPlugin({ id: 'test-id', meta: generateDaoPlugin({ address: '0x123' }) }),
-        ]);
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: generateDaoPlugin() })]);
     });
 
     afterEach(() => {
@@ -36,7 +34,7 @@ describe('<VoteProposalListItem /> component', () => {
     it('renders the parent proposal info when parentProposal is defined', () => {
         const vote = generateVote({
             parentProposal: { id: 'parent-id', title: 'Parent Proposal', incrementalId: 3, pluginAddress: '0x123' },
-            proposal: generateProposal({ title: 'Child Proposal', incrementalId: 2 }),
+            proposal: generateProposal({ title: 'Child Proposal' }),
         });
         const daoId = 'dao-test';
 
@@ -56,7 +54,7 @@ describe('<VoteProposalListItem /> component', () => {
         const daoId = 'dao-test';
 
         const plugin = generateDaoPlugin({ slug: 'child-slug' });
-        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ id: 'test-plugin', meta: plugin })]);
+        useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
 
         render(createTestComponent({ vote, daoId }));
 
@@ -80,7 +78,7 @@ describe('<VoteProposalListItem /> component', () => {
 
     it('renders the correct vote indicator', () => {
         const vote = generateVote({
-            proposal: generateProposal({ title: 'Child Proposal', incrementalId: 2 }),
+            proposal: generateProposal({ title: 'Child Proposal' }),
         });
         const daoId = 'dao-test';
         const voteIndicator = 'yes';

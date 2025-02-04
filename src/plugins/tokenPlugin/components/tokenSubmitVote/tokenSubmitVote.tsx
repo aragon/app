@@ -61,13 +61,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const openTransactionDialog = () => {
         const voteLabel = voteOptionToIndicator[selectedOption ?? ''];
         const vote = { value: Number(selectedOption), label: voteLabel };
-        const params: IVoteDialogParams = {
-            daoId,
-            proposal,
-            vote,
-            isVeto,
-            pluginAddress: plugin.parentPlugin ?? plugin.address,
-        };
+        const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
 
         open(GovernanceDialog.VOTE, { params });
     };

@@ -1,3 +1,4 @@
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -32,9 +33,9 @@ export interface IVoteDialogParams {
      */
     isVeto?: boolean;
     /**
-     * Plugin address to be used for slug
+     * Plugin where the proposal has been created.
      */
-    pluginAddress: string;
+    plugin: IDaoPlugin;
 }
 
 export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
@@ -50,7 +51,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { address } = useAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
 
-    const { vote, proposal, isVeto, daoId, pluginAddress } = location.params;
+    const { vote, proposal, isVeto, daoId, plugin } = location.params;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
         initialActiveStep: TransactionDialogStep.PREPARE,
@@ -58,13 +59,11 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     const handlePrepareTransaction = () => voteDialogUtils.buildTransaction({ proposal, voteValue: vote.value });
 
-    const plugin = useDaoPlugins({
-        daoId,
-        pluginAddress,
-        includeSubPlugins: true,
-    })?.[0];
+    // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
+    const pluginAddress = plugin.parentPlugin ?? plugin.address;
+    const processedPlugin = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })?.[0];
 
-    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, processedPlugin?.meta);
 
     return (
         <TransactionDialog
