@@ -89,7 +89,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                     ))}
                 </ProposalVoting.BodySummaryList>
                 {isTimelockStage && <SppVotingTerminalStageTimelock stage={stage} proposal={proposal} />}
-                <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} />
+                <SppVotingTerminalBodySummaryFooter proposal={proposal} stage={stage} daoId={daoId} />
             </ProposalVoting.BodySummary>
             {stage.plugins.map((plugin) => (
                 <ProposalVoting.BodyContent
@@ -106,7 +106,7 @@ export const SppVotingTerminalStage: React.FC<IProposalVotingTerminalStageProps>
                         canVote={canVote}
                         isVeto={isVeto}
                     >
-                        {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} />}
+                        {isSingleBody && <SppStageStatus proposal={proposal} stage={stage} daoId={daoId} />}
                     </SppVotingTerminalBodyContent>
                 </ProposalVoting.BodyContent>
             ))}

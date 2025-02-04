@@ -44,6 +44,7 @@ export const MultisigProposalListItem: React.FC<IMultisigProposalListItemProps> 
                 name: proposal.creator.ens ?? undefined,
                 link: `members/${proposal.creator.address}`,
             }}
+            id={slug}
         />
     );
 };

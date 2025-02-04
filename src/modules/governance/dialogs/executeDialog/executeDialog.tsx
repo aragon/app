@@ -5,11 +5,13 @@ import {
     TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
+import { proposalUtils } from '../../utils/proposalUtils';
 import { executeDialogUtils } from './executeDialogUtils';
 
 export interface IExecuteDialogParams {
@@ -52,6 +54,10 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
         return await executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
     };
 
+    const plugin = useDaoPlugins({ daoId: location.params.daoId, pluginAddress })?.[0];
+
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
+
     return (
         <TransactionDialog
             title={t('app.governance.executeDialog.title')}
@@ -71,6 +77,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
                     summary={summary}
                     publisher={{ address: creator.address }}
                     status={status}
+                    id={slug}
                 />
             </DataList.Root>
         </TransactionDialog>

@@ -44,6 +44,7 @@ export const TokenProposalListItem: React.FC<ITokenProposalListItemProps> = (pro
                 link: `members/${proposal.creator.address}`,
                 name: proposal.creator.ens ?? undefined,
             }}
+            id={slug}
         />
     );
 };
