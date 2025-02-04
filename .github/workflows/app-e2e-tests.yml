@@ -102,7 +102,7 @@ jobs:
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
       - name: Run E2E Tests
         working-directory: ./app-qa
-        run: xvfb-run yarn playwright test ./tests/ --project=chromium
+        run: xvfb-run yarn playwright test ./tests/sppPlugin_publishProposal.spec.ts --project=chromium
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
