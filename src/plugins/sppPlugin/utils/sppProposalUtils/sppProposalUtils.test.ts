@@ -85,32 +85,34 @@ describe('SppProposalUtils', () => {
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.PENDING);
         });
 
-        it('returns active if proposal endDate is not defined (last stage not reached)', () => {
+        it('returns active if last stage not reached', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 1 }).toSeconds();
-            const endDate = undefined;
+
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
+                stageIndex: 0,
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 })],
+                }),
                 startDate,
             });
             timeUtils.setTime(now);
-            getStageEndDateSpy.mockReturnValue(endDate);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACTIVE);
         });
 
-        it('returns active if proposal is not executable and proposal ends in the future', () => {
+        it('returns active if proposal is not executable, but final stage accepted, and proposal ends in the future', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 1 }).toSeconds();
-            const endDate = DateTime.fromISO(now).plus({ days: 1 });
+            const minAdvance = DateTime.fromISO(now).plus({ days: 1 }).toSeconds();
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
+                settings: generateSppPluginSettings({
+                    stages: [generateSppStage({ minAdvance })],
+                }),
                 startDate,
             });
-
-            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACTIVE);
+            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
             timeUtils.setTime(now);
-            getStageEndDateSpy.mockReturnValue(endDate);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACTIVE);
         });
@@ -165,42 +167,6 @@ describe('SppProposalUtils', () => {
             timeUtils.setTime(now);
             getStageEndDateSpy.mockReturnValue(endDate);
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.EXPIRED);
-        });
-
-        it('returns accepted if the final stage is a timelock with no stage plugins and has no expiration', () => {
-            const now = '2023-01-01T12:00:00.000Z';
-            const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
-            const endDate = DateTime.fromISO(now).minus({ days: 1 });
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({
-                    stages: [generateSppStage()],
-                }),
-                startDate,
-                actions: [generateProposalAction()],
-            });
-
-            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
-            timeUtils.setTime(now);
-            getStageEndDateSpy.mockReturnValue(endDate);
-            expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACCEPTED);
-        });
-
-        it('returns expired if the final stage is a timelock with no stage plugins and has an expiration', () => {
-            const now = '2023-01-01T12:00:00.000Z';
-            const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
-            const endDate = DateTime.fromISO(now).minus({ days: 1 });
-            const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({
-                    stages: [generateSppStage({ maxAdvance: endDate.toSeconds() })],
-                }),
-                startDate,
-                actions: [generateProposalAction()],
-            });
-
-            getStageStatusSpy.mockReturnValue(ProposalVotingStatus.ACCEPTED);
-            timeUtils.setTime(now);
-            getStageEndDateSpy.mockReturnValue(endDate);
-            expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ACCEPTED);
         });
     });
 
