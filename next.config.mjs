@@ -57,6 +57,11 @@ const sentryConfig = {
     release: packageInfo.version,
     // Environment for Sentry
     environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
+    // Options to optimise the bundle size
+    bundleSizeOptimizations: {
+        // Exclude replay worker from bundle as self-hosted for current CSP policies
+        excludeReplayWorker: true,
+    },
 };
 
 /** @type {import('next').NextConfig} */
