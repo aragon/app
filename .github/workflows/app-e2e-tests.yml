@@ -58,8 +58,6 @@ jobs:
         run: yarn vercel build --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }}
       - name: Vercel deployment
         run: yarn vercel deploy --prebuilt --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_SCOPE }} > deployment-url.txt
-        # env:
-        #   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Extract preview URL
         id: preview_url
         run: |
@@ -68,39 +66,25 @@ jobs:
           echo "PREVIEW_URL=$PREVIEW_URL" >> $GITHUB_ENV
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      # Step 8: Checkout app-qa repository
-      - name: Checkout app-qa Repository
+      - name: Checkout app-qa repository
         uses: actions/checkout@v4
         with:
           repository: aragon/app-qa
-          # token: ${{ secrets.GITHUB_TOKEN }}
           token: ${{ steps.load-secrets.outputs.GH_APP_QA }}
           path: ./app-qa
-      # - name: Initialize app-qa submodule
-      #   run: |
-      #     git submodule add https://$GITHUB_ACTOR:${{ steps.load-secrets.outputs.GH_APP_QA }}@github.com/aragon/app-qa.git ./app-qa || true
-      #     cd ./app-qa
-      #     git checkout main
-      #     git pull origin main
-      #     cd ..
-      #   env:
-      #     GITHUB_ACTOR: ${{ github.actor }}
       - name: Install app-qa dependencies
         working-directory: ./app-qa
-        # run: yarn install --frozen-lockfile
         run: yarn install --immutable
-      - name: Install Playwright Browsers
+      - name: Install Playwright browsers
         working-directory: ./app-qa
         run: npx playwright install chromium --with-deps
-      - name: Build Synpress Depencies
+      - name: Build Synpress depencies
         working-directory: ./app-qa
-        # if: steps.synpress-cache.outputs.cache-hit != 'true'
         run: xvfb-run npx synpress ./tests/
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
-      - name: Run E2E Tests
+      - name: Run E2E tests
         working-directory: ./app-qa
         run: xvfb-run yarn playwright test ./tests/sppPlugin/sppPlugin_publishProposal.spec.ts --project=chromium
         env:
@@ -109,17 +93,18 @@ jobs:
           NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
           TEST_ENV: preview
           PREVIEW_URL: ${{ env.PREVIEW_URL }}
-      - name: Upload Playwright Report
+      - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: ./app-qa/playwright-report/
           retention-days: 30
-      - name: Notify Discord
+      - name: Notify Discord on failure
         if: failure()
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ARTIFACT_URL: ${{ steps.upload_report.outputs.artifact-url }}
         run: |
           echo "Sending Discord failure notification..."
           curl -X POST -H "Content-Type: application/json" -d @- https://discord.com/api/webhooks/1309183202719699084/7iigCapTmyIHtgkqcLfXY9j557T_YChm7bv9h-BBU37ZhPDIIZYt34Z0KkqQGCBGic1M <<EOF
