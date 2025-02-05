@@ -56,6 +56,10 @@ const sentryConfig = {
     disableLogger: true,
     // Release version for Sentry
     release: { name: packageInfo.version },
+    // Delete sourcemaps from NextJs build after upload
+    sourcemaps: { deleteSourcemapsAfterUpload: true },
+    // Disable sending data to Sentry
+    telemetry: false,
     // Options to optimise the bundle size
     bundleSizeOptimizations: {
         // Exclude replay worker from bundle as self-hosted for current CSP policies
