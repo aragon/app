@@ -2,12 +2,7 @@ import { generateProposalAction } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import {
-    generateSppPluginSettings,
-    generateSppProposal,
-    generateSppStage,
-    generateSppStagePlugin,
-} from '../../testUtils';
+import { generateSppPluginSettings, generateSppProposal, generateSppStage } from '../../testUtils';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 
@@ -151,14 +146,12 @@ describe('SppProposalUtils', () => {
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(ProposalStatus.ADVANCEABLE);
         });
 
-        it('returns expired if approval is reached, has actions and plugins, and not executed before the max execution mark', () => {
+        it('returns expired if approval is reached, proposal has actions and has ended', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 }).toSeconds();
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
             const proposal = generateSppProposal({
-                settings: generateSppPluginSettings({
-                    stages: [generateSppStage({ plugins: [generateSppStagePlugin()] })],
-                }),
+                settings: generateSppPluginSettings({ stages: [generateSppStage()] }),
                 startDate,
                 actions: [generateProposalAction()],
             });
