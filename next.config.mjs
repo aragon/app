@@ -40,9 +40,10 @@ const webFunctionalities = [
 ];
 
 const sentryConfig = {
+    // Aragon organisation on Sentry
     org: 'aragonorg',
+    // Sentry project
     project: 'app-next',
-
     // Auth token needed for uploading source maps
     authToken: process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
     // Prevent built files from containing a sourceMappingURL comment
@@ -56,7 +57,7 @@ const sentryConfig = {
     // Release version for Sentry
     release: packageInfo.version,
     // Environment for Sentry
-    environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
+    environment: process.env.NEXT_PUBLIC_ENV,
     // Options to optimise the bundle size
     bundleSizeOptimizations: {
         // Exclude replay worker from bundle as self-hosted for current CSP policies

@@ -25,7 +25,6 @@ import {
     formatterUtils,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
 
 export interface IDaoDashboardPageClientProps {
     /**
@@ -66,10 +65,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
-
-    useEffect(() => {
-        throw new Error('test');
-    }, []);
 
     if (dao == null) {
         return null;
