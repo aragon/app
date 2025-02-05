@@ -27,10 +27,14 @@ export interface ISppStageStatusProps {
      * Stage to display the status for.
      */
     stage: ISppStage;
+    /**
+     * ID of the DAO related to the proposal.
+     */
+    daoId: string;
 }
 
 export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
-    const { proposal, stage } = props;
+    const { proposal, daoId, stage } = props;
 
     const { t } = useTranslations();
 
@@ -129,7 +133,12 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
                 </div>
             )}
 
-            <AdvanceStageDialog open={isAdvanceDialogOpen} onOpenChange={setIsAdvanceDialogOpen} proposal={proposal} />
+            <AdvanceStageDialog
+                open={isAdvanceDialogOpen}
+                onOpenChange={setIsAdvanceDialogOpen}
+                proposal={proposal}
+                daoId={daoId}
+            />
         </div>
     );
 };

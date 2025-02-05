@@ -1,7 +1,9 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IDaoProposalListDefaultItemProps {
     /**
@@ -17,14 +19,28 @@ export interface IDaoProposalListDefaultItemProps {
 export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemProps> = (props) => {
     const { proposal, daoId } = props;
 
-    const { id, title, summary, executed, endDate, creator, pluginSubdomain: pluginId } = proposal;
+    const {
+        id,
+        title,
+        summary,
+        executed,
+        endDate,
+        creator,
+        pluginSubdomain: pluginId,
+        pluginAddress,
+        incrementalId,
+    } = proposal;
 
     const slotId = GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS;
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({ params: proposal, slotId, pluginId })!;
 
+    const plugin = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })?.[0];
+
+    const slug = proposalUtils.getProposalSlug(incrementalId, plugin?.meta);
+
     const proposalDate = (executed.blockTimestamp ?? endDate) * 1000;
     const processedEndDate = proposalDate === 0 ? undefined : proposalDate;
-    const proposalHref = `/dao/${daoId}/proposals/${id}`;
+    const proposalHref = `/dao/${daoId}/proposals/${slug}`;
 
     const publisherHref = `/dao/${daoId}/members/${creator.address}`;
     const publisherName = creator.ens ?? undefined;
@@ -39,6 +55,7 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
             date={processedEndDate}
             href={proposalHref}
             publisher={{ address: creator.address, link: publisherHref, name: publisherName }}
+            id={slug}
         />
     );
 };
