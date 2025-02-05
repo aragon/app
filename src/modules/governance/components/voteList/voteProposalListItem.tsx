@@ -23,7 +23,7 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
 
     const proposal = vote.parentProposal ?? vote.proposal!;
 
-    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress })?.[0];
+    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress, includeSubPlugins: true })?.[0];
 
     const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 

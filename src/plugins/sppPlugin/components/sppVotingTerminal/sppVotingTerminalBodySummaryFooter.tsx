@@ -13,10 +13,14 @@ export interface ISppVotingTerminalBodySummaryFooterProps {
      * Stage of proposal
      */
     stage: ISppStage;
+    /**
+     * ID of the DAO related to the proposal.
+     */
+    daoId: string;
 }
 
 export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBodySummaryFooterProps> = (props) => {
-    const { stage, proposal } = props;
+    const { stage, proposal, daoId } = props;
 
     const { t } = useTranslations();
 
@@ -33,7 +37,7 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     // Display stage status component if approval is reached and it is not an optimistic stage
     // or if it is an optimistic stage that is accepted
     if ((isApprovalReached && !isVeto) || (isVeto && isAccepted)) {
-        return <SppStageStatus proposal={proposal} stage={stage} />;
+        return <SppStageStatus proposal={proposal} stage={stage} daoId={daoId} />;
     }
 
     return (

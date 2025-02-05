@@ -55,6 +55,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (props) 
                 name: proposal.creator.ens ?? undefined,
                 link: `members/${proposal.creator.address}`,
             }}
+            id={slug}
         />
     );
 };
