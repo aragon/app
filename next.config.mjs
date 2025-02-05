@@ -55,9 +55,7 @@ const sentryConfig = {
     // Disable Sentry debug logger to save bundle size
     disableLogger: true,
     // Release version for Sentry
-    release: packageInfo.version,
-    // Environment for Sentry
-    environment: process.env.NEXT_PUBLIC_ENV,
+    release: { name: packageInfo.version },
     // Options to optimise the bundle size
     bundleSizeOptimizations: {
         // Exclude replay worker from bundle as self-hosted for current CSP policies
