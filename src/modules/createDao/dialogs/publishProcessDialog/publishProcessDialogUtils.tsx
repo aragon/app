@@ -1,6 +1,5 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
-import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
@@ -8,6 +7,7 @@ import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../../governance/types';
 import { type ICreateProcessFormData } from '../../components/createProcessForm';
 import { type IPluginSetupData } from '../prepareProcessDialog/prepareProcessDialogUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 
 export interface IBuildTransactionParams {
     /**
@@ -50,7 +50,7 @@ class PublishProcessDialogUtils {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
-        const proposalActions = permissionTransactionUtils.buildInstallActions(values, setupData, dao.address as Hex);
+        const proposalActions = pluginTransactionUtils.buildInstallActions(values, setupData, dao.address as Hex);
 
         const buildDataParams: IBuildCreateProposalDataParams = {
             actions: proposalActions,
