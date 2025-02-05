@@ -43,7 +43,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const { proposal, status } = location.params;
+    const { proposal, status, daoId } = location.params;
     const { title, summary, creator, proposalIndex, pluginAddress, network } = proposal;
 
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
@@ -54,7 +54,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
         return await executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
     };
 
-    const plugin = useDaoPlugins({ daoId: location.params.daoId, pluginAddress })?.[0];
+    const plugin = useDaoPlugins({ daoId, pluginAddress })?.[0];
 
     const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
