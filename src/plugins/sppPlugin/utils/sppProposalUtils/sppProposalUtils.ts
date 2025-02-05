@@ -11,7 +11,6 @@ class SppProposalUtils {
         const stagesCount = proposal.settings.stages.length;
         const lastStage = stagesCount > 0 ? proposal.settings.stages[stagesCount - 1] : undefined;
 
-        const endDate = lastStage ? sppStageUtils.getStageEndDate(proposal, lastStage) : undefined;
         const minExecutionDate = lastStage ? sppStageUtils.getStageMinAdvance(proposal, lastStage) : undefined;
         const maxExecutionDate = lastStage ? sppStageUtils.getStageMaxAdvance(proposal, lastStage) : undefined;
 
@@ -52,15 +51,13 @@ class SppProposalUtils {
             return ProposalStatus.PENDING;
         }
 
-        if (endDate == null || now < endDate) {
+        if (minExecutionDate == null || now < minExecutionDate) {
             const canAdvance = sppStageUtils.canStageAdvance(proposal, currentStage);
 
             return canAdvance ? ProposalStatus.ADVANCEABLE : ProposalStatus.ACTIVE;
         }
 
-        return (approvalReached && isSignalingProposal) || this.isLastStageTimelock(proposal)
-            ? ProposalStatus.ACCEPTED
-            : ProposalStatus.EXPIRED;
+        return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.EXPIRED;
     };
 
     hasAnyStageStatus = (proposal: ISppProposal, status: ProposalVotingStatus): boolean =>
