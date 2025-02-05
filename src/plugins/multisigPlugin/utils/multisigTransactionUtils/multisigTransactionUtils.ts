@@ -3,19 +3,19 @@ import type {
     ICreateProcessFormProposalCreationBody,
 } from '@/modules/createDao/components/createProcessForm';
 import { multisigPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/multisigPluginSetupAbi';
+
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
-import { pluginInstallationUtils } from '@/shared/utils/pluginInstallationUtils';
-import { type IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils';
+import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { multisigPluginAbi } from './multisigPluginAbi';
 
 export interface ICreateMultisigProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class MultisigTransactionUtils {
-    private multisigRepo: IPluginRepoInfo = {
+    multisigRepo: IPluginRepoInfo = {
         address: '0xA0901B5BC6e04F14a9D0d094653E047644586DdE',
         version: { release: 1, build: 5 },
     };
@@ -59,7 +59,7 @@ class MultisigTransactionUtils {
         const { members, multisigThreshold } = body;
 
         const memberAddresses = members.map((member) => member.address as Hex);
-        const multisigTarget = { target: pluginInstallationUtils.globalExecutor, operation: 1 };
+        const multisigTarget = { target: pluginTransactionUtils.globalExecutor, operation: 1 };
         const pluginSettings = { onlyListed: permissionSettings != null, minApprovals: multisigThreshold };
 
         const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [
@@ -69,7 +69,7 @@ class MultisigTransactionUtils {
             metadataCid as Hex,
         ]);
 
-        const transactionData = pluginInstallationUtils.buildPrepareInstallationData(
+        const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
             this.multisigRepo,
             pluginSettingsData,
             daoAddress,

@@ -3,15 +3,14 @@ import { sppPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDia
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import { pluginInstallationUtils } from '@/shared/utils/pluginInstallationUtils';
-import { type IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils';
+import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import { sppPluginAbi } from './sppPluginAbi';
 
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class SppTransactionUtils {
-    private sppRepo: IPluginRepoInfo = {
+    sppRepo: IPluginRepoInfo = {
         address: '0xE67b8E026d190876704292442A38163Ce6945d6b',
         version: { release: 1, build: 8 },
     };
@@ -42,7 +41,7 @@ class SppTransactionUtils {
         const sppTarget = { target: daoAddress, operation: 0 };
         const pluginSettingsData = encodeAbiParameters(sppPluginSetupAbi, [metadataCid as Hex, [], [], sppTarget]);
 
-        const transactionData = pluginInstallationUtils.buildPrepareInstallationData(
+        const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
             this.sppRepo,
             pluginSettingsData,
             daoAddress,
