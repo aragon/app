@@ -57,7 +57,7 @@ jobs:
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
           NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
           TEST_ENV: preview
-          PREVIEW_URL: ${{ env.PREVIEW_URL }}
+          PREVIEW_URL: ${{ needs.deploy.outputs.deploymentUrl }}
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
@@ -81,7 +81,7 @@ jobs:
                 { "name": "Repository", "value": "${{ github.repository }}", "inline": false },
                 { "name": "Branch", "value": "${{ github.ref }}", "inline": false },
                 { "name": "Environment", "value": "preview", "inline": false },
-                { "name": "Preview URL", "value": "${{ env.PREVIEW_URL }}", "inline": false },
+                { "name": "Preview URL", "value": "${{ needs.deploy.outputs.deploymentUrl }}", "inline": false },
                 { "name": "Artifact Download URL", "value": "[Download Playwright Report]($ARTIFACT_URL)", "inline": false },
                 { "name": "Details", "value": "[View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false }
               ]
