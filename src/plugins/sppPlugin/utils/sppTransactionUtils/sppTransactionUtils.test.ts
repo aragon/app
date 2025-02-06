@@ -79,6 +79,7 @@ describe('SppTransactionUtils', () => {
                 expect.objectContaining({
                     abi: sppPluginAbi,
                     functionName: 'updateRules',
+                    // See PermissionTransactionUtils for ruleConditionId and ruleConditionOperator
                     args: [
                         [
                             {

@@ -156,20 +156,19 @@ describe('PluginTransactionUtils', () => {
 
             const actions = pluginTransactionUtils.buildInstallActions(testValues, setupData, daoAddress);
 
-            // Expected actions:
-            // 1. Grant multi-target permission on dao.
+            // - Grant multi-target permission on dao.
             const expectedGrantMultiTargetAction = { to: daoAddress, data: '0xGrantTxData', value: '0' };
-            // 2. Apply installation actions.
-            // 3. Update stages action.
-            // 4. Update rules action.
-            // 5. For each plugin in setupData (apart from spp):
+            // - Apply installation actions.
+            // - Update stages action.
+            // - Update rules action.
+            // For each plugin in setupData (apart from spp):
             //    - Revoke create proposal on sub-plugin.
             //    - Grant SPP create proposal on sub-plugin.
             //    - Revoke execute permission on sub-plugin.
             const expectedRevokePluginCreateProposalAction = { to: daoAddress, data: '0xRevokeTxData', value: '0' };
             const expectedGrantSppCreateProposalAction = { to: daoAddress, data: '0xGrantTxData', value: '0' };
             const expectedRevokeExecutePermission = { to: daoAddress, data: '0xRevokeTxData', value: '0' };
-            // 6. Revoke multi-target permission on dao.
+            // Revoke multi-target permission on dao.
             const expectedRevokeMultiTargetAction = { to: daoAddress, data: '0xRevokeTxData', value: '0' };
 
             const expectedActions = [

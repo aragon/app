@@ -12,7 +12,7 @@ jest.mock('viem', () => ({
 describe('PermissionTransactionUtils', () => {
     describe('buildGrantPermissionTransaction', () => {
         it('returns a transaction object with correct data for grant', () => {
-            const params = {
+            const grantParams = {
                 where: '0xWhere' as Hex,
                 who: '0xWho' as Hex,
                 what: 'what',
@@ -24,17 +24,17 @@ describe('PermissionTransactionUtils', () => {
 
             (encodeFunctionData as jest.Mock).mockReturnValueOnce('0xGrantTxData');
 
-            const tx = permissionTransactionUtils.buildGrantPermissionTransaction(params);
+            const tx = permissionTransactionUtils.buildGrantPermissionTransaction(grantParams);
 
             expect(encodeFunctionData).toHaveBeenCalledWith(
                 expect.objectContaining({
                     abi: daoAbi,
                     functionName: 'grant',
-                    args: [params.where, params.who, '0xGrantHash'],
+                    args: [grantParams.where, grantParams.who, '0xGrantHash'],
                 }),
             );
 
-            const expectedTransaction = { to: params.to, data: '0xGrantTxData', value: '0' };
+            const expectedTransaction = { to: grantParams.to, data: '0xGrantTxData', value: '0' };
 
             expect(tx).toEqual(expectedTransaction);
         });
@@ -42,7 +42,7 @@ describe('PermissionTransactionUtils', () => {
 
     describe('buildRevokePermissionTransaction', () => {
         it('returns a transaction object with correct data for revoke', () => {
-            const params = {
+            const revokeParams = {
                 where: '0xWhere' as Hex,
                 who: '0xWho' as Hex,
                 what: 'what',
@@ -54,17 +54,17 @@ describe('PermissionTransactionUtils', () => {
 
             (encodeFunctionData as jest.Mock).mockReturnValueOnce('0xRevokeTxData');
 
-            const tx = permissionTransactionUtils.buildRevokePermissionTransaction(params);
+            const tx = permissionTransactionUtils.buildRevokePermissionTransaction(revokeParams);
 
             expect(encodeFunctionData).toHaveBeenCalledWith(
                 expect.objectContaining({
                     abi: daoAbi,
                     functionName: 'revoke',
-                    args: [params.where, params.who, '0xRevokeHash'],
+                    args: [revokeParams.where, revokeParams.who, '0xRevokeHash'],
                 }),
             );
 
-            expect(tx).toEqual({ to: params.to, data: '0xRevokeTxData', value: '0' });
+            expect(tx).toEqual({ to: revokeParams.to, data: '0xRevokeTxData', value: '0' });
         });
     });
 
@@ -75,13 +75,9 @@ describe('PermissionTransactionUtils', () => {
             expect(result).toEqual(conditionRules);
         });
 
-        it('returns conditionRules with one added condition if conditionAddresses has one element', () => {
-            const conditionRules: IConditionRule[] = [];
+        it('creates a new condition rule when starting with an empty rules array', () => {
             const conditionAddress = '0xConditionAddress';
-            const result = permissionTransactionUtils.buildCreateProposalRuleConditions(
-                [conditionAddress],
-                conditionRules,
-            );
+            const result = permissionTransactionUtils.buildCreateProposalRuleConditions([conditionAddress], []);
 
             expect(result).toEqual([
                 {
@@ -94,12 +90,8 @@ describe('PermissionTransactionUtils', () => {
         });
 
         it('handles multiple conditionAddresses', () => {
-            const conditionRules: IConditionRule[] = [];
             const addresses = ['0x123', '0x456'];
-            const results = permissionTransactionUtils.buildCreateProposalRuleConditions(
-                [...addresses],
-                conditionRules,
-            );
+            const results = permissionTransactionUtils.buildCreateProposalRuleConditions([...addresses], []);
 
             const ruleConditionId = permissionTransactionUtils['ruleConditionId'];
             const ruleConditionOperator = permissionTransactionUtils['ruleConditionOperator'];
