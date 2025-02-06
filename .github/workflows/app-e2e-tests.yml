@@ -11,18 +11,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    uses: ./.github/workflows/shared-build.yml
-    if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
-    with:
-      env: "preview"
+  # build:
+  #   uses: ./.github/workflows/shared-build.yml
+  #   if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
+  #   with:
+  #     env: "preview"
 
-  deploy:
-    uses: ./.github/workflows/shared-deploy.yml
-    needs: build
-    secrets: inherit
-    with:
-      env: "preview"
+  # deploy:
+  #   uses: ./.github/workflows/shared-deploy.yml
+  #   needs: build
+  #   secrets: inherit
+  #   with:
+  #     env: "preview"
 
   test:
     runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
         with:
           export-env: false
         env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION_BACKUPS_TEMP }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION }}
           GH_APP_QA: op://apikeys_production/gh-app-qa/credential
       - name: Checkout QA repository
         uses: actions/checkout@v4.2.2
@@ -57,7 +57,8 @@ jobs:
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
           NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
           TEST_ENV: preview
-          PREVIEW_URL: ${{ needs.deploy.outputs.deploymentUrl }}
+          # PREVIEW_URL: ${{ needs.deploy.outputs.deploymentUrl }}
+          PREVIEW_URL: https://dev.app-next.aragon.org/
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
