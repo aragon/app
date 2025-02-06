@@ -2,8 +2,15 @@ import * as useProposalListData from '@/modules/governance/hooks/useProposalList
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import type { IProposal } from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
 import { DaoProposalListDefault, type IDaoProposalListDefaultProps } from './daoProposalListDefault';
+
+jest.mock('./daoProposalListDefaultItem', () => ({
+    DaoProposalListDefaultItem: ({ proposal }: { proposal: IProposal }) => (
+        <div data-testid="dao-proposal-default-list-item-mock">{proposal.title}</div>
+    ),
+}));
 
 describe('<DaoProposalListDefault /> component', () => {
     const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');

@@ -2,6 +2,6 @@ export * from './useCanVote';
 export * from './useMember';
 export * from './useMemberExists';
 export * from './useMemberList';
-export * from './useProposal';
+export * from './useProposalBySlug';
 export * from './useProposalList';
 export * from './useVoteList';

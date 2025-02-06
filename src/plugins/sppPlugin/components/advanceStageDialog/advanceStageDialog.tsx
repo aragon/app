@@ -1,9 +1,11 @@
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import {
     TransactionDialog,
     TransactionDialogStep,
     type ITransactionDialogStepMeta,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Dialog, ProposalDataListItem, ProposalStatus, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
@@ -15,10 +17,14 @@ export interface IAdvanceStageDialogProps extends IDialogRootProps {
      * Proposal to be advanced to the next step.
      */
     proposal: ISppProposal;
+    /**
+     * ID of the DAO related to the proposal
+     */
+    daoId: string;
 }
 
 export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) => {
-    const { proposal, onOpenChange, ...otherProps } = props;
+    const { proposal, onOpenChange, daoId, ...otherProps } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -39,6 +45,10 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
     };
 
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
+
+    const plugin = useDaoPlugins({ daoId, pluginAddress: proposal.pluginAddress, includeSubPlugins: true })?.[0];
+
+    const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
     return (
         <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
@@ -61,6 +71,7 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                     status={ProposalStatus.ACTIVE}
                     type="approvalThreshold"
                     publisher={{ address: creatorAddress, name: creatorEns ?? undefined }}
+                    id={slug}
                 />
             </TransactionDialog>
         </Dialog.Root>

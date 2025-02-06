@@ -1,6 +1,5 @@
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import type { TransactionReceipt } from 'viem';
 import * as Viem from 'viem';
 import { ProposalActionType } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -9,7 +8,6 @@ import {
     generateProposalActionUpdateMetadata,
     generateProposalActionWithdrawToken,
 } from '../../testUtils';
-import { proposalAbi } from './proposalAbi';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
@@ -77,27 +75,6 @@ describe('publishProposalDialog utils', () => {
 
             expect(transaction.data).toEqual(transactionData);
             expect(transaction.to).toEqual(plugin.address);
-        });
-    });
-
-    describe('getProposalId', () => {
-        it('parses the transaction receipt to return the proposal id as string', () => {
-            const proposalId = '16';
-            const subProposalId = '20';
-            const creator = '0x1234';
-            const firstLog = { topics: ['12803258c575c263c24d87e4958ca7b440046a9b5898738a03189f3138e11ce7'] };
-            const secondLog = { topics: ['000000000000000000000000000000000000000000000000000000006718d220'] };
-            const logs = [firstLog, secondLog];
-
-            const decodedLogs = [
-                { args: { proposalId: BigInt(subProposalId), creator: '0xplugin-address' } },
-                { args: { proposalId: BigInt(proposalId), creator: creator } },
-            ];
-            parseEventLogsSpy.mockReturnValue(decodedLogs as unknown as Viem.ParseEventLogsReturnType);
-
-            const result = publishProposalDialogUtils.getProposalId({ logs } as TransactionReceipt, creator);
-            expect(parseEventLogsSpy).toHaveBeenCalledWith({ abi: proposalAbi, eventName: 'ProposalCreated', logs });
-            expect(result).toEqual(proposalId);
         });
     });
 
