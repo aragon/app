@@ -70,6 +70,7 @@ class TokenTransactionUtils {
               : DaoTokenVotingMode.STANDARD;
 
         const minProposerVotingPower = minVotingPower ? parseUnits(minVotingPower, 18) : BigInt(0);
+
         const votingSettings = {
             votingMode,
             supportThreshold: supportThreshold * 10 ** 4,

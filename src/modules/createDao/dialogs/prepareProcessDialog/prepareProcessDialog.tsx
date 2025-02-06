@@ -66,6 +66,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
         invariant(dao != null, 'PrepareProcessDialog: DAO cannot be fetched');
 
         const params = { values, processMetadata, plugin: adminPlugin.meta, dao };
+
         const transaction = await prepareProcessDialogUtils.buildTransaction(params);
 
         return transaction;

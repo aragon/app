@@ -71,6 +71,7 @@ class PrepareProcessDialogUtils {
         })!;
 
         const proposalActions = this.buildPrepareInstallActions(values, dao.address as Hex, processMetadata);
+
         const buildDataParams: IBuildCreateProposalDataParams = {
             actions: proposalActions,
             metadata: proposalMetadata,
@@ -95,16 +96,20 @@ class PrepareProcessDialogUtils {
         const { proposalCreationBodies, proposalCreationMode } = permissions;
 
         const sppMetadata = transactionUtils.cidToHex(processMetadata.spp);
+
         const pluginsMetadata = processMetadata.plugins.map((cid) => transactionUtils.cidToHex(cid));
 
         const sppInstallData = sppTransactionUtils.buildPrepareSppInstallData(sppMetadata, daoAddress);
+
         const pluginsInstallData = stages.map((stage) => {
             const installData = stage.bodies.map((body) => {
                 const metadataCid = pluginsMetadata.shift()!;
+
                 const permissionSettings =
                     proposalCreationMode === ProposalCreationMode.ANY_WALLET
                         ? undefined
                         : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.id);
+
                 const params: IBuildPrepareInstallDataParams = {
                     metadataCid,
                     daoAddress,
@@ -114,8 +119,8 @@ class PrepareProcessDialogUtils {
                 };
 
                 return pluginRegistryUtils.getSlotFunction<IBuildPrepareInstallDataParams, Hex>({
-                    pluginId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_ACTIONS,
-                    slotId: body.governanceType,
+                    slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_ACTIONS,
+                    pluginId: body.governanceType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase(),
                 })?.(params);
             });
 
