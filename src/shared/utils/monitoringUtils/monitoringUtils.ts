@@ -15,7 +15,7 @@ class MonitoringUtils {
     getBaseConfig = (): Pick<ClientOptions, 'enabled' | 'dsn' | 'tracesSampleRate' | 'environment' | 'release'> => ({
         enabled: this.isEnabled(),
         dsn: this.serviceDsn,
-        tracesSampleRate: 1.0, // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+        tracesSampleRate: 1.0,
         environment: process.env.NEXT_PUBLIC_ENV,
         release: process.env.version,
     });

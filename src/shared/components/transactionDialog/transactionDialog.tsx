@@ -1,11 +1,9 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
-import type { UseQueryReturnType } from 'wagmi/query';
 import {
     TransactionStatus,
     type ITransactionStatusStepMetaAddon,
@@ -14,11 +12,7 @@ import {
 import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
-
-const queryToStepState = (
-    status: UseQueryReturnType['status'],
-    fetchStatus: UseQueryReturnType['fetchStatus'],
-): TransactionStatusState => (status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status);
+import { transactionDialogUtils } from './transactionDialogUtils';
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
@@ -45,10 +39,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const handleTransactionError = useCallback(
-        (stepId?: string) => (error: unknown, context?: Record<string, unknown>) => {
-            const processedContext = { stepId, ...context };
-            monitoringUtils.logError(error, { context: processedContext });
-        },
+        (stepId?: string) => (error: unknown, context?: Record<string, unknown>) =>
+            transactionDialogUtils.monitorTransactionError(error, { stepId, ...context }),
         [],
     );
 
@@ -107,7 +99,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
             [TransactionDialogStep.APPROVE]: approveStepStatus,
-            [TransactionDialogStep.CONFIRM]: queryToStepState(waitTxStatus, waitTxFetchStatus),
+            [TransactionDialogStep.CONFIRM]: transactionDialogUtils.queryToStepState(waitTxStatus, waitTxFetchStatus),
         }),
         [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus],
     );

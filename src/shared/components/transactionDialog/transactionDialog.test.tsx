@@ -257,23 +257,4 @@ describe('<TransactionDialog /> component', () => {
             href: `https://polygonscan.com/tx/${transactionHash}`,
         });
     });
-
-    it.each([
-        { status: 'pending', fetchStatus: 'idle', expected: 'idle' },
-        { status: 'error', fetchStatus: 'idle', expected: 'error' },
-        { status: 'pending', fetchStatus: 'fetching', expected: 'pending' },
-    ])(
-        'correctly parsers the wait-tx query status to $expected when on status $status and fetchStatus $fetchStatus',
-        ({ status, fetchStatus, expected }) => {
-            useWaitForTransactionReceiptSpy.mockReturnValue({
-                status,
-                fetchStatus,
-            } as Wagmi.UseWaitForTransactionReceiptReturnType);
-            const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
-            const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
-            render(createTestComponent({ stepper }));
-            const confirmStep = updateSteps.mock.calls[0][0][2];
-            expect(confirmStep.meta.state).toEqual(expected);
-        },
-    );
 });
