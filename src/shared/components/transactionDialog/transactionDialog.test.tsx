@@ -210,7 +210,7 @@ describe('<TransactionDialog /> component', () => {
         act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(switchChain).toHaveBeenCalledWith(
             { chainId: networkDefinitions[network].chainId },
-            { onError: expect.any(Function) as unknown, onSuccess: expect.any(Function) as unknown },
+            { onSuccess: expect.any(Function) as unknown },
         );
     });
 
