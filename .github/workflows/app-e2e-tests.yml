@@ -11,24 +11,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # TODO: enable
-  # build:
-  #   uses: ./.github/workflows/shared-build.yml
-  #   if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
-  #   with:
-  #     env: "preview"
+  build:
+    uses: ./.github/workflows/shared-build.yml
+    if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
+    with:
+      env: "preview"
 
-  # deploy:
-  #   uses: ./.github/workflows/shared-deploy.yml
-  #   needs: build
-  #   secrets: inherit
-  #   with:
-  #     env: "preview"
+  deploy:
+    uses: ./.github/workflows/shared-deploy.yml
+    needs: build
+    secrets: inherit
+    with:
+      env: "preview"
 
   test:
     runs-on: ubuntu-latest
-    # TODO: enable
-    # needs: deploy
+    needs: deploy
     steps:
       - name: Load secrets
         id: load-secrets
@@ -38,17 +36,15 @@ jobs:
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION }}
           GH_APP_QA: op://apikeys_production/gh-app-qa/credential
-      - name: Checkout QA repository
-        uses: actions/checkout@v4.2.2
+      - name: Setup QA repository
+        uses: aragon/app-next/.github/actions/setup@main
         with:
           repository: aragon/app-qa
           token: ${{ steps.load-secrets.outputs.GH_APP_QA }}
-      - name: Install dependencies
-        run: yarn install --immutable
       - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-      - name: Build Synpress depencies
-        run: xvfb-run npx synpress ./tests/
+        run: yarn playwright install chromium --with-deps
+      - name: Build Synpress cache
+        run: xvfb-run yarn synpress ./tests/
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
@@ -57,11 +53,8 @@ jobs:
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
-          NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
           TEST_ENV: preview
-          # TODO: enable
-          # PREVIEW_URL: ${{ needs.deploy.outputs.deploymentUrl }}
-          PREVIEW_URL: https://dev.app-next.aragon.org/
+          PREVIEW_URL: ${{ needs.deploy.outputs.deploymentUrl }}
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
