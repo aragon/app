@@ -1,11 +1,9 @@
-import type {
-    ICreateProcessFormBody,
-    ICreateProcessFormProposalCreationBody,
-} from '@/modules/createDao/components/createProcessForm';
 import { multisigPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/multisigPluginSetupAbi';
 
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
+
+import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/buildPrepareInstallDataParams';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
@@ -50,12 +48,8 @@ class MultisigTransactionUtils {
         return data;
     };
 
-    buildPrepareMultisigInstallData = (
-        body: ICreateProcessFormBody,
-        metadataCid: string,
-        daoAddress: Hex,
-        permissionSettings?: ICreateProcessFormProposalCreationBody,
-    ) => {
+    buildPrepareInstallData = (params: IBuildPrepareInstallDataParams) => {
+        const { metadataCid, daoAddress, permissionSettings, body } = params;
         const { members, multisigThreshold } = body;
 
         const memberAddresses = members.map((member) => member.address as Hex);

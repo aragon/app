@@ -1,3 +1,4 @@
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { useTokenPermissionCheckProposalCreation } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
@@ -122,5 +123,12 @@ export const initialiseTokenPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: plugin.id,
             component: TokenGovernanceInfo,
+        })
+
+        // Create DAO module slots
+        .registerSlotFunction({
+            slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_ACTIONS,
+            pluginId: plugin.id,
+            function: tokenTransactionUtils.buildPrepareInstallData,
         });
 };

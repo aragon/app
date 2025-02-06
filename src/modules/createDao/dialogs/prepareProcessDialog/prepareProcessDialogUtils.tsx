@@ -1,8 +1,8 @@
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/buildPrepareInstallDataParams';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
-import { multisigTransactionUtils } from '@/plugins/multisigPlugin/utils/multisigTransactionUtils';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
-import { tokenTransactionUtils } from '@/plugins/tokenPlugin/utils/tokenTransactionUtils';
 import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { type IBuildTransactionParams } from '@/shared/utils/pluginTransactionUtils';
@@ -100,33 +100,30 @@ class PrepareProcessDialogUtils {
         const sppInstallData = sppTransactionUtils.buildPrepareSppInstallData(sppMetadata, daoAddress);
         const pluginsInstallData = stages.map((stage) => {
             const installData = stage.bodies.map((body) => {
-                const pluginMetadata = pluginsMetadata.shift()!;
+                const metadataCid = pluginsMetadata.shift()!;
                 const permissionSettings =
                     proposalCreationMode === ProposalCreationMode.ANY_WALLET
                         ? undefined
                         : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.id);
+                const params: IBuildPrepareInstallDataParams = {
+                    metadataCid,
+                    daoAddress,
+                    permissionSettings,
+                    body,
+                    stage,
+                };
 
-                return body.governanceType === 'multisig'
-                    ? multisigTransactionUtils.buildPrepareMultisigInstallData(
-                          body,
-                          pluginMetadata,
-                          daoAddress,
-                          permissionSettings,
-                      )
-                    : tokenTransactionUtils.buildPrepareTokenInstallData(
-                          body,
-                          pluginMetadata,
-                          daoAddress,
-                          stage,
-                          permissionSettings,
-                      );
+                return pluginRegistryUtils.getSlotFunction<IBuildPrepareInstallDataParams, Hex>({
+                    pluginId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_ACTIONS,
+                    slotId: body.governanceType,
+                })?.(params);
             });
 
             return installData;
         });
 
         const installActions = [sppInstallData, ...pluginsInstallData.flat()].map((data) =>
-            this.installDataToAction(data),
+            this.installDataToAction(data!),
         );
 
         return installActions;

@@ -1,10 +1,6 @@
-import type {
-    ICreateProcessFormBody,
-    ICreateProcessFormProposalCreationBody,
-    ICreateProcessFormStage,
-    ITokenVotingMember,
-} from '@/modules/createDao/components/createProcessForm';
+import type { ITokenVotingMember } from '@/modules/createDao/components/createProcessForm';
 import { tokenPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/tokenPluginSetupAbi';
+import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/buildPrepareInstallDataParams';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
@@ -52,13 +48,8 @@ class TokenTransactionUtils {
         return data;
     };
 
-    buildPrepareTokenInstallData = (
-        body: ICreateProcessFormBody,
-        metadataCid: string,
-        daoAddress: Hex,
-        stage: ICreateProcessFormStage,
-        permissionSettings?: ICreateProcessFormProposalCreationBody,
-    ) => {
+    buildPrepareInstallData = (params: IBuildPrepareInstallDataParams) => {
+        const { body, metadataCid, daoAddress, permissionSettings, stage } = params;
         const {
             voteChange,
             supportThreshold,

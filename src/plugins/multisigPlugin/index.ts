@@ -1,3 +1,4 @@
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { useMultisigPermissionCheckProposalCreation } from '@/plugins/multisigPlugin/hooks/useMultisigPermissionCheckProposalCreation';
@@ -110,5 +111,12 @@ export const initialiseMultisigPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: plugin.id,
             component: MultisigGovernanceInfo,
+        })
+
+        // Create DAO module slots
+        .registerSlotFunction({
+            slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_ACTIONS,
+            pluginId: plugin.id,
+            function: multisigTransactionUtils.buildPrepareInstallData,
         });
 };

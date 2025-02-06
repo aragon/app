@@ -1,5 +1,6 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
+import type { PluginId } from '@/shared/utils/pluginRegistryUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
 export enum ProposalCreationMode {
@@ -109,7 +110,7 @@ export interface ICreateProcessFormBody {
     /**
      * Governance type of the body.
      */
-    governanceType: 'multisig' | 'tokenVoting';
+    governanceType: PluginId;
     /**
      * Members of the voting body.
      */
