@@ -1,13 +1,13 @@
-import { type ICreateProcessFormData } from '@/modules/createDao/components/createProcessForm';
+import { ProposalCreationMode, type ICreateProcessFormData } from '@/modules/createDao/components/createProcessForm';
 import {
     prepareProcessDialogUtils,
     type IPluginSetupData,
 } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
-import { pluginSetupProcessorAbi } from '@/modules/createDao/dialogs/publishProcessDialog/abi/pluginSetupProcessorAbi';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { generatePluginSetupDataPermission } from '@/shared/testUtils/generators/pluginSetupDataPermission';
 import { encodeAbiParameters, encodeFunctionData, keccak256, type Hex } from 'viem';
+import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { pluginTransactionUtils } from './pluginTransactionUtils';
 
 jest.mock('viem', () => ({
@@ -42,56 +42,7 @@ describe('PluginTransactionUtils', () => {
     describe('buildApplyInstallationTransactions', () => {
         const daoAddress = '0x123';
 
-        it('handles a single plugin setup', () => {
-            const singleSetupData = [
-                generatePluginSetupData({
-                    pluginSetupRepo: '0xSingleRepo' as Hex,
-                    pluginAddress: '0xSinglePlugin' as Hex,
-                    preparedSetupData: {
-                        permissions: [generatePluginSetupDataPermission()],
-                        helpers: ['0xHelperSingle'] as readonly Hex[],
-                    },
-                }),
-            ];
-
-            (encodeAbiParameters as jest.Mock).mockReturnValueOnce('0xEncodedSingle');
-            (keccak256 as jest.Mock).mockReturnValueOnce('0xSingleHash');
-
-            const encodedTxData = '0xEncodedTxDataSingle';
-            (encodeFunctionData as jest.Mock).mockReturnValueOnce(encodedTxData);
-
-            const result = pluginTransactionUtils.buildApplyInstallationTransactions(singleSetupData, daoAddress);
-
-            expect(encodeFunctionData).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    abi: pluginSetupProcessorAbi,
-                    functionName: 'applyInstallation',
-                    args: [
-                        daoAddress,
-                        expect.objectContaining({
-                            pluginSetupRef: {
-                                versionTag: { release: 1, build: 1 },
-                                pluginSetupRepo: singleSetupData[0].pluginSetupRepo,
-                            },
-                            plugin: singleSetupData[0].pluginAddress,
-                            permissions: singleSetupData[0].preparedSetupData.permissions,
-                            helpersHash: '0xSingleHash',
-                        }),
-                    ],
-                }),
-            );
-
-            const expectedTransaction = {
-                to: prepareProcessDialogUtils.pspRepoAddress,
-                data: encodedTxData,
-                value: '0',
-            };
-            expect(result).toEqual([expectedTransaction]);
-        });
-
         it('calls encodeFunctionData with the correct parameters', () => {
-            const hashHelpersSpy = jest.spyOn(pluginTransactionUtils, 'hashHelpers');
-
             const setupData = [
                 generatePluginSetupData({
                     pluginSetupRepo: '0xPluginSetupRepo' as Hex,
@@ -103,8 +54,7 @@ describe('PluginTransactionUtils', () => {
                 }),
             ];
 
-            const hash = '0xTestHash';
-            hashHelpersSpy.mockReturnValue(hash);
+            (keccak256 as jest.Mock).mockReturnValueOnce('0xHash');
 
             const encodedTxData = '0xEncodedTxData';
             (encodeFunctionData as jest.Mock).mockReturnValueOnce(encodedTxData);
@@ -124,7 +74,7 @@ describe('PluginTransactionUtils', () => {
                             },
                             plugin: setupData[0].pluginAddress,
                             permissions: setupData[0].preparedSetupData.permissions,
-                            helpersHash: hash,
+                            helpersHash: '0xHash',
                         }),
                     ],
                 }),
@@ -143,7 +93,18 @@ describe('PluginTransactionUtils', () => {
     describe('buildInstallActions', () => {
         const daoAddress = '0xDao';
 
-        const testValues = {} as ICreateProcessFormData;
+        const testValues: ICreateProcessFormData = {
+            name: 'TestProcess',
+            processKey: 'KEY',
+            description: 'TestDescription',
+            resources: [],
+            stages: [],
+            permissions: {
+                proposalCreationMode: ProposalCreationMode.ANY_WALLET,
+                proposalCreationBodies: [],
+            },
+        };
+
         const setupData: IPluginSetupData[] = [
             generatePluginSetupData({
                 pluginSetupRepo: '0xRepo1' as Hex,

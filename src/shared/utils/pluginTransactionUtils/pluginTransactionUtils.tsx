@@ -3,10 +3,10 @@ import {
     prepareProcessDialogUtils,
     type IPluginSetupData,
 } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
-import { pluginSetupProcessorAbi } from '@/modules/createDao/dialogs/publishProcessDialog/abi/pluginSetupProcessorAbi';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, keccak256, type Hex } from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
+import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 
 class PluginTransactionUtils {
     private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';

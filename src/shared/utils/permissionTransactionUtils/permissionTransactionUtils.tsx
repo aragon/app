@@ -1,5 +1,5 @@
-import { daoAbi } from '@/modules/createDao/dialogs/publishProcessDialog/abi/daoAbi';
 import { encodeFunctionData, type Hex, keccak256, toBytes, zeroHash } from 'viem';
+import { daoAbi } from './abi/daoAbi';
 
 export interface IConditionRule {
     id: number;

@@ -1,6 +1,6 @@
-import { daoAbi } from '@/modules/createDao/dialogs/publishProcessDialog/abi/daoAbi';
 import { encodeFunctionData, type Hex, keccak256, toBytes, zeroHash } from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
+import { daoAbi } from './abi/daoAbi';
 import type { IConditionRule } from './permissionTransactionUtils';
 
 jest.mock('viem', () => ({

@@ -16,7 +16,7 @@ describe('SppTransactionUtils', () => {
     describe('buildUpdateRulesTransaction', () => {
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
             const values: ICreateProcessFormData = {
-                name: 'name',
+                name: 'Process name',
                 processKey: 'KEY',
                 description: 'description',
                 resources: [],
@@ -32,15 +32,15 @@ describe('SppTransactionUtils', () => {
             expect(result).toBeUndefined();
         });
 
-        it('builds update rules transaction correctly when proposalCreationMode is not ANY_WALLET', () => {
+        it('builds update rules transaction correctly when proposalCreationMode is LISTED_BODIES', () => {
             const values: ICreateProcessFormData = {
-                name: 'name',
+                name: 'Process name',
                 processKey: 'KEY',
                 description: 'description',
                 resources: [],
                 stages: [
                     {
-                        name: 'stage',
+                        name: 'Stage name',
                         type: ProcessStageType.NORMAL,
                         timing: { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false },
                         requiredApprovals: 1,
@@ -68,7 +68,7 @@ describe('SppTransactionUtils', () => {
 
             const setupData = [
                 generatePluginSetupData(),
-                generatePluginSetupData({ preparedSetupData: { permissions: [], helpers: ['0xDummyBodyCondition'] } }),
+                generatePluginSetupData({ preparedSetupData: { permissions: [], helpers: ['0xTestBodyCondition'] } }),
             ];
 
             (encodeFunctionData as jest.Mock).mockReturnValueOnce('0xUpdateRulesData');
@@ -84,7 +84,7 @@ describe('SppTransactionUtils', () => {
                             {
                                 id: 202,
                                 op: 1,
-                                value: '0xDummyBodyCondition',
+                                value: '0xTestBodyCondition',
                                 permissionId: zeroHash,
                             },
                         ],
