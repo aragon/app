@@ -12,7 +12,7 @@ describe('transactionDialog utils', () => {
             expect(transactionDialogUtils.queryToStepState('pending', 'idle')).toEqual('idle');
         });
 
-        it.each([{ queryStatus: 'success' }])(
+        it.each([{ queryStatus: 'success' }, { queryStatus: 'error' }])(
             'returns $queryStatus when query status is $queryStatus',
             ({ queryStatus }) => {
                 const result = transactionDialogUtils.queryToStepState(
