@@ -11,6 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # TODO: enable
   # build:
   #   uses: ./.github/workflows/shared-build.yml
   #   if: contains(github.event.pull_request.labels.*.name, 'e2e-tests')
@@ -26,6 +27,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    # TODO: enable
     # needs: deploy
     steps:
       - name: Load secrets
@@ -57,6 +59,7 @@ jobs:
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
           NEXT_SECRET_IPFS_JWT: ${{ secrets.NEXT_SECRET_IPFS_JWT }}
           TEST_ENV: preview
+          # TODO: enable
           # PREVIEW_URL: ${{ needs.deploy.outputs.deploymentUrl }}
           PREVIEW_URL: https://dev.app-next.aragon.org/
       - name: Upload Playwright report
