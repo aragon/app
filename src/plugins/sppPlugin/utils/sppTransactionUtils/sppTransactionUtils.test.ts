@@ -1,8 +1,5 @@
-import {
-    type ICreateProcessFormData,
-    ProcessStageType,
-    ProposalCreationMode,
-} from '@/modules/createDao/components/createProcessForm';
+import { ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
+import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { encodeFunctionData, zeroHash } from 'viem';
 import { sppPluginAbi } from './sppPluginAbi';
@@ -15,29 +12,16 @@ jest.mock('viem', () => ({
 describe('SppTransactionUtils', () => {
     describe('buildUpdateRulesTransaction', () => {
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
-            const values: ICreateProcessFormData = {
-                name: 'Process name',
-                processKey: 'KEY',
-                description: 'description',
-                resources: [],
-                stages: [],
-                permissions: {
-                    proposalCreationBodies: [],
-                    proposalCreationMode: ProposalCreationMode.ANY_WALLET,
-                },
-            };
+            const values = generateCreateProcessFormData();
             const setupData = [generatePluginSetupData()];
 
             const result = sppTransactionUtils.buildUpdateRulesTransaction(values, setupData);
+
             expect(result).toBeUndefined();
         });
 
         it('builds update rules transaction correctly when proposalCreationMode is LISTED_BODIES', () => {
-            const values: ICreateProcessFormData = {
-                name: 'Process name',
-                processKey: 'KEY',
-                description: 'description',
-                resources: [],
+            const values = generateCreateProcessFormData({
                 stages: [
                     {
                         name: 'Stage name',
@@ -64,7 +48,7 @@ describe('SppTransactionUtils', () => {
                     proposalCreationBodies: [{ bodyId: 'body1' }],
                     proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
                 },
-            };
+            });
 
             const setupData = [
                 generatePluginSetupData(),
@@ -92,6 +76,7 @@ describe('SppTransactionUtils', () => {
                     ],
                 }),
             );
+
             expect(result).toEqual({
                 to: setupData[0].preparedSetupData.helpers[0],
                 data: '0xUpdateRulesData',

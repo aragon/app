@@ -1,9 +1,9 @@
-import { ProposalCreationMode, type ICreateProcessFormData } from '@/modules/createDao/components/createProcessForm';
 import {
     prepareProcessDialogUtils,
     type IPluginSetupData,
 } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
+import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { generatePluginSetupDataPermission } from '@/shared/testUtils/generators/pluginSetupDataPermission';
 import { encodeAbiParameters, encodeFunctionData, keccak256, type Hex } from 'viem';
@@ -18,6 +18,12 @@ jest.mock('viem', () => ({
 }));
 
 describe('PluginTransactionUtils', () => {
+    const buildApplyInstallSpy = jest.spyOn(pluginTransactionUtils, 'buildApplyInstallationTransactions');
+    const buildUpdateStagesSpy = jest.spyOn(sppTransactionUtils, 'buildUpdateStagesTransaction');
+    const buildUpdateRulesSpy = jest.spyOn(sppTransactionUtils, 'buildUpdateRulesTransaction');
+
+    const daoAddress = '0x123';
+
     describe('hashHelpers', () => {
         const helpers: readonly Hex[] = [
             '0x0000000000000000000000000000000000000001',
@@ -40,8 +46,6 @@ describe('PluginTransactionUtils', () => {
     });
 
     describe('buildApplyInstallationTransactions', () => {
-        const daoAddress = '0x123';
-
         it('calls encodeFunctionData with the correct parameters', () => {
             const setupData = [
                 generatePluginSetupData({
@@ -91,19 +95,7 @@ describe('PluginTransactionUtils', () => {
     });
 
     describe('buildInstallActions', () => {
-        const daoAddress = '0xDao';
-
-        const testValues: ICreateProcessFormData = {
-            name: 'TestProcess',
-            processKey: 'KEY',
-            description: 'TestDescription',
-            resources: [],
-            stages: [],
-            permissions: {
-                proposalCreationMode: ProposalCreationMode.ANY_WALLET,
-                proposalCreationBodies: [],
-            },
-        };
+        const testValues = generateCreateProcessFormData();
 
         const setupData: IPluginSetupData[] = [
             generatePluginSetupData({
@@ -125,23 +117,17 @@ describe('PluginTransactionUtils', () => {
         ];
 
         it('builds install actions correctly', () => {
-            const applyInstallationActions = [{ to: '0xApply' as Hex, data: '0xApply' as Hex, value: '0' }];
+            const applyInstallationActions = [{ to: '0xApplyTo' as Hex, data: '0xApplyData' as Hex, value: '0' }];
 
-            const buildApplySpy = jest
-                .spyOn(pluginTransactionUtils, 'buildApplyInstallationTransactions')
-                .mockReturnValue(applyInstallationActions);
+            buildApplyInstallSpy.mockReturnValue(applyInstallationActions);
 
-            const updateStagesAction = { to: '0xStages' as Hex, data: '0xStagesTx' as Hex, value: '0' };
+            const updateStagesAction = { to: '0xStagesTo' as Hex, data: '0xStagesData' as Hex, value: '0' };
 
-            const updateRulesAction = { to: '0xRules' as Hex, data: '0xRulesTx' as Hex, value: '0' };
+            const updateRulesAction = { to: '0xRulesTo' as Hex, data: '0xRulesData' as Hex, value: '0' };
 
-            const buildUpdateStagesSpy = jest
-                .spyOn(sppTransactionUtils, 'buildUpdateStagesTransaction')
-                .mockReturnValue(updateStagesAction);
+            buildUpdateStagesSpy.mockReturnValue(updateStagesAction);
 
-            const buildUpdateRulesSpy = jest
-                .spyOn(sppTransactionUtils, 'buildUpdateRulesTransaction')
-                .mockReturnValue(updateRulesAction);
+            buildUpdateRulesSpy.mockReturnValue(updateRulesAction);
 
             (encodeFunctionData as jest.Mock).mockImplementation(({ functionName }: { functionName: string }) => {
                 if (functionName === 'grant') {
@@ -183,8 +169,7 @@ describe('PluginTransactionUtils', () => {
             ];
 
             expect(actions).toEqual(expectedActions);
-
-            expect(buildApplySpy).toHaveBeenCalledWith(setupData, daoAddress);
+            expect(buildApplyInstallSpy).toHaveBeenCalledWith(setupData, daoAddress);
             expect(buildUpdateStagesSpy).toHaveBeenCalledWith(
                 testValues,
                 setupData.map((data) => data.pluginAddress),

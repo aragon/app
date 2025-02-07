@@ -72,6 +72,7 @@ describe('PermissionTransactionUtils', () => {
         it('returns original conditionRules if conditionAddresses is empty', () => {
             const conditionRules = [{ id: 1, op: 1, value: '0x123', permissionId: '0x456' }];
             const result = permissionTransactionUtils.buildCreateProposalRuleConditions([], conditionRules);
+
             expect(result).toEqual(conditionRules);
         });
 
@@ -93,8 +94,15 @@ describe('PermissionTransactionUtils', () => {
             const addresses = ['0x123', '0x456'];
             const results = permissionTransactionUtils.buildCreateProposalRuleConditions([...addresses], []);
 
-            const ruleConditionId = permissionTransactionUtils['ruleConditionId'];
-            const ruleConditionOperator = permissionTransactionUtils['ruleConditionOperator'];
+            const ruleConditionId = {
+                condition: 202,
+                logicOperation: 203,
+            };
+
+            const ruleConditionOperator = {
+                eq: 1,
+                or: 10,
+            };
 
             const addressConditions = results.filter(
                 (result: IConditionRule) => result.id === ruleConditionId.condition,
@@ -120,6 +128,7 @@ describe('PermissionTransactionUtils', () => {
             const logicalCondition = results.find(
                 (result: IConditionRule) => result.id === ruleConditionId.logicOperation,
             );
+
             expect(logicalCondition).toBeDefined();
         });
     });
