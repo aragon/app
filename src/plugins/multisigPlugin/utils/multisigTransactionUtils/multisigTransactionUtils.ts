@@ -11,7 +11,7 @@ import { multisigPluginAbi } from './multisigPluginAbi';
 export interface ICreateMultisigProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class MultisigTransactionUtils {
-    multisigRepo: IPluginRepoInfo = {
+    private multisigRepo: IPluginRepoInfo = {
         address: '0xA0901B5BC6e04F14a9D0d094653E047644586DdE',
         version: { release: 1, build: 5 },
     };

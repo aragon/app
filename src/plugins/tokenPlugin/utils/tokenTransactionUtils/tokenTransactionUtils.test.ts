@@ -66,6 +66,10 @@ describe('tokenTransaction utils', () => {
         });
 
         it('builds prepare installation data correctly for a token proposal', () => {
+            const tokenRepo = {
+                address: '0x6241ad0D3f162028d2e0000f1A878DBc4F5c4aD0',
+                version: { release: 1, build: 5 },
+            };
             const metadataCid = '0xSomeMetadataCID';
             const daoAddress: Viem.Hex = '0xDAOAddress';
             const permissionSettings = { minVotingPower: '1', bodyId: '1' };
@@ -96,11 +100,7 @@ describe('tokenTransaction utils', () => {
                     metadataCid,
                 ]),
             );
-            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
-                tokenTransactionUtils.tokenRepo,
-                '0xPluginSettingsData',
-                daoAddress,
-            );
+            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(tokenRepo, '0xPluginSettingsData', daoAddress);
             expect(result).toBe('0xTransactionData');
         });
     });

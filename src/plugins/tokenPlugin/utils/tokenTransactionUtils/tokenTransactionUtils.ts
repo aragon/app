@@ -13,7 +13,7 @@ import { tokenPluginAbi } from './tokenPluginAbi';
 export interface ICreateTokenProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class TokenTransactionUtils {
-    tokenRepo: IPluginRepoInfo = {
+    private tokenRepo: IPluginRepoInfo = {
         address: '0x6241ad0D3f162028d2e0000f1A878DBc4F5c4aD0',
         version: { release: 1, build: 5 },
     };

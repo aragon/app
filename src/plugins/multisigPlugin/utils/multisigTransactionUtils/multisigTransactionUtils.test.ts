@@ -71,6 +71,10 @@ describe('multisigTransaction utils', () => {
         });
 
         it('builds prepare installation data correctly', () => {
+            const multisigRepo = {
+                address: '0xA0901B5BC6e04F14a9D0d094653E047644586DdE',
+                version: { release: 1, build: 5 },
+            };
             const metadataCid = '0xSomeMetadataCID';
             const daoAddress: Viem.Hex = '0xDAOAddress';
             const permissionSettings = { someSetting: true, bodyId: '1' };
@@ -91,11 +95,7 @@ describe('multisigTransaction utils', () => {
                 expectedMultisigTarget,
                 metadataCid,
             ]);
-            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
-                multisigTransactionUtils.multisigRepo,
-                pluginSettingsData,
-                daoAddress,
-            );
+            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(multisigRepo, pluginSettingsData, daoAddress);
             expect(result).toBe(transactionData);
         });
     });
