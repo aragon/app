@@ -118,15 +118,11 @@ describe('PluginTransactionUtils', () => {
             ];
 
             const applyInstallationActions = [{ to: '0xApplyTo' as Hex, data: '0xApplyData' as Hex, value: '0' }];
-
-            buildApplyInstallSpy.mockReturnValue(applyInstallationActions);
-
             const updateStagesAction = { to: '0xStagesTo' as Hex, data: '0xStagesData' as Hex, value: '0' };
-
             const updateRulesAction = { to: '0xRulesTo' as Hex, data: '0xRulesData' as Hex, value: '0' };
 
+            buildApplyInstallSpy.mockReturnValue(applyInstallationActions);
             buildUpdateStagesSpy.mockReturnValue(updateStagesAction);
-
             buildUpdateRulesSpy.mockReturnValue(updateRulesAction);
 
             (encodeFunctionData as jest.Mock).mockImplementation(({ functionName }: { functionName: string }) => {

@@ -129,6 +129,7 @@ describe('PermissionTransactionUtils', () => {
                 (result: IConditionRule) => result.id === ruleConditionId.logicOperation,
             );
 
+            // Index is actually baseIndex + 1 so we use 1 and 2 here
             const expectedLogicalValue = BigInt(1) + (BigInt(2) << BigInt(32));
 
             expect(logicalCondition).toEqual({

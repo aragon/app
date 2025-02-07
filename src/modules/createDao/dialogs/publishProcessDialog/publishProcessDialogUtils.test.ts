@@ -13,6 +13,7 @@ jest.mock('viem', () => ({
     toBytes: jest.fn(),
     encodeAbiParameters: jest.fn(),
 }));
+
 describe('PublishProcessDialogUtils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 
@@ -45,10 +46,10 @@ describe('PublishProcessDialogUtils', () => {
             getSlotFunctionSpy.mockReturnValue(slotFunction);
 
             const metadataCid = 'test-cid';
-
             const dao = generateDao();
-            const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'spp' });
+            const plugin = generateDaoPlugin({ subdomain: 'spp' });
             const setupData = [generatePluginSetupData()];
+
             const transaction = await publishProcessDialogUtils.buildTransaction({
                 values,
                 dao,
