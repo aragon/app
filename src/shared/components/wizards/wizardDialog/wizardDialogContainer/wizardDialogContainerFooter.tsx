@@ -1,5 +1,5 @@
 import { Dialog } from '@aragon/gov-ui-kit';
-import { useWizardContext } from '../../wizard';
+import { useWizardContext, useWizardFooter } from '../../wizard';
 
 export interface IWizardDialogContainerFooterProps {
     /**
@@ -11,14 +11,20 @@ export interface IWizardDialogContainerFooterProps {
 export const WizardDialogContainerFooter: React.FC<IWizardDialogContainerFooterProps> = (props) => {
     const { formId } = props;
 
-    const { hasPrevious, previousStep, submitLabel } = useWizardContext();
+    const { hasPrevious, previousStep } = useWizardContext();
+    const { displayValidationError, submitLabel } = useWizardFooter();
+
+    const secondaryAction = {
+        label: 'Back',
+        onClick: previousStep,
+    };
 
     return (
         <Dialog.Footer
-            // hasError={displayValidationError}
-            // @ts-expect-error TODO: update primary action props to support form
+            hasError={displayValidationError}
+            variant="wizard"
             primaryAction={{ label: submitLabel, type: 'submit', form: formId }}
-            secondaryAction={hasPrevious ? { label: 'Back', onClick: previousStep } : undefined}
+            secondaryAction={hasPrevious ? secondaryAction : undefined}
         />
     );
 };

@@ -1,4 +1,3 @@
-import { DialogRootHiddenElement } from '@/shared/components/dialogRoot';
 import { Dialog } from '@aragon/gov-ui-kit';
 import type { FieldValues } from 'react-hook-form';
 import { type IWizardFormProps, type IWizardRootProps, Wizard } from '../../wizard';
@@ -32,25 +31,20 @@ export interface IWizardDialogContainerProps<TFormData extends FieldValues = Fie
 export const WizardDialogContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardDialogContainerProps<TFormData>,
 ) => {
-    const { title, description, formId, onClose, isOpen, initialSteps, submitLabel, onSubmit, ...formProps } = props;
+    const { title, description, formId, onClose, isOpen, initialSteps, submitLabel, onSubmit, children, ...formProps } =
+        props;
 
     if (!isOpen) {
         return null;
     }
 
     return (
-        <Dialog.Root size="lg" open={true} onOpenChange={onClose}>
+        <Dialog.Root size="lg" open={true} hiddenDescription={description} onOpenChange={onClose}>
             <Wizard.Root submitLabel={submitLabel} initialSteps={initialSteps}>
                 <Dialog.Header title={title} />
-                <DialogRootHiddenElement type="description" labelKey={description} />
                 <Dialog.Content>
                     <Wizard.Form onSubmit={onSubmit} id={formId} {...formProps}>
-                        <Wizard.Step id="1" order={1} meta={{ name: 'step 1' }}>
-                            <p>Step 1</p>
-                        </Wizard.Step>
-                        <Wizard.Step id="2" order={2} meta={{ name: 'step 2' }}>
-                            <p>Step 2</p>
-                        </Wizard.Step>
+                        {children}
                     </Wizard.Form>
                 </Dialog.Content>
                 <WizardDialogContainerFooter formId={formId} />
