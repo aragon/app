@@ -3,9 +3,9 @@ import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/b
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { type IBuildTransactionParams } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import {
@@ -27,6 +27,24 @@ export interface IPrepareProcessMetadata {
      * Metadata CID for the SPP plugin.
      */
     spp: string;
+}
+export interface IBuildTransactionParams {
+    /**
+     * Values of the create-proposal form.
+     */
+    values: ICreateProcessFormData;
+    /**
+     * Metadata structure for the process.
+     */
+    processMetadata: IPrepareProcessMetadata;
+    /**
+     * Plugin used a target for creating the proposal.
+     */
+    plugin: IDaoPlugin;
+    /**
+     * DAO to install the plugins to.
+     */
+    dao: IDao;
 }
 
 export interface IPluginSetupDataPermission {

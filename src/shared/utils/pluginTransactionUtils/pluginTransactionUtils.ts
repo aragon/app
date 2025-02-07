@@ -1,6 +1,4 @@
-import { type ICreateProcessFormData } from '@/modules/createDao/components/createProcessForm';
 import { pluginSetupProcessorAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/pluginSetupProcessorAbi';
-import { type IDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { encodeFunctionData, parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
 
 export interface IPrepareProcessMetadata {
@@ -16,25 +14,6 @@ export interface IPrepareProcessMetadata {
      * Metadata CID for the SPP plugin.
      */
     spp: string;
-}
-
-export interface IBuildTransactionParams {
-    /**
-     * Values of the create-proposal form.
-     */
-    values: ICreateProcessFormData;
-    /**
-     * Metadata structure for the process.
-     */
-    processMetadata: IPrepareProcessMetadata;
-    /**
-     * Plugin used a target for creating the proposal.
-     */
-    plugin: IDaoPlugin;
-    /**
-     * DAO to install the plugins to.
-     */
-    dao: IDao;
 }
 
 export interface IPluginRepoInfo {
