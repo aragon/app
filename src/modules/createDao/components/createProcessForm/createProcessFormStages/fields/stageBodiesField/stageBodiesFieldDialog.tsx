@@ -48,7 +48,7 @@ export const StageBodiesFieldDialog: React.FC<IStageBodiesFieldDialogProps> = (p
     );
 
     const fieldPrefix = `${stageFieldName}.bodies.${bodyIndex.toString()}` as `stages.${number}.bodies.${number}`;
-    const bodyGovernanceType = useWatch<Record<string, 'tokenVoting' | 'multisig'>>({
+    const bodyGovernanceType = useWatch<Record<string, 'token-voting' | 'multisig'>>({
         name: `${fieldPrefix}.governanceType`,
     });
 

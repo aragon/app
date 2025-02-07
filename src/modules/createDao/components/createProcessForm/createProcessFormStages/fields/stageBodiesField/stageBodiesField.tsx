@@ -65,7 +65,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
         appendBody({
             name: '',
             id: (bodyId++).toString(),
-            governanceType: 'tokenVoting',
+            governanceType: 'token-voting',
             tokenType: 'new',
             resources: [],
             members: [{ address: address ?? '', tokenAmount: 1 }],

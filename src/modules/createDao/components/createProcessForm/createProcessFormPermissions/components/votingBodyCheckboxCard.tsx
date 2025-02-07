@@ -24,7 +24,7 @@ export interface IVotingBodyCheckboxCardProps {
 export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (props) => {
     const { body, onChange, checked, fieldPrefix } = props;
 
-    const isTokenVoting = body.governanceType === 'tokenVoting';
+    const isTokenVoting = body.governanceType === 'token-voting';
 
     const tokenTotalSupply = body.members.reduce(
         (supply, member) => ('tokenAmount' in member ? supply + Number(member.tokenAmount) : supply),

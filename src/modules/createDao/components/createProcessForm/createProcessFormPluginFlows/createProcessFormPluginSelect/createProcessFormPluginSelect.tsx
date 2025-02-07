@@ -26,7 +26,7 @@ export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSel
                     className="w-full"
                     label="Token voting"
                     description="Create or import an ERC-20 token"
-                    value="tokenVoting"
+                    value="token-voting"
                 />
                 <RadioCard
                     className="w-full"
