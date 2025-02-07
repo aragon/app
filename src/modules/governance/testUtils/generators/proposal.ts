@@ -21,5 +21,6 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     actions: [],
     pluginAddress: '0x123',
     pluginSubdomain: 'test',
+    incrementalId: 1,
     ...proposal,
 });

@@ -64,14 +64,14 @@ export interface IGetMemberExistsUrlParams {
 
 export interface IGetMemberExistsParams extends IRequestUrlParams<IGetMemberExistsUrlParams> {}
 
-export interface IGetProposalUrlParams {
+export interface IGetProposalBySlugUrlParams {
     /**
-     * ID of the proposal to fetch.
+     * Slug of the proposal to fetch.
      */
-    id: string;
+    slug: string;
 }
 
-export interface IGetProposalParams extends IRequestUrlParams<IGetProposalUrlParams> {}
+export interface IGetProposalBySlugParams extends IRequestUrlParams<IGetProposalBySlugUrlParams> {}
 
 export interface IGetCanVoteUrlParams {
     /**

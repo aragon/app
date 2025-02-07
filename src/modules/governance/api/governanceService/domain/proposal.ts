@@ -9,9 +9,13 @@ export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> 
      */
     id: string;
     /**
-     * Incremental index of the proposal.
+     * The onchain index of the proposal.
      */
     proposalIndex: string;
+    /**
+     * Incremental ID of the proposal.
+     */
+    incrementalId: number;
     /**
      * Title of the proposal.
      */

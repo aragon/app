@@ -55,8 +55,9 @@ export const SppVotingTerminalBodyContent: React.FC<ISppVotingTerminalBodyConten
     });
 
     // Set parent name and description on sub-proposal to correctly display the proposal info on the vote dialog.
+    const { title, description, incrementalId } = proposal;
     const processedSubProposal =
-        subProposal != null ? { ...subProposal, title: proposal.title, description: proposal.description } : undefined;
+        subProposal != null ? { ...subProposal, title, description, incrementalId } : undefined;
 
     return (
         <>

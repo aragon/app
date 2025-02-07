@@ -1,12 +1,35 @@
 import { generateToken } from '@/modules/finance/testUtils';
+import { type IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { generateAddressInfo } from '@/shared/testUtils';
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
+import { render, screen, within } from '@testing-library/react';
 import { generateTokenVote } from '../../testUtils';
 import { VoteOption } from '../../types';
 import { type ITokenVoteListProps, TokenVoteList } from './tokenVoteList';
+
+jest.mock('../../../../modules/governance/components/voteList', () => ({
+    VoteProposalListItem: ({
+        vote,
+        daoId,
+        voteIndicator,
+    }: {
+        vote: IVote;
+        daoId: string;
+        voteIndicator: VoteIndicator;
+    }) => {
+        const slug = `TOKENVOTING-${vote.proposal!.incrementalId.toString()}`;
+        const href = `/dao/${daoId}/proposals/${slug}`;
+
+        return (
+            <a href={href} data-testid="vote-proposal-list-item-mock">
+                <span data-testid="proposal-title">{vote.proposal!.title}</span>
+                <span data-testid="vote-indicator">{voteIndicator.toLowerCase()}</span>
+            </a>
+        );
+    },
+}));
 
 describe('<TokenVoteList /> component', () => {
     const useVoteListDataSpy = jest.spyOn(useVoteListData, 'useVoteListData');
@@ -80,14 +103,14 @@ describe('<TokenVoteList /> component', () => {
             generateTokenVote({
                 transactionHash: '0x123',
                 voteOption: VoteOption.YES,
-                proposal: generateProposal({ id: 'network-0x123-1', title: 'Test Proposal 1' }),
+                proposal: generateProposal({ title: 'Test Proposal 1', incrementalId: 2 }),
                 blockTimestamp: 1234567890,
                 token,
             }),
             generateTokenVote({
                 transactionHash: '0x456',
                 voteOption: VoteOption.NO,
-                proposal: generateProposal({ id: 'network-0x456-2', title: 'Test Proposal 2' }),
+                proposal: generateProposal({ title: 'Test Proposal 2', incrementalId: 3 }),
                 blockTimestamp: 1234567890,
                 token,
             }),
@@ -105,15 +128,16 @@ describe('<TokenVoteList /> component', () => {
 
         render(createTestComponent({ initialParams: { queryParams: { includeInfo: true, pluginAddress: '0x123' } } }));
 
-        const links = screen.getAllByRole('link');
+        const links = screen.getAllByTestId('vote-proposal-list-item-mock');
         expect(links).toHaveLength(2);
-        expect(links[0].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[0].proposal!.id}`);
-        expect(links[1].getAttribute('href')).toBe(`/dao/test-id/proposals/${votes[1].proposal!.id}`);
 
-        expect(screen.getByText(votes[0].proposal!.title)).toBeInTheDocument();
-        expect(screen.getByText(votes[1].proposal!.title)).toBeInTheDocument();
-        expect(screen.getAllByText('yes')).toHaveLength(1);
-        expect(screen.getAllByText('no')).toHaveLength(1);
+        expect(links[0]).toHaveAttribute('href', '/dao/test-id/proposals/TOKENVOTING-2');
+        expect(links[1]).toHaveAttribute('href', '/dao/test-id/proposals/TOKENVOTING-3');
+
+        expect(within(links[0]).getByTestId('proposal-title')).toHaveTextContent(votes[0].proposal!.title);
+        expect(within(links[1]).getByTestId('proposal-title')).toHaveTextContent(votes[1].proposal!.title);
+        expect(within(links[0]).getByTestId('vote-indicator')).toHaveTextContent('yes');
+        expect(within(links[1]).getByTestId('vote-indicator')).toHaveTextContent('no');
     });
 
     it('calls useVoteListData with the correct query initialParams', () => {

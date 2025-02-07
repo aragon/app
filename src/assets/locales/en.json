@@ -654,6 +654,7 @@
           "details": {
             "creator": "Proposed by",
             "id": "ID",
+            "onChainId": "Onchain ID",
             "published": "Published",
             "status": "Status",
             "title": "Details"
@@ -754,7 +755,7 @@
       "publishProposalDialog": {
         "button": {
           "submit": "Publish proposal",
-          "success": "View proposal"
+          "success": "View proposals"
         },
         "description": "To publish your proposal you have to confirm the onchain transaction with your wallet.",
         "step": {

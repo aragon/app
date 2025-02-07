@@ -2,6 +2,10 @@ name: "Setup"
 description: "This action checks out the commit, sets up Node and installs the dependencies using yarn."
 
 inputs:
+  repository:
+    description: "The repository to checkout"
+    required: false
+    default: ${{ github.repository }}
   fetch-depth:
     description: "The number of commits to fetch when checking out the repository"
     required: false
@@ -25,6 +29,7 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4.2.2
       with:
+        repository: ${{ inputs.repository }}
         fetch-depth: ${{ inputs.fetch-depth }}
         token: ${{ inputs.token }}
     - name: Setup Node
