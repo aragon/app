@@ -57,16 +57,14 @@ jobs:
           PREVIEW_URL: ${{ needs.deploy.outputs.deploymentUrl }}
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        id: upload-e2e-report
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: playwright-report
           path: ./playwright-report/
           retention-days: 30
       - name: Notify Discord on failure
         if: failure()
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          ARTIFACT_URL: ${{ steps.upload_report.outputs.artifact-url }}
         run: |
           echo "Sending Discord failure notification..."
           curl -X POST -H "Content-Type: application/json" -d @- https://discord.com/api/webhooks/1309183202719699084/7iigCapTmyIHtgkqcLfXY9j557T_YChm7bv9h-BBU37ZhPDIIZYt34Z0KkqQGCBGic1M <<EOF
@@ -79,7 +77,7 @@ jobs:
                 { "name": "Branch", "value": "${{ github.ref }}", "inline": false },
                 { "name": "Environment", "value": "preview", "inline": false },
                 { "name": "Preview URL", "value": "${{ needs.deploy.outputs.deploymentUrl }}", "inline": false },
-                { "name": "Artifact Download URL", "value": "[Download Playwright Report]($ARTIFACT_URL)", "inline": false },
+                { "name": "Artifact Download URL", "value": "[Download Playwright Report](${{ steps.upload-e2e-report.outputs.artifact-url }})", "inline": false },
                 { "name": "Details", "value": "[View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false }
               ]
             }]
