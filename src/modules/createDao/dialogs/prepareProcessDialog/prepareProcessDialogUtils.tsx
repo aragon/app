@@ -27,6 +27,7 @@ import { multisigPluginSetupAbi } from './abi/multisigPluginSetupAbi';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { sppPluginSetupAbi } from './abi/sppPluginSetupAbi';
 import { tokenPluginSetupAbi } from './abi/tokenPluginSetupAbi';
+import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
 
 export interface IPrepareProcessMetadata {
     /**
@@ -71,21 +72,6 @@ export interface IPluginRepoInfo {
      * Version of the plugin to be used.
      */
     version: { release: number; build: number };
-}
-
-export interface IPluginSetupDataPermission {
-    operation: number;
-    where: Hex;
-    who: Hex;
-    condition: Hex;
-    permissionId: Hex;
-}
-
-export interface IPluginSetupData {
-    pluginAddress: Hex;
-    pluginSetupRepo: Hex;
-    versionTag: { release: number; build: number };
-    preparedSetupData: { helpers: readonly Hex[]; permissions: readonly IPluginSetupDataPermission[] };
 }
 
 class PrepareProcessDialogUtils {

@@ -16,8 +16,8 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
-import type { IPluginSetupData } from '../prepareProcessDialog/prepareProcessDialogUtils';
 import { publishProcessDialogUtils } from './publishProcessDialogUtils';
+import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
 
 export enum PublishProcessStep {
     PIN_METADATA = 'PIN_METADATA',

@@ -1,4 +1,4 @@
-import type { IPluginSetupDataPermission } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
+import type { IPluginSetupDataPermission } from '@/shared/types/pluginSetupData';
 import type { Hex } from 'viem';
 
 export const generatePluginSetupDataPermission = (

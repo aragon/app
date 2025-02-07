@@ -1,5 +1,5 @@
 import { encodeFunctionData, type Hex, keccak256, toBytes, zeroHash } from 'viem';
-import { daoAbi } from './abi/daoAbi';
+import { permissionManagerAbi } from './abi/permissionManagerAbi';
 
 export interface IConditionRule {
     id: number;
@@ -20,13 +20,13 @@ export interface IUpdatePermissionWithConditionParams extends IUpdatePermissionP
 }
 
 class PermissionTransactionUtils {
-    // // Identifiers of rule conditions (see https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L12)
+    // Identifiers of rule conditions (see https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L12)
     private ruleConditionId = {
         condition: 202,
         logicOperation: 203,
     };
 
-    // // Operations for conditions (see https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L43)
+    // Operations for conditions (see https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L43)
     private ruleConditionOperator = {
         eq: 1,
         or: 10,
@@ -35,7 +35,7 @@ class PermissionTransactionUtils {
     buildGrantPermissionTransaction = (params: IUpdatePermissionParams) => {
         const { where, who, what, to } = params;
         const transactionData = encodeFunctionData({
-            abi: daoAbi,
+            abi: permissionManagerAbi,
             functionName: 'grant',
             args: [where, who, keccak256(toBytes(what))],
         });
@@ -46,7 +46,7 @@ class PermissionTransactionUtils {
     buildRevokePermissionTransaction = (params: IUpdatePermissionParams) => {
         const { where, who, what, to } = params;
         const transactionData = encodeFunctionData({
-            abi: daoAbi,
+            abi: permissionManagerAbi,
             functionName: 'revoke',
             args: [where, who, keccak256(toBytes(what))],
         });
@@ -54,10 +54,7 @@ class PermissionTransactionUtils {
         return { to, data: transactionData, value: '0' };
     };
 
-    buildCreateProposalRuleConditions = (
-        conditionAddresses: string[],
-        conditionRules: IConditionRule[],
-    ): IConditionRule[] => {
+    buildRuleConditions = (conditionAddresses: string[], conditionRules: IConditionRule[]): IConditionRule[] => {
         if (!conditionAddresses.length) {
             return conditionRules;
         }
@@ -75,7 +72,7 @@ class PermissionTransactionUtils {
         const newCondition = { id: logicOperation, op: or, value, permissionId: zeroHash };
 
         return [
-            ...this.buildCreateProposalRuleConditions(conditionAddresses, [...conditionRules, newCondition]),
+            ...this.buildRuleConditions(conditionAddresses, [...conditionRules, newCondition]),
             this.addressToCondition(conditionAddress),
         ];
     };

@@ -1,7 +1,7 @@
 import * as Viem from 'viem';
 import { encodeFunctionData, type Hex, zeroHash } from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
-import { daoAbi } from './abi/daoAbi';
+import { permissionManagerAbi } from './abi/permissionManagerAbi';
 import type { IConditionRule } from './permissionTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
@@ -16,6 +16,7 @@ describe('PermissionTransactionUtils', () => {
         encodeFunctionDataSpy.mockReset();
         toBytesSpy.mockReset();
     });
+
     describe('buildGrantPermissionTransaction', () => {
         it('returns a transaction object with correct data for grant', () => {
             const grantParams = {
@@ -33,7 +34,7 @@ describe('PermissionTransactionUtils', () => {
 
             expect(encodeFunctionData).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    abi: daoAbi,
+                    abi: permissionManagerAbi,
                     functionName: 'grant',
                     args: [grantParams.where, grantParams.who, '0xGrantHash'],
                 }),
@@ -62,7 +63,7 @@ describe('PermissionTransactionUtils', () => {
 
             expect(encodeFunctionData).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    abi: daoAbi,
+                    abi: permissionManagerAbi,
                     functionName: 'revoke',
                     args: [revokeParams.where, revokeParams.who, '0xRevokeHash'],
                 }),
@@ -72,17 +73,17 @@ describe('PermissionTransactionUtils', () => {
         });
     });
 
-    describe('buildCreateProposalRuleConditions', () => {
+    describe('buildRuleConditions', () => {
         it('returns original conditionRules if conditionAddresses is empty', () => {
             const conditionRules = [{ id: 1, op: 1, value: '0x123', permissionId: '0x456' }];
-            const result = permissionTransactionUtils.buildCreateProposalRuleConditions([], conditionRules);
+            const result = permissionTransactionUtils.buildRuleConditions([], conditionRules);
 
             expect(result).toEqual(conditionRules);
         });
 
         it('creates a new condition rule when starting with an empty rules array', () => {
             const conditionAddress = '0xConditionAddress';
-            const result = permissionTransactionUtils.buildCreateProposalRuleConditions([conditionAddress], []);
+            const result = permissionTransactionUtils.buildRuleConditions([conditionAddress], []);
 
             expect(result).toEqual([
                 {
@@ -96,7 +97,7 @@ describe('PermissionTransactionUtils', () => {
 
         it('builds correct rule conditions with multiple conditionAddresses', () => {
             const addresses = ['0x123', '0x456'];
-            const results = permissionTransactionUtils.buildCreateProposalRuleConditions([...addresses], []);
+            const results = permissionTransactionUtils.buildRuleConditions([...addresses], []);
 
             const ruleConditionId = permissionTransactionUtils['ruleConditionId'];
             const ruleConditionOperator = permissionTransactionUtils['ruleConditionOperator'];

@@ -3,7 +3,6 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
-import type { IPluginSetupData } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
@@ -12,11 +11,22 @@ import { permissionTransactionUtils } from '@/shared/utils/permissionTransaction
 import { encodeFunctionData, type Hex } from 'viem';
 import { SppProposalType } from '../../types';
 import { sppPluginAbi } from './sppPluginAbi';
+import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
+import { prepareProcessDialogUtils } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class SppTransactionUtils {
     private defaultMaxAdvance = BigInt(dateUtils.durationToSeconds({ days: 36500, hours: 0, minutes: 0 })); // 10 years
+
+    private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
+
+    private permissionIds = {
+        applyMultiTargetPermission: 'ROOT_PERMISSION', // TODO: failing without root-permission
+        createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
+        executePermission: 'EXECUTE_PERMISSION',
+    };
 
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateSppProposalFormData>): Hex => {
         const { metadata, actions, values } = params;
@@ -53,7 +63,7 @@ class SppTransactionUtils {
                 return isBodyAllowed ? [...current, setupData[bodyIndex + 1].preparedSetupData.helpers[0]] : current;
             }, []);
 
-        const conditionRules = permissionTransactionUtils.buildCreateProposalRuleConditions(conditionAddresses, []);
+        const conditionRules = permissionTransactionUtils.buildRuleConditions(conditionAddresses, []);
 
         const transactionData = encodeFunctionData({
             abi: sppPluginAbi,
@@ -111,6 +121,70 @@ class SppTransactionUtils {
         });
 
         return { to: sppAddress, data: transactionData, value: '0' };
+    };
+
+    buildInstallActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], daoAddress: Hex) => {
+        const pluginAddresses = setupData.map((data) => data.pluginAddress);
+
+        const grantMultiTargetPermissionAction = permissionTransactionUtils.buildGrantPermissionTransaction({
+            where: daoAddress,
+            who: prepareProcessDialogUtils.pspRepoAddress,
+            what: this.permissionIds.applyMultiTargetPermission,
+            to: daoAddress,
+        });
+        const applyInstallationActions = pluginTransactionUtils.buildApplyInstallationTransactions(
+            setupData,
+            daoAddress,
+        );
+        const updateStagesAction = this.buildUpdateStagesTransaction(values, pluginAddresses);
+        const updateCreateProposalRulesAction = this.buildUpdateRulesTransaction(values, setupData);
+
+        // Skip first setupData item as it is related to the SPP plugin
+        const pluginPermissionActions = setupData.slice(1).map((pluginData) => {
+            const { pluginAddress: bodyAddress } = pluginData;
+
+            // No one should be able to create proposals directly on sub-plugins
+            const revokePluginCreateProposalAction = permissionTransactionUtils.buildRevokePermissionTransaction({
+                where: bodyAddress,
+                who: this.anyAddress,
+                what: this.permissionIds.createProposalPermission,
+                to: daoAddress,
+            });
+
+            // Allow SPP to create proposals on sub-plugins
+            const grantSppCreateProposalAction = permissionTransactionUtils.buildGrantPermissionTransaction({
+                where: bodyAddress,
+                who: pluginAddresses[0], // SPP address
+                what: this.permissionIds.createProposalPermission,
+                to: daoAddress,
+            });
+
+            // Sub-plugin shouldn't have execute permission as SPP will already have it
+            const revokeExecutePermission = permissionTransactionUtils.buildRevokePermissionTransaction({
+                where: daoAddress,
+                who: bodyAddress,
+                what: this.permissionIds.executePermission,
+                to: daoAddress,
+            });
+
+            return [revokePluginCreateProposalAction, grantSppCreateProposalAction, revokeExecutePermission];
+        });
+
+        const revokeMultiTargetPermissionAction = permissionTransactionUtils.buildRevokePermissionTransaction({
+            where: daoAddress,
+            who: prepareProcessDialogUtils.pspRepoAddress,
+            what: this.permissionIds.applyMultiTargetPermission,
+            to: daoAddress,
+        });
+
+        return [
+            grantMultiTargetPermissionAction,
+            ...applyInstallationActions,
+            updateStagesAction,
+            updateCreateProposalRulesAction,
+            ...pluginPermissionActions.flat(),
+            revokeMultiTargetPermissionAction,
+        ].filter((action) => action != null);
     };
 }
 

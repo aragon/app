@@ -3,20 +3,19 @@ import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { ProposalCreationMode } from '../../components/createProcessForm';
 import { publishProcessDialogUtils } from './publishProcessDialogUtils';
+import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 
-describe('PublishProcessDialogUtils', () => {
+describe('publishProcessDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
     const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
-    const buildInstallActionsSpy = jest.spyOn(pluginTransactionUtils, 'buildInstallActions');
+    const buildInstallActionsSpy = jest.spyOn(sppTransactionUtils, 'buildInstallActions');
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
         cidToHexSpy.mockReset();
-        buildInstallActionsSpy.mockReset();
     });
 
     describe('prepareProposalMetadata', () => {
@@ -46,6 +45,7 @@ describe('PublishProcessDialogUtils', () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
+            buildInstallActionsSpy.mockReturnValue([]);
 
             await publishProcessDialogUtils.buildTransaction({
                 values,
@@ -62,6 +62,7 @@ describe('PublishProcessDialogUtils', () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
+            buildInstallActionsSpy.mockReturnValue([]);
 
             await publishProcessDialogUtils.buildTransaction({
                 values,
@@ -83,6 +84,7 @@ describe('PublishProcessDialogUtils', () => {
             getSlotFunctionSpy.mockReturnValue(slotFunction);
 
             const metadataCid = 'test-cid';
+            buildInstallActionsSpy.mockReturnValue([]);
 
             const transaction = await publishProcessDialogUtils.buildTransaction({
                 values,
