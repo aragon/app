@@ -2,12 +2,12 @@ import { multisigPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProce
 import { generateProcessFormBody } from '@/modules/createDao/testUtils/generators/processBodyForm';
 import { generateProcessFormStage } from '@/modules/createDao/testUtils/generators/processFormStage';
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
-import { IBuildCreateProposalDataParams } from '@/modules/governance/types';
+import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
 import { multisigPluginAbi } from './multisigPluginAbi';
-import { ICreateMultisigProposalFormData, multisigTransactionUtils } from './multisigTransactionUtils';
+import { type ICreateMultisigProposalFormData, multisigTransactionUtils } from './multisigTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 

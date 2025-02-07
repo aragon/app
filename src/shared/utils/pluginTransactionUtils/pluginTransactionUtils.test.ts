@@ -4,7 +4,7 @@ import { pluginTransactionUtils } from './pluginTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
-describe('PluginTransactionUtils', () => {
+describe('pluginTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const parseEventLogsSpy = jest.spyOn(Viem, 'parseEventLogs');
 

@@ -7,7 +7,7 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type ICreateProcessFormData, ProposalCreationMode } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 
-describe('PrepareProcessDialogUtils', () => {
+describe('prepareProcessDialog utils', () => {
     describe('prepareProposalMetadata', () => {
         it('returns the correct title and summary', () => {
             const result = prepareProcessDialogUtils.prepareProposalMetadata();
