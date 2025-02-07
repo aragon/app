@@ -119,7 +119,7 @@ class PrepareProcessDialogUtils {
                 };
 
                 return pluginRegistryUtils.getSlotFunction<IBuildPrepareInstallDataParams, Hex>({
-                    slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_ACTIONS,
+                    slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_DATA,
                     pluginId: body.governanceType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase(),
                 })?.(params);
             });
