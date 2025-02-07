@@ -2,3 +2,4 @@
 .yarn
 node_modules
 CHANGELOG.md
+public/web-workers

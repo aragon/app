@@ -1,4 +1,5 @@
 import BundleAnalyzer from '@next/bundle-analyzer';
+import { withSentryConfig } from '@sentry/nextjs';
 import packageInfo from './package.json' with { type: 'json' };
 
 const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
@@ -37,6 +38,34 @@ const webFunctionalities = [
     'window-management=()',
     'xr-spatial-tracking=()',
 ];
+
+const sentryConfig = {
+    // Aragon organisation on Sentry
+    org: 'aragonorg',
+    // Sentry project
+    project: 'app-next',
+    // Auth token needed for uploading source maps
+    authToken: process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
+    // Prevent built files from containing a sourceMappingURL comment
+    hideSourceMaps: true,
+    // Make sure to upload all files and source maps
+    widenClientFileUpload: true,
+    // Use tunneling to forward events to Sentry and circumvent ad blockers
+    tunnelRoute: '/api/monitoring',
+    // Disable Sentry debug logger to save bundle size
+    disableLogger: true,
+    // Release version for Sentry
+    release: { name: packageInfo.version },
+    // Delete sourcemaps from NextJs build after upload
+    sourcemaps: { deleteSourcemapsAfterUpload: true },
+    // Disable sending data to Sentry
+    telemetry: false,
+    // Options to optimise the bundle size
+    bundleSizeOptimizations: {
+        // Exclude replay worker from bundle as self-hosted for current CSP policies
+        excludeReplayWorker: true,
+    },
+};
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -101,4 +130,4 @@ const nextConfig = {
     },
 };
 
-export default withBundleAnalyzer(nextConfig);
+export default withSentryConfig(withBundleAnalyzer(nextConfig), sentryConfig);
