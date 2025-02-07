@@ -79,16 +79,12 @@ describe('multisigTransaction utils', () => {
             const params = { metadataCid, daoAddress, permissionSettings, stage, body };
             const pluginSettingsData = '0xPluginSettingsData';
             const transactionData = '0xTransactionData';
-
             encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
-
             const result = multisigTransactionUtils.buildPrepareInstallData(params);
-
             const memberAddresses = body.members.map((member) => member.address);
             const expectedMultisigTarget = { target: pluginTransactionUtils.globalExecutor, operation: 1 };
             const expectedPluginSettings = { onlyListed: true, minApprovals: body.multisigThreshold };
-
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginSetupAbi, [
                 memberAddresses,
                 expectedPluginSettings,

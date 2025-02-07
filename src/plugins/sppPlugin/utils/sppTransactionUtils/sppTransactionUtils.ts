@@ -10,7 +10,7 @@ import { sppPluginAbi } from './sppPluginAbi';
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class SppTransactionUtils {
-    sppRepo: IPluginRepoInfo = {
+    private sppRepo: IPluginRepoInfo = {
         address: '0xE67b8E026d190876704292442A38163Ce6945d6b',
         version: { release: 1, build: 8 },
     };

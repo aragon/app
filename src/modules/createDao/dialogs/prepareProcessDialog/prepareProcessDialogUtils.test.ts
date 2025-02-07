@@ -70,11 +70,8 @@ describe('prepareProcessDialog utils', () => {
                     proposalCreationBodies: [{ bodyId: 'body1', minVotingPower: '0' }],
                 },
             };
-
             const actions = prepareProcessDialogUtils.buildPrepareInstallActions(values, daoAddress, processMetadata);
-
             const pspRepoAddress = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
-
             expect(actions).toEqual([
                 {
                     to: pspRepoAddress,
@@ -128,7 +125,6 @@ describe('prepareProcessDialog utils', () => {
                 { to: '0xTo1', data: '0xData1', value: 'value1' },
                 { to: '0xTo2', data: '0xData2', value: 'value2' },
             ]);
-
             const buildParams = {
                 values,
                 processMetadata,
@@ -137,7 +133,6 @@ describe('prepareProcessDialog utils', () => {
                 nonce: 0,
             };
             const result = await prepareProcessDialogUtils.buildTransaction(buildParams);
-
             expect(cidToHexSpy).toHaveBeenCalledWith(processMetadata.proposal);
             expect(buildPrepareInstallActionsSpy).toHaveBeenCalledWith(values, dao.address, processMetadata);
             expect(result).toEqual({

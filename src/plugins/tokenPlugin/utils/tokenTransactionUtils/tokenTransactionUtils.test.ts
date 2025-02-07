@@ -34,9 +34,7 @@ describe('tokenTransaction utils', () => {
             };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
-
             tokenTransactionUtils.buildCreateProposalData(params);
-
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
@@ -73,13 +71,10 @@ describe('tokenTransaction utils', () => {
             const permissionSettings = { minVotingPower: '1', bodyId: '1' };
             const body = generateProcessFormBody();
             const stage = generateProcessFormStage();
-
             encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
             buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
-
             const params = { metadataCid, daoAddress, permissionSettings, body, stage };
             const result = tokenTransactionUtils.buildPrepareInstallData(params);
-
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
                 tokenPluginSetupAbi,
                 expect.arrayContaining([

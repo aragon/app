@@ -1,6 +1,5 @@
 export {
     pluginTransactionUtils,
-    type IBuildTransactionParams,
     type IPluginRepoInfo,
     type IPluginSetupData,
     type IPluginSetupDataPermission,

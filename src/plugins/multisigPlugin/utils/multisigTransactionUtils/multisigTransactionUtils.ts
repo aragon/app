@@ -1,9 +1,7 @@
 import { multisigPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/multisigPluginSetupAbi';
-
+import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/buildPrepareInstallDataParams';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
-
-import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/buildPrepareInstallDataParams';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';

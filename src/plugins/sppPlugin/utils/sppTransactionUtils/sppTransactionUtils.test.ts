@@ -92,13 +92,15 @@ describe('sppTransaction utils', () => {
 
     describe('buildPrepareSppInstallData', () => {
         it('builds prepare installation data correctly', () => {
+            const sppRepo = {
+                address: '0xE67b8E026d190876704292442A38163Ce6945d6b',
+                version: { release: 1, build: 8 },
+            };
             const metadataCid = '0xmetadataCID';
             const daoAddress: Viem.Hex = '0xDAOAddress';
             const sppTarget = { target: daoAddress, operation: 0 };
-
             encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
             buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
-
             const result = sppTransactionUtils.buildPrepareSppInstallData(metadataCid, daoAddress);
             expect(Viem.encodeAbiParameters).toHaveBeenCalledWith(sppPluginSetupAbi, [
                 metadataCid as Viem.Hex,
@@ -107,7 +109,7 @@ describe('sppTransaction utils', () => {
                 sppTarget,
             ]);
             expect(pluginTransactionUtils.buildPrepareInstallationData).toHaveBeenCalledWith(
-                sppTransactionUtils.sppRepo,
+                sppRepo,
                 '0xPluginSettingsData',
                 daoAddress,
             );

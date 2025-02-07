@@ -63,7 +63,7 @@ export interface IPluginSetupData {
 }
 
 class PrepareProcessDialogUtils {
-    pspRepoAddress: Hex = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
+    private pspRepoAddress: Hex = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
 
     prepareProposalMetadata = () => {
         const title = 'Prepare plugin installation';
