@@ -90,7 +90,7 @@ describe('PermissionTransactionUtils', () => {
             ]);
         });
 
-        it('handles multiple conditionAddresses', () => {
+        it('builds correct rule conditions with multiple conditionAddresses', () => {
             const addresses = ['0x123', '0x456'];
             const results = permissionTransactionUtils.buildCreateProposalRuleConditions([...addresses], []);
 
@@ -129,7 +129,14 @@ describe('PermissionTransactionUtils', () => {
                 (result: IConditionRule) => result.id === ruleConditionId.logicOperation,
             );
 
-            expect(logicalCondition).toBeDefined();
+            const expectedLogicalValue = BigInt(1) + (BigInt(2) << BigInt(32));
+
+            expect(logicalCondition).toEqual({
+                id: ruleConditionId.logicOperation,
+                op: ruleConditionOperator.or,
+                value: expectedLogicalValue,
+                permissionId: zeroHash,
+            });
         });
     });
 });

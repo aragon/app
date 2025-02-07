@@ -25,12 +25,12 @@ describe('PluginTransactionUtils', () => {
     const daoAddress = '0x123';
 
     describe('hashHelpers', () => {
-        const helpers: readonly Hex[] = [
-            '0x0000000000000000000000000000000000000001',
-            '0x0000000000000000000000000000000000000002',
-        ];
-
         it('calls encodeAbiParameters and keccak256 with the correct parameters', () => {
+            const helpers: readonly Hex[] = [
+                '0x0000000000000000000000000000000000000001',
+                '0x0000000000000000000000000000000000000002',
+            ];
+
             const encodedValue = '0xEncoded';
             const expectedHash = '0xHash';
 
@@ -46,7 +46,7 @@ describe('PluginTransactionUtils', () => {
     });
 
     describe('buildApplyInstallationTransactions', () => {
-        it('calls encodeFunctionData with the correct parameters', () => {
+        it('correctly builds and returns installation transaction', () => {
             const setupData = [
                 generatePluginSetupData({
                     pluginSetupRepo: '0xPluginSetupRepo' as Hex,
@@ -95,28 +95,28 @@ describe('PluginTransactionUtils', () => {
     });
 
     describe('buildInstallActions', () => {
-        const testValues = generateCreateProcessFormData();
-
-        const setupData: IPluginSetupData[] = [
-            generatePluginSetupData({
-                pluginSetupRepo: '0xRepo1' as Hex,
-                pluginAddress: '0xPlugin1' as Hex,
-                preparedSetupData: {
-                    permissions: [generatePluginSetupDataPermission()],
-                    helpers: ['0xHelper1'] as readonly Hex[],
-                },
-            }),
-            generatePluginSetupData({
-                pluginSetupRepo: '0xRepo2' as Hex,
-                pluginAddress: '0xPlugin2' as Hex,
-                preparedSetupData: {
-                    permissions: [generatePluginSetupDataPermission()],
-                    helpers: ['0xHelper2'] as readonly Hex[],
-                },
-            }),
-        ];
-
         it('builds install actions correctly', () => {
+            const testValues = generateCreateProcessFormData();
+
+            const setupData: IPluginSetupData[] = [
+                generatePluginSetupData({
+                    pluginSetupRepo: '0xRepo1' as Hex,
+                    pluginAddress: '0xPlugin1' as Hex,
+                    preparedSetupData: {
+                        permissions: [generatePluginSetupDataPermission()],
+                        helpers: ['0xHelper1'] as readonly Hex[],
+                    },
+                }),
+                generatePluginSetupData({
+                    pluginSetupRepo: '0xRepo2' as Hex,
+                    pluginAddress: '0xPlugin2' as Hex,
+                    preparedSetupData: {
+                        permissions: [generatePluginSetupDataPermission()],
+                        helpers: ['0xHelper2'] as readonly Hex[],
+                    },
+                }),
+            ];
+
             const applyInstallationActions = [{ to: '0xApplyTo' as Hex, data: '0xApplyData' as Hex, value: '0' }];
 
             buildApplyInstallSpy.mockReturnValue(applyInstallationActions);
@@ -130,32 +130,16 @@ describe('PluginTransactionUtils', () => {
             buildUpdateRulesSpy.mockReturnValue(updateRulesAction);
 
             (encodeFunctionData as jest.Mock).mockImplementation(({ functionName }: { functionName: string }) => {
-                if (functionName === 'grant') {
-                    return '0xGrantTxData';
-                }
-                if (functionName === 'revoke') {
-                    return '0xRevokeTxData';
-                }
-
-                return '0xUnknown';
+                return `0x${functionName}TxData`;
             });
 
             const actions = pluginTransactionUtils.buildInstallActions(testValues, setupData, daoAddress);
 
-            // - Grant multi-target permission on dao.
-            const expectedGrantMultiTargetAction = { to: daoAddress, data: '0xGrantTxData', value: '0' };
-            // - Apply installation actions.
-            // - Update stages action.
-            // - Update rules action.
-            // For each plugin in setupData (apart from spp):
-            //    - Revoke create proposal on sub-plugin.
-            //    - Grant SPP create proposal on sub-plugin.
-            //    - Revoke execute permission on sub-plugin.
-            const expectedRevokePluginCreateProposalAction = { to: daoAddress, data: '0xRevokeTxData', value: '0' };
-            const expectedGrantSppCreateProposalAction = { to: daoAddress, data: '0xGrantTxData', value: '0' };
-            const expectedRevokeExecutePermission = { to: daoAddress, data: '0xRevokeTxData', value: '0' };
-            // Revoke multi-target permission on dao.
-            const expectedRevokeMultiTargetAction = { to: daoAddress, data: '0xRevokeTxData', value: '0' };
+            const expectedGrantMultiTargetAction = { to: daoAddress, data: '0xgrantTxData', value: '0' };
+            const expectedRevokePluginCreateProposalAction = { to: daoAddress, data: '0xrevokeTxData', value: '0' };
+            const expectedGrantSppCreateProposalAction = { to: daoAddress, data: '0xgrantTxData', value: '0' };
+            const expectedRevokeExecutePermission = { to: daoAddress, data: '0xrevokeTxData', value: '0' };
+            const expectedRevokeMultiTargetAction = { to: daoAddress, data: '0xrevokeTxData', value: '0' };
 
             const expectedActions = [
                 expectedGrantMultiTargetAction,
