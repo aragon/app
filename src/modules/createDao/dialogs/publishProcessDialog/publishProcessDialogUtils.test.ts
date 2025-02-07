@@ -58,7 +58,7 @@ describe('PublishProcessDialogUtils', () => {
             expect(cidToHexSpy).toHaveBeenCalledWith(metadataCid);
         });
 
-        it('calls the plugin-specific data function with the correct params', async () => {
+        it('calls the plugin specific data function with the correct params', async () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
@@ -77,7 +77,7 @@ describe('PublishProcessDialogUtils', () => {
             });
         });
 
-        it('calls the plugin-specific function to prepare the transaction data and resolves with a transaction object', async () => {
+        it('calls the plugin specific data function to prepare the transaction data and resolves with a transaction object', async () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
@@ -90,11 +90,6 @@ describe('PublishProcessDialogUtils', () => {
                 plugin,
                 setupData,
                 metadataCid,
-            });
-
-            expect(getSlotFunctionSpy).toHaveBeenCalledWith({
-                pluginId: plugin.subdomain,
-                slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             });
 
             expect(transaction.data).toEqual(transactionData);

@@ -16,6 +16,40 @@ describe('SppTransactionUtils', () => {
     });
 
     describe('buildUpdateRulesTransaction', () => {
+        const values = generateCreateProcessFormData({
+            stages: [
+                {
+                    name: 'Stage name',
+                    type: ProcessStageType.NORMAL,
+                    timing: { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false },
+                    requiredApprovals: 1,
+                    bodies: [
+                        {
+                            id: 'body1',
+                            name: 'body1',
+                            resources: [],
+                            governanceType: 'multisig',
+                            members: [],
+                            tokenType: 'new',
+                            supportThreshold: 1,
+                            minimumParticipation: 1,
+                            voteChange: false,
+                            multisigThreshold: 1,
+                        },
+                    ],
+                },
+            ],
+            permissions: {
+                proposalCreationBodies: [{ bodyId: 'body1' }],
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+            },
+        });
+
+        const setupData = [
+            generatePluginSetupData(),
+            generatePluginSetupData({ preparedSetupData: { permissions: [], helpers: ['0xTestBodyCondition'] } }),
+        ];
+
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
             const values = generateCreateProcessFormData();
             const setupData = [generatePluginSetupData()];
@@ -25,44 +59,10 @@ describe('SppTransactionUtils', () => {
             expect(result).toBeUndefined();
         });
 
-        it('builds update rules transaction correctly when proposalCreationMode is LISTED_BODIES', () => {
-            const values = generateCreateProcessFormData({
-                stages: [
-                    {
-                        name: 'Stage name',
-                        type: ProcessStageType.NORMAL,
-                        timing: { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false },
-                        requiredApprovals: 1,
-                        bodies: [
-                            {
-                                id: 'body1',
-                                name: 'body1',
-                                resources: [],
-                                governanceType: 'multisig',
-                                members: [],
-                                tokenType: 'new',
-                                supportThreshold: 1,
-                                minimumParticipation: 1,
-                                voteChange: false,
-                                multisigThreshold: 1,
-                            },
-                        ],
-                    },
-                ],
-                permissions: {
-                    proposalCreationBodies: [{ bodyId: 'body1' }],
-                    proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
-                },
-            });
-
-            const setupData = [
-                generatePluginSetupData(),
-                generatePluginSetupData({ preparedSetupData: { permissions: [], helpers: ['0xTestBodyCondition'] } }),
-            ];
-
+        it('calls the encodeDataFunction with the correct params', () => {
             encodeFunctionDataSpy.mockReturnValueOnce('0xUpdateRulesData');
 
-            const result = sppTransactionUtils.buildUpdateRulesTransaction(values, setupData);
+            sppTransactionUtils.buildUpdateRulesTransaction(values, setupData);
 
             expect(encodeFunctionData).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -81,6 +81,12 @@ describe('SppTransactionUtils', () => {
                     ],
                 }),
             );
+        });
+
+        it('builds update rules transaction correctly when proposalCreationMode is LISTED_BODIES', () => {
+            encodeFunctionDataSpy.mockReturnValueOnce('0xUpdateRulesData');
+
+            const result = sppTransactionUtils.buildUpdateRulesTransaction(values, setupData);
 
             expect(result).toEqual({
                 to: setupData[0].preparedSetupData.helpers[0],
