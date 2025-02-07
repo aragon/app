@@ -1,6 +1,7 @@
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -27,7 +28,6 @@ import { multisigPluginSetupAbi } from './abi/multisigPluginSetupAbi';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { sppPluginSetupAbi } from './abi/sppPluginSetupAbi';
 import { tokenPluginSetupAbi } from './abi/tokenPluginSetupAbi';
-import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
 
 export interface IPrepareProcessMetadata {
     /**

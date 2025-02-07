@@ -1,13 +1,13 @@
+import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../../governance/types';
 import { type ICreateProcessFormData } from '../../components/createProcessForm';
-import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
-import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 
 export interface IBuildTransactionParams {
     /**

@@ -1,4 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
@@ -6,7 +7,21 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { ProposalCreationMode } from '../../components/createProcessForm';
 import { publishProcessDialogUtils } from './publishProcessDialogUtils';
-import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
+
+export const createTestParams = () => {
+    const values = generateCreateProcessFormData({
+        permissions: {
+            proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+            proposalCreationBodies: [],
+        },
+    });
+    const dao = generateDao();
+    const plugin = generateDaoPlugin({ subdomain: 'spp' });
+    const setupData = [generatePluginSetupData()];
+    const metadataCid = 'test-cid';
+
+    return { values, dao, plugin, setupData, metadataCid };
+};
 
 describe('publishProcessDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
@@ -30,22 +45,15 @@ describe('publishProcessDialog utils', () => {
     });
 
     describe('buildTransaction', () => {
-        const values = generateCreateProcessFormData({
-            permissions: {
-                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
-                proposalCreationBodies: [],
-            },
-        });
-        const plugin = generateDaoPlugin({ subdomain: 'spp' });
-        const dao = generateDao();
-        const setupData = [generatePluginSetupData()];
-        const metadataCid = 'test-cid';
-
         it('converts the metadata CID to hex', async () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
             buildInstallActionsSpy.mockReturnValue([]);
+
+            const { values, dao, plugin, setupData } = createTestParams();
+
+            const metadataCid = 'cid-test';
 
             await publishProcessDialogUtils.buildTransaction({
                 values,
@@ -63,6 +71,8 @@ describe('publishProcessDialog utils', () => {
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
             buildInstallActionsSpy.mockReturnValue([]);
+
+            const { values, dao, plugin, setupData, metadataCid } = createTestParams();
 
             await publishProcessDialogUtils.buildTransaction({
                 values,
@@ -82,9 +92,9 @@ describe('publishProcessDialog utils', () => {
             const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
-
-            const metadataCid = 'test-cid';
             buildInstallActionsSpy.mockReturnValue([]);
+
+            const { values, dao, plugin, setupData, metadataCid } = createTestParams();
 
             const transaction = await publishProcessDialogUtils.buildTransaction({
                 values,

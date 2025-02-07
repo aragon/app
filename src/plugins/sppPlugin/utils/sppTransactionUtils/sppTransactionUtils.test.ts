@@ -1,13 +1,13 @@
 import { ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
 import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
+import { generatePluginSetupDataPermission } from '@/shared/testUtils/generators/pluginSetupDataPermission';
+import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
 import { encodeFunctionData, zeroHash, type Hex } from 'viem';
 import { sppPluginAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
-import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
-import { generatePluginSetupDataPermission } from '@/shared/testUtils/generators/pluginSetupDataPermission';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
@@ -105,7 +105,6 @@ describe('SppTransactionUtils', () => {
         const buildUpdateRulesSpy = jest.spyOn(sppTransactionUtils, 'buildUpdateRulesTransaction');
 
         afterEach(() => {
-            encodeFunctionDataSpy.mockReset();
             buildApplyInstallSpy.mockReset();
             buildUpdateStagesSpy.mockReset();
             buildUpdateRulesSpy.mockReset();

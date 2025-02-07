@@ -3,17 +3,17 @@ import {
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
+import { prepareProcessDialogUtils } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
+import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
 import { SppProposalType } from '../../types';
 import { sppPluginAbi } from './sppPluginAbi';
-import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
-import { prepareProcessDialogUtils } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
