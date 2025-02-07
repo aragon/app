@@ -74,5 +74,3 @@ class PublishProcessDialogUtils {
 }
 
 export const publishProcessDialogUtils = new PublishProcessDialogUtils();
-
-

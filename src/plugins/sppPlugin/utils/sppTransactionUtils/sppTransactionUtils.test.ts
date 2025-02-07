@@ -1,19 +1,19 @@
 import { ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
 import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
+import * as Viem from 'viem';
 import { encodeFunctionData, zeroHash } from 'viem';
 import { sppPluginAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
-import * as Viem from 'viem';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('SppTransactionUtils', () => {
-        const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
+    const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
 
-        afterEach(() => {
-            encodeFunctionDataSpy.mockReset();
-        });
+    afterEach(() => {
+        encodeFunctionDataSpy.mockReset();
+    });
 
     describe('buildUpdateRulesTransaction', () => {
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {

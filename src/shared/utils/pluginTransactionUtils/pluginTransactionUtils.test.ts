@@ -6,10 +6,10 @@ import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUti
 import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { generatePluginSetupDataPermission } from '@/shared/testUtils/generators/pluginSetupDataPermission';
+import * as Viem from 'viem';
 import { type Hex } from 'viem';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { pluginTransactionUtils } from './pluginTransactionUtils';
-import * as Viem from 'viem';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 

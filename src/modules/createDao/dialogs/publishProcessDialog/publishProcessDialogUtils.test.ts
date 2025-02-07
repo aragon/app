@@ -3,10 +3,10 @@ import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { ProposalCreationMode } from '../../components/createProcessForm';
 import { publishProcessDialogUtils } from './publishProcessDialogUtils';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 
 describe('PublishProcessDialogUtils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
@@ -102,5 +102,3 @@ describe('PublishProcessDialogUtils', () => {
         });
     });
 });
-
-
