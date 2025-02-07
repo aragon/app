@@ -6,44 +6,31 @@ import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUti
 import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { generatePluginSetupDataPermission } from '@/shared/testUtils/generators/pluginSetupDataPermission';
-import { encodeAbiParameters, encodeFunctionData, keccak256, type Hex } from 'viem';
+import { type Hex } from 'viem';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { pluginTransactionUtils } from './pluginTransactionUtils';
+import * as Viem from 'viem';
 
-jest.mock('viem', () => ({
-    encodeAbiParameters: jest.fn(),
-    keccak256: jest.fn(),
-    encodeFunctionData: jest.fn(),
-    toBytes: jest.fn(),
-}));
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('PluginTransactionUtils', () => {
+    const keccak256Spy = jest.spyOn(Viem, 'keccak256');
+    const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
+    const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const buildApplyInstallSpy = jest.spyOn(pluginTransactionUtils, 'buildApplyInstallationTransactions');
     const buildUpdateStagesSpy = jest.spyOn(sppTransactionUtils, 'buildUpdateStagesTransaction');
     const buildUpdateRulesSpy = jest.spyOn(sppTransactionUtils, 'buildUpdateRulesTransaction');
 
-    const daoAddress = '0x123';
-
-    describe('hashHelpers', () => {
-        it('calls encodeAbiParameters and keccak256 with the correct parameters', () => {
-            const helpers: readonly Hex[] = [
-                '0x0000000000000000000000000000000000000001',
-                '0x0000000000000000000000000000000000000002',
-            ];
-
-            const encodedValue = '0xEncoded';
-            const expectedHash = '0xHash';
-
-            (encodeAbiParameters as jest.Mock).mockReturnValueOnce(encodedValue);
-            (keccak256 as jest.Mock).mockReturnValueOnce(expectedHash);
-
-            const result = pluginTransactionUtils.hashHelpers(helpers);
-
-            expect(encodeAbiParameters).toHaveBeenCalledWith([{ type: 'address[]' }], [helpers]);
-            expect(keccak256).toHaveBeenCalledWith(encodedValue);
-            expect(result).toBe(expectedHash);
-        });
+    afterEach(() => {
+        keccak256Spy.mockReset();
+        encodeAbiParametersSpy.mockReset();
+        encodeFunctionDataSpy.mockReset();
+        buildApplyInstallSpy.mockReset();
+        buildUpdateStagesSpy.mockReset();
+        buildUpdateRulesSpy.mockReset();
     });
+
+    const daoAddress = '0x123';
 
     describe('buildApplyInstallationTransactions', () => {
         it('correctly builds and returns installation transaction', () => {
@@ -53,19 +40,22 @@ describe('PluginTransactionUtils', () => {
                     pluginAddress: '0x123' as Hex,
                     preparedSetupData: {
                         permissions: [generatePluginSetupDataPermission(), generatePluginSetupDataPermission()],
-                        helpers: ['0xHelper1', '0xHelper1'] as readonly Hex[],
+                        helpers: [
+                            '0x1111111111111111111111111111111111111111',
+                            '0x1111111111111111111111111111111111111111',
+                        ] as readonly Hex[],
                     },
                 }),
             ];
 
-            (keccak256 as jest.Mock).mockReturnValueOnce('0xHash');
+            keccak256Spy.mockReturnValueOnce('0xHash');
 
             const encodedTxData = '0xEncodedTxData';
-            (encodeFunctionData as jest.Mock).mockReturnValueOnce(encodedTxData);
+            encodeFunctionDataSpy.mockReturnValueOnce(encodedTxData);
 
             const result = pluginTransactionUtils.buildApplyInstallationTransactions(setupData, daoAddress);
 
-            expect(encodeFunctionData).toHaveBeenCalledWith(
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     abi: pluginSetupProcessorAbi,
                     functionName: 'applyInstallation',
@@ -91,6 +81,24 @@ describe('PluginTransactionUtils', () => {
             };
 
             expect(result).toEqual([expectedTransaction]);
+        });
+    });
+
+    describe('hashHelpers', () => {
+        it('calls encodeAbiParameters and keccak256 with the correct parameters', () => {
+            const helpers: readonly Hex[] = ['0xHelper1', '0xHelper2'];
+
+            const encodedValue = '0xEncoded';
+            const expectedHash = '0xHash';
+
+            encodeAbiParametersSpy.mockReturnValueOnce(encodedValue);
+            keccak256Spy.mockReturnValueOnce(expectedHash);
+
+            const result = pluginTransactionUtils.hashHelpers(helpers);
+
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith([{ type: 'address[]' }], [helpers]);
+            expect(keccak256Spy).toHaveBeenCalledWith(encodedValue);
+            expect(result).toBe(expectedHash);
         });
     });
 
@@ -125,8 +133,9 @@ describe('PluginTransactionUtils', () => {
             buildUpdateStagesSpy.mockReturnValue(updateStagesAction);
             buildUpdateRulesSpy.mockReturnValue(updateRulesAction);
 
-            (encodeFunctionData as jest.Mock).mockImplementation(({ functionName }: { functionName: string }) => {
-                return `0x${functionName}TxData`;
+            encodeFunctionDataSpy.mockImplementation((params) => {
+                const fnName = params.functionName ?? 'unknown';
+                return `0x${fnName}TxData`;
             });
 
             const actions = pluginTransactionUtils.buildInstallActions(testValues, setupData, daoAddress);

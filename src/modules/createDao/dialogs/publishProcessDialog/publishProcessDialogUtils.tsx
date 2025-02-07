@@ -33,9 +33,13 @@ export interface IBuildTransactionParams {
 }
 
 class PublishProcessDialogUtils {
+    private proposal = {
+        title: 'Apply plugin installation',
+        summary: 'This proposal applies the plugin installation to create the new process',
+    };
     prepareProposalMetadata = () => {
-        const title = 'Apply plugin installation';
-        const summary = 'This proposal applies the plugin installation to create the new process';
+        const title = this.proposal.title;
+        const summary = this.proposal.summary;
 
         return { title, summary };
     };
@@ -70,3 +74,5 @@ class PublishProcessDialogUtils {
 }
 
 export const publishProcessDialogUtils = new PublishProcessDialogUtils();
+
+

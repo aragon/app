@@ -1,15 +1,21 @@
-import { encodeFunctionData, type Hex, keccak256, toBytes, zeroHash } from 'viem';
+import * as Viem from 'viem';
+import { encodeFunctionData, type Hex, zeroHash } from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
 import { daoAbi } from './abi/daoAbi';
 import type { IConditionRule } from './permissionTransactionUtils';
 
-jest.mock('viem', () => ({
-    keccak256: jest.fn(),
-    encodeFunctionData: jest.fn(),
-    toBytes: jest.fn(),
-}));
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('PermissionTransactionUtils', () => {
+    const keccak256Spy = jest.spyOn(Viem, 'keccak256');
+    const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
+    const toBytesSpy = jest.spyOn(Viem, 'toBytes');
+
+    afterEach(() => {
+        keccak256Spy.mockReset();
+        encodeFunctionDataSpy.mockReset();
+        toBytesSpy.mockReset();
+    });
     describe('buildGrantPermissionTransaction', () => {
         it('returns a transaction object with correct data for grant', () => {
             const grantParams = {
@@ -19,10 +25,9 @@ describe('PermissionTransactionUtils', () => {
                 to: '0xTo' as Hex,
             };
 
-            (toBytes as jest.Mock).mockReturnValueOnce('0xBytesTest');
-            (keccak256 as jest.Mock).mockReturnValueOnce('0xGrantHash');
-
-            (encodeFunctionData as jest.Mock).mockReturnValueOnce('0xGrantTxData');
+            toBytesSpy.mockReturnValueOnce(Viem.hexToBytes('0x4279746573'));
+            keccak256Spy.mockReturnValueOnce('0xGrantHash');
+            encodeFunctionDataSpy.mockReturnValueOnce('0xGrantTxData');
 
             const tx = permissionTransactionUtils.buildGrantPermissionTransaction(grantParams);
 
@@ -49,10 +54,9 @@ describe('PermissionTransactionUtils', () => {
                 to: '0xTo' as Hex,
             };
 
-            (toBytes as jest.Mock).mockReturnValueOnce('0xBytesTest');
-            (keccak256 as jest.Mock).mockReturnValueOnce('0xRevokeHash');
-
-            (encodeFunctionData as jest.Mock).mockReturnValueOnce('0xRevokeTxData');
+            toBytesSpy.mockReturnValueOnce(Viem.hexToBytes('0x4279746573'));
+            keccak256Spy.mockReturnValueOnce('0xRevokeHash');
+            encodeFunctionDataSpy.mockReturnValueOnce('0xRevokeTxData');
 
             const tx = permissionTransactionUtils.buildRevokePermissionTransaction(revokeParams);
 
@@ -94,15 +98,8 @@ describe('PermissionTransactionUtils', () => {
             const addresses = ['0x123', '0x456'];
             const results = permissionTransactionUtils.buildCreateProposalRuleConditions([...addresses], []);
 
-            const ruleConditionId = {
-                condition: 202,
-                logicOperation: 203,
-            };
-
-            const ruleConditionOperator = {
-                eq: 1,
-                or: 10,
-            };
+            const ruleConditionId = permissionTransactionUtils['ruleConditionId'];
+            const ruleConditionOperator = permissionTransactionUtils['ruleConditionOperator'];
 
             const addressConditions = results.filter(
                 (result: IConditionRule) => result.id === ruleConditionId.condition,

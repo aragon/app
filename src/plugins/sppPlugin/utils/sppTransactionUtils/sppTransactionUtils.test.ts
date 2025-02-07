@@ -4,12 +4,17 @@ import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSet
 import { encodeFunctionData, zeroHash } from 'viem';
 import { sppPluginAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
+import * as Viem from 'viem';
 
-jest.mock('viem', () => ({
-    encodeFunctionData: jest.fn(),
-}));
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('SppTransactionUtils', () => {
+        const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
+
+        afterEach(() => {
+            encodeFunctionDataSpy.mockReset();
+        });
+
     describe('buildUpdateRulesTransaction', () => {
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
             const values = generateCreateProcessFormData();
@@ -55,7 +60,7 @@ describe('SppTransactionUtils', () => {
                 generatePluginSetupData({ preparedSetupData: { permissions: [], helpers: ['0xTestBodyCondition'] } }),
             ];
 
-            (encodeFunctionData as jest.Mock).mockReturnValueOnce('0xUpdateRulesData');
+            encodeFunctionDataSpy.mockReturnValueOnce('0xUpdateRulesData');
 
             const result = sppTransactionUtils.buildUpdateRulesTransaction(values, setupData);
 
