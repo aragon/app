@@ -1,26 +1,12 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    Accordion,
-    Button,
-    Card,
-    DefinitionList,
-    Dropdown,
-    formatterUtils,
-    Heading,
-    IconType,
-    InputContainer,
-    NumberFormat,
-    Tag,
-} from '@aragon/gov-ui-kit';
+import { Accordion, Button, Card, Dropdown, Heading, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-import type {
-    ICreateProcessFormBody,
-    ICreateProcessFormData,
-    ITokenVotingMember,
-} from '../../../createProcessFormDefinitions';
+import type { ICreateProcessFormBody, ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { StageBodiesFieldDialog } from './stageBodiesFieldDialog';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 
 export interface IStageBodiesFieldProps {
     /**
@@ -122,110 +108,13 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                         <Heading size="h4">{field.name}</Heading>
                                     </Accordion.ItemHeader>
                                     <Accordion.ItemContent>
-                                        <DefinitionList.Container className="w-full">
-                                            {field.governanceType === 'tokenVoting' && (
-                                                <>
-                                                    <DefinitionList.Item
-                                                        term={t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.token',
-                                                        )}
-                                                    >
-                                                        {field.tokenName} (${field.tokenSymbol})
-                                                    </DefinitionList.Item>
-                                                    <DefinitionList.Item
-                                                        term={t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.distribution',
-                                                        )}
-                                                    >
-                                                        {field.members.length}{' '}
-                                                        {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
-                                                        {(field.members.length ?? 0) > 1
-                                                            ? t(
-                                                                  'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.plural',
-                                                              )
-                                                            : t(
-                                                                  'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.single',
-                                                              )}
-                                                    </DefinitionList.Item>
-                                                    <DefinitionList.Item
-                                                        term={t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.supply',
-                                                        )}
-                                                    >
-                                                        {formatterUtils.formatNumber(
-                                                            field.members.reduce(
-                                                                (sum, member) =>
-                                                                    sum +
-                                                                    Number((member as ITokenVotingMember).tokenAmount),
-                                                                0,
-                                                            ),
-                                                            { format: NumberFormat.TOKEN_AMOUNT_LONG },
-                                                        )}{' '}
-                                                        ${field.tokenSymbol}
-                                                    </DefinitionList.Item>
-                                                    <DefinitionList.Item
-                                                        term={t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.support',
-                                                        )}
-                                                    >
-                                                        {`> ${field.supportThreshold.toString()}%`}
-                                                    </DefinitionList.Item>
-                                                    <DefinitionList.Item
-                                                        term={t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.minimum',
-                                                        )}
-                                                    >
-                                                        {`≥ ${field.minimumParticipation.toString()}%`}
-                                                    </DefinitionList.Item>
-                                                    <DefinitionList.Item
-                                                        term={t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.tokenVoting.voteChange',
-                                                        )}
-                                                    >
-                                                        <Tag
-                                                            label={
-                                                                field.voteChange
-                                                                    ? t(
-                                                                          'app.createDao.createProcessForm.stages.bodies.summary.no',
-                                                                      )
-                                                                    : t(
-                                                                          'app.createDao.createProcessForm.stages.bodies.summary.no',
-                                                                      )
-                                                            }
-                                                            variant={field.voteChange ? 'primary' : 'neutral'}
-                                                            className="max-w-fit"
-                                                        />
-                                                    </DefinitionList.Item>
-                                                </>
-                                            )}
-
-                                            {field.governanceType === 'multisig' && (
-                                                <>
-                                                    <DefinitionList.Item
-                                                        term={t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.multisig.members',
-                                                        )}
-                                                    >
-                                                        {field.members.length}{' '}
-                                                        {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
-                                                        {(field.members.length ?? 0) > 1
-                                                            ? t(
-                                                                  'app.createDao.createProcessForm.stages.bodies.summary.multisig.plural',
-                                                              )
-                                                            : t(
-                                                                  'app.createDao.createProcessForm.stages.bodies.summary.multisig.single',
-                                                              )}
-                                                    </DefinitionList.Item>
-                                                    <DefinitionList.Item
-                                                        term={t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.multisig.threshold',
-                                                        )}
-                                                    >
-                                                        {field.multisigThreshold} of {field.members.length}
-                                                    </DefinitionList.Item>
-                                                </>
-                                            )}
-                                        </DefinitionList.Container>
+                                        <PluginSingleComponent
+                                            pluginId={
+                                                field.governanceType === 'tokenVoting' ? 'token-voting' : 'multisig'
+                                            }
+                                            slotId={GovernanceSlotId.GOVERNANCE_PROCESS_BODY_FIELD}
+                                            field={field}
+                                        />
                                         <div className="flex w-full grow justify-between">
                                             <Button
                                                 className="justify-end"

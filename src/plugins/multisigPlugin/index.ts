@@ -17,6 +17,7 @@ import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSett
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
+import { MultisigProcessBodyField } from './components/multisigProcessBodyField';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -93,6 +94,11 @@ export const initialiseMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
             pluginId: plugin.id,
             function: useMultisigPermissionCheckVoteSubmission,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_BODY_FIELD,
+            pluginId: plugin.id,
+            component: MultisigProcessBodyField,
         })
 
         // Settings module slots
