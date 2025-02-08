@@ -7,6 +7,7 @@ import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposa
 import { TokenGovernanceInfo } from './components/tokenGovernanceInfo';
 import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
+import { TokenProcessBodyField } from './components/tokenProcessBodyField';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
 import { TokenProposalVotingSummary } from './components/tokenProposalVotingSummary';
@@ -19,7 +20,6 @@ import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
-import { TokenProcessBodyField } from './components/tokenProcessBodyField';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils

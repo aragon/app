@@ -1,3 +1,5 @@
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Accordion, Button, Card, Dropdown, Heading, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
@@ -5,8 +7,6 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useAccount } from 'wagmi';
 import type { ICreateProcessFormBody, ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { StageBodiesFieldDialog } from './stageBodiesFieldDialog';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 
 export interface IStageBodiesFieldProps {
     /**
