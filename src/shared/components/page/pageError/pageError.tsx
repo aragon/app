@@ -1,6 +1,8 @@
 'use client';
 
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { useEffect } from 'react';
 import { ErrorFeedback } from '../../errorFeedback';
 import { useTranslations } from '../../translationsProvider';
 
@@ -23,6 +25,10 @@ export const PageError: React.FC<IPageErrorProps> = (props) => {
     const { error, actionLink, notFoundNamespace } = props;
 
     const { t } = useTranslations();
+
+    useEffect(() => {
+        monitoringUtils.logError(error);
+    }, [error]);
 
     if (!AragonBackendServiceError.isNotFoundError(error)) {
         return <ErrorFeedback primaryButton={{ label: t(`${notFoundNamespace}.notFound.action`), href: actionLink }} />;

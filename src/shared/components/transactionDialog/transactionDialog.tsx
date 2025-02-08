@@ -4,7 +4,6 @@ import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
-import type { UseQueryReturnType } from 'wagmi/query';
 import {
     TransactionStatus,
     type ITransactionStatusStepMetaAddon,
@@ -13,11 +12,7 @@ import {
 import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
-
-const queryToStepState = (
-    status: UseQueryReturnType['status'],
-    fetchStatus: UseQueryReturnType['fetchStatus'],
-): TransactionStatusState => (status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status);
+import { transactionDialogUtils } from './transactionDialogUtils';
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
@@ -43,9 +38,11 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const { chainId: requiredChainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
-    const handleTransactionError = useCallback(() => {
-        // TODO: Report the error to an error reporting service (APP-3107)
-    }, []);
+    const handleTransactionError = useCallback(
+        (stepId?: string) => (error: unknown, context?: Record<string, unknown>) =>
+            transactionDialogUtils.monitorTransactionError(error, { stepId, ...context }),
+        [],
+    );
 
     const {
         mutate: prepareTransactionMutate,
@@ -68,19 +65,19 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     });
 
     const handleSendTransaction = useCallback(() => {
+        const errorHandler = handleTransactionError(TransactionDialogStep.APPROVE);
+
         if (transaction == null) {
-            handleTransactionError();
+            errorHandler(new Error('TransactionDialog: transaction must be defined.'));
         } else {
-            sendTransaction(transaction, { onError: handleTransactionError });
+            sendTransaction(transaction, { onError: errorHandler });
         }
     }, [transaction, sendTransaction, handleTransactionError]);
 
-    const handleSwitchNetwork = useCallback(() => {
-        switchChain(
-            { chainId: requiredChainId },
-            { onError: handleTransactionError, onSuccess: handleSendTransaction },
-        );
-    }, [switchChain, requiredChainId, handleTransactionError, handleSendTransaction]);
+    const handleSwitchNetwork = useCallback(
+        () => switchChain({ chainId: requiredChainId }, { onSuccess: handleSendTransaction }),
+        [switchChain, requiredChainId, handleSendTransaction],
+    );
 
     const handleRetryTransaction = useCallback(() => {
         updateActiveStep(TransactionDialogStep.APPROVE);
@@ -102,7 +99,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
             [TransactionDialogStep.APPROVE]: approveStepStatus,
-            [TransactionDialogStep.CONFIRM]: queryToStepState(waitTxStatus, waitTxFetchStatus),
+            [TransactionDialogStep.CONFIRM]: transactionDialogUtils.queryToStepState(waitTxStatus, waitTxFetchStatus),
         }),
         [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus],
     );
@@ -151,7 +148,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
         // Use setTimeout to avoid double mutation on dev + StrictMode
         // (see https://github.com/TanStack/query/issues/5341)
-        const timeout = setTimeout(() => action({ onError: handleTransactionError }), 100);
+        const timeout = setTimeout(() => action({ onError: handleTransactionError(activeStepInfo?.id) }), 100);
         return () => clearTimeout(timeout);
     }, [activeStepInfo, handleTransactionError]);
 
@@ -178,7 +175,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 successLink={successLink}
                 txReceipt={txReceipt}
                 activeStep={activeStepInfo}
-                onError={handleTransactionError}
+                onError={handleTransactionError(activeStepInfo?.id)}
                 onCancelClick={onCancelClick}
             />
         </>
