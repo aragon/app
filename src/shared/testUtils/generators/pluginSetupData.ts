@@ -1,4 +1,4 @@
-import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
+import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 import type { Hex } from 'viem';
 
 export const generatePluginSetupData = (pluginSetupData?: Partial<IPluginSetupData>): IPluginSetupData => ({

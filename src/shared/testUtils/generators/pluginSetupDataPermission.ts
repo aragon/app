@@ -1,9 +1,9 @@
-import type { IPluginSetupDataPermission } from '@/shared/types/pluginSetupData';
+import type { IPluginSetupPermission } from '@/shared/utils/pluginTransactionUtils';
 import type { Hex } from 'viem';
 
 export const generatePluginSetupDataPermission = (
-    pluginSetupDataPermission?: Partial<IPluginSetupDataPermission>,
-): IPluginSetupDataPermission => ({
+    pluginSetupDataPermission?: Partial<IPluginSetupPermission>,
+): IPluginSetupPermission => ({
     operation: 0,
     where: '0xWhere' as Hex,
     who: '0xWho' as Hex,
