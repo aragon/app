@@ -5,8 +5,9 @@ import { generateCreateProcessFormData } from '@/shared/testUtils/generators/cre
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
+import type { Hex } from 'viem';
 import { ProposalCreationMode } from '../../components/createProcessForm';
-import { publishProcessDialogUtils } from './publishProcessDialogUtils';
+import { type IBuildTransactionParams, publishProcessDialogUtils } from './publishProcessDialogUtils';
 
 export const createTestParams = () => {
     const values = generateCreateProcessFormData({
@@ -26,86 +27,76 @@ export const createTestParams = () => {
 describe('publishProcessDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
     const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
-    const buildInstallActionsSpy = jest.spyOn(sppTransactionUtils, 'buildInstallActions');
+    const buildInstallPluginsActionsSpy = jest.spyOn(sppTransactionUtils, 'buildInstallPluginsActions');
+
+    beforeEach(() => {
+        getSlotFunctionSpy.mockReturnValue(jest.fn());
+        buildInstallPluginsActionsSpy.mockReturnValue([]);
+    });
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
         cidToHexSpy.mockReset();
+        buildInstallPluginsActionsSpy.mockReset();
     });
 
     describe('prepareProposalMetadata', () => {
-        it('returns correct proposal metadata', () => {
+        it('returns the metadata for the publish process proposal', () => {
             const result = publishProcessDialogUtils.prepareProposalMetadata();
-
-            expect(result).toEqual({
-                title: publishProcessDialogUtils['proposal'].title,
-                summary: publishProcessDialogUtils['proposal'].summary,
-            });
+            expect(result.title).toEqual(publishProcessDialogUtils['proposalMetadata'].title);
+            expect(result.summary).toEqual(publishProcessDialogUtils['proposalMetadata'].summary);
         });
     });
 
     describe('buildTransaction', () => {
-        it('converts the metadata CID to hex', async () => {
-            const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
-            const slotFunction = jest.fn(() => transactionData);
+        const createTestParams = (params?: Partial<IBuildTransactionParams>): IBuildTransactionParams => ({
+            values: generateCreateProcessFormData(),
+            dao: generateDao(),
+            plugin: generateDaoPlugin(),
+            setupData: [generatePluginSetupData()],
+            metadataCid: 'cid',
+            ...params,
+        });
+
+        it('converts the metadata CID to hex before passing it to the create proposal plugin function', async () => {
+            const metadataCid = 'cid';
+            const metadataHex = '0xtest';
+            const slotFunction = jest.fn();
+            cidToHexSpy.mockReturnValue(metadataHex);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
-            buildInstallActionsSpy.mockReturnValue([]);
 
-            const { values, dao, plugin, setupData } = createTestParams();
-
-            const metadataCid = 'cid-test';
-
-            await publishProcessDialogUtils.buildTransaction({
-                values,
-                dao,
-                plugin,
-                setupData,
-                metadataCid,
-            });
-
+            await publishProcessDialogUtils.buildTransaction(createTestParams({ metadataCid }));
             expect(cidToHexSpy).toHaveBeenCalledWith(metadataCid);
+            expect(slotFunction).toHaveBeenCalledWith(expect.objectContaining({ metadata: metadataHex }));
         });
 
-        it('calls the plugin specific data function with the correct params', async () => {
-            const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
-            const slotFunction = jest.fn(() => transactionData);
+        it('builds the install plugins actions and passes them to the create proposal plugin function', async () => {
+            const dao = generateDao();
+            const setupData = [generatePluginSetupData()];
+            const values = generateCreateProcessFormData();
+            const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: '11' }];
+            const slotFunction = jest.fn();
+            buildInstallPluginsActionsSpy.mockReturnValue(installPluginActions);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
-            buildInstallActionsSpy.mockReturnValue([]);
 
-            const { values, dao, plugin, setupData, metadataCid } = createTestParams();
-
-            await publishProcessDialogUtils.buildTransaction({
-                values,
-                dao,
-                plugin,
-                setupData,
-                metadataCid,
-            });
-
-            expect(getSlotFunctionSpy).toHaveBeenCalledWith({
-                pluginId: plugin.subdomain,
-                slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
-            });
+            await publishProcessDialogUtils.buildTransaction(createTestParams({ dao, values, setupData }));
+            expect(buildInstallPluginsActionsSpy).toHaveBeenCalledWith(values, setupData, dao);
+            expect(slotFunction).toHaveBeenCalledWith(expect.objectContaining({ actions: installPluginActions }));
         });
 
-        it('calls the plugin specific data function to prepare the transaction data and resolves with a transaction object', async () => {
-            const transactionData = '0xfbd56e4100000000000000000000000000000000000000000000000000000000000000e';
-            const slotFunction = jest.fn(() => transactionData);
-            getSlotFunctionSpy.mockReturnValue(slotFunction);
-            buildInstallActionsSpy.mockReturnValue([]);
+        it('retrieves and triggers the plugin specific function for building a create proposal transaction', async () => {
+            const plugin = generateDaoPlugin({ subdomain: 'admin' });
+            const transactionData = '0x123';
+            const buildTransactionFunction = jest.fn(() => transactionData);
+            getSlotFunctionSpy.mockReturnValue(buildTransactionFunction);
 
-            const { values, dao, plugin, setupData, metadataCid } = createTestParams();
+            const result = await publishProcessDialogUtils.buildTransaction(createTestParams({ plugin }));
 
-            const transaction = await publishProcessDialogUtils.buildTransaction({
-                values,
-                dao,
-                plugin,
-                setupData,
-                metadataCid,
-            });
+            const slotId = GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA;
+            expect(getSlotFunctionSpy).toHaveBeenCalledWith({ pluginId: plugin.subdomain, slotId });
 
-            expect(transaction.data).toEqual(transactionData);
-            expect(transaction.to).toEqual(plugin.address);
+            expect(result.to).toEqual(plugin.address);
+            expect(result.data).toEqual(transactionData);
         });
     });
 });
