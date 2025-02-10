@@ -6,23 +6,7 @@ import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSet
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import type { Hex } from 'viem';
-import { ProposalCreationMode } from '../../components/createProcessForm';
 import { type IBuildTransactionParams, publishProcessDialogUtils } from './publishProcessDialogUtils';
-
-export const createTestParams = () => {
-    const values = generateCreateProcessFormData({
-        permissions: {
-            proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
-            proposalCreationBodies: [],
-        },
-    });
-    const dao = generateDao();
-    const plugin = generateDaoPlugin({ subdomain: 'spp' });
-    const setupData = [generatePluginSetupData()];
-    const metadataCid = 'test-cid';
-
-    return { values, dao, plugin, setupData, metadataCid };
-};
 
 describe('publishProcessDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
