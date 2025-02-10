@@ -11,6 +11,10 @@ export interface INetworkDefinitionAddresses {
      * Admin plugin repository address.
      */
     adminPluginRepo: Hex;
+    /**
+     * Address of the plugin setup processor.
+     */
+    pluginSetupProcessor: Hex;
 }
 
 export interface INetworkDefinition {
@@ -45,7 +49,6 @@ export interface INetworkDefinition {
 }
 
 //TODO: Update the factoryAddress and adminPluginRepo for each network after 1.4 deployment
-
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
     // Mainnets
     [Network.ETHEREUM_MAINNET]: {
@@ -57,6 +60,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+            pluginSetupProcessor: zeroAddress,
         },
     },
     [Network.POLYGON_MAINNET]: {
@@ -68,6 +72,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+            pluginSetupProcessor: zeroAddress,
         },
     },
     [Network.BASE_MAINNET]: {
@@ -79,6 +84,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+            pluginSetupProcessor: zeroAddress,
         },
     },
     [Network.ARBITRUM_MAINNET]: {
@@ -90,6 +96,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+            pluginSetupProcessor: zeroAddress,
         },
     },
     [Network.ZKSYNC_MAINNET]: {
@@ -101,6 +108,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+            pluginSetupProcessor: zeroAddress,
         },
     },
     // Testnets
@@ -114,6 +122,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
             adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
+            pluginSetupProcessor: '0x9e99D11b513dD2cc5e117a5793412106502FF04B',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
@@ -126,6 +135,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         addresses: {
             daoFactory: zeroAddress,
             adminPluginRepo: zeroAddress,
+            pluginSetupProcessor: zeroAddress,
         },
     },
 };
