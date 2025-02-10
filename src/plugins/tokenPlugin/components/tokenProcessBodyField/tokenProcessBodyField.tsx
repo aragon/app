@@ -2,7 +2,7 @@ import type { ITokenVotingMember } from '@/modules/createDao/components/createPr
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
 
-export interface ITokenProcessBodyField {
+export interface ITokenProcessBody {
     /**
      * The name of the token.
      */
@@ -31,9 +31,9 @@ export interface ITokenProcessBodyField {
 
 export interface ITokenProcessBodyFieldProps {
     /**
-     * The field to display.
+     * The field from the create process form.
      */
-    field: ITokenProcessBodyField;
+    field: ITokenProcessBody;
 }
 
 export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
@@ -49,31 +49,31 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
         fallback: '0',
     });
 
-    const voteChangeLabel = voteChange
-        ? t('app.plugins.token.tokenProcessBodyField.yes')
-        : t('app.plugins.token.tokenProcessBodyField.no');
+    const baseTranslationKey = 'app.plugins.token.tokenProcessBodyField';
+
+    const voteChangeLabel = voteChange ? t(`${baseTranslationKey}.yes`) : t(`${baseTranslationKey}.no`);
+
+    const membersDefinition = members.length > 1 ? `${baseTranslationKey}.plural` : `${baseTranslationKey}.single`;
 
     return (
         <DefinitionList.Container className="w-full">
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.token')}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.token`)}>
                 {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.distribution')}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.distribution`)}>
                 {members.length}
-                {members.length > 1
-                    ? t('app.plugins.token.tokenProcessBodyField.plural')
-                    : t('app.plugins.token.tokenProcessBodyField.single')}
+                {t(membersDefinition)}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supply')}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.supply`)}>
                 {`${formattedSupply!} ${tokenSymbol}`}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.support')}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.support`)}>
                 {`> ${supportThreshold.toString()}%`}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.minimum')}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.minimum`)}>
                 {`≥ ${minimumParticipation.toString()}%`}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.voteChange')}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.voteChange`)}>
                 <Tag label={voteChangeLabel} variant={voteChange ? 'primary' : 'neutral'} className="max-w-fit" />
             </DefinitionList.Item>
         </DefinitionList.Container>

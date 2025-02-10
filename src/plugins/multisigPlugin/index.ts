@@ -18,6 +18,7 @@ import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSett
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -95,11 +96,6 @@ export const initialiseMultisigPlugin = () => {
             pluginId: plugin.id,
             function: useMultisigPermissionCheckVoteSubmission,
         })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_BODY_FIELD,
-            pluginId: plugin.id,
-            component: MultisigProcessBodyField,
-        })
 
         // Settings module slots
         .registerSlotFunction({
@@ -116,5 +112,12 @@ export const initialiseMultisigPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: plugin.id,
             component: MultisigGovernanceInfo,
+        })
+
+        // Create DAO module slots
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
+            pluginId: plugin.id,
+            component: MultisigProcessBodyField,
         });
 };

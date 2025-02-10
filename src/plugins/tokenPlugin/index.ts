@@ -20,6 +20,7 @@ import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
@@ -107,11 +108,6 @@ export const initialiseTokenPlugin = () => {
             pluginId: plugin.id,
             function: useTokenPermissionCheckVoteSubmission,
         })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_BODY_FIELD,
-            pluginId: plugin.id,
-            component: TokenProcessBodyField,
-        })
 
         // Settings module slots
         .registerSlotFunction({
@@ -128,5 +124,12 @@ export const initialiseTokenPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_INFO,
             pluginId: plugin.id,
             component: TokenGovernanceInfo,
+        })
+
+        // Create DAO module slots
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
+            pluginId: plugin.id,
+            component: TokenProcessBodyField,
         });
 };

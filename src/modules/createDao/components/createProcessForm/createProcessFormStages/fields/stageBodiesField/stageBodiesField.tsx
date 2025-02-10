@@ -1,4 +1,4 @@
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Accordion, Button, Card, Dropdown, Heading, IconType, InputContainer } from '@aragon/gov-ui-kit';
@@ -112,8 +112,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                             pluginId={
                                                 field.governanceType === 'tokenVoting' ? 'token-voting' : 'multisig'
                                             }
-                                            // TODO: CREATE DAO SOMETHING ELSE
-                                            slotId={GovernanceSlotId.GOVERNANCE_PROCESS_BODY_FIELD}
+                                            slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                                             field={field}
                                         />
                                         <div className="flex w-full grow justify-between">

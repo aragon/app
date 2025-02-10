@@ -1,22 +1,22 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList } from '@aragon/gov-ui-kit';
 
-export interface IMultisigProcessBodyField {
+export interface IMultisigProcessBody {
     /**
-     * Members of the multisig.
+     * Members of the body.
      */
     members: string[];
     /**
-     * Threshold of the multisig.
+     * Threshold of the body.
      */
     multisigThreshold: number;
 }
 
 export interface IMultisigProcessBodyFieldProps {
     /**
-     * The field to display.
+     * The field from the create process form.
      */
-    field: IMultisigProcessBodyField;
+    field: IMultisigProcessBody;
 }
 
 export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) => {
@@ -25,15 +25,18 @@ export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) 
 
     const { t } = useTranslations();
 
+    const baseTranslationKey = 'app.plugins.multisig.multisigProcessBodyField';
+
+    const membersDefinition =
+        members.length > 1 ? t(`${baseTranslationKey}.plural`) : t(`${baseTranslationKey}.single`);
+
     return (
         <DefinitionList.Container className="w-full">
-            <DefinitionList.Item term={t('app.plugins.multisig.multisigProcessBodyField.members')}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.members`)}>
                 {members.length}
-                {members.length > 1
-                    ? t('app.plugins.multisig.multisigProcessBodyField.plural')
-                    : t('app.plugins.multisig.multisigProcessBodyField.single')}
+                {membersDefinition}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.multisig.multisigProcessBodyField.threshold')}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.threshold`)}>
                 {multisigThreshold} of {members.length}
             </DefinitionList.Item>
         </DefinitionList.Container>

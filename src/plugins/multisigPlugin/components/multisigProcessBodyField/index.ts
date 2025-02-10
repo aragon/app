@@ -4,4 +4,4 @@ export const MultisigProcessBodyField = dynamic(() =>
     import('./multisigProcessBodyField').then((mod) => mod.MultisigProcessBodyField),
 );
 
-export type { IMultisigProcessBodyFieldProps } from './multisigProcessBodyField';
+export type { IMultisigProcessBodyFieldProps, IMultisigProcessBody } from './multisigProcessBodyField';
