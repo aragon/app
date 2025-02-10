@@ -1,8 +1,8 @@
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
-import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
@@ -33,12 +33,12 @@ export interface IBuildTransactionParams {
 }
 
 class PublishProcessDialogUtils {
-    private proposal = {
+    private proposalMetadata = {
         title: 'Apply plugin installation',
         summary: 'This proposal applies the plugin installation to create the new process',
     };
 
-    prepareProposalMetadata = () => this.proposal;
+    prepareProposalMetadata = () => this.proposalMetadata;
 
     buildTransaction = (params: IBuildTransactionParams) => {
         const { values, dao, setupData, plugin, metadataCid } = params;
@@ -50,7 +50,7 @@ class PublishProcessDialogUtils {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
-        const proposalActions = sppTransactionUtils.buildInstallActions(values, setupData, dao.address as Hex);
+        const proposalActions = sppTransactionUtils.buildInstallPluginsActions(values, setupData, dao);
 
         const buildDataParams: IBuildCreateProposalDataParams = {
             actions: proposalActions,

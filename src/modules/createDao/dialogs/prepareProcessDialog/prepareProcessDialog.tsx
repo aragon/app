@@ -11,6 +11,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
@@ -101,7 +102,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     );
 
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
-        const setupData = prepareProcessDialogUtils.getPluginSetupData(txReceipt);
+        const setupData = pluginTransactionUtils.getPluginSetupData(txReceipt);
         const params: IPublishProcessDialogParams = { values, daoId, setupData };
         open('PUBLISH_PROCESS', { params });
     };

@@ -1,16 +1,17 @@
 import {
     type ICreateProcessFormData,
+    type ICreateProcessFormStageTiming,
     ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
-import { prepareProcessDialogUtils } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import type { IPluginSetupData } from '@/shared/types/pluginSetupData';
+import type { IDao } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { type IPluginSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
 import { SppProposalType } from '../../types';
 import { sppPluginAbi } from './sppPluginAbi';
@@ -18,12 +19,15 @@ import { sppPluginAbi } from './sppPluginAbi';
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class SppTransactionUtils {
-    private defaultMaxAdvance = BigInt(dateUtils.durationToSeconds({ days: 36500, hours: 0, minutes: 0 })); // 10 years
+    // When stage expiration is not defined, we set a default max-advance to 100 years
+    private defaultMaxAdvance = BigInt(dateUtils.durationToSeconds({ days: 36525, hours: 0, minutes: 0 }));
 
+    // A special address for encoding permissions
+    // See https://github.com/aragon/osx/blob/main/packages/contracts/src/core/permission/PermissionManager.sol#L23
     private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
 
     private permissionIds = {
-        applyMultiTargetPermission: 'ROOT_PERMISSION', // TODO: failing without root-permission
+        rootPermission: 'ROOT_PERMISSION',
         createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
         executePermission: 'EXECUTE_PERMISSION',
     };
@@ -43,25 +47,97 @@ class SppTransactionUtils {
         return data;
     };
 
-    buildUpdateRulesTransaction = (values: ICreateProcessFormData, setupData: IPluginSetupData[]) => {
+    buildInstallPluginsActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], dao: IDao) => {
+        const daoAddress = dao.address as Hex;
+        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
+
+        // The SPP plugin is the one prepared first, the setupData array contains the data for the SPP plugin as the first element.
+        const [sppAddress, ...pluginAddresses] = setupData.map((data) => data.pluginAddress);
+        const [sppSetupData, ...pluginSetupData] = setupData;
+
+        const grantRootPermissionAction = permissionTransactionUtils.buildGrantPermissionTransaction({
+            where: daoAddress,
+            who: pluginSetupProcessor,
+            what: this.permissionIds.rootPermission,
+            to: daoAddress,
+        });
+
+        const applyInstallationActions = pluginTransactionUtils.setupDataToActions(setupData, dao);
+        const updateStagesAction = this.buildUpdateStagesTransaction(values, sppAddress, pluginAddresses);
+        const updateCreateProposalRulesAction = this.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData);
+
+        const pluginPermissionActions = pluginSetupData
+            .map((data) => this.buildBodyPermissionActions(data, daoAddress, sppAddress))
+            .flat();
+
+        const revokeRootPermissionAction = permissionTransactionUtils.buildRevokePermissionTransaction({
+            where: daoAddress,
+            who: pluginSetupProcessor,
+            what: this.permissionIds.rootPermission,
+            to: daoAddress,
+        });
+
+        return [
+            grantRootPermissionAction,
+            ...applyInstallationActions,
+            updateStagesAction,
+            updateCreateProposalRulesAction,
+            ...pluginPermissionActions,
+            revokeRootPermissionAction,
+        ].filter((action) => action != null);
+    };
+
+    private buildBodyPermissionActions = (pluginData: IPluginSetupData, daoAddress: Hex, sppAddress: Hex) => {
+        const { pluginAddress: bodyAddress } = pluginData;
+
+        // No address should be able to create proposals directly on sub-plugins
+        const revokePluginCreateProposalAction = permissionTransactionUtils.buildRevokePermissionTransaction({
+            where: bodyAddress,
+            who: this.anyAddress,
+            what: this.permissionIds.createProposalPermission,
+            to: daoAddress,
+        });
+
+        // Allow SPP to create proposals on sub-plugins
+        const grantSppCreateProposalAction = permissionTransactionUtils.buildGrantPermissionTransaction({
+            where: bodyAddress,
+            who: sppAddress,
+            what: this.permissionIds.createProposalPermission,
+            to: daoAddress,
+        });
+
+        // Sub-plugin should not have execute permission on the DAO, only SPP should have execute permission
+        const revokeExecutePermission = permissionTransactionUtils.buildRevokePermissionTransaction({
+            where: daoAddress,
+            who: bodyAddress,
+            what: this.permissionIds.executePermission,
+            to: daoAddress,
+        });
+
+        return [revokePluginCreateProposalAction, grantSppCreateProposalAction, revokeExecutePermission];
+    };
+
+    private buildUpdateRulesTransaction = (
+        values: ICreateProcessFormData,
+        sppSetupData: IPluginSetupData,
+        pluginSetupData: IPluginSetupData[],
+    ) => {
         const { permissions, stages } = values;
         const { proposalCreationBodies, proposalCreationMode } = permissions;
 
-        // SPP setup data is the first element of the setupData array and the related rule-condition contract is the
-        // first item of the helpers address array (similarly for the plugin-specific conditions)
-        const sppRuleCondition = setupData[0].preparedSetupData.helpers[0];
+        const sppRuleConditionContract = sppSetupData.preparedSetupData.helpers[0];
 
         if (proposalCreationMode === ProposalCreationMode.ANY_WALLET) {
             return undefined;
         }
 
-        const conditionAddresses = stages
-            .flatMap((stage) => stage.bodies)
-            .reduce<string[]>((current, body, bodyIndex) => {
-                const isBodyAllowed = proposalCreationBodies.find((bodySettings) => bodySettings.bodyId === body.id);
+        const sppBodies = stages.flatMap((stage) => stage.bodies);
+        const conditionAddresses = sppBodies.reduce<string[]>((current, body, bodyIndex) => {
+            const isBodyAllowed = proposalCreationBodies.find((bodySettings) => bodySettings.bodyId === body.id);
+            const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
-                return isBodyAllowed ? [...current, setupData[bodyIndex + 1].preparedSetupData.helpers[0]] : current;
-            }, []);
+            return isBodyAllowed ? [...current, bodyConditionAddress] : current;
+        }, []);
 
         const conditionRules = permissionTransactionUtils.buildRuleConditions(conditionAddresses, []);
 
@@ -71,47 +147,24 @@ class SppTransactionUtils {
             args: [conditionRules],
         });
 
-        return { to: sppRuleCondition, data: transactionData, value: '0' };
+        return { to: sppRuleConditionContract, data: transactionData, value: '0' };
     };
 
-    buildUpdateStagesTransaction = (values: ICreateProcessFormData, pluginAddresses: Hex[]) => {
+    private buildUpdateStagesTransaction = (values: ICreateProcessFormData, sppAddress: Hex, bodyAddresses: Hex[]) => {
         const { stages } = values;
-        const [sppAddress, ...bodyAddresses] = pluginAddresses;
 
         const processedStages = stages.map((stage) => {
-            const isTimelockStage = stage.type === ProcessStageType.TIMELOCK;
+            const { type, bodies, timing, requiredApprovals } = stage;
 
-            const bodies = stage.bodies.map(() => {
-                const pluginAddress = bodyAddresses.shift()!;
+            const stageTiming = this.processStageTiming(timing, type);
+            const stageApprovals = this.processStageApprovals(requiredApprovals, type);
 
-                return {
-                    addr: pluginAddress,
-                    isManual: false,
-                    tryAdvance: true,
-                    resultType:
-                        stage.type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO,
-                };
-            });
+            const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
-            const votingPeriod = BigInt(dateUtils.durationToSeconds(stage.timing.votingPeriod));
+            const bodySettings = { isManual: false, tryAdvance: true };
+            const processedBodies = bodies.map(() => ({ addr: bodyAddresses.shift()!, resultType, ...bodySettings }));
 
-            const voteDuration = isTimelockStage ? BigInt(0) : votingPeriod;
-
-            const maxAdvance =
-                stage.timing.stageExpiration != null
-                    ? BigInt(dateUtils.durationToSeconds(stage.timing.stageExpiration)) + voteDuration
-                    : undefined;
-
-            return {
-                bodies,
-                minAdvance: stage.timing.earlyStageAdvance ? BigInt(0) : votingPeriod,
-                maxAdvance: maxAdvance ?? this.defaultMaxAdvance,
-                voteDuration,
-                approvalThreshold: stage.type === ProcessStageType.NORMAL ? stage.requiredApprovals : 0,
-                vetoThreshold: stage.type === ProcessStageType.OPTIMISTIC ? stage.requiredApprovals : 0,
-                cancelable: false,
-                editable: false,
-            };
+            return { bodies: processedBodies, ...stageApprovals, ...stageTiming, cancelable: false, editable: false };
         });
 
         const transactionData = encodeFunctionData({
@@ -123,68 +176,28 @@ class SppTransactionUtils {
         return { to: sppAddress, data: transactionData, value: '0' };
     };
 
-    buildInstallActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], daoAddress: Hex) => {
-        const pluginAddresses = setupData.map((data) => data.pluginAddress);
+    private processStageApprovals = (requiredApprovals: number, stageType: ProcessStageType) => {
+        const approvalThreshold = stageType === ProcessStageType.NORMAL ? requiredApprovals : 0;
+        const vetoThreshold = stageType === ProcessStageType.OPTIMISTIC ? requiredApprovals : 0;
 
-        const grantMultiTargetPermissionAction = permissionTransactionUtils.buildGrantPermissionTransaction({
-            where: daoAddress,
-            who: prepareProcessDialogUtils.pspRepoAddress,
-            what: this.permissionIds.applyMultiTargetPermission,
-            to: daoAddress,
-        });
-        const applyInstallationActions = pluginTransactionUtils.buildApplyInstallationTransactions(
-            setupData,
-            daoAddress,
-        );
-        const updateStagesAction = this.buildUpdateStagesTransaction(values, pluginAddresses);
-        const updateCreateProposalRulesAction = this.buildUpdateRulesTransaction(values, setupData);
+        return { approvalThreshold, vetoThreshold };
+    };
 
-        // Skip first setupData item as it is related to the SPP plugin
-        const pluginPermissionActions = setupData.slice(1).map((pluginData) => {
-            const { pluginAddress: bodyAddress } = pluginData;
+    private processStageTiming = (timing: ICreateProcessFormStageTiming, stageType: ProcessStageType) => {
+        const { votingPeriod, stageExpiration, earlyStageAdvance } = timing;
 
-            // No one should be able to create proposals directly on sub-plugins
-            const revokePluginCreateProposalAction = permissionTransactionUtils.buildRevokePermissionTransaction({
-                where: bodyAddress,
-                who: this.anyAddress,
-                what: this.permissionIds.createProposalPermission,
-                to: daoAddress,
-            });
+        const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
-            // Allow SPP to create proposals on sub-plugins
-            const grantSppCreateProposalAction = permissionTransactionUtils.buildGrantPermissionTransaction({
-                where: bodyAddress,
-                who: pluginAddresses[0], // SPP address
-                what: this.permissionIds.createProposalPermission,
-                to: daoAddress,
-            });
+        const processedVotingPeriod = BigInt(dateUtils.durationToSeconds(votingPeriod));
+        const voteDuration = isTimelockStage ? BigInt(0) : processedVotingPeriod;
 
-            // Sub-plugin shouldn't have execute permission as SPP will already have it
-            const revokeExecutePermission = permissionTransactionUtils.buildRevokePermissionTransaction({
-                where: daoAddress,
-                who: bodyAddress,
-                what: this.permissionIds.executePermission,
-                to: daoAddress,
-            });
+        const minAdvance = earlyStageAdvance ? BigInt(0) : processedVotingPeriod;
+        const maxAdvance =
+            stageExpiration != null
+                ? voteDuration + BigInt(dateUtils.durationToSeconds(stageExpiration))
+                : this.defaultMaxAdvance;
 
-            return [revokePluginCreateProposalAction, grantSppCreateProposalAction, revokeExecutePermission];
-        });
-
-        const revokeMultiTargetPermissionAction = permissionTransactionUtils.buildRevokePermissionTransaction({
-            where: daoAddress,
-            who: prepareProcessDialogUtils.pspRepoAddress,
-            what: this.permissionIds.applyMultiTargetPermission,
-            to: daoAddress,
-        });
-
-        return [
-            grantMultiTargetPermissionAction,
-            ...applyInstallationActions,
-            updateStagesAction,
-            updateCreateProposalRulesAction,
-            ...pluginPermissionActions.flat(),
-            revokeMultiTargetPermissionAction,
-        ].filter((action) => action != null);
+        return { minAdvance, maxAdvance, voteDuration };
     };
 }
 
