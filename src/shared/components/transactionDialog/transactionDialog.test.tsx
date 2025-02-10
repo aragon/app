@@ -256,7 +256,7 @@ describe('<TransactionDialog /> component', () => {
         });
     });
 
-    it('logs an error to the monitoring service when wait-for-tx step fails', () => {
+    it('logs an error to the monitoring service when CONFIRM step fails', () => {
         const error = 'transaction-failed' as unknown as WaitForTransactionReceiptErrorType;
         const waitTxError = { queryKey: [''], ...generateReactQueryResultError({ error }) };
         const address = '0x123';
