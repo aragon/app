@@ -3,16 +3,9 @@ import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import {
-    encodeAbiParameters,
-    encodeFunctionData,
-    parseEventLogs,
-    parseUnits,
-    zeroAddress,
-    type Hex,
-    type TransactionReceipt,
-} from 'viem';
+import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroAddress, type Hex } from 'viem';
 import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
 import type { IBuildCreateProposalDataParams } from '../../../governance/types';
 import {
@@ -73,21 +66,6 @@ export interface IPluginRepoInfo {
     version: { release: number; build: number };
 }
 
-export interface IPluginSetupDataPermission {
-    operation: number;
-    where: Hex;
-    who: Hex;
-    condition: Hex;
-    permissionId: Hex;
-}
-
-export interface IPluginSetupData {
-    pluginAddress: Hex;
-    pluginSetupRepo: Hex;
-    versionTag: { release: number; build: number };
-    preparedSetupData: { helpers: readonly Hex[]; permissions: readonly IPluginSetupDataPermission[] };
-}
-
 class PrepareProcessDialogUtils {
     private sppRepo: IPluginRepoInfo = {
         address: '0xE67b8E026d190876704292442A38163Ce6945d6b',
@@ -105,8 +83,6 @@ class PrepareProcessDialogUtils {
     };
 
     private globalExecutor: Hex = '0x67744773b8C29aaDc8a11010C09306c0029219Ff';
-
-    pspRepoAddress: Hex = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
 
     prepareProposalMetadata = () => {
         const title = 'Prepare plugin installation';
@@ -138,7 +114,7 @@ class PrepareProcessDialogUtils {
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
-        const proposalActions = this.buildPrepareInstallActions(values, dao.address as Hex, processMetadata);
+        const proposalActions = this.buildPrepareInstallActions(values, dao, processMetadata);
         const buildDataParams: IBuildCreateProposalDataParams = {
             actions: proposalActions,
             metadata: proposalMetadata,
@@ -154,32 +130,15 @@ class PrepareProcessDialogUtils {
         return Promise.resolve(transaction);
     };
 
-    getPluginSetupData = (receipt: TransactionReceipt) => {
-        const { logs } = receipt;
-
-        const installationPreparedLogs = parseEventLogs({
-            abi: pluginSetupProcessorAbi,
-            eventName: 'InstallationPrepared',
-            logs,
-        });
-
-        const pluginSetupData: IPluginSetupData[] = installationPreparedLogs.map((log) => ({
-            pluginAddress: log.args.plugin,
-            pluginSetupRepo: log.args.pluginSetupRepo,
-            versionTag: log.args.versionTag,
-            preparedSetupData: log.args.preparedSetupData,
-        }));
-
-        return pluginSetupData;
-    };
-
     private buildPrepareInstallActions = (
         values: ICreateProcessFormData,
-        daoAddress: Hex,
+        dao: IDao,
         processMetadata: IPrepareProcessMetadata,
     ) => {
         const { stages, permissions } = values;
         const { proposalCreationBodies, proposalCreationMode } = permissions;
+        const { network } = dao;
+        const daoAddress = dao.address as Hex;
 
         const sppMetadata = transactionUtils.cidToHex(processMetadata.spp);
         const pluginsMetadata = processMetadata.plugins.map((cid) => transactionUtils.cidToHex(cid));
@@ -202,7 +161,7 @@ class PrepareProcessDialogUtils {
         });
 
         const installActions = [sppInstallData, ...pluginsInstallData.flat()].map((data) =>
-            this.installDataToAction(data),
+            pluginTransactionUtils.installDataToAction(data, network),
         );
 
         return installActions;
@@ -316,8 +275,6 @@ class PrepareProcessDialogUtils {
 
         return transactionData;
     };
-
-    private installDataToAction = (data: Hex) => ({ to: this.pspRepoAddress, data, value: '0' });
 }
 
 export const prepareProcessDialogUtils = new PrepareProcessDialogUtils();

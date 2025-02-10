@@ -34,14 +34,14 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const { t } = useTranslations();
     const { switchChain, status: switchChainStatus } = useSwitchChain();
 
-    const { chainId } = useAccount();
+    const { chainId, address } = useAccount();
     const { chainId: requiredChainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const handleTransactionError = useCallback(
         (stepId?: string) => (error: unknown, context?: Record<string, unknown>) =>
-            transactionDialogUtils.monitorTransactionError(error, { stepId, ...context }),
-        [],
+            transactionDialogUtils.monitorTransactionError(error, { stepId, from: address, ...context }),
+        [address],
     );
 
     const {
@@ -60,6 +60,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         data: txReceipt,
         status: waitTxStatus,
         fetchStatus: waitTxFetchStatus,
+        error: waitTxError,
     } = useWaitForTransactionReceipt({
         hash: transactionHash,
     });
@@ -156,6 +157,12 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         () => updateSteps([...(customSteps ?? []), ...transactionSteps]),
         [customSteps, transactionSteps, updateSteps],
     );
+
+    useEffect(() => {
+        if (waitTxError) {
+            handleTransactionError(TransactionDialogStep.CONFIRM)(waitTxError, { transaction });
+        }
+    }, [waitTxError, transaction, handleTransactionError]);
 
     return (
         <>
