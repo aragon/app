@@ -1,4 +1,4 @@
-import { type ICreateProcessFormData, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
+import { type ICreateProcessFormData, ProposalCreationMode } from '../../components/createProcessForm';
 
 export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFormData>): ICreateProcessFormData => ({
     name: 'Test Process',

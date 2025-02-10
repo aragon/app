@@ -1,14 +1,14 @@
 import { ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
-import { type Hex, zeroHash } from 'viem';
-import * as Viem from 'viem';
-import { sppTransactionUtils } from './sppTransactionUtils';
-import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
-import { sppPluginAbi } from './sppPluginAbi';
+import { generateCreateProcessFormData } from '@/modules/createDao/testUtils/generators/createProcessFormData';
+import { Network } from '@/shared/api/daoService';
+import { generateDao } from '@/shared/testUtils';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { generateDao } from '@/shared/testUtils';
-import { Network } from '@/shared/api/daoService';
+import * as Viem from 'viem';
+import { type Hex, zeroHash } from 'viem';
+import { sppPluginAbi } from './sppPluginAbi';
+import { sppTransactionUtils } from './sppTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
@@ -382,4 +382,3 @@ describe('sppTransaction utils', () => {
         });
     });
 });
-
