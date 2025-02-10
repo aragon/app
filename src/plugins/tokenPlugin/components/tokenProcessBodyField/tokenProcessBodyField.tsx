@@ -43,6 +43,16 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
 
     const { t } = useTranslations();
 
+    const supply = members.reduce((sum, member) => sum + Number(member.tokenAmount), 0);
+    const formattedSupply = formatterUtils.formatNumber(supply, {
+        format: NumberFormat.TOKEN_AMOUNT_LONG,
+        fallback: '0',
+    });
+
+    const voteChangeLabel = voteChange
+        ? t('app.plugins.token.tokenProcessBodyField.yes')
+        : t('app.plugins.token.tokenProcessBodyField.no');
+
     return (
         <DefinitionList.Container className="w-full">
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.token')}>
@@ -55,11 +65,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                     : t('app.plugins.token.tokenProcessBodyField.single')}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supply')}>
-                {formatterUtils.formatNumber(
-                    members.reduce((sum, member) => sum + Number(member.tokenAmount), 0),
-                    { format: NumberFormat.TOKEN_AMOUNT_LONG },
-                )}{' '}
-                ${tokenSymbol}
+                {`${formattedSupply!} ${tokenSymbol}`}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.support')}>
                 {`> ${supportThreshold.toString()}%`}
@@ -68,15 +74,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 {`≥ ${minimumParticipation.toString()}%`}
             </DefinitionList.Item>
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.voteChange')}>
-                <Tag
-                    label={
-                        voteChange
-                            ? t('app.plugins.token.tokenProcessBodyField.yes')
-                            : t('app.plugins.token.tokenProcessBodyField.no')
-                    }
-                    variant={voteChange ? 'primary' : 'neutral'}
-                    className="max-w-fit"
-                />
+                <Tag label={voteChangeLabel} variant={voteChange ? 'primary' : 'neutral'} className="max-w-fit" />
             </DefinitionList.Item>
         </DefinitionList.Container>
     );
