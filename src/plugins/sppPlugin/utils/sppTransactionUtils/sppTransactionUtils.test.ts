@@ -232,7 +232,9 @@ describe('sppTransaction utils', () => {
     });
 
     describe('buildUpdateStagesTransaction', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const processStageTimingSpy = jest.spyOn(sppTransactionUtils as any, 'processStageTiming');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const processStageApprovalsSpy = jest.spyOn(sppTransactionUtils as any, 'processStageApprovals');
 
         afterEach(() => {
