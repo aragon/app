@@ -6,7 +6,7 @@ import type { IConditionRule } from './permissionTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
-describe('PermissionTransactionUtils', () => {
+describe('permissionTransaction utils', () => {
     const keccak256Spy = jest.spyOn(Viem, 'keccak256');
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const toBytesSpy = jest.spyOn(Viem, 'toBytes');

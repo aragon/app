@@ -12,14 +12,12 @@ jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>(
 
 describe('pluginTransaction utils', () => {
     const parseEventLogsSpy = jest.spyOn(Viem, 'parseEventLogs');
-
     const keccak256Spy = jest.spyOn(Viem, 'keccak256');
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
 
     afterEach(() => {
         parseEventLogsSpy.mockReset();
-
         keccak256Spy.mockReset();
         encodeAbiParametersSpy.mockReset();
         encodeFunctionDataSpy.mockReset();
