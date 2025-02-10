@@ -1,8 +1,11 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { generateCreateProcessFormData } from '@/shared/testUtils/generators/createProcessFormData';
-import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
+import {
+    generateCreateProcessFormData,
+    generateDao,
+    generateDaoPlugin,
+    generatePluginSetupData,
+} from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import type { Hex } from 'viem';

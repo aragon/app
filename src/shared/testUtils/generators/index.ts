@@ -1,4 +1,5 @@
 export * from './addressInfo';
+export * from './createProcessFormData';
 export * from './dao';
 export * from './daoMetrics';
 export * from './daoPlugin';
@@ -7,6 +8,8 @@ export * from './paginatedResponse';
 export * from './paginatedResponseMetadata';
 export * from './plugin';
 export * from './pluginSettings';
+export * from './pluginSetupData';
+export * from './pluginSetupDataPermission';
 export * from './reactQueryResponse';
 export * from './request';
 export * from './response';

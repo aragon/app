@@ -1,8 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { generateDao } from '@/shared/testUtils';
-import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
-import { generatePluginSetupDataPermission } from '@/shared/testUtils/generators/pluginSetupDataPermission';
+import { generateDao, generatePluginSetupData, generatePluginSetupDataPermission } from '@/shared/testUtils';
 import type { Hex } from 'viem';
 import * as Viem from 'viem';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
