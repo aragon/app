@@ -1,3 +1,4 @@
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { useMultisigPermissionCheckProposalCreation } from '@/plugins/multisigPlugin/hooks/useMultisigPermissionCheckProposalCreation';
@@ -18,7 +19,6 @@ import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSett
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
-import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils

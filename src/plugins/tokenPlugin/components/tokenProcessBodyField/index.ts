@@ -4,4 +4,4 @@ export const TokenProcessBodyField = dynamic(() =>
     import('./tokenProcessBodyField').then((mod) => mod.TokenProcessBodyField),
 );
 
-export type { ITokenProcessBodyFieldProps, ITokenProcessBody } from './tokenProcessBodyField';
+export type { ITokenProcessBody, ITokenProcessBodyFieldProps } from './tokenProcessBodyField';
