@@ -112,6 +112,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                             pluginId={
                                                 field.governanceType === 'tokenVoting' ? 'token-voting' : 'multisig'
                                             }
+                                            // TODO: CREATE DAO SOMETHING ELSE
                                             slotId={GovernanceSlotId.GOVERNANCE_PROCESS_BODY_FIELD}
                                             field={field}
                                         />
