@@ -153,6 +153,7 @@ class SppTransactionUtils {
     private buildUpdateStagesTransaction = (values: ICreateProcessFormData, sppAddress: Hex, bodyAddresses: Hex[]) => {
         const { stages } = values;
 
+        const processedBodyAddresses = [...bodyAddresses];
         const processedStages = stages.map((stage) => {
             const { type, bodies, timing, requiredApprovals } = stage;
 
@@ -162,7 +163,11 @@ class SppTransactionUtils {
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
             const bodySettings = { isManual: false, tryAdvance: true };
-            const processedBodies = bodies.map(() => ({ addr: bodyAddresses.shift()!, resultType, ...bodySettings }));
+            const processedBodies = bodies.map(() => ({
+                addr: processedBodyAddresses.shift()!,
+                resultType,
+                ...bodySettings,
+            }));
 
             return { bodies: processedBodies, ...stageApprovals, ...stageTiming, cancelable: false, editable: false };
         });

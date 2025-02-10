@@ -1,5 +1,9 @@
 import { ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
-import { generateCreateProcessFormData } from '@/modules/createDao/testUtils/generators/createProcessFormData';
+import {
+    generateCreateProcessFormBody,
+    generateCreateProcessFormData,
+    generateCreateProcessFormStage,
+} from '@/modules/createDao/testUtils/generators/createProcessFormData';
 import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
@@ -13,82 +17,69 @@ import { sppTransactionUtils } from './sppTransactionUtils';
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('sppTransaction utils', () => {
+    const grantPermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');
+    const revokePermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildRevokePermissionTransaction');
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
 
     afterEach(() => {
+        grantPermissionSpy.mockReset();
+        revokePermissionSpy.mockReset();
         encodeFunctionDataSpy.mockReset();
     });
 
     describe('buildInstallPluginsActions', () => {
-        const grantPermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');
         const setupDataToActionsSpy = jest.spyOn(pluginTransactionUtils, 'setupDataToActions');
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildUpdateStagesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateStagesTransaction');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildUpdateRulesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateRulesTransaction');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildBodyPermissionActionsSpy = jest.spyOn(sppTransactionUtils as any, 'buildBodyPermissionActions');
-        const buildRevokePermissionTransactionSpy = jest.spyOn(
-            permissionTransactionUtils,
-            'buildRevokePermissionTransaction',
-        );
-        const installDataToActionSpy = jest.spyOn(pluginTransactionUtils, 'installDataToAction');
 
         afterEach(() => {
-            grantPermissionSpy.mockReset();
             setupDataToActionsSpy.mockReset();
             buildUpdateStagesTransactionSpy.mockReset();
             buildUpdateRulesTransactionSpy.mockReset();
             buildBodyPermissionActionsSpy.mockReset();
-            buildRevokePermissionTransactionSpy.mockReset();
-            installDataToActionSpy.mockReset();
         });
 
         afterAll(() => {
-            grantPermissionSpy.mockRestore();
             setupDataToActionsSpy.mockRestore();
             buildUpdateStagesTransactionSpy.mockRestore();
             buildUpdateRulesTransactionSpy.mockRestore();
             buildBodyPermissionActionsSpy.mockRestore();
-            buildRevokePermissionTransactionSpy.mockRestore();
-            installDataToActionSpy.mockRestore();
         });
 
         it('correctly builds the install actions for plugins', () => {
             const values = generateCreateProcessFormData();
             const setupData = [generatePluginSetupData(), generatePluginSetupData()];
-            const dao = generateDao({
-                address: '0x0000000000000000000000000000000000000001',
-                network: Network.ETHEREUM_SEPOLIA,
-            });
-
+            const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
             const daoAddress = dao.address as Hex;
 
-            // Mock each utility call to return consistent objects
-            grantPermissionSpy.mockReturnValueOnce({ to: daoAddress, data: '0xGrantRootPermissionData', value: '0' });
-            setupDataToActionsSpy.mockReturnValueOnce([{ to: '0xApplyTo', data: '0xApplyData', value: '0' }]);
-            installDataToActionSpy.mockReturnValueOnce({ to: '0xApplyTo', data: '0xApplyData', value: '0' });
-            buildBodyPermissionActionsSpy.mockReturnValueOnce([
-                { to: daoAddress, data: '0xBodyPermissionData', value: '0' },
-            ]);
-            buildUpdateStagesTransactionSpy.mockReturnValueOnce({ to: '0xStagesTo', data: '0xStagesData', value: '0' });
-            buildUpdateRulesTransactionSpy.mockReturnValueOnce({ to: '0xRulesTo', data: '0xRulesData', value: '0' });
-            // This is the missing piece
-            buildRevokePermissionTransactionSpy.mockReturnValueOnce({
-                to: daoAddress,
-                data: '0xRevokePermissionData',
-                value: '0',
-            });
+            const grantAction = { to: daoAddress, data: '0xgrant' as Hex, value: '0' };
+            const setupActions = [{ to: '0x001' as Hex, data: '0xsetup' as Hex, value: '0' }];
+            const updateStagesAction = { to: '0x002', data: '0xstages', value: '0' };
+            const updateRulesAction = { to: '0x003', data: '0xrules', value: '0' };
+            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Hex, value: '0' }];
+            const revokeAction = { to: daoAddress, data: '0xrevoke' as Hex, value: '0' };
+
+            grantPermissionSpy.mockReturnValueOnce(grantAction);
+            setupDataToActionsSpy.mockReturnValueOnce(setupActions);
+            buildUpdateStagesTransactionSpy.mockReturnValueOnce(updateStagesAction);
+            buildUpdateRulesTransactionSpy.mockReturnValueOnce(updateRulesAction);
+            buildBodyPermissionActionsSpy.mockReturnValueOnce(bodyPermissionActions);
+            revokePermissionSpy.mockReturnValueOnce(revokeAction);
 
             const result = sppTransactionUtils.buildInstallPluginsActions(values, setupData, dao);
 
             const expected = [
-                { to: daoAddress, data: '0xGrantRootPermissionData', value: '0' },
-                { to: '0xApplyTo', data: '0xApplyData', value: '0' },
-                { to: '0xStagesTo', data: '0xStagesData', value: '0' },
-                { to: '0xRulesTo', data: '0xRulesData', value: '0' },
-                { to: daoAddress, data: '0xBodyPermissionData', value: '0' },
-                { to: daoAddress, data: '0xRevokePermissionData', value: '0' },
+                grantAction,
+                ...setupActions,
+                updateStagesAction,
+                updateRulesAction,
+                ...bodyPermissionActions,
+                revokeAction,
             ];
 
             expect(result).toEqual(expected);
@@ -96,128 +87,84 @@ describe('sppTransaction utils', () => {
     });
 
     describe('buildBodyPermissionActions', () => {
-        const revokePermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildRevokePermissionTransaction');
-        const grantPermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');
-        const revokeExecutePermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildRevokePermissionTransaction');
+        it('correctly builds permission actions for the bodies of the SPP', () => {
+            const pluginData = generatePluginSetupData({ pluginAddress: '0x123' });
+            const daoAddress = '0xDao' as Hex;
+            const sppAddress = '0xSpp' as Hex;
 
-        afterEach(() => {
-            revokePermissionSpy.mockReset();
-            grantPermissionSpy.mockReset();
-            revokeExecutePermissionSpy.mockReset();
-        });
+            const revokeCreateProposalAction = { to: daoAddress, data: '0xrevoke-proposal' as Hex, value: '0' };
+            const revokeExecutePermissionAction = { to: daoAddress, data: '0xrevoke-execute' as Hex, value: '0' };
+            const grantAction = { to: daoAddress, data: '0xgrant' as Hex, value: '0' };
 
-        afterAll(() => {
-            revokePermissionSpy.mockRestore();
-            grantPermissionSpy.mockRestore();
-            revokeExecutePermissionSpy.mockRestore();
-        });
-
-        it('correctly builds the body permission actions', () => {
-            const pluginData = generatePluginSetupData({ pluginAddress: '0xBody' });
-            const daoAddress = '0xDao';
-            const sppAddress = '0xSpp';
-
-            const revokeData = '0xRevokePluginCreateProposalData';
-            const grantData = '0xGrantSppCreateProposalData';
-            const revokeExecuteData = '0xrevokeExecuteData';
-
-            revokePermissionSpy.mockReturnValueOnce({ to: daoAddress, data: revokeData, value: '0' });
-            grantPermissionSpy.mockReturnValueOnce({ to: daoAddress, data: grantData, value: '0' });
-            revokeExecutePermissionSpy.mockReturnValueOnce({ to: daoAddress, data: revokeExecuteData, value: '0' });
+            revokePermissionSpy
+                .mockReturnValueOnce(revokeCreateProposalAction)
+                .mockReturnValueOnce(revokeExecutePermissionAction);
+            grantPermissionSpy.mockReturnValueOnce(grantAction);
 
             const result = sppTransactionUtils['buildBodyPermissionActions'](pluginData, daoAddress, sppAddress);
+            expect(result).toEqual([revokeCreateProposalAction, grantAction, revokeExecutePermissionAction]);
 
-            const expectedRevokeAction = { to: daoAddress, data: revokeData, value: '0' };
-            const expectedGrantAction = { to: daoAddress, data: grantData, value: '0' };
-            const expectedRevokeExecuteAction = { to: daoAddress, data: revokeExecuteData, value: '0' };
-
-            expect(result).toEqual([expectedRevokeAction, expectedGrantAction, expectedRevokeExecuteAction]);
+            expect(revokePermissionSpy).toHaveBeenNthCalledWith(1, {
+                where: pluginData.pluginAddress,
+                who: sppTransactionUtils['anyAddress'],
+                what: sppTransactionUtils['permissionIds'].createProposalPermission,
+                to: daoAddress,
+            });
+            expect(revokePermissionSpy).toHaveBeenNthCalledWith(2, {
+                where: daoAddress,
+                who: pluginData.pluginAddress,
+                what: sppTransactionUtils['permissionIds'].executePermission,
+                to: daoAddress,
+            });
+            expect(grantPermissionSpy).toHaveBeenCalledWith({
+                where: pluginData.pluginAddress,
+                who: sppAddress,
+                what: sppTransactionUtils['permissionIds'].createProposalPermission,
+                to: daoAddress,
+            });
         });
     });
 
     describe('buildUpdateRulesTransaction', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const processStageTimingSpy = jest.spyOn(sppTransactionUtils as any, 'processStageTiming');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const processStageApprovalsSpy = jest.spyOn(sppTransactionUtils as any, 'processStageApprovals');
         const buildRuleConditionsSpy = jest.spyOn(permissionTransactionUtils, 'buildRuleConditions');
 
-        afterEach(() => {
-            processStageTimingSpy.mockReset();
-            processStageApprovalsSpy.mockReset();
-        });
-
-        afterAll(() => {
-            processStageTimingSpy.mockRestore();
-            processStageApprovalsSpy.mockRestore();
-        });
-
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
-            const values = generateCreateProcessFormData();
-            const sppSetupData = generatePluginSetupData();
-            const pluginSetupData = [generatePluginSetupData()];
-
-            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData);
-
+            const permissions = { proposalCreationMode: ProposalCreationMode.ANY_WALLET, proposalCreationBodies: [] };
+            const values = generateCreateProcessFormData({ permissions });
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, generatePluginSetupData(), []);
             expect(result).toBeUndefined();
         });
 
         it('correctly builds the update rules transaction', () => {
+            const sppAllowedBody = generateCreateProcessFormBody({ id: 'body-1' });
+            const sppNotAllowedBody = generateCreateProcessFormBody({ id: 'body-2' });
+            const sppStage = generateCreateProcessFormStage({ bodies: [sppAllowedBody, sppNotAllowedBody] });
             const values = generateCreateProcessFormData({
-                stages: [
-                    {
-                        name: 'Stage name',
-                        type: ProcessStageType.NORMAL,
-                        timing: {
-                            votingPeriod: { days: 1, hours: 0, minutes: 0 },
-                            earlyStageAdvance: false,
-                        },
-                        requiredApprovals: 1,
-                        bodies: [
-                            {
-                                id: 'body1',
-                                name: 'body1',
-                                resources: [],
-                                governanceType: 'multisig',
-                                members: [],
-                                tokenType: 'new',
-                                supportThreshold: 1,
-                                minimumParticipation: 1,
-                                voteChange: false,
-                                multisigThreshold: 1,
-                            },
-                        ],
-                    },
-                ],
+                stages: [sppStage],
                 permissions: {
-                    proposalCreationBodies: [{ bodyId: 'body1' }],
+                    proposalCreationBodies: [{ bodyId: sppAllowedBody.id }],
                     proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
                 },
             });
 
             const sppSetupData = generatePluginSetupData({
-                preparedSetupData: {
-                    helpers: ['0xSppRuleCondition'] as readonly Hex[],
-                    permissions: [],
-                },
+                preparedSetupData: { helpers: ['0xSppRuleCondition'], permissions: [] },
             });
+
             const pluginSetupData = [
-                generatePluginSetupData({
-                    preparedSetupData: {
-                        helpers: ['0xTestBodyCondition'] as readonly Hex[],
-                        permissions: [],
-                    },
-                }),
+                generatePluginSetupData({ preparedSetupData: { helpers: ['0x0'], permissions: [] } }),
+                generatePluginSetupData({ preparedSetupData: { helpers: ['0x1'], permissions: [] } }),
             ];
 
             const expectedConditionRules = [{ id: 202, op: 1, value: '0xTestBodyCondition', permissionId: zeroHash }];
-
             buildRuleConditionsSpy.mockReturnValueOnce(expectedConditionRules);
 
             const updateRulesTxData = '0xUpdateRulesTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(updateRulesTxData);
 
             const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, sppSetupData, pluginSetupData);
+
+            expect(buildRuleConditionsSpy).toHaveBeenCalledWith(['0x0'], []);
 
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: sppPluginAbi,
@@ -226,7 +173,6 @@ describe('sppTransaction utils', () => {
             });
 
             const expectedTransaction = { to: '0xSppRuleCondition', data: updateRulesTxData, value: '0' };
-
             expect(result).toEqual(expectedTransaction);
         });
     });
@@ -248,62 +194,32 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the update stages transaction', () => {
-            const values = generateCreateProcessFormData({
-                stages: [
-                    {
-                        name: 'Stage name',
-                        type: ProcessStageType.NORMAL,
-                        timing: { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false },
-                        requiredApprovals: 1,
-                        bodies: [
-                            {
-                                id: 'body1',
-                                name: 'body1',
-                                resources: [],
-                                governanceType: 'multisig',
-                                members: [],
-                                tokenType: 'new',
-                                supportThreshold: 1,
-                                minimumParticipation: 1,
-                                voteChange: false,
-                                multisigThreshold: 1,
-                            },
-                        ],
-                    },
-                ],
-                permissions: {
-                    proposalCreationBodies: [{ bodyId: 'body1' }],
-                    proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
-                },
-            });
+            const sppBody = generateCreateProcessFormBody();
+            const sppStage = generateCreateProcessFormStage({ bodies: [sppBody] });
+            const values = generateCreateProcessFormData({ stages: [sppStage] });
+            const transactionData = '0xupdate-stages';
 
-            processStageTimingSpy.mockReturnValueOnce({
+            const timing = {
                 voteDuration: BigInt(86400),
                 minAdvance: BigInt(86400),
                 maxAdvance: sppTransactionUtils['defaultMaxAdvance'],
-            });
+            };
+            processStageTimingSpy.mockReturnValueOnce(timing);
 
-            processStageApprovalsSpy.mockReturnValueOnce({ approvalThreshold: 1, vetoThreshold: 0 });
+            const thresholds = { approvalThreshold: 1, vetoThreshold: 0 };
+            processStageApprovalsSpy.mockReturnValueOnce(thresholds);
 
-            encodeFunctionDataSpy.mockReturnValueOnce('0xUpdateStagesData');
+            encodeFunctionDataSpy.mockReturnValueOnce(transactionData);
 
             const sppAddress = '0xSpp';
-            const pluginAddresses = ['0xPlugin1'] as Hex[];
-
+            const pluginAddresses = ['0x01'] as Hex[];
             const result = sppTransactionUtils['buildUpdateStagesTransaction'](values, sppAddress, pluginAddresses);
 
-            const expectedProcessedBodies = [{ addr: '0xPlugin1', resultType: 1, isManual: false, tryAdvance: true }];
+            const expectedProcessedBodies = [
+                { addr: pluginAddresses[0], resultType: 1, isManual: false, tryAdvance: true },
+            ];
             const expectedProcessedStages = [
-                {
-                    bodies: expectedProcessedBodies,
-                    approvalThreshold: 1,
-                    vetoThreshold: 0,
-                    minAdvance: BigInt(86400),
-                    voteDuration: BigInt(86400),
-                    maxAdvance: sppTransactionUtils['defaultMaxAdvance'],
-                    cancelable: false,
-                    editable: false,
-                },
+                { bodies: expectedProcessedBodies, ...thresholds, ...timing, cancelable: false, editable: false },
             ];
 
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
@@ -312,73 +228,75 @@ describe('sppTransaction utils', () => {
                 args: [expectedProcessedStages],
             });
 
-            expect(result).toEqual({
-                to: '0xSpp',
-                data: '0xUpdateStagesData',
-                value: '0',
-            });
+            expect(result).toEqual({ to: sppAddress, data: transactionData, value: '0' });
         });
     });
 
     describe('processStageApprovals', () => {
         it('returns the correct approvals for a timelock stage', () => {
-            const stageType = ProcessStageType.TIMELOCK;
-            const requiredApprovals = 1;
-
-            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, stageType);
-
-            expect(result.approvalThreshold).toBe(0);
-            expect(result.vetoThreshold).toBe(0);
+            const result = sppTransactionUtils['processStageApprovals'](1, ProcessStageType.TIMELOCK);
+            expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: 0 });
         });
 
         it('returns the correct approvals for a normal stage', () => {
-            const stageType = ProcessStageType.NORMAL;
             const requiredApprovals = 3;
-
-            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, stageType);
-
-            expect(result.approvalThreshold).toBe(3);
-            expect(result.vetoThreshold).toBe(0);
+            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.NORMAL);
+            expect(result).toEqual({ approvalThreshold: requiredApprovals, vetoThreshold: 0 });
         });
 
         it('returns the correct approvals for a optimistic stage', () => {
-            const stageType = ProcessStageType.OPTIMISTIC;
             const requiredApprovals = 2;
-
-            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, stageType);
-
-            expect(result.approvalThreshold).toBe(0);
-            expect(result.vetoThreshold).toBe(2);
+            const result = sppTransactionUtils['processStageApprovals'](requiredApprovals, ProcessStageType.OPTIMISTIC);
+            expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: requiredApprovals });
         });
     });
 
     describe('processStageTiming', () => {
-        it('returns voteDuration as 0 when stageType is TIMELOCK', () => {
+        it('returns vote duration as 0 when stageType is TIMELOCK', () => {
             const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false };
             const stageType = ProcessStageType.TIMELOCK;
-
             const result = sppTransactionUtils['processStageTiming'](timing, stageType);
-
             expect(result.voteDuration).toBe(BigInt(0));
         });
 
         it('correctly processes the voting period to seconds for non timelock stages', () => {
-            const ONE_DAY_IN_SECONDS = 86400;
             const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false };
             const stageType = ProcessStageType.NORMAL;
-
             const result = sppTransactionUtils['processStageTiming'](timing, stageType);
-
-            expect(result.voteDuration).toBe(BigInt(ONE_DAY_IN_SECONDS));
+            expect(result.voteDuration).toBe(BigInt(86400)); // One day in seconds
         });
 
         it('returns minAdvance as 0 when earlyStageAdvance is true', () => {
             const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: true };
             const stageType = ProcessStageType.NORMAL;
-
             const result = sppTransactionUtils['processStageTiming'](timing, stageType);
-
             expect(result.minAdvance).toBe(BigInt(0));
+        });
+
+        it('returns minAdvance as the voting period when earlyStageAdvance is false', () => {
+            const timing = { votingPeriod: { days: 0, hours: 12, minutes: 0 }, earlyStageAdvance: false };
+            const result = sppTransactionUtils['processStageTiming'](timing, ProcessStageType.OPTIMISTIC);
+            expect(result.minAdvance).toBe(BigInt(43200));
+        });
+
+        it('returns a big default max advance when stage expiration is not set', () => {
+            const timing = {
+                votingPeriod: { days: 0, hours: 12, minutes: 0 },
+                earlyStageAdvance: false,
+                stageExpiration: undefined,
+            };
+            const result = sppTransactionUtils['processStageTiming'](timing, ProcessStageType.OPTIMISTIC);
+            expect(result.maxAdvance).toEqual(sppTransactionUtils['defaultMaxAdvance']);
+        });
+
+        it('returns the max advance set to the vote duration plus the stage expiration when set', () => {
+            const timing = {
+                votingPeriod: { days: 0, hours: 12, minutes: 0 },
+                earlyStageAdvance: false,
+                stageExpiration: { days: 0, hours: 0, minutes: 30 },
+            };
+            const result = sppTransactionUtils['processStageTiming'](timing, ProcessStageType.OPTIMISTIC);
+            expect(result.maxAdvance).toEqual(BigInt(45000));
         });
     });
 });
