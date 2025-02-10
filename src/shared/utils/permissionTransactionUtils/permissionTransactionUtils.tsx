@@ -62,6 +62,8 @@ class PermissionTransactionUtils {
         ];
     };
 
+    // Encodes two rules indexes into a uint240 value
+    // See https://github.com/aragon/osx-commons/blob/develop/contracts/src/permission/condition/extensions/RuledCondition.sol#L315
     private encodeLogicalOperator = (firstIndex: number, secondIndex: number) =>
         BigInt(firstIndex) + (BigInt(secondIndex) << BigInt(32));
 
