@@ -37,11 +37,10 @@ export interface ITokenProcessBodyFieldProps {
 }
 
 export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
-    const { field } = props;
-
-    const { members, tokenName, tokenSymbol, supportThreshold, minimumParticipation, voteChange } = field;
-
     const { t } = useTranslations();
+
+    const { field } = props;
+    const { members, tokenName, tokenSymbol, supportThreshold, minimumParticipation, voteChange } = field;
 
     const supply = members.reduce((sum, member) => sum + Number(member.tokenAmount), 0);
     const formattedSupply = formatterUtils.formatNumber(supply, {
@@ -50,9 +49,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     });
 
     const baseTranslationKey = 'app.plugins.token.tokenProcessBodyField';
-
     const voteChangeLabel = voteChange ? t(`${baseTranslationKey}.yes`) : t(`${baseTranslationKey}.no`);
-
     const membersDefinition = members.length > 1 ? `${baseTranslationKey}.plural` : `${baseTranslationKey}.single`;
 
     return (

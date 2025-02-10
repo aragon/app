@@ -20,13 +20,12 @@ export interface IMultisigProcessBodyFieldProps {
 }
 
 export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) => {
+    const { t } = useTranslations();
+
     const { field } = props;
     const { members, multisigThreshold } = field;
 
-    const { t } = useTranslations();
-
     const baseTranslationKey = 'app.plugins.multisig.multisigProcessBodyField';
-
     const membersDefinition =
         members.length > 1 ? t(`${baseTranslationKey}.plural`) : t(`${baseTranslationKey}.single`);
 
