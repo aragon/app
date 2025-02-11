@@ -20,7 +20,7 @@ jobs:
         with:
           export-env: false
         env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION_BACKUPS_TEMP }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION }}
           GH_APP_QA: op://apikeys_production/gh-app-qa/credential
 
       - name: Extract branch name

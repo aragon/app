@@ -1,10 +1,11 @@
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { generateStepperResult } from '@/shared/testUtils';
+import { generateReactQueryResultError, generateStepperResult } from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { Dialog, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import * as ReactQuery from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
+import type { WaitForTransactionReceiptErrorType } from 'viem';
 import { polygon } from 'viem/chains';
 import * as Wagmi from 'wagmi';
 import { TransactionDialog } from './transactionDialog';
@@ -13,6 +14,7 @@ import {
     type ITransactionDialogProps,
     type ITransactionDialogStepMeta,
 } from './transactionDialog.api';
+import { transactionDialogUtils } from './transactionDialogUtils';
 
 jest.mock('./transactionDialogFooter', () => ({ TransactionDialogFooter: () => <div data-testid="footer-mock" /> }));
 
@@ -27,6 +29,7 @@ describe('<TransactionDialog /> component', () => {
     const useWaitForTransactionReceiptSpy = jest.spyOn(Wagmi, 'useWaitForTransactionReceipt');
     const useAccountSpy = jest.spyOn(Wagmi, 'useAccount');
     const useSwitchChainSpy = jest.spyOn(Wagmi, 'useSwitchChain');
+    const monitorTransactionErrorSpy = jest.spyOn(transactionDialogUtils, 'monitorTransactionError');
 
     beforeEach(() => {
         useSendTransactionSpy.mockReturnValue({} as Wagmi.UseSendTransactionReturnType);
@@ -42,6 +45,7 @@ describe('<TransactionDialog /> component', () => {
         useAccountSpy.mockReset();
         useWaitForTransactionReceiptSpy.mockReset();
         useSwitchChainSpy.mockReset();
+        monitorTransactionErrorSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
@@ -117,17 +121,11 @@ describe('<TransactionDialog /> component', () => {
     });
 
     it('correctly set the transaction steps when having custom steps', () => {
+        const stepMetaOne = { label: 'pin', action: jest.fn(), auto: false, state: 'idle' as const };
+        const stepMetaTwo = { label: 'something', action: jest.fn(), auto: false, state: 'idle' as const };
         const customSteps = [
-            {
-                id: 'pin-metadata',
-                order: 0,
-                meta: { label: 'pin', action: jest.fn(), auto: false, state: 'idle' as const },
-            },
-            {
-                id: 'something',
-                order: 1,
-                meta: { label: 'something', action: jest.fn(), auto: false, state: 'idle' as const },
-            },
+            { id: 'pin-metadata', order: 0, meta: stepMetaOne },
+            { id: 'something', order: 1, meta: stepMetaTwo },
         ];
         const expectedSteps = [
             {
@@ -210,7 +208,7 @@ describe('<TransactionDialog /> component', () => {
         act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(switchChain).toHaveBeenCalledWith(
             { chainId: networkDefinitions[network].chainId },
-            { onError: expect.any(Function) as unknown, onSuccess: expect.any(Function) as unknown },
+            { onSuccess: expect.any(Function) as unknown },
         );
     });
 
@@ -258,22 +256,17 @@ describe('<TransactionDialog /> component', () => {
         });
     });
 
-    it.each([
-        { status: 'pending', fetchStatus: 'idle', expected: 'idle' },
-        { status: 'error', fetchStatus: 'idle', expected: 'error' },
-        { status: 'pending', fetchStatus: 'fetching', expected: 'pending' },
-    ])(
-        'correctly parsers the wait-tx query status to $expected when on status $status and fetchStatus $fetchStatus',
-        ({ status, fetchStatus, expected }) => {
-            useWaitForTransactionReceiptSpy.mockReturnValue({
-                status,
-                fetchStatus,
-            } as Wagmi.UseWaitForTransactionReceiptReturnType);
-            const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
-            const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
-            render(createTestComponent({ stepper }));
-            const confirmStep = updateSteps.mock.calls[0][0][2];
-            expect(confirmStep.meta.state).toEqual(expected);
-        },
-    );
+    it('logs an error to the monitoring service when CONFIRM step fails', () => {
+        const error = 'transaction-failed' as unknown as WaitForTransactionReceiptErrorType;
+        const waitTxError = { queryKey: [''], ...generateReactQueryResultError({ error }) };
+        const address = '0x123';
+        useAccountSpy.mockReturnValue({ chainId: 1, address } as unknown as Wagmi.UseAccountReturnType);
+        useWaitForTransactionReceiptSpy.mockReturnValue(waitTxError);
+        render(createTestComponent());
+        expect(monitorTransactionErrorSpy).toHaveBeenCalledWith(error, {
+            stepId: TransactionDialogStep.CONFIRM,
+            from: address,
+            transaction: undefined,
+        });
+    });
 });

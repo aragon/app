@@ -1,7 +1,7 @@
-export {
-    pluginTransactionUtils,
-    type IPluginRepoInfo,
-    type IPluginSetupData,
-    type IPluginSetupDataPermission,
-    type IPrepareProcessMetadata,
-} from './pluginTransactionUtils';
+export { pluginTransactionUtils } from './pluginTransactionUtils';
+export type {
+    IPluginSetupData,
+    IPluginSetupPermission,
+    IPluginSetupPreparedSetupData,
+    IPluginSetupVersionTag,
+} from './pluginTransactionUtils.api';

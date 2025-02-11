@@ -42,7 +42,9 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const displayAdminMemberBanner = isAdminMember && process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
     const bannerType = displayAdminMemberBanner ? 'adminMember' : hasAdminPlugin ? 'adminPlugin' : null;
 
-    const bannerActionProps = isAdminMember ? { onClick: handleBannerActionClick } : { href: `/dao/${id}/members` };
+    const bannerActionProps = displayAdminMemberBanner
+        ? { onClick: handleBannerActionClick }
+        : { href: `/dao/${id}/members` };
 
     if (bannerType == null) {
         return null;

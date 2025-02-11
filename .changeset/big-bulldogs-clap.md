@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Initial release of app-next
+Bump vercel to v41

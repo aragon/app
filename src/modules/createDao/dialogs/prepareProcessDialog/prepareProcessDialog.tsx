@@ -1,4 +1,3 @@
-import { prepareProcessDialogUtils } from '@/modules/createDao/dialogs/prepareProcessDialog/prepareProcessDialogUtils';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
@@ -13,13 +12,14 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { type IPrepareProcessMetadata, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IPublishProcessDialogParams } from '../publishProcessDialog';
+import { type IPrepareProcessMetadata, prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 
 export enum PrepareProcessStep {
     PIN_METADATA = 'PIN_METADATA',

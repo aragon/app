@@ -1,4 +1,4 @@
-export const daoAbi = [
+export const permissionManagerAbi = [
     {
         type: 'function',
         inputs: [
