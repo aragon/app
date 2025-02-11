@@ -1,7 +1,7 @@
 import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
-import { plugin } from '@/plugins/tokenPlugin/constants/plugin';
+import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
@@ -97,8 +97,8 @@ describe('tokenTransaction utils', () => {
                 ]),
             );
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
-                plugin.repositoryAddresses[dao.network],
-                plugin.installVersion,
+                tokenPlugin.repositoryAddresses[dao.network],
+                tokenPlugin.installVersion,
                 '0xPluginSettingsData',
                 dao.address,
             );

@@ -2,7 +2,7 @@ import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
-import { plugin } from '@/plugins/multisigPlugin/constants/plugin';
+import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao } from '@/shared/testUtils';
@@ -103,8 +103,8 @@ describe('multisigTransaction utils', () => {
                 metadataCid,
             ]);
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
-                plugin.repositoryAddresses[dao.network],
-                plugin.installVersion,
+                multisigPlugin.repositoryAddresses[dao.network],
+                multisigPlugin.installVersion,
                 pluginSettingsData,
                 dao.address,
             );

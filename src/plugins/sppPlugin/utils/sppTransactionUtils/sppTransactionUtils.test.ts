@@ -5,7 +5,7 @@ import {
     generateCreateProcessFormStage,
 } from '@/modules/createDao/testUtils/generators/createProcessFormData';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
-import { plugin } from '@/plugins/sppPlugin/constants/plugin';
+import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
@@ -155,8 +155,8 @@ describe('sppTransaction utils', () => {
 
             // Verify buildPrepareInstallationData is called with expected arguments.
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
-                plugin.repositoryAddresses[network],
-                plugin.installVersion,
+                sppPlugin.repositoryAddresses[network],
+                sppPlugin.installVersion,
                 '0xPluginSettingsData',
                 dao.address as Viem.Hex,
             );
