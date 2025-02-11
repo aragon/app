@@ -1,53 +1,60 @@
-import { pluginSetupProcessorAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/pluginSetupProcessorAbi';
-import { encodeFunctionData, parseEventLogs, type Hex, type TransactionReceipt } from 'viem';
+import type { IDao, Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import {
+    encodeAbiParameters,
+    encodeFunctionData,
+    keccak256,
+    parseEventLogs,
+    type Hex,
+    type TransactionReceipt,
+} from 'viem';
+import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
+import type { IPluginSetupData, IPluginSetupVersionTag } from './pluginTransactionUtils.api';
 
-export interface IPrepareProcessMetadata {
-    /**
-     * Metadata CID of the proposal.
-     */
-    proposal: string;
-    /**
-     * Metadata CID of all process plugins ordered by stage and order of body inside the stage.
-     */
-    plugins: string[];
-    /**
-     * Metadata CID for the SPP plugin.
-     */
-    spp: string;
-}
+class PluginTransactionUtils {
+    setupDataToActions = (setupData: IPluginSetupData[], dao: IDao) => {
+        const { address, network } = dao;
 
-export interface IPluginRepoInfo {
-    /**
-     * Address of the plugin repo.
-     */
-    address: Hex;
-    /**
-     * Version of the plugin to be used.
-     */
-    version: { release: number; build: number };
-}
+        const actions = setupData.map((data) => {
+            const transactionData = this.buildApplyInstallationData(data, address);
 
-export interface IPluginSetupDataPermission {
-    operation: number;
-    where: Hex;
-    who: Hex;
-    condition: Hex;
-    permissionId: Hex;
-}
+            return this.installDataToAction(transactionData, network);
+        });
 
-export interface IPluginSetupData {
-    pluginAddress: Hex;
-    pluginSetupRepo: Hex;
-    versionTag: { release: number; build: number };
-    preparedSetupData: { helpers: readonly Hex[]; permissions: readonly IPluginSetupDataPermission[] };
-}
+        return actions;
+    };
 
-export class PluginTransactionUtils {
-    pspRepoAddress: Hex = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
-    globalExecutor: Hex = '0x67744773b8C29aaDc8a11010C09306c0029219Ff';
+    getPluginSetupData = (receipt: TransactionReceipt): IPluginSetupData[] => {
+        const { logs } = receipt;
 
-    buildPrepareInstallationData = (pluginRepo: IPluginRepoInfo, data: Hex, daoAddress: Hex) => {
-        const pluginSetupRef = { pluginSetupRepo: pluginRepo.address, versionTag: pluginRepo.version };
+        const installationPreparedLogs = parseEventLogs({
+            abi: pluginSetupProcessorAbi,
+            eventName: 'InstallationPrepared',
+            logs,
+        });
+
+        const pluginSetupData = installationPreparedLogs.map((log) => {
+            const { plugin, pluginSetupRepo, versionTag, preparedSetupData } = log.args;
+
+            return { pluginAddress: plugin, pluginSetupRepo, versionTag, preparedSetupData };
+        });
+
+        return pluginSetupData;
+    };
+
+    installDataToAction = (data: Hex, network: Network) => {
+        const { pluginSetupProcessor } = networkDefinitions[network].addresses;
+
+        return { to: pluginSetupProcessor, data, value: '0' };
+    };
+
+    buildPrepareInstallationData = (
+        pluginAddress: Hex,
+        pluginVersion: IPluginSetupVersionTag,
+        data: Hex,
+        daoAddress: Hex,
+    ) => {
+        const pluginSetupRef = { pluginSetupRepo: pluginAddress, versionTag: pluginVersion };
         const transactionData = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
             functionName: 'prepareInstallation',
@@ -57,24 +64,24 @@ export class PluginTransactionUtils {
         return transactionData;
     };
 
-    getPluginSetupData = (receipt: TransactionReceipt) => {
-        const { logs } = receipt;
+    private buildApplyInstallationData = (setupData: IPluginSetupData, daoAddress: string) => {
+        const { pluginSetupRepo, versionTag, pluginAddress, preparedSetupData } = setupData;
+        const { permissions, helpers } = preparedSetupData;
 
-        const installationPreparedLogs = parseEventLogs({
+        const helpersHash = this.hashHelpers(helpers);
+        const pluginSetupRef = { versionTag, pluginSetupRepo };
+
+        const transactionData = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
-            eventName: 'InstallationPrepared',
-            logs,
+            functionName: 'applyInstallation',
+            args: [daoAddress as Hex, { pluginSetupRef, plugin: pluginAddress, permissions, helpersHash }],
         });
 
-        const pluginSetupData: IPluginSetupData[] = installationPreparedLogs.map((log) => ({
-            pluginAddress: log.args.plugin,
-            pluginSetupRepo: log.args.pluginSetupRepo,
-            versionTag: log.args.versionTag,
-            preparedSetupData: log.args.preparedSetupData,
-        }));
-
-        return pluginSetupData;
+        return transactionData;
     };
+
+    private hashHelpers = (helpers: readonly Hex[]): Hex =>
+        keccak256(encodeAbiParameters([{ type: 'address[]' }], [helpers]));
 }
 
 export const pluginTransactionUtils = new PluginTransactionUtils();
