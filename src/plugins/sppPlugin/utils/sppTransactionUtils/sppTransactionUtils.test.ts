@@ -1,11 +1,9 @@
 import { ProcessStageType, ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
-import { sppPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/sppPluginSetupAbi';
 import {
     generateCreateProcessFormBody,
     generateCreateProcessFormData,
     generateCreateProcessFormStage,
 } from '@/modules/createDao/testUtils/generators/createProcessFormData';
-import { generateProcessFormStage } from '@/modules/createDao/testUtils/generators/processFormStage';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
@@ -14,7 +12,7 @@ import { permissionTransactionUtils } from '@/shared/utils/permissionTransaction
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
 import { type Hex, zeroHash } from 'viem';
-import { sppPluginAbi } from './sppPluginAbi';
+import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
@@ -32,33 +30,6 @@ describe('sppTransaction utils', () => {
         encodeFunctionDataSpy.mockReset();
         buildPrepareInstallationDataSpy.mockReset();
         parseStartDateSpy.mockReset();
-    });
-
-    describe('prepareSppMetadata', () => {
-        it('returns metadata with stageNames extracted from stages', () => {
-            const formData = {
-                name: 'Test Process',
-                description: 'Test description',
-                resources: [{ name: 'Link', url: 'http://example.com' }],
-                processKey: 'test-key',
-                stages: [generateProcessFormStage({ name: 'Stage1' }), generateProcessFormStage({ name: 'Stage2' })],
-                permissions: {
-                    proposalCreationMode: ProposalCreationMode.ANY_WALLET,
-                    proposalCreationBodies: [{ bodyId: 'body1', minVotingPower: '0' }],
-                },
-            };
-
-            const expected = {
-                name: 'Test Process',
-                description: 'Test description',
-                links: formData.resources,
-                processKey: 'test-key',
-                stageNames: ['Stage1', 'Stage2'],
-            };
-
-            const result = sppTransactionUtils.prepareSppMetadata(formData);
-            expect(result).toEqual(expected);
-        });
     });
 
     describe('buildInstallPluginsActions', () => {
@@ -165,11 +136,11 @@ describe('sppTransaction utils', () => {
                 version: { release: 1, build: 8 },
             };
             const metadataCid = '0xmetadataCID';
-            const daoAddress: Viem.Hex = '0xDAOAddress';
-            const sppTarget = { target: daoAddress, operation: 0 };
+            const dao = generateDao({ address: '0x001' });
+            const sppTarget = { target: dao.address, operation: 0 };
             encodeFunctionDataSpy.mockReturnValue('0xPluginSettingsData');
             buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
-            const result = sppTransactionUtils.buildPreparePluginInstallData(metadataCid, daoAddress);
+            const result = sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
             expect(Viem.encodeAbiParameters).toHaveBeenCalledWith(sppPluginSetupAbi, [
                 metadataCid as Viem.Hex,
                 [],
@@ -179,7 +150,7 @@ describe('sppTransaction utils', () => {
             expect(pluginTransactionUtils.buildPrepareInstallationData).toHaveBeenCalledWith(
                 sppRepo,
                 '0xPluginSettingsData',
-                daoAddress,
+                dao.address,
             );
             expect(result).toBe('0xTransactionData');
         });

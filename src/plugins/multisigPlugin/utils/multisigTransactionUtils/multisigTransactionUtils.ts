@@ -1,21 +1,17 @@
-import { multisigPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/multisigPluginSetupAbi';
-import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/buildPrepareInstallDataParams';
+import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
-import { type IPluginRepoInfo, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
-import { multisigPluginAbi } from './multisigPluginAbi';
+import { plugin } from '../../constants/plugin';
+import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 
 export interface ICreateMultisigProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class MultisigTransactionUtils {
-    private multisigRepo: IPluginRepoInfo = {
-        address: '0xA0901B5BC6e04F14a9D0d094653E047644586DdE',
-        version: { release: 1, build: 5 },
-    };
-
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateMultisigProposalFormData>): Hex => {
         const { metadata, actions, values } = params;
 
@@ -46,12 +42,15 @@ class MultisigTransactionUtils {
         return data;
     };
 
-    buildPrepareInstallData = (params: IBuildPrepareInstallDataParams) => {
-        const { metadataCid, daoAddress, permissionSettings, body } = params;
+    buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams) => {
+        const { metadataCid, dao, permissionSettings, body } = params;
         const { members, multisigThreshold } = body;
 
+        const { globalExecutor } = networkDefinitions[dao.network].addresses;
+        const repositoryAddress = plugin.repositoryAddresses[dao.network];
+
         const memberAddresses = members.map((member) => member.address as Hex);
-        const multisigTarget = { target: pluginTransactionUtils.globalExecutor, operation: 1 };
+        const multisigTarget = { target: globalExecutor, operation: 1 };
         const pluginSettings = { onlyListed: permissionSettings != null, minApprovals: multisigThreshold };
 
         const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [
@@ -62,9 +61,10 @@ class MultisigTransactionUtils {
         ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
-            this.multisigRepo,
+            repositoryAddress,
+            plugin.installVersion,
             pluginSettingsData,
-            daoAddress,
+            dao.address as Hex,
         );
 
         return transactionData;

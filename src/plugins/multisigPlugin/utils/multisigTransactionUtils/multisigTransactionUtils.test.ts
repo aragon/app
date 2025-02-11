@@ -1,12 +1,13 @@
-import { multisigPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/multisigPluginSetupAbi';
-import { generateProcessFormBody } from '@/modules/createDao/testUtils/generators/processBodyForm';
-import { generateProcessFormStage } from '@/modules/createDao/testUtils/generators/processFormStage';
+import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
+import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
-import { multisigPluginAbi } from './multisigPluginAbi';
+import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { type ICreateMultisigProposalFormData, multisigTransactionUtils } from './multisigTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
@@ -76,18 +77,27 @@ describe('multisigTransaction utils', () => {
                 version: { release: 1, build: 5 },
             };
             const metadataCid = '0xSomeMetadataCID';
-            const daoAddress: Viem.Hex = '0xDAOAddress';
+            const dao = generateDao({ network: Network.BASE_MAINNET });
             const permissionSettings = { someSetting: true, bodyId: '1' };
-            const body = generateProcessFormBody();
-            const stage = generateProcessFormStage();
-            const params = { metadataCid, daoAddress, permissionSettings, stage, body };
+            const body = generateCreateProcessFormBody();
+            const stage = generateCreateProcessFormStage();
+            const params = {
+                metadataCid,
+                dao,
+                permissionSettings,
+                stage,
+                body,
+            };
             const pluginSettingsData = '0xPluginSettingsData';
             const transactionData = '0xTransactionData';
             encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
             const result = multisigTransactionUtils.buildPrepareInstallData(params);
             const memberAddresses = body.members.map((member) => member.address);
-            const expectedMultisigTarget = { target: pluginTransactionUtils.globalExecutor, operation: 1 };
+            const expectedMultisigTarget = {
+                target: networkDefinitions[dao.network].addresses.globalExecutor,
+                operation: 1,
+            };
             const expectedPluginSettings = { onlyListed: true, minApprovals: body.multisigThreshold };
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginSetupAbi, [
                 memberAddresses,
@@ -95,7 +105,7 @@ describe('multisigTransaction utils', () => {
                 expectedMultisigTarget,
                 metadataCid,
             ]);
-            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(multisigRepo, pluginSettingsData, daoAddress);
+            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(multisigRepo, pluginSettingsData, dao.address);
             expect(result).toBe(transactionData);
         });
     });

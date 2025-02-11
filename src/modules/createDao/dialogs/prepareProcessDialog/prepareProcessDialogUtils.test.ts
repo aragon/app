@@ -1,10 +1,9 @@
-import { generateProcessFormBody } from '@/modules/createDao/testUtils/generators/processBodyForm';
-import { generateProcessFormStage } from '@/modules/createDao/testUtils/generators/processFormStage';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type ICreateProcessFormData, ProposalCreationMode } from '../../components/createProcessForm';
+import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '../../testUtils';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 
 describe('prepareProcessDialog utils', () => {
@@ -20,7 +19,7 @@ describe('prepareProcessDialog utils', () => {
 
     describe('preparePluginMetadata', () => {
         it('maps the plugin form body to metadata', () => {
-            const plugin = generateProcessFormBody({
+            const plugin = generateCreateProcessFormBody({
                 name: 'Test Plugin',
                 description: 'A test description',
                 resources: [{ name: 'Example', url: 'http://example.com' }],
@@ -34,9 +33,39 @@ describe('prepareProcessDialog utils', () => {
         });
     });
 
+    describe('prepareSppMetadata', () => {
+        it('returns metadata with stageNames extracted from stages', () => {
+            const formData = {
+                name: 'Test Process',
+                description: 'Test description',
+                resources: [{ name: 'Link', url: 'http://example.com' }],
+                processKey: 'test-key',
+                stages: [
+                    generateCreateProcessFormStage({ name: 'Stage1' }),
+                    generateCreateProcessFormStage({ name: 'Stage2' }),
+                ],
+                permissions: {
+                    proposalCreationMode: ProposalCreationMode.ANY_WALLET,
+                    proposalCreationBodies: [{ bodyId: 'body1', minVotingPower: '0' }],
+                },
+            };
+
+            const expected = {
+                name: 'Test Process',
+                description: 'Test description',
+                links: formData.resources,
+                processKey: 'test-key',
+                stageNames: ['Stage1', 'Stage2'],
+            };
+
+            const result = prepareProcessDialogUtils.prepareSppMetadata(formData);
+            expect(result).toEqual(expected);
+        });
+    });
+
     describe('buildPrepareInstallActions', () => {
         const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
-        const sppInstallSpy = jest.spyOn(sppTransactionUtils, 'buildPrepareSppInstallData');
+        const sppInstallSpy = jest.spyOn(sppTransactionUtils, 'buildPreparePluginInstallData');
         const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 
         afterEach(() => {
@@ -46,7 +75,7 @@ describe('prepareProcessDialog utils', () => {
         });
 
         it('builds install actions for SPP and plugin bodies', () => {
-            const daoAddress = '0x1234567890123456789012345678901234567890';
+            const dao = generateDao({ address: '0x1234567890123456789012345678901234567890' });
             const processMetadata = {
                 proposal: 'proposalCID',
                 plugins: ['pluginCID1', 'pluginCID2'],
@@ -64,13 +93,13 @@ describe('prepareProcessDialog utils', () => {
                 processKey: 'test-process-key',
                 description: 'This is a test process',
                 resources: [],
-                stages: [generateProcessFormStage({ bodies: [generateProcessFormBody()] })],
+                stages: [generateCreateProcessFormStage({ bodies: [generateCreateProcessFormBody()] })],
                 permissions: {
                     proposalCreationMode: ProposalCreationMode.ANY_WALLET,
                     proposalCreationBodies: [{ bodyId: 'body1', minVotingPower: '0' }],
                 },
             };
-            const actions = prepareProcessDialogUtils.buildPrepareInstallActions(values, daoAddress, processMetadata);
+            const actions = prepareProcessDialogUtils.buildPrepareInstallActions(values, dao, processMetadata);
             const pspRepoAddress = '0x9e99D11b513dD2cc5e117a5793412106502FF04B';
             expect(actions).toEqual([
                 {
@@ -89,7 +118,7 @@ describe('prepareProcessDialog utils', () => {
 
     describe('buildTransaction', () => {
         const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
-        const sppInstallSpy = jest.spyOn(sppTransactionUtils, 'buildPrepareSppInstallData');
+        const sppInstallSpy = jest.spyOn(sppTransactionUtils, 'buildPreparePluginInstallData');
         const buildPrepareInstallActionsSpy = jest.spyOn(prepareProcessDialogUtils, 'buildPrepareInstallActions');
         const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 

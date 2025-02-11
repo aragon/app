@@ -3,9 +3,9 @@ import {
     type ICreateProcessFormProposalCreationBody,
     type ICreateProcessFormStage,
 } from '@/modules/createDao/components/createProcessForm';
-import { type Hex } from 'viem';
+import type { IDao } from '@/shared/api/daoService';
 
-export interface IBuildPrepareInstallDataParams<TStage extends ICreateProcessFormStage = ICreateProcessFormStage> {
+export interface IBuildPreparePluginInstallDataParams {
     /**
      * The required form data for a body to be installed with a process.
      */
@@ -15,9 +15,9 @@ export interface IBuildPrepareInstallDataParams<TStage extends ICreateProcessFor
      */
     metadataCid: string;
     /**
-     * The DAO address to install the process to.
+     * The DAO to install the process to.
      */
-    daoAddress: Hex;
+    dao: IDao;
     /**
      * The permission settings for creating proposals.
      */
@@ -25,5 +25,5 @@ export interface IBuildPrepareInstallDataParams<TStage extends ICreateProcessFor
     /**
      * The required form data for a stage to be installed with a process.
      */
-    stage: TStage;
+    stage: ICreateProcessFormStage;
 }

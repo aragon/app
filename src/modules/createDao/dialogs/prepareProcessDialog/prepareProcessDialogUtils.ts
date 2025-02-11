@@ -1,5 +1,4 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/buildPrepareInstallDataParams';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
@@ -14,6 +13,7 @@ import {
     type ICreateProcessFormBody,
     type ICreateProcessFormData,
 } from '../../components/createProcessForm';
+import type { IBuildPreparePluginInstallDataParams } from '../../types';
 
 export interface IPrepareProcessMetadata {
     /**
@@ -50,17 +50,24 @@ export interface IBuildTransactionParams {
 }
 
 class PrepareProcessDialogUtils {
-    prepareProposalMetadata = () => {
-        const title = 'Prepare plugin installation';
-        const summary = 'This proposal prepares the installation of all plugins';
-
-        return { title, summary };
+    private proposalMetadata = {
+        title: 'Prepare plugin installation',
+        summary: 'This proposal prepares the installation of all plugins',
     };
+
+    prepareProposalMetadata = () => this.proposalMetadata;
 
     preparePluginMetadata = (plugin: ICreateProcessFormBody) => {
         const { name, description, resources: links } = plugin;
 
         return { name, description, links };
+    };
+
+    prepareSppMetadata = (values: ICreateProcessFormData) => {
+        const { name, description, resources: links, processKey } = values;
+        const stageNames = values.stages.map((stage) => stage.name);
+
+        return { name, description, links, processKey, stageNames };
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
@@ -97,14 +104,11 @@ class PrepareProcessDialogUtils {
     ) => {
         const { stages, permissions } = values;
         const { proposalCreationBodies, proposalCreationMode } = permissions;
-        const { network } = dao;
-        const daoAddress = dao.address as Hex;
 
         const sppMetadata = transactionUtils.cidToHex(processMetadata.spp);
-
         const pluginsMetadata = processMetadata.plugins.map((cid) => transactionUtils.cidToHex(cid));
 
-        const sppInstallData = sppTransactionUtils.buildPreparePluginInstallData(sppMetadata, daoAddress);
+        const sppInstallData = sppTransactionUtils.buildPreparePluginInstallData(sppMetadata, dao);
 
         const pluginsInstallData = stages.map((stage) => {
             const installData = stage.bodies.map((body) => {
@@ -115,25 +119,27 @@ class PrepareProcessDialogUtils {
                         ? undefined
                         : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.id);
 
-                const params: IBuildPrepareInstallDataParams = {
+                const params: IBuildPreparePluginInstallDataParams = {
                     metadataCid,
-                    daoAddress,
+                    dao,
                     permissionSettings,
                     body,
                     stage,
                 };
 
-                return pluginRegistryUtils.getSlotFunction<IBuildPrepareInstallDataParams, Hex>({
-                    slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_DATA,
+                const prepareFunction = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginInstallDataParams, Hex>({
+                    slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
                     pluginId: body.governanceType,
-                })!(params);
+                })!;
+
+                return prepareFunction(params);
             });
 
             return installData;
         });
 
         const installActions = [sppInstallData, ...pluginsInstallData.flat()].map((data) =>
-            pluginTransactionUtils.installDataToAction(data, network),
+            pluginTransactionUtils.installDataToAction(data, dao.network),
         );
 
         return installActions;

@@ -1,4 +1,3 @@
-import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
@@ -76,7 +75,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             const proposalMetadata = prepareProcessDialogUtils.prepareProposalMetadata();
             const { IpfsHash: proposalMetadataHash } = await pinJson({ body: proposalMetadata }, params);
 
-            const sppMetadata = sppTransactionUtils.prepareSppMetadata(values);
+            const sppMetadata = prepareProcessDialogUtils.prepareSppMetadata(values);
             const { IpfsHash: sppMetadataHash } = await pinJson({ body: sppMetadata }, params);
 
             const pinPluginsMetadataPromises = values.stages

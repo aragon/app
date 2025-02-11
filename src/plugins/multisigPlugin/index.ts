@@ -115,7 +115,7 @@ export const initialiseMultisigPlugin = () => {
 
         // Create DAO module slots
         .registerSlotFunction({
-            slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_INSTALL_DATA,
+            slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
             pluginId: plugin.id,
             function: multisigTransactionUtils.buildPrepareInstallData,
         });

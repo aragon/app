@@ -1,23 +1,20 @@
 import type { ITokenVotingMember } from '@/modules/createDao/components/createProcessForm';
-import { tokenPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/tokenPluginSetupAbi';
-import type { IBuildPrepareInstallDataParams } from '@/modules/createDao/types/buildPrepareInstallDataParams';
+import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { pluginTransactionUtils, type IPluginRepoInfo } from '@/shared/utils/pluginTransactionUtils';
+import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroAddress, type Hex } from 'viem';
-import { tokenPluginAbi } from './tokenPluginAbi';
+import { plugin } from '../../constants/plugin';
+import { tokenSettingsUtils } from '../tokenSettingsUtils';
+import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
 export interface ICreateTokenProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
 class TokenTransactionUtils {
-    private tokenRepo: IPluginRepoInfo = {
-        address: '0x6241ad0D3f162028d2e0000f1A878DBc4F5c4aD0',
-        version: { release: 1, build: 5 },
-    };
-
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateTokenProposalFormData>): Hex => {
         const { metadata, actions, values } = params;
 
@@ -48,8 +45,8 @@ class TokenTransactionUtils {
         return data;
     };
 
-    buildPrepareInstallData = (params: IBuildPrepareInstallDataParams) => {
-        const { body, metadataCid, daoAddress, permissionSettings, stage } = params;
+    buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams) => {
+        const { body, metadataCid, dao, permissionSettings, stage } = params;
         const {
             voteChange,
             supportThreshold,
@@ -63,6 +60,9 @@ class TokenTransactionUtils {
         const { earlyStageAdvance, votingPeriod } = stage.timing;
         const { minVotingPower } = permissionSettings ?? {};
 
+        const { globalExecutor } = networkDefinitions[dao.network].addresses;
+        const repositoryAddress = plugin.repositoryAddresses[dao.network];
+
         const votingMode = voteChange
             ? DaoTokenVotingMode.VOTE_REPLACEMENT
             : earlyStageAdvance
@@ -73,8 +73,8 @@ class TokenTransactionUtils {
 
         const votingSettings = {
             votingMode,
-            supportThreshold: supportThreshold * 10 ** 4,
-            minParticipation: minimumParticipation * 10 ** 4,
+            supportThreshold: tokenSettingsUtils.fromPercentageToRatio(supportThreshold),
+            minParticipation: tokenSettingsUtils.fromPercentageToRatio(minimumParticipation),
             minDuration: BigInt(dateUtils.durationToSeconds(votingPeriod)),
             minProposerVotingPower: minProposerVotingPower,
         };
@@ -94,7 +94,7 @@ class TokenTransactionUtils {
             defaultMintSettings,
         );
 
-        const tokenTarget = { target: pluginTransactionUtils.globalExecutor, operation: 1 };
+        const tokenTarget = { target: globalExecutor, operation: 1 };
         const pluginSettingsData = encodeAbiParameters(tokenPluginSetupAbi, [
             votingSettings,
             tokenSettings,
@@ -105,9 +105,10 @@ class TokenTransactionUtils {
         ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
-            this.tokenRepo,
+            repositoryAddress,
+            plugin.installVersion,
             pluginSettingsData,
-            daoAddress,
+            dao.address as Hex,
         );
 
         return transactionData;

@@ -1,12 +1,11 @@
-import { tokenPluginSetupAbi } from '@/modules/createDao/dialogs/prepareProcessDialog/abi/tokenPluginSetupAbi';
-import { generateProcessFormBody } from '@/modules/createDao/testUtils/generators/processBodyForm';
-import { generateProcessFormStage } from '@/modules/createDao/testUtils/generators/processFormStage';
+import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
+import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
-import { tokenPluginAbi } from './tokenPluginAbi';
+import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
@@ -71,13 +70,13 @@ describe('tokenTransaction utils', () => {
                 version: { release: 1, build: 5 },
             };
             const metadataCid = '0xSomeMetadataCID';
-            const daoAddress: Viem.Hex = '0xDAOAddress';
+            const dao = generateDao({ address: '0x001' });
             const permissionSettings = { minVotingPower: '1', bodyId: '1' };
-            const body = generateProcessFormBody();
-            const stage = generateProcessFormStage();
+            const body = generateCreateProcessFormBody();
+            const stage = generateCreateProcessFormStage();
             encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
             buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
-            const params = { metadataCid, daoAddress, permissionSettings, body, stage };
+            const params = { metadataCid, dao, permissionSettings, body, stage };
             const result = tokenTransactionUtils.buildPrepareInstallData(params);
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
                 tokenPluginSetupAbi,
@@ -100,7 +99,11 @@ describe('tokenTransaction utils', () => {
                     metadataCid,
                 ]),
             );
-            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(tokenRepo, '0xPluginSettingsData', daoAddress);
+            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
+                tokenRepo,
+                '0xPluginSettingsData',
+                dao.address,
+            );
             expect(result).toBe('0xTransactionData');
         });
     });
