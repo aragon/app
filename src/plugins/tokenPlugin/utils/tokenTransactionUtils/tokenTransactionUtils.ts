@@ -8,7 +8,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroAddress, type Hex } from 'viem';
-import { plugin } from '../../constants/plugin';
+import { tokenPlugin } from '../../constants/tokenPlugin';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
@@ -61,7 +61,7 @@ class TokenTransactionUtils {
         const { minVotingPower } = permissionSettings ?? {};
 
         const { globalExecutor } = networkDefinitions[dao.network].addresses;
-        const repositoryAddress = plugin.repositoryAddresses[dao.network];
+        const repositoryAddress = tokenPlugin.repositoryAddresses[dao.network];
 
         const votingMode = voteChange
             ? DaoTokenVotingMode.VOTE_REPLACEMENT
@@ -106,7 +106,7 @@ class TokenTransactionUtils {
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
             repositoryAddress,
-            plugin.installVersion,
+            tokenPlugin.installVersion,
             pluginSettingsData,
             dao.address as Hex,
         );

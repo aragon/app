@@ -13,7 +13,7 @@ import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { type IPluginSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
-import { plugin } from '../../constants/plugin';
+import { sppPlugin } from '../../constants/sppPlugin';
 import { SppProposalType } from '../../types';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 
@@ -51,14 +51,14 @@ class SppTransactionUtils {
     buildPreparePluginInstallData = (metadataCid: string, dao: IDao) => {
         const { address: daoAddress, network } = dao;
 
-        const repositoryAddress = plugin.repositoryAddresses[network];
+        const repositoryAddress = sppPlugin.repositoryAddresses[network];
 
         const target = { target: daoAddress as Hex, operation: 0 };
         const pluginSettingsData = encodeAbiParameters(sppPluginSetupAbi, [metadataCid as Hex, [], [], target]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
             repositoryAddress,
-            plugin.installVersion,
+            sppPlugin.installVersion,
             pluginSettingsData,
             daoAddress as Hex,
         );
