@@ -1,6 +1,7 @@
 import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
+import { plugin } from '@/plugins/tokenPlugin/constants/plugin';
 import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
@@ -65,10 +66,6 @@ describe('tokenTransaction utils', () => {
         });
 
         it('builds prepare installation data correctly for a token proposal', () => {
-            const tokenRepo = {
-                address: '0x6241ad0D3f162028d2e0000f1A878DBc4F5c4aD0',
-                version: { release: 1, build: 5 },
-            };
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
             const permissionSettings = { minVotingPower: '1', bodyId: '1' };
@@ -82,10 +79,10 @@ describe('tokenTransaction utils', () => {
                 tokenPluginSetupAbi,
                 expect.arrayContaining([
                     {
-                        minDuration: BigInt(0),
-                        minParticipation: 0,
+                        minDuration: BigInt(86400),
+                        minParticipation: 10000,
                         minProposerVotingPower: BigInt(1e18),
-                        supportThreshold: 0,
+                        supportThreshold: 10000,
                         votingMode: 0,
                     },
                     expect.objectContaining({
@@ -94,13 +91,14 @@ describe('tokenTransaction utils', () => {
                         symbol: '',
                     }),
                     { amounts: [], receivers: [] },
-                    { operation: 1, target: '0x67744773b8C29aaDc8a11010C09306c0029219Ff' },
+                    { operation: 1, target: zeroAddress },
                     BigInt(0),
                     metadataCid,
                 ]),
             );
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
-                tokenRepo,
+                plugin.repositoryAddresses[dao.network],
+                plugin.installVersion,
                 '0xPluginSettingsData',
                 dao.address,
             );

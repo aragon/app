@@ -25,7 +25,7 @@ describe('pluginTransaction utils', () => {
         const buildApplyInstallationTransactionSpy = jest.spyOn(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             pluginTransactionUtils as any,
-            'buildApplyInstallationTransaction',
+            'buildApplyInstallationData',
         );
         const installDataToActionSpy = jest.spyOn(pluginTransactionUtils, 'installDataToAction');
 

@@ -2,6 +2,7 @@ import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
+import { plugin } from '@/plugins/multisigPlugin/constants/plugin';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao } from '@/shared/testUtils';
@@ -72,10 +73,6 @@ describe('multisigTransaction utils', () => {
         });
 
         it('builds prepare installation data correctly', () => {
-            const multisigRepo = {
-                address: '0xA0901B5BC6e04F14a9D0d094653E047644586DdE',
-                version: { release: 1, build: 5 },
-            };
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ network: Network.BASE_MAINNET });
             const permissionSettings = { someSetting: true, bodyId: '1' };
@@ -105,7 +102,12 @@ describe('multisigTransaction utils', () => {
                 expectedMultisigTarget,
                 metadataCid,
             ]);
-            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(multisigRepo, pluginSettingsData, dao.address);
+            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
+                plugin.repositoryAddresses[dao.network],
+                plugin.installVersion,
+                pluginSettingsData,
+                dao.address,
+            );
             expect(result).toBe(transactionData);
         });
     });
