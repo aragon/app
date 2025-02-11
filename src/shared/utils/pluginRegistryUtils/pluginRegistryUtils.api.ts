@@ -1,7 +1,4 @@
-import type { Network } from '@/shared/api/daoService';
 import type { ComponentType } from 'react';
-import type { Hex } from 'viem';
-import type { IPluginSetupVersionTag } from '../pluginTransactionUtils';
 
 // Id of the slot (e.g. GOVERNANCE_DAO_MEMBER_LIST)
 export type SlotId = string;
@@ -35,14 +32,6 @@ export interface IPlugin {
      * Name of the plugin.
      */
     name: string;
-    /**
-     * Plugin version to be install on governance designer process.
-     */
-    installVersion: IPluginSetupVersionTag;
-    /**
-     * Repository address of the plugin for each supported network.
-     */
-    repositoryAddresses: Record<Network, Hex>;
 }
 
 /**

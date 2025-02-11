@@ -119,14 +119,7 @@ class PrepareProcessDialogUtils {
                         ? undefined
                         : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.id);
 
-                const params: IBuildPreparePluginInstallDataParams = {
-                    metadataCid,
-                    dao,
-                    permissionSettings,
-                    body,
-                    stage,
-                };
-
+                const params = { metadataCid, dao, permissionSettings, body, stage };
                 const prepareFunction = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginInstallDataParams, Hex>({
                     slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
                     pluginId: body.governanceType,

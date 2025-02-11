@@ -6,7 +6,7 @@ import { createProposalUtils } from '@/modules/governance/utils/createProposalUt
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
-import { plugin } from '../../constants/plugin';
+import { multisigPlugin } from '../../constants/multisigPlugin';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 
 export interface ICreateMultisigProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
@@ -47,7 +47,7 @@ class MultisigTransactionUtils {
         const { members, multisigThreshold } = body;
 
         const { globalExecutor } = networkDefinitions[dao.network].addresses;
-        const repositoryAddress = plugin.repositoryAddresses[dao.network];
+        const repositoryAddress = multisigPlugin.repositoryAddresses[dao.network];
 
         const memberAddresses = members.map((member) => member.address as Hex);
         const multisigTarget = { target: globalExecutor, operation: 1 };
@@ -62,7 +62,7 @@ class MultisigTransactionUtils {
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
             repositoryAddress,
-            plugin.installVersion,
+            multisigPlugin.installVersion,
             pluginSettingsData,
             dao.address as Hex,
         );
