@@ -49,7 +49,7 @@ jobs:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
       - name: Run E2E tests
-        run: xvfb-run yarn playwright test ./tests/sppPlugin/sppPlugin_publishProposal.spec.ts --project=chromium
+        run: xvfb-run yarn playwright test --project=chromium
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
