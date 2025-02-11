@@ -44,7 +44,7 @@ jobs:
       - name: Install Playwright browsers
         run: yarn playwright install chromium --with-deps
       - name: Build Synpress cache
-        run: xvfb-run yarn synpress ./tests/
+        run: xvfb-run yarn synpress ./tests/helpers/
         env:
           METAMASK_SEED_PHRASE: ${{ secrets.METAMASK_SEED_PHRASE }}
           METAMASK_PASSWORD: ${{ secrets.METAMASK_PASSWORD }}
