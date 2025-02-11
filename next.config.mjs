@@ -46,8 +46,6 @@ const sentryConfig = {
     project: 'app-next',
     // Auth token needed for uploading source maps
     authToken: process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
-    // Prevent built files from containing a sourceMappingURL comment
-    hideSourceMaps: true,
     // Make sure to upload all files and source maps
     widenClientFileUpload: true,
     // Use tunneling to forward events to Sentry and circumvent ad blockers
