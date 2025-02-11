@@ -32,8 +32,7 @@ export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) 
     return (
         <DefinitionList.Container className="w-full">
             <DefinitionList.Item term={t(`${baseTranslationKey}.members`)}>
-                {members.length}
-                {membersDefinition}
+                {`${members.length.toString()} ${membersDefinition}`}
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.threshold`)}>
                 {multisigThreshold} of {members.length}

@@ -50,7 +50,8 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
 
     const baseTranslationKey = 'app.plugins.token.tokenProcessBodyField';
     const voteChangeLabel = voteChange ? t(`${baseTranslationKey}.yes`) : t(`${baseTranslationKey}.no`);
-    const membersDefinition = members.length > 1 ? `${baseTranslationKey}.plural` : `${baseTranslationKey}.single`;
+    const membersDefinition =
+        members.length > 1 ? t(`${baseTranslationKey}.plural`) : t(`${baseTranslationKey}.single`);
 
     return (
         <DefinitionList.Container className="w-full">
@@ -58,8 +59,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.distribution`)}>
-                {members.length}
-                {t(membersDefinition)}
+                {`${members.length.toString()} ${membersDefinition}`}
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.supply`)}>
                 {`${formattedSupply!} ${tokenSymbol}`}
