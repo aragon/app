@@ -45,24 +45,14 @@ class TokenTransactionUtils {
         return data;
     };
 
-    buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams) => {
-        const { body, metadataCid, dao, permissionSettings, stage } = params;
-        const {
-            voteChange,
-            supportThreshold,
-            minimumParticipation,
-            tokenType,
-            importTokenAddress,
-            tokenName,
-            tokenSymbol,
-            members,
-        } = body;
-        const { earlyStageAdvance, votingPeriod } = stage.timing;
+    buildInstallDataVotingSettings = (
+        params: Pick<IBuildPreparePluginInstallDataParams, 'body' | 'stage' | 'permissionSettings'>,
+    ) => {
+        const { body, stage, permissionSettings } = params;
         const { minVotingPower } = permissionSettings ?? {};
 
-        const { globalExecutor } = networkDefinitions[dao.network].addresses;
-        const repositoryAddress = tokenPlugin.repositoryAddresses[dao.network];
-
+        const { earlyStageAdvance, votingPeriod } = stage.timing;
+        const { voteChange, supportThreshold, minimumParticipation } = body;
         const votingMode = voteChange
             ? DaoTokenVotingMode.VOTE_REPLACEMENT
             : earlyStageAdvance
@@ -79,6 +69,16 @@ class TokenTransactionUtils {
             minProposerVotingPower: minProposerVotingPower,
         };
 
+        return votingSettings;
+    };
+
+    buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams) => {
+        const { body, metadataCid, dao } = params;
+        const { tokenType, importTokenAddress, tokenName, tokenSymbol, members } = body;
+
+        const { globalExecutor } = networkDefinitions[dao.network].addresses;
+        const repositoryAddress = tokenPlugin.repositoryAddresses[dao.network];
+
         const tokenSettings = {
             addr: tokenType === 'imported' ? (importTokenAddress as Hex) : zeroAddress,
             name: tokenName ?? '',
@@ -93,6 +93,8 @@ class TokenTransactionUtils {
             }),
             defaultMintSettings,
         );
+
+        const votingSettings = this.buildInstallDataVotingSettings(params);
 
         const tokenTarget = { target: globalExecutor, operation: 1 };
         const pluginSettingsData = encodeAbiParameters(tokenPluginSetupAbi, [
