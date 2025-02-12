@@ -12,9 +12,10 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { type IPluginSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { encodeFunctionData, type Hex } from 'viem';
+import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
+import { sppPlugin } from '../../constants/sppPlugin';
 import { SppProposalType } from '../../types';
-import { sppPluginAbi } from './sppPluginAbi';
+import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 
 export interface ICreateSppProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
@@ -38,13 +39,27 @@ class SppTransactionUtils {
         const startDate = createProposalUtils.parseStartDate(values);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, [[]]];
-        const data = encodeFunctionData({
-            abi: sppPluginAbi,
-            functionName: 'createProposal',
-            args: functionArgs,
-        });
+        const data = encodeFunctionData({ abi: sppPluginAbi, functionName: 'createProposal', args: functionArgs });
 
         return data;
+    };
+
+    buildPreparePluginInstallData = (metadataCid: string, dao: IDao) => {
+        const { address: daoAddress, network } = dao;
+
+        const repositoryAddress = sppPlugin.repositoryAddresses[network];
+
+        const target = { target: daoAddress as Hex, operation: 0 };
+        const pluginSettingsData = encodeAbiParameters(sppPluginSetupAbi, [metadataCid as Hex, [], [], target]);
+
+        const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
+            repositoryAddress,
+            sppPlugin.installVersion,
+            pluginSettingsData,
+            daoAddress as Hex,
+        );
+
+        return transactionData;
     };
 
     buildInstallPluginsActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], dao: IDao) => {

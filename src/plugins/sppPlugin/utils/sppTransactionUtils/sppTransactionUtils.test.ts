@@ -4,27 +4,36 @@ import {
     generateCreateProcessFormData,
     generateCreateProcessFormStage,
 } from '@/modules/createDao/testUtils/generators/createProcessFormData';
+import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
+import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
+import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { generatePluginSetupData } from '@/shared/testUtils/generators/pluginSetupData';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
-import { type Hex, zeroHash } from 'viem';
-import { sppPluginAbi } from './sppPluginAbi';
+import { zeroHash } from 'viem';
+import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
 describe('sppTransaction utils', () => {
+    const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const grantPermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');
     const revokePermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildRevokePermissionTransaction');
+    const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
+    const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
 
     afterEach(() => {
+        encodeAbiParametersSpy.mockReset();
         grantPermissionSpy.mockReset();
         revokePermissionSpy.mockReset();
         encodeFunctionDataSpy.mockReset();
+        buildPrepareInstallationDataSpy.mockReset();
+        parseStartDateSpy.mockReset();
     });
 
     describe('buildInstallPluginsActions', () => {
@@ -55,14 +64,14 @@ describe('sppTransaction utils', () => {
             const values = generateCreateProcessFormData();
             const setupData = [generatePluginSetupData(), generatePluginSetupData()];
             const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
-            const daoAddress = dao.address as Hex;
+            const daoAddress = dao.address as Viem.Hex;
 
-            const grantAction = { to: daoAddress, data: '0xgrant' as Hex, value: '0' };
-            const setupActions = [{ to: '0x001' as Hex, data: '0xsetup' as Hex, value: '0' }];
+            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: '0' };
+            const setupActions = [{ to: '0x001' as Viem.Hex, data: '0xsetup' as Viem.Hex, value: '0' }];
             const updateStagesAction = { to: '0x002', data: '0xstages', value: '0' };
             const updateRulesAction = { to: '0x003', data: '0xrules', value: '0' };
-            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Hex, value: '0' }];
-            const revokeAction = { to: daoAddress, data: '0xrevoke' as Hex, value: '0' };
+            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Viem.Hex, value: '0' }];
+            const revokeAction = { to: daoAddress, data: '0xrevoke' as Viem.Hex, value: '0' };
 
             grantPermissionSpy.mockReturnValueOnce(grantAction);
             setupDataToActionsSpy.mockReturnValueOnce(setupActions);
@@ -86,15 +95,79 @@ describe('sppTransaction utils', () => {
         });
     });
 
+    describe('buildCreateProposalData', () => {
+        it('encodes createProposal data with correct parameters', () => {
+            const transactionData = '0xencoded';
+            const startDate = 12345;
+            parseStartDateSpy.mockReturnValue(startDate);
+
+            const params = {
+                metadata: '0xmetadata' as Viem.Hex,
+                actions: [{ to: '0xAddress', data: '0xdata', value: '0' }],
+                values: { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() },
+            };
+            encodeFunctionDataSpy.mockReturnValue(transactionData);
+
+            const result = sppTransactionUtils.buildCreateProposalData(params);
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
+                abi: sppPluginAbi,
+                functionName: 'createProposal',
+                args: [params.metadata, params.actions, BigInt(0), startDate, [[]]],
+            });
+            expect(result).toBe(transactionData);
+        });
+    });
+
+    describe('buildPrepareSppInstallData', () => {
+        it('encodes the plugin settings correctly using encodeAbiParameters', () => {
+            const metadataCid = '0xMetadataCID';
+            const dao = generateDao({ address: '0xDAOAddress' });
+
+            encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
+            sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
+
+            const expectedTarget = { target: dao.address as Viem.Hex, operation: 0 };
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(sppPluginSetupAbi, [
+                metadataCid as Viem.Hex,
+                [],
+                [],
+                expectedTarget,
+            ]);
+        });
+
+        it('builds prepare installation data correctly using buildPrepareInstallationData', () => {
+            const metadataCid = '0xMetadataCID';
+            const network = Network.BASE_MAINNET;
+            const dao = generateDao({ address: '0xDAOAddress', network });
+
+            const pluginSettingsData = '0xPluginSettingsData';
+            const transactionData = '0xTransactionData';
+
+            encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
+            buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
+
+            const result = sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
+
+            expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
+                sppPlugin.repositoryAddresses[network],
+                sppPlugin.installVersion,
+                pluginSettingsData,
+                dao.address as Viem.Hex,
+            );
+
+            expect(result).toBe(transactionData);
+        });
+    });
+
     describe('buildBodyPermissionActions', () => {
         it('correctly builds permission actions for the bodies of the SPP', () => {
             const pluginData = generatePluginSetupData({ pluginAddress: '0x123' });
-            const daoAddress = '0xDao' as Hex;
-            const sppAddress = '0xSpp' as Hex;
+            const daoAddress = '0xDao' as Viem.Hex;
+            const sppAddress = '0xSpp' as Viem.Hex;
 
-            const revokeCreateProposalAction = { to: daoAddress, data: '0xrevoke-proposal' as Hex, value: '0' };
-            const revokeExecutePermissionAction = { to: daoAddress, data: '0xrevoke-execute' as Hex, value: '0' };
-            const grantAction = { to: daoAddress, data: '0xgrant' as Hex, value: '0' };
+            const revokeCreateProposalAction = { to: daoAddress, data: '0xrevoke-proposal' as Viem.Hex, value: '0' };
+            const revokeExecutePermissionAction = { to: daoAddress, data: '0xrevoke-execute' as Viem.Hex, value: '0' };
+            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: '0' };
 
             revokePermissionSpy
                 .mockReturnValueOnce(revokeCreateProposalAction)
@@ -212,7 +285,7 @@ describe('sppTransaction utils', () => {
             encodeFunctionDataSpy.mockReturnValueOnce(transactionData);
 
             const sppAddress = '0xSpp';
-            const pluginAddresses = ['0x01'] as Hex[];
+            const pluginAddresses = ['0x01'] as Viem.Hex[];
             const result = sppTransactionUtils['buildUpdateStagesTransaction'](values, sppAddress, pluginAddresses);
 
             const expectedProcessedBodies = [

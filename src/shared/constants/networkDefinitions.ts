@@ -8,13 +8,13 @@ export interface INetworkDefinitionAddresses {
      */
     daoFactory: Hex;
     /**
-     * Admin plugin repository address.
-     */
-    adminPluginRepo: Hex;
-    /**
      * Address of the plugin setup processor.
      */
     pluginSetupProcessor: Hex;
+    /**
+     * Executor address for SPP sub-plugins.
+     */
+    globalExecutor: Hex;
 }
 
 export interface INetworkDefinition {
@@ -48,7 +48,7 @@ export interface INetworkDefinition {
     addresses: INetworkDefinitionAddresses;
 }
 
-//TODO: Update the factoryAddress and adminPluginRepo for each network after 1.4 deployment
+//TODO: Update the addresses for each network after 1.4 deployment
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
     // Mainnets
     [Network.ETHEREUM_MAINNET]: {
@@ -59,8 +59,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         wagmiChain: mainnet,
         addresses: {
             daoFactory: zeroAddress,
-            adminPluginRepo: zeroAddress,
             pluginSetupProcessor: zeroAddress,
+            globalExecutor: zeroAddress,
         },
     },
     [Network.POLYGON_MAINNET]: {
@@ -71,8 +71,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         wagmiChain: polygon,
         addresses: {
             daoFactory: zeroAddress,
-            adminPluginRepo: zeroAddress,
             pluginSetupProcessor: zeroAddress,
+            globalExecutor: zeroAddress,
         },
     },
     [Network.BASE_MAINNET]: {
@@ -83,8 +83,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         wagmiChain: base,
         addresses: {
             daoFactory: zeroAddress,
-            adminPluginRepo: zeroAddress,
             pluginSetupProcessor: zeroAddress,
+            globalExecutor: zeroAddress,
         },
     },
     [Network.ARBITRUM_MAINNET]: {
@@ -95,8 +95,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         wagmiChain: arbitrum,
         addresses: {
             daoFactory: zeroAddress,
-            adminPluginRepo: zeroAddress,
             pluginSetupProcessor: zeroAddress,
+            globalExecutor: zeroAddress,
         },
     },
     [Network.ZKSYNC_MAINNET]: {
@@ -107,8 +107,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         wagmiChain: zksync,
         addresses: {
             daoFactory: zeroAddress,
-            adminPluginRepo: zeroAddress,
             pluginSetupProcessor: zeroAddress,
+            globalExecutor: zeroAddress,
         },
     },
     // Testnets
@@ -121,8 +121,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         wagmiChain: sepolia,
         addresses: {
             daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
-            adminPluginRepo: '0xEdA3074437375DC71007AFC9D421644656d72287',
             pluginSetupProcessor: '0x9e99D11b513dD2cc5e117a5793412106502FF04B',
+            globalExecutor: '0x67744773b8C29aaDc8a11010C09306c0029219Ff',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
@@ -134,8 +134,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         wagmiChain: zksyncSepoliaTestnet,
         addresses: {
             daoFactory: zeroAddress,
-            adminPluginRepo: zeroAddress,
             pluginSetupProcessor: zeroAddress,
+            globalExecutor: zeroAddress,
         },
     },
 };

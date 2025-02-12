@@ -9,14 +9,14 @@ import {
     type TransactionReceipt,
 } from 'viem';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
-import type { IPluginSetupData } from './pluginTransactionUtils.api';
+import type { IPluginSetupData, IPluginSetupVersionTag } from './pluginTransactionUtils.api';
 
 class PluginTransactionUtils {
     setupDataToActions = (setupData: IPluginSetupData[], dao: IDao) => {
         const { address, network } = dao;
 
         const actions = setupData.map((data) => {
-            const transactionData = this.buildApplyInstallationTransaction(data, address);
+            const transactionData = this.buildApplyInstallationData(data, address);
 
             return this.installDataToAction(transactionData, network);
         });
@@ -48,7 +48,23 @@ class PluginTransactionUtils {
         return { to: pluginSetupProcessor, data, value: '0' };
     };
 
-    private buildApplyInstallationTransaction = (setupData: IPluginSetupData, daoAddress: string) => {
+    buildPrepareInstallationData = (
+        pluginAddress: Hex,
+        pluginVersion: IPluginSetupVersionTag,
+        data: Hex,
+        daoAddress: Hex,
+    ) => {
+        const pluginSetupRef = { pluginSetupRepo: pluginAddress, versionTag: pluginVersion };
+        const transactionData = encodeFunctionData({
+            abi: pluginSetupProcessorAbi,
+            functionName: 'prepareInstallation',
+            args: [daoAddress, { pluginSetupRef, data }],
+        });
+
+        return transactionData;
+    };
+
+    private buildApplyInstallationData = (setupData: IPluginSetupData, daoAddress: string) => {
         const { pluginSetupRepo, versionTag, pluginAddress, preparedSetupData } = setupData;
         const { permissions, helpers } = preparedSetupData;
 
