@@ -53,20 +53,21 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
 
     return (
         <DefinitionList.Container className="w-full">
-            <DefinitionList.Item term={t(`${baseTranslationKey}.token`)}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.tokenTerm`)}>
                 {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
-            <DefinitionList.Item term={t(`${baseTranslationKey}.distribution`)}>
-                {`${members.length.toString()} ${t(`${baseTranslationKey}.holders`)}`}
+            <DefinitionList.Item term={t(`${baseTranslationKey}.distributionTerm`)}>
+                {t(`${baseTranslationKey}.holders`, { count: members.length })}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t(`${baseTranslationKey}.supply`)}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.supplyTerm`)}>
                 {`${formattedSupply!} ${tokenSymbol}`}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t(`${baseTranslationKey}.support`)}>
-                {`> ${supportThreshold.toString()}%`}
+            <DefinitionList.Item term={t(`${baseTranslationKey}.supportTerm`)}>
+                {t(`${baseTranslationKey}.supportDefinition`, { threshold: supportThreshold })}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t(`${baseTranslationKey}.minimum`)}>
+            <DefinitionList.Item term={t(`${baseTranslationKey}.minParticipationTerm`)}>
                 {`≥ ${minimumParticipation.toString()}%`}
+                {t(`${baseTranslationKey}.minParticipationDefinition`, { minimumParticipation })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.voteChange`)}>
                 <Tag label={voteChangeLabel} variant={voteChange ? 'primary' : 'neutral'} className="max-w-fit" />

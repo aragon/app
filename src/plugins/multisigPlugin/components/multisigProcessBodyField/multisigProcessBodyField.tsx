@@ -26,15 +26,17 @@ export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) 
     const { members, multisigThreshold } = field;
 
     const baseTranslationKey = 'app.plugins.multisig.multisigProcessBodyField';
-    const membersDefinition = t(`${baseTranslationKey}.members`).toLowerCase();
 
     return (
         <DefinitionList.Container className="w-full">
-            <DefinitionList.Item term={t(`${baseTranslationKey}.members`)}>
-                {`${members.length.toString()} ${membersDefinition}`}
+            <DefinitionList.Item term={t(`${baseTranslationKey}.membersTerm`)}>
+                {t(`${baseTranslationKey}.membersDefinition`, { count: members.length })}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t(`${baseTranslationKey}.threshold`)}>
-                {multisigThreshold} of {members.length}
+            <DefinitionList.Item term={t(`${baseTranslationKey}.thresholdTerm`)}>
+                {t(`${baseTranslationKey}.thresholdDefinition`, {
+                    threshold: multisigThreshold,
+                    count: members.length,
+                })}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

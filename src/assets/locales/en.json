@@ -904,8 +904,10 @@
           "nonMember": "Not a member"
         },
         "multisigProcessBodyField": {
-          "members": "Members",
-          "threshold": "Multisig threshold"
+          "membersDefinition": "{{count}} members",
+          "membersTerm": "Members",
+          "thresholdDefinition": "{{threshold}} of {{count}}",
+          "thresholdTerm": "Multisig threshold"
         },
         "multisigProposalList": {
           "entity": "Proposals"
@@ -1094,13 +1096,16 @@
           "membership": "Your voting power"
         },
         "tokenProcessBodyField": {
-          "distribution": "Distribution",
-          "holders": "token holders",
-          "minimum": "Minimum participation",
+          "distributionTerm": "Distribution",
+          "holders": "{{count}} token holders",
+          "minParticipationDefinition": "≥ {{minimumParticipation}}%",
+          "minParticipationTerm": "Minimum participation",
           "no": "No",
-          "supply": "Supply",
-          "support": "Support threshold",
-          "token": "Token",
+          "supplyTerm": "Supply",
+          "supportDefinition": "> {{support}}%",
+          "supportTerm": "Support threshold",
+          "tokenDefinition": "",
+          "tokenTerm": "Token",
           "voteChange": "Vote change",
           "yes": "Yes"
         },
