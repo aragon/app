@@ -8,6 +8,7 @@ import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposa
 import { TokenGovernanceInfo } from './components/tokenGovernanceInfo';
 import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
+import { TokenProcessBodyField } from './components/tokenProcessBodyField';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
 import { TokenProposalVotingSummary } from './components/tokenProposalVotingSummary';
@@ -130,5 +131,10 @@ export const initialiseTokenPlugin = () => {
             slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
             pluginId: tokenPlugin.id,
             function: tokenTransactionUtils.buildPrepareInstallData,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
+            pluginId: tokenPlugin.id,
+            component: TokenProcessBodyField,
         });
 };

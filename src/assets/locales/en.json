@@ -218,23 +218,7 @@
             "summary": {
               "edit": "Edit",
               "more": "More",
-              "multisig": {
-                "members": "Members",
-                "plural": "members",
-                "single": "member",
-                "threshold": "Multisig threshold"
-              },
               "no": "No",
-              "tokenVoting": {
-                "distribution": "Distribution",
-                "minimum": "Minimum participation",
-                "plural": "token holders",
-                "single": "token holder",
-                "supply": "Supply",
-                "support": "Support threshold",
-                "token": "Token",
-                "voteChange": "Vote change"
-              },
               "yes": "Yes"
             },
             "threshold": {
@@ -919,6 +903,12 @@
           "membership": "Your membership",
           "nonMember": "Not a member"
         },
+        "multisigProcessBodyField": {
+          "membersDefinition": "{{count}} members",
+          "membersTerm": "Members",
+          "thresholdDefinition": "{{threshold}} of {{count}}",
+          "thresholdTerm": "Multisig threshold"
+        },
         "multisigProposalList": {
           "entity": "Proposals"
         },
@@ -1104,6 +1094,19 @@
         "tokenPermissionCheckVoteSubmission": {
           "createdAt": "Created at",
           "membership": "Your voting power"
+        },
+        "tokenProcessBodyField": {
+          "distributionTerm": "Distribution",
+          "holders": "{{count}} token holders",
+          "minParticipationDefinition": "≥ {{minimumParticipation}}%",
+          "minParticipationTerm": "Minimum participation",
+          "no": "No",
+          "supplyTerm": "Supply",
+          "supportDefinition": "> {{support}}%",
+          "supportTerm": "Support threshold",
+          "tokenTerm": "Token",
+          "voteChange": "Vote change",
+          "yes": "Yes"
         },
         "tokenProposalList": {
           "entity": "Proposals"

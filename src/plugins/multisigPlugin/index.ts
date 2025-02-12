@@ -7,6 +7,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
 import { MultisigGovernanceInfo } from './components/multisigGovernanceInfo';
 import { MultisigMemberInfo } from './components/multisigMemberInfo';
+import { MultisigProcessBodyField } from './components/multisigProcessBodyField';
 import { MultisigProposalList } from './components/multisigProposalList';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
 import { MultisigProposalVotingSummary } from './components/multisigProposalVotingSummary';
@@ -118,5 +119,10 @@ export const initialiseMultisigPlugin = () => {
             slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
             pluginId: multisigPlugin.id,
             function: multisigTransactionUtils.buildPrepareInstallData,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
+            pluginId: multisigPlugin.id,
+            component: MultisigProcessBodyField,
         });
 };
