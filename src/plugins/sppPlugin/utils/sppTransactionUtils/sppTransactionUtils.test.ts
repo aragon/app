@@ -133,16 +133,16 @@ describe('sppTransaction utils', () => {
     });
 
     describe('buildPrepareSppInstallData', () => {
-        it('builds prepare installation data correctly', () => {
-            const metadataCid = '0xmetadataCID';
-            const network = Network.BASE_MAINNET;
-            const dao = generateDao({ address: '0xDAOAddress', network });
-            const expectedTarget = { target: dao.address as Viem.Hex, operation: 0 };
+        const metadataCid = '0xMetadataCID';
+        const network = Network.BASE_MAINNET;
+        const dao = generateDao({ address: '0xDAOAddress', network });
+        const expectedTarget = { target: dao.address as Viem.Hex, operation: 0 };
 
-            encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
-            buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
+        it('encodes the plugin settings correctly using encodeAbiParameters', () => {
+            const pluginSettingsData = '0xPluginSettingsData';
+            encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
 
-            const result = sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
+            sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
 
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(sppPluginSetupAbi, [
                 metadataCid as Viem.Hex,
@@ -150,15 +150,25 @@ describe('sppTransaction utils', () => {
                 [],
                 expectedTarget,
             ]);
+        });
+
+        it('builds prepare installation data correctly using buildPrepareInstallationData', () => {
+            const pluginSettingsData = '0xPluginSettingsData';
+            const transactionData = '0xTransactionData';
+
+            encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
+            buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
+
+            const result = sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
 
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 sppPlugin.repositoryAddresses[network],
                 sppPlugin.installVersion,
-                '0xPluginSettingsData',
+                pluginSettingsData,
                 dao.address as Viem.Hex,
             );
 
-            expect(result).toBe('0xTransactionData');
+            expect(result).toBe(transactionData);
         });
     });
 
