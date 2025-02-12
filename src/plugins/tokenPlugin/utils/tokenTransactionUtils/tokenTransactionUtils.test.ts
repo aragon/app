@@ -61,89 +61,27 @@ describe('tokenTransaction utils', () => {
         });
     });
 
-    describe('buildInstallDataVotingSettings', () => {
-        it('returns the correct voting mode when vote replacement is enabled', () => {
-            const body = generateCreateProcessFormBody({ id: 'body-1', voteChange: true });
-            const stage = generateCreateProcessFormStage();
-            const permissionSettings = { minVotingPower: '1', bodyId: 'body-1' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
-
-            expect(result.votingMode).toBe(DaoTokenVotingMode.VOTE_REPLACEMENT);
-        });
-
-        it('returns the correct voting mode when early execution is enabled', () => {
-            const body = generateCreateProcessFormBody({ id: 'body-2' });
-            const stage = generateCreateProcessFormStage({
-                timing: {
-                    votingPeriod: { days: 1, hours: 0, minutes: 0 },
-                    earlyStageAdvance: true,
-                },
-            });
-            const permissionSettings = { minVotingPower: '1', bodyId: 'body-1' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
-
-            expect(result.votingMode).toBe(DaoTokenVotingMode.EARLY_EXECUTION);
-        });
-
-        it('returns standard voting mode when vote replacement and early execute are not defined)', () => {
-            const body = generateCreateProcessFormBody({ id: 'body-3' });
-            const stage = generateCreateProcessFormStage();
-            const permissionSettings = { minVotingPower: '3', bodyId: 'body-3' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
-
-            expect(result.votingMode).toBe(DaoTokenVotingMode.STANDARD);
-        });
-
-        it('returns 0  for voting power when permissionSettings are undefined', () => {
-            const body = generateCreateProcessFormBody({ id: 'body-4', supportThreshold: 3 });
-            const stage = generateCreateProcessFormStage();
-            const params = { body, stage, permissionSettings: undefined };
-
-            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
-
-            expect(result.minProposerVotingPower).toBe(BigInt(0));
-        });
-
-        it('correctly calculates the voting settings', () => {
-            const body = generateCreateProcessFormBody({ id: 'body-5', supportThreshold: 3, minimumParticipation: 4 });
-            const stage = generateCreateProcessFormStage({
-                timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
-            });
-            const permissionSettings = { minVotingPower: '2', bodyId: 'body-5' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
-
-            const expectedResult = {
-                votingMode: DaoTokenVotingMode.STANDARD,
-                supportThreshold: 30000,
-                minParticipation: 40000,
-                minDuration: BigInt(7200),
-                minProposerVotingPower: BigInt(2e18),
-            };
-
-            expect(result).toEqual(expectedResult);
-        });
-    });
-
     describe('buildPrepareInstallData', () => {
-        const votingSettingsSpy = jest.spyOn(tokenTransactionUtils, 'buildInstallDataVotingSettings');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const votingSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataVotingSettings');
 
         afterEach(() => {
             votingSettingsSpy.mockReset();
+        });
+
+        afterAll(() => {
+            votingSettingsSpy.mockRestore();
         });
 
         it('calls the encodeAbiParameters with the correct params', () => {
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
             const permissionSettings = { minVotingPower: '2', bodyId: '1' };
-            const body = generateCreateProcessFormBody({ supportThreshold: 2, minimumParticipation: 2 });
+            const body = generateCreateProcessFormBody({
+                supportThreshold: 2,
+                minimumParticipation: 2,
+                tokenType: 'new',
+            });
             const stage = generateCreateProcessFormStage({
                 timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
             });
@@ -156,52 +94,111 @@ describe('tokenTransaction utils', () => {
                 supportThreshold: 10000,
                 votingMode: 0,
             };
-
             votingSettingsSpy.mockReturnValue(votingSettingsMock);
 
             const params = { metadataCid, dao, permissionSettings, body, stage };
-
             tokenTransactionUtils.buildPrepareInstallData(params);
 
-            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
-                tokenPluginSetupAbi,
-                expect.arrayContaining([
-                    votingSettingsMock,
-                    expect.objectContaining({
-                        addr: zeroAddress,
-                        name: '',
-                        symbol: '',
-                    }),
-                    { amounts: [], receivers: [] },
-                    { operation: 1, target: zeroAddress },
-                    BigInt(0),
-                    metadataCid,
-                ]),
-            );
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(tokenPluginSetupAbi, [
+                votingSettingsMock,
+                { addr: zeroAddress, name: '', symbol: '' },
+                { amounts: [], receivers: [] },
+                { operation: 1, target: zeroAddress },
+                BigInt(0),
+                metadataCid,
+            ]);
         });
 
         it('builds prepare installation data correctly for a token proposal', () => {
+            const encodedPluginData = '0xPluginSettingsData';
+            const transactionData = '0xTransactionData';
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
             const permissionSettings = { minVotingPower: '1', bodyId: '1' };
             const body = generateCreateProcessFormBody();
             const stage = generateCreateProcessFormStage();
 
-            encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
-            buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
+            encodeAbiParametersSpy.mockReturnValue(encodedPluginData);
+            buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
 
             const params = { metadataCid, dao, permissionSettings, body, stage };
-
             const result = tokenTransactionUtils.buildPrepareInstallData(params);
 
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 tokenPlugin.repositoryAddresses[dao.network],
                 tokenPlugin.installVersion,
-                '0xPluginSettingsData',
+                encodedPluginData,
                 dao.address,
             );
 
-            expect(result).toBe('0xTransactionData');
+            expect(result).toBe(transactionData);
+        });
+    });
+
+    describe('buildInstallDataVotingSettings', () => {
+        it('returns the correct voting mode when vote change is enabled', () => {
+            const body = generateCreateProcessFormBody({ voteChange: true });
+            const stage = generateCreateProcessFormStage();
+            const permissionSettings = { minVotingPower: '1', bodyId: '' };
+
+            const params = { body, stage, permissionSettings };
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
+
+            expect(result.votingMode).toBe(DaoTokenVotingMode.VOTE_REPLACEMENT);
+        });
+
+        it('returns the correct voting mode when early execution is enabled', () => {
+            const body = generateCreateProcessFormBody();
+            const stage = generateCreateProcessFormStage({
+                timing: { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: true },
+            });
+            const permissionSettings = { minVotingPower: '1', bodyId: '' };
+
+            const params = { body, stage, permissionSettings };
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
+
+            expect(result.votingMode).toBe(DaoTokenVotingMode.EARLY_EXECUTION);
+        });
+
+        it('returns standard voting mode when vote replacement and early execution are not set', () => {
+            const body = generateCreateProcessFormBody();
+            const stage = generateCreateProcessFormStage();
+            const permissionSettings = { minVotingPower: '3', bodyId: '' };
+
+            const params = { body, stage, permissionSettings };
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
+
+            expect(result.votingMode).toBe(DaoTokenVotingMode.STANDARD);
+        });
+
+        it('returns 0 for min proposer voting power when permissionSettings are undefined', () => {
+            const body = generateCreateProcessFormBody();
+            const stage = generateCreateProcessFormStage();
+            const params = { body, stage, permissionSettings: undefined };
+
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
+            expect(result.minProposerVotingPower).toBe(BigInt(0));
+        });
+
+        it('correctly calculates the voting settings', () => {
+            const body = generateCreateProcessFormBody({ supportThreshold: 3, minimumParticipation: 4 });
+            const stage = generateCreateProcessFormStage({
+                timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
+            });
+            const permissionSettings = { minVotingPower: '2', bodyId: '' };
+
+            const params = { body, stage, permissionSettings };
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
+
+            const expectedResult = {
+                votingMode: DaoTokenVotingMode.STANDARD,
+                supportThreshold: 30000,
+                minParticipation: 40000,
+                minDuration: BigInt(7200),
+                minProposerVotingPower: BigInt(2e18),
+            };
+
+            expect(result).toEqual(expectedResult);
         });
     });
 });

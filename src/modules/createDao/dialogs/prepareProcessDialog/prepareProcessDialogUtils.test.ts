@@ -1,12 +1,11 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
-import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { type Hex, zeroAddress } from 'viem';
+import { type Hex } from 'viem';
 import { ProposalCreationMode } from '../../components/createProcessForm';
 import {
     generateCreateProcessFormBody,
@@ -17,12 +16,10 @@ import { type IBuildTransactionParams, prepareProcessDialogUtils } from './prepa
 
 describe('prepareProcessDialog utils', () => {
     const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
-    const buildPrepareInstallActionsSpy = jest.spyOn(prepareProcessDialogUtils, 'buildPrepareInstallActions');
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
 
     afterEach(() => {
         cidToHexSpy.mockReset();
-        buildPrepareInstallActionsSpy.mockReset();
         getSlotFunctionSpy.mockReset();
     });
 
@@ -74,6 +71,12 @@ describe('prepareProcessDialog utils', () => {
     });
 
     describe('buildTransaction', () => {
+        const buildPrepareInstallActionsSpy = jest.spyOn(prepareProcessDialogUtils, 'buildPrepareInstallActions');
+
+        afterEach(() => {
+            buildPrepareInstallActionsSpy.mockReset();
+        });
+
         afterAll(() => {
             buildPrepareInstallActionsSpy.mockRestore();
         });
@@ -97,6 +100,7 @@ describe('prepareProcessDialog utils', () => {
 
             cidToHexSpy.mockReturnValue(metadataHex);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
+            buildPrepareInstallActionsSpy.mockReturnValue([]);
 
             await prepareProcessDialogUtils.buildTransaction(
                 createTestParams({ processMetadata: { proposal: metadataCid, plugins: [], spp: '' } }),
@@ -106,7 +110,7 @@ describe('prepareProcessDialog utils', () => {
             expect(slotFunction).toHaveBeenCalledWith(expect.objectContaining({ metadata: metadataHex }));
         });
 
-        it('builds the install plugin actions and passes them to the create proposal plugin function', async () => {
+        it('builds the prepare install plugin actions and passes them to the create proposal plugin function', async () => {
             const dao = generateDao();
             const values = generateCreateProcessFormData();
             const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: '11' }];
@@ -140,114 +144,78 @@ describe('prepareProcessDialog utils', () => {
 
     describe('buildPrepareInstallActions', () => {
         const sppInstallSpy = jest.spyOn(sppTransactionUtils, 'buildPreparePluginInstallData');
-        const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
         const installDataToActionSpy = jest.spyOn(pluginTransactionUtils, 'installDataToAction');
 
         afterEach(() => {
             sppInstallSpy.mockReset();
-            getSlotFunctionSpy.mockReset();
             installDataToActionSpy.mockReset();
         });
 
         it('prepares the SPP install data', () => {
-            const sppInstallData = '0xSppInstallData';
+            const values = generateCreateProcessFormData();
+            const processMetadata = { proposal: 'proposalCID', plugins: [], spp: 'sppCID' };
             const sppMetadata = '0xSppMetadata';
+            const sppInstallData = '0xSppInstallData' as Hex;
+            const sppInstallAction = { to: '0x' as Hex, value: '0', data: sppInstallData };
             const dao = generateDao({ address: '0xDaoAddress' });
 
+            cidToHexSpy.mockReturnValue(sppMetadata);
             sppInstallSpy.mockReturnValue(sppInstallData);
-
-            const result = sppTransactionUtils.buildPreparePluginInstallData(sppMetadata, dao);
+            installDataToActionSpy.mockReturnValue(sppInstallAction);
+            const result = prepareProcessDialogUtils.buildPrepareInstallActions(values, dao, processMetadata);
 
             expect(sppInstallSpy).toHaveBeenCalledWith(sppMetadata, dao);
-
-            expect(result).toEqual(sppInstallData);
+            expect(result).toEqual([sppInstallAction]);
         });
 
         it('prepares the plugin install data with no permissions when proposal creation mode is any wallet', () => {
-            const pluginInstallData = '0xPluginInstallData' as Hex;
-            const governanceType = 'multisig';
-            const body = generateCreateProcessFormBody({ id: 'body1', governanceType });
+            const body = generateCreateProcessFormBody({ id: 'body1', governanceType: 'multisig' });
             const stage = generateCreateProcessFormStage({ bodies: [body] });
             const permissions = {
                 proposalCreationMode: ProposalCreationMode.ANY_WALLET,
                 proposalCreationBodies: [],
             };
             const values = generateCreateProcessFormData({ stages: [stage], permissions });
-
             const dao = generateDao({ address: '0xDaoAddress' });
 
-            const params = { metadataCid: undefined, dao, permissionSettings: undefined, body, stage };
-
-            const slotFunction = jest.fn().mockReturnValue(pluginInstallData);
+            const slotFunction = jest.fn().mockReturnValue('0xPluginInstallData');
             getSlotFunctionSpy.mockReturnValue(slotFunction);
-            const processMetadata = { proposal: 'proposalCID', plugins: [], spp: 'sppCID' };
+            const processMetadata = { proposal: '', plugins: [], spp: '' };
 
             prepareProcessDialogUtils.buildPrepareInstallActions(values, dao, processMetadata);
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
-                pluginId: governanceType,
+                pluginId: body.governanceType,
             });
 
-            expect(slotFunction).toHaveBeenCalledWith(params);
+            expect(slotFunction).toHaveBeenCalledWith(expect.objectContaining({ permissionSettings: undefined }));
         });
 
         it('prepares the plugin install data with defined permissions when proposal creation mode is listed bodies', () => {
-            const pluginInstallData = '0xPluginInstallData' as Hex;
-            const governanceType = 'token-voting';
-            const body = generateCreateProcessFormBody({ id: 'body1', governanceType });
+            const body = generateCreateProcessFormBody({ id: 'body1', governanceType: 'token-voting' });
             const listedBody = { bodyId: body.id };
             const stage = generateCreateProcessFormStage({ bodies: [body] });
             const permissions = {
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
                 proposalCreationBodies: [listedBody],
             };
-            const values = generateCreateProcessFormData({ stages: [stage], permissions });
 
+            const values = generateCreateProcessFormData({ stages: [stage], permissions });
             const dao = generateDao({ address: '0xDaoAddress' });
 
-            const params = { metadataCid: undefined, dao, permissionSettings: listedBody, body, stage };
-
-            const slotFunction = jest.fn().mockReturnValue(pluginInstallData);
+            const slotFunction = jest.fn().mockReturnValue('0xPluginInstallData');
             getSlotFunctionSpy.mockReturnValue(slotFunction);
-            const processMetadata = { proposal: 'proposalCID', plugins: [], spp: 'sppCID' };
 
+            const processMetadata = { proposal: '', plugins: [], spp: '' };
             prepareProcessDialogUtils.buildPrepareInstallActions(values, dao, processMetadata);
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
-                pluginId: governanceType,
+                pluginId: body.governanceType,
             });
 
-            expect(slotFunction).toHaveBeenCalledWith(params);
-        });
-
-        it('maps install data to install actions', () => {
-            const dao = generateDao({ address: '0xDaoAddress', network: Network.POLYGON_MAINNET });
-            const sppInstallData = '0xSppInstallData';
-            const pluginInstallData1 = '0xPluginInstallData1';
-            const pluginInstallData2 = '0xPluginInstallData2';
-
-            const pluginsInstallData = [[pluginInstallData1], [pluginInstallData2]];
-
-            installDataToActionSpy.mockImplementation((data) => ({ to: zeroAddress, data, value: '0' }));
-
-            // Simulate the installActions mapping step
-            const installActions = [sppInstallData, ...pluginsInstallData.flat()].map((data) =>
-                pluginTransactionUtils.installDataToAction(data as Hex, dao.network),
-            );
-
-            // Ensure installDataToAction was called for each install data item
-            expect(installDataToActionSpy).toHaveBeenCalledWith(sppInstallData, dao.network);
-            expect(installDataToActionSpy).toHaveBeenCalledWith(pluginInstallData1, dao.network);
-            expect(installDataToActionSpy).toHaveBeenCalledWith(pluginInstallData2, dao.network);
-
-            // Ensure the final installActions array contains the expected transactions
-            expect(installActions).toEqual([
-                { to: zeroAddress, data: sppInstallData, value: '0' },
-                { to: zeroAddress, data: pluginInstallData1, value: '0' },
-                { to: zeroAddress, data: pluginInstallData2, value: '0' },
-            ]);
+            expect(slotFunction).toHaveBeenCalledWith(expect.objectContaining({ permissionSettings: listedBody }));
         });
     });
 });

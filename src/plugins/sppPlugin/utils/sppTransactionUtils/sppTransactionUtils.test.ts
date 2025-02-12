@@ -4,6 +4,7 @@ import {
     generateCreateProcessFormData,
     generateCreateProcessFormStage,
 } from '@/modules/createDao/testUtils/generators/createProcessFormData';
+import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { sppPlugin } from '@/plugins/sppPlugin/constants/sppPlugin';
 import { Network } from '@/shared/api/daoService';
@@ -96,54 +97,36 @@ describe('sppTransaction utils', () => {
 
     describe('buildCreateProposalData', () => {
         it('encodes createProposal data with correct parameters', () => {
+            const transactionData = '0xencoded';
             const startDate = 12345;
             parseStartDateSpy.mockReturnValue(startDate);
 
             const params = {
-                metadata: '0xmetadata' as const,
+                metadata: '0xmetadata' as Viem.Hex,
                 actions: [{ to: '0xAddress', data: '0xdata', value: '0' }],
-                values: {
-                    title: 'Proposal Title',
-                    summary: 'Proposal Summary',
-                    description: 'Proposal Description',
-                    addActions: false,
-                    resources: [],
-                    actions: [],
-                    startTimeMode: 'fixed' as const,
-                    endTimeMode: 'duration' as const,
-                },
-                title: 'Proposal Title',
-                description: 'Proposal Description',
-                addActions: false,
-                permissions: {
-                    proposalCreationMode: ProposalCreationMode.ANY_WALLET,
-                    proposalCreationBodies: [{ bodyId: 'body1', minVotingPower: '0' }],
-                },
+                values: { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() },
             };
-            encodeFunctionDataSpy.mockReturnValue('0xEncodedData');
+            encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = sppTransactionUtils.buildCreateProposalData(params);
-            expect(Viem.encodeFunctionData).toHaveBeenCalledWith({
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: sppPluginAbi,
                 functionName: 'createProposal',
                 args: [params.metadata, params.actions, BigInt(0), startDate, [[]]],
             });
-            expect(result).toBe('0xEncodedData');
+            expect(result).toBe(transactionData);
         });
     });
 
     describe('buildPrepareSppInstallData', () => {
-        const metadataCid = '0xMetadataCID';
-        const network = Network.BASE_MAINNET;
-        const dao = generateDao({ address: '0xDAOAddress', network });
-        const expectedTarget = { target: dao.address as Viem.Hex, operation: 0 };
-
         it('encodes the plugin settings correctly using encodeAbiParameters', () => {
-            const pluginSettingsData = '0xPluginSettingsData';
-            encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
+            const metadataCid = '0xMetadataCID';
+            const dao = generateDao({ address: '0xDAOAddress' });
 
+            encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
             sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
 
+            const expectedTarget = { target: dao.address as Viem.Hex, operation: 0 };
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(sppPluginSetupAbi, [
                 metadataCid as Viem.Hex,
                 [],
@@ -153,6 +136,10 @@ describe('sppTransaction utils', () => {
         });
 
         it('builds prepare installation data correctly using buildPrepareInstallationData', () => {
+            const metadataCid = '0xMetadataCID';
+            const network = Network.BASE_MAINNET;
+            const dao = generateDao({ address: '0xDAOAddress', network });
+
             const pluginSettingsData = '0xPluginSettingsData';
             const transactionData = '0xTransactionData';
 

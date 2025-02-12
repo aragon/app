@@ -39,11 +39,7 @@ class SppTransactionUtils {
         const startDate = createProposalUtils.parseStartDate(values);
 
         const functionArgs = [metadata, actions, BigInt(0), startDate, [[]]];
-        const data = encodeFunctionData({
-            abi: sppPluginAbi,
-            functionName: 'createProposal',
-            args: functionArgs,
-        });
+        const data = encodeFunctionData({ abi: sppPluginAbi, functionName: 'createProposal', args: functionArgs });
 
         return data;
     };

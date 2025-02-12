@@ -45,33 +45,6 @@ class TokenTransactionUtils {
         return data;
     };
 
-    buildInstallDataVotingSettings = (
-        params: Pick<IBuildPreparePluginInstallDataParams, 'body' | 'stage' | 'permissionSettings'>,
-    ) => {
-        const { body, stage, permissionSettings } = params;
-        const { minVotingPower } = permissionSettings ?? {};
-
-        const { earlyStageAdvance, votingPeriod } = stage.timing;
-        const { voteChange, supportThreshold, minimumParticipation } = body;
-        const votingMode = voteChange
-            ? DaoTokenVotingMode.VOTE_REPLACEMENT
-            : earlyStageAdvance
-              ? DaoTokenVotingMode.EARLY_EXECUTION
-              : DaoTokenVotingMode.STANDARD;
-
-        const minProposerVotingPower = minVotingPower ? parseUnits(minVotingPower, 18) : BigInt(0);
-
-        const votingSettings = {
-            votingMode,
-            supportThreshold: tokenSettingsUtils.fromPercentageToRatio(supportThreshold),
-            minParticipation: tokenSettingsUtils.fromPercentageToRatio(minimumParticipation),
-            minDuration: BigInt(dateUtils.durationToSeconds(votingPeriod)),
-            minProposerVotingPower: minProposerVotingPower,
-        };
-
-        return votingSettings;
-    };
-
     buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams) => {
         const { body, metadataCid, dao } = params;
         const { tokenType, importTokenAddress, tokenName, tokenSymbol, members } = body;
@@ -114,6 +87,33 @@ class TokenTransactionUtils {
         );
 
         return transactionData;
+    };
+
+    private buildInstallDataVotingSettings = (
+        params: Pick<IBuildPreparePluginInstallDataParams, 'body' | 'stage' | 'permissionSettings'>,
+    ) => {
+        const { body, stage, permissionSettings } = params;
+        const { minVotingPower } = permissionSettings ?? {};
+
+        const { earlyStageAdvance, votingPeriod } = stage.timing;
+        const { voteChange, supportThreshold, minimumParticipation } = body;
+        const votingMode = voteChange
+            ? DaoTokenVotingMode.VOTE_REPLACEMENT
+            : earlyStageAdvance
+              ? DaoTokenVotingMode.EARLY_EXECUTION
+              : DaoTokenVotingMode.STANDARD;
+
+        const minProposerVotingPower = minVotingPower ? parseUnits(minVotingPower, 18) : BigInt(0);
+
+        const votingSettings = {
+            votingMode,
+            supportThreshold: tokenSettingsUtils.fromPercentageToRatio(supportThreshold),
+            minParticipation: tokenSettingsUtils.fromPercentageToRatio(minimumParticipation),
+            minDuration: BigInt(dateUtils.durationToSeconds(votingPeriod)),
+            minProposerVotingPower: minProposerVotingPower,
+        };
+
+        return votingSettings;
     };
 }
 

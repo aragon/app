@@ -19,11 +19,7 @@ class MultisigTransactionUtils {
         const endDate = createProposalUtils.parseEndDate(values);
 
         const functionArgs = [metadata, actions, BigInt(0), false, false, startDate, endDate];
-        const data = encodeFunctionData({
-            abi: multisigPluginAbi,
-            functionName: 'createProposal',
-            args: functionArgs,
-        });
+        const data = encodeFunctionData({ abi: multisigPluginAbi, functionName: 'createProposal', args: functionArgs });
 
         return data;
     };
@@ -32,12 +28,7 @@ class MultisigTransactionUtils {
         const { proposalIndex } = params;
 
         const functionArgs = [proposalIndex, false];
-
-        const data = encodeFunctionData({
-            abi: multisigPluginAbi,
-            functionName: 'approve',
-            args: functionArgs,
-        });
+        const data = encodeFunctionData({ abi: multisigPluginAbi, functionName: 'approve', args: functionArgs });
 
         return data;
     };
