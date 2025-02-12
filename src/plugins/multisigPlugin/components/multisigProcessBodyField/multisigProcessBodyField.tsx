@@ -26,8 +26,7 @@ export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) 
     const { members, multisigThreshold } = field;
 
     const baseTranslationKey = 'app.plugins.multisig.multisigProcessBodyField';
-    const membersDefinition =
-        members.length > 1 ? t(`${baseTranslationKey}.plural`) : t(`${baseTranslationKey}.single`);
+    const membersDefinition = t(`${baseTranslationKey}.members`).toLowerCase();
 
     return (
         <DefinitionList.Container className="w-full">

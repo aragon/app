@@ -109,9 +109,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                                     </Accordion.ItemHeader>
                                     <Accordion.ItemContent>
                                         <PluginSingleComponent
-                                            pluginId={
-                                                field.governanceType === 'tokenVoting' ? 'token-voting' : 'multisig'
-                                            }
+                                            pluginId={field.governanceType}
                                             slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                                             field={field}
                                         />

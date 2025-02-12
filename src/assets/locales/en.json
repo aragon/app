@@ -905,8 +905,6 @@
         },
         "multisigProcessBodyField": {
           "members": "Members",
-          "plural": "members",
-          "single": "member",
           "threshold": "Multisig threshold"
         },
         "multisigProposalList": {
@@ -1097,10 +1095,9 @@
         },
         "tokenProcessBodyField": {
           "distribution": "Distribution",
+          "holders": "token holders",
           "minimum": "Minimum participation",
           "no": "No",
-          "plural": "token holders",
-          "single": "token holder",
           "supply": "Supply",
           "support": "Support threshold",
           "token": "Token",
