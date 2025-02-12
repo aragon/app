@@ -8,6 +8,7 @@ import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
+import { DaoTokenVotingMode } from '../../types';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
@@ -56,35 +57,116 @@ describe('tokenTransaction utils', () => {
         });
     });
 
+    describe('buildInstallDataVotingSettings', () => {
+        it('returns the correct voting mode when vote replacement is enabled', () => {
+            const body = generateCreateProcessFormBody({ id: 'body-1', voteChange: true });
+            const stage = generateCreateProcessFormStage();
+            const permissionSettings = { minVotingPower: '1', bodyId: 'body-1' };
+
+            const params = { body, stage, permissionSettings };
+            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
+
+            expect(result.votingMode).toBe(DaoTokenVotingMode.VOTE_REPLACEMENT);
+        });
+
+        it('returns the correct voting mode when early execution is enabled', () => {
+            const body = generateCreateProcessFormBody({ id: 'body-2' });
+            const stage = generateCreateProcessFormStage({
+                timing: {
+                    votingPeriod: { days: 1, hours: 0, minutes: 0 },
+                    earlyStageAdvance: true,
+                },
+            });
+            const permissionSettings = { minVotingPower: '1', bodyId: 'body-1' };
+
+            const params = { body, stage, permissionSettings };
+            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
+
+            expect(result.votingMode).toBe(DaoTokenVotingMode.EARLY_EXECUTION);
+        });
+
+        it('returns standard voting mode when vote replacement and early execute are not defined)', () => {
+            const body = generateCreateProcessFormBody({ id: 'body-3' });
+            const stage = generateCreateProcessFormStage();
+            const permissionSettings = { minVotingPower: '3', bodyId: 'body-3' };
+
+            const params = { body, stage, permissionSettings };
+            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
+
+            expect(result.votingMode).toBe(DaoTokenVotingMode.STANDARD);
+        });
+
+        it('returns 0  for voting power when permissionSettings are undefined', () => {
+            const body = generateCreateProcessFormBody({ id: 'body-4', supportThreshold: 3 });
+            const stage = generateCreateProcessFormStage();
+            const params = { body, stage, permissionSettings: undefined };
+
+            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
+
+            expect(result.minProposerVotingPower).toBe(BigInt(0));
+        });
+
+        it('correctly calculates the voting settings', () => {
+            const body = generateCreateProcessFormBody({ id: 'body-5', supportThreshold: 3, minimumParticipation: 4 });
+            const stage = generateCreateProcessFormStage({
+                timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
+            });
+            const permissionSettings = { minVotingPower: '0.001', bodyId: 'body-5' };
+
+            const params = { body, stage, permissionSettings };
+            const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
+
+            const expectedResult = {
+                votingMode: DaoTokenVotingMode.STANDARD,
+                supportThreshold: 30000,
+                minParticipation: 40000,
+                minDuration: BigInt(7200),
+                minProposerVotingPower: BigInt(1000000000000000),
+            };
+
+            expect(result).toEqual(expectedResult);
+        });
+    });
+
     describe('buildPrepareInstallData', () => {
         const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
         const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
+        const votingSettingsSpy = jest.spyOn(tokenTransactionUtils, 'buildInstallDataVotingSettings');
 
         afterEach(() => {
             encodeAbiParametersSpy.mockReset();
             buildPrepareInstallationDataSpy.mockReset();
+            votingSettingsSpy.mockReset();
         });
 
-        it('builds prepare installation data correctly for a token proposal', () => {
+        it('calls the encodeAbiParameters with the correct params', () => {
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
-            const permissionSettings = { minVotingPower: '1', bodyId: '1' };
-            const body = generateCreateProcessFormBody();
-            const stage = generateCreateProcessFormStage();
+            const permissionSettings = { minVotingPower: '0.001', bodyId: '1' };
+            const body = generateCreateProcessFormBody({ supportThreshold: 2, minimumParticipation: 2 });
+            const stage = generateCreateProcessFormStage({
+                timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
+            });
             encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
-            buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
+
+            const votingSettingsMock = {
+                minDuration: BigInt(7200),
+                minParticipation: 10000,
+                minProposerVotingPower: BigInt(1000000000000000000),
+                supportThreshold: 10000,
+                votingMode: 0,
+            };
+
+            votingSettingsSpy.mockReturnValue(votingSettingsMock);
+
             const params = { metadataCid, dao, permissionSettings, body, stage };
-            const result = tokenTransactionUtils.buildPrepareInstallData(params);
+
+            tokenTransactionUtils.buildPrepareInstallData(params);
+
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
                 tokenPluginSetupAbi,
                 expect.arrayContaining([
-                    {
-                        minDuration: BigInt(86400),
-                        minParticipation: 10000,
-                        minProposerVotingPower: BigInt(1e18),
-                        supportThreshold: 10000,
-                        votingMode: 0,
-                    },
+                    votingSettingsMock,
                     expect.objectContaining({
                         addr: zeroAddress,
                         name: '',
@@ -96,12 +178,29 @@ describe('tokenTransaction utils', () => {
                     metadataCid,
                 ]),
             );
+        });
+
+        it('builds prepare installation data correctly for a token proposal', () => {
+            const metadataCid = '0xSomeMetadataCID';
+            const dao = generateDao({ address: '0x001' });
+            const permissionSettings = { minVotingPower: '1', bodyId: '1' };
+            const body = generateCreateProcessFormBody();
+            const stage = generateCreateProcessFormStage();
+
+            encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
+            buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
+
+            const params = { metadataCid, dao, permissionSettings, body, stage };
+
+            const result = tokenTransactionUtils.buildPrepareInstallData(params);
+
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 tokenPlugin.repositoryAddresses[dao.network],
                 tokenPlugin.installVersion,
                 '0xPluginSettingsData',
                 dao.address,
             );
+
             expect(result).toBe('0xTransactionData');
         });
     });
