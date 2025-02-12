@@ -1,3 +1,4 @@
+import { adminPlugin } from '@/plugins/adminPlugin/constants/adminPlugin';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -47,8 +48,8 @@ class PublishDaoDialogUtils {
         const { values, metadataCid, connectedAddress } = params;
         const { network } = values;
 
-        const { addresses } = networkDefinitions[network];
-        const { daoFactory, adminPluginRepo } = addresses;
+        const { daoFactory } = networkDefinitions[network].addresses;
+        const adminPluginRepo = adminPlugin.repositoryAddresses[network];
 
         const daoSettings = this.buildDaoSettingsParams(metadataCid);
         const pluginSettings = this.buildPluginSettingsParams(adminPluginRepo, connectedAddress);
@@ -102,7 +103,7 @@ class PublishDaoDialogUtils {
         const pluginSettingsParams = {
             pluginSetupRef: {
                 pluginSetupRepo: adminPluginRepo,
-                versionTag: { release: 1, build: 6 },
+                versionTag: adminPlugin.installVersion,
             },
             data: pluginSettingsData,
         };

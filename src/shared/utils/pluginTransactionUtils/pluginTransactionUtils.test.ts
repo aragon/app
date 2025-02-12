@@ -25,7 +25,7 @@ describe('pluginTransaction utils', () => {
         const buildApplyInstallationTransactionSpy = jest.spyOn(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             pluginTransactionUtils as any,
-            'buildApplyInstallationTransaction',
+            'buildApplyInstallationData',
         );
         const installDataToActionSpy = jest.spyOn(pluginTransactionUtils, 'installDataToAction');
 
@@ -57,6 +57,32 @@ describe('pluginTransaction utils', () => {
             expect(installDataToActionSpy).toHaveBeenNthCalledWith(2, transactionData, dao.network);
 
             expect(result).toEqual([transactionOne, transactionTwo]);
+        });
+    });
+
+    describe('buildPrepareInstallationData', () => {
+        it('encodes function data with correct arguments', () => {
+            const transactionData = '0xencoded-data';
+            encodeFunctionDataSpy.mockReturnValue(transactionData);
+            const pluginAddress = '0xAddress';
+            const pluginVersion = { release: 1, build: 2 };
+            const data = '0xSomeData';
+            const daoAddress = '0xDAOAddress';
+
+            const result = pluginTransactionUtils.buildPrepareInstallationData(
+                pluginAddress,
+                pluginVersion,
+                data,
+                daoAddress,
+            );
+
+            const expectedPluginSetupRef = { pluginSetupRepo: pluginAddress, versionTag: pluginVersion };
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
+                abi: pluginSetupProcessorAbi,
+                functionName: 'prepareInstallation',
+                args: [daoAddress, { pluginSetupRef: expectedPluginSetupRef, data }],
+            });
+            expect(result).toEqual(transactionData);
         });
     });
 
@@ -124,7 +150,7 @@ describe('pluginTransaction utils', () => {
             const encodedTxData = '0xEncodedTxData';
             encodeFunctionDataSpy.mockReturnValueOnce(encodedTxData);
 
-            const result = pluginTransactionUtils['buildApplyInstallationTransaction'](setupData, daoAddress);
+            const result = pluginTransactionUtils['buildApplyInstallationData'](setupData, daoAddress);
             expect(hashHelpersSpy).toHaveBeenCalledWith(preparedSetupData.helpers);
 
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({

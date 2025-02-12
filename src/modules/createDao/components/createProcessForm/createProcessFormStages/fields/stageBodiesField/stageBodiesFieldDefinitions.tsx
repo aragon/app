@@ -35,13 +35,13 @@ export const CreateProcessFormBodyDialogSteps: Record<
     [BodyCreationDialogSteps.PLUGIN_SELECT]: (props) => <CreateProcessFormPluginSelect {...props} />,
     [BodyCreationDialogSteps.PLUGIN_METADATA]: (props) => <CreateProcessFormPluginMetadata {...props} />,
     [BodyCreationDialogSteps.GOVERNANCE_DISTRO]: (props) =>
-        props.bodyGovernanceType === 'tokenVoting' ? (
+        props.bodyGovernanceType === 'token-voting' ? (
             <CreateProcessFormTokenVotingDistro {...props} />
         ) : (
             <CreateProcessFormMultisigDistro {...props} />
         ),
     [BodyCreationDialogSteps.GOVERNANCE_PARAMS]: (props) =>
-        props.bodyGovernanceType === 'tokenVoting' ? (
+        props.bodyGovernanceType === 'token-voting' ? (
             <CreateProcessFormTokenVotingParams {...props} />
         ) : (
             <CreateProcessFormMultisigParams {...props} />
@@ -93,7 +93,7 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
 
         let fieldPaths: string[];
 
-        if (bodyGovernanceType === 'tokenVoting') {
+        if (bodyGovernanceType === 'token-voting') {
             fieldPaths = [`${basePath}.tokenName`, `${basePath}.tokenSymbol`, `${basePath}.members`];
         } else {
             fieldPaths = [`${basePath}.multisigThreshold`, `${basePath}.members`];
@@ -107,7 +107,7 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
         const basePath = `${stageFieldName}.bodies.${bodyIndex.toString()}`;
 
         let fieldPaths: string[];
-        if (bodyGovernanceType === 'tokenVoting') {
+        if (bodyGovernanceType === 'token-voting') {
             fieldPaths = [`${basePath}.supportThreshold`, `${basePath}.minimumParticipation`, `${basePath}.voteChange`];
         } else {
             fieldPaths = [`${basePath}.supportThreshold`];

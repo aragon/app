@@ -109,7 +109,7 @@ export interface ICreateProcessFormBody {
     /**
      * Governance type of the body.
      */
-    governanceType: 'multisig' | 'tokenVoting';
+    governanceType: string;
     /**
      * Members of the voting body.
      */

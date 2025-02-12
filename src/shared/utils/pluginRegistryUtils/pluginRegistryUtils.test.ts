@@ -74,7 +74,7 @@ describe('pluginRegistry utils', () => {
         it('returns undefined when no component is registered for the given slot id', () => {
             const registeredSlotId = 'member-list';
             const unregisteredSlotId = 'settings';
-            const pluginId = 'tokenVoting';
+            const pluginId = 'token-voting';
             pluginRegistryUtils.registerSlotComponent({
                 slotId: registeredSlotId,
                 pluginId: pluginId,
@@ -142,7 +142,7 @@ describe('pluginRegistry utils', () => {
         it('returns undefined when no function is registered for the given slot id', () => {
             const registeredSlotId = 'member-list';
             const unregisteredSlotId = 'settings';
-            const pluginId = 'tokenVoting';
+            const pluginId = 'token-voting';
             pluginRegistryUtils.registerSlotFunction({
                 slotId: registeredSlotId,
                 pluginId: pluginId,
