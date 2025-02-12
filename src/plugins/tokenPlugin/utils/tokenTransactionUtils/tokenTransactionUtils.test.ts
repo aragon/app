@@ -6,9 +6,9 @@ import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
 import { zeroAddress } from 'viem';
+import { DaoTokenVotingMode } from '../../types';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
-import { DaoTokenVotingMode } from '../../types';
 
 jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
 
@@ -16,11 +16,15 @@ describe('tokenTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
     const parseEndDateSpy = jest.spyOn(createProposalUtils, 'parseEndDate');
+    const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
+    const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
 
     afterEach(() => {
         encodeFunctionDataSpy.mockReset();
         parseStartDateSpy.mockReset();
         parseEndDateSpy.mockReset();
+        encodeAbiParametersSpy.mockReset();
+        buildPrepareInstallationDataSpy.mockReset();
     });
 
     describe('buildCreateProposalData', () => {
@@ -111,7 +115,7 @@ describe('tokenTransaction utils', () => {
             const stage = generateCreateProcessFormStage({
                 timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
             });
-            const permissionSettings = { minVotingPower: '0.001', bodyId: 'body-5' };
+            const permissionSettings = { minVotingPower: '2', bodyId: 'body-5' };
 
             const params = { body, stage, permissionSettings };
             const result = tokenTransactionUtils.buildInstallDataVotingSettings(params);
@@ -121,7 +125,7 @@ describe('tokenTransaction utils', () => {
                 supportThreshold: 30000,
                 minParticipation: 40000,
                 minDuration: BigInt(7200),
-                minProposerVotingPower: BigInt(1000000000000000),
+                minProposerVotingPower: BigInt(2e18),
             };
 
             expect(result).toEqual(expectedResult);
@@ -129,20 +133,16 @@ describe('tokenTransaction utils', () => {
     });
 
     describe('buildPrepareInstallData', () => {
-        const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
-        const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
         const votingSettingsSpy = jest.spyOn(tokenTransactionUtils, 'buildInstallDataVotingSettings');
 
         afterEach(() => {
-            encodeAbiParametersSpy.mockReset();
-            buildPrepareInstallationDataSpy.mockReset();
             votingSettingsSpy.mockReset();
         });
 
         it('calls the encodeAbiParameters with the correct params', () => {
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
-            const permissionSettings = { minVotingPower: '0.001', bodyId: '1' };
+            const permissionSettings = { minVotingPower: '2', bodyId: '1' };
             const body = generateCreateProcessFormBody({ supportThreshold: 2, minimumParticipation: 2 });
             const stage = generateCreateProcessFormStage({
                 timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
@@ -152,7 +152,7 @@ describe('tokenTransaction utils', () => {
             const votingSettingsMock = {
                 minDuration: BigInt(7200),
                 minParticipation: 10000,
-                minProposerVotingPower: BigInt(1000000000000000000),
+                minProposerVotingPower: BigInt(2e18),
                 supportThreshold: 10000,
                 votingMode: 0,
             };
