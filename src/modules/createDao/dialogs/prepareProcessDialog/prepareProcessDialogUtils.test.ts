@@ -1,10 +1,12 @@
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
+import { Network } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { zeroAddress } from 'viem';
-import { ProposalCreationMode, type ICreateProcessFormData } from '../../components/createProcessForm';
+import { type Hex, zeroAddress } from 'viem';
+import { ProposalCreationMode } from '../../components/createProcessForm';
 import {
     generateCreateProcessFormBody,
     generateCreateProcessFormData,
@@ -126,40 +128,104 @@ describe('prepareProcessDialog utils', () => {
             installDataToActionSpy.mockReset();
         });
 
-        it('builds install actions for SPP and plugin bodies', () => {
-            const dao = generateDao({ address: '0xDaoAddress' });
+        it('correctly prepares the SPP install data', () => {
             const sppInstallData = '0xSppInstallData';
-            const pluginInstallData = '0xPluginInstallData';
-            const processMetadata = {
-                proposal: 'proposalCID',
-                plugins: ['pluginCID1', 'pluginCID2'],
-                spp: 'sppCID',
-            };
+            const sppMetadata = '0xSppMetadata';
+            const dao = generateDao({ address: '0xDaoAddress' });
 
-            cidToHexSpy.mockImplementation((cid: string) => `0x${cid}`);
             sppInstallSpy.mockReturnValue(sppInstallData);
-            getSlotFunctionSpy.mockReturnValue(() => pluginInstallData);
+
+            const result = sppTransactionUtils.buildPreparePluginInstallData(sppMetadata, dao);
+
+            expect(sppInstallSpy).toHaveBeenCalledWith(sppMetadata, dao);
+
+            expect(result).toEqual(sppInstallData);
+        });
+
+        it('correctly prepares the plugin install data with no permissions when proposal creation mode is any wallet', () => {
+            const pluginInstallData = '0xPluginInstallData' as Hex;
+            const governanceType = 'multisig';
+            const body = generateCreateProcessFormBody({ id: 'body1', governanceType });
+            const stage = generateCreateProcessFormStage({ bodies: [body] });
+            const permissions = {
+                proposalCreationMode: ProposalCreationMode.ANY_WALLET,
+                proposalCreationBodies: [],
+            };
+            const values = generateCreateProcessFormData({ stages: [stage], permissions });
+
+            const dao = generateDao({ address: '0xDaoAddress' });
+
+            const params = { metadataCid: undefined, dao, permissionSettings: undefined, body, stage };
+
+            const slotFunction = jest.fn().mockReturnValue(pluginInstallData);
+            getSlotFunctionSpy.mockReturnValue(slotFunction);
+            const processMetadata = { proposal: 'proposalCID', plugins: [], spp: 'sppCID' };
+
+            prepareProcessDialogUtils.buildPrepareInstallActions(values, dao, processMetadata);
+
+            expect(getSlotFunctionSpy).toHaveBeenCalledWith({
+                slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
+                pluginId: governanceType,
+            });
+
+            expect(slotFunction).toHaveBeenCalledWith(params);
+        });
+
+        it('correctly prepares the plugin install data with defined permissions when proposal creation mode is listed bodies', () => {
+            const pluginInstallData = '0xPluginInstallData' as Hex;
+            const governanceType = 'token-voting';
+            const body = generateCreateProcessFormBody({ id: 'body1', governanceType });
+            const listedBody = { bodyId: body.id };
+            const stage = generateCreateProcessFormStage({ bodies: [body] });
+            const permissions = {
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+                proposalCreationBodies: [listedBody],
+            };
+            const values = generateCreateProcessFormData({ stages: [stage], permissions });
+
+            const dao = generateDao({ address: '0xDaoAddress' });
+
+            const params = { metadataCid: undefined, dao, permissionSettings: listedBody, body, stage };
+
+            const slotFunction = jest.fn().mockReturnValue(pluginInstallData);
+            getSlotFunctionSpy.mockReturnValue(slotFunction);
+            const processMetadata = { proposal: 'proposalCID', plugins: [], spp: 'sppCID' };
+
+            prepareProcessDialogUtils.buildPrepareInstallActions(values, dao, processMetadata);
+
+            expect(getSlotFunctionSpy).toHaveBeenCalledWith({
+                slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
+                pluginId: governanceType,
+            });
+
+            expect(slotFunction).toHaveBeenCalledWith(params);
+        });
+
+        it('correctly maps install data to install actions', () => {
+            const dao = generateDao({ address: '0xDaoAddress', network: Network.POLYGON_MAINNET });
+            const sppInstallData = '0xSppInstallData';
+            const pluginInstallData1 = '0xPluginInstallData1';
+            const pluginInstallData2 = '0xPluginInstallData2';
+
+            const pluginsInstallData = [[pluginInstallData1], [pluginInstallData2]];
+
             installDataToActionSpy.mockImplementation((data) => ({ to: zeroAddress, data, value: '0' }));
 
-            const stage = generateCreateProcessFormStage({
-                bodies: [generateCreateProcessFormBody({ id: 'body1', governanceType: 'multisig' })],
-            });
-            const values: ICreateProcessFormData = {
-                name: 'Test Process',
-                description: 'Test description',
-                processKey: 'test-key',
-                resources: [],
-                stages: [stage],
-                permissions: {
-                    proposalCreationMode: ProposalCreationMode.ANY_WALLET,
-                    proposalCreationBodies: [],
-                },
-            };
+            // Simulate the installActions mapping step
+            const installActions = [sppInstallData, ...pluginsInstallData.flat()].map((data) =>
+                pluginTransactionUtils.installDataToAction(data as Hex, dao.network),
+            );
 
-            const actions = prepareProcessDialogUtils.buildPrepareInstallActions(values, dao, processMetadata);
-            expect(actions).toEqual([
+            // Ensure installDataToAction was called for each install data item
+            expect(installDataToActionSpy).toHaveBeenCalledWith(sppInstallData, dao.network);
+            expect(installDataToActionSpy).toHaveBeenCalledWith(pluginInstallData1, dao.network);
+            expect(installDataToActionSpy).toHaveBeenCalledWith(pluginInstallData2, dao.network);
+
+            // Ensure the final installActions array contains the expected transactions
+            expect(installActions).toEqual([
                 { to: zeroAddress, data: sppInstallData, value: '0' },
-                { to: zeroAddress, data: pluginInstallData, value: '0' },
+                { to: zeroAddress, data: pluginInstallData1, value: '0' },
+                { to: zeroAddress, data: pluginInstallData2, value: '0' },
             ]);
         });
     });

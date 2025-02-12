@@ -139,13 +139,11 @@ describe('sppTransaction utils', () => {
             const dao = generateDao({ address: '0xDAOAddress', network });
             const expectedTarget = { target: dao.address as Viem.Hex, operation: 0 };
 
-            // Stub dependencies with hardcoded return values.
             encodeAbiParametersSpy.mockReturnValue('0xPluginSettingsData');
             buildPrepareInstallationDataSpy.mockReturnValue('0xTransactionData');
 
             const result = sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
 
-            // Verify encodeAbiParameters is called with the expected parameters.
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(sppPluginSetupAbi, [
                 metadataCid as Viem.Hex,
                 [],
@@ -153,7 +151,6 @@ describe('sppTransaction utils', () => {
                 expectedTarget,
             ]);
 
-            // Verify buildPrepareInstallationData is called with expected arguments.
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 sppPlugin.repositoryAddresses[network],
                 sppPlugin.installVersion,
