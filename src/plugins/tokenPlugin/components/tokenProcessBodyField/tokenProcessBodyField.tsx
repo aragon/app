@@ -66,7 +66,6 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 {t(`${baseTranslationKey}.supportDefinition`, { threshold: supportThreshold })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.minParticipationTerm`)}>
-                {`≥ ${minimumParticipation.toString()}%`}
                 {t(`${baseTranslationKey}.minParticipationDefinition`, { minimumParticipation })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.voteChange`)}>
