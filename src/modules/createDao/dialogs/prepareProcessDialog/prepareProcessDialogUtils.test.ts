@@ -60,8 +60,8 @@ describe('prepareProcessDialog utils', () => {
                 name: values.name,
                 description: values.description,
                 links: resources,
-                process: values.processKey,
-                stages: [stageOne.name, stageTwo.name],
+                processKey: values.processKey,
+                stageNames: [stageOne.name, stageTwo.name],
             });
         });
     });
@@ -73,6 +73,10 @@ describe('prepareProcessDialog utils', () => {
         afterEach(() => {
             buildPrepareInstallActionsSpy.mockReset();
             getSlotFunctionSpy.mockReset();
+        });
+
+        afterAll(() => {
+            buildPrepareInstallActionsSpy.mockRestore();
         });
 
         it('builds transaction data using the slot function', async () => {
