@@ -1104,7 +1104,6 @@
           "supplyTerm": "Supply",
           "supportDefinition": "> {{support}}%",
           "supportTerm": "Support threshold",
-          "tokenDefinition": "",
           "tokenTerm": "Token",
           "voteChange": "Vote change",
           "yes": "Yes"
