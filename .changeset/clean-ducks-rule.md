@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Refactor prepare transction utils for plugins, add test coverage
+Refactor prepare process utilities and add tests
