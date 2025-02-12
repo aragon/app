@@ -14,7 +14,7 @@ export interface IWizardPageStepProps extends IWizardStepProps {
     description: string;
 }
 
-export const WizardStepPage: React.FC<IWizardPageStepProps> = (props) => {
+export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
     const { title, description, children, className, ...otherProps } = props;
 
     const { hasPrevious, previousStep } = useWizardContext();
@@ -37,8 +37,8 @@ export const WizardStepPage: React.FC<IWizardPageStepProps> = (props) => {
             <div className="flex flex-col gap-6">
                 {displayValidationError && (
                     <AlertCard
-                        message={t(`app.shared.wizard.step.error.${validationStatus}.title`)}
-                        description={t(`app.shared.wizard.step.error.${validationStatus}.description`)}
+                        message={t(`app.shared.wizardPage.step.error.${validationStatus}.title`)}
+                        description={t(`app.shared.wizardPage.step.error.${validationStatus}.description`)}
                         variant="critical"
                     />
                 )}
@@ -50,7 +50,7 @@ export const WizardStepPage: React.FC<IWizardPageStepProps> = (props) => {
                         variant="tertiary"
                         size="lg"
                     >
-                        {t('app.shared.wizard.step.back')}
+                        {t('app.shared.wizardPage.step.back')}
                     </Button>
                     <Button iconRight={IconType.CHEVRON_RIGHT} variant={submitVariant} size="lg" type="submit">
                         {submitLabel}

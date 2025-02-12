@@ -10,8 +10,6 @@ import * as Viem from 'viem';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { type ICreateMultisigProposalFormData, multisigTransactionUtils } from './multisigTransactionUtils';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
-
 describe('multisigTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');

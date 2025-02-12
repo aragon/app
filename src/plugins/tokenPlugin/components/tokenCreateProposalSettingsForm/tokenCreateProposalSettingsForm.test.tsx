@@ -9,11 +9,6 @@ import {
     type ITokenCreateProposalSettingsFormProps,
 } from './tokenCreateProposalSettingsForm';
 
-jest.mock('react-hook-form', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof ReactHookForm>('react-hook-form'),
-}));
-
 jest.mock('@/shared/components/forms/advancedDateInput', () => ({
     AdvancedDateInput: ({ label, helpText, field, infoText, useDuration, minDuration }: IAdvancedDateInputProps) => (
         <div data-testid="advanced-date-input">

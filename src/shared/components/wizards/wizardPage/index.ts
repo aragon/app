@@ -1,9 +1,9 @@
 import { WizardPageContainer } from './wizardPageContainer';
-import { WizardStepPage } from './wizardPageStep';
+import { WizardPageStep } from './wizardPageStep';
 
 export const WizardPage = {
     Container: WizardPageContainer,
-    Step: WizardStepPage,
+    Step: WizardPageStep,
 };
 
 export * from './wizardPageContainer';

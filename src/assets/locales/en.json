@@ -1328,6 +1328,23 @@
         "versionEnv": "v{{version}} ({{env}})"
       },
       "wizard": {
+        "footer": {
+          "next": "Next"
+        }
+      },
+      "wizardDetailsDialog": {
+        "footer": {
+          "cancel": "Cancel"
+        },
+        "infoLabel": "Learn more",
+        "step": "Step {{number}}"
+      },
+      "wizardDialog": {
+        "container": {
+          "back": "Back"
+        }
+      },
+      "wizardPage": {
         "container": {
           "next": "Next:",
           "step": "Step {{number}}",
@@ -1351,13 +1368,6 @@
           },
           "next": "Next"
         }
-      },
-      "wizardDetailsDialog": {
-        "footer": {
-          "cancel": "Cancel"
-        },
-        "infoLabel": "Learn more",
-        "step": "Step {{number}}"
       }
     }
   }

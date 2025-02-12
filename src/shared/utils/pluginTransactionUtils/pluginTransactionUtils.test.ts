@@ -6,8 +6,6 @@ import * as Viem from 'viem';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { pluginTransactionUtils } from './pluginTransactionUtils';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
-
 describe('pluginTransaction utils', () => {
     const parseEventLogsSpy = jest.spyOn(Viem, 'parseEventLogs');
     const keccak256Spy = jest.spyOn(Viem, 'keccak256');

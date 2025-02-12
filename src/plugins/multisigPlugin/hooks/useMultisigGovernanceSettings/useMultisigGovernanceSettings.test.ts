@@ -10,12 +10,6 @@ import { renderHook } from '@testing-library/react';
 import * as governanceService from '../../../../modules/governance/api/governanceService';
 import { useMultisigGovernanceSettings } from './useMultisigGovernanceSettings';
 
-// Needed to spy on useMemberList hook
-jest.mock('../../../../modules/governance/api/governanceService', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof governanceService>('../../../../modules/governance/api/governanceService'),
-}));
-
 describe('useMultisigGovernanceSettings', () => {
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
     const parseSettingsSpy = jest.spyOn(multisigSettingsUtils, 'parseSettings');

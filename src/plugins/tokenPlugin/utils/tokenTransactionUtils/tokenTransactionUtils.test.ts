@@ -10,8 +10,6 @@ import { DaoTokenVotingMode } from '../../types';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
-
 describe('tokenTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');

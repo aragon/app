@@ -1,6 +1,6 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Progress } from '@aragon/gov-ui-kit';
-import { useWizardContext } from '../../wizard/wizardProvider';
+import { useWizardContext } from '../../wizard';
 
 export interface IWizardPageContainerProgressProps {
     /**
@@ -23,15 +23,15 @@ export const WizardPageContainerProgress = (props: IWizardPageContainerProgressP
             <div className="flex flex-row justify-between">
                 <div className="flex flex-row gap-1 text-base font-normal leading-tight">
                     <span className="text-primary-400">
-                        {t('app.shared.wizard.container.step', { number: activeStepIndex + 1 })}
+                        {t('app.shared.wizardPage.container.step', { number: activeStepIndex + 1 })}
                     </span>
                     <span className="text-neutral-500">
-                        {t('app.shared.wizard.container.total', { total: steps.length })}
+                        {t('app.shared.wizardPage.container.total', { total: steps.length })}
                     </span>
                 </div>
                 {nextStepName != null && (
                     <div className="flex flex-row gap-1 text-base font-normal leading-tight">
-                        <span className="text-neutral-500">{t('app.shared.wizard.container.next')}</span>
+                        <span className="text-neutral-500">{t('app.shared.wizardPage.container.next')}</span>
                         <span className="text-neutral-800">{nextStepName}</span>
                     </div>
                 )}

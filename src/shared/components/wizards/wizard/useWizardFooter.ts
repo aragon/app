@@ -48,7 +48,7 @@ export const useWizardFooter = (): IUseWizardFooterReturn => {
     const displayValidationError = isSubmitted && validationStatus !== 'valid';
 
     const submitVariant = displayValidationError ? 'critical' : !hasNext ? 'primary' : 'secondary';
-    const processedSubmitLabel = hasNext ? t('app.shared.wizard.step.next') : submitLabel;
+    const processedSubmitLabel = hasNext ? t('app.shared.wizard.footer.next') : submitLabel;
 
     return {
         validationStatus,

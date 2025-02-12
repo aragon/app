@@ -10,11 +10,6 @@ import {
 } from './createProposalPageClientSteps';
 import { CreateProposalWizardStep, createProposalWizardSteps } from './createProposalPageDefinitions';
 
-jest.mock('react-hook-form', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof ReactHookForm>('react-hook-form'),
-}));
-
 jest.mock('../../components/createProposalForm', () => ({
     CreateProposalForm: {
         Metadata: () => <div data-testid="proposal-metadata" />,

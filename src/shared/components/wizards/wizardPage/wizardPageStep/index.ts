@@ -1,1 +1,1 @@
-export { WizardStepPage, type IWizardPageStepProps } from './wizardPageStep';
+export { WizardPageStep, type IWizardPageStepProps } from './wizardPageStep';
