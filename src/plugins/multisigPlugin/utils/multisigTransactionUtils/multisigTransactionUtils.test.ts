@@ -15,13 +15,17 @@ jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>(
 
 describe('multisigTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
+    const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
     const parseEndDateSpy = jest.spyOn(createProposalUtils, 'parseEndDate');
+    const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
 
     afterEach(() => {
         encodeFunctionDataSpy.mockReset();
+        encodeAbiParametersSpy.mockReset();
         parseStartDateSpy.mockReset();
         parseEndDateSpy.mockReset();
+        buildPrepareInstallationDataSpy.mockReset();
     });
 
     describe('buildCreateProposalData', () => {
@@ -64,50 +68,50 @@ describe('multisigTransaction utils', () => {
     });
 
     describe('buildPrepareInstallData', () => {
-        const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
-        const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
+        const metadataCid = '0xSomeMetadataCID';
+        const dao = generateDao({ network: Network.BASE_MAINNET });
+        const permissionSettings = { someSetting: true, bodyId: '1' };
+        const body = generateCreateProcessFormBody();
+        const stage = generateCreateProcessFormStage();
+        const params = { metadataCid, dao, permissionSettings, stage, body };
 
-        afterEach(() => {
-            encodeAbiParametersSpy.mockReset();
-            buildPrepareInstallationDataSpy.mockReset();
-        });
-
-        it('builds prepare installation data correctly', () => {
-            const metadataCid = '0xSomeMetadataCID';
-            const dao = generateDao({ network: Network.BASE_MAINNET });
-            const permissionSettings = { someSetting: true, bodyId: '1' };
-            const body = generateCreateProcessFormBody();
-            const stage = generateCreateProcessFormStage();
-            const params = {
-                metadataCid,
-                dao,
-                permissionSettings,
-                stage,
-                body,
-            };
+        it('encodes the plugin settings correctly using encodeAbiParameters', () => {
             const pluginSettingsData = '0xPluginSettingsData';
-            const transactionData = '0xTransactionData';
             encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
-            buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
-            const result = multisigTransactionUtils.buildPrepareInstallData(params);
+
+            multisigTransactionUtils.buildPrepareInstallData(params);
+
             const memberAddresses = body.members.map((member) => member.address);
             const expectedMultisigTarget = {
                 target: networkDefinitions[dao.network].addresses.globalExecutor,
                 operation: 1,
             };
             const expectedPluginSettings = { onlyListed: true, minApprovals: body.multisigThreshold };
+
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginSetupAbi, [
                 memberAddresses,
                 expectedPluginSettings,
                 expectedMultisigTarget,
                 metadataCid,
             ]);
+        });
+
+        it('builds prepare installation data correctly using buildPrepareInstallationData', () => {
+            const pluginSettingsData = '0xPluginSettingsData';
+            const transactionData = '0xTransactionData';
+
+            encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
+            buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
+
+            const result = multisigTransactionUtils.buildPrepareInstallData(params);
+
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 multisigPlugin.repositoryAddresses[dao.network],
                 multisigPlugin.installVersion,
                 pluginSettingsData,
                 dao.address,
             );
+
             expect(result).toBe(transactionData);
         });
     });
