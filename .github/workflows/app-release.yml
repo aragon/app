@@ -24,7 +24,12 @@ jobs:
           git config --global user.name "Arabot-1"
           git config --global user.email "arabot-1@users.noreply.github.com"
       - name: Update version and changelog
-        run: yarn changeset version
+        # Run prettier on CHANGELOG.md file (used for Github release notes) to remove automatic formatting applied by
+        # changeset as Github does not support soft line breaks.
+        # (See https://github.com/changesets/changesets/issues/1452, https://github.com/orgs/community/discussions/10981)
+        run: |
+          yarn changeset version
+          yarn prettier --write CHANGELOG.md --print-width 9999999 --ignore-path
         env:
           GITHUB_TOKEN: ${{ secrets.ARABOT_PAT }}
       - name: Create tag
