@@ -5,7 +5,7 @@ import { Container } from '../../container';
 export interface IPageContentProps extends ComponentProps<'div'> {
     /**
      * Whether the content should be inset vertically or not.
-     * Useful for pages with a header.
+     * Disable on page layouts which use a <Page.Header />.
      * @default true
      */
     inset?: boolean;
