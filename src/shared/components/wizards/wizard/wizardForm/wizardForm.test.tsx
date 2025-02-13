@@ -55,4 +55,14 @@ describe('<WizardForm /> component', () => {
         await userEvent.click(screen.getByRole('button'));
         expect(handleSubmit).toHaveBeenCalledWith(onSubmit);
     });
+
+    it('does not throw error when the onSubmit property is not defined', async () => {
+        const children = <Button type="submit" />;
+        const handleSubmit = ((callback: () => void) => () => callback()) as ReactHookForm.UseFormHandleSubmit<object>;
+        const onSubmit = undefined;
+        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasNext: false }));
+        useFormContextSpy.mockReturnValue(generateFormContext({ handleSubmit }));
+        render(createTestComponent({ children, onSubmit }));
+        await expect(userEvent.click(screen.getByRole('button'))).resolves.toBeUndefined();
+    });
 });
