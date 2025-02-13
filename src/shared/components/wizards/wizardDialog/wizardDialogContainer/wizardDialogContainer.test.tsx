@@ -1,5 +1,15 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import type { IWizardFormProps, IWizardRootProps } from '../../wizard';
 import { type IWizardDialogContainerProps, WizardDialogContainer } from './wizardDialogContainer';
+
+jest.mock('../../wizard', () => ({
+    Wizard: {
+        Root: (props: IWizardRootProps) => <div>{props.children}</div>,
+        Form: (props: IWizardFormProps) => <div>{props.children}</div>,
+    },
+}));
+
+jest.mock('./WizardDialogContainerFooter', () => ({ WizardDialogContainerFooter: () => <div data-testid="footer" /> }));
 
 describe('<WizardDialogContainer /> component', () => {
     const createTestComponent = (props?: Partial<IWizardDialogContainerProps>) => {
@@ -19,5 +29,16 @@ describe('<WizardDialogContainer /> component', () => {
         const isOpen = false;
         const { container } = render(createTestComponent({ isOpen }));
         expect(container).toBeEmptyDOMElement();
+    });
+
+    it('renders a dialog with the specified title, description, content and footer when dialog is open', () => {
+        const title = 'wizard-title';
+        const description = 'wizard-description';
+        const children = 'wizard-steps';
+        render(createTestComponent({ title, description, children, isOpen: true }));
+        expect(screen.getByText(title)).toBeInTheDocument();
+        expect(screen.getByText(description)).toBeInTheDocument();
+        expect(screen.getByText(children)).toBeInTheDocument();
+        expect(screen.getByTestId('footer')).toBeInTheDocument();
     });
 });
