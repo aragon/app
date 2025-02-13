@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { IWizardFormProps } from '../../wizard/wizardForm';
-import type { IWizardRootProps } from '../../wizard/wizardRoot';
+import type { IWizardFormProps, IWizardRootProps } from '../../wizard';
 import { type IWizardPageContainerProps, WizardPageContainer } from './wizardPageContainer';
 
 jest.mock('../../wizard', () => ({

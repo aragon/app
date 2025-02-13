@@ -1,5 +1,4 @@
-import { Wizard } from '../../wizard';
-import type { IWizardStepProps } from '../../wizard/wizardStep';
+import { Wizard, type IWizardStepProps } from '../../wizard';
 
 export interface IWizardDialogStepProps extends IWizardStepProps {}
 

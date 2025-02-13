@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { IWizardStepProps } from '../../wizard/wizardStep';
+import type { IWizardStepProps } from '../../wizard';
 import { type IWizardDialogStepProps, WizardDialogStep } from './wizardDialogStep';
 
 jest.mock('../../wizard', () => ({
