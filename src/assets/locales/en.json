@@ -1102,7 +1102,7 @@
           "minParticipationTerm": "Minimum participation",
           "no": "No",
           "supplyTerm": "Supply",
-          "supportDefinition": "> {{support}}%",
+          "supportDefinition": "> {{threshold}}%",
           "supportTerm": "Support threshold",
           "tokenTerm": "Token",
           "voteChange": "Vote change",
