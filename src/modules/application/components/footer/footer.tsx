@@ -26,7 +26,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
 
     return (
         <footer className={classNames('border-t border-neutral-100 bg-neutral-0 py-5', className)} {...otherProps}>
-            <Container className={classNames('grid items-center md:gap-6', layoutClassNames)} inset={true}>
+            <Container className={classNames('grid items-center md:gap-6', layoutClassNames)}>
                 <div className="flex flex-row items-center justify-between gap-4 pb-4 pt-3 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
                     <AragonLogo />
                     <ApplicationTags variant="primary" />
