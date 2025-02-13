@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { IWizardStepperStep } from '@/shared/components/wizards/wizard';
+import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { CreateProcessForm } from '../../components/createProcessForm';
 import { CreateProcessWizardStep } from './createProcessPageDefinitions';
