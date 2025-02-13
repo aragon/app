@@ -181,7 +181,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                             dropdownItems={getActionDropdownItems(index)}
                             editMode={true}
                             formPrefix={`actions.${index.toString()}`}
-                            chainId={networkDefinitions[dao!.network].chainId}
+                            chainId={networkDefinitions[dao!.network].id}
                         />
                     ))}
                 </ProposalActions.Container>

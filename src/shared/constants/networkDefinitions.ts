@@ -1,6 +1,7 @@
 import { Network } from '@/shared/api/daoService';
 import { zeroAddress, type Chain, type Hex } from 'viem';
 import { arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
+import { peaq } from './customChains';
 
 export interface INetworkDefinitionAddresses {
     /**
@@ -17,11 +18,7 @@ export interface INetworkDefinitionAddresses {
     globalExecutor: Hex;
 }
 
-export interface INetworkDefinition {
-    /**
-     * Chain ID of the network.
-     */
-    chainId: number;
+export interface INetworkDefinition extends Chain {
     /**
      * Name of the network.
      */
@@ -31,32 +28,22 @@ export interface INetworkDefinition {
      */
     logo: string;
     /**
-     * URL of the RPC endpoint to use.
+     * URL of the private RPC endpoint to use.
      */
-    rpc: string;
-    /**
-     * Flag to determine if the network is testnet
-     */
-    isTestnet?: boolean;
-    /**
-     * Wagmi chain configuration.
-     */
-    wagmiChain: Chain;
+    privateRpc?: string;
     /**
      * Addresses for the network.
      */
     addresses: INetworkDefinitionAddresses;
 }
 
-//TODO: Update the addresses for each network after 1.4 deployment
 export const networkDefinitions: Record<Network, INetworkDefinition> = {
     // Mainnets
     [Network.ETHEREUM_MAINNET]: {
-        chainId: 1,
+        ...mainnet,
         name: 'Ethereum',
         logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-        rpc: 'https://eth-mainnet.g.alchemy.com/v2/',
-        wagmiChain: mainnet,
+        privateRpc: 'https://eth-mainnet.g.alchemy.com/v2/',
         addresses: {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
@@ -64,11 +51,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         },
     },
     [Network.POLYGON_MAINNET]: {
-        chainId: 137,
+        ...polygon,
         name: 'Polygon',
         logo: 'https://assets.coingecko.com/coins/images/4713/large/polygon.png',
-        rpc: 'https://polygon-mainnet.g.alchemy.com/v2/',
-        wagmiChain: polygon,
+        privateRpc: 'https://polygon-mainnet.g.alchemy.com/v2/',
         addresses: {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
@@ -76,11 +62,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         },
     },
     [Network.BASE_MAINNET]: {
-        chainId: 8453,
+        ...base,
         name: 'Base',
         logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
-        rpc: 'https://base-mainnet.g.alchemy.com/v2/',
-        wagmiChain: base,
+        privateRpc: 'https://base-mainnet.g.alchemy.com/v2/',
         addresses: {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
@@ -88,11 +73,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         },
     },
     [Network.ARBITRUM_MAINNET]: {
-        chainId: 42161,
+        ...arbitrum,
         name: 'Arbitrum',
         logo: 'https://docs.arbitrum.io/img/logo.svg',
-        rpc: 'https://arb-mainnet.g.alchemy.com/v2/',
-        wagmiChain: arbitrum,
+        privateRpc: 'https://arb-mainnet.g.alchemy.com/v2/',
         addresses: {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
@@ -100,25 +84,33 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         },
     },
     [Network.ZKSYNC_MAINNET]: {
-        chainId: 324,
+        ...zksync,
         name: 'zkSync',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
-        rpc: 'https://zksync-mainnet.g.alchemy.com/v2/',
-        wagmiChain: zksync,
+        privateRpc: 'https://zksync-mainnet.g.alchemy.com/v2/',
         addresses: {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
             globalExecutor: zeroAddress,
         },
     },
+    [Network.PEAQ_MAINNET]: {
+        ...peaq,
+        name: 'Peaq',
+        logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
+        addresses: {
+            daoFactory: zeroAddress,
+            pluginSetupProcessor: zeroAddress,
+            globalExecutor: zeroAddress,
+        },
+    },
+
     // Testnets
     [Network.ETHEREUM_SEPOLIA]: {
-        chainId: 11155111,
+        ...sepolia,
         name: 'Ethereum Sepolia',
         logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-        rpc: 'https://eth-sepolia.g.alchemy.com/v2/',
-        isTestnet: true,
-        wagmiChain: sepolia,
+        privateRpc: 'https://eth-sepolia.g.alchemy.com/v2/',
         addresses: {
             daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
             pluginSetupProcessor: '0x9e99D11b513dD2cc5e117a5793412106502FF04B',
@@ -126,12 +118,10 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
-        chainId: 300,
+        ...zksyncSepoliaTestnet,
         name: 'zkSync Sepolia',
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
-        rpc: 'https://zksync-sepolia.g.alchemy.com/v2/',
-        isTestnet: true,
-        wagmiChain: zksyncSepoliaTestnet,
+        privateRpc: 'https://zksync-sepolia.g.alchemy.com/v2/',
         addresses: {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,

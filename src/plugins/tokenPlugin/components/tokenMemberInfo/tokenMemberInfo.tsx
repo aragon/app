@@ -38,7 +38,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
 
     const distribution = memberList?.pages[0].metadata.totalRecords;
 
-    const chainId = networkDefinitions[plugin.settings.token.network].chainId;
+    const { id: chainId } = networkDefinitions[plugin.settings.token.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const { token } = plugin.settings;
