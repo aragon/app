@@ -9,7 +9,7 @@ jest.mock('../../wizard', () => ({
     },
 }));
 
-jest.mock('./WizardDialogContainerFooter', () => ({ WizardDialogContainerFooter: () => <div data-testid="footer" /> }));
+jest.mock('./wizardDialogContainerFooter', () => ({ WizardDialogContainerFooter: () => <div data-testid="footer" /> }));
 
 describe('<WizardDialogContainer /> component', () => {
     const createTestComponent = (props?: Partial<IWizardDialogContainerProps>) => {
