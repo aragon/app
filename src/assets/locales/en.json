@@ -1365,8 +1365,7 @@
               "description": "Some inputs are not filled. Review and fill out all mandatory data to proceed.",
               "title": "Missing data"
             }
-          },
-          "next": "Next"
+          }
         }
       }
     }
