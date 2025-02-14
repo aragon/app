@@ -15,7 +15,7 @@ describe('<WizardDialogContainer /> component', () => {
     const createTestComponent = (props?: Partial<IWizardDialogContainerProps>) => {
         const completeProps: IWizardDialogContainerProps = {
             title: 'title',
-            description: 'description',
+            descriptionKey: 'description',
             formId: 'formId',
             onClose: jest.fn(),
             submitLabel: 'submit',
@@ -33,11 +33,11 @@ describe('<WizardDialogContainer /> component', () => {
 
     it('renders a dialog with the specified title, description, content and footer when dialog is open', () => {
         const title = 'wizard-title';
-        const description = 'wizard-description';
+        const descriptionKey = 'wizard-description';
         const children = 'wizard-steps';
-        render(createTestComponent({ title, description, children, isOpen: true }));
+        render(createTestComponent({ title, descriptionKey, children, isOpen: true }));
         expect(screen.getByText(title)).toBeInTheDocument();
-        expect(screen.getByText(description)).toBeInTheDocument();
+        expect(screen.getByText(descriptionKey)).toBeInTheDocument();
         expect(screen.getByText(children)).toBeInTheDocument();
         expect(screen.getByTestId('footer')).toBeInTheDocument();
     });

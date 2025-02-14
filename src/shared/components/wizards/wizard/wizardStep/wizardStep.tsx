@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import { useEffect, type ComponentProps } from 'react';
-import { useWizardContext } from '../wizardProvider';
-import type { IWizardStepperStep } from '../wizardProvider/wizardProvider';
+import { useWizardContext, type IWizardStepperStep } from '../wizardProvider';
 
 export interface IWizardStepProps extends IWizardStepperStep, Omit<ComponentProps<'div'>, 'id'> {
     /**

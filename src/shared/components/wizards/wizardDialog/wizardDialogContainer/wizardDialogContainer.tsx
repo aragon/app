@@ -13,7 +13,7 @@ export interface IWizardDialogContainerProps<TFormData extends FieldValues = Fie
     /**
      * Translation key of the wizard description, hidden and only used for dialog accessibility.
      */
-    description: string;
+    descriptionKey: string;
     /**
      * ID of the form, needed to link the submit button to the form element.
      */
@@ -31,15 +31,25 @@ export interface IWizardDialogContainerProps<TFormData extends FieldValues = Fie
 export const WizardDialogContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardDialogContainerProps<TFormData>,
 ) => {
-    const { title, description, formId, onClose, isOpen, initialSteps, submitLabel, onSubmit, children, ...formProps } =
-        props;
+    const {
+        title,
+        descriptionKey,
+        formId,
+        onClose,
+        isOpen,
+        initialSteps,
+        submitLabel,
+        onSubmit,
+        children,
+        ...formProps
+    } = props;
 
     if (!isOpen) {
         return null;
     }
 
     return (
-        <Dialog.Root size="lg" open={true} hiddenDescription={description} onOpenChange={onClose}>
+        <Dialog.Root size="lg" open={true} hiddenDescription={descriptionKey} onOpenChange={onClose}>
             <Wizard.Root submitLabel={submitLabel} initialSteps={initialSteps}>
                 <Dialog.Header title={title} />
                 <Dialog.Content>
