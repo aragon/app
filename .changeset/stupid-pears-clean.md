@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Adjust button string
+Fix button label on publish proposal dialog
