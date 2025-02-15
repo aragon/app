@@ -44,6 +44,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
                     pluginId={selectedPlugin.id}
                     slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
                     plugin={selectedPlugin.meta}
+                    daoId={daoId}
                 />
             </Page.Aside>
         </>
