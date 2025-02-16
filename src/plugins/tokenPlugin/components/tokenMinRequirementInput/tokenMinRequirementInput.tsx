@@ -40,7 +40,7 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
                 prefix="≥"
                 helpText={t('app.createDao.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
                 placeholder={t('app.createDao.createProcessForm.permissions.tokenMinRequirementInput.placeholder')}
-                min={0}
+                min={parseFloat('1e-18')}
                 max={totalSupply}
                 {...minVotingPowerField}
             />
