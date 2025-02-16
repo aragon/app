@@ -1,13 +1,14 @@
+import type { ITokenProcessBody } from '@/plugins/tokenPlugin/components/tokenProcessBodyField';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputNumber } from '@aragon/gov-ui-kit';
-import type { ICreateProcessFormProposalCreationBody } from '../../createProcessFormDefinitions';
+import type { ICreateProcessFormProposalCreationBody } from '../../../../modules/createDao/components/createProcessForm/createProcessFormDefinitions';
 
 export interface ITokenMinRequirementInputProps {
     /**
-     * Total supply of the token.
+     * The body of the process.
      */
-    totalSupply: number;
+    body: ITokenProcessBody;
     /**
      * Prefix to be prepended to the form field.
      */
@@ -15,7 +16,12 @@ export interface ITokenMinRequirementInputProps {
 }
 
 export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> = (props) => {
-    const { fieldPrefix, totalSupply } = props;
+    const { fieldPrefix, body } = props;
+
+    const totalSupply = body.members.reduce(
+        (supply, member) => ('tokenAmount' in member ? supply + Number(member.tokenAmount) : supply),
+        0,
+    );
 
     const { t } = useTranslations();
 

@@ -1,6 +1,7 @@
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { CheckboxCard } from '@aragon/gov-ui-kit';
 import { type ICreateProcessFormBody } from '../../createProcessFormDefinitions';
-import { TokenMinRequirementInput } from './tokenMinRequirementInput';
 
 export interface IVotingBodyCheckboxCardProps {
     /**
@@ -23,22 +24,22 @@ export interface IVotingBodyCheckboxCardProps {
 
 export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (props) => {
     const { body, onChange, checked, fieldPrefix } = props;
-
-    const isTokenVoting = body.governanceType === 'token-voting';
-
-    const tokenTotalSupply = body.members.reduce(
-        (supply, member) => ('tokenAmount' in member ? supply + Number(member.tokenAmount) : supply),
-        0,
-    );
+    const { name, description, governanceType, id } = body;
 
     return (
         <CheckboxCard
-            label={body.name}
-            description={body.description}
-            onCheckedChange={(isChecked) => onChange(body.id, Boolean(isChecked))}
+            label={name}
+            description={description}
+            onCheckedChange={(isChecked) => onChange(id, Boolean(isChecked))}
             checked={checked}
         >
-            {isTokenVoting && <TokenMinRequirementInput fieldPrefix={fieldPrefix} totalSupply={tokenTotalSupply} />}
+            <PluginSingleComponent
+                slotId={GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_CREATION_REQUIREMENTS}
+                pluginId={governanceType}
+                body={body}
+                fieldPrefix={fieldPrefix}
+                Fallback={() => null}
+            />
         </CheckboxCard>
     );
 };
