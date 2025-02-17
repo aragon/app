@@ -160,7 +160,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>
-                    <Page.Section title={t('app.governance.daoMemberDetailsPage.aside.details.title')} inset={false}>
+                    <Page.AsideCard title={t('app.governance.daoMemberDetailsPage.aside.details.title')}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.governance.daoMemberDetailsPage.aside.details.address')}>
                                 {addressUrl && (
@@ -182,7 +182,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                                 {formattedFirstActivity ?? '-'}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
-                    </Page.Section>
+                    </Page.AsideCard>
                 </Page.Aside>
             </Page.Content>
         </>

@@ -164,7 +164,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                     )}
                 </Page.Main>
                 <Page.Aside>
-                    <Page.Section title={t('app.dashboard.daoDashboardPage.aside.details.title')} inset={false}>
+                    <Page.AsideCard title={t('app.dashboard.daoDashboardPage.aside.details.title')}>
                         <DefinitionList.Container>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.blockchain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
@@ -187,9 +187,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 </Link>
                             </DefinitionList.Item>
                         </DefinitionList.Container>
-                    </Page.Section>
+                    </Page.AsideCard>
                     {dao.links.length > 0 && (
-                        <Page.Section
+                        <Page.AsideCard
                             title={t('app.dashboard.daoDashboardPage.aside.links')}
                             className="flex flex-col gap-4"
                         >
@@ -198,7 +198,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     {name}
                                 </Link>
                             ))}
-                        </Page.Section>
+                        </Page.AsideCard>
                     )}
                 </Page.Aside>
             </Page.Content>

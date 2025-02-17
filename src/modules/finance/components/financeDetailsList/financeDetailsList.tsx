@@ -32,7 +32,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
     const daoEns = daoUtils.getDaoEns(dao);
 
     return (
-        <Page.Section title={t('app.finance.financeDetailsList.title')} inset={false}>
+        <Page.AsideCard title={t('app.finance.financeDetailsList.title')}>
             <DefinitionList.Container {...otherProps}>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.blockchain')}>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
@@ -50,6 +50,6 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
-        </Page.Section>
+        </Page.AsideCard>
     );
 };

@@ -53,9 +53,9 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
                 )}
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>
+                <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>
                     <DaoVersionInfo dao={dao} />
-                </Page.Section>
+                </Page.AsideCard>
             </Page.Aside>
         </>
     );
