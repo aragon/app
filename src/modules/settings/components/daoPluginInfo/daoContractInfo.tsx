@@ -21,27 +21,19 @@ export interface IDaoContractInfoProps {
 export const DaoContractInfo: React.FC<IDaoContractInfoProps> = (props) => {
     const { plugin, daoId } = props;
 
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-
-    const { blockTimestamp, transactionHash, address, release, build } = plugin;
-
     const { t } = useTranslations();
-
     const { buildEntityUrl } = useBlockExplorer();
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     if (dao == null) {
         return null;
     }
 
-    const chainId = networkDefinitions[dao.network].chainId;
-
+    const { blockTimestamp, transactionHash, address, release, build } = plugin;
     const pluginLaunchedAt = formatterUtils.formatDate(blockTimestamp * 1000, { format: DateFormat.YEAR_MONTH });
 
-    const pluginCreationLink = buildEntityUrl({
-        type: ChainEntityType.TRANSACTION,
-        id: transactionHash,
-        chainId,
-    });
+    const { id: chainId } = networkDefinitions[dao.network];
+    const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
     return (
         <DefinitionList.Container>
