@@ -1,16 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import type { ReactNode } from 'react';
-import type { IPageContext } from '../pageContext';
 import { PageMain, type IPageMainProps } from './pageMain';
-
-jest.mock('../pageContext', () => ({
-    PageContextProvider: (props: { value: IPageContext; children: ReactNode }) => (
-        <div data-testid="page-context-mock" data-type={props.value.contentType}>
-            {props.children}
-        </div>
-    ),
-}));
 
 describe('<Page.Main /> component', () => {
     const createTestComponent = (props?: Partial<IPageMainProps>) => {
@@ -23,13 +13,6 @@ describe('<Page.Main /> component', () => {
         const children = 'test-children';
         render(createTestComponent({ children }));
         expect(screen.getByText(children)).toBeInTheDocument();
-    });
-
-    it('renders a page context to set the content type to "main"', () => {
-        render(createTestComponent());
-        const pageContext = screen.getByTestId('page-context-mock');
-        expect(pageContext).toBeInTheDocument();
-        expect(pageContext.dataset.type).toEqual('main');
     });
 
     it('renders the title when defined', () => {

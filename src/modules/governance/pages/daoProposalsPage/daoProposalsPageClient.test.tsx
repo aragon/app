@@ -9,10 +9,6 @@ jest.mock('../../components/daoProposalList', () => ({
     DaoProposalList: { Container: () => <div data-testid="proposal-list-mock" /> },
 }));
 
-jest.mock('@/modules/settings/components/daoGovernanceInfo', () => ({
-    DaoGovernanceInfo: () => <div data-testid="governance-info-mock" />,
-}));
-
 jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
     DaoPluginInfo: () => <div data-testid="plugin-info-mock" />,
 }));
@@ -50,9 +46,8 @@ describe('<DaoProposalsPageClient /> component', () => {
     it('renders the page title, proposals list and proposals page details', () => {
         render(createTestComponent());
         expect(screen.getByText(/daoProposalsPage.main.title/)).toBeInTheDocument();
-        expect(screen.getByText(/daoProposalsPage.aside.settings.title/)).toBeInTheDocument();
         expect(screen.getByTestId('proposal-list-mock')).toBeInTheDocument();
-        expect(screen.getByTestId('governance-info-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
     });
 
     it('renders the create proposal button with the correct link and label', () => {
