@@ -87,7 +87,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
 
     const creatorName = creator.ens ?? addressUtils.truncateAddress(creator.address);
 
-    const { chainId } = networkDefinitions[proposal.network];
+    const { id: chainId } = networkDefinitions[proposal.network];
     const creatorLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: creator.address, chainId });
     const creationBlockLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 

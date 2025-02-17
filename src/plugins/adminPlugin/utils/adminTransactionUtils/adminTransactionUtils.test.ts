@@ -3,8 +3,6 @@ import * as Viem from 'viem';
 import { adminPluginAbi } from './adminPluginAbi';
 import { adminTransactionUtils } from './adminTransactionUtils';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
-
 describe('adminTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
 

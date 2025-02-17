@@ -1,4 +1,4 @@
-import type { IWizardStepProps } from '@/shared/components/wizard';
+import type { IWizardPageStepProps } from '@/shared/components/wizards/wizardPage';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateTabComponentPlugin } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -10,11 +10,6 @@ import {
 } from './createProposalPageClientSteps';
 import { CreateProposalWizardStep, createProposalWizardSteps } from './createProposalPageDefinitions';
 
-jest.mock('react-hook-form', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof ReactHookForm>('react-hook-form'),
-}));
-
 jest.mock('../../components/createProposalForm', () => ({
     CreateProposalForm: {
         Metadata: () => <div data-testid="proposal-metadata" />,
@@ -23,9 +18,9 @@ jest.mock('../../components/createProposalForm', () => ({
     },
 }));
 
-jest.mock('@/shared/components/wizard', () => ({
-    Wizard: {
-        Step: ({ title, description, children, hidden, id }: IWizardStepProps) => (
+jest.mock('@/shared/components/wizards/wizardPage', () => ({
+    WizardPage: {
+        Step: ({ title, description, children, hidden, id }: IWizardPageStepProps) => (
             <div data-testid={id} data-hidden={hidden} data-title={title} data-description={description}>
                 {children}
             </div>

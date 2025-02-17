@@ -2,12 +2,6 @@ import { renderHook } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
 import { useFormField } from './useFormField';
 
-// Needed to spy usage of useFormContext hook
-jest.mock('react-hook-form', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof ReactHookForm>('react-hook-form'),
-}));
-
 describe('useFormField hook', () => {
     const useControllerSpy = jest.spyOn(ReactHookForm, 'useController');
 

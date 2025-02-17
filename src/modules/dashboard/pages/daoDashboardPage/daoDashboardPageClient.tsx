@@ -84,7 +84,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         format: DateFormat.YEAR_MONTH,
     });
 
-    const { chainId } = networkDefinitions[dao.network];
+    const { id: chainId } = networkDefinitions[dao.network];
     const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId });
     const daoCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: dao.transactionHash, chainId });
 

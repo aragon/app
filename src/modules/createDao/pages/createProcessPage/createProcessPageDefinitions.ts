@@ -1,4 +1,4 @@
-import type { IWizardStepperStep } from '@/shared/components/wizard/wizardProvider';
+import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 
 export enum CreateProcessWizardStep {
     METADATA = 'METADATA',

@@ -19,7 +19,7 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
 
     const { buildEntityUrl } = useBlockExplorer();
 
-    const { chainId } = networkDefinitions[token.network];
+    const { id: chainId } = networkDefinitions[token.network];
     const entityUrl = buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address, chainId });
 
     const processedEntityUrl = onAssetClick != null ? undefined : entityUrl;

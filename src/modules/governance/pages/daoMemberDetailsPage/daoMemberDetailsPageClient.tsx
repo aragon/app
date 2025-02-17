@@ -95,7 +95,7 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const truncatedAddress = addressUtils.truncateAddress(address);
     const memberName = ens ?? truncatedAddress;
 
-    const { chainId } = networkDefinitions[dao.network];
+    const { id: chainId } = networkDefinitions[dao.network];
     const addressUrl = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId });
     const blockExplorer = getBlockExplorer(chainId);
 
