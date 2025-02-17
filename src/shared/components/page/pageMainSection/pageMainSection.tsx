@@ -4,7 +4,7 @@ import { Heading } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 
-export interface IPageSectionProps extends ComponentProps<'div'> {
+export interface IPageMainSectionProps extends ComponentProps<'div'> {
     /**
      * Set the default spacing between the title and the section content when set to true.
      * @default true
@@ -20,7 +20,7 @@ export interface IPageSectionProps extends ComponentProps<'div'> {
     description?: string;
 }
 
-export const PageSection: React.FC<IPageSectionProps> = (props) => {
+export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
     const { children, className, inset = true, title, description, ...otherProps } = props;
 
     return (

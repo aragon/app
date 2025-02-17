@@ -120,7 +120,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             <Page.Content>
                 <Page.Main>
                     {hasSupportedPlugins && (
-                        <Page.Section title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
+                        <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
                             <DaoProposalList.Container initialParams={proposalListParams} hidePagination={true}>
                                 <Button
                                     className="self-start"
@@ -132,9 +132,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
                             </DaoProposalList.Container>
-                        </Page.Section>
+                        </Page.MainSection>
                     )}
-                    <Page.Section title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
+                    <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
                         <AssetList initialParams={assetListParams} hidePagination={true}>
                             <Button
                                 className="self-start"
@@ -146,9 +146,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 {t('app.dashboard.daoDashboardPage.main.viewAll')}
                             </Button>
                         </AssetList>
-                    </Page.Section>
+                    </Page.MainSection>
                     {hasSupportedPlugins && (
-                        <Page.Section title={t('app.dashboard.daoDashboardPage.main.members.title')}>
+                        <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.members.title')}>
                             <DaoMemberList.Container initialParams={memberListParams} hidePagination={true}>
                                 <Button
                                     className="self-start"
@@ -160,7 +160,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     {t('app.dashboard.daoDashboardPage.main.viewAll')}
                                 </Button>
                             </DaoMemberList.Container>
-                        </Page.Section>
+                        </Page.MainSection>
                     )}
                 </Page.Main>
                 <Page.Aside>

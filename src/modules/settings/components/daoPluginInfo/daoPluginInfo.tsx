@@ -10,25 +10,25 @@ import { DaoPluginInfoTabId, type IDaoPlugInfoProps } from './daoPluginInfo.api'
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId, isMembersPage } = props;
 
-    const { t } = useTranslations();
-
     const { description, links } = plugin;
+
+    const { t } = useTranslations();
 
     const tabs = useMemo(
         () => [
             {
                 id: DaoPluginInfoTabId.DESCRIPTION,
-                title: t('app.settings.daoPluginInfo.tabs.description.title'),
+                label: t('app.settings.daoPluginInfo.tabs.description.label'),
                 hidden: !description && !links?.length,
             },
             {
                 id: DaoPluginInfoTabId.CONTRACT,
-                title: t('app.settings.daoPluginInfo.tabs.contract.title'),
+                label: t('app.settings.daoPluginInfo.tabs.contract.label'),
                 hidden: false,
             },
             {
                 id: DaoPluginInfoTabId.SETTINGS,
-                title: t('app.settings.daoPluginInfo.tabs.settings.title'),
+                label: t('app.settings.daoPluginInfo.tabs.settings.label'),
                 hidden: false,
             },
         ],
@@ -61,8 +61,8 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     return (
         <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value as DaoPluginInfoTabId)}>
             <Tabs.List>
-                {visibleTabs.map(({ id, title }) => (
-                    <Tabs.Trigger key={id} label={title} value={id} />
+                {visibleTabs.map(({ id, label }) => (
+                    <Tabs.Trigger key={id} label={label} value={id} />
                 ))}
             </Tabs.List>
             {visibleTabs.map(({ id }) => (

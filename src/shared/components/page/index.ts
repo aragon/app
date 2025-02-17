@@ -5,7 +5,7 @@ import { PageContent } from './pageContent';
 import { PageError } from './pageError';
 import { PageHeader } from './pageHeader';
 import { PageMain } from './pageMain';
-import { PageSection } from './pageSection';
+import { PageMainSection } from './pageMainSection';
 
 export const Page = {
     Container: PageContainer,
@@ -14,7 +14,7 @@ export const Page = {
     Error: PageError,
     Main: PageMain,
     Aside: PageAside,
-    Section: PageSection,
+    MainSection: PageMainSection,
     AsideCard: PageAsideCard,
 };
 
@@ -25,4 +25,4 @@ export * from './pageContent';
 export * from './pageError';
 export * from './pageHeader';
 export * from './pageMain';
-export * from './pageSection';
+export * from './pageMainSection';

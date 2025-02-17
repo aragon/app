@@ -1206,13 +1206,13 @@
         "processName": "Process name",
         "tabs": {
           "contract": {
-            "title": "Contract"
+            "label": "Contract"
           },
           "description": {
-            "title": "Description"
+            "label": "Description"
           },
           "settings": {
-            "title": "Settings"
+            "label": "Settings"
           }
         }
       },

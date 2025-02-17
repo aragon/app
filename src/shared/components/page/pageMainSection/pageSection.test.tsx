@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
-import { PageSection, type IPageSectionProps } from './pageSection';
+import { PageMainSection, type IPageMainSectionProps } from './pageMainSection';
 
-describe('<PageSection /> component', () => {
-    const createTestComponent = (props?: Partial<IPageSectionProps>) => {
-        const completeProps: IPageSectionProps = {
+describe('<PageMainSection /> component', () => {
+    const createTestComponent = (props?: Partial<IPageMainSectionProps>) => {
+        const completeProps: IPageMainSectionProps = {
             title: 'test-title',
             ...props,
         };
 
-        return <PageSection {...completeProps} />;
+        return <PageMainSection {...completeProps} />;
     };
 
     it('renders the children property', () => {

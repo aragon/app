@@ -21,9 +21,9 @@ export interface IDaoPluginInfoTab {
      */
     id: DaoPluginInfoTabId;
     /**
-     * The title of the tab.
+     * The label of the tab.
      */
-    title: string;
+    label: string;
     /**
      * Flag indicating whether or not the tab should be hidden (when it has no content).
      */

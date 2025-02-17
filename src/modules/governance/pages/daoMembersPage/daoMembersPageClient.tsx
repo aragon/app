@@ -40,13 +40,13 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={bodyName} inset={true}>
+                <Page.AsideCard title={bodyName}>
                     <DaoPluginInfo
                         plugin={selectedPlugin.meta}
                         daoId={initialParams.queryParams.daoId}
                         isMembersPage={true}
                     />
-                </Page.Section>
+                </Page.AsideCard>
             </Page.Aside>
         </>
     );
