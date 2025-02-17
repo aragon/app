@@ -22,3 +22,7 @@ Object.assign(global, { TextDecoder, TextEncoder });
 
 // Mock ResideObserver functionality
 global.ResizeObserver = jest.fn().mockImplementation(() => ({ observe: jest.fn(), disconnect: jest.fn() }));
+
+// Allow spying on library functions
+jest.mock('react-hook-form', () => ({ __esModule: true, ...jest.requireActual<object>('react-hook-form') }));
+jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<object>('viem') }));

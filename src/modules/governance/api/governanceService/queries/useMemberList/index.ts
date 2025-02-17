@@ -1,1 +1,1 @@
-export * from './useMemberList';
+export { memberListOptions, useMemberList } from './useMemberList';

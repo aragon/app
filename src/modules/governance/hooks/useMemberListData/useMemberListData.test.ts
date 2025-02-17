@@ -10,12 +10,6 @@ import * as governanceService from '../../api/governanceService';
 import { generateMember } from '../../testUtils';
 import { useMemberListData } from './useMemberListData';
 
-// Needed to spy usage of useMemberList hook
-jest.mock('../../api/governanceService', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof governanceService>('../../api/governanceService'),
-}));
-
 describe('useMemberListData hook', () => {
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
 
