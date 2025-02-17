@@ -73,21 +73,28 @@ describe('rpcRequest utils', () => {
     });
 
     describe('chainIdToRpcEndpoint', () => {
-        it('returns the rpc endpoint with the rpc key of the specified chain id', () => {
+        it('returns the private rpc endpoint with the rpc key of the specified chain id when defined', () => {
             const rpcKey = 'test-key';
             const testClass = createTestClass(rpcKey);
 
             expect(testClass['chainIdToRpcEndpoint']('1')).toEqual(
-                `${networkDefinitions[Network.ETHEREUM_MAINNET].rpc}${rpcKey}`,
+                `${networkDefinitions[Network.ETHEREUM_MAINNET].privateRpc!}${rpcKey}`,
             );
             expect(testClass['chainIdToRpcEndpoint']('11155111')).toEqual(
-                `${networkDefinitions[Network.ETHEREUM_SEPOLIA].rpc}${rpcKey}`,
+                `${networkDefinitions[Network.ETHEREUM_SEPOLIA].privateRpc!}${rpcKey}`,
+            );
+        });
+
+        it('returns the public rpc endpoint when no private rpc is set for the given chain id', () => {
+            const testClass = createTestClass();
+            expect(testClass['chainIdToRpcEndpoint']('3338')).toEqual(
+                networkDefinitions[Network.PEAQ_MAINNET].rpcUrls.default.http[0],
             );
         });
 
         it('returns undefined when network definitions of chain id cannot be found', () => {
             const testClass = createTestClass();
-            expect(testClass['chainIdToRpcEndpoint']('123')).toBeUndefined();
+            expect(testClass['chainIdToRpcEndpoint']('unknown_chain')).toBeUndefined();
         });
     });
 
