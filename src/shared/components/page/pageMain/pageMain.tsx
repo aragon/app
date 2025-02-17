@@ -36,7 +36,6 @@ export interface IPageMainProps extends ComponentProps<'main'> {
     fullWidth?: boolean;
 }
 
-
 export const PageMain: React.FC<IPageMainProps> = (props) => {
     const { className, children, title, action, fullWidth, ...otherProps } = props;
 

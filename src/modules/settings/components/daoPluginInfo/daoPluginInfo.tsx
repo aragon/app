@@ -44,7 +44,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
         setActiveTab(visibleTabs[0].id);
     }, [visibleTabs]);
 
-    // Map the content for each tab
+    // Map the tab content to each tab
     const tabContent = useMemo(
         () => ({
             [DaoPluginInfoTabId.DESCRIPTION]: <DaoPluginDetails description={description} links={links} />,

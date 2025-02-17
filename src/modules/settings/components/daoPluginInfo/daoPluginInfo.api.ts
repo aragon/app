@@ -2,15 +2,15 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 
 export interface IDaoPlugInfoProps {
     /**
-     * The DAO plugin to display information for.
+     * The selected plugin the info is related to.
      */
     plugin: IDaoPlugin;
     /**
-     * The DAO ID.
+     * The ID of the DAO.
      */
     daoId: string;
     /**
-     * Flag indicating whether plugin info component is rendered on the member page or not.
+     * Flag indicating whether plugin info component is rendered on the DAO members page or not.
      */
     isMembersPage?: boolean;
 }
@@ -25,7 +25,7 @@ export interface IDaoPluginInfoTab {
      */
     title: string;
     /**
-     * Flag indicating whether or not to render the tab.
+     * Flag indicating whether or not the tab should be hidden (when it has no content).
      */
     hidden: boolean;
 }

@@ -42,6 +42,7 @@ export const DaoContractInfo: React.FC<IDaoContractInfoProps> = (props) => {
         id: transactionHash,
         chainId,
     });
+
     return (
         <DefinitionList.Container>
             <DefinitionList.Item term={t('app.settings.daoPluginInfo.plugin')}>
