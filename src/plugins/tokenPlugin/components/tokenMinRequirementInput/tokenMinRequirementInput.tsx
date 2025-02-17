@@ -30,6 +30,7 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
         {
             fieldPrefix,
             defaultValue: '1',
+            rules: { validate: (value) => Number(value) > 0 },
             label: t('app.createDao.createProcessForm.permissions.tokenMinRequirementInput.label'),
         },
     );
@@ -40,7 +41,6 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
                 prefix="≥"
                 helpText={t('app.createDao.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
                 placeholder={t('app.createDao.createProcessForm.permissions.tokenMinRequirementInput.placeholder')}
-                min={parseFloat('1e-18')}
                 max={totalSupply}
                 {...minVotingPowerField}
             />
