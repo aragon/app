@@ -19,10 +19,10 @@ export const Page = {
 };
 
 export * from './pageAside';
+export * from './pageAsideCard';
 export * from './pageContainer';
 export * from './pageContent';
 export * from './pageError';
 export * from './pageHeader';
 export * from './pageMain';
 export * from './pageSection';
-export * from './pageAsideCard';
