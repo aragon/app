@@ -27,7 +27,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                     <Tabs.Trigger label="Delegate" value="delegate" />
                 </Tabs.List>
                 <Tabs.Content value="delegate" className="pt-4">
-                    <TokenDelegationForm onSubmit={() => null} daoId={daoId} plugin={plugin} />
+                    <TokenDelegationForm daoId={daoId} plugin={plugin} />
                 </Tabs.Content>
             </Tabs.Root>
         </Page.Section>

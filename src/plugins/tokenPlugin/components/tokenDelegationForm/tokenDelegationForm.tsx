@@ -1,13 +1,21 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useMember } from '@/modules/governance/api/governanceService';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils, Button, type ICompositeAddress, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    Button,
+    RadioCard,
+    RadioGroup,
+    type IAddressInputResolvedValue,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
+import { TokenDelegationFormDialog } from './tokenDelegationFormDialog';
 
 export enum TokenDelegationSelection {
     YOURSELF = 'YOURSELF',
@@ -22,7 +30,7 @@ export interface ITokenDelegationFormData {
     /**
      * Address to delegate the voting power to.
      */
-    delegate?: ICompositeAddress;
+    delegate?: IAddressInputResolvedValue;
 }
 
 export interface ITokenDelegationFormProps {
@@ -34,17 +42,16 @@ export interface ITokenDelegationFormProps {
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * Callback triggered on form submit.
-     */
-    onSubmit: (values: ITokenDelegationFormData) => void;
 }
 
 export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) => {
-    const { plugin, daoId, onSubmit } = props;
+    const { plugin, daoId } = props;
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const { t } = useTranslations();
     const { address } = useAccount();
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { data: tokenMember } = useMember<ITokenMember>(
         { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
@@ -74,9 +81,9 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
 
     const [delegateInput, setDelegateInput] = useState<string | undefined>();
     const {
-        onChange: onReceiverChange,
-        value,
-        ...receiverField
+        onChange: onDelegateChange,
+        value: delegate,
+        ...delegateField
     } = useFormField<ITokenDelegationFormData, 'delegate'>('delegate', {
         label: t('app.plugins.token.tokenDelegationForm.delegate.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
@@ -89,6 +96,8 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         onSelectionChange(value);
     };
 
+    const handleFormSubmit = () => setIsDialogOpen(true);
+
     // Update form initial data on user address / backend data update
     useEffect(() => {
         reset(defaultValues);
@@ -96,7 +105,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     }, [reset, defaultValues]);
 
     return (
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
             <RadioGroup onValueChange={handleSelectionChange} {...selectionField}>
                 <RadioCard
                     value={TokenDelegationSelection.YOURSELF}
@@ -113,8 +122,8 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                 chainId={1}
                 value={delegateInput}
                 onChange={setDelegateInput}
-                onAccept={onReceiverChange}
-                {...receiverField}
+                onAccept={onDelegateChange}
+                {...delegateField}
             />
             <div className="flex flex-col gap-3">
                 <Button
@@ -128,6 +137,12 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                     {t('app.plugins.token.tokenDelegationForm.info')}
                 </p>
             </div>
+            <TokenDelegationFormDialog
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                delegate={delegate?.address}
+                network={dao!.network}
+            />
         </form>
     );
 };
