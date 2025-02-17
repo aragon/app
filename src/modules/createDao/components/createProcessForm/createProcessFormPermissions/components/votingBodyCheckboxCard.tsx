@@ -1,5 +1,5 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { CheckboxCard } from '@aragon/gov-ui-kit';
 import { type ICreateProcessFormBody } from '../../createProcessFormDefinitions';
 
@@ -26,6 +26,11 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
     const { body, onChange, checked, fieldPrefix } = props;
     const { name, description, governanceType, id } = body;
 
+    const LoadedComponent = pluginRegistryUtils.getSlotComponent({
+        slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_CREATION_REQUIREMENTS,
+        pluginId: governanceType,
+    });
+
     return (
         <CheckboxCard
             label={name}
@@ -33,13 +38,7 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
             onCheckedChange={(isChecked) => onChange(id, Boolean(isChecked))}
             checked={checked}
         >
-            <PluginSingleComponent
-                slotId={GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_CREATION_REQUIREMENTS}
-                pluginId={governanceType}
-                body={body}
-                fieldPrefix={fieldPrefix}
-                Fallback={() => null}
-            />
+            {LoadedComponent && <LoadedComponent body={body} fieldPrefix={fieldPrefix} />}
         </CheckboxCard>
     );
 };
