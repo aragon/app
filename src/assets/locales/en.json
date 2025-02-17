@@ -1220,6 +1220,7 @@
           "versionInfoTitle": "Version Info"
         },
         "main": {
+          "adminSettingsTitle": "Admin",
           "governanceInfoTitle": "Governance",
           "membersInfoTitle": "Members",
           "settingsInfoTitle": "DAO",
