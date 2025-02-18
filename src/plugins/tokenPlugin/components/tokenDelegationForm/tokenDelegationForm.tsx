@@ -140,6 +140,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
             <TokenDelegationFormDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
+                token={plugin.settings.token.address}
                 delegate={delegate?.address}
                 network={dao!.network}
             />

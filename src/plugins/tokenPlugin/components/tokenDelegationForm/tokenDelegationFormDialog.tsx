@@ -13,6 +13,10 @@ import { tokenDelegationFormDialogUtils } from './tokenDelegationFormDialogUtils
 
 export interface ITokenDelegationFormDialogProps extends IDialogRootProps {
     /**
+     * Address of the token.
+     */
+    token: string;
+    /**
      * Address to delegate the voting power to.
      */
     delegate?: string;
@@ -23,7 +27,7 @@ export interface ITokenDelegationFormDialogProps extends IDialogRootProps {
 }
 
 export const TokenDelegationFormDialog: React.FC<ITokenDelegationFormDialogProps> = (props) => {
-    const { delegate = zeroAddress, network, onOpenChange, ...otherProps } = props;
+    const { token, delegate = zeroAddress, network, onOpenChange, ...otherProps } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -31,7 +35,7 @@ export const TokenDelegationFormDialog: React.FC<ITokenDelegationFormDialogProps
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () => tokenDelegationFormDialogUtils.buildTransaction();
+    const handlePrepareTransaction = () => tokenDelegationFormDialogUtils.buildTransaction(token, delegate);
 
     const onSuccessClick = () => {
         router.refresh();

@@ -1075,6 +1075,11 @@
         "tokenMemberList": {
           "entity": "Members"
         },
+        "tokenMemberPanel": {
+          "tabs": {
+            "delegate": "Delegate"
+          }
+        },
         "tokenMemberStats": {
           "delegations": "Delegations",
           "tokenBalance": "Token balance",
