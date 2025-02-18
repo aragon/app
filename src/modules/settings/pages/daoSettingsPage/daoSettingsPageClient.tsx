@@ -9,10 +9,8 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { Card, IconType } from '@aragon/gov-ui-kit';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
-import { useMemberExists } from '@/modules/governance/api/governanceService';
-import { useAccount } from 'wagmi';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { AdminGovernanceInfo } from '@/plugins/adminPlugin/components/adminGovernanceInfo';
+import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 
 export interface IDaoSettingsPageClientProps {
     /**
@@ -24,27 +22,16 @@ export interface IDaoSettingsPageClientProps {
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (props) => {
     const { daoId } = props;
 
-    const { address: memberAddress } = useAccount();
-
     const { t } = useTranslations();
+
+    const { isAdminMember, hasAdminPlugin } = useAdminStatus({ daoId });
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
 
-    const adminPlugin = useDaoPlugins({ daoId, subdomain: 'admin' })?.[0];
-    const pluginAddress = adminPlugin?.meta.address;
-
-    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: pluginAddress! };
-
-    const { data: isAdminMember } = useMemberExists(
-        { urlParams: memberExistsParams },
-        { enabled: memberAddress != null && pluginAddress != null },
-    );
-
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
-    const displayAdminSettings =
-        adminPlugin && isAdminMember && process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
+    const displayAdminSettings = isAdminMember && hasAdminPlugin;
 
     if (!dao) {
         return null;

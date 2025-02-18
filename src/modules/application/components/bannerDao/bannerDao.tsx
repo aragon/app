@@ -2,13 +2,11 @@
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
-import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
 
 export interface IBannerDaoProps {
     /**
@@ -21,18 +19,9 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { id } = props;
 
     const { t } = useTranslations();
-    const { address: memberAddress } = useAccount();
     const { open } = useDialogContext();
 
-    const adminPlugin = useDaoPlugins({ daoId: id, subdomain: 'admin' });
-    const pluginAddress = adminPlugin?.[0]?.meta?.address;
-    const hasAdminPlugin = pluginAddress != null;
-
-    const memberExistsParams = { memberAddress: memberAddress as string, pluginAddress: pluginAddress! };
-    const { data: isAdminMember } = useMemberExists(
-        { urlParams: memberExistsParams },
-        { enabled: memberAddress != null && pluginAddress != null },
-    );
+    const { isAdminMember, hasAdminPlugin } = useAdminStatus({ daoId: id });
 
     const handleBannerActionClick = () => {
         const params: ICreateProcessDetailsDialogParams = { daoId: id };
