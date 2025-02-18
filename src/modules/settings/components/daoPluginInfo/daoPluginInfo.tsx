@@ -1,12 +1,12 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { PluginType } from '@/shared/types';
 import { Tabs } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
 import { DaoGovernanceInfo } from '../daoGovernanceInfo';
 import { DaoMembersInfo } from '../daoMembersInfo';
+import { DaoPluginInfoTabId, type IDaoPlugInfoProps, type IDaoPluginInfoTab } from './daoPluginInfo.api';
 import { DaoPluginInfoContract } from './daoPluginInfoContract';
 import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata.tsx';
-import { DaoPluginInfoTabId, type IDaoPluginInfoTab, type IDaoPlugInfoProps } from './daoPluginInfo.api';
-import { PluginType } from '@/shared/types';
 
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, daoId, type } = props;
