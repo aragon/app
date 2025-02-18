@@ -13,7 +13,7 @@ export interface ITabComponentPlugin<TMeta extends object = object, TProps exten
     /**
      * Label of the plugin to be displayed as on the tab list. Defaults to the plugin id when not set.
      */
-    label: string;
+    label?: string;
     /**
      * Metadata of the tab component plugin.
      */
