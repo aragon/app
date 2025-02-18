@@ -17,8 +17,6 @@ import { zeroHash } from 'viem';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
-
 describe('sppTransaction utils', () => {
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const grantPermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');

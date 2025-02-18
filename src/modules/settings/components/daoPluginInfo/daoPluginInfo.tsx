@@ -34,31 +34,23 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     const { plugin, type, daoId } = props;
 
     const { t } = useTranslations();
-
     const { buildEntityUrl } = useBlockExplorer();
-
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     if (dao == null) {
         return null;
     }
 
-    const chainId = networkDefinitions[dao.network].chainId;
+    const { blockTimestamp, transactionHash, description, links, name, processKey, address } = plugin;
+    const pluginLaunchedAt = formatterUtils.formatDate(blockTimestamp * 1000, { format: DateFormat.YEAR_MONTH });
 
-    const pluginLaunchedAt = formatterUtils.formatDate(plugin.blockTimestamp * 1000, {
-        format: DateFormat.YEAR_MONTH,
-    });
-
-    const pluginCreationLink = buildEntityUrl({
-        type: ChainEntityType.TRANSACTION,
-        id: plugin.transactionHash,
-        chainId,
-    });
+    const { id: chainId } = networkDefinitions[dao.network];
+    const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
 
     return (
         <div className="flex flex-col gap-y-6">
-            {plugin.description && <p className="text-neutral-500">{plugin.description}</p>}
-            {plugin.links?.map((resource: IResource, index: number) => (
+            {description && <p className="text-neutral-500">{description}</p>}
+            {links?.map((resource: IResource, index: number) => (
                 <div className="flex flex-col gap-y-3" key={index}>
                     <Link
                         description={resource.url}
@@ -71,7 +63,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 </div>
             ))}
             <DefinitionList.Container>
-                {plugin.name && (
+                {name && (
                     <DefinitionList.Item
                         term={t(
                             type === PluginType.PROCESS
@@ -82,16 +74,16 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                         <p className="text-neutral-500">{daoUtils.getPluginName(plugin)}</p>
                     </DefinitionList.Item>
                 )}
-                {plugin.processKey && type === PluginType.PROCESS && (
+                {processKey && type === PluginType.PROCESS && (
                     <DefinitionList.Item term={t('app.settings.daoPluginInfo.processKey')} className="text-neutral-500">
-                        <p className="uppercase text-neutral-500"> {plugin.processKey}</p>
+                        <p className="uppercase text-neutral-500"> {processKey}</p>
                     </DefinitionList.Item>
                 )}
                 <DefinitionList.Item term={t('app.settings.daoPluginInfo.plugin')}>
                     <Link
-                        description={addressUtils.truncateAddress(plugin.address)}
+                        description={addressUtils.truncateAddress(address)}
                         iconRight={IconType.LINK_EXTERNAL}
-                        href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: plugin.address, chainId })}
+                        href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId })}
                         target="_blank"
                     >
                         {t('app.settings.daoPluginInfo.pluginVersionInfo', {

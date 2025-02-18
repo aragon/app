@@ -21,7 +21,7 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
             {Object.entries(networkDefinitions).map(([key, network]) => (
                 <RadioCard
-                    tag={network.isTestnet ? testnetTag : undefined}
+                    tag={network.testnet ? testnetTag : undefined}
                     key={key}
                     value={key}
                     label={network.name}
