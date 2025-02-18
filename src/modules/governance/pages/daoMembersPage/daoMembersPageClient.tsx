@@ -42,7 +42,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
                     <DaoPluginInfo
                         plugin={selectedPlugin.meta}
                         daoId={initialParams.queryParams.daoId}
-                        isMembersPage={true}
+                        type={PluginType.BODY}
                     />
                 </Page.AsideCard>
             </Page.Aside>

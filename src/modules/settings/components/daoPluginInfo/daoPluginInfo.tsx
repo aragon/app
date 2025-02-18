@@ -3,12 +3,13 @@ import { Tabs } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
 import { DaoGovernanceInfo } from '../daoGovernanceInfo';
 import { DaoMembersInfo } from '../daoMembersInfo';
-import { DaoContractInfo } from './daoContractInfo';
-import { DaoPluginDetails } from './daoPluginDetails';
+import { DaoPluginInfoContract } from './daoPluginInfoContract';
+import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata.tsx';
 import { DaoPluginInfoTabId, type IDaoPlugInfoProps } from './daoPluginInfo.api';
+import { PluginType } from '@/shared/types';
 
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
-    const { plugin, daoId, isMembersPage } = props;
+    const { plugin, daoId, type } = props;
 
     const { description, links } = plugin;
 
@@ -21,16 +22,8 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 label: t('app.settings.daoPluginInfo.tabs.description.label'),
                 hidden: !description && !links?.length,
             },
-            {
-                id: DaoPluginInfoTabId.CONTRACT,
-                label: t('app.settings.daoPluginInfo.tabs.contract.label'),
-                hidden: false,
-            },
-            {
-                id: DaoPluginInfoTabId.SETTINGS,
-                label: t('app.settings.daoPluginInfo.tabs.settings.label'),
-                hidden: false,
-            },
+            { id: DaoPluginInfoTabId.CONTRACT, label: t('app.settings.daoPluginInfo.tabs.contract.label') },
+            { id: DaoPluginInfoTabId.SETTINGS, label: t('app.settings.daoPluginInfo.tabs.settings.label') },
         ],
         [description, links, t],
     );
@@ -47,15 +40,16 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
     // Map the tab content to each tab
     const tabContent = useMemo(
         () => ({
-            [DaoPluginInfoTabId.DESCRIPTION]: <DaoPluginDetails description={description} links={links} />,
-            [DaoPluginInfoTabId.CONTRACT]: <DaoContractInfo plugin={plugin} daoId={daoId} />,
-            [DaoPluginInfoTabId.SETTINGS]: isMembersPage ? (
-                <DaoMembersInfo daoId={daoId} plugin={plugin} />
-            ) : (
-                <DaoGovernanceInfo daoId={daoId} plugin={plugin} />
-            ),
+            [DaoPluginInfoTabId.DESCRIPTION]: <DaoPluginInfoMetadata description={description} links={links} />,
+            [DaoPluginInfoTabId.CONTRACT]: <DaoPluginInfoContract plugin={plugin} daoId={daoId} />,
+            [DaoPluginInfoTabId.SETTINGS]:
+                type === PluginType.BODY ? (
+                    <DaoMembersInfo daoId={daoId} plugin={plugin} />
+                ) : (
+                    <DaoGovernanceInfo daoId={daoId} plugin={plugin} />
+                ),
         }),
-        [description, links, plugin, daoId, isMembersPage],
+        [description, links, plugin, daoId, type],
     );
 
     return (

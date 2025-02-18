@@ -17,7 +17,7 @@ describe('<PageMainSection /> component', () => {
         expect(screen.getByText(children)).toBeInTheDocument();
     });
 
-    it('renders the title as heading 2 on main context', () => {
+    it('renders the title as heading 2', () => {
         const title = 'main-title';
         render(createTestComponent({ title }));
         expect(screen.getByRole('heading', { name: title, level: 2 })).toBeInTheDocument();

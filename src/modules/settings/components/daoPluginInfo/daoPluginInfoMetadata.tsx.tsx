@@ -1,7 +1,7 @@
 import type { IResource } from '@/shared/api/daoService';
 import { IconType, Link } from '@aragon/gov-ui-kit';
 
-export interface IDaoPluginDetailsProps {
+export interface IDaoPluginInfoMetadataProps {
     /**
      * The plugin description.
      */
@@ -12,12 +12,8 @@ export interface IDaoPluginDetailsProps {
     links?: IResource[];
 }
 
-export const DaoPluginDetails: React.FC<IDaoPluginDetailsProps> = (props) => {
+export const DaoPluginInfoMetadata: React.FC<IDaoPluginInfoMetadataProps> = (props) => {
     const { description, links } = props;
-
-    if (!description && !links) {
-        return null;
-    }
 
     return (
         <div className="flex flex-col gap-y-6">

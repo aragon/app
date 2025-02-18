@@ -620,15 +620,6 @@
         }
       },
       "daoMembersPage": {
-        "aside": {
-          "details": {
-            "blockchain": "Blockchain",
-            "title": "Details"
-          },
-          "settings": {
-            "title": "Settings"
-          }
-        },
         "main": {
           "title": "Members"
         }
@@ -1199,9 +1190,11 @@
     "settings": {
       "daoPluginInfo": {
         "bodyName": "Body name",
-        "launchedAt": "Launched",
-        "plugin": "Plugin",
-        "pluginVersionInfo": "{{name}} v{{release}}.{{build}}",
+        "contract": {
+          "launchedAt": "Launched",
+          "plugin": "Plugin",
+          "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
+        },
         "processKey": "Process key",
         "processName": "Process name",
         "tabs": {

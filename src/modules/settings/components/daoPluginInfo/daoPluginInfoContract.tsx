@@ -13,12 +13,18 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 
-export interface IDaoContractInfoProps {
+export interface IDaoPluginInfoContractProps {
+    /**
+     * The ID of the DAO.
+     */
     daoId: string;
+    /**
+     * The plugin to show the contract information for
+     */
     plugin: IDaoPlugin;
 }
 
-export const DaoContractInfo: React.FC<IDaoContractInfoProps> = (props) => {
+export const DaoPluginInfoContract: React.FC<IDaoPluginInfoContractProps> = (props) => {
     const { plugin, daoId } = props;
 
     const { t } = useTranslations();
@@ -37,21 +43,21 @@ export const DaoContractInfo: React.FC<IDaoContractInfoProps> = (props) => {
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.settings.daoPluginInfo.plugin')}>
+            <DefinitionList.Item term={t('app.settings.daoPluginInfo.contract.plugin')}>
                 <Link
                     description={addressUtils.truncateAddress(address)}
                     iconRight={IconType.LINK_EXTERNAL}
                     href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId })}
                     target="_blank"
                 >
-                    {t('app.settings.daoPluginInfo.pluginVersionInfo', {
+                    {t('app.settings.daoPluginInfo.contract.pluginVersionInfo', {
                         name: daoUtils.getPluginName(plugin),
                         release,
                         build,
                     })}
                 </Link>
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.settings.daoPluginInfo.launchedAt')}>
+            <DefinitionList.Item term={t('app.settings.daoPluginInfo.contract.launchedAt')}>
                 <Link href={pluginCreationLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
                     {pluginLaunchedAt}
                 </Link>
