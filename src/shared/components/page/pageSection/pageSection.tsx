@@ -24,7 +24,8 @@ export interface IPageSectionProps extends ComponentProps<'div'> {
      */
     icon?: IconType;
     /**
-     * Icon classes.
+     * Styles for icon.
+     * @default 'text-warning-500'
      */
     iconClassName?: string;
 }
