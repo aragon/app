@@ -2,15 +2,15 @@
 
 import { DaoGovernanceInfo } from '@/modules/settings/components/daoGovernanceInfo';
 import { DaoMembersInfo } from '@/modules/settings/components/daoMembersInfo';
+import { AdminGovernanceInfo } from '@/plugins/adminPlugin/components/adminGovernanceInfo';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { Card, IconType } from '@aragon/gov-ui-kit';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
-import { AdminGovernanceInfo } from '@/plugins/adminPlugin/components/adminGovernanceInfo';
-import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 
 export interface IDaoSettingsPageClientProps {
     /**
