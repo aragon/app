@@ -27,7 +27,7 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
     const adminFeatureEnabled = process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
 
     return {
-        isAdminMember: Boolean(isAdminMember && adminFeatureEnabled),
-        hasAdminPlugin: Boolean(pluginAddress),
+        isAdminMember: !!(isAdminMember && adminFeatureEnabled),
+        hasAdminPlugin: !!pluginAddress,
     };
 };
