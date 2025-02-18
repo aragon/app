@@ -53,8 +53,8 @@ export const PluginTabComponent = <TMeta extends object, TProps extends object>(
     return (
         <Tabs.Root value={activePlugin?.uniqueId} onValueChange={updateActivePlugin}>
             <Tabs.List>
-                {plugins.map(({ uniqueId, id, label }) => (
-                    <Tabs.Trigger key={uniqueId} label={label ?? id} value={uniqueId} />
+                {plugins.map(({ uniqueId, label }) => (
+                    <Tabs.Trigger key={uniqueId} label={label} value={uniqueId} />
                 ))}
             </Tabs.List>
             {plugins.map(({ id, uniqueId, props }) => (
