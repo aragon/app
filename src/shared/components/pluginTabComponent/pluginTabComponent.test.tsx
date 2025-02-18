@@ -79,27 +79,19 @@ describe('<PluginTabComponent /> component', () => {
         expect(screen.getByTestId('token-component')).toBeInTheDocument();
     });
 
-    it('defaults the tab label to the plugin id when label is not set', () => {
-        const plugins = [
-            generateTabComponentPlugin({ id: 'token-id', uniqueId: '1' }),
-            generateTabComponentPlugin({ uniqueId: '2' }),
-        ];
-        getSlotComponentSpy.mockReturnValue(() => <div />);
-        render(createTestComponent({ plugins }));
-        expect(screen.getByRole('tab', { name: 'token-id' })).toBeInTheDocument();
-    });
+it('updates the active tab and calls the onValueChange property on tab click', async () => {
+    const onValueChange = jest.fn();
+    const plugins = [
+        generateTabComponentPlugin({ id: '1', uniqueId: '1', label: 'plugin1' }),
+        generateTabComponentPlugin({ id: '2', uniqueId: '2', label: 'plugin2' }),
+    ];
+    getSlotComponentSpy.mockImplementation((params: { pluginId: string }) => () => `component-${params.pluginId}`);
+    render(createTestComponent({ plugins, onValueChange }));
 
-    it('updates the active tab and calls the onValueChange property on tab click', async () => {
-        const onValueChange = jest.fn();
-        const plugins = [
-            generateTabComponentPlugin({ id: '1', uniqueId: '1' }),
-            generateTabComponentPlugin({ id: '2', uniqueId: '2' }),
-        ];
-        getSlotComponentSpy.mockImplementation((params: { pluginId: string }) => () => `component-${params.pluginId}`);
-        render(createTestComponent({ plugins, onValueChange }));
-        expect(screen.getByText('component-1')).toBeInTheDocument();
-        await userEvent.click(screen.getByRole('tab', { name: '2' }));
-        expect(screen.getByText('component-2')).toBeInTheDocument();
-        expect(onValueChange).toHaveBeenCalledWith(plugins[1]);
-    });
+    expect(screen.getByText('component-1')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('tab', { name: plugins[1].label }));
+    expect(screen.getByText('component-2')).toBeInTheDocument();
+    expect(onValueChange).toHaveBeenCalledWith(plugins[1]);
+});
+
 });

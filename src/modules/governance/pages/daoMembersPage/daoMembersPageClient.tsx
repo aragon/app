@@ -29,9 +29,6 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
 
     const [selectedPlugin, setSelectedPlugin] = useState(bodyPlugins[0]);
 
-    // Label is always set in the useDaoPlugins hook
-    const asideTitle = selectedPlugin.label!;
-
     return (
         <>
             <Page.Main title={t('app.governance.daoMembersPage.main.title')}>
@@ -42,7 +39,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.AsideCard title={asideTitle}>
+                <Page.AsideCard title={selectedPlugin.label}>
                     <DaoPluginInfo
                         plugin={selectedPlugin.meta}
                         daoId={initialParams.queryParams.daoId}
