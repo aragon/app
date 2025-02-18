@@ -1,8 +1,8 @@
+import type { ICreateProcessFormProposalCreationBody } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
 import type { ITokenProcessBody } from '@/plugins/tokenPlugin/components/tokenProcessBodyField';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputNumber } from '@aragon/gov-ui-kit';
-import type { ICreateProcessFormProposalCreationBody } from '../../../../modules/createDao/components/createProcessForm/createProcessFormDefinitions';
 
 export interface ITokenMinRequirementInputProps {
     /**
