@@ -24,14 +24,12 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const { t } = useTranslations();
 
-    const { isAdminMember, hasAdminPlugin } = useAdminStatus({ daoId });
+    const { isAdminMember } = useAdminStatus({ daoId });
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
-
-    const displayAdminSettings = isAdminMember && hasAdminPlugin;
 
     if (!dao) {
         return null;
@@ -40,7 +38,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     return (
         <>
             <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
-                {displayAdminSettings && (
+                {isAdminMember && (
                     <Page.Section
                         title={t('app.settings.daoSettingsPage.main.adminSettingsTitle')}
                         icon={IconType.WARNING}
