@@ -5,7 +5,7 @@ import { DaoGovernanceInfo } from '../daoGovernanceInfo';
 import { DaoMembersInfo } from '../daoMembersInfo';
 import { DaoPluginInfoContract } from './daoPluginInfoContract';
 import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata.tsx';
-import { DaoPluginInfoTabId, type IDaoPlugInfoProps } from './daoPluginInfo.api';
+import { DaoPluginInfoTabId, type IDaoPluginInfoTab, type IDaoPlugInfoProps } from './daoPluginInfo.api';
 import { PluginType } from '@/shared/types';
 
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
@@ -15,7 +15,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const tabs = useMemo(
+    const tabs: IDaoPluginInfoTab[] = useMemo(
         () => [
             {
                 id: DaoPluginInfoTabId.DESCRIPTION,
@@ -28,9 +28,9 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
         [description, links, t],
     );
 
-    const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
+    const visibleTabs: IDaoPluginInfoTab[] = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
 
-    const [activeTab, setActiveTab] = useState(visibleTabs[0].id);
+    const [activeTab, setActiveTab] = useState<DaoPluginInfoTabId>(visibleTabs[0].id);
 
     // Update active tab if tabs prop changes
     useEffect(() => {

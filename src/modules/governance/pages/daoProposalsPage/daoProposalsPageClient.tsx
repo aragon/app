@@ -65,8 +65,6 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const actionProps = processPlugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
 
-    const sectionTitle = `${selectedPlugin.label} - ${selectedPlugin.meta.slug}`;
-
     return (
         <>
             <Page.Main
@@ -83,7 +81,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.AsideCard title={sectionTitle}>
+                <Page.AsideCard title={`${selectedPlugin.label} - ${selectedPlugin.meta.slug}`}>
                     <DaoPluginInfo
                         plugin={selectedPlugin.meta}
                         daoId={initialParams.queryParams.daoId}

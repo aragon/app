@@ -26,6 +26,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
         type: PluginType.BODY,
         includeSubPlugins: true,
     })!;
+
     const [selectedPlugin, setSelectedPlugin] = useState(bodyPlugins[0]);
 
     return (

@@ -677,14 +677,6 @@
         }
       },
       "daoProposalsPage": {
-        "aside": {
-          "details": {
-            "title": "Details"
-          },
-          "settings": {
-            "title": "Settings"
-          }
-        },
         "main": {
           "action": "Proposal",
           "title": "Proposals"
