@@ -51,7 +51,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
     const latestVote = useUserVote<ITokenVote>({ proposal });
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })![0];
 
-    const { chainId } = networkDefinitions[network];
+    const { id: chainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const latestVoteTxHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: latestVote?.transactionHash });
 

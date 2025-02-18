@@ -1,12 +1,12 @@
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { type INetworkDefinition, networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { walletConnectDefinitions } from '@/shared/constants/walletConnectDefinitions';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { createAppKit } from '@reown/appkit/react';
-import { type Chain, createClient } from 'viem';
+import { createClient } from 'viem';
 import { cookieStorage, createStorage, http } from 'wagmi';
 
 // Supported chains by the Application.
-const chains = Object.values(networkDefinitions).map((network) => network.wagmiChain) as [Chain, ...Chain[]];
+const chains = Object.values(networkDefinitions) as [INetworkDefinition, ...INetworkDefinition[]];
 
 // Wagmi configuration for the Application.
 const wagmiAdapter = new WagmiAdapter({

@@ -16,7 +16,11 @@ export interface IFooterLink {
 }
 
 export const footerLinks: IFooterLink[] = [
-    { label: 'explore', link: '/' },
+    {
+        label: 'explore',
+        link: process.env.NEXT_PUBLIC_FEATURE_DEPLOYED_EXPLORE_LINK === 'true' ? 'https://app.aragon.org' : '/',
+        target: process.env.NEXT_PUBLIC_FEATURE_DEPLOYED_EXPLORE_LINK === 'true' ? '_blank' : undefined,
+    },
     { label: 'help', link: 'https://discord.com/invite/AhzsGmh7fK', target: '_blank' },
     { label: 'privacy', link: 'https://aragon.org/privacy-policy', target: '_blank' },
     { label: 'termsOfService', link: 'https://aragon.org/terms-and-conditions', target: '_blank' },

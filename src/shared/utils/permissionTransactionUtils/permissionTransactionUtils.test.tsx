@@ -3,8 +3,6 @@ import { encodeFunctionData, type Hex, zeroHash } from 'viem';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
 import { permissionManagerAbi } from './abi/permissionManagerAbi';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
-
 describe('permissionTransaction utils', () => {
     const keccak256Spy = jest.spyOn(Viem, 'keccak256');
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');

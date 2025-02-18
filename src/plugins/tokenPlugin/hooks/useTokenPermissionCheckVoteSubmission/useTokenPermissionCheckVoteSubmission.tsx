@@ -30,7 +30,7 @@ export const useTokenPermissionCheckVoteSubmission = (
         format: DateFormat.YEAR_MONTH_DAY,
     });
 
-    const { chainId } = networkDefinitions[network];
+    const { id: chainId } = networkDefinitions[network];
 
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });

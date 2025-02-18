@@ -45,13 +45,13 @@ export class RpcRequestUtils {
 
     private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
         const network = this.chainIdToNetwork(chainId);
-        const rpcEndpoint = network ? networkDefinitions[network].rpc : undefined;
+        const { privateRpc, rpcUrls } = network ? networkDefinitions[network] : {};
 
-        return rpcEndpoint ? `${rpcEndpoint}${this.rpcKey}` : undefined;
+        return privateRpc ? `${privateRpc}${this.rpcKey}` : rpcUrls?.default.http[0];
     };
 
     private chainIdToNetwork = (chainId: string): Network | undefined =>
-        Object.values(Network).find((network) => networkDefinitions[network as Network].chainId === Number(chainId));
+        Object.values(Network).find((network) => networkDefinitions[network as Network].id === Number(chainId));
 
     private buildRequestOptions = (request: Request): RequestInit => {
         const { method, body, headers } = request;

@@ -739,7 +739,7 @@
       "publishProposalDialog": {
         "button": {
           "submit": "Publish proposal",
-          "success": "View proposals"
+          "success": "View proposal"
         },
         "description": "To publish your proposal you have to confirm the onchain transaction with your wallet.",
         "step": {
@@ -1328,6 +1328,23 @@
         "versionEnv": "v{{version}} ({{env}})"
       },
       "wizard": {
+        "footer": {
+          "next": "Next"
+        }
+      },
+      "wizardDetailsDialog": {
+        "footer": {
+          "cancel": "Cancel"
+        },
+        "infoLabel": "Learn more",
+        "step": "Step {{number}}"
+      },
+      "wizardDialog": {
+        "container": {
+          "back": "Back"
+        }
+      },
+      "wizardPage": {
         "container": {
           "next": "Next:",
           "step": "Step {{number}}",
@@ -1348,16 +1365,8 @@
               "description": "Some inputs are not filled. Review and fill out all mandatory data to proceed.",
               "title": "Missing data"
             }
-          },
-          "next": "Next"
+          }
         }
-      },
-      "wizardDetailsDialog": {
-        "footer": {
-          "cancel": "Cancel"
-        },
-        "infoLabel": "Learn more",
-        "step": "Step {{number}}"
       }
     }
   }

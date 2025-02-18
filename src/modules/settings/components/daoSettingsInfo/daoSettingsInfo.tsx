@@ -29,7 +29,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
 
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
-    const chainId = networkDefinitions[dao.network].chainId;
+    const { id: chainId } = networkDefinitions[dao.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     return (
