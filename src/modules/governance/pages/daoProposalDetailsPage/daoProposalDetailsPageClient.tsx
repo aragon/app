@@ -160,7 +160,11 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                     </Page.Section>
                 </Page.Main>
                 <Page.Aside>
-                    <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.details.title')} inset={false}>
+                    <Page.Section
+                        title={t('app.governance.daoProposalDetailsPage.aside.details.title')}
+                        inset={false}
+                        data-testid="proposal-details-container"
+                    >
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
