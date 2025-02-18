@@ -65,9 +65,8 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
 
     const actionProps = processPlugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
 
-    const pluginName = selectedPlugin.meta.name ?? selectedPlugin.label ?? selectedPlugin.id;
     const processKey = selectedPlugin.meta.processKey;
-    const sectionTitle = `${pluginName} ${processKey ? `- ${processKey}` : ''}`;
+    const sectionTitle = `${selectedPlugin.label} ${processKey ? `- ${processKey}` : ''}`;
 
     return (
         <>
