@@ -155,7 +155,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
         const detailsTitle = screen.getByText(/daoProposalDetailsPage.aside.details.title/);
         // eslint-disable-next-line testing-library/no-node-access
-        const detailsContainer = detailsTitle.parentElement!.parentElement!;
+        const detailsContainer = detailsTitle.parentElement!.parentElement!.parentElement!;
 
         expect(detailsTitle).toBeInTheDocument();
         expect(screen.getByText(/daoProposalDetailsPage.aside.details.onChainId/)).toBeInTheDocument();
