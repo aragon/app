@@ -74,10 +74,11 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     });
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
-    const { onChange: onSelectionChange, ...selectionField } = useFormField<ITokenDelegationFormData, 'selection'>(
-        'selection',
-        { rules: { required: true }, control },
-    );
+    const {
+        onChange: onSelectionChange,
+        value: selectionValue,
+        ...selectionField
+    } = useFormField<ITokenDelegationFormData, 'selection'>('selection', { rules: { required: true }, control });
 
     const [delegateInput, setDelegateInput] = useState<string | undefined>();
     const {
@@ -106,7 +107,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
 
     return (
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
-            <RadioGroup onValueChange={handleSelectionChange} {...selectionField}>
+            <RadioGroup onValueChange={handleSelectionChange} value={selectionValue} {...selectionField}>
                 <RadioCard
                     value={TokenDelegationSelection.YOURSELF}
                     label={t('app.plugins.token.tokenDelegationForm.selection.option.self')}
@@ -123,6 +124,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                 value={delegateInput}
                 onChange={setDelegateInput}
                 onAccept={onDelegateChange}
+                disabled={selectionValue === TokenDelegationSelection.YOURSELF}
                 {...delegateField}
             />
             <div className="flex flex-col gap-3">
