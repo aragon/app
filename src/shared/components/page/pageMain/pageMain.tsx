@@ -56,7 +56,7 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
                 {...otherProps}
             >
                 {title && (
-                    <header className="flex flex-row justify-between gap-6">
+                    <header className="mb-2 flex flex-row justify-between gap-6">
                         <Heading size="h1">{title}</Heading>
                         {action && !action.hidden && (
                             <Button
