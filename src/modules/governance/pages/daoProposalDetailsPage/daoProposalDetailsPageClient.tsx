@@ -120,16 +120,16 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
             <Page.Content>
                 <Page.Main>
                     {description && (
-                        <Page.Section title={t('app.governance.daoProposalDetailsPage.main.description.header')}>
+                        <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.description.header')}>
                             <CardCollapsible
                                 buttonLabelClosed={t('app.governance.daoProposalDetailsPage.main.description.readMore')}
                                 buttonLabelOpened={t('app.governance.daoProposalDetailsPage.main.description.readLess')}
                             >
                                 <DocumentParser document={description} />
                             </CardCollapsible>
-                        </Page.Section>
+                        </Page.MainSection>
                     )}
-                    <Page.Section title={t('app.governance.daoProposalDetailsPage.main.voting')}>
+                    <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.voting')}>
                         <PluginSingleComponent
                             slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_TERMINAL}
                             pluginId={proposal.pluginSubdomain}
@@ -138,8 +138,8 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             daoId={daoId}
                             Fallback={ProposalVotingTerminal}
                         />
-                    </Page.Section>
-                    <Page.Section
+                    </Page.MainSection>
+                    <Page.MainSection
                         title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
                         description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
                     >
@@ -157,14 +157,10 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 )}
                             </ProposalActions.Footer>
                         </ProposalActions.Root>
-                    </Page.Section>
+                    </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
-                    <Page.Section
-                        title={t('app.governance.daoProposalDetailsPage.aside.details.title')}
-                        inset={false}
-                        data-testid="proposal-details-container"
-                    >
+                    <Page.AsideCard title={t('app.governance.daoProposalDetailsPage.aside.details.title')}>
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
@@ -197,9 +193,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                 <Tag label={statusTag.label} variant={statusTag.variant} className="w-fit" />
                             </DefinitionList.Item>
                         </DefinitionList.Container>
-                    </Page.Section>
+                    </Page.AsideCard>
                     {resources.length > 0 && (
-                        <Page.Section title={t('app.governance.daoProposalDetailsPage.aside.links.title')}>
+                        <Page.AsideCard title={t('app.governance.daoProposalDetailsPage.aside.links.title')}>
                             <div className="flex flex-col gap-4">
                                 {resources.map((resource) => (
                                     <Link
@@ -213,7 +209,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                     </Link>
                                 ))}
                             </div>
-                        </Page.Section>
+                        </Page.AsideCard>
                     )}
                 </Page.Aside>
             </Page.Content>

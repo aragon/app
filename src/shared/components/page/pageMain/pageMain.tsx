@@ -1,7 +1,6 @@
 import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ComponentProps } from 'react';
-import { PageContextProvider } from '../pageContext';
 
 export interface IPageMainAction {
     /**
@@ -37,42 +36,38 @@ export interface IPageMainProps extends ComponentProps<'main'> {
     fullWidth?: boolean;
 }
 
-const mainContextValues = { contentType: 'main' as const };
-
 export const PageMain: React.FC<IPageMainProps> = (props) => {
     const { className, children, title, action, fullWidth, ...otherProps } = props;
 
     return (
-        <PageContextProvider value={mainContextValues}>
-            <main
-                className={classNames(
-                    'flex flex-col',
-                    { 'lg:w-2/3': !fullWidth },
-                    { 'm-auto h-full max-w-[1024px] px-4 pb-10 pt-6 md:px-6 md:pb-20 md:pt-12 lg:px-28': fullWidth },
-                    { 'gap-20': title == null },
-                    { 'gap-6': title != null },
-                    className,
-                )}
-                {...otherProps}
-            >
-                {title && (
-                    <header className="flex flex-row justify-between gap-6">
-                        <Heading size="h1">{title}</Heading>
-                        {action && !action.hidden && (
-                            <Button
-                                variant="primary"
-                                size="md"
-                                onClick={action.onClick}
-                                href={action.href}
-                                iconLeft={IconType.PLUS}
-                            >
-                                {action.label}
-                            </Button>
-                        )}
-                    </header>
-                )}
-                {children}
-            </main>
-        </PageContextProvider>
+        <main
+            className={classNames(
+                'flex flex-col',
+                { 'lg:w-2/3': !fullWidth },
+                { 'm-auto h-full max-w-[1024px] px-4 pb-10 pt-6 md:px-6 md:pb-20 md:pt-12 lg:px-28': fullWidth },
+                { 'gap-20': title == null },
+                { 'gap-6': title != null },
+                className,
+            )}
+            {...otherProps}
+        >
+            {title && (
+                <header className="flex flex-row justify-between gap-6">
+                    <Heading size="h1">{title}</Heading>
+                    {action && !action.hidden && (
+                        <Button
+                            variant="primary"
+                            size="md"
+                            onClick={action.onClick}
+                            href={action.href}
+                            iconLeft={IconType.PLUS}
+                        >
+                            {action.label}
+                        </Button>
+                    )}
+                </header>
+            )}
+            {children}
+        </main>
     );
 };

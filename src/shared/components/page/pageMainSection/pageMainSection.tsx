@@ -3,9 +3,8 @@
 import { Heading, Icon, type IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
-import { usePageContext } from '../pageContext';
 
-export interface IPageSectionProps extends ComponentProps<'div'> {
+export interface IPageMainSectionProps extends ComponentProps<'div'> {
     /**
      * Set the default spacing between the title and the section content when set to true.
      * @default true
@@ -30,25 +29,14 @@ export interface IPageSectionProps extends ComponentProps<'div'> {
     iconClassName?: string;
 }
 
-export const PageSection: React.FC<IPageSectionProps> = (props) => {
-    const {
-        children,
-        className,
-        inset = true,
-        title,
-        description,
-        icon,
-        iconClassName = 'text-warning-500',
-        ...otherProps
-    } = props;
-
-    const { contentType } = usePageContext();
+export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
+    const { children, className, inset = true, title, description, icon, iconClassName, ...otherProps } = props;
 
     return (
         <div className={classNames('flex flex-col', { 'gap-4': inset }, className)} {...otherProps}>
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                    <Heading size={contentType === 'main' ? 'h2' : 'h3'}>{title}</Heading>
+                    <Heading size='h2'>{title}</Heading>
                     {icon && <Icon icon={icon} size="md" className={iconClassName} />}
                 </div>
                 {description && <p className="text-base font-normal leading-normal text-neutral-500">{description}</p>}

@@ -7,10 +7,6 @@ jest.mock('../../components/daoMemberList', () => ({
     DaoMemberList: { Container: () => <div data-testid="member-list-mock" /> },
 }));
 
-jest.mock('@/modules/settings/components/daoMembersInfo', () => ({
-    DaoMembersInfo: () => <div data-testid="members-info-mock" />,
-}));
-
 jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
     DaoPluginInfo: () => <div data-testid="plugin-info-mock" />,
 }));
@@ -39,8 +35,7 @@ describe('<DaoMembersPageClient /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByText(/daoMembersPage.main.title/)).toBeInTheDocument();
-        expect(screen.getByText(/daoMembersPage.aside.settings.title/)).toBeInTheDocument();
         expect(screen.getByTestId('member-list-mock')).toBeInTheDocument();
-        expect(screen.getByTestId('members-info-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
     });
 });

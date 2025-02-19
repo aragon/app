@@ -6,6 +6,7 @@ export const generateTabComponentPlugin = <TMeta extends object, TProps extends 
     id: 'id',
     uniqueId: 'id-1',
     meta: {} as TMeta,
+    label: 'Label',
     props: {} as TProps,
     ...plugin,
 });
