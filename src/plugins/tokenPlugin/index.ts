@@ -1,7 +1,7 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { TokenMinRequirementInput } from '@/plugins/tokenPlugin/components/tokenMinRequirementInput';
+import { TokenProposalCreationRequirements } from '@/plugins/tokenPlugin/components/tokenProposalCreationRequirements';
 import { useTokenPermissionCheckProposalCreation } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
 import { useTokenPermissionCheckVoteSubmission } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckVoteSubmission';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -99,11 +99,6 @@ export const initialiseTokenPlugin = () => {
             pluginId: tokenPlugin.id,
             component: TokenProposalVotingSummary,
         })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_CREATION_REQUIREMENTS,
-            pluginId: tokenPlugin.id,
-            component: TokenMinRequirementInput,
-        })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             pluginId: tokenPlugin.id,
@@ -142,5 +137,10 @@ export const initialiseTokenPlugin = () => {
             slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
             pluginId: tokenPlugin.id,
             component: TokenProcessBodyField,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
+            pluginId: tokenPlugin.id,
+            component: TokenProposalCreationRequirements,
         });
 };

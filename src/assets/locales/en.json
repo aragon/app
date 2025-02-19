@@ -1053,11 +1053,6 @@
           "tokenBalance": "Token balance",
           "votingPower": "Voting power"
         },
-        "tokenMinRequirementInput": {
-          "helpText": "The voting power or token balance needed to create proposals.",
-          "label": "Minimum requirement",
-          "placeholder": "≥ 1"
-        },
         "tokenMintTokensAction": {
           "address": {
             "label": "Address",
@@ -1090,6 +1085,11 @@
           "tokenTerm": "Token",
           "voteChange": "Vote change",
           "yes": "Yes"
+        },
+        "tokenProposalCreationRequirements": {
+          "helpText": "The voting power or token balance needed to create proposals.",
+          "label": "Minimum requirement",
+          "placeholder": "≥ 1"
         },
         "tokenProposalList": {
           "entity": "Proposals"

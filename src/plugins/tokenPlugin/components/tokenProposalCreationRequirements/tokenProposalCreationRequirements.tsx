@@ -4,7 +4,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputNumber } from '@aragon/gov-ui-kit';
 
-export interface ITokenMinRequirementInputProps {
+export interface ITokenProposalCreationRequirementsProps {
     /**
      * The body of the process.
      */
@@ -15,7 +15,7 @@ export interface ITokenMinRequirementInputProps {
     fieldPrefix: string;
 }
 
-export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> = (props) => {
+export const TokenProposalCreationRequirements: React.FC<ITokenProposalCreationRequirementsProps> = (props) => {
     const { fieldPrefix, body } = props;
 
     const totalSupply = body.members.reduce(
@@ -24,6 +24,7 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
     );
 
     const { t } = useTranslations();
+    const keyNamespace = `app.plugins.token.tokenProposalCreationRequirements`;
 
     const minVotingPowerField = useFormField<ICreateProcessFormProposalCreationBody, 'minVotingPower'>(
         'minVotingPower',
@@ -31,11 +32,9 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
             fieldPrefix,
             defaultValue: '1',
             rules: { validate: (value) => Number(value) > 0 },
-            label: t('app.createDao.createProcessForm.permissions.tokenMinRequirementInput.label'),
+            label: t(`${keyNamespace}.label`),
         },
     );
-
-    const keyNamespace = `app.plugins.token.tokenMinRequirementInput`;
 
     return (
         <button className="w-full text-left" onClick={(e) => e.preventDefault()}>
