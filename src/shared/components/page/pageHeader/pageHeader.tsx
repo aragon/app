@@ -45,7 +45,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
         >
             <Container className="flex flex-col gap-6">
                 {breadcrumbs && <Breadcrumbs links={breadcrumbs} tag={breadcrumbsTag} />}
-                <div className="flex w-full flex-row gap-8 md:gap-16 lg:gap-8 xl:gap-16">
+                <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
                     <div className="flex w-full flex-col">
                         <Heading size="h1">{title}</Heading>
                         <Collapsible
