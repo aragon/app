@@ -6,7 +6,7 @@ import { AdminGovernanceInfo } from '../adminGovernanceInfo';
 
 export interface IAdminSettingsPanelProps {
     /**
-     * ID of the Dao
+     * ID of the DAO.
      */
     daoId: string;
 }
