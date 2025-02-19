@@ -42,11 +42,11 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
     return (
         <main
             className={classNames(
-                'flex flex-col',
+                'flex min-w-0 flex-col',
                 { 'w-full': !fullWidth },
                 { 'm-auto h-full max-w-[1024px] px-4 pb-10 pt-6 md:px-6 md:pb-20 lg:px-28': fullWidth },
                 { 'gap-12': title == null },
-                { 'gap-10': title != null },
+                { 'gap-6': title != null },
                 className,
             )}
             {...otherProps}
