@@ -28,7 +28,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     // }
 
     return (
-        <Page.Section title={`${token.name} (${token.symbol})`}>
+        <Page.AsideCard title={`${token.name} (${token.symbol})`}>
             <Tabs.Root value="delegate">
                 <Tabs.List>
                     <Tabs.Trigger label={t('app.plugins.token.tokenMemberPanel.tabs.delegate')} value="delegate" />
@@ -37,6 +37,6 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                     <TokenDelegationForm daoId={daoId} plugin={plugin} />
                 </Tabs.Content>
             </Tabs.Root>
-        </Page.Section>
+        </Page.AsideCard>
     );
 };

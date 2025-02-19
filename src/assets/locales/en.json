@@ -1222,15 +1222,9 @@
         "processKey": "Process key",
         "processName": "Process name",
         "tabs": {
-          "contract": {
-            "label": "Contract"
-          },
-          "description": {
-            "label": "Description"
-          },
-          "settings": {
-            "label": "Settings"
-          }
+          "CONTRACT": "Contract",
+          "DESCRIPTION": "Description",
+          "SETTINGS": "Settings"
         }
       },
       "daoSettingsInfo": {

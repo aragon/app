@@ -78,7 +78,11 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         onChange: onSelectionChange,
         value: selectionValue,
         ...selectionField
-    } = useFormField<ITokenDelegationFormData, 'selection'>('selection', { rules: { required: true }, control });
+    } = useFormField<ITokenDelegationFormData, 'selection'>('selection', {
+        label: t('app.plugins.token.tokenDelegationForm.selection.label'),
+        rules: { required: true },
+        control,
+    });
 
     const [delegateInput, setDelegateInput] = useState<string | undefined>();
     const {
