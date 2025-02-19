@@ -117,7 +117,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                     </Dropdown.Container>
                 </div>
             </Page.Header>
-            <Page.Content inset={false}>
+            <Page.Content>
                 <Page.Main>
                     {hasSupportedPlugins && (
                         <Page.Section title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
