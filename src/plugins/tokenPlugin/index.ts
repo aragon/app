@@ -1,6 +1,7 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { TokenProposalCreationRequirements } from '@/plugins/tokenPlugin/components/tokenProposalCreationRequirements';
 import { useTokenPermissionCheckProposalCreation } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
 import { useTokenPermissionCheckVoteSubmission } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckVoteSubmission';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -136,5 +137,10 @@ export const initialiseTokenPlugin = () => {
             slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
             pluginId: tokenPlugin.id,
             component: TokenProcessBodyField,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
+            pluginId: tokenPlugin.id,
+            component: TokenProposalCreationRequirements,
         });
 };

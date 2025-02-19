@@ -1,6 +1,7 @@
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { CheckboxCard } from '@aragon/gov-ui-kit';
 import { type ICreateProcessFormBody } from '../../createProcessFormDefinitions';
-import { TokenMinRequirementInput } from './tokenMinRequirementInput';
 
 export interface IVotingBodyCheckboxCardProps {
     /**
@@ -23,22 +24,21 @@ export interface IVotingBodyCheckboxCardProps {
 
 export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (props) => {
     const { body, onChange, checked, fieldPrefix } = props;
+    const { name, description, governanceType, id } = body;
 
-    const isTokenVoting = body.governanceType === 'token-voting';
-
-    const tokenTotalSupply = body.members.reduce(
-        (supply, member) => ('tokenAmount' in member ? supply + Number(member.tokenAmount) : supply),
-        0,
-    );
+    const LoadedComponent = pluginRegistryUtils.getSlotComponent({
+        slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
+        pluginId: governanceType,
+    });
 
     return (
         <CheckboxCard
-            label={body.name}
-            description={body.description}
-            onCheckedChange={(isChecked) => onChange(body.id, Boolean(isChecked))}
+            label={name}
+            description={description}
+            onCheckedChange={(isChecked) => onChange(id, Boolean(isChecked))}
             checked={checked}
         >
-            {isTokenVoting && <TokenMinRequirementInput fieldPrefix={fieldPrefix} totalSupply={tokenTotalSupply} />}
+            {LoadedComponent && <LoadedComponent body={body} fieldPrefix={fieldPrefix} />}
         </CheckboxCard>
     );
 };
