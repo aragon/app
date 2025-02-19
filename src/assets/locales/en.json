@@ -822,6 +822,9 @@
           "pluginLabelName": "Name",
           "requirement": "Admin only"
         },
+        "adminSettingsPanel": {
+          "title": "Admin"
+        },
         "adminVotingTerminal": {
           "description": "Proposals created by admins do not require governance in order to pass.",
           "title": "Automatic execution"
