@@ -2,13 +2,12 @@
 
 import { DaoGovernanceInfo } from '@/modules/settings/components/daoGovernanceInfo';
 import { DaoMembersInfo } from '@/modules/settings/components/daoMembersInfo';
-import { AdminGovernanceInfo } from '@/plugins/adminPlugin/components/adminGovernanceInfo';
+import { AdminSettingsPanel } from '@/plugins/adminPlugin/components/adminSettingsPanel';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Card, IconType } from '@aragon/gov-ui-kit';
+import { Card } from '@aragon/gov-ui-kit';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
 
@@ -24,8 +23,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
 
     const { t } = useTranslations();
 
-    const { hasAdminPlugin } = useAdminStatus({ daoId });
-
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
 
@@ -38,16 +35,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     return (
         <>
             <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
-                                {hasAdminPlugin && (
-                    <Page.MainSection
-                        title={t('app.settings.daoSettingsPage.main.adminSettingsTitle')}
-                        icon={IconType.WARNING}
-                    >
-                        <Card className="p-6">
-                            <AdminGovernanceInfo />
-                        </Card>
-                    </Page.MainSection>
-                )}
+                <AdminSettingsPanel daoId={daoId} />
                 <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />
                 </Page.MainSection>

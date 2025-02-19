@@ -22,22 +22,17 @@ export interface IPageMainSectionProps extends ComponentProps<'div'> {
      * An icon to display next to the title.
      */
     icon?: IconType;
-    /**
-     * Styles for icon.
-     * @default 'text-warning-500'
-     */
-    iconClassName?: string;
 }
 
 export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
-    const { children, className, inset = true, title, description, icon, iconClassName, ...otherProps } = props;
+    const { children, className, inset = true, title, description, icon, ...otherProps } = props;
 
     return (
         <div className={classNames('flex flex-col', { 'gap-4': inset }, className)} {...otherProps}>
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                    <Heading size='h2'>{title}</Heading>
-                    {icon && <Icon icon={icon} size="md" className={iconClassName} />}
+                    <Heading size="h2">{title}</Heading>
+                    {icon && <Icon icon={icon} size="md" className="text-warning-500" />}
                 </div>
                 {description && <p className="text-base font-normal leading-normal text-neutral-500">{description}</p>}
             </div>
