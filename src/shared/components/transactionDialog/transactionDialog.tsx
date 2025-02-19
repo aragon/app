@@ -35,7 +35,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const { switchChain, status: switchChainStatus } = useSwitchChain();
 
     const { chainId, address } = useAccount();
-    const { chainId: requiredChainId } = networkDefinitions[network];
+    const { id: requiredChainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const handleTransactionError = useCallback(

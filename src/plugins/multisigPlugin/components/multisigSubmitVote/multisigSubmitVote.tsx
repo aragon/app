@@ -35,7 +35,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const userVote = useUserVote<IMultisigVote>({ proposal });
     const voted = userVote != null;
 
-    const { chainId } = networkDefinitions[network];
+    const { id: chainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const voteTransactionHref = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: userVote?.transactionHash });
 

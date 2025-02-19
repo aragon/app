@@ -38,7 +38,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const { chainId } = networkDefinitions[proposal.network];
+    const { id: chainId } = networkDefinitions[proposal.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
 
     const [isAdvanceDialogOpen, setIsAdvanceDialogOpen] = useState(false);

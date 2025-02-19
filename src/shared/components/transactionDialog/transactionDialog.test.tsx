@@ -182,7 +182,7 @@ describe('<TransactionDialog /> component', () => {
         const sendTransaction = jest.fn();
         const network = Network.POLYGON_MAINNET;
         useAccountSpy.mockReturnValue({
-            chainId: networkDefinitions[network].chainId,
+            chainId: networkDefinitions[network].id,
         } as unknown as Wagmi.UseAccountReturnType);
         useMutationSpy.mockReturnValue({ data: transaction } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
@@ -198,7 +198,7 @@ describe('<TransactionDialog /> component', () => {
         const network = Network.BASE_MAINNET;
         const switchChain = jest.fn();
         useAccountSpy.mockReturnValue({
-            chainId: networkDefinitions[Network.ARBITRUM_MAINNET].chainId,
+            chainId: networkDefinitions[Network.ARBITRUM_MAINNET].id,
         } as unknown as Wagmi.UseAccountReturnType);
         useSwitchChainSpy.mockReturnValue({ switchChain } as unknown as Wagmi.UseSwitchChainReturnType);
         const updateSteps = jest.fn() as jest.Mock<void, Array<Array<IStepperStep<ITransactionDialogStepMeta>>>>;
@@ -207,7 +207,7 @@ describe('<TransactionDialog /> component', () => {
         const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(switchChain).toHaveBeenCalledWith(
-            { chainId: networkDefinitions[network].chainId },
+            { chainId: networkDefinitions[network].id },
             { onSuccess: expect.any(Function) as unknown },
         );
     });

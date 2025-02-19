@@ -44,8 +44,8 @@ describe('<CreateProposalPageClient /> component', () => {
 
     it('renders the create-proposal wizard steps', async () => {
         render(createTestComponent());
-        expect(await screen.findByText(/wizard.container.step \(number=1\)/)).toBeInTheDocument();
-        expect(screen.getByText(/wizard.container.total \(total=3\)/)).toBeInTheDocument();
+        expect(await screen.findByText(/wizardPage.container.step \(number=1\)/)).toBeInTheDocument();
+        expect(screen.getByText(/wizardPage.container.total \(total=3\)/)).toBeInTheDocument();
         expect(screen.getByTestId('steps-mock')).toBeInTheDocument();
     });
 

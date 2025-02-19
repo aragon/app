@@ -11,12 +11,6 @@ import { generateMember } from '../../../../modules/governance/testUtils';
 import { generateMultisigPluginSettings } from '../../testUtils';
 import { type IMultisigMemberInfoProps, MultisigMemberInfo } from './multisigMemberInfo';
 
-// Needed to spy usage of useMemberList hook
-jest.mock('../../../../modules/governance/api/governanceService', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof governanceService>('../../../../modules/governance/api/governanceService'),
-}));
-
 describe('<MultisigMemberInfo /> component', () => {
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
 

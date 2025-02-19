@@ -12,12 +12,6 @@ import * as governanceService from '../../../../modules/governance/api/governanc
 import { generateMember } from '../../../../modules/governance/testUtils';
 import { type ITokenMemberInfoProps, TokenMemberInfo } from './tokenMemberInfo';
 
-// Needed to spy usage of useMemberList hook
-jest.mock('../../../../modules/governance/api/governanceService', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof governanceService>('../../../../modules/governance/api/governanceService'),
-}));
-
 describe('<TokenMemberInfo /> component', () => {
     const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
 

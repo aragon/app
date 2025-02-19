@@ -35,7 +35,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
     const { open } = useDialogContext();
 
     const { network, pluginSubdomain, executed } = proposal;
-    const { chainId } = networkDefinitions[network];
+    const { id: chainId } = networkDefinitions[network];
 
     const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
         params: proposal,

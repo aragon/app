@@ -11,11 +11,6 @@ import {
 import { renderHook } from '@testing-library/react';
 import * as financeService from '../../api/financeService';
 
-jest.mock('../../api/financeService', () => ({
-    __esModule: true,
-    ...jest.requireActual<typeof financeService>('../../api/financeService'),
-}));
-
 describe('useAssetListData hook', () => {
     const useAssetListSpy = jest.spyOn(financeService, 'useAssetList');
 

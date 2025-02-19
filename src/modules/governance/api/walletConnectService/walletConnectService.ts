@@ -109,7 +109,7 @@ export class WalletConnectService {
     };
 
     private getSupportedNamespaces = (account: string) => {
-        const supportedChainIds = Object.values(networkDefinitions).map((definition) => definition.chainId);
+        const supportedChainIds = Object.values(networkDefinitions).map((definition) => definition.id);
 
         const chainIdNamespaces = supportedChainIds.map((chainId) => `eip155:${chainId.toString()}`);
         const accountNamespaces = chainIdNamespaces.map((namespace) => `${namespace}:${account}`);

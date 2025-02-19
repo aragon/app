@@ -10,8 +10,6 @@ import {
 } from '../../testUtils';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<typeof Viem>('viem') }));
-
 describe('publishProposalDialog utils', () => {
     const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
     const parseEventLogsSpy = jest.spyOn(Viem, 'parseEventLogs');

@@ -51,7 +51,7 @@ export const TransactionList: React.FC<ITransactionListProps> = (props) => {
                         // Multiple transactions can have the same transaction hash
                         // (e.g. one deposit and one withdraw on the same proposal)
                         key={`${transaction.transactionHash}-${index.toString()}`}
-                        chainId={networkDefinitions[transaction.network].chainId}
+                        chainId={networkDefinitions[transaction.network].id}
                         hash={transaction.transactionHash}
                         target="_blank"
                         date={transaction.blockTimestamp * 1000}

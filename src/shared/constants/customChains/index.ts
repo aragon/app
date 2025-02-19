@@ -1,0 +1,1 @@
+export { peaq } from './peaq';
