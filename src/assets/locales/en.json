@@ -199,11 +199,6 @@
             "bodiesDescription": "Select which governing bodies are able to create proposals",
             "bodiesLabel": "Only members of governing bodies",
             "label": "Who is eligible to create this type of proposal?"
-          },
-          "tokenMinRequirementInput": {
-            "helpText": "The voting power or token balance needed to create proposals.",
-            "label": "Minimum requirement",
-            "placeholder": "≥ 1"
           }
         },
         "stages": {
@@ -1057,6 +1052,11 @@
           "delegations": "Delegations",
           "tokenBalance": "Token balance",
           "votingPower": "Voting power"
+        },
+        "tokenMinRequirementInput": {
+          "helpText": "The voting power or token balance needed to create proposals.",
+          "label": "Minimum requirement",
+          "placeholder": "≥ 1"
         },
         "tokenMintTokensAction": {
           "address": {

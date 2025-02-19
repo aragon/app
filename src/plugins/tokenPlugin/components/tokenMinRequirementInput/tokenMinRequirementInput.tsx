@@ -35,12 +35,14 @@ export const TokenMinRequirementInput: React.FC<ITokenMinRequirementInputProps> 
         },
     );
 
+    const keyNamespace = `app.plugins.token.tokenMinRequirementInput`;
+
     return (
         <button className="w-full text-left" onClick={(e) => e.preventDefault()}>
             <InputNumber
                 prefix="≥"
-                helpText={t('app.createDao.createProcessForm.permissions.tokenMinRequirementInput.helpText')}
-                placeholder={t('app.createDao.createProcessForm.permissions.tokenMinRequirementInput.placeholder')}
+                helpText={t(`${keyNamespace}.helpText`)}
+                placeholder={t(`${keyNamespace}.placeholder`)}
                 max={totalSupply}
                 {...minVotingPowerField}
             />
