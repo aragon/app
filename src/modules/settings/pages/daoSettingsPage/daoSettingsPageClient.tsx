@@ -34,28 +34,28 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (pro
     return (
         <>
             <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
-                <Page.Section title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
+                <Page.MainSection title={t('app.settings.daoSettingsPage.main.settingsInfoTitle')}>
                     <DaoSettingsInfo dao={dao} />
-                </Page.Section>
+                </Page.MainSection>
                 {hasSupportedPlugins && (
-                    <Page.Section title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}>
+                    <Page.MainSection title={t('app.settings.daoSettingsPage.main.governanceInfoTitle')}>
                         <Card className="p-6">
                             <DaoGovernanceInfo daoId={daoId} />
                         </Card>
-                    </Page.Section>
+                    </Page.MainSection>
                 )}
                 {hasSupportedPlugins && (
-                    <Page.Section title={t('app.settings.daoSettingsPage.main.membersInfoTitle')}>
+                    <Page.MainSection title={t('app.settings.daoSettingsPage.main.membersInfoTitle')}>
                         <Card className="p-6">
                             <DaoMembersInfo daoId={daoId} />
                         </Card>
-                    </Page.Section>
+                    </Page.MainSection>
                 )}
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>
+                <Page.AsideCard title={t('app.settings.daoSettingsPage.aside.versionInfoTitle')}>
                     <DaoVersionInfo dao={dao} />
-                </Page.Section>
+                </Page.AsideCard>
             </Page.Aside>
         </>
     );
