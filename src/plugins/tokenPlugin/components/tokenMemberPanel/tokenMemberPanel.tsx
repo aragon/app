@@ -16,6 +16,10 @@ export interface ITokenMemberPanelProps {
     daoId: string;
 }
 
+enum TokenMemberPanelTab {
+    DELEGATE = 'DELEGATE',
+}
+
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
     const { token } = plugin.settings;
@@ -29,11 +33,14 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
 
     return (
         <Page.AsideCard title={`${token.name} (${token.symbol})`}>
-            <Tabs.Root value="delegate">
-                <Tabs.List>
-                    <Tabs.Trigger label={t('app.plugins.token.tokenMemberPanel.tabs.delegate')} value="delegate" />
+            <Tabs.Root value={TokenMemberPanelTab.DELEGATE}>
+                <Tabs.List className="pb-4">
+                    <Tabs.Trigger
+                        label={t(`app.plugins.token.tokenMemberPanel.tabs.${TokenMemberPanelTab.DELEGATE}`)}
+                        value={TokenMemberPanelTab.DELEGATE}
+                    />
                 </Tabs.List>
-                <Tabs.Content value="delegate" className="pt-4">
+                <Tabs.Content value={TokenMemberPanelTab.DELEGATE}>
                     <TokenDelegationForm daoId={daoId} plugin={plugin} />
                 </Tabs.Content>
             </Tabs.Root>

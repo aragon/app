@@ -1077,7 +1077,7 @@
         },
         "tokenMemberPanel": {
           "tabs": {
-            "delegate": "Delegate"
+            "DELEGATE": "Delegate"
           }
         },
         "tokenMemberStats": {
