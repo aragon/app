@@ -375,7 +375,7 @@
             "blockchain": "Blockchain",
             "ens": "ENS name",
             "launched": "Launched at",
-            "title": "Details"
+            "title": "Contract"
           },
           "links": "Links"
         },
@@ -467,7 +467,7 @@
       },
       "financeDetailsList": {
         "blockchain": "Blockchain",
-        "title": "Details",
+        "title": "Vault",
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
       },
@@ -620,15 +620,6 @@
         }
       },
       "daoMembersPage": {
-        "aside": {
-          "details": {
-            "blockchain": "Blockchain",
-            "title": "Details"
-          },
-          "settings": {
-            "title": "Settings"
-          }
-        },
         "main": {
           "title": "Members"
         }
@@ -686,14 +677,6 @@
         }
       },
       "daoProposalsPage": {
-        "aside": {
-          "details": {
-            "title": "Details"
-          },
-          "settings": {
-            "title": "Settings"
-          }
-        },
         "main": {
           "action": "Proposal",
           "title": "Proposals"
@@ -1199,11 +1182,24 @@
     "settings": {
       "daoPluginInfo": {
         "bodyName": "Body name",
-        "launchedAt": "Launched",
-        "plugin": "Plugin",
-        "pluginVersionInfo": "{{name}} v{{release}}.{{build}}",
+        "contract": {
+          "launchedAt": "Launched",
+          "plugin": "Plugin",
+          "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
+        },
         "processKey": "Process key",
-        "processName": "Process name"
+        "processName": "Process name",
+        "tabs": {
+          "contract": {
+            "label": "Contract"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "settings": {
+            "label": "Settings"
+          }
+        }
       },
       "daoSettingsInfo": {
         "blockchain": "Blockchain",

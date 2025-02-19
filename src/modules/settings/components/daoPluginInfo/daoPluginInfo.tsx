@@ -1,104 +1,69 @@
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
-import { type IResource } from '@/shared/api/daoService/domain/resource';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { PluginType } from '@/shared/types';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    addressUtils,
-    ChainEntityType,
-    DateFormat,
-    DefinitionList,
-    formatterUtils,
-    IconType,
-    Link,
-    useBlockExplorer,
-} from '@aragon/gov-ui-kit';
-
-export interface IDaoPlugInfoProps {
-    /**
-     * The DAO plugin to display information for.
-     */
-    plugin: IDaoPlugin;
-    /**
-     * The type of plugin.
-     */
-    type: PluginType;
-    /**
-     * The DAO ID.
-     */
-    daoId: string;
-}
+import { Tabs } from '@aragon/gov-ui-kit';
+import { useEffect, useMemo, useState } from 'react';
+import { DaoGovernanceInfo } from '../daoGovernanceInfo';
+import { DaoMembersInfo } from '../daoMembersInfo';
+import { DaoPluginInfoTabId, type IDaoPlugInfoProps, type IDaoPluginInfoTab } from './daoPluginInfo.api';
+import { DaoPluginInfoContract } from './daoPluginInfoContract';
+import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata.tsx';
 
 export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
-    const { plugin, type, daoId } = props;
+    const { plugin, daoId, type } = props;
+
+    const { description, links } = plugin;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    if (dao == null) {
-        return null;
-    }
+    const tabs: IDaoPluginInfoTab[] = useMemo(
+        () => [
+            {
+                id: DaoPluginInfoTabId.DESCRIPTION,
+                label: t('app.settings.daoPluginInfo.tabs.description.label'),
+                hidden: !description && !links?.length,
+            },
+            { id: DaoPluginInfoTabId.CONTRACT, label: t('app.settings.daoPluginInfo.tabs.contract.label') },
+            { id: DaoPluginInfoTabId.SETTINGS, label: t('app.settings.daoPluginInfo.tabs.settings.label') },
+        ],
+        [description, links, t],
+    );
 
-    const { blockTimestamp, transactionHash, description, links, name, processKey, address } = plugin;
-    const pluginLaunchedAt = formatterUtils.formatDate(blockTimestamp * 1000, { format: DateFormat.YEAR_MONTH });
+    const visibleTabs: IDaoPluginInfoTab[] = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
 
-    const { id: chainId } = networkDefinitions[dao.network];
-    const pluginCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash, chainId });
+    const [activeTab, setActiveTab] = useState<DaoPluginInfoTabId>(visibleTabs[0].id);
+
+    // Update active tab if tabs prop changes
+    useEffect(() => {
+        setActiveTab(visibleTabs[0].id);
+    }, [visibleTabs]);
+
+    // Map the tab content to each tab
+    const tabContent = useMemo(
+        () => ({
+            [DaoPluginInfoTabId.DESCRIPTION]: <DaoPluginInfoMetadata description={description} links={links} />,
+            [DaoPluginInfoTabId.CONTRACT]: <DaoPluginInfoContract plugin={plugin} daoId={daoId} />,
+            [DaoPluginInfoTabId.SETTINGS]:
+                type === PluginType.BODY ? (
+                    <DaoMembersInfo daoId={daoId} plugin={plugin} />
+                ) : (
+                    <DaoGovernanceInfo daoId={daoId} plugin={plugin} />
+                ),
+        }),
+        [description, links, plugin, daoId, type],
+    );
 
     return (
-        <div className="flex flex-col gap-y-6">
-            {description && <p className="text-neutral-500">{description}</p>}
-            {links?.map((resource: IResource, index: number) => (
-                <div className="flex flex-col gap-y-3" key={index}>
-                    <Link
-                        description={resource.url}
-                        href={resource.url}
-                        target="_blank"
-                        iconRight={IconType.LINK_EXTERNAL}
-                    >
-                        {resource.name}
-                    </Link>
-                </div>
+        <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value as DaoPluginInfoTabId)}>
+            <Tabs.List>
+                {visibleTabs.map(({ id, label }) => (
+                    <Tabs.Trigger key={id} label={label} value={id} />
+                ))}
+            </Tabs.List>
+            {visibleTabs.map(({ id }) => (
+                <Tabs.Content key={id} value={id} className="pt-6">
+                    {tabContent[id]}
+                </Tabs.Content>
             ))}
-            <DefinitionList.Container>
-                {name && (
-                    <DefinitionList.Item
-                        term={t(
-                            type === PluginType.PROCESS
-                                ? 'app.settings.daoPluginInfo.processName'
-                                : 'app.settings.daoPluginInfo.bodyName',
-                        )}
-                    >
-                        <p className="text-neutral-500">{daoUtils.getPluginName(plugin)}</p>
-                    </DefinitionList.Item>
-                )}
-                {processKey && type === PluginType.PROCESS && (
-                    <DefinitionList.Item term={t('app.settings.daoPluginInfo.processKey')} className="text-neutral-500">
-                        <p className="uppercase text-neutral-500"> {processKey}</p>
-                    </DefinitionList.Item>
-                )}
-                <DefinitionList.Item term={t('app.settings.daoPluginInfo.plugin')}>
-                    <Link
-                        description={addressUtils.truncateAddress(address)}
-                        iconRight={IconType.LINK_EXTERNAL}
-                        href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: address, chainId })}
-                        target="_blank"
-                    >
-                        {t('app.settings.daoPluginInfo.pluginVersionInfo', {
-                            name: daoUtils.getPluginName(plugin),
-                            release: plugin.release,
-                            build: plugin.build,
-                        })}
-                    </Link>
-                </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.settings.daoPluginInfo.launchedAt')}>
-                    <Link href={pluginCreationLink} target="_blank" iconRight={IconType.LINK_EXTERNAL}>
-                        {pluginLaunchedAt}
-                    </Link>
-                </DefinitionList.Item>
-            </DefinitionList.Container>
-        </div>
+        </Tabs.Root>
     );
 };
