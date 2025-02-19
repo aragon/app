@@ -46,7 +46,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
             <Container className="flex flex-col gap-6">
                 {breadcrumbs && <Breadcrumbs links={breadcrumbs} tag={breadcrumbsTag} />}
                 <div className="flex w-full flex-row gap-8 md:gap-16 lg:gap-8 xl:gap-16">
-                    <div className="flex w-full shrink-0 flex-col md:w-2/3">
+                    <div className="flex w-full flex-col">
                         <Heading size="h1">{title}</Heading>
                         <Collapsible
                             buttonLabelClosed={t('app.shared.page.header.readMore')}
@@ -64,7 +64,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             </div>
                         )}
                     </div>
-                    {avatar && <div className="hidden lg:block lg:w-1/3">{avatar}</div>}
+                    {avatar && <div className="hidden w-[400px] shrink-0 lg:block">{avatar}</div>}
                 </div>
                 {children}
             </Container>

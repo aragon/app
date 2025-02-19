@@ -9,7 +9,7 @@ export const PageAside: React.FC<IPageAsideProps> = (props) => {
     const { className, children, ...otherProps } = props;
 
     return (
-        <aside className={classNames('flex shrink-0 flex-col gap-10 lg:w-1/3', className)} {...otherProps}>
+        <aside className={classNames('flex w-full shrink-0 flex-col gap-10 lg:w-[400px]', className)} {...otherProps}>
             {children}
         </aside>
     );

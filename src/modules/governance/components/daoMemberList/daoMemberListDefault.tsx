@@ -40,7 +40,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props
     const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, memberList } =
         useMemberListData(initialParams);
 
-    const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-3';
+    const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
     const getMemberLink = (member: IMember) =>
         onMemberClick != null ? undefined : `/dao/${initialParams.queryParams.daoId}/members/${member.address}`;
