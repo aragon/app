@@ -8,5 +8,6 @@ export const generateTokenMember = (member?: Partial<ITokenMember>): ITokenMembe
     votingPower: '0',
     tokenBalance: '0',
     metrics: generateTokenMemberMetrics(),
+    delegate: null,
     ...member,
 });
