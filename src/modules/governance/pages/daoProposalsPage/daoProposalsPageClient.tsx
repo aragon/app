@@ -11,7 +11,6 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { DaoGovernanceInfo } from '../../../settings/components/daoGovernanceInfo';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { GovernanceDialog } from '../../constants/moduleDialogs';
@@ -82,16 +81,13 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.Section title={t('app.governance.daoProposalsPage.aside.details.title')} inset={true}>
+                <Page.AsideCard title={`${selectedPlugin.label} - ${selectedPlugin.meta.slug}`}>
                     <DaoPluginInfo
                         plugin={selectedPlugin.meta}
-                        type={PluginType.PROCESS}
                         daoId={initialParams.queryParams.daoId}
+                        type={PluginType.PROCESS}
                     />
-                </Page.Section>
-                <Page.Section title={t('app.governance.daoProposalsPage.aside.settings.title')} inset={false}>
-                    <DaoGovernanceInfo daoId={daoId} plugin={selectedPlugin.meta} />
-                </Page.Section>
+                </Page.AsideCard>
             </Page.Aside>
         </>
     );
