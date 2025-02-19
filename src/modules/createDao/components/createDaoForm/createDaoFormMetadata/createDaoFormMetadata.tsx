@@ -2,6 +2,7 @@ import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
+import { useWatch } from 'react-hook-form';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormMetadataProps {
@@ -29,7 +30,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         defaultValue: '',
     });
 
-    const { value: avatarValue, ...avatarField } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
+    const { value, ...avatarField } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
         label: t('app.createDao.createDaoForm.metadata.avatar.label'),
         fieldPrefix,
         rules: {
@@ -37,6 +38,10 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 value?.error ? `app.createDao.createDaoForm.metadata.avatar.error.${value.error}` : undefined,
         },
     });
+
+    // Watch the avatar field to properly update the InputFileAvatar component when its value changes
+    const avatarFieldName = fieldPrefix ? `${fieldPrefix}.avatar` : 'avatar';
+    const avatarValue = useWatch<Record<string, ICreateDaoFormData['avatar']>>({ name: avatarFieldName });
 
     const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
         label: t('app.createDao.createDaoForm.metadata.description.label'),
@@ -55,12 +60,12 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                 {...nameField}
             />
             <InputFileAvatar
-                {...avatarField}
                 value={avatarValue}
                 helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
                 maxDimension={maxAvatarDimension}
                 maxFileSize={maxAvatarFileSize}
                 isOptional={true}
+                {...avatarField}
             />
             <TextArea
                 helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}
