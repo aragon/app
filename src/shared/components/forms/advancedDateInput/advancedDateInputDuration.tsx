@@ -2,7 +2,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { Card, InputNumber } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
@@ -35,13 +35,21 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     const validateDuration = (value: IDateDuration) =>
         validateMinDuration ? dateUtils.validateDuration({ value, minDuration }) : true;
 
-    const processedDefaultValue = minDuration ?? { days: 0, hours: 0, minutes: 0 };
+    const processedDefaultValue: IDateDuration = useMemo(
+        () => minDuration ?? { days: 0, hours: 0, minutes: 0 },
+        [minDuration],
+    );
+
     const durationField = useFormField<Record<string, IDateDuration>, typeof field>(field, {
         rules: { validate: validateDuration },
         label,
         shouldUnregister: true,
         defaultValue: processedDefaultValue,
     });
+
+    useEffect(() => {
+        setValue(field, processedDefaultValue, { shouldValidate: false });
+    }, [setValue, field, processedDefaultValue]);
 
     const handleDurationChange = (type: string) => (value: string) => {
         const parsedValue = parseInt(value, 10);
