@@ -67,7 +67,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
                 </div>
             </div>
-            <Navigation.Links className="hidden md:flex xl:pl-14" links={links} variant="columns" />
+            <Navigation.Links className="hidden md:flex" links={links} variant="columns" />
             <Navigation.Dialog
                 links={links}
                 open={isDialogOpen}

@@ -10,10 +10,9 @@ export const PageContent: React.FC<IPageContentProps> = (props) => {
     return (
         <Container
             className={classNames(
-                'flex flex-col gap-10 pb-20 pt-8 md:gap-20 md:pt-12 lg:flex-row lg:gap-10 xl:gap-20',
+                'flex flex-col gap-10 pb-20 pt-8 md:gap-16 md:pt-12 lg:flex-row lg:gap-10 xl:gap-16',
                 className,
             )}
-            inset={true}
             {...otherProps}
         >
             {children}

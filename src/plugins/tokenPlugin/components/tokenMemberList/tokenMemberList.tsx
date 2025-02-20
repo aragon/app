@@ -27,7 +27,7 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
                 SkeletonElement={MemberDataListItem.Skeleton}
                 emptyState={emptyState}
                 errorState={errorState}
-                layoutClassName="grid grid-cols-1 lg:grid-cols-3"
+                layoutClassName="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
             >
                 {memberList?.map((member) => (
                     <TokenMemberListItem
