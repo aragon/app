@@ -21,5 +21,5 @@ export interface ITokenMember extends Omit<IMember, 'metrics'> {
     /**
      * Current user delegate.
      */
-    delegate: string | null;
+    lastDelegate: string | null;
 }
