@@ -2,7 +2,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { Card, InputNumber } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { type ComponentProps } from 'react';
+import type { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
@@ -35,7 +35,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     const validateDuration = (value: IDateDuration) =>
         validateMinDuration ? dateUtils.validateDuration({ value, minDuration }) : true;
 
-    const processedDefaultValue: IDateDuration = minDuration ?? { days: 0, hours: 0, minutes: 0 };
+    const processedDefaultValue = minDuration ?? { days: 0, hours: 0, minutes: 0 };
 
     const durationField = useFormField<Record<string, IDateDuration>, typeof field>(field, {
         rules: { validate: validateDuration },
