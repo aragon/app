@@ -5,6 +5,7 @@ import { Card, InputDate, InputText, InputTime } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 import type { ComponentProps } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
@@ -16,11 +17,14 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const { field, label, infoText, minDuration, minTime, validateMinDuration, className, infoDisplay, ...otherProps } =
         props;
     const { t } = useTranslations();
-
     const { setValue, trigger } = useFormContext();
 
     const { days = 0, hours = 0, minutes = 0 } = minDuration ?? {};
-    const defaultValue = minTime.plus({ days, hours, minutes });
+
+    const defaultValue = useMemo(
+        () => dateUtils.dateToFixedDate(minTime.plus({ days, hours, minutes })) ?? { date: '', time: '' },
+        [minTime, days, hours, minutes],
+    );
 
     const validateFixedTime = (value: IDateFixed) =>
         dateUtils.validateFixedTime({ value, minTime, minDuration: validateMinDuration ? minDuration : undefined });
@@ -29,10 +33,14 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
         rules: { validate: validateFixedTime },
         shouldUnregister: true,
         label,
-        defaultValue: dateUtils.dateToFixedDate(defaultValue) ?? undefined,
+        defaultValue,
     });
 
-    const handleFixedDateTimeChange = (type: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+        setValue(field, defaultValue, { shouldValidate: false });
+    }, [setValue, field, defaultValue]);
+
+    const handleFixedDateTimeChange = (type: keyof IDateFixed) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = { ...fixedDateField.value, [type]: event.target.value };
         setValue(field, newValue, { shouldValidate: false });
     };
