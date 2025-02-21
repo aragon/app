@@ -81,7 +81,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 />
             </Page.Main>
             <Page.Aside>
-                <Page.AsideCard title={`${selectedPlugin.label} - ${selectedPlugin.meta.slug}`}>
+                <Page.AsideCard title={`${selectedPlugin.label} (${selectedPlugin.meta.slug.toUpperCase()})`}>
                     <DaoPluginInfo
                         plugin={selectedPlugin.meta}
                         daoId={initialParams.queryParams.daoId}
