@@ -24,10 +24,6 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      * Default value of the field.
      */
     defaultValue?: FieldPathValue<TFieldValues, TName>;
-    /**
-     * Unregisters the field from the form when the component unmounts if set to true.
-     */
-    shouldUnregister?: boolean;
     /*
      * Prefix to prepend to the field name.
      */
