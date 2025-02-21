@@ -19,8 +19,6 @@ class SppProposalUtils {
 
         const isExecutable = lastStage != null && sppStageUtils.canStageAdvance(proposal, lastStage);
 
-        console.log('canStageAdvance', sppStageUtils.canStageAdvance(proposal, lastStage!));
-
         if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;
         }
