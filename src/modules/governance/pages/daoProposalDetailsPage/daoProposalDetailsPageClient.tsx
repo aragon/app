@@ -168,7 +168,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             <DefinitionList.Item
                                 term={t('app.governance.daoProposalDetailsPage.aside.details.onChainId')}
                             >
-                                <p className="truncate text-neutral-500">{proposal.proposalIndex}</p>
+                                <p className="break-words text-neutral-500">{proposal.proposalIndex}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.governance.daoProposalDetailsPage.aside.details.id')}>
                                 <p className="truncate text-neutral-500">{slug}</p>
