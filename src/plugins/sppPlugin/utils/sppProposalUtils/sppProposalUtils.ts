@@ -19,6 +19,8 @@ class SppProposalUtils {
 
         const isExecutable = lastStage != null && sppStageUtils.canStageAdvance(proposal, lastStage);
 
+        console.log('canStageAdvance', sppStageUtils.canStageAdvance(proposal, lastStage!));
+
         if (proposal.executed.status) {
             return ProposalStatus.EXECUTED;
         }
@@ -43,7 +45,7 @@ class SppProposalUtils {
             return ProposalStatus.PENDING;
         }
 
-        if (minExecutionDate == null || now < minExecutionDate) {
+        if (minExecutionDate == null || now < minExecutionDate || stagesCount === 1) {
             const canAdvance = sppStageUtils.canStageAdvance(proposal, currentStage);
 
             return canAdvance ? ProposalStatus.ADVANCEABLE : ProposalStatus.ACTIVE;
