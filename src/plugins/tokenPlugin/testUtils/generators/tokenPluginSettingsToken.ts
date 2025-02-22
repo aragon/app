@@ -4,7 +4,7 @@ import type { ITokenPluginSettingsToken } from '../../types';
 export const generateTokenPluginSettingsToken = (
     token?: Partial<ITokenPluginSettingsToken>,
 ): ITokenPluginSettingsToken => ({
-    features: { delegation: false },
+    hasDelegate: false,
     ...generateToken(),
     ...token,
 });
