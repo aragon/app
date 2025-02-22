@@ -36,10 +36,10 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
         validateMinDuration ? dateUtils.validateDuration({ value, minDuration }) : true;
 
     const processedDefaultValue = minDuration ?? { days: 0, hours: 0, minutes: 0 };
+
     const durationField = useFormField<Record<string, IDateDuration>, typeof field>(field, {
         rules: { validate: validateDuration },
         label,
-        shouldUnregister: true,
         defaultValue: processedDefaultValue,
     });
 

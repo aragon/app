@@ -27,7 +27,6 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
 
     const fixedDateField = useFormField<Record<string, IDateFixed>, typeof field>(field, {
         rules: { validate: validateFixedTime },
-        shouldUnregister: true,
         label,
         defaultValue: dateUtils.dateToFixedDate(defaultValue) ?? undefined,
     });
