@@ -30,7 +30,7 @@ export interface ITokenDelegationFormData {
     /**
      * Address to delegate the voting power to.
      */
-    delegate?: IAddressInputResolvedValue;
+    delegate?: string;
 }
 
 export interface ITokenDelegationFormProps {
@@ -60,8 +60,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
 
     const defaultValues: ITokenDelegationFormData = useMemo(() => {
         const isSelfDelegate = addressUtils.isAddressEqual(address, tokenMember?.lastDelegate ?? undefined);
-        const defaultDelegate =
-            tokenMember?.lastDelegate != null ? { address: tokenMember.lastDelegate, name: undefined } : undefined;
+        const defaultDelegate = tokenMember?.lastDelegate ?? undefined;
 
         return {
             selection: isSelfDelegate ? TokenDelegationSelection.YOURSELF : TokenDelegationSelection.OTHER,
@@ -92,7 +91,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         ...delegateField
     } = useFormField<ITokenDelegationFormData, 'delegate'>('delegate', {
         label: t('app.plugins.token.tokenDelegationForm.delegate.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
+        rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
         control,
     });
 
@@ -102,12 +101,14 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         onSelectionChange(value);
     };
 
+    const handleDelegateChange = (value?: IAddressInputResolvedValue) => onDelegateChange(value?.address);
+
     const handleFormSubmit = () => setIsDialogOpen(true);
 
     // Update form initial data on user address / backend data update
     useEffect(() => {
         reset(defaultValues);
-        setDelegateInput(defaultValues.delegate?.address);
+        setDelegateInput(defaultValues.delegate);
     }, [reset, defaultValues]);
 
     return (
@@ -128,7 +129,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                 chainId={1}
                 value={delegateInput}
                 onChange={setDelegateInput}
-                onAccept={onDelegateChange}
+                onAccept={handleDelegateChange}
                 disabled={selectionValue === TokenDelegationSelection.YOURSELF}
                 {...delegateField}
             />
@@ -148,7 +149,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 token={plugin.settings.token.address}
-                delegate={delegate?.address}
+                delegate={delegate}
                 network={dao!.network}
             />
         </form>

@@ -26,10 +26,9 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
 
     const { t } = useTranslations();
 
-    // TODO: enable check
-    // if (!token.features.delegation) {
-    //     return null;
-    // }
+    if (!token.hasDelegate) {
+        return null;
+    }
 
     return (
         <Page.AsideCard title={`${token.name} (${token.symbol})`}>
