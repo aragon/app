@@ -14,6 +14,6 @@ export const multisigPlugin: IPluginInfo = {
         [Network.POLYGON_MAINNET]: zeroAddress,
         [Network.ZKSYNC_MAINNET]: zeroAddress,
         [Network.ZKSYNC_SEPOLIA]: zeroAddress,
-        [Network.PEAQ_MAINNET]: zeroAddress,
+        [Network.PEAQ_MAINNET]: '0x83a977d564349586936f17D9536b2c5702B4Fe20',
     },
 };

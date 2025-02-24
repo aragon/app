@@ -14,6 +14,6 @@ export const adminPlugin: IPluginInfo = {
         [Network.POLYGON_MAINNET]: zeroAddress,
         [Network.ZKSYNC_MAINNET]: zeroAddress,
         [Network.ZKSYNC_SEPOLIA]: zeroAddress,
-        [Network.PEAQ_MAINNET]: zeroAddress,
+        [Network.PEAQ_MAINNET]: '0x86C87Aa7C09a447048adf4197fec7C12eF62A07F',
     },
 };

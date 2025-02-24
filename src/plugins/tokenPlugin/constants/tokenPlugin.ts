@@ -14,6 +14,6 @@ export const tokenPlugin: IPluginInfo = {
         [Network.POLYGON_MAINNET]: zeroAddress,
         [Network.ZKSYNC_MAINNET]: zeroAddress,
         [Network.ZKSYNC_SEPOLIA]: zeroAddress,
-        [Network.PEAQ_MAINNET]: zeroAddress,
+        [Network.PEAQ_MAINNET]: '0xFBFbE98845B4E2751a8A004B5A1759e3A278FC68',
     },
 };

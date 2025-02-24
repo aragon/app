@@ -14,6 +14,6 @@ export const sppPlugin: IPluginInfo = {
         [Network.POLYGON_MAINNET]: zeroAddress,
         [Network.ZKSYNC_MAINNET]: zeroAddress,
         [Network.ZKSYNC_SEPOLIA]: zeroAddress,
-        [Network.PEAQ_MAINNET]: zeroAddress,
+        [Network.PEAQ_MAINNET]: '0x2784e9500f8f60C1267e819f216682a88A37d56D',
     },
 };
