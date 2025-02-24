@@ -2,7 +2,7 @@ import BundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import packageInfo from './package.json' with { type: 'json' };
 
-const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
+const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'true' && process.env.NEXT_USE_TURBOPACK !== '1' });
 
 const webFunctionalities = [
     'accelerometer=()',
@@ -40,27 +40,16 @@ const webFunctionalities = [
 ];
 
 const sentryConfig = {
-    // Aragon organisation on Sentry
     org: 'aragonorg',
-    // Sentry project
     project: 'app-next',
-    // Auth token needed for uploading source maps
     authToken: process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
-    // Make sure to upload all files and source maps
     widenClientFileUpload: true,
-    // Use tunneling to forward events to Sentry and circumvent ad blockers
     tunnelRoute: '/api/monitoring',
-    // Disable Sentry debug logger to save bundle size
-    disableLogger: true,
-    // Release version for Sentry
+    disableLogger: process.env.NEXT_USE_TURBOPACK === '1',
     release: { name: packageInfo.version },
-    // Delete sourcemaps from NextJs build after upload
     sourcemaps: { deleteSourcemapsAfterUpload: true },
-    // Disable sending data to Sentry
     telemetry: false,
-    // Options to optimise the bundle size
     bundleSizeOptimizations: {
-        // Exclude replay worker from bundle as self-hosted for current CSP policies
         excludeReplayWorker: true,
     },
 };
@@ -78,23 +67,16 @@ const nextConfig = {
     },
     async headers() {
         return [
-            // Security headers for all paths
             {
                 source: '/:path*',
                 headers: [
-                    // Do not allow usage of application inside iframes
                     { key: 'X-Frame-Options', value: 'DENY' },
-                    // Enforce HTTPS access
                     { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-                    // Explicitly disable all web functionalities
                     { key: 'Permissions-Policy', value: webFunctionalities.join(', ') },
-                    // Prevents the browser from guessing the content type when related header is not set
                     { key: 'X-Content-Type-Options', value: 'nosniff' },
-                    // Allow browsers to proactively perform domain name resolution on extenal resources (links, CSS, ..)
                     { key: 'X-DNS-Prefetch-Control', value: 'on' },
                 ],
             },
-            // CORS headers for api routes
             {
                 source: '/api/:path*',
                 headers: [
@@ -114,16 +96,21 @@ const nextConfig = {
             },
         ],
     },
-    experimental: {
-        typedRoutes: true,
-    },
     env: {
         version: packageInfo.version,
     },
     webpack: (config) => {
-        // Configs needed by wallet-connect (see https://docs.walletconnect.com/appkit/next/core/installation#extra-configuration)
+        if (process.env.NEXT_USE_TURBOPACK === '1') {
+            console.warn('TURBOPACK ENABLED: Skipping Webpack changes');
+            return config;
+        }
+        
+        if (process.env.NODE_ENV === 'development') {
+            console.warn('TURBOPACK DISABLED: Applying Webpack changes');
+        }
+        
         config.externals.push('pino-pretty', 'lokijs', 'encoding');
-
+        
         return config;
     },
 };
