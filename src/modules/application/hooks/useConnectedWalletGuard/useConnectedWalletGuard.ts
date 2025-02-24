@@ -30,7 +30,7 @@ export const useConnectedWalletGuard = (params?: IUseConnectedWalletGuardParams)
             const dialogParams = { onError, onSuccess, ...functionParams };
             open(ApplicationDialog.CONNECT_WALLET, { params: dialogParams });
         },
-        [open, onSuccess, onError],
+        [open, onSuccess, onError, isConnected],
     );
 
     return { check: checkWalletConnected, result: isConnected };
