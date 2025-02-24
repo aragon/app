@@ -1,10 +1,11 @@
 'use client';
 
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { CreateDaoForm, type ICreateDaoFormData } from '../../components/createDaoForm';
 import { CreateDaoDialog } from '../../constants/moduleDialogs';
 import type { IPublishDaoDialogParams } from '../../dialogs/publishDaoDialog';
@@ -16,9 +17,26 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
     const { open } = useDialogContext();
     const { t } = useTranslations();
 
+    const publishDaoParamsRef = useRef<IPublishDaoDialogParams | null>(null);
+
+    const openPublishDaoDialog = () => {
+        open(CreateDaoDialog.PUBLISH_DAO, { params: publishDaoParamsRef.current });
+        publishDaoParamsRef.current = null;
+    };
+
+    const { check: checkWalletConnection, result: isConnected } = useConnectedWalletGuard({
+        onSuccess: openPublishDaoDialog,
+    });
+
     const handleFormSubmit = (values: ICreateDaoFormData) => {
         const params: IPublishDaoDialogParams = { values };
-        open(CreateDaoDialog.PUBLISH_DAO, { params });
+        publishDaoParamsRef.current = params;
+
+        if (isConnected) {
+            openPublishDaoDialog();
+            return;
+        }
+        checkWalletConnection();
     };
 
     const [networkStep, metadataStep] = createDaoWizardSteps;
