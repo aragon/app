@@ -19,9 +19,12 @@ export const useOpenDialogWithConnectedWallet = <TParams extends DialogComponent
             const { dialogId, options } = dialogParamsRef.current;
             open(dialogId, options);
         },
+        onError: () => {
+            dialogParamsRef.current = null;
+        },
     });
 
-    const openWithWalletConnected = useCallback(
+    const openWithConnectedWallet = useCallback(
         (dialogId: string, options?: IDialogLocationOptions<TParams>) => {
             dialogParamsRef.current = { dialogId, options };
             promptWalletConnection();
@@ -29,5 +32,5 @@ export const useOpenDialogWithConnectedWallet = <TParams extends DialogComponent
         [promptWalletConnection],
     );
 
-    return openWithWalletConnected;
+    return openWithConnectedWallet;
 };

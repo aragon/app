@@ -1,11 +1,10 @@
 'use client';
 
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useOpenDialogWithConnectedWallet } from '@/modules/application/hooks/useOpenDialogWithConnectedWallet';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { CreateDaoForm, type ICreateDaoFormData } from '../../components/createDaoForm';
 import { CreateDaoDialog } from '../../constants/moduleDialogs';
 import type { IPublishDaoDialogParams } from '../../dialogs/publishDaoDialog';
@@ -14,29 +13,12 @@ import { CreateDaoWizardStep, createDaoWizardSteps } from './createDaoPageDefini
 export interface ICreateDaoPageClientProps {}
 
 export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
-    const { open } = useDialogContext();
     const { t } = useTranslations();
-
-    const publishDaoParamsRef = useRef<IPublishDaoDialogParams | null>(null);
-
-    const openPublishDaoDialog = () => {
-        open(CreateDaoDialog.PUBLISH_DAO, { params: publishDaoParamsRef.current });
-        publishDaoParamsRef.current = null;
-    };
-
-    const { check: checkWalletConnection, result: isConnected } = useConnectedWalletGuard({
-        onSuccess: openPublishDaoDialog,
-    });
+    const openWithConnectedWallet = useOpenDialogWithConnectedWallet();
 
     const handleFormSubmit = (values: ICreateDaoFormData) => {
         const params: IPublishDaoDialogParams = { values };
-        publishDaoParamsRef.current = params;
-
-        if (isConnected) {
-            openPublishDaoDialog();
-            return;
-        }
-        checkWalletConnection();
+        openWithConnectedWallet(CreateDaoDialog.PUBLISH_DAO, { params });
     };
 
     const [networkStep, metadataStep] = createDaoWizardSteps;
