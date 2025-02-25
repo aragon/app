@@ -59,8 +59,8 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     );
 
     const defaultValues: ITokenDelegationFormData = useMemo(() => {
-        const isSelfDelegate = addressUtils.isAddressEqual(address, tokenMember?.lastDelegate ?? undefined);
-        const defaultDelegate = tokenMember?.lastDelegate ?? undefined;
+        const isSelfDelegate = addressUtils.isAddressEqual(address, tokenMember?.currentDelegate ?? undefined);
+        const defaultDelegate = tokenMember?.currentDelegate ?? undefined;
 
         return {
             selection: isSelfDelegate ? TokenDelegationSelection.YOURSELF : TokenDelegationSelection.OTHER,
@@ -96,7 +96,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     });
 
     const handleSelectionChange = (value: string) => {
-        const newDelegateInput = value === TokenDelegationSelection.YOURSELF ? address : tokenMember?.lastDelegate;
+        const newDelegateInput = value === TokenDelegationSelection.YOURSELF ? address : tokenMember?.currentDelegate;
         setDelegateInput(newDelegateInput ?? undefined);
         onSelectionChange(value);
     };
