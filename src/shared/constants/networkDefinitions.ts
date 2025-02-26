@@ -16,6 +16,10 @@ export interface INetworkDefinitionAddresses {
      * Executor address for SPP sub-plugins.
      */
     globalExecutor: Hex;
+    /**
+     * Base address for the plugin repository.
+     */
+    pluginRepoBase: Hex;
 }
 
 export interface INetworkDefinition extends Chain {
@@ -48,6 +52,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
             globalExecutor: zeroAddress,
+            pluginRepoBase: zeroAddress,
         },
     },
     [Network.POLYGON_MAINNET]: {
@@ -59,6 +64,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
             globalExecutor: zeroAddress,
+            pluginRepoBase: zeroAddress,
         },
     },
     [Network.BASE_MAINNET]: {
@@ -70,6 +76,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
             globalExecutor: zeroAddress,
+            pluginRepoBase: zeroAddress,
         },
     },
     [Network.ARBITRUM_MAINNET]: {
@@ -81,6 +88,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
             globalExecutor: zeroAddress,
+            pluginRepoBase: zeroAddress,
         },
     },
     [Network.ZKSYNC_MAINNET]: {
@@ -92,6 +100,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
             globalExecutor: zeroAddress,
+            pluginRepoBase: zeroAddress,
         },
     },
     [Network.PEAQ_MAINNET]: {
@@ -102,6 +111,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x35B62715459cB60bf6dC17fF8cfe138EA305E7Ee',
             pluginSetupProcessor: '0x08633901DdF9cD8e2DC3a073594d0A7DaD6f3f57',
             globalExecutor: '0x07f49c49Ce2A99CF7C28F66673d406386BDD8Ff4',
+            pluginRepoBase: zeroAddress,
         },
     },
 
@@ -115,6 +125,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
             pluginSetupProcessor: '0x9e99D11b513dD2cc5e117a5793412106502FF04B',
             globalExecutor: '0x67744773b8C29aaDc8a11010C09306c0029219Ff',
+            pluginRepoBase: '0x917C2Ab96c40aDEfD08d240409485D8b606423E3',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {
@@ -126,6 +137,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
             globalExecutor: zeroAddress,
+            pluginRepoBase: zeroAddress,
         },
     },
 };
