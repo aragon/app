@@ -1,10 +1,9 @@
-import { generateToken } from '@/modules/finance/testUtils';
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import { generateProposalAction } from '@/modules/governance/testUtils';
 import { timeUtils } from '@/test/utils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
+import { generateTokenPluginSettings, generateTokenPluginSettingsToken, generateTokenProposal } from '../../testUtils';
 import { DaoTokenVotingMode, VoteOption, type ITokenProposal, type ITokenProposalOptionVotes } from '../../types';
 import { tokenProposalUtils } from './tokenProposalUtils';
 
@@ -343,7 +342,7 @@ describe('tokenProposal utils', () => {
                 { type: VoteOption.NO, totalVotingPower: '2000000000000000000' },
             ];
             const proposal: ITokenProposal = generateTokenProposal({
-                settings: generateTokenPluginSettings({ token: generateToken({ decimals: 18 }) }),
+                settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 18 }) }),
                 metrics: { votesByOption },
             });
 
@@ -359,7 +358,7 @@ describe('tokenProposal utils', () => {
                 { type: VoteOption.YES, totalVotingPower: '1000000000000000000' },
             ];
             const proposal: ITokenProposal = generateTokenProposal({
-                settings: generateTokenPluginSettings({ token: generateToken({ decimals: 18 }) }),
+                settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 18 }) }),
                 metrics: { votesByOption },
             });
 
@@ -374,7 +373,7 @@ describe('tokenProposal utils', () => {
                 { type: VoteOption.NO, totalVotingPower: '2500000' },
             ];
             const proposal: ITokenProposal = generateTokenProposal({
-                settings: generateTokenPluginSettings({ token: generateToken({ decimals: 6 }) }),
+                settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 6 }) }),
                 metrics: { votesByOption },
             });
 
@@ -387,7 +386,7 @@ describe('tokenProposal utils', () => {
 
         it('returns 0 when votesByOption is empty', () => {
             const proposal: ITokenProposal = generateTokenProposal({
-                settings: generateTokenPluginSettings({ token: generateToken({ decimals: 18 }) }),
+                settings: generateTokenPluginSettings({ token: generateTokenPluginSettingsToken({ decimals: 18 }) }),
                 metrics: { votesByOption: [] },
             });
 

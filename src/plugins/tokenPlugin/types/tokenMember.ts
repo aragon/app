@@ -18,4 +18,8 @@ export interface ITokenMember extends Omit<IMember, 'metrics'> {
      * Metrics for the token member.
      */
     metrics: ITokenMemberMetrics;
+    /**
+     * Current user delegate.
+     */
+    currentDelegate: string | null;
 }
