@@ -1,5 +1,5 @@
 import {
-    IUseConnectedWalletGuardParams,
+    type IUseConnectedWalletGuardParams,
     useConnectedWalletGuard,
 } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useOpenDialogWithConnectedWallet } from '@/modules/application/hooks/useOpenDialogWithConnectedWallet/useOpenDialogWithConnectedWallet';
