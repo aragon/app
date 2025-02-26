@@ -1,9 +1,13 @@
-import { generateToken } from '@/modules/finance/testUtils';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateMember } from '@/modules/governance/testUtils';
 import { generateDaoPlugin, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { renderHook } from '@testing-library/react';
-import { generateTokenMember, generateTokenMemberMetrics, generateTokenPluginSettings } from '../../testUtils';
+import {
+    generateTokenMember,
+    generateTokenMemberMetrics,
+    generateTokenPluginSettings,
+    generateTokenPluginSettingsToken,
+} from '../../testUtils';
 import { useTokenMemberStats } from './useTokenMemberStats';
 
 describe('useTokenMemberStats hook', () => {
@@ -18,7 +22,7 @@ describe('useTokenMemberStats hook', () => {
     });
 
     it('returns token member stats', () => {
-        const token = generateToken({ decimals: 6 });
+        const token = generateTokenPluginSettingsToken({ decimals: 6 });
         const daoTokenSettings = generateTokenPluginSettings({ token });
         const plugin = generateDaoPlugin({ settings: daoTokenSettings });
         const memberStatsParams = {

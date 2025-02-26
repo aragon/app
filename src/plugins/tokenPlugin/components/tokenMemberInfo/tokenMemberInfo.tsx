@@ -36,7 +36,7 @@ export const TokenMemberInfo: React.FC<ITokenMemberInfoProps> = (props) => {
     const daoMemberParams = { daoId, pluginAddress: plugin.address };
     const { data: memberList } = useMemberList({ queryParams: daoMemberParams });
 
-    const distribution = memberList?.pages[0].metadata.totalRecords;
+    const distribution = memberList?.pages[0]?.metadata.totalRecords;
 
     const { id: chainId } = networkDefinitions[plugin.settings.token.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });

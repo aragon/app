@@ -1,2 +1,2 @@
 export { DaoPluginInfo } from './daoPluginInfo';
-export { DaoPluginInfoTabId, type IDaoPlugInfoProps, type IDaoPluginInfoTab } from './daoPluginInfo.api';
+export { DaoPluginInfoTabId, type IDaoPlugInfoProps } from './daoPluginInfo.api';

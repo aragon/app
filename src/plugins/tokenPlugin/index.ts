@@ -9,6 +9,7 @@ import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposa
 import { TokenGovernanceInfo } from './components/tokenGovernanceInfo';
 import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
+import { TokenMemberPanel } from './components/tokenMemberPanel';
 import { TokenProcessBodyField } from './components/tokenProcessBodyField';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
@@ -33,6 +34,11 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
             pluginId: tokenPlugin.id,
             component: TokenMemberList,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_PANEL,
+            pluginId: tokenPlugin.id,
+            component: TokenMemberPanel,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
