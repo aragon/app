@@ -18,7 +18,7 @@ import {
     ProposalActions,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { ActionComposer, type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
 import { ActionItemId } from '../../actionComposer/actionComposerUtils';
@@ -57,7 +57,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const [actionComposerMode, setActionComposerMode] = useState<ActionComposerMode>('native');
 
     const {
-        append: addAction,
+        prepend: addAction,
         remove: removeAction,
         move: moveAction,
         fields: actions,
@@ -77,6 +77,20 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             ? { ...inputData, parameters: inputData.parameters.filter(({ type }) => (type as unknown) != null) }
             : null,
     }));
+
+    // Scroll to top when there is new action added
+    const containerRef = useRef<HTMLDivElement>(null);
+    const prevActionsCount = useRef(processedActions.length);
+    useEffect(() => {
+        if (processedActions.length > prevActionsCount.current) {
+            const offset = 120;
+            if (containerRef.current) {
+                const topPosition = containerRef.current.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top: topPosition - offset, behavior: 'smooth' });
+            }
+        }
+        prevActionsCount.current = processedActions.length;
+    }, [processedActions.length]);
 
     const handleAddAction = (mode: ActionComposerMode) => {
         setActionComposerMode(mode);
@@ -170,22 +184,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     return (
-        <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root>
-                <ProposalActions.Container emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}>
-                    {processedActions.map((action, index) => (
-                        <ProposalActions.Item
-                            key={action.id}
-                            action={action}
-                            CustomComponent={customActionComponents[action.type]}
-                            dropdownItems={getActionDropdownItems(index)}
-                            editMode={true}
-                            formPrefix={`actions.${index.toString()}`}
-                            chainId={networkDefinitions[dao!.network].id}
-                        />
-                    ))}
-                </ProposalActions.Container>
-            </ProposalActions.Root>
+        <div className="flex flex-col gap-y-4">
             <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction('native')}>
                     {t('app.governance.createProposalForm.actions.addAction.default')}
@@ -217,6 +216,25 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 daoId={daoId}
                 mode={actionComposerMode}
             />
+            <ProposalActions.Root>
+                <ProposalActions.Container
+                    emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
+                    ref={containerRef}
+                >
+                    {processedActions.map((action, index) => (
+                        <ProposalActions.Item
+                            key={action.id}
+                            action={action}
+                            value={action.id}
+                            CustomComponent={customActionComponents[action.type]}
+                            dropdownItems={getActionDropdownItems(index)}
+                            editMode={true}
+                            formPrefix={`actions.${index.toString()}`}
+                            chainId={networkDefinitions[dao!.network].id}
+                        />
+                    ))}
+                </ProposalActions.Container>
+            </ProposalActions.Root>
         </div>
     );
 };
