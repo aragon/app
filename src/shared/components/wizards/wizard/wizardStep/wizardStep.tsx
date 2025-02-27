@@ -1,4 +1,4 @@
-import { scrollToTop } from '@/shared/hooks/useScrollToTop';
+import { appUtils } from '@/shared/utils/appUtils';
 import classNames from 'classnames';
 import { useEffect, type ComponentProps } from 'react';
 import { useWizardContext, type IWizardStepperStep } from '../wizardProvider';
@@ -25,7 +25,7 @@ export const WizardStep: React.FC<IWizardStepProps> = (props) => {
 
     useEffect(() => {
         if (activeStep === id) {
-            scrollToTop();
+            appUtils.scrollToTop();
         }
     }, [activeStep, id]);
 
