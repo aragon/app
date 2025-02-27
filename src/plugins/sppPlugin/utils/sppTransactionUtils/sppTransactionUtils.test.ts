@@ -323,30 +323,21 @@ describe('sppTransaction utils', () => {
     });
 
     describe('processStageTiming', () => {
-        it('returns vote duration as 0 when stageType is TIMELOCK', () => {
-            const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false };
-            const stageType = ProcessStageType.TIMELOCK;
-            const result = sppTransactionUtils['processStageTiming'](timing, stageType);
-            expect(result.voteDuration).toBe(BigInt(0));
-        });
-
         it('correctly processes the voting period to seconds for non timelock stages', () => {
             const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false };
-            const stageType = ProcessStageType.NORMAL;
-            const result = sppTransactionUtils['processStageTiming'](timing, stageType);
+            const result = sppTransactionUtils['processStageTiming'](timing);
             expect(result.voteDuration).toBe(BigInt(86400)); // One day in seconds
         });
 
         it('returns minAdvance as 0 when earlyStageAdvance is true', () => {
             const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: true };
-            const stageType = ProcessStageType.NORMAL;
-            const result = sppTransactionUtils['processStageTiming'](timing, stageType);
+            const result = sppTransactionUtils['processStageTiming'](timing);
             expect(result.minAdvance).toBe(BigInt(0));
         });
 
         it('returns minAdvance as the voting period when earlyStageAdvance is false', () => {
             const timing = { votingPeriod: { days: 0, hours: 12, minutes: 0 }, earlyStageAdvance: false };
-            const result = sppTransactionUtils['processStageTiming'](timing, ProcessStageType.OPTIMISTIC);
+            const result = sppTransactionUtils['processStageTiming'](timing);
             expect(result.minAdvance).toBe(BigInt(43200));
         });
 
@@ -356,7 +347,7 @@ describe('sppTransaction utils', () => {
                 earlyStageAdvance: false,
                 stageExpiration: undefined,
             };
-            const result = sppTransactionUtils['processStageTiming'](timing, ProcessStageType.OPTIMISTIC);
+            const result = sppTransactionUtils['processStageTiming'](timing);
             expect(result.maxAdvance).toEqual(sppTransactionUtils['defaultMaxAdvance']);
         });
 
@@ -366,7 +357,7 @@ describe('sppTransaction utils', () => {
                 earlyStageAdvance: false,
                 stageExpiration: { days: 0, hours: 0, minutes: 30 },
             };
-            const result = sppTransactionUtils['processStageTiming'](timing, ProcessStageType.OPTIMISTIC);
+            const result = sppTransactionUtils['processStageTiming'](timing);
             expect(result.maxAdvance).toEqual(BigInt(45000));
         });
     });

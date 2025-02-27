@@ -1,6 +1,6 @@
+import { type IToken } from '@/modules/finance/api/financeService';
 import type { IPluginSettings } from '@/shared/api/daoService';
-import type { DaoTokenVotingMode } from './enum';
-import type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
+import { type DaoTokenVotingMode } from './enum';
 
 export interface ITokenPluginSettings extends IPluginSettings {
     /**
@@ -26,7 +26,7 @@ export interface ITokenPluginSettings extends IPluginSettings {
     /**
      * Governance token of the DAO.
      */
-    token: ITokenPluginSettingsToken;
+    token: IToken;
     /**
      * Total supply of the token only set when settings are fetched for a specific block number (e.g. settings when a proposal was created)
      */

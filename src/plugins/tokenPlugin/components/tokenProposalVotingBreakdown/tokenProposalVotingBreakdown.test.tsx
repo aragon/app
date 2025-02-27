@@ -1,6 +1,7 @@
+import { generateToken } from '@/modules/finance/testUtils';
 import { ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateTokenPluginSettings, generateTokenPluginSettingsToken, generateTokenProposal } from '../../testUtils';
+import { generateTokenPluginSettings, generateTokenProposal } from '../../testUtils';
 import { VoteOption } from '../../types/enum/voteOption';
 import { TokenProposalVotingBreakdown, type ITokenProposalVotingBreakdownProps } from './tokenProposalVotingBreakdown';
 
@@ -8,7 +9,7 @@ describe('<TokenProposalVotingBreakdown /> component', () => {
     const createTestComponent = (props?: Partial<ITokenProposalVotingBreakdownProps>) => {
         const baseProposal = generateTokenProposal({
             settings: generateTokenPluginSettings({
-                token: generateTokenPluginSettingsToken(),
+                token: generateToken(),
                 historicalTotalSupply: '1',
             }),
         });
@@ -29,7 +30,7 @@ describe('<TokenProposalVotingBreakdown /> component', () => {
             minParticipation: 200000,
             supportThreshold: 500000,
             historicalTotalSupply: '1000000',
-            token: generateTokenPluginSettingsToken({ decimals: 1, symbol: 'TTT' }),
+            token: generateToken({ decimals: 1, symbol: 'TTT' }),
         });
         const votesByOption = [
             { type: VoteOption.YES, totalVotingPower: '7500' },

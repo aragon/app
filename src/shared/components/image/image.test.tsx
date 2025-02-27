@@ -1,3 +1,4 @@
+import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
 import { Image, type IImageProps } from './image';
 
@@ -16,9 +17,8 @@ describe('<Image /> component', () => {
         expect(image.src).toMatch(/_next\/image/);
     });
 
-    it('renders empty container when src is not defined', () => {
-        const src = undefined;
-        const { container } = render(createTestComponent({ src }));
-        expect(container).toBeEmptyDOMElement();
+    it('sets default src when relative property is not defined', () => {
+        testLogger.suppressErrors();
+        expect(() => render(createTestComponent())).not.toThrow();
     });
 });

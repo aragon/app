@@ -32,21 +32,11 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
         trimOnBlur: true,
     });
 
-    /**
-     * URL Regex:
-     * - Optional protocol (http:// or https://)
-     * - Domain with one or more subdomains
-     * - Optional path
-     * - Optional query string
-     * - Optional fragment identifier
-     */
-    const urlRegex = /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
-
     const urlFieldName = `${name}.${index.toString()}.url`;
     const urlField = useFormField<ResourcesInputItemBaseForm, typeof urlFieldName>(urlFieldName, {
         label: t('app.shared.resourcesInput.item.linkInput.title'),
         defaultValue: '',
-        rules: { required: true, pattern: urlRegex },
+        rules: { required: true, pattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/ },
         trimOnBlur: true,
     });
 

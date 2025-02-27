@@ -16,6 +16,21 @@ export interface IDaoPlugInfoProps {
     type: PluginType;
 }
 
+export interface IDaoPluginInfoTab {
+    /**
+     * The ID of the tab.
+     */
+    id: DaoPluginInfoTabId;
+    /**
+     * The label of the tab.
+     */
+    label: string;
+    /**
+     * Flag indicating whether or not the tab should be hidden (when it has no content).
+     */
+    hidden?: boolean;
+}
+
 export enum DaoPluginInfoTabId {
     DESCRIPTION = 'DESCRIPTION',
     CONTRACT = 'CONTRACT',

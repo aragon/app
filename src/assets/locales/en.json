@@ -1022,30 +1022,6 @@
             "label": "Start time"
           }
         },
-        "tokenDelegationForm": {
-          "delegate": {
-            "helpText": "Enter the address you would like to delegate the voting power of your token balance to.",
-            "label": "Your delegation",
-            "placeholder": "ENS or 0x …"
-          },
-          "dialog": {
-            "button": {
-              "submit": "Delegate",
-              "success": "View members"
-            },
-            "description": "To delegate to this address you have to confirm the onchain transaction with your wallet.",
-            "title": "Delegate"
-          },
-          "info": "Delegating increases the voting power of the address you indicate above by your current or future balance. If you are delegating to somebody else, you will be unable to vote until you claim your voting power back.",
-          "selection": {
-            "label": "Who would you like to delegate to?",
-            "option": {
-              "other": "Someone else",
-              "self": "Yourself"
-            }
-          },
-          "submit": "Delegate voting power"
-        },
         "tokenGovernanceSettings": {
           "approval": "> {{approvalThreshold}}",
           "approvalThreshold": "Approval threshold",
@@ -1074,11 +1050,6 @@
         },
         "tokenMemberList": {
           "entity": "Members"
-        },
-        "tokenMemberPanel": {
-          "tabs": {
-            "DELEGATE": "Delegate"
-          }
         },
         "tokenMemberStats": {
           "delegations": "Delegations",
@@ -1222,9 +1193,15 @@
         "processKey": "Process key",
         "processName": "Process name",
         "tabs": {
-          "CONTRACT": "Contract",
-          "DESCRIPTION": "Description",
-          "SETTINGS": "Settings"
+          "contract": {
+            "label": "Contract"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "settings": {
+            "label": "Settings"
+          }
         }
       },
       "daoSettingsInfo": {

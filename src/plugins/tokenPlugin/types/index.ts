@@ -4,7 +4,6 @@ export type { ITokenActionTokenMint } from './tokenActionTokenMint';
 export type { ITokenMember } from './tokenMember';
 export type { ITokenMemberMetrics } from './tokenMemberMetrics';
 export type { ITokenPluginSettings } from './tokenPluginSettings';
-export type { ITokenPluginSettingsToken } from './tokenPluginSettingsToken';
 export type { ITokenProposal } from './tokenProposal';
 export type { ITokenProposalAction } from './tokenProposalAction';
 export type { ITokenProposalOptionVotes } from './tokenProposalOptionVotes';

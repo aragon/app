@@ -1,12 +1,8 @@
+import { generateToken } from '@/modules/finance/testUtils';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import {
-    generateTokenMember,
-    generateTokenMemberMetrics,
-    generateTokenPluginSettings,
-    generateTokenPluginSettingsToken,
-} from '../../testUtils';
+import { generateTokenMember, generateTokenMemberMetrics, generateTokenPluginSettings } from '../../testUtils';
 import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
 
 describe('<TokenMemberListItem /> component', () => {
@@ -45,7 +41,7 @@ describe('<TokenMemberListItem /> component', () => {
 
     it('retrieves the plugin settings to parse the member voting power using the decimals of the governance token', () => {
         const daoId = 'test-dao-id';
-        const token = generateTokenPluginSettingsToken({ decimals: 6 });
+        const token = generateToken({ decimals: 6 });
         const pluginSettings = generateTokenPluginSettings({ token });
         const member = generateTokenMember({ votingPower: '47928374987234' });
         const plugin = generateDaoPlugin({ settings: pluginSettings });

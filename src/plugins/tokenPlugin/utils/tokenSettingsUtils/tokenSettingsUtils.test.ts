@@ -1,4 +1,5 @@
-import { generateTokenPluginSettings, generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils';
+import { generateToken } from '@/modules/finance/testUtils';
+import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { mockTranslations } from '@/test/utils';
 import { tokenSettingsUtils } from './tokenSettingsUtils';
@@ -49,7 +50,7 @@ describe('tokenSettings utils', () => {
 
         it('correctly formats and displays the minimum participation token value', () => {
             const settings = generateTokenPluginSettings({
-                token: generateTokenPluginSettingsToken({ totalSupply: '200000', decimals: 2 }),
+                token: generateToken({ totalSupply: '200000', decimals: 2 }),
                 minParticipation: 200000,
             });
             const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
@@ -74,7 +75,7 @@ describe('tokenSettings utils', () => {
 
         it('correctly formats and displays the voting power necessary to be a proposer', () => {
             const settings = generateTokenPluginSettings({
-                token: generateTokenPluginSettingsToken({ symbol: 'TKN', decimals: 18 }),
+                token: generateToken({ symbol: 'TKN', decimals: 18 }),
                 minProposerVotingPower: '100000000000000000000',
             });
             const result = tokenSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
