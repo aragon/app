@@ -1,4 +1,3 @@
-import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
@@ -11,8 +10,7 @@ import {
     type ICompositeAddress,
     IconType,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useCallback, useState } from 'react';
 
 export interface IManageAdminsAddMembersItemProps {
     /**
@@ -24,10 +22,6 @@ export interface IManageAdminsAddMembersItemProps {
      */
     onRemoveMember?: () => void;
     /**
-     * Address of the current DAO plugin.
-     */
-    pluginAddress: string;
-    /**
      * Field name of the form.
      */
     fieldName: string;
@@ -37,13 +31,14 @@ export interface IManageAdminsAddMembersItemProps {
     isAlreadyInList: boolean;
 }
 
-const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean, isMember?: boolean) => {
+const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean) => {
     const errorNamespace = 'app.plugins.multisig.multisigAddMembersAction.addressInput.error';
-
+    console.log('member', member);
+    if (!member.address) {
+        return true;
+    }
     if (!addressUtils.isAddress(member.address)) {
         return `${errorNamespace}.invalid`;
-    } else if (isMember) {
-        return `${errorNamespace}.alreadyMember`;
     } else if (isAlreadyInList) {
         return `${errorNamespace}.alreadyInList`;
     }
@@ -52,10 +47,9 @@ const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean, isM
 };
 
 export const ManageAdminsAddMembersItem: React.FC<IManageAdminsAddMembersItemProps> = (props) => {
-    const { index, onRemoveMember, pluginAddress, fieldName, isAlreadyInList } = props;
+    const { index, onRemoveMember, fieldName, isAlreadyInList } = props;
 
     const { t } = useTranslations();
-    const { trigger } = useFormContext();
 
     const memberFieldName = `${fieldName}.[${index.toString()}]`;
     const {
@@ -67,7 +61,7 @@ export const ManageAdminsAddMembersItem: React.FC<IManageAdminsAddMembersItemPro
         label: t('app.plugins.multisig.multisigAddMembersAction.addressInput.label'),
         rules: {
             required: true,
-            validate: (value) => validateMember(value, isAlreadyInList, isMember),
+            validate: (value) => validateMember(value, isAlreadyInList),
         },
     });
 
@@ -75,36 +69,15 @@ export const ManageAdminsAddMembersItem: React.FC<IManageAdminsAddMembersItemPro
 
     const [addressInput, setAddressInput] = useState<string | undefined>(value.address);
 
-    const memberExistsParams = { memberAddress: value.address, pluginAddress };
-    const { data: isMember } = useMemberExists(
-        { urlParams: memberExistsParams },
-        { enabled: addressUtils.isAddress(value.address) },
-    );
-
     const handleAddressAccept = useCallback(
-        (value?: IAddressInputResolvedValue) => onAddressChange({ address: value?.address ?? '', name: value?.name }),
+        (value?: IAddressInputResolvedValue) => onAddressChange({ address: value?.address ?? '' }),
         [onAddressChange],
     );
-
-    // Trigger member validation to check if added user is already a member of the DAO or not.
-    useEffect(() => {
-        if (isMember != null) {
-            void trigger(memberFieldName);
-        }
-    }, [trigger, memberFieldName, isMember]);
-
-    // Only trigger already-in-list validation if value is a valid address to avoid displaying an error on mount.
-    useEffect(() => {
-        if (addressUtils.isAddress(value.address)) {
-            void trigger(memberFieldName);
-        }
-    }, [trigger, memberFieldName, isAlreadyInList, value.address]);
 
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <AddressInput
                 chainId={1}
-                placeholder={t('app.plugins.multisig.multisigAddMembersAction.addressInput.placeholder')}
                 onChange={setAddressInput}
                 value={addressInput}
                 onAccept={handleAddressAccept}
