@@ -57,7 +57,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const [actionComposerMode, setActionComposerMode] = useState<ActionComposerMode>('native');
 
     const {
-        prepend: addAction,
+        append: addAction,
         remove: removeAction,
         move: moveAction,
         fields: actions,
@@ -185,6 +185,25 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     return (
         <div className="flex flex-col gap-y-4">
+            <ProposalActions.Root>
+                <ProposalActions.Container
+                    emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
+                    ref={containerRef}
+                >
+                    {processedActions.map((action, index) => (
+                        <ProposalActions.Item
+                            key={action.id}
+                            action={action}
+                            value={action.id}
+                            CustomComponent={customActionComponents[action.type]}
+                            dropdownItems={getActionDropdownItems(index)}
+                            editMode={true}
+                            formPrefix={`actions.${index.toString()}`}
+                            chainId={networkDefinitions[dao!.network].id}
+                        />
+                    ))}
+                </ProposalActions.Container>
+            </ProposalActions.Root>
             <div className={classNames('flex flex-row gap-3', { hidden: displayActionComposer })}>
                 <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={() => handleAddAction('native')}>
                     {t('app.governance.createProposalForm.actions.addAction.default')}
@@ -216,25 +235,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                 daoId={daoId}
                 mode={actionComposerMode}
             />
-            <ProposalActions.Root>
-                <ProposalActions.Container
-                    emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
-                    ref={containerRef}
-                >
-                    {processedActions.map((action, index) => (
-                        <ProposalActions.Item
-                            key={action.id}
-                            action={action}
-                            value={action.id}
-                            CustomComponent={customActionComponents[action.type]}
-                            dropdownItems={getActionDropdownItems(index)}
-                            editMode={true}
-                            formPrefix={`actions.${index.toString()}`}
-                            chainId={networkDefinitions[dao!.network].id}
-                        />
-                    ))}
-                </ProposalActions.Container>
-            </ProposalActions.Root>
         </div>
     );
 };
