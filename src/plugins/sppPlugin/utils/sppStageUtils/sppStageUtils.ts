@@ -57,6 +57,7 @@ class SppStageUtils {
         const isSignalingProposal = this.isSignalingProposal(proposal, stage);
 
         return (
+            stage.stageIndex === proposal.stageIndex &&
             approvalReached &&
             minAdvanceDate != null &&
             maxAdvanceDate != null &&
