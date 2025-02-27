@@ -828,6 +828,14 @@
         "adminVotingTerminal": {
           "description": "Proposals created by admins do not require governance in order to pass.",
           "title": "Automatic execution"
+        },
+        "manageAdmins": {
+          "manage": "Manage admins"
+        },
+        "manageAdminsDialog": {
+          "add": "Add",
+          "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
+          "title": "Manage admins"
         }
       },
       "multisig": {
