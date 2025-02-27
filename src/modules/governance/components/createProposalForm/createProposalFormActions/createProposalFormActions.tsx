@@ -184,7 +184,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     return (
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col gap-y-10">
             <ProposalActions.Root>
                 <ProposalActions.Container
                     emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
