@@ -14,6 +14,7 @@ export const useOpenDialogWithConnectedWallet = <TParams extends DialogComponent
     const { open } = useDialogContext();
     const { check: promptWalletConnection } = useConnectedWalletGuard({
         onSuccess: () => {
+            // onSuccess callback is called either when the wallet is already connected or when the user connects it!
             if (!dialogParamsRef.current) {
                 return;
             }
@@ -28,6 +29,11 @@ export const useOpenDialogWithConnectedWallet = <TParams extends DialogComponent
 
     const openWithConnectedWallet = useCallback(
         (dialogId: string, options?: IDialogLocationOptions<TParams>) => {
+            // This will trigger one of the following scenarios:
+            //   1. If the wallet is already connected, the dialog will be opened immediately.
+            //   2. If the wallet is not connected, the user will be prompted to connect it.
+            //      2.1. If the connection is successful, the dialog will be opened.
+            //      2.2. If the connection fails, the dialog will not be opened.
             dialogParamsRef.current = { dialogId, options };
             promptWalletConnection();
         },
