@@ -18,6 +18,7 @@ export const ManageAdmins: React.FC<IManageAdminsProps> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
+
     const [isManageAdminsDialogOpen, setIsManageAdminsDialogOpen] = useState(false);
 
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' })!;

@@ -8,19 +8,28 @@ import {
     type ICompositeAddress,
     type IDialogRootProps,
 } from '@aragon/gov-ui-kit';
-import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { ManageAdminsAddMembersItem } from './manageAdminsDialogAddMembersItem';
+import { useEffect, useMemo } from 'react';
 
 export interface IManageAdminsDialogProps extends IDialogRootProps {
+    /**
+     * List of current admins on the admin plugin.
+     */
     currentAdmins: IMember[];
 }
 
 export interface IManageAdminsFormData {
+    /**
+     * List of members in the form.
+     */
     members: ICompositeAddress[];
 }
 
+const formId = 'manageAdminsForm';
+
 export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) => {
-    const { currentAdmins, ...otherProps } = props;
+    const { currentAdmins, onOpenChange, ...otherProps } = props;
 
     const { t } = useTranslations();
 
@@ -30,12 +39,12 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
 
     const formMethods = useForm<IManageAdminsFormData>({
         defaultValues: {
-            members: initialMembers.length > 0 ? initialMembers : [{ address: '' }],
+            members: initialMembers,
         },
-        mode: 'onChange',
+        mode: 'onTouched',
     });
 
-    const { handleSubmit, control } = formMethods;
+    const { handleSubmit, control, reset } = formMethods;
 
     const membersFieldName = 'members';
     const {
@@ -43,6 +52,13 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
         append: addMember,
         remove: removeMember,
     } = useFieldArray({ name: membersFieldName, control });
+
+    const watchMembersField = useWatch({ name: 'members', control });
+
+    const controlledMembersField = useMemo(
+        () => membersField.map((field, index) => ({ ...field, ...watchMembersField[index] })),
+        [membersField, watchMembersField],
+    );
 
     const handleAddMember = () => addMember({ address: '' });
 
@@ -52,23 +68,32 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
         }
     };
 
+    useEffect(() => {
+        // Needed to make sure that the default values are set correctly on the form
+        const members =
+            currentAdmins.length > 0 ? currentAdmins.map((member) => ({ address: member.address })) : [{ address: '' }];
+        reset({ members });
+    }, [currentAdmins, reset]);
+
     const handleFormSubmit = (data: IManageAdminsFormData) => {
+        // TODO: handle transaction preparation
         console.log('data', data);
     };
-    console.log('membersField', membersField);
+
     const checkIsAlreadyInList = (index: number) =>
-        membersField
+        controlledMembersField
             .slice(0, index)
-            .some((field) => addressUtils.isAddressEqual(field.address, membersField[index].address));
+            .some((field) => addressUtils.isAddressEqual(field.address, controlledMembersField[index].address));
 
     return (
-        <Dialog.Root {...otherProps}>
-            <Dialog.Header title={t('app.plugins.admin.manageAdminsDialog.title')} />
-            <Dialog.Content description={t('app.plugins.admin.manageAdminsDialog.description')}>
-                <FormProvider {...formMethods}>
+        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
+            <FormProvider {...formMethods}>
+                <Dialog.Header title={t('app.plugins.admin.manageAdminsDialog.title')} />
+                <Dialog.Content description={t('app.plugins.admin.manageAdminsDialog.description')}>
                     <form
                         className="flex w-full flex-col gap-3 pb-6 md:gap-2"
                         onSubmit={handleSubmit(handleFormSubmit)}
+                        id={formId}
                     >
                         {membersField.map((field, index) => (
                             <ManageAdminsAddMembersItem
@@ -79,7 +104,6 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
                                 isAlreadyInList={checkIsAlreadyInList(index)}
                             />
                         ))}
-
                         <Button
                             size="md"
                             variant="tertiary"
@@ -90,8 +114,19 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
                             {t('app.plugins.admin.manageAdminsDialog.add')}
                         </Button>
                     </form>
-                </FormProvider>
-            </Dialog.Content>
+                </Dialog.Content>
+                <Dialog.Footer
+                    primaryAction={{
+                        label: t('app.plugins.admin.manageAdminsDialog.action.update'),
+                        type: 'submit',
+                        form: formId,
+                    }}
+                    secondaryAction={{
+                        label: t('app.plugins.admin.manageAdminsDialog.action.cancel'),
+                        onClick: () => onOpenChange?.(false),
+                    }}
+                />
+            </FormProvider>
         </Dialog.Root>
     );
 };

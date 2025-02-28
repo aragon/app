@@ -833,8 +833,22 @@
           "manage": "Manage admins"
         },
         "manageAdminsDialog": {
+          "action": {
+            "cancel": "Cancel",
+            "update": "Update admins"
+          },
           "add": "Add",
+          "addressInput": {
+            "error": {
+              "alreadyInList": "Address has already been added",
+              "alreadyMember": "Address is already a member of the DAO",
+              "invalid": "Address is not valid"
+            },
+            "label": "Member",
+            "placeholder": "ENS or 0x …"
+          },
           "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
+          "removeMember": "Remove member",
           "title": "Manage admins"
         }
       },
