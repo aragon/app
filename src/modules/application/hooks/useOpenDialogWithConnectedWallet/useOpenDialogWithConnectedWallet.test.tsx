@@ -1,23 +1,27 @@
-import {
-    type IUseConnectedWalletGuardParams,
-    useConnectedWalletGuard,
-} from '@/modules/application/hooks/useConnectedWalletGuard';
-import { useOpenDialogWithConnectedWallet } from '@/modules/application/hooks/useOpenDialogWithConnectedWallet/useOpenDialogWithConnectedWallet';
-import { useDialogContext } from '@/shared/components/dialogProvider';
+import * as useConnectedWalletGuard from '@/modules/application/hooks/useConnectedWalletGuard';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import { useOpenDialogWithConnectedWallet } from '.';
+
+import { generateDialogContext } from '@/shared/testUtils';
 import { act, renderHook } from '@testing-library/react';
 
-jest.mock('@/shared/components/dialogProvider');
-jest.mock('@/modules/application/hooks/useConnectedWalletGuard');
-
 describe('useOpenDialogWithConnectedWallet', () => {
-    const openMock = jest.fn();
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const useConnectedWalletGuardSpy = jest.spyOn(useConnectedWalletGuard, 'useConnectedWalletGuard');
+
     const promptWalletConnectionMock = jest.fn();
+    const openDialogMock = jest.fn();
 
     beforeEach(() => {
-        (useDialogContext as jest.Mock).mockReturnValue({ open: openMock });
-        (useConnectedWalletGuard as jest.Mock).mockReturnValue({ check: promptWalletConnectionMock });
-        openMock.mockClear();
-        promptWalletConnectionMock.mockClear();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open: openDialogMock }));
+        useConnectedWalletGuardSpy.mockReturnValue({ check: promptWalletConnectionMock, result: false });
+    });
+
+    afterEach(() => {
+        useDialogContextSpy.mockReset();
+        useConnectedWalletGuardSpy.mockReset();
+        promptWalletConnectionMock.mockReset();
+        openDialogMock.mockReset();
     });
 
     const dialogLocation = { id: 'dialog-id', params: { customDialogParams: 'value' } };
@@ -32,12 +36,13 @@ describe('useOpenDialogWithConnectedWallet', () => {
         });
 
         expect(promptWalletConnectionMock).toHaveBeenCalled();
-        // simulate wallet connection success
-        const mockFirstCall = (useConnectedWalletGuard as jest.Mock).mock.calls[0] as IUseConnectedWalletGuardParams[];
-        const mockReturnValue = mockFirstCall[0];
-        mockReturnValue.onSuccess!();
 
-        expect(openMock).toHaveBeenCalledWith(dialogId, options);
+        // simulate wallet connection success
+        const spyFirstCall = useConnectedWalletGuardSpy.mock.calls[0];
+        const spyFirstCallArgs = spyFirstCall[0]!;
+        spyFirstCallArgs.onSuccess!();
+
+        expect(openDialogMock).toHaveBeenCalledWith(dialogId, options);
     });
 
     it('does not open dialog when wallet connection fails', () => {
@@ -48,11 +53,12 @@ describe('useOpenDialogWithConnectedWallet', () => {
         });
 
         expect(promptWalletConnectionMock).toHaveBeenCalled();
-        // simulate wallet connection error
-        const mockFirstCall = (useConnectedWalletGuard as jest.Mock).mock.calls[0] as IUseConnectedWalletGuardParams[];
-        const mockReturnValue = mockFirstCall[0];
-        mockReturnValue.onError!();
 
-        expect(openMock).not.toHaveBeenCalled();
+        // simulate wallet connection error
+        const spyFirstCall = useConnectedWalletGuardSpy.mock.calls[0];
+        const spyFirstCallArgs = spyFirstCall[0]!;
+        spyFirstCallArgs.onError!();
+
+        expect(openDialogMock).not.toHaveBeenCalled();
     });
 });

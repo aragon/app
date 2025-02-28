@@ -7,6 +7,8 @@ import type {
 import { useCallback, useRef } from 'react';
 
 export const useOpenDialogWithConnectedWallet = <TParams extends DialogComponentProps = DialogComponentProps>() => {
+    // Since dialog params are not available on hook call (i.e. when dialog is opened on form submit), we need to store
+    // them in a ref to be able to use them later when the wallet connection succeeds.
     const dialogParamsRef = useRef<{ dialogId: string; options: IDialogLocationOptions<TParams> | undefined }>(null);
 
     const { open } = useDialogContext();
