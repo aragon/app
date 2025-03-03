@@ -36,7 +36,7 @@ jobs:
       - name: Setup
         uses: aragon/app-next/.github/actions/setup@main
       - name: Retrieve NextJs build
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v4.1.9
         with:
           name: nextjs-build
       - name: Prepare secrets
