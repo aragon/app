@@ -551,9 +551,9 @@
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
-            "description": "These actions can be executed once the proposal passes. These actions can be executed once the proposal passes. They will execute in the order they are listed on this page.",
+            "description": "These actions can be executed once the proposal passes. They will execute in the order they are listed on this page.",
             "name": "Add actions",
-            "title": "Add actions",
+            "title": "Add actions"
           },
           "METADATA": {
             "description": "Provide information voters need to make their decision.",
