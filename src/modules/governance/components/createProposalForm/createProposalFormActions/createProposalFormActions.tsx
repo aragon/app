@@ -18,7 +18,7 @@ import {
     ProposalActions,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { ActionComposer, type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
 import { ActionItemId } from '../../actionComposer/actionComposerUtils';
@@ -77,20 +77,6 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             ? { ...inputData, parameters: inputData.parameters.filter(({ type }) => (type as unknown) != null) }
             : null,
     }));
-
-    // Scroll to top when there is new action added
-    const containerRef = useRef<HTMLDivElement>(null);
-    const prevActionsCount = useRef(processedActions.length);
-    useEffect(() => {
-        if (processedActions.length > prevActionsCount.current) {
-            const offset = 120;
-            if (containerRef.current) {
-                const topPosition = containerRef.current.getBoundingClientRect().top + window.scrollY;
-                window.scrollTo({ top: topPosition - offset, behavior: 'smooth' });
-            }
-        }
-        prevActionsCount.current = processedActions.length;
-    }, [processedActions.length]);
 
     const handleAddAction = (mode: ActionComposerMode) => {
         setActionComposerMode(mode);
@@ -186,10 +172,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions.Root>
-                <ProposalActions.Container
-                    emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}
-                    ref={containerRef}
-                >
+                <ProposalActions.Container emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}>
                     {processedActions.map((action, index) => (
                         <ProposalActions.Item
                             key={action.id}
