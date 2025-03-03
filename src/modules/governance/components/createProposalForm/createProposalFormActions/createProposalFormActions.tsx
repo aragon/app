@@ -41,8 +41,6 @@ const coreCustomActionComponents = {
     [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
 } as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
-let count = 0;
-
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
     const { daoId } = props;
 
