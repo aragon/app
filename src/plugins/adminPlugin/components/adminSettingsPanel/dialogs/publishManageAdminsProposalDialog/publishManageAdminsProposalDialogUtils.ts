@@ -3,15 +3,15 @@ import { type TransactionDialogPrepareReturn } from '@/shared/components/transac
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { encodeFunctionData, type Hex } from 'viem';
-import { adminTransactionUtils } from '../../utils/adminTransactionUtils';
-import { permissionManagerAbi } from './../../../../shared/utils/permissionTransactionUtils/abi/permissionManagerAbi';
+import { adminTransactionUtils } from '../../../../utils/adminTransactionUtils';
+import { permissionManagerAbi } from '../../../../../../shared/utils/permissionTransactionUtils/abi/permissionManagerAbi';
 import type {
     IBuildActionsArrayParams,
     IBuildTransactionParams,
     IEncodeDataParams,
-} from './publishManageAdminsProposalUtils.abi';
+} from './publishManageAdminsProposalDialogUtils.abi';
 
-class PublishManageAdminsProposalUtils {
+class PublishManageAdminsProposalDialogUtils {
     private proposalMetadata = {
         title: 'Manage admins proposal',
         summary: 'This proposal manages the admins of the DAO',
@@ -103,4 +103,4 @@ class PublishManageAdminsProposalUtils {
     };
 }
 
-export const publishManageAdminsProposalUtils = new PublishManageAdminsProposalUtils();
+export const publishManageAdminsProposalDialogUtils = new PublishManageAdminsProposalDialogUtils();

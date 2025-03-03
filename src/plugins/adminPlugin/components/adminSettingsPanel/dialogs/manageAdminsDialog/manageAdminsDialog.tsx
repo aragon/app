@@ -1,5 +1,4 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     addressUtils,
@@ -11,7 +10,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { AdminDialog } from '../../constants/adminDialogs';
 import { ManageAdminsAddMembersItem } from './manageAdminsDialogAddMembersItem';
 
 export interface IManageAdminsDialogProps extends IDialogRootProps {
@@ -20,13 +18,9 @@ export interface IManageAdminsDialogProps extends IDialogRootProps {
      */
     currentAdmins: IMember[];
     /**
-     * Address of the admin plugin.
+     * Function to open the publish dialog and pass the correct list of updated admins.
      */
-    pluginAddress: string;
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
+    handleOpenPublishManageAdminsDialog: (updatedAdmins: ICompositeAddress[]) => void
 }
 
 export interface IManageAdminsFormData {
@@ -39,10 +33,9 @@ export interface IManageAdminsFormData {
 const formId = 'manageAdminsForm';
 
 export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) => {
-    const { currentAdmins, pluginAddress, daoId, onOpenChange, ...otherProps } = props;
+    const { currentAdmins, onOpenChange, handleOpenPublishManageAdminsDialog,...otherProps } = props;
 
     const { t } = useTranslations();
-    const { open } = useDialogContext();
 
     const initialMembers = currentAdmins.map((member) => ({
         address: member.address,
@@ -87,15 +80,7 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
     }, [currentAdmins, reset]);
 
     const handleFormSubmit = (data: IManageAdminsFormData) => {
-        const params = {
-            currentAdmins,
-            updatedAdmins: data.members,
-            pluginAddress,
-            daoId,
-        };
-
-        open(AdminDialog.PUBLISH_MANAGE_ADMINS, { params });
-        onOpenChange?.(false);
+        handleOpenPublishManageAdminsDialog(data.members);
     };
 
     const checkIsAlreadyInList = (index: number) =>

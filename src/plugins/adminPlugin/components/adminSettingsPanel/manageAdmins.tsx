@@ -3,9 +3,11 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { Button } from '@aragon/gov-ui-kit';
+import { Button, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
-import { ManageAdminsDialog } from '../../dialogs/manageAdminsDialog';
+import { ManageAdminsDialog } from './dialogs/manageAdminsDialog';
+import { PublishManageAdminsProposalDialog } from './dialogs/publishManageAdminsProposalDialog';
+import type { Hex } from 'viem';
 
 export interface IManageAdminsProps {
     /**
@@ -20,6 +22,8 @@ export const ManageAdmins: React.FC<IManageAdminsProps> = (props) => {
     const { t } = useTranslations();
 
     const [isManageAdminsDialogOpen, setIsManageAdminsDialogOpen] = useState(false);
+    const [isPublishManageAdminsDialogOpen, setIsPublishManageAdminsDialogOpen] = useState(false);
+    const [updatedAdmins, setUpdatedAdmins] = useState<ICompositeAddress[]>([]);
 
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' })!;
 
@@ -46,6 +50,12 @@ export const ManageAdmins: React.FC<IManageAdminsProps> = (props) => {
         }
     };
 
+    const handleOpenPublishManageAdminsDialog = (updatedAdmins: ICompositeAddress[]) => {
+        setUpdatedAdmins(updatedAdmins);
+        setIsPublishManageAdminsDialogOpen(true);
+        setIsManageAdminsDialogOpen(false);
+    };
+
     return (
         <>
             <Button onClick={handleManageAdminsClick} size="md" variant="secondary">
@@ -55,8 +65,15 @@ export const ManageAdmins: React.FC<IManageAdminsProps> = (props) => {
                 open={isManageAdminsDialogOpen}
                 onOpenChange={setIsManageAdminsDialogOpen}
                 currentAdmins={allMembers ?? []}
-                pluginAddress={adminPlugin.meta.address}
+                handleOpenPublishManageAdminsDialog={handleOpenPublishManageAdminsDialog}
+            />
+            <PublishManageAdminsProposalDialog
+                currentAdmins={allMembers ?? []}
+                updatedAdmins={updatedAdmins}
+                pluginAddress={adminPlugin.meta.address as Hex}
                 daoId={daoId}
+                open={isPublishManageAdminsDialogOpen}
+                onOpenChange={setIsPublishManageAdminsDialogOpen}
             />
         </>
     );

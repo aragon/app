@@ -1,7 +1,6 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
@@ -11,52 +10,55 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
+import { Dialog, type ICompositeAddress, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
-import { publishManageAdminsProposalUtils } from './publishManageAdminsProposalUtils';
+import { publishManageAdminsProposalDialogUtils } from './publishManageAdminsProposalDialogUtils';
 
-export enum PublishManageAdminsProposalStep {
+export enum PublishManageAdminsProposalDialogStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
-export interface IPublishManageAdminsProposalDialogParams {
-    currentAdmins: IMember[];
-    updatedAdmins: ICompositeAddress[];
-    pluginAddress: Hex;
-    daoId: string;
-}
 
 export interface IPublishManageAdminsProposalDialogProps
-    extends IDialogComponentProps<IPublishManageAdminsProposalDialogParams> {}
+    extends IDialogRootProps {
+        /**
+     * List of current admins on the admin plugin.
+     */
+            currentAdmins: IMember[];
+            /**
+             * List of updated admins.
+             */
+    updatedAdmins: ICompositeAddress[];
+    /**
+     * Address of the admin plugin.
+     */
+    pluginAddress: Hex;
+    /**
+        * ID of the DAO.
+        */
+    daoId: string;
+    }
 
 export const PublishManageAdminsProposalDialog: React.FC<IPublishManageAdminsProposalDialogProps> = (props) => {
-    const { location } = props;
-    invariant(location.params != null, 'PublishManageAdminsDialog: required parameters must be set.');
+    const { currentAdmins, updatedAdmins, pluginAddress, daoId, onOpenChange, ...otherProps } = props;
 
-    const { address } = useAccount();
-    invariant(address != null, 'PublishManageAdminsDialog: user must be connected.');
-
-    const { currentAdmins, updatedAdmins, pluginAddress, daoId } = location.params;
-
-    const { close } = useDialogContext();
     const { t } = useTranslations();
     const router = useRouter();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'PublishManageAdminsDialog: DAO data must be set.');
 
-    const stepper = useStepper<ITransactionDialogStepMeta, PublishManageAdminsProposalStep | TransactionDialogStep>({
-        initialActiveStep: PublishManageAdminsProposalStep.PIN_METADATA,
+    const stepper = useStepper<ITransactionDialogStepMeta, PublishManageAdminsProposalDialogStep | TransactionDialogStep>({
+        initialActiveStep: PublishManageAdminsProposalDialogStep.PIN_METADATA,
     });
 
     const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = publishManageAdminsProposalUtils.prepareProposalMetadata();
+            const proposalMetadata = publishManageAdminsProposalDialogUtils.prepareProposalMetadata();
             pinJson({ body: proposalMetadata }, params);
         },
         [pinJson],
@@ -74,27 +76,27 @@ export const PublishManageAdminsProposalDialog: React.FC<IPublishManageAdminsPro
             daoAddress: dao.address as Hex,
         };
 
-        const actions = publishManageAdminsProposalUtils.buildActionsArray(actionsParams);
+        const actions = publishManageAdminsProposalDialogUtils.buildActionsArray(actionsParams);
 
-        return publishManageAdminsProposalUtils.buildTransaction({
-            values: publishManageAdminsProposalUtils.prepareProposalMetadata(),
+        return publishManageAdminsProposalDialogUtils.buildTransaction({
+            values: publishManageAdminsProposalDialogUtils.prepareProposalMetadata(),
             actions,
             metadataCid,
             pluginAddress,
         });
     };
 
-    const customSteps: Array<ITransactionDialogStep<PublishManageAdminsProposalStep>> = useMemo(
+    const customSteps: Array<ITransactionDialogStep<PublishManageAdminsProposalDialogStep>> = useMemo(
         () => [
             {
-                id: PublishManageAdminsProposalStep.PIN_METADATA,
+                id: PublishManageAdminsProposalDialogStep.PIN_METADATA,
                 order: 0,
                 meta: {
                     label: t(
-                        `app.plugins.admin.publishManageAdminsDialog.step.${PublishManageAdminsProposalStep.PIN_METADATA}.label`,
+                        `app.plugins.admin.publishManageAdminsDialog.step.${PublishManageAdminsProposalDialogStep.PIN_METADATA}.label`,
                     ),
                     errorLabel: t(
-                        `app.plugins.admin.publishManageAdminsDialog.step.${PublishManageAdminsProposalStep.PIN_METADATA}.errorLabel`,
+                        `app.plugins.admin.publishManageAdminsDialog.step.${PublishManageAdminsProposalDialogStep.PIN_METADATA}.errorLabel`,
                     ),
                     state: status,
                     action: handlePinJson,
@@ -107,14 +109,15 @@ export const PublishManageAdminsProposalDialog: React.FC<IPublishManageAdminsPro
 
     const onSuccessClick = () => {
         router.refresh();
-        close();
+        onOpenChange?.(false);
     };
     return (
-        <TransactionDialog
+        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
+            <TransactionDialog
             title={t('app.plugins.admin.publishManageAdminsDialog.title')}
             description={t('app.plugins.admin.publishManageAdminsDialog.description')}
             submitLabel={t('app.plugins.admin.publishManageAdminsDialog.button.submit')}
-            onCancelClick={close}
+            onCancelClick={() => onOpenChange?.(false)}
             successLink={{
                 label: t('app.plugins.admin.publishManageAdminsDialog.button.success'),
                 onClick: onSuccessClick,
@@ -124,5 +127,6 @@ export const PublishManageAdminsProposalDialog: React.FC<IPublishManageAdminsPro
             prepareTransaction={handlePrepareTransaction}
             network={dao.network}
         />
+        </Dialog.Root>
     );
 };
