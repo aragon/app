@@ -1,4 +1,5 @@
 import Hero from '@/modules/explore/pages/exploreDaosPage/hero';
+import { Section } from '@/modules/explore/pages/exploreDaosPage/section';
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
 import { daoListOptions } from '../../api/daoExplorerService';
@@ -21,8 +22,14 @@ export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
             <ExploreNav />
             <Hero />
             <Page.Content>
-                <Page.Main>
-                    <ExploreDaosPageClient initialParams={daoListParams} />
+                <Page.Main className="!gap-10 xl:gap-20">
+                    <Section title="Featured">Featured DAOs Carousel</Section>
+                    <Section title="Explore">
+                        <ExploreDaosPageClient initialParams={daoListParams} />
+                    </Section>
+                    <Section title="Getting Started">
+                        <p>Getting Started section</p>
+                    </Section>
                 </Page.Main>
             </Page.Content>
         </Page.Container>
