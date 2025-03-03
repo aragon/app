@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Fixing incorrect strings in the governance designer.
+Fix strings on governance designer flow
