@@ -190,14 +190,14 @@
         },
         "permissions": {
           "proposalCreationBodies": {
-            "error": "You must select at least one governing body.",
-            "label": "Governing Bodies"
+            "error": "You must select at least one body.",
+            "label": "Bodies"
           },
           "proposalCreationMode": {
             "anyDescription": "Any address can create proposals",
             "anyLabel": "Anyone",
-            "bodiesDescription": "Select which governing bodies are able to create proposals",
-            "bodiesLabel": "Only members of governing bodies",
+            "bodiesDescription": "Members of the selected bodies",
+            "bodiesLabel": "Members",
             "label": "Who is eligible to create this type of proposal?"
           }
         },
@@ -249,7 +249,7 @@
                 "label": "Early stage advance"
               },
               "expiration": {
-                "helpText": "Should there be a limited amount of time in which the proposal is eligible to be advanced to the next stage?",
+                "helpText": "Should there be a limited amount of time after the voting period ends in which the proposal is eligible to be advanced to the next stage?",
                 "infoText": "Recommended minimum expiration time is 7 days.",
                 "label": "Stage expiration"
               },
@@ -350,7 +350,7 @@
       "publishProcessDialog": {
         "button": {
           "submit": "Finalize installation",
-          "success": "View proposal"
+          "success": "View proposals"
         },
         "description": "To finalize your process you have to confirm the onchain transaction with your wallet.",
         "step": {
@@ -1199,7 +1199,7 @@
             "label": "Support threshold"
           },
           "voteChange": {
-            "helpText": "Allows voters to change their vote during the voting period. This setting can’t be enabled if early execution is enabled.",
+            "helpText": "Allows voters to change their vote during the voting period. This prevents this body from approving or vetoing a proposal early so it can advance or be executed early.",
             "label": "Vote change",
             "switch": {
               "label": "Yes"
