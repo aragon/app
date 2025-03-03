@@ -143,7 +143,7 @@ export interface ICreateProcessFormBody {
      */
     minimumParticipation: number;
     /**
-     * Allows voters to change their vote during the voting period. This prevents this body from approving or vetoing a proposal early so it can advance or be executed early.
+     * Allows voters to change their vote during the voting period.
      */
     voteChange: boolean;
 
