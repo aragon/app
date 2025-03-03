@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Improve CreateProposalFormActions UX
+Improve expanded / collapsed states handling of actions on create proposal flow
