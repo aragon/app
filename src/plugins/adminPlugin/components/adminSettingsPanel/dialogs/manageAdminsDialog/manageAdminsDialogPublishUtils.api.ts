@@ -47,21 +47,6 @@ interface IProposalValues {
     summary: string;
 }
 
-export interface IDecodeTransactionBodyParams {
-    /**
-     * Encoded transaction data to be decoded.
-     */
-    data: string;
-    /**
-     * Value of the transaction.
-     */
-    value: string;
-    /**
-     * Address sending the transaction.
-     */
-    from: string;
-}
-
 export interface IBuildTransactionParams {
     /**
      *   Proposal values (title and description).
@@ -79,19 +64,4 @@ export interface IBuildTransactionParams {
      * Admin plugin address.
      */
     pluginAddress: Hex;
-}
-
-export interface IEncodeDataParams {
-    /**
-     * The address on which the permission will be set.
-     */
-    where: Hex;
-    /**
-     * The address that will be granted or revoked the permission.
-     */
-    who: Hex;
-    /**
-     * The permission ID.
-     */
-    permissionId: Hex;
 }
