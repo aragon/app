@@ -21,7 +21,7 @@ export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
         <Page.Container queryClient={queryClient}>
             <ExploreNav />
             <Hero />
-            <Page.Content>
+            <Page.Content className="!px-4 !py-10 xl:!px-6 xl:!py-16">
                 <Page.Main className="!gap-10 xl:gap-20">
                     <Section title="Featured">Featured DAOs Carousel</Section>
                     <Section title="Explore">
