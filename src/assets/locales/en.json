@@ -551,12 +551,12 @@
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
-            "description": "These actions can be executed only once the governance parameters are met",
-            "name": "Set actions",
-            "title": "Define content"
+            "description": "These actions can be executed once the proposal passes. They will execute in the order shown on this page.",
+            "name": "Add actions",
+            "title": "Add actions"
           },
           "METADATA": {
-            "description": "Provide the information voters will need to make their decision here",
+            "description": "Provide the information voters will need to make their decision here.",
             "name": "Define content",
             "title": "Define content"
           },
