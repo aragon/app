@@ -10,7 +10,6 @@ import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoList } from '../../components/daoList';
-
 export interface IExploreDaosPageClientProps {
     /**
      * Initial parameters to use to fetch the list of DAOs.
@@ -39,32 +38,39 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
     };
 
     return (
-        <div className="flex grow flex-col gap-5">
-            <div className="flex items-center justify-between">
-                <div className="flex w-full items-center gap-x-2 md:gap-x-3">
-                    <ToggleGroup isMultiSelect={false} onChange={setDaoFilter} value={daoFilter}>
-                        <Toggle value="all" label={t('app.explore.exploreDaosPage.filter.all')} />
-                        <Toggle
-                            value="member"
-                            label={t('app.explore.exploreDaosPage.filter.member')}
-                            disabled={address == null}
+        <div>
+            <div className="flex grow flex-col gap-5">
+                <div className="flex items-center justify-between">
+                    <div className="flex w-full items-center gap-x-2 md:gap-x-3">
+                        <ToggleGroup isMultiSelect={false} onChange={setDaoFilter} value={daoFilter}>
+                            <Toggle value="all" label={t('app.explore.exploreDaosPage.filter.all')} />
+                            <Toggle
+                                value="member"
+                                label={t('app.explore.exploreDaosPage.filter.member')}
+                                disabled={address == null}
+                            />
+                        </ToggleGroup>
+                    </div>
+                    <div className="flex items-center gap-x-2 md:gap-x-3">
+                        <Button
+                            iconLeft={IconType.PLUS}
+                            className="!rounded-full"
+                            variant="primary"
+                            size="md"
+                            onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                        >
+                            {t('app.explore.exploreDaosPage.createDao')}
+                        </Button>
+                        <Wallet
+                            className="self-end"
+                            user={walletUser}
+                            onClick={handleWalletClick}
+                            chainId={mainnet.id}
                         />
-                    </ToggleGroup>
+                    </div>
                 </div>
-                <div className="flex items-center gap-x-2 md:gap-x-3">
-                    <Button
-                        iconLeft={IconType.PLUS}
-                        className="!rounded-full"
-                        variant="primary"
-                        size="md"
-                        onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
-                    >
-                        {t('app.explore.exploreDaosPage.createDao')}
-                    </Button>
-                    <Wallet className="self-end" user={walletUser} onClick={handleWalletClick} chainId={mainnet.id} />
-                </div>
+                <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />
             </div>
-            <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />
         </div>
     );
 };

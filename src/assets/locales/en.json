@@ -396,6 +396,10 @@
       }
     },
     "explore": {
+      "hero": {
+        "title": "Governed on Aragon",
+        "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance."
+      },
       "daoList": {
         "emptyState": {
           "description": "This will show relevant DAOs when available.",
