@@ -13,7 +13,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-export interface IManageAdminsAddMembersItemProps {
+export interface IManageAdminsDialogAddressesItem {
     /**
      * The index of the member.
      */
@@ -44,7 +44,7 @@ const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean) => 
     return true;
 };
 
-export const ManageAdminsAddMembersItem: React.FC<IManageAdminsAddMembersItemProps> = (props) => {
+export const ManageAdminsDialogAddressesItem: React.FC<IManageAdminsDialogAddressesItem> = (props) => {
     const { index, onRemoveMember, fieldName, isAlreadyInList } = props;
 
     const { t } = useTranslations();

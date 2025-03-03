@@ -1,26 +1,18 @@
-import type { IMember } from '@/modules/governance/api/governanceService';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    addressUtils,
-    Button,
-    Dialog,
-    IconType,
-    type ICompositeAddress,
-    type IDialogRootProps,
-} from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
-import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { ManageAdminsAddMembersItem } from './manageAdminsDialogAddMembersItem';
+import { useMemberList } from '@/modules/governance/api/governanceService';
+import { Dialog, type ICompositeAddress, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { useMemo, useState } from 'react';
+import { ManageAdminsDialogAddresses } from './manageAdminsDialogAddresses';
+import { ManageAdminsDialogPublish } from './manageAdminsDialogPublish';
 
 export interface IManageAdminsDialogProps extends IDialogRootProps {
     /**
-     * List of current admins on the admin plugin.
+     * ID of the DAO.
      */
-    currentAdmins: IMember[];
+    daoId: string;
     /**
-     * Function to open the publish dialog and pass the correct list of updated admins.
+     * Address of the admin plugin
      */
-    handleOpenPublishManageAdminsDialog: (updatedAdmins: ICompositeAddress[]) => void
+    pluginAddress: string;
 }
 
 export interface IManageAdminsFormData {
@@ -30,120 +22,48 @@ export interface IManageAdminsFormData {
     members: ICompositeAddress[];
 }
 
-const formId = 'manageAdminsForm';
-
 export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) => {
-    const { currentAdmins, onOpenChange, handleOpenPublishManageAdminsDialog,...otherProps } = props;
+    const { onOpenChange, daoId, pluginAddress, ...otherProps } = props;
 
-    const { t } = useTranslations();
+    const [updatedAdmins, setUpdatedAdmins] = useState<ICompositeAddress[]>([]);
 
-    const initialMembers = currentAdmins.map((member) => ({
-        address: member.address,
-    }));
+    const memberParams = { daoId, pluginAddress };
+    const { data: memberList } = useMemberList({ queryParams: memberParams });
 
-    const formMethods = useForm<IManageAdminsFormData>({
-        defaultValues: {
-            members: initialMembers,
-        },
-        mode: 'onTouched',
-    });
+    const currentAdmins = useMemo(() => {
+        return memberList?.pages.flatMap((page) => page.data);
+    }, [memberList]);
 
-    const { handleSubmit, control, reset } = formMethods;
+    const [showPublishManageAdmins, setShowPublishManageAdmins] = useState(false);
 
-    const membersFieldName = 'members';
-    const {
-        fields: membersField,
-        append: addMember,
-        remove: removeMember,
-    } = useFieldArray({ name: membersFieldName, control });
-
-    const watchMembersField = useWatch({ name: 'members', control });
-
-    const controlledMembersField = useMemo(
-        () => membersField.map((field, index) => ({ ...field, ...watchMembersField[index] })),
-        [membersField, watchMembersField],
-    );
-
-    const handleAddMember = () => addMember({ address: '' });
-
-    const handleRemoveMember = (index: number) => {
-        if (membersField.length > 1) {
-            removeMember(index);
-        }
+    const handleSubmitAddresses = (data: IManageAdminsFormData) => {
+        setUpdatedAdmins(data.members);
+        setShowPublishManageAdmins(true);
     };
 
-    useEffect(() => {
-        // Needed to make sure that the default values are set correctly on the form
-        const members =
-            currentAdmins.length > 0 ? currentAdmins.map((member) => ({ address: member.address })) : [{ address: '' }];
-        reset({ members });
-    }, [currentAdmins, reset]);
-
-    const handleFormSubmit = (data: IManageAdminsFormData) => {
-        handleOpenPublishManageAdminsDialog(data.members);
-    };
-
-    const checkIsAlreadyInList = (index: number) =>
-        controlledMembersField
-            .slice(0, index)
-            .some((field) => addressUtils.isAddressEqual(field.address, controlledMembersField[index].address));
-
-    const haveMembersChanged = () => {
-        const initialMembers = currentAdmins.map((member) => member.address);
-        const newMembers = controlledMembersField.map((field) => field.address);
-
-        if (initialMembers.length !== newMembers.length) {
-            return true;
-        }
-
-        return !initialMembers.every((initialAddress) =>
-            newMembers.some((newAddress) => addressUtils.isAddressEqual(initialAddress, newAddress)),
-        );
+    const onClose = () => {
+        setShowPublishManageAdmins(false);
+        setUpdatedAdmins([]);
+        onOpenChange?.(false);
     };
 
     return (
         <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
-            <FormProvider {...formMethods}>
-                <Dialog.Header title={t('app.plugins.admin.manageAdminsDialog.title')} />
-                <Dialog.Content description={t('app.plugins.admin.manageAdminsDialog.description')}>
-                    <form
-                        className="flex w-full flex-col gap-3 pb-6 md:gap-2"
-                        onSubmit={handleSubmit(handleFormSubmit)}
-                        id={formId}
-                    >
-                        {membersField.map((field, index) => (
-                            <ManageAdminsAddMembersItem
-                                key={field.id}
-                                index={index}
-                                fieldName={membersFieldName}
-                                onRemoveMember={membersField.length > 1 ? () => handleRemoveMember(index) : undefined}
-                                isAlreadyInList={checkIsAlreadyInList(index)}
-                            />
-                        ))}
-                        <Button
-                            size="md"
-                            variant="tertiary"
-                            className="w-fit"
-                            iconLeft={IconType.PLUS}
-                            onClick={handleAddMember}
-                        >
-                            {t('app.plugins.admin.manageAdminsDialog.add')}
-                        </Button>
-                    </form>
-                </Dialog.Content>
-                <Dialog.Footer
-                    primaryAction={{
-                        label: t('app.plugins.admin.manageAdminsDialog.action.update'),
-                        type: 'submit',
-                        form: formId,
-                        disabled: !haveMembersChanged(),
-                    }}
-                    secondaryAction={{
-                        label: t('app.plugins.admin.manageAdminsDialog.action.cancel'),
-                        onClick: () => onOpenChange?.(false),
-                    }}
+            {showPublishManageAdmins ? (
+                <ManageAdminsDialogPublish
+                    currentAdmins={currentAdmins ?? []}
+                    updatedAdmins={updatedAdmins}
+                    pluginAddress={pluginAddress}
+                    daoId={daoId}
+                    close={onClose}
                 />
-            </FormProvider>
+            ) : (
+                <ManageAdminsDialogAddresses
+                    currentAdmins={currentAdmins ?? []}
+                    close={onClose}
+                    handleSubmitAddresses={handleSubmitAddresses}
+                />
+            )}
         </Dialog.Root>
     );
 };

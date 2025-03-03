@@ -823,14 +823,15 @@
           "requirement": "Admin only"
         },
         "adminSettingsPanel": {
+          "buttons": {
+            "manage": "Manage admins",
+            "remove": "Remove all admins"
+          },
           "title": "Admin"
         },
         "adminVotingTerminal": {
           "description": "Proposals created by admins do not require governance in order to pass.",
           "title": "Automatic execution"
-        },
-        "manageAdmins": {
-          "manage": "Manage admins"
         },
         "manageAdminsDialog": {
           "action": {
