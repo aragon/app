@@ -18,10 +18,9 @@ export const Hero = () => {
                     className="absolute left-0 top-0 size-full object-cover"
                 />
                 {/* Wrapper*/}
-                <div className="relative flex max-w-screen-xl flex-col items-start justify-center gap-2 self-stretch px-4 py-10 lg:px-6 lg:py-16">
-                    {/* Content Group*/}
-                    <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch lg:gap-4">
-                        <h1 className="self-stretch text-2xl font-normal leading-tight tracking-[-0.576px] text-primary-50 lg:text-5xl lg:tracking-[-1.152px]">
+                <div className="relative flex max-w-screen-xl flex-col items-start justify-center gap-2 self-stretch px-4 py-10 lg:px-6 lg:py-12">
+                    <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch lg:gap-3">
+                        <h1 className="text-2xl font-normal leading-tight text-neutral-0 lg:text-3xl">
                             {t('app.explore.hero.title')}
                         </h1>
                         <h3 className="text-base font-normal leading-normal text-primary-50 lg:text-xl">
