@@ -473,27 +473,27 @@ describe('SppStageUtils', () => {
         const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
         const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
         const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
-        const isLastStageSpy = jest.spyOn(sppStageUtils, 'isLastStage');
+        const isSignalingProposalSpy = jest.spyOn(sppStageUtils, 'isSignalingProposal');
 
         afterEach(() => {
             isApprovalReachedSpy.mockReset();
             getStageMinAdvanceSpy.mockReset();
             getStageMaxAdvanceSpy.mockReset();
-            isLastStageSpy.mockReset();
+            isSignalingProposalSpy.mockReset();
         });
 
         it('returns true when all conditions are met', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
             const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
-            const stage = generateSppStage();
-            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+            const stage = generateSppStage({ stageIndex: 1 });
+            const proposal = generateSppProposal({ stageIndex: 1 });
 
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
             getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
-            isLastStageSpy.mockReturnValue(false);
+            isSignalingProposalSpy.mockReturnValue(false);
 
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeTruthy();
         });
@@ -503,13 +503,13 @@ describe('SppStageUtils', () => {
             const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
             const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
             const stage = generateSppStage();
-            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+            const proposal = generateSppProposal();
 
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(false);
             getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
-            isLastStageSpy.mockReturnValue(false);
+            isSignalingProposalSpy.mockReturnValue(false);
 
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
         });
@@ -519,13 +519,13 @@ describe('SppStageUtils', () => {
             const minAdvanceDate = DateTime.fromISO(now).plus({ minutes: 5 });
             const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
             const stage = generateSppStage();
-            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+            const proposal = generateSppProposal();
 
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
             getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
-            isLastStageSpy.mockReturnValue(false);
+            isSignalingProposalSpy.mockReturnValue(false);
 
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
         });
@@ -535,29 +535,45 @@ describe('SppStageUtils', () => {
             const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
             const maxAdvanceDate = DateTime.fromISO(now).minus({ minutes: 1 });
             const stage = generateSppStage();
-            const proposal = generateSppProposal({ actions: [generateProposalAction()] });
+            const proposal = generateSppProposal();
 
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
             getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
-            isLastStageSpy.mockReturnValue(false);
+            isSignalingProposalSpy.mockReturnValue(false);
 
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
         });
 
-        it('returns false when the proposal is a signaling proposal (last stage, no actions)', () => {
+        it('returns false when the proposal is a signaling proposal', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
             const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
             const stage = generateSppStage();
-            const proposal = generateSppProposal({ actions: [] });
+            const proposal = generateSppProposal();
 
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
             getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
-            isLastStageSpy.mockReturnValue(true);
+            isSignalingProposalSpy.mockReturnValue(true);
+
+            expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false when stage is not the current active proposal stage', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
+            const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({ actions: [generateProposalAction()], stageIndex: 1 });
+
+            timeUtils.setTime(now);
+            isApprovalReachedSpy.mockReturnValue(true);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvanceDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvanceDate);
+            isSignalingProposalSpy.mockReturnValue(false);
 
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
         });

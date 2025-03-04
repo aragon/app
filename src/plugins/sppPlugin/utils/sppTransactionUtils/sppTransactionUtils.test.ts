@@ -323,7 +323,7 @@ describe('sppTransaction utils', () => {
     });
 
     describe('processStageTiming', () => {
-        it('correctly processes the voting period to seconds for non timelock stages', () => {
+        it('correctly processes the voting period to seconds', () => {
             const timing = { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: false };
             const result = sppTransactionUtils['processStageTiming'](timing);
             expect(result.voteDuration).toBe(BigInt(86400)); // One day in seconds
