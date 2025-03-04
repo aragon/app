@@ -1,4 +1,4 @@
-import Hero from '@/modules/explore/pages/exploreDaosPage/hero';
+import { Hero } from '@/modules/explore/pages/exploreDaosPage/hero';
 import { Section } from '@/modules/explore/pages/exploreDaosPage/section';
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
