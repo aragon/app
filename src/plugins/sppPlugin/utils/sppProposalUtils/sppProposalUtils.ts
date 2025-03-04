@@ -1,4 +1,4 @@
-import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils/proposalStatusUtils';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
