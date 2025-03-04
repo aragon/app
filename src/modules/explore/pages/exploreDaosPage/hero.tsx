@@ -25,8 +25,7 @@ export const Hero = () => {
                             {/*{t('explore.hero.title')}*/}
                             Governed on Aragon
                         </h1>
-
-                        <h3 className="text-base font-normal leading-[150%] text-primary-50 lg:text-xl">
+                        <h3 className="text-base font-normal leading-normal text-primary-50 lg:text-xl">
                             {/*{t('explore.hero.subtitle')}*/}
                             Explore the organizations using our modular governance stack to secure their onchain
                             governance.
