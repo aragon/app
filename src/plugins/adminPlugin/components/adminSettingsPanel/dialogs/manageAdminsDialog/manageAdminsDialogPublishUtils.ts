@@ -13,8 +13,8 @@ class ManageAdminsDialogPublishUtils {
     };
 
     private proposalMetadata = {
-        title: 'Manage admins proposal',
-        summary: 'This proposal manages the admins of the DAO',
+        title: 'Update admins',
+        summary: 'One or more changes have been made to who has permission to execute proposals via the admin plugin.',
     };
 
     prepareProposalMetadata = () => this.proposalMetadata;
