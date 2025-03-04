@@ -14,7 +14,6 @@ class SppProposalUtils {
         const isVetoed = this.hasAnyStageStatus(proposal, ProposalVotingStatus.VETOED);
 
         const endDate = sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds();
-        const processedEndDate = !this.hasAnyStageStatus(proposal, ProposalVotingStatus.ACTIVE) ? undefined : endDate;
         const executionExpiryDate = sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds();
 
         const hasAdvanceableStages = stages.some(
@@ -25,13 +24,13 @@ class SppProposalUtils {
 
         const paramsMet = this.areAllStagesAccepted(proposal);
         const hasActions = actions.length > 0;
-        const canExecuteEarly = false;
+        const canExecuteEarly = lastStage.minAdvance === 0;
 
         return proposalStatusUtils.getProposalStatus({
             isExecuted,
             isVetoed,
             startDate,
-            endDate: processedEndDate,
+            endDate,
             executionExpiryDate,
             hasAdvanceableStages,
             hasExpiredStages,
