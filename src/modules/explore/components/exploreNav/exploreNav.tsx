@@ -71,7 +71,7 @@ export const ExploreNav: React.FC = () => {
                 {/*Right - Navigation Group*/}
                 <nav className="flex items-center justify-end gap-4 xl:gap-6">
                     <Button
-                        variant="secondary"
+                        variant="tertiary"
                         iconRight={IconType.LINK_EXTERNAL}
                         onClick={handleLegacyAppClick}
                         size="sm"
