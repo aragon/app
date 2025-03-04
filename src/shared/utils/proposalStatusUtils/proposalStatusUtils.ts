@@ -19,7 +19,7 @@ class ProposalStatusUtils {
 
         const now = DateTime.now();
         const startsInTheFuture = now < DateTime.fromSeconds(startDate);
-        const endsInTheFuture = endDate != null && now < DateTime.fromSeconds(endDate);
+        const endsInTheFuture = endDate == null || now < DateTime.fromSeconds(endDate);
         const isExecutionExpired = executionExpiryDate != null && now > DateTime.fromSeconds(executionExpiryDate);
 
         if (isExecuted) {
