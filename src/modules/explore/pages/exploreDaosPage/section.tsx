@@ -1,5 +1,6 @@
 import { Heading } from '@aragon/gov-ui-kit';
-import type { ComponentProps } from 'react';
+import type React from 'react';
+import { type ComponentProps } from 'react';
 
 export interface ISectionProps extends ComponentProps<'section'> {
     title: string;

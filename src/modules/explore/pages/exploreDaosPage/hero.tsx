@@ -1,47 +1,18 @@
 'use client';
 
+import { Image } from '@/shared/components/image';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import Blueprint from './net_bg.svg';
 
 const Hero = () => {
     const { t } = useTranslations();
 
-    return <Hero2 />;
-
-    return (
-        <div className="relative -mt-20 overflow-hidden bg-primary-400 pt-20 xl:-mt-24 xl:pt-24">
-            <img
-                src={Blueprint.src}
-                alt="Background Texture"
-                className="absolute left-0 top-0 h-full w-full object-cover"
-            />
-            <div className="mx-4 grid grid-cols-4 gap-x-4 gap-y-4 md:mx-6 md:grid-cols-8 xl:mx-10 xl:grid-cols-12 xl:gap-x-6 xl:gap-y-6 2xl:mx-auto 2xl:w-[1520px] 2xl:gap-x-8 2xl:gap-y-8">
-                <div className="relative col-start-1 col-end-12 flex w-full xl:col-start-2">
-                    <div className="flex max-w-[720px] flex-col space-y-4 py-16">
-                        <h1 className="text-neutral-0 ft-text-5xl" style={{ letterSpacing: '-2.4%' }}>
-                            {t('explore.hero.title')}
-                        </h1>
-                        <h3 className="font-normal leading-[24px] text-neutral-0 ft-text-lg xl:leading-[30px]">
-                            {t('explore.hero.subtitle1')}
-                        </h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-export default Hero;
-
-function Hero2() {
-    const { t } = useTranslations();
-
     return (
         <div className="relative -mt-[72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] xl:-mt-24 xl:pt-24">
             <div className="mx-auto w-full max-w-screen-xl">
                 {/* Background Image */}
-                <img
-                    src={Blueprint.src}
+                <Image
+                    src={Blueprint as string}
                     alt="Background Texture"
                     // className="absolute right-0 top-[-412px] h-[1178.485px] w-[1440px]"
                     className="absolute left-0 top-0 size-full object-cover"
@@ -65,4 +36,6 @@ function Hero2() {
             </div>
         </div>
     );
-}
+};
+
+export default Hero;
