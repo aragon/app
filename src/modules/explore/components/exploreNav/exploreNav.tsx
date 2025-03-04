@@ -55,7 +55,7 @@ export const ExploreNav: React.FC = () => {
         <div
             className={classNames(
                 'sticky top-0 z-[var(--app-navbar-z-index)] w-full',
-                'transition-colors duration-200',
+                'transition-colors duration-300',
                 isPostHero ? solid : gradient,
             )}
         >
