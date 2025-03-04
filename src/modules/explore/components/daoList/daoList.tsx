@@ -5,7 +5,15 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot, invariant } from '@aragon/gov-ui-kit';
+import {
+    DaoDataListItem,
+    DataListContainer,
+    DataListFilter,
+    DataListPagination,
+    DataListRoot,
+    invariant,
+} from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import {
     useDaoList,
     useDaoListByMemberAddress,
@@ -37,11 +45,22 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         'Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.',
     );
 
+    const [searchValue, setSearchValue] = useState<string>();
+
     const enableDaoList = initialParams != null && !daoListByMemberParams;
-    const daoListResult = useDaoList(initialParams!, { enabled: enableDaoList });
+    const daoListResult = useDaoList(
+        { ...initialParams, queryParams: { ...initialParams?.queryParams, search: searchValue } },
+        { enabled: enableDaoList },
+    );
 
     const enableDaoListByMember = daoListByMemberParams != null && !initialParams;
-    const daoListByMember = useDaoListByMemberAddress(daoListByMemberParams!, { enabled: enableDaoListByMember });
+    const daoListByMember = useDaoListByMemberAddress(
+        {
+            ...daoListByMemberParams!,
+            queryParams: { ...daoListByMemberParams?.queryParams, search: searchValue },
+        },
+        { enabled: enableDaoListByMember },
+    );
 
     const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } = initialParams
         ? daoListResult
@@ -78,6 +97,11 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             pageSize={pageSize}
             itemsCount={itemsCount}
         >
+            <DataListFilter
+                onSearchValueChange={setSearchValue}
+                searchValue={searchValue}
+                placeholder={t('app.explore.daoList.searchPlaceholder')}
+            />
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}

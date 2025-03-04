@@ -409,10 +409,11 @@
         "errorState": {
           "description": "There was an error loading the DAOs. Please try again later.",
           "heading": "Error loading DAOs"
-        }
+        },
+        "searchPlaceholder": "Filter by Name, Address or ENS"
       },
       "exploreDaosPage": {
-        "createDao": "DAO",
+        "createDao": "Create a DAO",
         "filter": {
           "all": "All DAOs",
           "member": "Member"

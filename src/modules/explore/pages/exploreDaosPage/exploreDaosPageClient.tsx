@@ -1,12 +1,10 @@
 'use client';
 
-import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, Toggle, ToggleGroup, Wallet } from '@aragon/gov-ui-kit';
+import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoList } from '../../components/daoList';
@@ -21,21 +19,14 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
     const { initialParams } = props;
 
     const { t } = useTranslations();
-    const { address, isConnected } = useAccount();
+    const { address } = useAccount();
     const { open } = useDialogContext();
 
     const [daoFilter, setDaoFilter] = useState<string | undefined>('all');
 
-    const walletUser = address != null ? { address } : undefined;
-
     const daoListParams = daoFilter === 'all' ? initialParams : undefined;
     const daoListMemberParams =
         daoFilter === 'member' ? { urlParams: { address: address! }, queryParams: { sort: 'blockNumber' } } : undefined;
-
-    const handleWalletClick = () => {
-        const dialog = isConnected ? ApplicationDialog.USER : ApplicationDialog.CONNECT_WALLET;
-        open(dialog);
-    };
 
     return (
         <div>
@@ -51,23 +42,14 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                             />
                         </ToggleGroup>
                     </div>
-                    <div className="flex items-center gap-x-2 md:gap-x-3">
-                        <Button
-                            iconLeft={IconType.PLUS}
-                            className="!rounded-full"
-                            variant="primary"
-                            size="md"
-                            onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
-                        >
-                            {t('app.explore.exploreDaosPage.createDao')}
-                        </Button>
-                        <Wallet
-                            className="self-end"
-                            user={walletUser}
-                            onClick={handleWalletClick}
-                            chainId={mainnet.id}
-                        />
-                    </div>
+                    <Button
+                        variant="primary"
+                        size="md"
+                        onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                        className="shrink-0"
+                    >
+                        {t('app.explore.exploreDaosPage.createDao')}
+                    </Button>
                 </div>
                 <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />
             </div>
