@@ -1,11 +1,11 @@
 import { type IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { type TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
+import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
+import type { Hex } from 'viem';
 import { adminTransactionUtils } from '../../../../utils/adminTransactionUtils';
 import type { IBuildActionsArrayParams, IBuildTransactionParams } from './manageAdminsDialogPublishUtils.api';
-import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
-import type { Hex } from 'viem';
 
 class ManageAdminsDialogPublishUtils {
     private permissionIds = {

@@ -1,12 +1,6 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    addressUtils,
-    Button,
-    Dialog,
-    IconType,
-    type ICompositeAddress,
-} from '@aragon/gov-ui-kit';
+import { addressUtils, Button, Dialog, IconType, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { ManageAdminsDialogAddressesItem } from './manageAdminsDialogAddressesItem';
@@ -19,11 +13,11 @@ export interface IManageAdminsDialogAddressesProps {
     /**
      * Callback to handle the form submission.
      */
-    handleSubmitAddresses: (data: IManageAdminsFormData) => void
+    handleSubmitAddresses: (data: IManageAdminsFormData) => void;
     /**
-        * Callback to close the dialog.
-        */
-        close: () => void;
+     * Callback to close the dialog.
+     */
+    close: () => void;
 }
 
 export interface IManageAdminsFormData {
@@ -40,9 +34,7 @@ export const ManageAdminsDialogAddresses: React.FC<IManageAdminsDialogAddressesP
 
     const { t } = useTranslations();
 
-    const initialMembers = currentAdmins.map((member) => ({
-        address: member.address,
-    }));
+    const initialMembers = currentAdmins.map((member) => ({ address: member.address }));
 
     const formMethods = useForm<IManageAdminsFormData>({
         defaultValues: {

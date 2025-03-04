@@ -1,44 +1,50 @@
-import { type IMember } from "@/modules/governance/api/governanceService";
-import { useDao } from "@/shared/api/daoService";
-import { usePinJson } from "@/shared/api/ipfsService/mutations";
-import { type ITransactionDialogActionParams, type ITransactionDialogStep, type ITransactionDialogStepMeta, TransactionDialog, type TransactionDialogStep } from "@/shared/components/transactionDialog";
-import { useTranslations } from "@/shared/components/translationsProvider";
-import { useStepper } from "@/shared/hooks/useStepper";
-import { type ICompositeAddress, invariant } from "@aragon/gov-ui-kit";
-import { useRouter } from "next/navigation";
-import { useCallback, useMemo } from "react";
-import { type Hex } from "viem";
-import { manageAdminsDialogPublishUtils } from "./manageAdminsDialogPublishUtils";
+import { type IMember } from '@/modules/governance/api/governanceService';
+import { useDao } from '@/shared/api/daoService';
+import { usePinJson } from '@/shared/api/ipfsService/mutations';
+import {
+    type ITransactionDialogActionParams,
+    type ITransactionDialogStep,
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    type TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
+import { type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
+import { type Hex } from 'viem';
+import { manageAdminsDialogPublishUtils } from './manageAdminsDialogPublishUtils';
 
 export enum ManageAdminsDialogPublishStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
 export interface IManageAdminsDialogPublishProps {
-        /**
+    /**
      * List of current admins on the admin plugin.
      */
-            currentAdmins: IMember[];
-            /**
-             * List of updated admins.
-             */
+    currentAdmins: IMember[];
+    /**
+     * List of updated admins.
+     */
     updatedAdmins: ICompositeAddress[];
     /**
      * Address of the admin plugin.
      */
     pluginAddress: string;
     /**
-        * ID of the DAO.
-        */
+     * ID of the DAO.
+     */
     daoId: string;
-        /**
-        * Callback to close the dialog.
-        */
-        close: () => void;
-    }
+    /**
+     * Callback to close the dialog.
+     */
+    close: () => void;
+}
 
 export const ManageAdminsDialogPublish: React.FC<IManageAdminsDialogPublishProps> = (props) => {
- const { currentAdmins, updatedAdmins, pluginAddress, daoId, close } = props;
+    const { currentAdmins, updatedAdmins, pluginAddress, daoId, close } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -105,11 +111,10 @@ export const ManageAdminsDialogPublish: React.FC<IManageAdminsDialogPublishProps
 
     const onSuccessClick = () => {
         router.refresh();
-       close();
+        close();
     };
     return (
-
-            <TransactionDialog
+        <TransactionDialog
             title={t('app.plugins.admin.publishManageAdminsDialog.title')}
             description={t('app.plugins.admin.publishManageAdminsDialog.description')}
             submitLabel={t('app.plugins.admin.publishManageAdminsDialog.button.submit')}
@@ -123,5 +128,5 @@ export const ManageAdminsDialogPublish: React.FC<IManageAdminsDialogPublishProps
             prepareTransaction={handlePrepareTransaction}
             network={dao.network}
         />
-
-    );};
+    );
+};

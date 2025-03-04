@@ -1,12 +1,12 @@
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useAdminStatus } from '@/plugins/adminPlugin/hooks/useAdminStatus';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, Card, IconType } from '@aragon/gov-ui-kit';
-import { AdminGovernanceInfo } from '../adminGovernanceInfo';
-import { useState } from 'react';
-import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { Button, Card, IconType } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
+import { AdminGovernanceInfo } from '../adminGovernanceInfo';
 import { ManageAdminsDialog } from './dialogs/manageAdminsDialog';
 
 export interface IAdminSettingsPanelProps {

@@ -41,6 +41,7 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
         setShowPublishManageAdmins(true);
     };
 
+    // When closing we reset the updated admins and update the dialog content to be the addresses form
     const onClose = () => {
         setShowPublishManageAdmins(false);
         setUpdatedAdmins([]);
