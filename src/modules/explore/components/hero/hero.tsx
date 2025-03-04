@@ -8,7 +8,10 @@ export const Hero = () => {
     const { t } = useTranslations();
 
     return (
-        <div className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] lg:-mt-24 lg:pt-24">
+        <div
+            id="hero"
+            className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] lg:-mt-24 lg:pt-24"
+        >
             <div className="mx-auto w-full max-w-screen-xl">
                 {/* Background Image */}
                 <Image
