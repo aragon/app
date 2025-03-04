@@ -5,7 +5,7 @@ import { zeroAddress } from 'viem';
 export const sppPlugin: IPluginInfo = {
     id: 'spp',
     name: 'Staged Proposal Processor',
-    installVersion: { release: 1, build: 8 },
+    installVersion: { release: 1, build: 1 },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: zeroAddress,
         [Network.BASE_MAINNET]: zeroAddress,

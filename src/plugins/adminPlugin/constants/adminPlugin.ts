@@ -5,7 +5,7 @@ import { zeroAddress } from 'viem';
 export const adminPlugin: IPluginInfo = {
     id: 'admin',
     name: 'Admin',
-    installVersion: { release: 1, build: 6 },
+    installVersion: { release: 1, build: 2 },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: zeroAddress,
         [Network.BASE_MAINNET]: zeroAddress,

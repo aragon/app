@@ -5,7 +5,7 @@ import { zeroAddress } from 'viem';
 export const tokenPlugin: IPluginInfo = {
     id: 'token-voting',
     name: 'Token',
-    installVersion: { release: 1, build: 5 },
+    installVersion: { release: 1, build: 3 },
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]: zeroAddress,
         [Network.BASE_MAINNET]: zeroAddress,
