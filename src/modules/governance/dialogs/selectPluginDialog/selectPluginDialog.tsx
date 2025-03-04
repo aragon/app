@@ -21,7 +21,7 @@ export interface ISelectPluginDialogParams {
     /**
      * Plugin to preselect.
      */
-    initialPlugin: ITabComponentPlugin<IDaoPlugin>;
+    initialPlugin?: ITabComponentPlugin<IDaoPlugin>;
 }
 
 export interface ISelectPluginDialogProps extends IDialogComponentProps<ISelectPluginDialogParams> {}
@@ -37,7 +37,11 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
-    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(initialPlugin);
+    console.log('daoPlugins', daoPlugins);
+
+    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(
+        initialPlugin ?? daoPlugins[0],
+    );
 
     const handleConfirm = () => {
         close();
