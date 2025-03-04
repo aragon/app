@@ -2,14 +2,13 @@
 
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import { IconType, Wallet } from '@aragon/gov-ui-kit';
-import { Button } from '@aragon/gov-ui-kit-original';
+import { Button, IconType, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
-import { Logo } from './logo';
-import { Logotype } from './logotype';
+import { Logo } from '../../pages/exploreDaosPage/logo';
+import { Logotype } from '../../pages/exploreDaosPage/logotype';
 
 const gradient = 'bg-gradient-to-b from-primary-400 to-transparent';
 

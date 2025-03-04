@@ -1,10 +1,10 @@
-import { Hero } from '@/modules/explore/pages/exploreDaosPage/hero';
-import { Section } from '@/modules/explore/pages/exploreDaosPage/section';
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
 import { daoListOptions } from '../../api/daoExplorerService';
+import { ExploreNav } from '../../components/exploreNav';
+import { Hero } from '../../components/hero';
+import { Section } from '../../components/section';
 import { ExploreDaosPageClient } from './exploreDaosPageClient';
-import { ExploreNav } from './exploreNav';
 
 export interface IExploreDaosPageProps {}
 

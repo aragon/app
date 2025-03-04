@@ -2,7 +2,7 @@
 
 import { Image } from '@/shared/components/image';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import Blueprint from './net_bg.svg';
+import Blueprint from '../../pages/exploreDaosPage/net_bg.svg';
 
 export const Hero = () => {
     const { t } = useTranslations();
@@ -21,14 +21,11 @@ export const Hero = () => {
                 <div className="relative flex max-w-screen-xl flex-col items-start justify-center gap-2 self-stretch px-4 py-10 lg:px-6 lg:py-16">
                     {/* Content Group*/}
                     <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch lg:gap-4">
-                        <h1 className="self-stretch text-2xl font-normal leading-[115%] tracking-[-0.576px] text-primary-50 lg:text-5xl lg:tracking-[-1.152px]">
-                            {/*{t('explore.hero.title')}*/}
-                            Governed on Aragon
+                        <h1 className="self-stretch text-2xl font-normal leading-tight tracking-[-0.576px] text-primary-50 lg:text-5xl lg:tracking-[-1.152px]">
+                            {t('app.explore.hero.title')}
                         </h1>
                         <h3 className="text-base font-normal leading-normal text-primary-50 lg:text-xl">
-                            {/*{t('explore.hero.subtitle')}*/}
-                            Explore the organizations using our modular governance stack to secure their onchain
-                            governance.
+                            {t('app.explore.hero.subtitle')}
                         </h3>
                     </div>
                 </div>
