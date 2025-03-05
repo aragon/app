@@ -11,13 +11,25 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { DialogAlert, DialogAlertFooter } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { Hex } from 'viem';
 
 export interface IUninstallSelectProcessDialogProps {
+    /**
+     * ID of the DAO.
+     */
     daoId: string;
+    /**
+     * Metadata of the admin plugin.
+     */
     adminMeta: IDaoPlugin;
+    /**
+     * Whether the dialog is open.
+     */
     isOpen: boolean;
+    /**
+     * Callback to close the dialog.
+     */
     onClose: () => void;
 }
 
@@ -34,46 +46,49 @@ export const UninstallSelectProcessDialog: React.FC<IUninstallSelectProcessDialo
     const { pluginSetupProcessor } = networkDefinitions[dao!.network].addresses;
     const daoAddress = dao!.address;
 
-    const handlePermissionGuardSuccess = (plugin: IDaoPlugin) => {
-        const params: IPublishProposalDialogParams = {
-            values,
-            daoId,
-            pluginAddress: plugin.address,
-            prepareActions: {},
-        };
-        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
-    };
+    const handlePermissionGuardSuccess = useCallback(
+        (plugin: IDaoPlugin) => {
+            const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
+                where: daoAddress as Hex,
+                who: pluginSetupProcessor,
+                what: 'ROOT_PERMISSION',
+                to: daoAddress as Hex,
+            });
+
+            const revokeAction: IProposalActionData = {
+                ...rawAction,
+                from: daoAddress,
+                type: 'function',
+                inputData: null,
+                daoId,
+                meta: undefined,
+            };
+
+            const values: ICreateProposalFormData & ICreateProposalStartDateForm = {
+                title: 'Remove all admins',
+                summary:
+                    'This proposal intends to remove all admin control of the DAO. The action will revoke their permission to execute transactions on behalf of the DAO. By passing the proposal, it signifies that this governance process is configured properly and is able to execute on behalf of the DAO now.',
+                body: '',
+                addActions: true,
+                resources: [],
+                actions: [revokeAction],
+                startTimeMode: 'now',
+            };
+
+            const params: IPublishProposalDialogParams = {
+                values,
+                daoId,
+                pluginAddress: plugin.address,
+                prepareActions: {},
+            };
+            open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
+        },
+        [daoAddress, daoId, open, pluginSetupProcessor],
+    );
 
     const handlePluginSelected = (plugin: IDaoPlugin) => {
         createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
         setSelectedPlugin(plugin);
-    };
-
-    const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
-        where: daoAddress as Hex,
-        who: pluginSetupProcessor,
-        what: 'ROOT_PERMISSION',
-        to: daoAddress as Hex,
-    });
-
-    const revokeAction: IProposalActionData = {
-        ...rawAction,
-        from: daoAddress,
-        type: 'function',
-        inputData: null,
-        daoId,
-        meta: undefined,
-    };
-
-    const values: ICreateProposalFormData & ICreateProposalStartDateForm = {
-        title: 'Remove all admins',
-        summary:
-            'This proposal intends to remove all admin control of the DAO. The action will revoke their permission to execute transactions on behalf of the DAO. By passing the proposal, it signifies that this governance process is configured properly and is able to execute on behalf of the DAO now.',
-        body: '',
-        addActions: true,
-        resources: [],
-        actions: [revokeAction],
-        startTimeMode: 'now',
     };
 
     const params: ISelectPluginDialogParams = {

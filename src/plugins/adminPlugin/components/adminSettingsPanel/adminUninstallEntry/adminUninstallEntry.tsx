@@ -7,13 +7,15 @@ import { UninstallCreateProcessDialog } from '../dialogs/uninstallCreateProcessD
 import { UninstallSelectProcessDialog } from '../dialogs/uninstallSelectProcessDialog';
 
 export interface IAdminUninstallEntryProps {
+    /**
+     * ID of the DAO.
+     */
     daoId: string;
 }
 
 export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) => {
     const { daoId } = props;
-    const [isCreateProcessDialogOpen, setIsCreateProcessDialogOpen] = useState(false);
-    const [isSelectProcessDialogOpen, setIsSelectProcessDialogOpen] = useState(false);
+    const [openDialog, setOpenDialog] = useState<'create' | 'select' | null>(null);
 
     const { t } = useTranslations();
 
@@ -21,19 +23,11 @@ export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) 
     const adminMeta = daoPlugins.find((plugin) => plugin.id === 'admin')!.meta;
 
     const handleOpenDialog = () => {
-        if (daoPlugins.length > 1) {
-            setIsSelectProcessDialogOpen(true);
-        } else {
-            setIsCreateProcessDialogOpen(true);
-        }
+        setOpenDialog(daoPlugins.length > 1 ? 'select' : 'create');
     };
 
-    const handleCreateProcessDialogClose = () => {
-        setIsCreateProcessDialogOpen(false);
-    };
-
-    const handleSelectProcessDialogClose = () => {
-        setIsSelectProcessDialogOpen(false);
+    const handleCloseDialog = () => {
+        setOpenDialog(null);
     };
 
     return (
@@ -44,14 +38,14 @@ export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) 
             <UninstallCreateProcessDialog
                 daoId={daoId}
                 adminMeta={adminMeta}
-                isOpen={isCreateProcessDialogOpen}
-                onClose={handleCreateProcessDialogClose}
+                isOpen={openDialog === 'create'}
+                onClose={handleCloseDialog}
             />
             <UninstallSelectProcessDialog
                 daoId={daoId}
                 adminMeta={adminMeta}
-                isOpen={isSelectProcessDialogOpen}
-                onClose={handleSelectProcessDialogClose}
+                isOpen={openDialog === 'select'}
+                onClose={handleCloseDialog}
             />
         </>
     );

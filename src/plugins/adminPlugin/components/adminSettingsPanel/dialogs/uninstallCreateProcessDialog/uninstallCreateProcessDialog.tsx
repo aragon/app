@@ -4,11 +4,24 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, EmptyState } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 export interface IUninstallCreateProcessDialogProps {
+    /**
+     * ID of the DAO.
+     */
     daoId: string;
+    /**
+     * Metadata of the admin plugin.
+     */
     adminMeta: IDaoPlugin;
+    /**
+     * Whether the dialog is open.
+     */
     isOpen: boolean;
+    /**
+     * Callback to close the dialog.
+     */
     onClose: () => void;
 }
 
@@ -21,10 +34,10 @@ export const UninstallCreateProcessDialog: React.FC<IUninstallCreateProcessDialo
 
     const keyNamespace = 'app.plugins.admin.adminSettingsPanel.uninstallCreateProcessDialog';
 
-    const handlePermissionGuardSuccess = () => {
+    const handlePermissionGuardSuccess = useCallback(() => {
         router.push(`/dao/${daoId}/create/process`);
         onClose();
-    };
+    }, [daoId, router, onClose]);
 
     const { check: createProcessGuard, result: canCreateProcess } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
@@ -34,14 +47,13 @@ export const UninstallCreateProcessDialog: React.FC<IUninstallCreateProcessDialo
         daoId,
     });
 
-    const actionProps = {
-        onClick: canCreateProcess ? undefined : () => createProcessGuard(),
-        href: canCreateProcess ? `/dao/${daoId}/create/process` : undefined,
-    };
+    const primaryActionProps = canCreateProcess
+        ? { href: `/dao/${daoId}/create/process` }
+        : { onClick: () => createProcessGuard };
 
     return (
         <Dialog.Root open={isOpen} size="lg">
-            <Dialog.Header title="Remove all admins" onClose={() => onClose()} />
+            <Dialog.Header title="Remove all admins" onClose={onClose} />
             <Dialog.Content className="flex flex-col items-center gap-4">
                 <EmptyState
                     objectIllustration={{ object: 'USERS' }}
@@ -49,7 +61,7 @@ export const UninstallCreateProcessDialog: React.FC<IUninstallCreateProcessDialo
                     description={t(`${keyNamespace}.description`)}
                     primaryButton={{
                         label: t(`${keyNamespace}.label`),
-                        ...actionProps,
+                        ...primaryActionProps,
                     }}
                 />
             </Dialog.Content>
