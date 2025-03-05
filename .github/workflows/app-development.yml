@@ -22,6 +22,7 @@ jobs:
       - name: Dispatch E2E tests
         uses: aragon/app-qa/.github/actions/dispatch@main
         with:
+          token: ${{ secrets.E2E_REPO_TOKEN }}
           environment: "development"
 
   build:
