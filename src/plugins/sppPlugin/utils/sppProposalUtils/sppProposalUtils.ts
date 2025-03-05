@@ -13,14 +13,16 @@ class SppProposalUtils {
         const isExecuted = executed.status;
         const isVetoed = this.hasAnyStageStatus(proposal, ProposalVotingStatus.VETOED);
 
-        const endDate = sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds();
+        const hasUnreachedStages = this.hasAnyStageStatus(proposal, ProposalVotingStatus.UNREACHED);
+        const hasExpiredStages = this.hasAnyStageStatus(proposal, ProposalVotingStatus.EXPIRED);
+
+        // Set end date to 0 to mark SPP proposals as "ended" when one or more stages are unreached
+        const endDate = !hasUnreachedStages ? sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds() : 0;
         const executionExpiryDate = sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds();
 
         const hasAdvanceableStages = stages.some(
             (stage) => !sppStageUtils.isLastStage(proposal, stage) && sppStageUtils.canStageAdvance(proposal, stage),
         );
-
-        const hasExpiredStages = this.hasAnyStageStatus(proposal, ProposalVotingStatus.EXPIRED);
 
         const paramsMet = this.areAllStagesAccepted(proposal);
         const hasActions = actions.length > 0;
