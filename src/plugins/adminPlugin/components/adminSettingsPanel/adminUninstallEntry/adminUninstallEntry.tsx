@@ -1,3 +1,4 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { Button } from '@aragon/gov-ui-kit';
@@ -13,6 +14,8 @@ export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) 
     const { daoId } = props;
     const [isCreateProcessDialogOpen, setIsCreateProcessDialogOpen] = useState(false);
     const [isSelectProcessDialogOpen, setIsSelectProcessDialogOpen] = useState(false);
+
+    const { t } = useTranslations();
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
     const adminMeta = daoPlugins.find((plugin) => plugin.id === 'admin')!.meta;
@@ -36,7 +39,7 @@ export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) 
     return (
         <>
             <Button size="md" variant="critical" onClick={() => handleOpenDialog()}>
-                Remove all admins
+                {t('app.plugins.admin.adminSettingsPanel.adminUninstallEntry.label')}
             </Button>
             <UninstallCreateProcessDialog
                 daoId={daoId}

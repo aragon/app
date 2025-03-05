@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, EmptyState } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 
@@ -13,7 +14,12 @@ export interface IUninstallCreateProcessDialogProps {
 
 export const UninstallCreateProcessDialog: React.FC<IUninstallCreateProcessDialogProps> = (props) => {
     const { daoId, adminMeta, isOpen, onClose } = props;
+
     const router = useRouter();
+
+    const { t } = useTranslations();
+
+    const keyNamespace = 'app.plugins.admin.adminSettingsPanel.uninstallCreateProcessDialog';
 
     const handlePermissionGuardSuccess = () => {
         router.push(`/dao/${daoId}/create/process`);
@@ -39,10 +45,10 @@ export const UninstallCreateProcessDialog: React.FC<IUninstallCreateProcessDialo
             <Dialog.Content className="flex flex-col items-center gap-4">
                 <EmptyState
                     objectIllustration={{ object: 'USERS' }}
-                    heading="No governance process found"
-                    description="To remove all admins, you need to first create at least one other governance process for your DAO."
+                    heading={t(`${keyNamespace}.heading`)}
+                    description={t(`${keyNamespace}.description`)}
                     primaryButton={{
-                        label: 'Create governance process',
+                        label: t(`${keyNamespace}.label`),
                         ...actionProps,
                     }}
                 />

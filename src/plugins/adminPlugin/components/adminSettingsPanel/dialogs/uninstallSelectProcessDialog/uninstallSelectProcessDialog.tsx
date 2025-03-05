@@ -7,6 +7,7 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import type { ICreateProposalStartDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { DialogAlert, DialogAlertFooter } from '@aragon/gov-ui-kit';
@@ -23,6 +24,10 @@ export interface IUninstallSelectProcessDialogProps {
 export const UninstallSelectProcessDialog: React.FC<IUninstallSelectProcessDialogProps> = (props) => {
     const { daoId, adminMeta, isOpen, onClose } = props;
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(adminMeta);
+
+    const { t } = useTranslations();
+    const keyNamespace = 'app.plugins.admin.adminSettingsPanel.uninstallSelectProcessDialog';
+
     const { open } = useDialogContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -91,20 +96,17 @@ export const UninstallSelectProcessDialog: React.FC<IUninstallSelectProcessDialo
     });
 
     return (
-        <DialogAlert.Root open={isOpen} variant="critical">
-            <DialogAlert.Header title="Remove all admins" />
+        <DialogAlert.Root open={isOpen} variant="critical" hiddenDescription={t(`${keyNamespace}.hiddenDescription`)}>
+            <DialogAlert.Header title={t(`${keyNamespace}.title`)} />
             <DialogAlert.Content>
                 <div className="flex flex-col gap-y-4">
-                    <p>
-                        You have to create and pass a proposal in another governance process to remove admin control
-                        from the DAO.
-                    </p>
-                    <p>This should only be done when the DAO is ready and no longer requires admin control.</p>
+                    <p>{t(`${keyNamespace}.descriptionFirstLine`)}</p>
+                    <p>{t(`${keyNamespace}.descriptionSecondLine`)}</p>
                 </div>
             </DialogAlert.Content>
             <DialogAlertFooter
-                actionButton={{ label: 'Select process', onClick: handleSelectProcessClick }}
-                cancelButton={{ label: 'Cancel', onClick: onClose }}
+                actionButton={{ label: t(`${keyNamespace}.action.select`), onClick: handleSelectProcessClick }}
+                cancelButton={{ label: t(`${keyNamespace}.action.cancel`), onClick: onClose }}
             />
         </DialogAlert.Root>
     );
