@@ -22,7 +22,7 @@ jobs:
       - name: Dispatch E2E tests
         uses: aragon/app-qa/.github/actions/dispatch@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ARABOT_PAT }}
           environment: "development"
 
   build:
