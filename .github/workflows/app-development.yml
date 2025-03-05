@@ -15,6 +15,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Test dispatch action
+  temp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch E2E tests
+        uses: aragon/app-qa/.github/actions/dispatch@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: "development"
+
   build:
     uses: ./.github/workflows/shared-build.yml
     with:
