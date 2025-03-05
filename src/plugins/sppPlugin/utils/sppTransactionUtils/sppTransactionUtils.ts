@@ -172,7 +172,7 @@ class SppTransactionUtils {
         const processedStages = stages.map((stage) => {
             const { type, bodies, timing, requiredApprovals } = stage;
 
-            const stageTiming = this.processStageTiming(timing, type);
+            const stageTiming = this.processStageTiming(timing);
             const stageApprovals = this.processStageApprovals(requiredApprovals, type);
 
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
@@ -203,19 +203,15 @@ class SppTransactionUtils {
         return { approvalThreshold, vetoThreshold };
     };
 
-    private processStageTiming = (timing: ICreateProcessFormStageTiming, stageType: ProcessStageType) => {
+    private processStageTiming = (timing: ICreateProcessFormStageTiming) => {
         const { votingPeriod, stageExpiration, earlyStageAdvance } = timing;
 
-        const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
+        const voteDuration = BigInt(dateUtils.durationToSeconds(votingPeriod));
+        const processedStageExpiration =
+            stageExpiration != null ? voteDuration + BigInt(dateUtils.durationToSeconds(stageExpiration)) : undefined;
 
-        const processedVotingPeriod = BigInt(dateUtils.durationToSeconds(votingPeriod));
-        const voteDuration = isTimelockStage ? BigInt(0) : processedVotingPeriod;
-
-        const minAdvance = earlyStageAdvance ? BigInt(0) : processedVotingPeriod;
-        const maxAdvance =
-            stageExpiration != null
-                ? voteDuration + BigInt(dateUtils.durationToSeconds(stageExpiration))
-                : this.defaultMaxAdvance;
+        const minAdvance = earlyStageAdvance ? BigInt(0) : voteDuration;
+        const maxAdvance = processedStageExpiration ?? this.defaultMaxAdvance;
 
         return { minAdvance, maxAdvance, voteDuration };
     };

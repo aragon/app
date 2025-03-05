@@ -2,4 +2,4 @@
 '@aragon/app-next': minor
 ---
 
-Support Peaq network
+Update integration of E2E tests

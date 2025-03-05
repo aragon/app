@@ -132,7 +132,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                 </Card>
             </InputContainer>
             <Switch
-                helpText="Allows voters to change their vote during the voting period."
+                helpText="Allows voters to change their vote during the voting period. This prevents this body from approving or vetoing a proposal early so it can advance or be executed early."
                 inlineLabel={voteChangeField.value ? 'Yes' : 'No'}
                 onCheckedChanged={(checked) => setValue(voteChangeField.name, checked)}
                 checked={voteChangeField.value}
