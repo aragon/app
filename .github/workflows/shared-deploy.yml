@@ -36,7 +36,7 @@ jobs:
       - name: Setup
         uses: aragon/app-next/.github/actions/setup@main
       - name: Retrieve NextJs build
-        uses: actions/download-artifact@v4.1.8
+        uses: actions/download-artifact@v4.1.9
         with:
           name: nextjs-build
       - name: Prepare secrets
@@ -54,3 +54,9 @@ jobs:
       - name: Set deployment alias
         if: ${{ inputs.domain != '' }}
         run: yarn vercel alias ${{ steps.set-deployment-url.outputs.deploymentUrl }} ${{ inputs.domain }} --token=${{ secrets.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+      - name: Dispatch E2E tests
+        uses: aragon/app-qa/.github/actions/dispatch@main
+        if: ${{ inputs.env == 'development' || inputs.env == 'staging' || inputs.env == 'production' }}
+        with:
+          opToken: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION }}
+          environment: ${{ inputs.env }}

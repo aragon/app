@@ -19,6 +19,13 @@ Organizations (DAOs). The application interacts with the [Aragon OSx](https://gi
 integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the
 [Aragon Governance UI Kit](https://github.com/aragon/gov-ui-kit) library.
 
+## Requirements
+
+Before setting up the project, ensure you have the following installed:
+
+- Node.js: Version >= 20
+- EditorConfig: Ensure your IDE has EditorConfig support enabled
+
 ## Getting Started
 
 Follow these steps to get the app running on your machine:
