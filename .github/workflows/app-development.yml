@@ -26,6 +26,7 @@ jobs:
           environment: "development"
 
   build:
+    needs: temp # TODO: remove
     uses: ./.github/workflows/shared-build.yml
     with:
       env: "development"
