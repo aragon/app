@@ -58,5 +58,5 @@ jobs:
         uses: aragon/app-qa/.github/actions/dispatch@main
         if: ${{ inputs.env == 'development' || inputs.env == 'staging' || inputs.env == 'production' }}
         with:
-          token: ${{ secrets.E2E_REPO_TOKEN }}
+          opToken: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_PRODUCTION }}
           environment: ${{ inputs.env }}
