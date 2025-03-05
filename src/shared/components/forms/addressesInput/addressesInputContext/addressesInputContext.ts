@@ -6,13 +6,12 @@ export interface IAddressesInputContext {
      * The field name for the form.
      */
     fieldName: string;
-
     /**
-     * Function to remove a member from the list.
+     * Callback to remove a member from the list.
      */
     onRemoveMember: (index: number) => void;
     /**
-     * Function to check if an address is already in the list.
+     * Callback to check if an address is already in the list.
      */
     checkIsAlreadyInList: (index: number) => boolean;
     /**
@@ -24,7 +23,7 @@ export interface IAddressesInputContext {
      */
     membersField: ICompositeAddress[];
     /**
-     * Function to add a new member.
+     * Callback to add a new member.
      */
     addMember: () => void;
 }

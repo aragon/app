@@ -1293,7 +1293,6 @@
           "input": {
             "error": {
               "alreadyInList": "Address has already been added",
-              "alreadyMember": "Address is already a member of the DAO",
               "invalid": "Address is not valid"
             },
             "label": "Member",

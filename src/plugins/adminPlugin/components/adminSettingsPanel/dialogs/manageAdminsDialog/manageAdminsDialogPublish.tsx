@@ -50,7 +50,7 @@ export const ManageAdminsDialogPublish: React.FC<IManageAdminsDialogPublishProps
     const router = useRouter();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    invariant(dao != null, 'PublishManageAdminsDialog: DAO data must be set.');
+    invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
 
     const stepper = useStepper<ITransactionDialogStepMeta, ManageAdminsDialogPublishStep | TransactionDialogStep>({
         initialActiveStep: ManageAdminsDialogPublishStep.PIN_METADATA,
@@ -67,7 +67,7 @@ export const ManageAdminsDialogPublish: React.FC<IManageAdminsDialogPublishProps
     );
 
     const handlePrepareTransaction = () => {
-        invariant(pinJsonData != null, 'PublishManageAdminsDialog: metadata not pinned for prepare transaction step.');
+        invariant(pinJsonData != null, 'ManageAdminsDialogPublish: metadata not pinned for prepare transaction step.');
 
         const { IpfsHash: metadataCid } = pinJsonData;
 

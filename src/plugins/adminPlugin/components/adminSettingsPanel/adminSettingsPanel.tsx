@@ -18,13 +18,14 @@ export interface IAdminSettingsPanelProps {
 
 export const AdminSettingsPanel: React.FC<IAdminSettingsPanelProps> = (props) => {
     const { daoId } = props;
-    const [isManageAdminsDialogOpen, setIsManageAdminsDialogOpen] = useState(false);
 
     const { t } = useTranslations();
 
     const { hasAdminPlugin } = useAdminStatus({ daoId });
 
     const [adminPlugin] = useDaoPlugins({ daoId, subdomain: 'admin' })!;
+
+    const [isManageAdminsDialogOpen, setIsManageAdminsDialogOpen] = useState(false);
 
     const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',

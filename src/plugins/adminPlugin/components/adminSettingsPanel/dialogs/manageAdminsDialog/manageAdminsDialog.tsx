@@ -10,7 +10,7 @@ export interface IManageAdminsDialogProps extends IDialogRootProps {
      */
     daoId: string;
     /**
-     * Address of the admin plugin
+     * Address of the admin plugin.
      */
     pluginAddress: string;
 }

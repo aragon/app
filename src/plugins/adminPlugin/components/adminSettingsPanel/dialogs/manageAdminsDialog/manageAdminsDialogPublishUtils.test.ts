@@ -44,6 +44,7 @@ describe('ManageAdminsDialogPublishUtils', () => {
                 }
                 return false;
             });
+
             const encodedRevokeData = '0xrevokeData';
             const encodedGrantData = '0xgrantData';
 
