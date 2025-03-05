@@ -6,34 +6,23 @@ import {
     Button,
     Card,
     Dropdown,
+    IconType,
     type IAddressInputResolvedValue,
     type ICompositeAddress,
-    IconType,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useAddressesInputContext } from '../addressesInputContext';
 
-export interface IManageAdminsDialogAddressesItem {
+export interface IAddressesInputItemProps extends ComponentProps<'div'> {
     /**
      * The index of the member.
      */
     index: number;
-    /**
-     * Callback triggered on remove member click.
-     */
-    onRemoveMember?: () => void;
-    /**
-     * Field name of the form.
-     */
-    fieldName: string;
-    /**
-     * Defines if the current field is already in the list.
-     */
-    isAlreadyInList: boolean;
 }
 
 const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean) => {
-    const errorNamespace = 'app.plugins.admin.manageAdminsDialog.addressInput.error';
+    const errorNamespace = 'app.shared.addressesInput.item.input.error';
 
     if (!addressUtils.isAddress(member.address)) {
         return `${errorNamespace}.invalid`;
@@ -44,12 +33,17 @@ const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean) => 
     return true;
 };
 
-export const ManageAdminsDialogAddressesItem: React.FC<IManageAdminsDialogAddressesItem> = (props) => {
-    const { index, onRemoveMember, fieldName, isAlreadyInList } = props;
+export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) => {
+    const { index } = props;
 
     const { t } = useTranslations();
 
     const { trigger } = useFormContext();
+
+    const { fieldName, onRemoveMember, checkIsAlreadyInList, membersField } = useAddressesInputContext();
+
+    const isAlreadyInList = checkIsAlreadyInList(index);
+    const canRemove = membersField.length > 1;
 
     const memberFieldName = `${fieldName}.[${index.toString()}]`;
     const {
@@ -58,7 +52,7 @@ export const ManageAdminsDialogAddressesItem: React.FC<IManageAdminsDialogAddres
         label,
         ...addressField
     } = useFormField<Record<string, ICompositeAddress>, string>(memberFieldName, {
-        label: t('app.plugins.admin.manageAdminsDialog.addressInput.label'),
+        label: t('app.shared.addressesInput.item.input.label'),
         rules: {
             required: true,
             validate: (value) => validateMember(value, isAlreadyInList),
@@ -86,6 +80,7 @@ export const ManageAdminsDialogAddressesItem: React.FC<IManageAdminsDialogAddres
                 onChange={setAddressInput}
                 value={addressInput}
                 onAccept={handleAddressAccept}
+                placeholder={t('app.shared.addressesInput.item.input.placeholder')}
                 {...addressField}
             />
 
@@ -93,10 +88,10 @@ export const ManageAdminsDialogAddressesItem: React.FC<IManageAdminsDialogAddres
                 constrainContentWidth={false}
                 size="md"
                 customTrigger={<Button variant="tertiary" size="lg" iconLeft={IconType.DOTS_VERTICAL} />}
-                disabled={!onRemoveMember}
+                disabled={!canRemove}
             >
-                <Dropdown.Item onClick={onRemoveMember}>
-                    {t('app.plugins.admin.manageAdminsDialog.removeMember')}
+                <Dropdown.Item onClick={() => onRemoveMember(index)}>
+                    {t('app.shared.addressesInput.item.remove')}
                 </Dropdown.Item>
             </Dropdown.Container>
         </Card>

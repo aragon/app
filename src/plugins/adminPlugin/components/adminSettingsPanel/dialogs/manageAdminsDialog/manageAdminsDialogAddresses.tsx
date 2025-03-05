@@ -1,9 +1,9 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
+import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, Button, Dialog, IconType, type ICompositeAddress } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
-import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { ManageAdminsDialogAddressesItem } from './manageAdminsDialogAddressesItem';
+import { addressUtils, Dialog, type ICompositeAddress } from '@aragon/gov-ui-kit';
+import { useMemo } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 export interface IManageAdminsDialogAddressesProps {
     /**
@@ -43,45 +43,13 @@ export const ManageAdminsDialogAddresses: React.FC<IManageAdminsDialogAddressesP
         mode: 'onTouched',
     });
 
-    const { handleSubmit, control, reset } = formMethods;
-
-    const membersFieldName = 'members';
-    const {
-        fields: membersField,
-        append: addMember,
-        remove: removeMember,
-    } = useFieldArray({ name: membersFieldName, control });
+    const { handleSubmit, control } = formMethods;
 
     const watchMembersField = useWatch({ name: 'members', control });
 
-    const controlledMembersField = useMemo(
-        () => membersField.map((field, index) => ({ ...field, ...watchMembersField[index] })),
-        [membersField, watchMembersField],
-    );
-
-    const handleAddMember = () => addMember({ address: '' });
-
-    const handleRemoveMember = (index: number) => {
-        if (membersField.length > 1) {
-            removeMember(index);
-        }
-    };
-
-    useEffect(() => {
-        // Needed to make sure that the default values are set correctly on the form
-        const members =
-            currentAdmins.length > 0 ? currentAdmins.map((member) => ({ address: member.address })) : [{ address: '' }];
-        reset({ members });
-    }, [currentAdmins, reset]);
-
-    const checkIsAlreadyInList = (index: number) =>
-        controlledMembersField
-            .slice(0, index)
-            .some((field) => addressUtils.isAddressEqual(field.address, controlledMembersField[index].address));
-
-    const haveMembersChanged = () => {
+    const haveMembersChanged = useMemo(() => {
         const initialMembers = currentAdmins.map((member) => member.address);
-        const newMembers = controlledMembersField.map((field) => field.address);
+        const newMembers = watchMembersField.map((field) => field.address);
 
         if (initialMembers.length !== newMembers.length) {
             return true;
@@ -90,7 +58,7 @@ export const ManageAdminsDialogAddresses: React.FC<IManageAdminsDialogAddressesP
         return !initialMembers.every((initialAddress) =>
             newMembers.some((newAddress) => addressUtils.isAddressEqual(initialAddress, newAddress)),
         );
-    };
+    }, [watchMembersField, currentAdmins]);
 
     return (
         <>
@@ -102,24 +70,11 @@ export const ManageAdminsDialogAddresses: React.FC<IManageAdminsDialogAddressesP
                         onSubmit={handleSubmit(handleSubmitAddresses)}
                         id={formId}
                     >
-                        {membersField.map((field, index) => (
-                            <ManageAdminsDialogAddressesItem
-                                key={field.id}
-                                index={index}
-                                fieldName={membersFieldName}
-                                onRemoveMember={membersField.length > 1 ? () => handleRemoveMember(index) : undefined}
-                                isAlreadyInList={checkIsAlreadyInList(index)}
-                            />
-                        ))}
-                        <Button
-                            size="md"
-                            variant="tertiary"
-                            className="w-fit"
-                            iconLeft={IconType.PLUS}
-                            onClick={handleAddMember}
-                        >
-                            {t('app.plugins.admin.manageAdminsDialog.add')}
-                        </Button>
+                        <AddressesInput.Container name="members" control={control} allowZeroMembers={true}>
+                            {watchMembersField.map((field, index) => (
+                                <AddressesInput.Item key={index} index={index} />
+                            ))}
+                        </AddressesInput.Container>
                     </form>
                 </Dialog.Content>
                 <Dialog.Footer
@@ -127,7 +82,7 @@ export const ManageAdminsDialogAddresses: React.FC<IManageAdminsDialogAddressesP
                         label: t('app.plugins.admin.manageAdminsDialog.action.update'),
                         type: 'submit',
                         form: formId,
-                        disabled: !haveMembersChanged(),
+                        disabled: !haveMembersChanged,
                     }}
                     secondaryAction={{
                         label: t('app.plugins.admin.manageAdminsDialog.action.cancel'),

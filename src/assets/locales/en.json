@@ -833,38 +833,28 @@
           "description": "Proposals created by admins do not require governance in order to pass.",
           "title": "Automatic execution"
         },
-        "manageAdminsDialog": {
+        "manageAdminsDialogAddresses": {
           "action": {
             "cancel": "Cancel",
             "update": "Update admins"
           },
-          "add": "Add",
-          "addressInput": {
-            "error": {
-              "alreadyInList": "Address has already been added",
-              "alreadyMember": "Address is already a member of the DAO",
-              "invalid": "Address is not valid"
-            },
-            "label": "Member",
-            "placeholder": "ENS or 0x …"
-          },
+
           "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
-          "removeMember": "Remove member",
+          "manageAdminsDialogPublish": {
+            "button": {
+              "submit": "Update admins",
+              "success": "View settings"
+            },
+            "description": "To update admins you have to confirm the onchain transaction with your wallet.",
+            "step": {
+              "PIN_METADATA": {
+                "errorLabel": "Unable to pin data on IPFS",
+                "label": "Pin data on IPFS"
+              }
+            },
+            "title": "Update admins"
+          },
           "title": "Manage admins"
-        },
-        "publishManageAdminsDialog": {
-          "button": {
-            "submit": "Update admins",
-            "success": "View settings"
-          },
-          "description": "To update admins you have to confirm the onchain transaction with your wallet.",
-          "step": {
-            "PIN_METADATA": {
-              "errorLabel": "Unable to pin data on IPFS",
-              "label": "Pin data on IPFS"
-            }
-          },
-          "title": "Update admins"
         }
       },
       "multisig": {
@@ -1294,6 +1284,23 @@
       }
     },
     "shared": {
+      "addressesInput": {
+        "container": {
+          "add": "Add"
+        },
+        "item": {
+          "input": {
+            "error": {
+              "alreadyInList": "Address has already been added",
+              "alreadyMember": "Address is already a member of the DAO",
+              "invalid": "Address is not valid"
+            },
+            "label": "Member",
+            "placeholder": "ENS or 0x …"
+          },
+          "remove": "Remove member"
+        }
+      },
       "advancedDateInput": {
         "duration": {
           "days": "Days",
