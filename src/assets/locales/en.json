@@ -11,7 +11,7 @@
         },
         "adminPlugin": {
           "buttonLabel": "View admins",
-          "message": "This DAO is under construction. Admins can make changes without a proposal."
+          "message": "This DAO is under construction. Admins can make changes to the DAO without a proposal."
         }
       },
       "connectWalletDialog": {
