@@ -840,21 +840,22 @@
           },
 
           "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
-          "manageAdminsDialogPublish": {
-            "button": {
-              "submit": "Update admins",
-              "success": "View settings"
-            },
-            "description": "To update admins you have to confirm the onchain transaction with your wallet.",
-            "step": {
-              "PIN_METADATA": {
-                "errorLabel": "Unable to pin data on IPFS",
-                "label": "Pin data on IPFS"
-              }
-            },
-            "title": "Update admins"
-          },
+
           "title": "Manage admins"
+        },
+        "manageAdminsDialogPublish": {
+          "button": {
+            "submit": "Update admins",
+            "success": "View settings"
+          },
+          "description": "To update admins you have to confirm the onchain transaction with your wallet.",
+          "step": {
+            "PIN_METADATA": {
+              "errorLabel": "Unable to pin data on IPFS",
+              "label": "Pin data on IPFS"
+            }
+          },
+          "title": "Update admins"
         }
       },
       "multisig": {
