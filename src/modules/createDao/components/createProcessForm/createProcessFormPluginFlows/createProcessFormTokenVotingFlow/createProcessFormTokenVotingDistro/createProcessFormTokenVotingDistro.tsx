@@ -51,7 +51,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
 
     const tokenNameField = useFormField<ICreateProcessFormBody, 'tokenName'>('tokenName', {
-        label: 'Token Name',
+        label: 'Token name',
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix,
@@ -59,7 +59,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
     });
 
     const tokenSymbolField = useFormField<ICreateProcessFormBody, 'tokenSymbol'>('tokenSymbol', {
-        label: 'Token Symbol',
+        label: 'Token symbol',
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix,
@@ -83,7 +83,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
         <>
             <InputContainer
                 id="token"
-                helpText="Import or create a new ERC-20 token, which is used for this Token Voting plugin"
+                helpText="Import or create a new ERC-20 token to be used in governance."
                 useCustomWrapper={true}
                 {...tokenTypeField}
             >
@@ -115,19 +115,19 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
             {tokenType === 'new' && (
                 <>
                     <InputText
-                        placeholder="Enter a name"
-                        helpText="The full name of the token. For example: Uniswap"
+                        placeholder=""
+                        helpText="This is full name of the token. For example: Uniswap"
                         {...tokenNameField}
                     />
                     <InputText
-                        placeholder="Enter a symbol"
-                        helpText="The abbreviation of the token. For example: UNI"
+                        placeholder=""
+                        helpText="This is the abbreviated ticker of the token. For example: UNI"
                         {...tokenSymbolField}
                     />
                     <InputContainer
                         id="distribute"
-                        label="Distribute Tokens"
-                        helpText="Add the wallets you'd like to distribute tokens to."
+                        label="Distribute tokens"
+                        helpText="These addreses will receive newly minted tokens."
                         useCustomWrapper={true}
                     >
                         {fields.map((field, index) => (

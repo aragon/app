@@ -25,8 +25,8 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
 
     return (
         <InputNumber
-            label="Approval Threshold"
-            helpText="Number of approvals required to execute a proposal."
+            label="Approval threshold"
+            helpText="At least this many members will have to approve proposals."
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             max={members?.length}
             min={1}

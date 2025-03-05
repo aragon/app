@@ -17,7 +17,7 @@ export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSel
         <>
             <RadioGroup
                 className="flex gap-4"
-                helpText="What kind of governance would you like to add?"
+                helpText="What kind of governance will this body use to make decisions?"
                 onValueChange={(value) => onChange(value)}
                 defaultValue={governanceTypeField.value}
                 {...governanceTypeField}
@@ -25,13 +25,13 @@ export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSel
                 <RadioCard
                     className="w-full"
                     label="Token voting"
-                    description="Create or import an ERC-20 token"
+                    description="Majority voting based on token voting power"
                     value="token-voting"
                 />
                 <RadioCard
                     className="w-full"
                     label="Multisig"
-                    description="Define which addresses are members"
+                    description="Designated members must reach a minimum approval threshold"
                     value="multisig"
                 />
             </RadioGroup>

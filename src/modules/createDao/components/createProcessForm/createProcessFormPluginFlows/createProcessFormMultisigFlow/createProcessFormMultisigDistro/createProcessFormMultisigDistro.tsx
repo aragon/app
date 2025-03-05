@@ -20,8 +20,8 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
         <>
             <InputContainer
                 id="multisig-members"
-                label="Multisig Members"
-                helpText="Add the addresses that will be part of the multisig."
+                label="Members"
+                helpText="These addresses will be the only ones able to participate."
                 useCustomWrapper={true}
             >
                 {fields.map((member, index) => (
@@ -35,7 +35,7 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
             </InputContainer>
             <div className="flex w-full justify-between">
                 <Button size="md" variant="tertiary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
-                    Add Member
+                    Add member
                 </Button>
             </div>
         </>

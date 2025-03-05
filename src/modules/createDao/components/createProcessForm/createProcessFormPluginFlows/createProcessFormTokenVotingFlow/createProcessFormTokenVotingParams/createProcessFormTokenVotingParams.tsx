@@ -72,7 +72,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
         <div className="flex flex-col gap-y-6">
             <InputContainer
                 id="threshold"
-                helpText={`The percentage of tokens that vote "Yes" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.`}
+                helpText={`The percentage of tokens that vote "Yes" in support of a proposal, out of all tokens that have voted, must be greater than this value.`}
                 useCustomWrapper={true}
                 {...supportThresholdField}
             >
@@ -94,16 +94,16 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                         </div>
                     </div>
                     {supportThresholdField.value >= 50 ? (
-                        <AlertInline variant="success" message="Proposal will be approved by majority" />
+                        <AlertInline variant="success" message="Proposal will require a majority." />
                     ) : (
-                        <AlertInline variant="warning" message="Proposal will be approved by minority" />
+                        <AlertInline variant="warning" message="Proposal will only require a minority." />
                     )}
                 </Card>
             </InputContainer>
             <InputContainer
                 id="participation"
                 label="Minimum participation"
-                helpText="The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value for the proposal to pass."
+                helpText="The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value."
                 useCustomWrapper={true}
                 {...minimumParticipationField}
             >

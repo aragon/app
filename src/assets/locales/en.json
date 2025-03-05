@@ -7,7 +7,7 @@
       "bannerDao": {
         "adminMember": {
           "buttonLabel": "Add governance",
-          "message": "Your DAO is under construction. Add as many custom governance processes as you need."
+          "message": "Your DAO is under construction. You can add as many custom governance processes as your DAO needs."
         },
         "adminPlugin": {
           "buttonLabel": "View admins",
@@ -28,7 +28,7 @@
         "connect": "wants to connect to your wallet",
         "feature": {
           "permissions": "View-only permissions",
-          "smartContracts": "Audited Smart Contracts",
+          "smartContracts": "Audited smart contracts",
           "stats": "Trusted by 7,500+ DAOs and $27B+"
         }
       },
@@ -94,7 +94,7 @@
         "description": "Start simple and learn as you go. You can adapt your DAO at any time.",
         "steps": {
           "describe": "Describe your DAO",
-          "network": "Select blockchain"
+          "network": "Select chain"
         },
         "title": "Create new DAO"
       },
@@ -113,22 +113,22 @@
             "label": "Logo"
           },
           "description": {
-            "helpText": "Describe your DAO's purpose in a few sentences. This appears on the Explore page so new contributors can find you.",
+            "helpText": "The description is shown on the DAO's dashboard and the Explore page so new contributors can easily find and identify you.",
             "label": "Description",
-            "placeholder": "Description of the DAO"
+            "placeholder": ""
           },
           "name": {
-            "helpText": "Give your DAO a recognizable name.",
-            "label": "DAO name",
-            "placeholder": "Type the DAO's name"
+            "helpText": "",
+            "label": "Name",
+            "placeholder": ""
           },
           "resources": {
-            "helpText": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers."
+            "helpText": "Resources are shown as links on the DAO dashboard. They are best used for your external sites, social media, or Discord."
           }
         },
         "network": {
           "helpText": "The chain you choose is where your tokens and assets are stored.",
-          "label": "Select blockchain",
+          "label": "Select chain",
           "testnetLabel": "Testnet"
         }
       },
@@ -141,21 +141,21 @@
             "title": "Debug"
           },
           "METADATA": {
-            "description": "Name and define your DAO so members know they've come to the right place. This information will be displayed at the top of your dashboard and can be changed with a vote.",
+            "description": "Describe your DAO so visitors know they've come to the right place. Any of these fields can be changed later via governance.",
             "name": "Describe your DAO",
             "title": "Describe your DAO"
           },
           "NETWORK": {
-            "description": "The chain you choose is where your DAO and tokens will be deployed. If you already have a token, select the chain your token is on. This can't be changed later.",
-            "name": "Select blockchain",
-            "title": "Select blockchain"
+            "description": "The chain you choose is where your DAO and tokens will be deployed. If you already have a token, select the chain your token is on.",
+            "name": "Select chain",
+            "title": "Select chain"
           }
         },
         "submitLabel": "Publish DAO"
       },
       "createProcessDetailsDialog": {
         "actionLabel": "Get started",
-        "description": "Governance should suit your organization's needs. Whether it's for funds management, protocol upgrades, or team coordination, you can add a new governance process at any time.",
+        "description": "Governance should suit your DAO's needs. Whether it's for funds management, protocol upgrades, or team coordination, you can add a new governance process at any time.",
         "steps": {
           "describe": "Describe new proposal type",
           "design": "Design the governance process",
@@ -166,22 +166,22 @@
       "createProcessForm": {
         "metadata": {
           "description": {
-            "helpText": "Summarize your {{type}} in 2-3 sentences. This helps DAO members understand the {{type}} in more detail.",
-            "label": "Summary",
-            "placeholder": "Type a summary"
+            "helpText": "The description is shown on the proposals list of proposals of this type.",
+            "label": "Description",
+            "placeholder": ""
           },
           "name": {
             "helpText": "Give your {{type}} an easily identifiable name.",
             "label": "Name",
-            "placeholder": "Type a name"
+            "placeholder": ""
           },
           "processKey": {
-            "helpText": "Define a key for this governance process to have a unique ID. Something like EIP, which leads to EIP-01 and increments for each proposal.",
+            "helpText": "The key is part of the proposals' unique identifier. Something like EIP would lead to EIP-1 and increment for each proposal.",
             "label": "Key",
-            "placeholder": "Type a key"
+            "placeholder": ""
           },
           "resources": {
-            "helpText": "Add any additional external resources that help members understand the {{type}}."
+            "helpText": "Resources are shown as links on the proposal list. They can be used to help visitors understand the {{type}}."
           },
           "type": {
             "plugin": "plugin",
@@ -198,14 +198,14 @@
             "anyLabel": "Anyone",
             "bodiesDescription": "Members of the selected bodies",
             "bodiesLabel": "Members",
-            "label": "Who is eligible to create this type of proposal?"
+            "label": "Proposal creation eligibility"
           }
         },
         "stages": {
           "add": "Add stage",
           "bodies": {
-            "add": "Add",
-            "helpText": "Add the governing bodies that decide whether or not this stage passes.",
+            "add": "Add body",
+            "helpText": "These bodies will decide whether or not this stage passes.",
             "label": {
               "vetoing": "Vetoing bodies",
               "voting": "Voting bodies"
@@ -230,9 +230,9 @@
           },
           "more": "More",
           "name": {
-            "helpText": "Give the stage a name that describes its role. For example: Community Review, Guardian Veto, or Founder Signoff.",
-            "label": "Name",
-            "placeholder": "Type a name"
+            "helpText": "Give the stage a name that describes what's happening. For example: Community Review, Guardian Veto, or Founder Signoff",
+            "label": "Stage name",
+            "placeholder": ""
           },
           "remove": "Remove stage",
           "timing": {
@@ -268,7 +268,7 @@
             "edit": "Edit timing",
             "expiration": "Stage expiration",
             "expirationPeriod": "Expiration period",
-            "helpText": "Configure how long voting lasts and when the proposal can advance.",
+            "helpText": "",
             "label": "Timing",
             "no": "No",
             "timelockPeriod": "Timelock period",
@@ -276,8 +276,8 @@
             "yes": "Yes"
           },
           "type": {
-            "helpText": "Specify the role that governance plays. A normal stage passes only if it's approved. An optimistic stage passes unless vetoed. A timelock stage passes after its timelock period.",
-            "label": "Type",
+            "helpText": "Governance plays a different role in each stage type.",
+            "label": "Stage Type",
             "list": {
               "NORMAL": {
                 "description": "Proposals pass this stage only if approved.",
@@ -299,7 +299,7 @@
         "finalStep": "Publish process",
         "steps": {
           "METADATA": {
-            "description": "Information on this page is shown alongside proposals of this type. It helps voters understand the governance process and make informed decisions.",
+            "description": "Describe the governance process so visitors understand how decisions are made. Any of these fields can be changed later via governance.",
             "name": "Process description",
             "title": "Describe new proposal type"
           },
@@ -309,7 +309,7 @@
             "title": "Set proposal creation rules"
           },
           "STAGES": {
-            "description": "Design how proposals of this type pass or fail. A proposal can go through multiple sequential stages. Each stage can approve or veto the proposal.",
+            "description": "Design how decisions are made in this type of proposal. A proposal can go through multiple sequential stages and have any number of governing bodies.",
             "name": "Governance design",
             "title": "Design the governance process"
           }
@@ -366,24 +366,24 @@
       "daoDashboardPage": {
         "aside": {
           "details": {
-            "address": "Contract address",
-            "blockchain": "Blockchain",
-            "ens": "ENS name",
-            "launched": "Launched at",
+            "address": "DAO address",
+            "blockchain": "Chain",
+            "ens": "ENS",
+            "launched": "Launched",
             "title": "Contract"
           },
-          "links": "Links"
+          "links": "Resources"
         },
         "header": {
           "stat": {
             "members": "Members",
             "proposals": "Proposals",
-            "treasury": "Treasury value"
+            "treasury": "Treasury"
           }
         },
         "main": {
           "assets": {
-            "title": "Top assets"
+            "title": "Assets"
           },
           "members": {
             "title": "Members"
@@ -441,7 +441,7 @@
       "daoAssetsPage": {
         "aside": {
           "details": {
-            "blockchain": "Blockchain",
+            "blockchain": "Chain",
             "title": "Details"
           }
         },
@@ -452,7 +452,7 @@
       "daoTransactionsPage": {
         "aside": {
           "details": {
-            "blockchain": "Blockchain",
+            "blockchain": "Chain",
             "title": "Details"
           }
         },
@@ -461,7 +461,7 @@
         }
       },
       "financeDetailsList": {
-        "blockchain": "Blockchain",
+        "blockchain": "Chain",
         "title": "Vault",
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
@@ -483,16 +483,16 @@
           "placeholder": "0"
         },
         "receiver": {
-          "helpText": "The wallet that receives the tokens.",
+          "helpText": "The address to transfer assets to.",
           "label": "Recipient",
-          "placeholder": "ENS or 0x …"
+          "placeholder": "ENS or 0x…"
         }
       }
     },
     "governance": {
       "actionComposer": {
         "customItem": {
-          "ADD_CONTRACT": "Add new address",
+          "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
         },
         "nativeGroup": {
@@ -503,7 +503,7 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
-        "placeholder": "Filter by action, contract name or address",
+        "placeholder": "Filter by action, contract name, or address",
         "rawCalldataFunction": "Unknown",
         "selectItem": "Add action"
       },
@@ -519,30 +519,30 @@
             "remove": "Remove",
             "up": "Move up"
           },
-          "empty": "Add actions by selecting them, interacting with custom contracts, or connecting to other applications."
+          "empty": ""
         },
         "metadata": {
           "actions": {
-            "helpText": "Add onchain transactions to execute if this proposal passes.",
+            "helpText": "Actions are onchain transactions that can be executed if the proposal passes.",
             "label": "Yes",
-            "title": "Would you like to add actions to this proposal?"
+            "title": "Add actions"
           },
           "body": {
-            "helpText": "Describe the proposal in more detail so voters can clearly understand it.",
-            "placeholder": "Type a proposal body",
+            "helpText": "This is the full proposal text that is viewable only on the proposal details page",
+            "placeholder": "",
             "title": "Body"
           },
           "resources": {
-            "helpText": "Add any relevant links to documents, websites, or forum posts."
+            "helpText": "Resources are shown as links on the proposal page. They can be used to help members understand the proposal."
           },
           "summary": {
-            "helpText": "Briefly describe your proposal in 2–3 sentences. Voters will see this overview first.",
+            "helpText": "The summary is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it is about.",
             "placeholder": "Type a summary",
             "title": "Summary"
           },
           "title": {
-            "helpText": "Give your proposal a concise title. This will appear in the proposal overview.",
-            "placeholder": "Type a title",
+            "helpText": "",
+            "placeholder": "",
             "title": "Title"
           }
         }
@@ -551,17 +551,17 @@
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
-            "description": "These actions can be executed once the proposal passes. They will execute in the order they are listed on this page.",
+            "description": "Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order they are listed on this page.",
             "name": "Add actions",
             "title": "Add actions"
           },
           "METADATA": {
-            "description": "Provide information voters need to make their decision.",
+            "description": "Describe the proposal so voters have the information they need to understand it and make a decision.",
             "name": "Define content",
             "title": "Define content"
           },
           "SETTINGS": {
-            "description": "Define the settings for this proposal.",
+            "description": "Configure the settings for this proposal.",
             "name": "Proposal settings",
             "title": "Proposal settings"
           }
@@ -643,8 +643,8 @@
         },
         "main": {
           "actions": {
-            "description": "The following actions execute if all voting stages pass.",
-            "empty": "Proposal has no actions.",
+            "description": "Actions are onchain transactions that can be executed if the proposal passes.",
+            "empty": "",
             "header": "Actions"
           },
           "description": {
@@ -712,7 +712,7 @@
           "failed": "Execution failed",
           "tryAgain": "Try again"
         },
-        "notExecutable": "This proposal must pass all voting stages before the onchain actions can be executed."
+        "notExecutable": "The proposal must pass before its actions can be executed."
       },
       "publishProposalDialog": {
         "button": {
@@ -742,7 +742,7 @@
           "cancel": "Cancel",
           "verify": "Verify contract"
         },
-        "description": "Enter the contract address to configure your action.",
+        "description": "The write functions on this contract can be used to add actions.",
         "smartContractLabel": "Address",
         "step": {
           "abi": {
@@ -787,9 +787,9 @@
             "retry": "Retry"
           },
           "description": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
-          "title": "Connect new dApp",
+          "title": "Connect to dApp",
           "uriField": {
-            "placeholder": "wc: …"
+            "placeholder": "wc:…"
           }
         },
         "listener": {
@@ -845,7 +845,7 @@
               "invalid": "Address is not valid"
             },
             "label": "Member",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "removeMember": "Remove member"
         },
@@ -856,8 +856,8 @@
             "label": "Expiration time"
           },
           "startTime": {
-            "helpText": "Define when a proposal is active to receive approvals. If now is selected, it starts immediately after publishing.",
-            "label": "Start time"
+            "helpText": "This is the time that the proposal becomes available to for approvals.",
+            "label": "Approval start time"
           }
         },
         "multisigGovernanceSettings": {
@@ -880,7 +880,7 @@
           "requirement": "Multisig member"
         },
         "multisigPermissionCheckVoteSubmission": {
-          "createdAt": "Created at",
+          "createdAt": "Created",
           "membership": "Your membership",
           "nonMember": "Not a member"
         },
@@ -906,9 +906,9 @@
           "add": "Add",
           "addressInput": {
             "error": {
-              "alreadyInList": "Address has already been added"
+              "alreadyInList": "Address has already been added."
             },
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "dialog": {
             "entity": "Members",
@@ -961,8 +961,8 @@
         },
         "sppCreateProposalSettingsForm": {
           "startTime": {
-            "helpText": "Define when the first stage starts. If now is selected, it starts immediately after publishing.",
-            "label": "Start time"
+            "helpText": "This is the time that the first stage's voting period begins.",
+            "label": "Stage 1 start time"
           }
         },
         "sppGovernanceSettings": {
@@ -1013,20 +1013,20 @@
         },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
-            "helpText": "Set the duration of voting in days, or pick an exact date and time for it to end.",
+            "helpText": "",
             "infoText": "The minimum duration is {{days}} days, {{hours}} hours, and {{minutes}} minutes, set by DAO governance.",
-            "label": "End time"
+            "label": "Voting duration / end time"
           },
           "startTime": {
-            "helpText": "Define when this proposal is active for voting. If now is selected, it starts immediately after publishing.",
-            "label": "Start time"
+            "helpText": "",
+            "label": "Voting start time"
           }
         },
         "tokenDelegationForm": {
           "delegate": {
             "helpText": "Enter the address where you want to delegate your current or future token balance's voting power.",
             "label": "Your delegation",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "dialog": {
             "button": {
@@ -1088,7 +1088,7 @@
         "tokenMintTokensAction": {
           "address": {
             "label": "Address",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "amount": {
             "label": "Amount",
@@ -1102,7 +1102,7 @@
           "userVotingPower": "Your voting power"
         },
         "tokenPermissionCheckVoteSubmission": {
-          "createdAt": "Created at",
+          "createdAt": "Created",
           "membership": "Your voting power"
         },
         "tokenProcessBodyField": {
@@ -1195,7 +1195,7 @@
               "majority": "Proposal will be approved by majority",
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
-            "helpText": "The percentage of tokens voting Yes, out of the total votes cast, must exceed this for the proposal to pass.",
+            "helpText": "The percentage of tokens voting Yes, out of the total votes cast, must exceed this.",
             "label": "Support threshold"
           },
           "voteChange": {
@@ -1216,7 +1216,7 @@
         "bodyName": "Body name",
         "contract": {
           "launchedAt": "Launched",
-          "plugin": "Plugin",
+          "plugin": "Plugin address",
           "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
         },
         "processKey": "Process key",
@@ -1228,7 +1228,7 @@
         }
       },
       "daoSettingsInfo": {
-        "blockchain": "Blockchain",
+        "blockchain": "Chain",
         "ens": "ENS name",
         "links": "Links",
         "name": "Name",
@@ -1290,11 +1290,11 @@
       },
       "formField": {
         "error": {
-          "max": "{{name}} must be less than {{value}}",
-          "min": "{{name}} must be greater than {{value}}",
-          "pattern": "Invalid {{name}} format",
-          "required": "{{name}} is mandatory",
-          "validate": "{{name}} is invalid"
+          "max": "{{name}} must be less than {{value}}.",
+          "min": "{{name}} must be greater than {{value}}.",
+          "pattern": "Invalid {{name}} format.",
+          "required": "{{name}} is mandatory.",
+          "validate": "{{name}} is invalid."
         }
       },
       "page": {
@@ -1307,14 +1307,14 @@
         "add": "Add",
         "item": {
           "labelInput": {
-            "placeholder": "Type a label",
-            "title": "Label"
+            "placeholder": "",
+            "title": "Link text"
           },
           "linkInput": {
             "placeholder": "https://",
-            "title": "Link"
+            "title": "URL"
           },
-          "removeResource": "Remove Link"
+          "removeResource": "Remove"
         },
         "title": "Resources"
       },

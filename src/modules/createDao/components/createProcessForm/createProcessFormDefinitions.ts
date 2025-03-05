@@ -139,7 +139,7 @@ export interface ICreateProcessFormBody {
     supportThreshold: number;
     /**
      * The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal
-     * to this value for the proposal to pass.
+     * to this value.
      */
     minimumParticipation: number;
     /**
