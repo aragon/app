@@ -17,7 +17,7 @@ export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSel
         <>
             <RadioGroup
                 className="flex gap-4"
-                helpText="What kind of governance will this body use to make decisions?"
+                helpText="This determines the governance the body uses to make decisions."
                 onValueChange={(value) => onChange(value)}
                 defaultValue={governanceTypeField.value}
                 {...governanceTypeField}

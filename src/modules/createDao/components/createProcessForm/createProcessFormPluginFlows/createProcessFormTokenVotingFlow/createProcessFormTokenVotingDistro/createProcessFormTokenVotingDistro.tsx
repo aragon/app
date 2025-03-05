@@ -83,7 +83,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
         <>
             <InputContainer
                 id="token"
-                helpText="Import or create a new ERC-20 token to be used in governance."
+                helpText="You can either import an existing ERC-20 token to be used in governance or create a new one."
                 useCustomWrapper={true}
                 {...tokenTypeField}
             >

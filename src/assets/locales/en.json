@@ -113,7 +113,7 @@
             "label": "Logo"
           },
           "description": {
-            "helpText": "The description is shown on the DAO's dashboard and the Explore page so new contributors can easily find and identify you.",
+            "helpText": "This is shown on the DAO's dashboard and the Explore page so visitors can easily find you.",
             "label": "Description",
             "placeholder": ""
           },
@@ -123,7 +123,7 @@
             "placeholder": ""
           },
           "resources": {
-            "helpText": "Resources are shown as links on the DAO dashboard. They are best used for your external sites, social media, or Discord."
+            "helpText": "These are shown as links on the DAO dashboard. They are best suited for your website, social media, or Discord."
           }
         },
         "network": {
@@ -155,7 +155,7 @@
       },
       "createProcessDetailsDialog": {
         "actionLabel": "Get started",
-        "description": "Governance should suit your DAO's needs. Whether it's for funds management, protocol upgrades, or team coordination, you can add a new governance process at any time.",
+        "description": "Governance should suit your DAO's needs. Whether it's for asset management, protocol upgrades, or team coordination, you can add a new governance process at any time.",
         "steps": {
           "describe": "Describe new proposal type",
           "design": "Design the governance process",
@@ -166,22 +166,22 @@
       "createProcessForm": {
         "metadata": {
           "description": {
-            "helpText": "The description is shown on the proposals list of proposals of this type.",
+            "helpText": "This is shown on the proposals list.",
             "label": "Description",
             "placeholder": ""
           },
           "name": {
-            "helpText": "Give your {{type}} an easily identifiable name.",
-            "label": "Name",
+            "helpText": "",
+            "label": "Process name",
             "placeholder": ""
           },
           "processKey": {
-            "helpText": "The key is part of the proposals' unique identifier. Something like EIP would lead to EIP-1 and increment for each proposal.",
+            "helpText": "The key is part of the unique identifier for proposals of this type. Something like EIP would lead to EIP-1 and increment for each proposal.",
             "label": "Key",
             "placeholder": ""
           },
           "resources": {
-            "helpText": "Resources are shown as links on the proposal list. They can be used to help visitors understand the {{type}}."
+            "helpText": "These are shown as links on the proposal list. They can be used to help visitors understand the {{type}}."
           },
           "type": {
             "plugin": "plugin",
@@ -230,7 +230,7 @@
           },
           "more": "More",
           "name": {
-            "helpText": "Give the stage a name that describes what's happening. For example: Community Review, Guardian Veto, or Founder Signoff",
+            "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
             "label": "Stage name",
             "placeholder": ""
           },
@@ -245,11 +245,11 @@
                 "save": "Save"
               },
               "earlyAdvance": {
-                "helpText": "Can this proposal be advanced early to subsequent stages if it's approved before the voting period ends?",
+                "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
                 "label": "Early stage advance"
               },
               "expiration": {
-                "helpText": "Should there be a limited time after the voting period ends for advancing the proposal to the next stage?",
+                "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
                 "infoText": "Recommended minimum expiration time is 7 days.",
                 "label": "Stage expiration"
               },
@@ -259,7 +259,7 @@
               },
               "title": "Edit timing",
               "votingPeriod": {
-                "helpText": "The amount of time bodies in this stage have to vote on proposals.",
+                "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
                 "infoText": "Recommended minimum voting period is 7 days.",
                 "label": "Voting period"
               }
@@ -276,8 +276,8 @@
             "yes": "Yes"
           },
           "type": {
-            "helpText": "Governance plays a different role in each stage type.",
-            "label": "Stage Type",
+            "helpText": "This will determine the role that governance plays in the stage.",
+            "label": "Stage type",
             "list": {
               "NORMAL": {
                 "description": "Proposals pass this stage only if approved.",
@@ -299,7 +299,7 @@
         "finalStep": "Publish process",
         "steps": {
           "METADATA": {
-            "description": "Describe the governance process so visitors understand how decisions are made. Any of these fields can be changed later via governance.",
+            "description": "Describe the governance process so visitors understand its purpose and how decisions are made. Any of these fields can be changed later via governance.",
             "name": "Process description",
             "title": "Describe new proposal type"
           },
@@ -533,17 +533,17 @@
             "title": "Body"
           },
           "resources": {
-            "helpText": "Resources are shown as links on the proposal page. They can be used to help members understand the proposal."
+            "helpText": "These are shown as links on the proposal page. They can be used to help members understand the proposal."
           },
           "summary": {
-            "helpText": "The summary is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it is about.",
-            "placeholder": "Type a summary",
+            "helpText": "This is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it's about.",
+            "placeholder": "",
             "title": "Summary"
           },
           "title": {
             "helpText": "",
             "placeholder": "",
-            "title": "Title"
+            "title": "Proposal title"
           }
         }
       },
@@ -551,14 +551,14 @@
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
-            "description": "Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order they are listed on this page.",
+            "description": "Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.",
             "name": "Add actions",
             "title": "Add actions"
           },
           "METADATA": {
             "description": "Describe the proposal so voters have the information they need to understand it and make a decision.",
-            "name": "Define content",
-            "title": "Define content"
+            "name": "Describe proposal",
+            "title": "Describe proposal"
           },
           "SETTINGS": {
             "description": "Configure the settings for this proposal.",
@@ -851,12 +851,12 @@
         },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
-            "helpText": "Define when a proposal expires. After that time, you can't approve or execute it.",
+            "helpText": "After a proposal expires, you can't approve or execute it.",
             "infoText": "It’s recommended to have an expiration time of {{days}} days to maintain a clean proposal list.",
             "label": "Expiration time"
           },
           "startTime": {
-            "helpText": "This is the time that the proposal becomes available to for approvals.",
+            "helpText": "This is the time that the proposal becomes available for approvals.",
             "label": "Approval start time"
           }
         },
@@ -1230,12 +1230,12 @@
       "daoSettingsInfo": {
         "blockchain": "Chain",
         "ens": "ENS name",
-        "links": "Links",
+        "links": "Resources",
         "name": "Name",
         "notChangeable": "Not changeable",
         "readLess": "Read less",
         "readMore": "Read more",
-        "summary": "Summary"
+        "summary": "Description"
       },
       "daoSettingsPage": {
         "aside": {

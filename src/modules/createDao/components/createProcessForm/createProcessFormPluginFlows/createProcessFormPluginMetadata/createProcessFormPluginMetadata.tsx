@@ -27,7 +27,7 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
         <>
             <InputText maxLength={40} label="Body name" placeholder="" {...bodyNameField} />
             <TextArea
-                helpText="The description is shown on the members list to help visitors understand what body is responsible for."
+                helpText="This is shown on the members list to help visitors understand what the body is responsible for."
                 placeholder=""
                 isOptional={true}
                 maxLength={480}
@@ -35,7 +35,7 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
             />
             <ResourcesInput
                 name={`${fieldPrefix}.resources`}
-                helpText="Resources are shown as links on the members list."
+                helpText="These are shown as links on the members list."
             />
         </>
     );
