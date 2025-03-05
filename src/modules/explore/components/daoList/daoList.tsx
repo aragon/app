@@ -12,6 +12,7 @@ import {
     DataListPagination,
     DataListRoot,
     invariant,
+    useDebouncedValue,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import {
@@ -46,18 +47,24 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     );
 
     const [searchValue, setSearchValue] = useState<string>();
+    const [searchValueDebounced] = useDebouncedValue(searchValue, { delay: 500 });
 
     const enableDaoList = initialParams != null && !daoListByMemberParams;
     const daoListResult = useDaoList(
-        { ...initialParams, queryParams: { ...initialParams?.queryParams, search: searchValue } },
+        {
+            // Add search value to the query params
+            ...initialParams,
+            queryParams: { ...initialParams?.queryParams, search: searchValueDebounced },
+        },
         { enabled: enableDaoList },
     );
 
     const enableDaoListByMember = daoListByMemberParams != null && !initialParams;
     const daoListByMember = useDaoListByMemberAddress(
         {
+            // Add search value to the query params
             ...daoListByMemberParams!,
-            queryParams: { ...daoListByMemberParams?.queryParams, search: searchValue },
+            queryParams: { ...daoListByMemberParams?.queryParams, search: searchValueDebounced },
         },
         { enabled: enableDaoListByMember },
     );
