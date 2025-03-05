@@ -418,6 +418,23 @@
           "all": "All DAOs",
           "member": "Member"
         }
+      },
+      "cta": {
+        "noCodeSetup": {
+          "title": "No code setup",
+          "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
+          "actionLabel": "Create a DAO"
+        },
+        "enterpriseService": {
+          "title": "Enterprise service",
+          "subtitle": "Let our team manage the complexities of governance so you can focus on building your product and community.",
+          "actionLabel": "Get in touch"
+        },
+        "doItYourself": {
+          "title": "Do it yourself",
+          "subtitle": "Build your own custom Aragon OSx DAO or your own web application using our Governance UI Kit and App Template.",
+          "actionLabel": "Developer portal"
+        }
       }
     },
     "finance": {

@@ -2,6 +2,7 @@ import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
 import { daoListOptions } from '../../api/daoExplorerService';
 import { ExploreNav } from '../../components/exploreNav';
+import { ExplorerCta } from '../../components/explorerCta';
 import { Hero } from '../../components/hero';
 import { Section } from '../../components/section';
 import { ExploreDaosPageClient } from './exploreDaosPageClient';
@@ -28,7 +29,7 @@ export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
                         <ExploreDaosPageClient initialParams={daoListParams} />
                     </Section>
                     <Section title="Getting Started">
-                        <p>Getting Started section</p>
+                        <ExplorerCta />
                     </Section>
                 </Page.Main>
             </Page.Content>
