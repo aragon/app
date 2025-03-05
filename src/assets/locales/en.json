@@ -731,10 +731,10 @@
       "selectPluginDialog": {
         "action": {
           "cancel": "Cancel",
-          "select": "Create"
+          "select": "Create proposal"
         },
         "description": "Select the proposal type that you'd like to create.",
-        "title": "Create proposal"
+        "title": "Select process"
       },
       "verifySmartContractDialog": {
         "action": {

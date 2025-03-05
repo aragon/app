@@ -15,6 +15,7 @@ export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) 
     const [isSelectProcessDialogOpen, setIsSelectProcessDialogOpen] = useState(false);
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
+    const adminMeta = daoPlugins.find((plugin) => plugin.id === 'admin')!.meta;
 
     const handleOpenDialog = () => {
         if (daoPlugins.length > 1) {
@@ -39,11 +40,13 @@ export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) 
             </Button>
             <UninstallCreateProcessDialog
                 daoId={daoId}
+                adminMeta={adminMeta}
                 isOpen={isCreateProcessDialogOpen}
                 onClose={handleCreateProcessDialogClose}
             />
             <UninstallSelectProcessDialog
                 daoId={daoId}
+                adminMeta={adminMeta}
                 isOpen={isSelectProcessDialogOpen}
                 onClose={handleSelectProcessDialogClose}
             />

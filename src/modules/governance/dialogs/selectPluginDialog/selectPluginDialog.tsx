@@ -15,6 +15,10 @@ export interface ISelectPluginDialogParams {
      */
     daoId: string;
     /**
+     * Array of plugin IDs to filter out from the selection list.
+     */
+    filteredPluginIds?: string[];
+    /**
      * Callback called on plugin selected.
      */
     onPluginSelected?: (plugin: IDaoPlugin) => void;
@@ -30,17 +34,17 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, onPluginSelected, initialPlugin } = location.params;
+    const { daoId, filteredPluginIds, onPluginSelected, initialPlugin } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
-    console.log('daoPlugins', daoPlugins);
+    const processedDaoPlugins = daoPlugins.filter((plugin) => !filteredPluginIds?.includes(plugin.id));
 
     const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(
-        initialPlugin ?? daoPlugins[0],
+        initialPlugin ?? processedDaoPlugins[0],
     );
 
     const handleConfirm = () => {
@@ -53,7 +57,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
             <Dialog.Header title={t('app.governance.selectPluginDialog.title')} onClose={close} />
             <Dialog.Content description={t('app.governance.selectPluginDialog.description')}>
                 <div className="flex flex-col gap-2 py-2">
-                    {daoPlugins.map((plugin) => (
+                    {processedDaoPlugins.map((plugin) => (
                         <DataList.Item
                             key={plugin.uniqueId}
                             onClick={() => setSelectedPlugin(plugin)}
