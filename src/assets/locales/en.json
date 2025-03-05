@@ -1224,7 +1224,8 @@
         },
         "tokenMemberPanel": {
           "tabs": {
-            "DELEGATE": "Delegate"
+            "DELEGATE": "Delegate",
+            "WRAP": "Wrap"
           }
         },
         "tokenMemberStats": {
@@ -1355,6 +1356,14 @@
         },
         "tokenVoteList": {
           "entity": "Votes"
+        },
+        "tokenWrapForm": {
+          "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
+          "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
+          "submit": {
+            "unwrap": "Unwrap {{amount}} {{symbol}}",
+            "wrap": "Wrap {{underlyingSymbol}}"
+          }
         }
       }
     },

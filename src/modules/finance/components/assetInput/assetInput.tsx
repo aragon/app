@@ -2,7 +2,7 @@ import { type ITransferAssetFormData } from '@/modules/finance/components/transf
 import { type Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type IUseFormFieldReturn } from '@/shared/hooks/useFormField';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { FinanceDialogs } from '../../constants/moduleDialogs';
@@ -18,29 +18,31 @@ export interface IAssetInputProps {
      */
     network: Network;
     /**
-     * Form field for the asset.
+     * Prefix to be prepended to all form fields.
      */
-    assetField: IUseFormFieldReturn<ITransferAssetFormData, 'asset'>;
-    /**
-     * Form field for the amount.
-     */
-    amountField: IUseFormFieldReturn<ITransferAssetFormData, 'amount'>;
+    fieldPrefix?: string;
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const { assetField, amountField, sender, network } = props;
+    const { sender, network, fieldPrefix } = props;
 
     const { t } = useTranslations();
-
     const { open, close } = useDialogContext();
 
-    const initialParams = {
-        queryParams: { address: sender, network },
-    };
+    const assetField = useFormField<ITransferAssetFormData, 'asset'>('asset', {
+        rules: { required: true },
+        fieldPrefix,
+    });
 
-    const params: IAssetSelectionDialogParams = { initialParams, onAssetClick: assetField.onChange, close };
+    const amountField = useFormField<ITransferAssetFormData, 'amount'>('amount', {
+        label: t('app.finance.transferAssetForm.amount.label'),
+        rules: { required: true, max: assetField.value?.amount, validate: (value) => parseFloat(value ?? '') > 0 },
+        fieldPrefix,
+    });
 
     const handleOpenDialog = () => {
+        const initialParams = { queryParams: { address: sender, network } };
+        const params: IAssetSelectionDialogParams = { initialParams, onAssetClick: assetField.onChange, close };
         open(FinanceDialogs.ASSET_SELECTION, { params });
     };
 
