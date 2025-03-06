@@ -8,11 +8,11 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
-import { Logo } from '../../pages/exploreDaosPage/logo';
-import { Logotype } from '../../pages/exploreDaosPage/logotype';
+import { Logo } from './logo';
+import { Logotype } from './logotype';
 
-const gradient = 'bg-gradient-to-b from-primary-400 to-transparent';
-const solid = 'bg-gradient-to-b from-primary-400 to-primary-400';
+const gradientBg = 'bg-gradient-to-b from-primary-400 to-transparent';
+const solidBg = 'bg-primary-400';
 
 export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();
@@ -35,10 +35,8 @@ export const ExploreNav: React.FC = () => {
         // Initial check
         checkScrollPosition();
 
-        // Listen for scroll events
         window.addEventListener('scroll', checkScrollPosition);
 
-        // Clean up
         return () => window.removeEventListener('scroll', checkScrollPosition);
     }, []);
 
@@ -55,8 +53,7 @@ export const ExploreNav: React.FC = () => {
         <div
             className={classNames(
                 'sticky top-0 z-[var(--app-navbar-z-index)] w-full',
-                'transition-colors duration-300',
-                isPostHero ? solid : gradient,
+                isPostHero ? solidBg : gradientBg,
             )}
         >
             <header className="mx-auto flex max-w-screen-xl items-center justify-between gap-6 self-stretch px-4 py-3 xl:gap-12 xl:px-6 xl:py-5">
