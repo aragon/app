@@ -1,7 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { zeroAddress, type Chain, type Hex } from 'viem';
-import { arbitrum, base, mainnet, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
-import { peaq } from './customChains';
+import { arbitrum, base, mainnet, peaq, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
 
 export interface INetworkDefinitionAddresses {
     /**

@@ -1,55 +1,45 @@
-import { ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
-import { DateTime } from 'luxon';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
+import { type ProposalStatus, ProposalVotingStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage } from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
 
 class SppProposalUtils {
     getProposalStatus = (proposal: ISppProposal): ProposalStatus => {
-        const now = DateTime.now();
-        const startDate = DateTime.fromSeconds(proposal.startDate);
+        const { executed, actions, settings, startDate } = proposal;
+        const { stages } = settings;
 
-        const stagesCount = proposal.settings.stages.length;
-        const lastStage = stagesCount > 0 ? proposal.settings.stages[stagesCount - 1] : undefined;
-        const currentStage = sppProposalUtils.getCurrentStage(proposal);
+        const lastStage = stages[stages.length - 1];
 
-        const minExecutionDate = lastStage ? sppStageUtils.getStageMinAdvance(proposal, lastStage) : undefined;
+        const isExecuted = executed.status;
+        const isVetoed = this.hasAnyStageStatus(proposal, ProposalVotingStatus.VETOED);
 
-        const approvalReached = this.areAllStagesAccepted(proposal);
-        const isSignalingProposal = proposal.actions.length === 0;
+        const hasUnreachedStages = this.hasAnyStageStatus(proposal, ProposalVotingStatus.UNREACHED);
+        const hasExpiredStages = this.hasAnyStageStatus(proposal, ProposalVotingStatus.EXPIRED);
 
-        const isExecutable = lastStage != null && sppStageUtils.canStageAdvance(proposal, lastStage);
+        // Set end date to 0 to mark SPP proposals as "ended" when one or more stages are unreached
+        const endDate = !hasUnreachedStages ? sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds() : 0;
+        const executionExpiryDate = sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds();
 
-        if (proposal.executed.status) {
-            return ProposalStatus.EXECUTED;
-        }
+        const hasAdvanceableStages = stages.some(
+            (stage) => !sppStageUtils.isLastStage(proposal, stage) && sppStageUtils.canStageAdvance(proposal, stage),
+        );
 
-        if (this.hasAnyStageStatus(proposal, ProposalVotingStatus.VETOED)) {
-            return ProposalStatus.VETOED;
-        }
+        const paramsMet = this.areAllStagesAccepted(proposal);
+        const hasActions = actions.length > 0;
+        const canExecuteEarly = lastStage.minAdvance === 0;
 
-        if (this.hasAnyStageStatus(proposal, ProposalVotingStatus.REJECTED)) {
-            return ProposalStatus.REJECTED;
-        }
-
-        if (this.hasAnyStageStatus(proposal, ProposalVotingStatus.EXPIRED)) {
-            return ProposalStatus.EXPIRED;
-        }
-
-        if (isExecutable) {
-            return ProposalStatus.EXECUTABLE;
-        }
-
-        if (startDate > now) {
-            return ProposalStatus.PENDING;
-        }
-
-        if (minExecutionDate == null || now < minExecutionDate) {
-            const canAdvance = sppStageUtils.canStageAdvance(proposal, currentStage);
-
-            return canAdvance ? ProposalStatus.ADVANCEABLE : ProposalStatus.ACTIVE;
-        }
-
-        return approvalReached && isSignalingProposal ? ProposalStatus.ACCEPTED : ProposalStatus.EXPIRED;
+        return proposalStatusUtils.getProposalStatus({
+            isExecuted,
+            isVetoed,
+            startDate,
+            endDate,
+            executionExpiryDate,
+            hasAdvanceableStages,
+            hasExpiredStages,
+            paramsMet,
+            hasActions,
+            canExecuteEarly,
+        });
     };
 
     hasAnyStageStatus = (proposal: ISppProposal, status: ProposalVotingStatus): boolean =>
