@@ -3,8 +3,8 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { Button } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { UninstallCreateProcessDialog } from '../dialogs/uninstallCreateProcessDialog';
-import { UninstallSelectProcessDialog } from '../dialogs/uninstallSelectProcessDialog';
+import { AdminUninstallCreateProcessDialog } from '../dialogs/adminUninstallCreateProcessDialog';
+import { AdminUninstallSelectProcessDialog } from '../dialogs/adminUninstallSelectProcessDialog';
 
 export interface IAdminUninstallEntryProps {
     /**
@@ -35,13 +35,13 @@ export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) 
             <Button size="md" variant="critical" onClick={() => handleOpenDialog()}>
                 {t('app.plugins.admin.adminSettingsPanel.adminUninstallEntry.label')}
             </Button>
-            <UninstallCreateProcessDialog
+            <AdminUninstallCreateProcessDialog
                 daoId={daoId}
                 adminMeta={adminMeta}
                 isOpen={openDialog === 'create'}
                 onClose={handleCloseDialog}
             />
-            <UninstallSelectProcessDialog
+            <AdminUninstallSelectProcessDialog
                 daoId={daoId}
                 adminMeta={adminMeta}
                 isOpen={openDialog === 'select'}

@@ -1,4 +1,4 @@
-import { AdminUninstallEntry } from '@/plugins/adminPlugin/components/adminSettingsPanel/adminUninstallEntry';
+import { AdminUninstallEntry } from '@/plugins/adminPlugin/components/adminUninstallPlugin/adminUninstallEntry';
 import { useAdminStatus } from '@/plugins/adminPlugin/hooks/useAdminStatus';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';

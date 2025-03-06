@@ -6,7 +6,7 @@ import { Dialog, EmptyState } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
-export interface IUninstallCreateProcessDialogProps {
+export interface IAdminUninstallCreateProcessDialogProps {
     /**
      * ID of the DAO.
      */
@@ -25,14 +25,13 @@ export interface IUninstallCreateProcessDialogProps {
     onClose: () => void;
 }
 
-export const UninstallCreateProcessDialog: React.FC<IUninstallCreateProcessDialogProps> = (props) => {
+export const AdminUninstallCreateProcessDialog: React.FC<IAdminUninstallCreateProcessDialogProps> = (props) => {
     const { daoId, adminMeta, isOpen, onClose } = props;
 
     const router = useRouter();
 
     const { t } = useTranslations();
-
-    const keyNamespace = 'app.plugins.admin.adminSettingsPanel.uninstallCreateProcessDialog';
+    const keyNamespace = 'app.plugins.admin.adminSettingsPanel.adminUninstallCreateProcessDialog';
 
     const handlePermissionGuardSuccess = useCallback(() => {
         router.push(`/dao/${daoId}/create/process`);

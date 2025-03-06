@@ -14,7 +14,7 @@ import { DialogAlert, DialogAlertFooter } from '@aragon/gov-ui-kit';
 import { useCallback, useState } from 'react';
 import type { Hex } from 'viem';
 
-export interface IUninstallSelectProcessDialogProps {
+export interface IAdminUninstallSelectProcessDialogProps {
     /**
      * ID of the DAO.
      */
@@ -33,12 +33,12 @@ export interface IUninstallSelectProcessDialogProps {
     onClose: () => void;
 }
 
-export const UninstallSelectProcessDialog: React.FC<IUninstallSelectProcessDialogProps> = (props) => {
+export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectProcessDialogProps> = (props) => {
     const { daoId, adminMeta, isOpen, onClose } = props;
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(adminMeta);
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.plugins.admin.adminSettingsPanel.uninstallSelectProcessDialog';
+    const keyNamespace = 'app.plugins.admin.adminSettingsPanel.adminUninstallSelectProcessDialog';
 
     const { open } = useDialogContext();
 

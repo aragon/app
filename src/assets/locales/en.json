@@ -823,16 +823,15 @@
           "requirement": "Admin only"
         },
         "adminSettingsPanel": {
-          "adminUninstallEntry": {
-            "label": "Remove all admins"
-          },
-          "title": "Admin",
-          "uninstallCreateProcessDialog": {
+          "adminUninstallCreateProcessDialog": {
             "description": "To remove all admins, you need to first create at least one other governance process for your DAO.",
             "heading": "No governance process found",
             "label": "Create governance process"
           },
-          "uninstallSelectProcessDialog": {
+          "adminUninstallEntry": {
+            "label": "Remove all admins"
+          },
+          "adminUninstallSelectProcessDialog": {
             "action": {
               "cancel": "Cancel",
               "select": "Select process"
@@ -841,7 +840,8 @@
             "descriptionSecondLine": "This should only be done when the DAO is ready and no longer requires admin control.",
             "hiddenDescription": "You have to create and pass a proposal in another governance process to remove admin control from the DAO. This should only be done when the DAO is ready and no longer requires admin control.",
             "title": "Remove all admins"
-          }
+          },
+          "title": "Admin"
         },
         "adminVotingTerminal": {
           "description": "Proposals created by admins do not require governance in order to pass.",
