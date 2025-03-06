@@ -400,6 +400,9 @@
         "title": "Governed on Aragon",
         "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance."
       },
+      "featured": {
+        "sectionTitle": "Featured"
+      },
       "daoList": {
         "emptyState": {
           "description": "This will show relevant DAOs when available.",
@@ -413,6 +416,7 @@
         "searchPlaceholder": "Filter by Name, Address or ENS"
       },
       "exploreDaosPage": {
+        "sectionTitle": "Explore",
         "createDao": "Create a DAO",
         "filter": {
           "all": "All DAOs",
@@ -420,6 +424,7 @@
         }
       },
       "cta": {
+        "sectionTitle": "Getting started",
         "noCodeSetup": {
           "title": "No code setup",
           "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
