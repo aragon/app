@@ -28,7 +28,11 @@ export interface ICtaCardProps {
     /**
      * Path to navigate to when the action button is clicked.
      */
-    actionHref: string;
+    actionHref?: string;
+    /**
+     * Callback function to execute when the action button is clicked.
+     */
+    onClick?: () => void;
     /**
      * Custom class name for the component.
      */
@@ -39,7 +43,7 @@ export interface ICtaCardProps {
  * Might be promoted to a shared component in the future!
  */
 export const CtaCard: React.FC<ICtaCardProps> = (props) => {
-    const { imgSrc, title, subtitle, isPrimary, actionHref, actionLabel, className } = props;
+    const { imgSrc, title, subtitle, isPrimary, actionHref, actionLabel, onClick, className } = props;
 
     return (
         <div
@@ -71,6 +75,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                     iconRight={isPrimary ? undefined : IconType.LINK_EXTERNAL}
                     size="md"
                     href={actionHref}
+                    onClick={onClick}
                     target={isPrimary ? '_self' : '_blank'}
                 >
                     {actionLabel}

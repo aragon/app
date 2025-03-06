@@ -1,6 +1,8 @@
 'use client';
 
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { CtaCard } from '@/modules/explore/components/explorerCta/ctaCard';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type React from 'react';
 import doItYourselfIcon from './doItYourselfIcon.svg';
@@ -9,6 +11,7 @@ import noCodeSetupIcon from './noCodeSetup.svg';
 
 export const ExplorerCta: React.FC = () => {
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     return (
         <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-8">
@@ -18,7 +21,7 @@ export const ExplorerCta: React.FC = () => {
                 subtitle={t('app.explore.cta.noCodeSetup.subtitle')}
                 isPrimary={true}
                 actionLabel={t('app.explore.cta.noCodeSetup.actionLabel')}
-                actionHref={'/'}
+                onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
             />
             <CtaCard
                 imgSrc={enterpriseServiceIcon as string}
@@ -26,7 +29,7 @@ export const ExplorerCta: React.FC = () => {
                 subtitle={t('app.explore.cta.enterpriseService.subtitle')}
                 isPrimary={false}
                 actionLabel={t('app.explore.cta.enterpriseService.actionLabel')}
-                actionHref={'/'}
+                actionHref={'https://www.aragon.org/get-assistance-form'}
             />
             <CtaCard
                 imgSrc={doItYourselfIcon as string}
@@ -34,7 +37,7 @@ export const ExplorerCta: React.FC = () => {
                 subtitle={t('app.explore.cta.doItYourself.subtitle')}
                 isPrimary={false}
                 actionLabel={t('app.explore.cta.doItYourself.actionLabel')}
-                actionHref={'/'}
+                actionHref={'https://docs.aragon.org/'}
             />
         </div>
     );
