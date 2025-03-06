@@ -75,6 +75,9 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
         addMember: handleAddMember,
     };
 
+    // This is needed because in the parent we are using, useWatch, but this hook
+    // does not expose the RHF IDs of the fields, which results in the lists being
+    // out of sync when removing items, so here we append the key to each child element
     const childrenWithKeys = Children.map(children, (child, index) => {
         if (isValidElement(child) && index < membersField.length) {
             const fieldId = membersField[index].id;
