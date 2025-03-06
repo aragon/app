@@ -123,7 +123,7 @@
             "placeholder": ""
           },
           "resources": {
-            "helpText": "These are shown as links on the DAO dashboard. They are best suited for your website, social media, or Discord."
+            "helpText": "These are shown as links on the DAO dashboard. They are best suited for your website, social media, or other communication channels."
           }
         },
         "network": {
@@ -213,8 +213,8 @@
             "summary": {
               "edit": "Edit",
               "more": "More",
-              "no": "No",
-              "yes": "Yes"
+              "no": "Disabled",
+              "yes": "Enabled"
             },
             "threshold": {
               "bodies": "bodies",
@@ -270,10 +270,10 @@
             "expirationPeriod": "Expiration period",
             "helpText": "",
             "label": "Timing",
-            "no": "No",
+            "no": "Disabled",
             "timelockPeriod": "Timelock period",
             "votingPeriod": "Voting period",
-            "yes": "Yes"
+            "yes": "Enabled"
           },
           "type": {
             "helpText": "This will determine the role that governance plays in the stage.",
@@ -528,7 +528,7 @@
             "title": "Add actions"
           },
           "body": {
-            "helpText": "This is the full proposal text that is viewable only on the proposal details page",
+            "helpText": "This is the full proposal text that is viewable only on the proposal details page.",
             "placeholder": "",
             "title": "Body"
           },
@@ -643,7 +643,7 @@
         },
         "main": {
           "actions": {
-            "description": "Actions are onchain transactions that can be executed if the proposal passes.",
+            "description": "",
             "empty": "",
             "header": "Actions"
           },
@@ -1110,13 +1110,13 @@
           "holders": "{{count}} token holders",
           "minParticipationDefinition": "≥ {{minimumParticipation}}%",
           "minParticipationTerm": "Minimum participation",
-          "no": "No",
+          "no": "Disabled",
           "supplyTerm": "Supply",
           "supportDefinition": "> {{threshold}}%",
           "supportTerm": "Support threshold",
           "tokenTerm": "Token",
           "voteChange": "Vote change",
-          "yes": "Yes"
+          "yes": "Enabled"
         },
         "tokenProposalCreationRequirements": {
           "helpText": "The voting power or token balance required to create proposals.",
@@ -1159,7 +1159,7 @@
             "helpText": "Allows a proposal to be executed before the voting period ends. This is only possible if the proposal meets the support threshold, satisfies the minimum participation, and can’t be overturned by remaining voters.",
             "label": "Early execution",
             "switch": {
-              "label": "Yes"
+              "label": "Enabled"
             }
           },
           "eligibleField": {
@@ -1202,7 +1202,7 @@
             "helpText": "Allows voters to change their vote during the voting period. This prevents the body from giving early approval or veto.",
             "label": "Vote change",
             "switch": {
-              "label": "Yes"
+              "label": "Enabled"
             }
           }
         },
