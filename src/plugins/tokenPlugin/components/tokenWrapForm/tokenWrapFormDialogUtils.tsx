@@ -1,6 +1,6 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
-import { encodeFunctionData, type Hex } from 'viem';
-import type { IBuildTokenWrapTransactionParams } from './tokenWrapFormDialogUtils.abi';
+import { encodeFunctionData, erc20Abi, type Hex } from 'viem';
+import type { IBuildApproveTransactionParams, IBuildTokenWrapTransactionParams } from './tokenWrapFormDialogUtils.abi';
 
 const erc20WrapperAbi = [
     {
@@ -24,6 +24,20 @@ const erc20WrapperAbi = [
 ];
 
 class TokenWrapFormDialogUtils {
+    buildApproveTransaction = (params: IBuildApproveTransactionParams) => {
+        const { token, amount } = params;
+
+        const transactionData = encodeFunctionData({
+            abi: erc20Abi,
+            functionName: 'approve',
+            args: [token.address as Hex, amount],
+        });
+
+        const transaction: TransactionDialogPrepareReturn = { to: token.underlying as Hex, data: transactionData };
+
+        return Promise.resolve(transaction);
+    };
+
     buildWrapTransaction = (params: IBuildTokenWrapTransactionParams) => {
         const { token, address, amount } = params;
 

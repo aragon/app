@@ -3,6 +3,7 @@ import { useMember } from '@/modules/governance/api/governanceService';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, formatterUtils, NumberFormat, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, type Hex } from 'viem';
@@ -36,17 +37,18 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const queryClient = useQueryClient();
 
     const [percentageValue, setPercentageValue] = useState<string | undefined>('100');
     const [activeDialog, setActiveDialog] = useState<string | undefined>();
 
-    const { data: tokenMember } = useMember<ITokenMember>(
+    const { data: tokenMember, refetch: refetchMember } = useMember<ITokenMember>(
         { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
         { enabled: address != null },
     );
 
     const underlyingAddress = (token.underlying ?? undefined) as Hex | undefined;
-    const { data: unwrappedBalance } = useBalance({ address, token: underlyingAddress });
+    const { data: unwrappedBalance, queryKey: unwrappedBalanceKey } = useBalance({ address, token: underlyingAddress });
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
 
@@ -57,6 +59,11 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     });
 
     const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({ control, name: 'amount' });
+
+    const handleTransactionSuccess = () => {
+        void queryClient.invalidateQueries({ queryKey: [unwrappedBalanceKey] });
+        void refetchMember();
+    };
 
     // Update the amount field when the percentage value or the unwrapped balance of the user change
     useEffect(() => {
@@ -118,19 +125,26 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                     </p>
                 </div>
             </form>
-            <TokenWrapFormDialogWrap
-                open={activeDialog == 'wrap'}
-                onOpenChange={() => setActiveDialog(undefined)}
-                token={token}
-                amount={wrapAmount ?? '0'}
-                network={dao!.network}
-            />
+            {/* Only render the wrap dialog when active to avoid running its allowance logic when not open and reset
+            the transaction stepper mutations after a successful approve transaction */}
+            {activeDialog === 'wrap' && (
+                <TokenWrapFormDialogWrap
+                    open={true}
+                    onOpenChange={() => setActiveDialog(undefined)}
+                    onApproveSuccess={() => setActiveDialog('wrap')}
+                    token={token}
+                    amount={wrapAmount ?? '0'}
+                    network={dao!.network}
+                    onSuccess={handleTransactionSuccess}
+                />
+            )}
             <TokenWrapFormDialogUnwrap
                 open={activeDialog == 'unwrap'}
                 onOpenChange={() => setActiveDialog(undefined)}
                 token={token}
                 amount={wrappedAmount}
                 network={dao!.network}
+                onSuccess={handleTransactionSuccess}
             />
         </FormProvider>
     );

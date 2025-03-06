@@ -112,7 +112,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     type="number"
                     placeholder="0"
                     className={inputClassName}
-                    value={amountField.value}
+                    value={amountField.value ?? ''}
                     onChange={amountField.onChange}
                     disabled={!assetField.value}
                 />

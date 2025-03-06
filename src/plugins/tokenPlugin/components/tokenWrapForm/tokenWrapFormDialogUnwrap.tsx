@@ -1,4 +1,3 @@
-import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import {
     TransactionDialog,
@@ -11,13 +10,14 @@ import { AssetDataListItem, Dialog, invariant, type IDialogRootProps } from '@ar
 import { useRouter } from 'next/navigation';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
 
 export interface ITokenWrapFormDialogUnwrapProps extends IDialogRootProps {
     /**
-     * Token to be unwrapped.
+     * Wrapper governance token.
      */
-    token: IToken;
+    token: ITokenPluginSettingsToken;
     /**
      * Amount of tokens to be unwrapped in WEI format.
      */
@@ -26,10 +26,14 @@ export interface ITokenWrapFormDialogUnwrapProps extends IDialogRootProps {
      * Network used for the transaction.
      */
     network: Network;
+    /**
+     * Callback called on unwrap transaction success.
+     */
+    onSuccess?: () => void;
 }
 
 export const TokenWrapFormDialogUnwrap: React.FC<ITokenWrapFormDialogUnwrapProps> = (props) => {
-    const { token, amount, network, onOpenChange, ...otherProps } = props;
+    const { token, amount, network, onOpenChange, onSuccess, ...otherProps } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -64,8 +68,9 @@ export const TokenWrapFormDialogUnwrap: React.FC<ITokenWrapFormDialogUnwrapProps
                 prepareTransaction={handlePrepareTransaction}
                 onCancelClick={handleCloseDialog}
                 network={network}
+                onSuccess={onSuccess}
                 successLink={{
-                    label: t('app.plugins.token.tokenWrapForm.dialog.success'),
+                    label: t('app.plugins.token.tokenWrapForm.dialog.unwrap.success'),
                     onClick: onSuccessClick,
                 }}
             >

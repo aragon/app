@@ -7,15 +7,16 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AssetDataListItem, Dialog, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { parseUnits } from 'viem';
-import { useAccount } from 'wagmi';
+import { erc20Abi, parseUnits, type Hex } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
 
 export interface ITokenWrapFormDialogWrapProps extends IDialogRootProps {
     /**
-     * Wrapped governance token.
+     * Wrapper governance token.
      */
     token: ITokenPluginSettingsToken;
     /**
@@ -26,28 +27,50 @@ export interface ITokenWrapFormDialogWrapProps extends IDialogRootProps {
      * Network used for the transaction.
      */
     network: Network;
+    /**
+     * Callback called when on approve success button click.
+     */
+    onApproveSuccess: () => void;
+    /**
+     * Callback called on approve / wrap transaction success.
+     */
+    onSuccess?: () => void;
 }
 
 export const TokenWrapFormDialogWrap: React.FC<ITokenWrapFormDialogWrapProps> = (props) => {
-    const { token, amount, network, onOpenChange, ...otherProps } = props;
+    const { token, amount, network, onOpenChange, onApproveSuccess, onSuccess, ...otherProps } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
     const { address } = useAccount();
+    const queryClient = useQueryClient();
 
     invariant(address != null, 'TokenWrapFormDialogWrap: user must be connected to perform the action');
+
+    const {
+        data: tokenAllowance,
+        queryKey: allowanceQueryKey,
+        status: allowanceStatus,
+    } = useReadContract({
+        abi: erc20Abi,
+        functionName: 'allowance',
+        address: token.underlying as Hex,
+        args: [address, token.address as Hex],
+    });
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const handlePrepareTransaction = () => {
-        const weiAmount = parseUnits(amount, token.decimals);
-        return tokenWrapFormDialogUtils.buildWrapTransaction({ token, address, amount: weiAmount });
-    };
+    const weiAmount = parseUnits(amount, token.decimals);
+    const needsApproveTransaction = tokenAllowance == null || tokenAllowance < weiAmount;
+    const context = needsApproveTransaction ? 'approve' : 'wrap';
 
-    const onSuccessClick = () => {
-        router.refresh();
-        onOpenChange?.(false);
+    const handlePrepareTransaction = () => {
+        if (needsApproveTransaction) {
+            return tokenWrapFormDialogUtils.buildApproveTransaction({ token, amount: weiAmount });
+        } else {
+            return tokenWrapFormDialogUtils.buildWrapTransaction({ token, address, amount: weiAmount });
+        }
     };
 
     const handleCloseDialog = () => {
@@ -55,18 +78,42 @@ export const TokenWrapFormDialogWrap: React.FC<ITokenWrapFormDialogWrapProps> = 
         onOpenChange?.(false);
     };
 
+    const handleTransactionSuccess = () => {
+        if (needsApproveTransaction) {
+            void queryClient.invalidateQueries({ queryKey: allowanceQueryKey });
+        }
+
+        onSuccess?.();
+    };
+
+    const onSuccessClick = () => {
+        handleCloseDialog();
+
+        if (needsApproveTransaction) {
+            onApproveSuccess();
+        } else {
+            router.refresh();
+        }
+    };
+
+    // Do not render dialog when allowance hasn't been fetched yet to set the proper mutations on transaction-dialog mount
+    if (allowanceStatus === 'pending') {
+        return null;
+    }
+
     return (
         <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
             <TransactionDialog
-                title={t('app.plugins.token.tokenWrapForm.dialog.wrap.title')}
-                description={t('app.plugins.token.tokenWrapForm.dialog.wrap.description')}
-                submitLabel={t('app.plugins.token.tokenWrapForm.dialog.wrap.submit')}
+                title={t(`app.plugins.token.tokenWrapForm.dialog.${context}.title`)}
+                description={t(`app.plugins.token.tokenWrapForm.dialog.${context}.description`)}
+                submitLabel={t(`app.plugins.token.tokenWrapForm.dialog.${context}.submit`)}
                 stepper={stepper}
                 prepareTransaction={handlePrepareTransaction}
                 onCancelClick={handleCloseDialog}
                 network={network}
+                onSuccess={handleTransactionSuccess}
                 successLink={{
-                    label: t('app.plugins.token.tokenWrapForm.dialog.success'),
+                    label: t(`app.plugins.token.tokenWrapForm.dialog.${context}.success`),
                     onClick: onSuccessClick,
                 }}
             >

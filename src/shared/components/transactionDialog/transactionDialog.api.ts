@@ -89,6 +89,10 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      */
     onCancelClick?: () => void;
     /**
+     * Callback called when the transaction has been successfully included on the block.
+     */
+    onSuccess?: () => void;
+    /**
      * The Network the user must be connected to for the transaction.
      * @default Network.ETHEREUM_MAINNET
      */
