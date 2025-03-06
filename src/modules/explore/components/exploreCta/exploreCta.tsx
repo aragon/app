@@ -1,7 +1,7 @@
 'use client';
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
-import { CtaCard } from '@/modules/explore/components/explorerCta/ctaCard';
+import { CtaCard } from '@/modules/explore/components/exploreCta/ctaCard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type React from 'react';
@@ -9,7 +9,7 @@ import doItYourselfIcon from './doItYourselfIcon.svg';
 import enterpriseServiceIcon from './enterpriseServiceIcon.svg';
 import noCodeSetupIcon from './noCodeSetup.svg';
 
-export const ExplorerCta: React.FC = () => {
+export const ExploreCta: React.FC = () => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
