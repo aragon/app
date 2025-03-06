@@ -41,7 +41,7 @@ export const AdminMangeAdmins: React.FC<IAdminMangeAdminsProps> = (props) => {
     return (
         <>
             <Button onClick={handleManageAdminsClick} size="md" variant="secondary">
-                {t('app.plugins.admin.adminSettingsPanel.buttons.manage')}
+                {t('app.plugins.admin.adminManageAdmins.button')}
             </Button>
             <AdminManageAdminsDialog
                 open={isManageAdminsDialogOpen}

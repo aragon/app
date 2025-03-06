@@ -1,7 +1,7 @@
 import { useAdminStatus } from '@/plugins/adminPlugin/hooks/useAdminStatus';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, Card, IconType } from '@aragon/gov-ui-kit';
+import { Card, IconType } from '@aragon/gov-ui-kit';
 import { AdminGovernanceInfo } from '../adminGovernanceInfo';
 import { AdminMangeAdmins } from '../adminManageAdmins/adminManageAdmins';
 
@@ -29,9 +29,6 @@ export const AdminSettingsPanel: React.FC<IAdminSettingsPanelProps> = (props) =>
                 <AdminGovernanceInfo />
                 <div className="flex items-center justify-between">
                     <AdminMangeAdmins daoId={daoId} />
-                    <Button size="md" variant="critical">
-                        {t('app.plugins.admin.adminSettingsPanel.buttons.remove')}
-                    </Button>
                 </div>
             </Card>
         </Page.MainSection>

@@ -63,8 +63,8 @@ export const AdminManageAdminsDialogAddresses: React.FC<IAdminManageAdminsDialog
     return (
         <>
             <FormProvider {...formMethods}>
-                <Dialog.Header title={t('app.plugins.admin.manageAdminsDialogAddresses.title')} />
-                <Dialog.Content description={t('app.plugins.admin.manageAdminsDialogAddresses.description')}>
+                <Dialog.Header title={t('app.plugins.admin.adminManageAdmins.dialog.addresses.title')} />
+                <Dialog.Content description={t('app.plugins.admin.adminManageAdmins.dialog.addresses.description')}>
                     <form
                         className="flex w-full flex-col gap-3 pb-6 md:gap-2"
                         onSubmit={handleSubmit(handleSubmitAddresses)}
@@ -79,13 +79,13 @@ export const AdminManageAdminsDialogAddresses: React.FC<IAdminManageAdminsDialog
                 </Dialog.Content>
                 <Dialog.Footer
                     primaryAction={{
-                        label: t('app.plugins.admin.manageAdminsDialogAddresses.action.update'),
+                        label: t('app.plugins.admin.adminManageAdmins.dialog.addresses.action.update'),
                         type: 'submit',
                         form: formId,
                         disabled: !haveMembersChanged,
                     }}
                     secondaryAction={{
-                        label: t('app.plugins.admin.manageAdminsDialogAddresses.action.cancel'),
+                        label: t('app.plugins.admin.adminManageAdmins.dialog.addresses.action.cancel'),
                         onClick: close,
                     }}
                 />
