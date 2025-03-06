@@ -45,7 +45,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
 
     const handleDialogClose = useCallback(() => {
         onError?.();
-        close('PERMISSION_CHECK');
+        close();
     }, [close, onError]);
 
     useEffect(() => {

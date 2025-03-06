@@ -12,9 +12,9 @@ export interface IAdminUninstallCreateProcessDialogProps {
      */
     daoId: string;
     /**
-     * Metadata of the admin plugin.
+     * The admin plugin.
      */
-    adminMeta: IDaoPlugin;
+    adminPlugin: IDaoPlugin;
     /**
      * Whether the dialog is open.
      */
@@ -26,12 +26,12 @@ export interface IAdminUninstallCreateProcessDialogProps {
 }
 
 export const AdminUninstallCreateProcessDialog: React.FC<IAdminUninstallCreateProcessDialogProps> = (props) => {
-    const { daoId, adminMeta, isOpen, onClose } = props;
+    const { daoId, adminPlugin, isOpen, onClose } = props;
 
     const router = useRouter();
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.plugins.admin.adminSettingsPanel.adminUninstallCreateProcessDialog';
+    const keyNamespace = 'app.plugins.admin.adminUninstallCreateProcessDialog';
 
     const handlePermissionGuardSuccess = useCallback(() => {
         router.push(`/dao/${daoId}/create/process`);
@@ -42,7 +42,7 @@ export const AdminUninstallCreateProcessDialog: React.FC<IAdminUninstallCreatePr
         permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         onSuccess: handlePermissionGuardSuccess,
-        plugin: adminMeta,
+        plugin: adminPlugin,
         daoId,
     });
 

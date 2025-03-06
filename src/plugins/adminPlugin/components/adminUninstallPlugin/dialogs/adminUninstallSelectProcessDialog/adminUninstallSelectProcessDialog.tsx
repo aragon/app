@@ -1,18 +1,15 @@
-import type { ICreateProposalFormData, IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import type { ICreateProposalStartDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { DialogAlert, DialogAlertFooter } from '@aragon/gov-ui-kit';
-import { useCallback, useState } from 'react';
-import type { Hex } from 'viem';
+import { useState } from 'react';
+import { Hex } from 'viem';
+import { adminUninstallSelectProcessDialogUtils } from './adminUninstallSelectProcessDialogUtils';
 
 export interface IAdminUninstallSelectProcessDialogProps {
     /**
@@ -20,9 +17,9 @@ export interface IAdminUninstallSelectProcessDialogProps {
      */
     daoId: string;
     /**
-     * Metadata of the admin plugin.
+     * The admin plugin.
      */
-    adminMeta: IDaoPlugin;
+    adminPlugin: IDaoPlugin;
     /**
      * Whether the dialog is open.
      */
@@ -34,70 +31,39 @@ export interface IAdminUninstallSelectProcessDialogProps {
 }
 
 export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectProcessDialogProps> = (props) => {
-    const { daoId, adminMeta, isOpen, onClose } = props;
-    const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(adminMeta);
+    const { daoId, adminPlugin, isOpen, onClose } = props;
+    const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(adminPlugin);
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.plugins.admin.adminSettingsPanel.adminUninstallSelectProcessDialog';
+    const keyNamespace = 'app.plugins.admin.adminUninstallSelectProcessDialog';
 
     const { open } = useDialogContext();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { pluginSetupProcessor } = networkDefinitions[dao!.network].addresses;
-    const daoAddress = dao!.address;
+    const daoAddress = dao!.address as Hex;
 
-    const handlePermissionGuardSuccess = useCallback(
-        (plugin: IDaoPlugin) => {
-            const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
-                where: daoAddress as Hex,
-                who: pluginSetupProcessor,
-                what: 'ROOT_PERMISSION',
-                to: daoAddress as Hex,
-            });
-
-            const revokeAction: IProposalActionData = {
-                ...rawAction,
-                from: daoAddress,
-                type: 'function',
-                inputData: null,
-                daoId,
-                meta: undefined,
-            };
-
-            const values: ICreateProposalFormData & ICreateProposalStartDateForm = {
-                title: 'Remove all admins',
-                summary:
-                    'This proposal intends to remove all admin control of the DAO. The action will revoke their permission to execute transactions on behalf of the DAO. By passing the proposal, it signifies that this governance process is configured properly and is able to execute on behalf of the DAO now.',
-                body: '',
-                addActions: true,
-                resources: [],
-                actions: [revokeAction],
-                startTimeMode: 'now',
-            };
-
-            const params: IPublishProposalDialogParams = {
-                values,
-                daoId,
-                pluginAddress: plugin.address,
-                prepareActions: {},
-            };
-            open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
-        },
-        [daoAddress, daoId, open, pluginSetupProcessor],
-    );
+    const handleSuccess = () => {
+        const params = adminUninstallSelectProcessDialogUtils.buildProposalParams(
+            selectedPlugin,
+            daoAddress,
+            daoId,
+            pluginSetupProcessor,
+        );
+        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
+    };
 
     const handlePluginSelected = (plugin: IDaoPlugin) => {
-        createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
+        createProposalGuard({ plugin, onSuccess: () => handleSuccess() });
         setSelectedPlugin(plugin);
     };
 
-    const params: ISelectPluginDialogParams = {
-        daoId,
-        filteredPluginIds: ['admin'],
-        onPluginSelected: handlePluginSelected,
-    };
-
     const handleSelectProcessClick = () => {
+        const params: ISelectPluginDialogParams = {
+            daoId,
+            filteredPluginIds: ['admin'],
+            onPluginSelected: handlePluginSelected,
+        };
         open(GovernanceDialog.SELECT_PLUGIN, { params });
         onClose();
     };
@@ -105,7 +71,7 @@ export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectPr
     const { check: createProposalGuard } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onSuccess: () => handlePermissionGuardSuccess(selectedPlugin),
+        onSuccess: () => handleSuccess(),
         plugin: selectedPlugin,
         daoId,
     });
