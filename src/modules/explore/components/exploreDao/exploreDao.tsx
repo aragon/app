@@ -25,6 +25,14 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
 
     const [daoFilter, setDaoFilter] = useState<string | undefined>('all');
 
+    const handleToggleChange = (value: string | undefined) => {
+        // We need to ensure that 1 of the filters is always selected, so we ignore empty values!
+        if (!value) {
+            return;
+        }
+        setDaoFilter(value);
+    };
+
     const daoListParams = daoFilter === 'all' ? initialParams : undefined;
     const daoListMemberParams =
         daoFilter === 'member' ? { urlParams: { address: address! }, queryParams: { sort: 'blockNumber' } } : undefined;
@@ -34,7 +42,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
             <div className="flex grow flex-col gap-3">
                 <div className="flex items-center justify-between">
                     <div className="flex w-full items-center gap-x-2 md:gap-x-3">
-                        <ToggleGroup isMultiSelect={false} onChange={setDaoFilter} value={daoFilter}>
+                        <ToggleGroup isMultiSelect={false} onChange={handleToggleChange} value={daoFilter}>
                             <Toggle value="all" label={t('app.explore.exploreDaosPage.filter.all')} />
                             <Toggle
                                 value="member"
