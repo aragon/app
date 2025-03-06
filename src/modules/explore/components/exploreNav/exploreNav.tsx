@@ -24,7 +24,7 @@ export const ExploreNav: React.FC = () => {
     useEffect(() => {
         const checkScrollPosition = () => {
             // Find the hero element by its id
-            const heroElement = document.querySelector('#hero');
+            const heroElement = document.querySelector('#explore-page-hero');
             if (heroElement) {
                 const heroRect = heroElement.getBoundingClientRect();
                 // Consider navbar height (72px) plus small margin to avoid flickering

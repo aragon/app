@@ -2,14 +2,14 @@
 
 import { Image } from '@/shared/components/image';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import Blueprint from '../../pages/exploreDaosPage/net_bg.svg';
+import Blueprint from './net_bg.svg';
 
 export const Hero = () => {
     const { t } = useTranslations();
 
     return (
         <div
-            id="hero"
+            id="explore-page-hero"
             className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] lg:-mt-24 lg:pt-24"
         >
             <div className="mx-auto w-full max-w-screen-xl">
@@ -17,7 +17,6 @@ export const Hero = () => {
                 <Image
                     src={Blueprint as string}
                     alt="Background Texture"
-                    // className="absolute right-0 top-[-412px] h-[1178.485px] w-[1440px]"
                     className="absolute left-0 top-0 size-full object-cover"
                 />
                 {/* Wrapper*/}
