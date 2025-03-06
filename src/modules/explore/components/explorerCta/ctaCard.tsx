@@ -77,6 +77,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                     href={actionHref}
                     onClick={onClick}
                     target={isPrimary ? '_self' : '_blank'}
+                    className="justify-self-stretch"
                 >
                     {actionLabel}
                 </Button>
