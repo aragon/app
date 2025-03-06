@@ -29,7 +29,7 @@ export const ExploreNav: React.FC = () => {
             if (heroElement) {
                 const heroRect = heroElement.getBoundingClientRect();
                 // Consider navbar height (72px) plus small margin to avoid flickering
-                setIsPostHero(heroRect.bottom <= 100);
+                setIsPostHero(heroRect.bottom <= 80);
             }
         };
 
