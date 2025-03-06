@@ -396,12 +396,23 @@
       }
     },
     "explore": {
-      "hero": {
-        "title": "Governed on Aragon",
-        "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance."
-      },
-      "featured": {
-        "sectionTitle": "Featured"
+      "cta": {
+        "doItYourself": {
+          "actionLabel": "Developer portal",
+          "subtitle": "Build your own custom Aragon OSx DAO or your own web application using our Governance UI Kit and App Template.",
+          "title": "Do it yourself"
+        },
+        "enterpriseService": {
+          "actionLabel": "Get in touch",
+          "subtitle": "Let our team manage the complexities of governance so you can focus on building your product and community.",
+          "title": "Enterprise service"
+        },
+        "noCodeSetup": {
+          "actionLabel": "Create a DAO",
+          "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
+          "title": "No code setup"
+        },
+        "sectionTitle": "Getting started"
       },
       "daoList": {
         "emptyState": {
@@ -416,30 +427,19 @@
         "searchPlaceholder": "Filter by Name, Address or ENS"
       },
       "exploreDaosPage": {
-        "sectionTitle": "Explore",
         "createDao": "Create a DAO",
         "filter": {
           "all": "All DAOs",
           "member": "Member"
-        }
+        },
+        "sectionTitle": "Explore"
       },
-      "cta": {
-        "sectionTitle": "Getting started",
-        "noCodeSetup": {
-          "title": "No code setup",
-          "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
-          "actionLabel": "Create a DAO"
-        },
-        "enterpriseService": {
-          "title": "Enterprise service",
-          "subtitle": "Let our team manage the complexities of governance so you can focus on building your product and community.",
-          "actionLabel": "Get in touch"
-        },
-        "doItYourself": {
-          "title": "Do it yourself",
-          "subtitle": "Build your own custom Aragon OSx DAO or your own web application using our Governance UI Kit and App Template.",
-          "actionLabel": "Developer portal"
-        }
+      "featured": {
+        "sectionTitle": "Featured"
+      },
+      "hero": {
+        "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance.",
+        "title": "Governed on Aragon"
       }
     },
     "finance": {
