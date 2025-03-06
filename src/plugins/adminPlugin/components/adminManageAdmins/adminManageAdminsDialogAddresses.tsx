@@ -5,7 +5,7 @@ import { addressUtils, Dialog, type ICompositeAddress } from '@aragon/gov-ui-kit
 import { useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
-export interface IManageAdminsDialogAddressesProps {
+export interface IAdminManageAdminsDialogAddressesProps {
     /**
      * List of current admins on the admin plugin.
      */
@@ -13,14 +13,14 @@ export interface IManageAdminsDialogAddressesProps {
     /**
      * Callback to handle the form submission.
      */
-    handleSubmitAddresses: (data: IManageAdminsFormData) => void;
+    handleSubmitAddresses: (data: IAdminManageAdminsFormData) => void;
     /**
      * Callback to close the dialog.
      */
     close: () => void;
 }
 
-export interface IManageAdminsFormData {
+export interface IAdminManageAdminsFormData {
     /**
      * List of members in the form.
      */
@@ -29,14 +29,14 @@ export interface IManageAdminsFormData {
 
 const formId = 'manageAdminsForm';
 
-export const ManageAdminsDialogAddresses: React.FC<IManageAdminsDialogAddressesProps> = (props) => {
+export const AdminManageAdminsDialogAddresses: React.FC<IAdminManageAdminsDialogAddressesProps> = (props) => {
     const { currentAdmins, close, handleSubmitAddresses } = props;
 
     const { t } = useTranslations();
 
     const initialMembers = currentAdmins.map((member) => ({ address: member.address }));
 
-    const formMethods = useForm<IManageAdminsFormData>({
+    const formMethods = useForm<IAdminManageAdminsFormData>({
         defaultValues: {
             members: initialMembers,
         },
@@ -70,7 +70,7 @@ export const ManageAdminsDialogAddresses: React.FC<IManageAdminsDialogAddressesP
                         onSubmit={handleSubmit(handleSubmitAddresses)}
                         id={formId}
                     >
-                        <AddressesInput.Container name="members" control={control} allowZeroMembers={true}>
+                        <AddressesInput.Container name="members" allowZeroMembers={true}>
                             {watchMembersField.map((field, index) => (
                                 <AddressesInput.Item key={index} index={index} />
                             ))}

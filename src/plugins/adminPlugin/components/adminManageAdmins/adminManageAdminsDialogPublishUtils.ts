@@ -4,10 +4,10 @@ import { permissionTransactionUtils } from '@/shared/utils/permissionTransaction
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import { adminTransactionUtils } from '../../../../utils/adminTransactionUtils';
-import type { IBuildActionsArrayParams, IBuildTransactionParams } from './manageAdminsDialogPublishUtils.api';
+import { adminTransactionUtils } from '../../utils/adminTransactionUtils';
+import type { IBuildActionsArrayParams, IBuildTransactionParams } from './adminManageAdminsDialogPublishUtils.api';
 
-class ManageAdminsDialogPublishUtils {
+class AdminManageAdminsDialogPublishUtils {
     private permissionIds = {
         EXECUTE_PROPOSAL_PERMISSION: 'EXECUTE_PROPOSAL_PERMISSION',
     };
@@ -74,4 +74,4 @@ class ManageAdminsDialogPublishUtils {
     };
 }
 
-export const manageAdminsDialogPublishUtils = new ManageAdminsDialogPublishUtils();
+export const adminManageAdminsDialogPublishUtils = new AdminManageAdminsDialogPublishUtils();

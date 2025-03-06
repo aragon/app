@@ -1,10 +1,10 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { Dialog, type ICompositeAddress, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
-import { ManageAdminsDialogAddresses } from './manageAdminsDialogAddresses';
-import { ManageAdminsDialogPublish } from './manageAdminsDialogPublish';
+import { AdminManageAdminsDialogAddresses } from './adminManageAdminsDialogAddresses';
+import { AdminManageAdminsDialogPublish } from './adminManageAdminsDialogPublish';
 
-export interface IManageAdminsDialogProps extends IDialogRootProps {
+export interface IAdminManageAdminsDialogProps extends IDialogRootProps {
     /**
      * ID of the DAO.
      */
@@ -22,7 +22,7 @@ export interface IManageAdminsFormData {
     members: ICompositeAddress[];
 }
 
-export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) => {
+export const AdminManageAdminsDialog: React.FC<IAdminManageAdminsDialogProps> = (props) => {
     const { onOpenChange, daoId, pluginAddress, ...otherProps } = props;
 
     const [updatedAdmins, setUpdatedAdmins] = useState<ICompositeAddress[]>([]);
@@ -51,7 +51,7 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
     return (
         <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
             {showPublishManageAdmins ? (
-                <ManageAdminsDialogPublish
+                <AdminManageAdminsDialogPublish
                     currentAdmins={currentAdmins ?? []}
                     updatedAdmins={updatedAdmins}
                     pluginAddress={pluginAddress}
@@ -59,7 +59,7 @@ export const ManageAdminsDialog: React.FC<IManageAdminsDialogProps> = (props) =>
                     close={onClose}
                 />
             ) : (
-                <ManageAdminsDialogAddresses
+                <AdminManageAdminsDialogAddresses
                     currentAdmins={currentAdmins ?? []}
                     close={onClose}
                     handleSubmitAddresses={handleSubmitAddresses}

@@ -14,13 +14,13 @@ import { type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { type Hex } from 'viem';
-import { manageAdminsDialogPublishUtils } from './manageAdminsDialogPublishUtils';
+import { adminManageAdminsDialogPublishUtils } from './adminManageAdminsDialogPublishUtils';
 
-export enum ManageAdminsDialogPublishStep {
+export enum AdminManageAdminsDialogPublishStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
-export interface IManageAdminsDialogPublishProps {
+export interface IAdminManageAdminsDialogPublishProps {
     /**
      * List of current admins on the admin plugin.
      */
@@ -43,7 +43,7 @@ export interface IManageAdminsDialogPublishProps {
     close: () => void;
 }
 
-export const ManageAdminsDialogPublish: React.FC<IManageAdminsDialogPublishProps> = (props) => {
+export const AdminManageAdminsDialogPublish: React.FC<IAdminManageAdminsDialogPublishProps> = (props) => {
     const { currentAdmins, updatedAdmins, pluginAddress, daoId, close } = props;
 
     const { t } = useTranslations();
@@ -52,15 +52,15 @@ export const ManageAdminsDialogPublish: React.FC<IManageAdminsDialogPublishProps
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
 
-    const stepper = useStepper<ITransactionDialogStepMeta, ManageAdminsDialogPublishStep | TransactionDialogStep>({
-        initialActiveStep: ManageAdminsDialogPublishStep.PIN_METADATA,
+    const stepper = useStepper<ITransactionDialogStepMeta, AdminManageAdminsDialogPublishStep | TransactionDialogStep>({
+        initialActiveStep: AdminManageAdminsDialogPublishStep.PIN_METADATA,
     });
 
     const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = manageAdminsDialogPublishUtils.prepareProposalMetadata();
+            const proposalMetadata = adminManageAdminsDialogPublishUtils.prepareProposalMetadata();
             pinJson({ body: proposalMetadata }, params);
         },
         [pinJson],
@@ -78,27 +78,27 @@ export const ManageAdminsDialogPublish: React.FC<IManageAdminsDialogPublishProps
             daoAddress: dao.address as Hex,
         };
 
-        const actions = manageAdminsDialogPublishUtils.buildActionsArray(actionsParams);
+        const actions = adminManageAdminsDialogPublishUtils.buildActionsArray(actionsParams);
 
-        return manageAdminsDialogPublishUtils.buildTransaction({
-            values: manageAdminsDialogPublishUtils.prepareProposalMetadata(),
+        return adminManageAdminsDialogPublishUtils.buildTransaction({
+            values: adminManageAdminsDialogPublishUtils.prepareProposalMetadata(),
             actions,
             metadataCid,
             pluginAddress: pluginAddress as Hex,
         });
     };
 
-    const customSteps: Array<ITransactionDialogStep<ManageAdminsDialogPublishStep>> = useMemo(
+    const customSteps: Array<ITransactionDialogStep<AdminManageAdminsDialogPublishStep>> = useMemo(
         () => [
             {
-                id: ManageAdminsDialogPublishStep.PIN_METADATA,
+                id: AdminManageAdminsDialogPublishStep.PIN_METADATA,
                 order: 0,
                 meta: {
                     label: t(
-                        `app.plugins.admin.manageAdminsDialogPublish.step.${ManageAdminsDialogPublishStep.PIN_METADATA}.label`,
+                        `app.plugins.admin.manageAdminsDialogPublish.step.${AdminManageAdminsDialogPublishStep.PIN_METADATA}.label`,
                     ),
                     errorLabel: t(
-                        `app.plugins.admin.manageAdminsDialogPublish.step.${ManageAdminsDialogPublishStep.PIN_METADATA}.errorLabel`,
+                        `app.plugins.admin.manageAdminsDialogPublish.step.${AdminManageAdminsDialogPublishStep.PIN_METADATA}.errorLabel`,
                     ),
                     state: status,
                     action: handlePinJson,

@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { addressUtils, Button, type ICompositeAddress, IconType } from '@aragon/gov-ui-kit';
 import { Children, cloneElement, type ComponentProps, isValidElement, useMemo } from 'react';
-import { type Control, useFieldArray, useWatch } from 'react-hook-form';
+import { useFieldArray, useWatch } from 'react-hook-form';
 import { AddressesInputContextProvider } from '../addressesInputContext';
 
 export interface IAddressesInputContainerProps extends ComponentProps<'div'> {
@@ -14,11 +14,6 @@ export interface IAddressesInputContainerProps extends ComponentProps<'div'> {
      */
     name: string;
     /**
-     * The control object of the form.
-     */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    control?: Control<any>;
-    /**
      * Flag to determine if zero members are allowed in the list.
      */
     allowZeroMembers?: boolean;
@@ -27,7 +22,7 @@ export interface IAddressesInputContainerProps extends ComponentProps<'div'> {
 export type AddressListInputBaseForm = Record<string, ICompositeAddress[]>;
 
 export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = (props) => {
-    const { children, fieldPrefix, name, control, allowZeroMembers } = props;
+    const { children, fieldPrefix, name, allowZeroMembers } = props;
 
     const { t } = useTranslations();
 
@@ -39,7 +34,6 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
         remove: removeMember,
     } = useFieldArray<AddressListInputBaseForm>({
         name: membersFieldName,
-        control,
     });
 
     const watchMembersField = useWatch<AddressListInputBaseForm>({
