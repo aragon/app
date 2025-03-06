@@ -396,7 +396,28 @@
       }
     },
     "explore": {
-      "cta": {
+      "daoList": {
+        "emptyState": {
+          "description": "This will show relevant DAOs when available.",
+          "heading": "No DAOs found"
+        },
+        "entity": "DAOs",
+        "errorState": {
+          "description": "There was an error loading the DAOs. Please try again later.",
+          "heading": "Error loading DAOs"
+        },
+        "searchPlaceholder": "Filter by Name, Address or ENS"
+      },
+      "exploreDaosPage": {
+        "section": {
+          "daos": "Explore",
+          "cta": "Getting started",
+          "featured": "Featured"
+        },
+        "hero": {
+          "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance.",
+          "title": "Governed on Aragon"
+        },
         "doItYourself": {
           "actionLabel": "Developer portal",
           "subtitle": "Build your own custom Aragon OSx DAO or your own web application using our Governance UI Kit and App Template.",
@@ -411,23 +432,7 @@
           "actionLabel": "Create a DAO",
           "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
           "title": "No code setup"
-        },
-        "sectionTitle": "Getting started"
-      },
-      "daoList": {
-        "emptyState": {
-          "description": "This will show relevant DAOs when available.",
-          "heading": "No DAOs found"
-        },
-        "entity": "DAOs",
-        "errorState": {
-          "description": "There was an error loading the DAOs. Please try again later.",
-          "heading": "Error loading DAOs"
-        },
-        "searchPlaceholder": "Filter by Name, Address or ENS"
-      },
-      "exploreDaosPage": {
-        "sectionTitle": "Explore"
+        }
       },
       "exploreDao": {
         "createDao": "Create a DAO",
@@ -436,15 +441,8 @@
           "member": "Member"
         }
       },
-      "featured": {
-        "sectionTitle": "Featured"
-      },
       "exploreNav": {
         "legacyAppButtonLabel": "Legacy app"
-      },
-      "hero": {
-        "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance.",
-        "title": "Governed on Aragon"
       }
     },
     "finance": {

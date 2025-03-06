@@ -51,7 +51,7 @@ export const ExploreNav: React.FC = () => {
     return (
         <div
             className={classNames(
-                'sticky top-0 z-[var(--app-navbar-z-index)] w-full',
+                'sticky top-0 z-[var(--app-explore-navbar-z-index)] w-full',
                 isPostHero ? solidBg : gradientBg,
             )}
         >

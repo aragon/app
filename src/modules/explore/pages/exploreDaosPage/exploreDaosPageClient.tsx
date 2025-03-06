@@ -1,13 +1,18 @@
 'use client';
 
+import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import Image from 'next/image';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
-import { ExploreCta } from '../../components/exploreCta';
+import { CtaCard } from '../../components/ctaCard';
 import { ExploreDaos } from '../../components/exploreDao';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
-import Blueprint from './net_bg.svg';
+import doItYourselfIcon from './icons/doItYourselfIcon.svg';
+import enterpriseServiceIcon from './icons/enterpriseServiceIcon.svg';
+import Blueprint from './icons/net_bg.svg';
+import noCodeSetupIcon from './icons/noCodeSetup.svg';
 
 export interface IExploreDaosPageClientProps {
     /**
@@ -20,6 +25,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
     const { initialParams } = props;
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     return (
         <>
@@ -39,10 +45,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                     <div className="relative flex max-w-screen-xl flex-col items-start justify-center gap-2 self-stretch px-4 py-10 lg:px-6 lg:py-12">
                         <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch lg:gap-3">
                             <h1 className="text-2xl font-normal leading-tight text-neutral-0 lg:text-3xl">
-                                {t('app.explore.hero.title')}
+                                {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
                             <h3 className="text-base font-normal leading-normal text-primary-50 lg:text-xl">
-                                {t('app.explore.hero.subtitle')}
+                                {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>
                     </div>
@@ -50,11 +56,36 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
             </div>
 
             <main className="mx-auto flex max-w-screen-xl flex-col gap-10 px-4 py-10 md:gap-20 md:px-6 md:py-16">
-                <ExploreSection title={t('app.explore.exploreDaosPage.sectionTitle')}>
+                <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
                     <ExploreDaos initialParams={initialParams} />
                 </ExploreSection>
-                <ExploreSection title={t('app.explore.cta.sectionTitle')}>
-                    <ExploreCta />
+                <ExploreSection title={t('app.explore.exploreDaosPage.section.cta')}>
+                    <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-8">
+                        <CtaCard
+                            imgSrc={noCodeSetupIcon as string}
+                            title={t('app.explore.exploreDaosPage.noCodeSetup.title')}
+                            subtitle={t('app.explore.exploreDaosPage.noCodeSetup.subtitle')}
+                            isPrimary={true}
+                            actionLabel={t('app.explore.exploreDaosPage.noCodeSetup.actionLabel')}
+                            actionOnClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                        />
+                        <CtaCard
+                            imgSrc={enterpriseServiceIcon as string}
+                            title={t('app.explore.exploreDaosPage.enterpriseService.title')}
+                            subtitle={t('app.explore.exploreDaosPage.enterpriseService.subtitle')}
+                            isPrimary={false}
+                            actionLabel={t('app.explore.exploreDaosPage.enterpriseService.actionLabel')}
+                            actionHref="https://www.aragon.org/get-assistance-form"
+                        />
+                        <CtaCard
+                            imgSrc={doItYourselfIcon as string}
+                            title={t('app.explore.exploreDaosPage.doItYourself.title')}
+                            subtitle={t('app.explore.exploreDaosPage.doItYourself.subtitle')}
+                            isPrimary={false}
+                            actionLabel={t('app.explore.exploreDaosPage.doItYourself.actionLabel')}
+                            actionHref="https://docs.aragon.org/"
+                        />
+                    </div>
                 </ExploreSection>
             </main>
         </>

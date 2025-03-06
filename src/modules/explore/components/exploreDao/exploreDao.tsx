@@ -38,30 +38,28 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
         daoFilter === 'member' ? { urlParams: { address: address! }, queryParams: { sort: 'blockNumber' } } : undefined;
 
     return (
-        <div>
-            <div className="flex grow flex-col gap-3">
-                <div className="flex items-center justify-between">
-                    <div className="flex w-full items-center gap-x-2 md:gap-x-3">
-                        <ToggleGroup isMultiSelect={false} onChange={handleToggleChange} value={daoFilter}>
-                            <Toggle value="all" label={t('app.explore.exploreDao.filter.all')} />
-                            <Toggle
-                                value="member"
-                                label={t('app.explore.exploreDao.filter.member')}
-                                disabled={address == null}
-                            />
-                        </ToggleGroup>
-                    </div>
-                    <Button
-                        variant="primary"
-                        size="md"
-                        onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
-                        className="shrink-0"
-                    >
-                        {t('app.explore.exploreDao.createDao')}
-                    </Button>
+        <div className="flex grow flex-col gap-3">
+            <div className="flex items-center justify-between">
+                <div className="flex w-full items-center gap-x-2 md:gap-x-3">
+                    <ToggleGroup isMultiSelect={false} onChange={handleToggleChange} value={daoFilter}>
+                        <Toggle value="all" label={t('app.explore.exploreDao.filter.all')} />
+                        <Toggle
+                            value="member"
+                            label={t('app.explore.exploreDao.filter.member')}
+                            disabled={address == null}
+                        />
+                    </ToggleGroup>
                 </div>
-                <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />
+                <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                    className="shrink-0"
+                >
+                    {t('app.explore.exploreDao.createDao')}
+                </Button>
             </div>
+            <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />
         </div>
     );
 };
