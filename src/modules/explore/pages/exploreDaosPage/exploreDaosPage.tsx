@@ -5,7 +5,7 @@ import { daoListOptions } from '../../api/daoExplorerService';
 
 export interface IExploreDaosPageProps {}
 
-const daosPerPage = 20;
+const daosPerPage = 10;
 
 export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
     const queryClient = new QueryClient();

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoList } from '../../components/daoList';
+
 export interface IExploreDaosProps {
     /**
      * Initial parameters to use to fetch the list of DAOs.
