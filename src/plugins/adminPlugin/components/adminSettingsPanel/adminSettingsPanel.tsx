@@ -3,7 +3,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Card, IconType } from '@aragon/gov-ui-kit';
 import { AdminGovernanceInfo } from '../adminGovernanceInfo';
-import { AdminMangeAdmins } from '../adminManageMembers/adminManageMembers';
+import { AdminManageMembers } from '../adminManageMembers';
 
 export interface IAdminSettingsPanelProps {
     /**
@@ -28,7 +28,7 @@ export const AdminSettingsPanel: React.FC<IAdminSettingsPanelProps> = (props) =>
             <Card className="flex flex-col gap-4 p-6">
                 <AdminGovernanceInfo />
                 <div className="flex items-center justify-between">
-                    <AdminMangeAdmins daoId={daoId} />
+                    <AdminManageMembers daoId={daoId} />
                 </div>
             </Card>
         </Page.MainSection>
