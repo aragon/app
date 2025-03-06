@@ -813,7 +813,7 @@
           "proposalCreation": "Proposal creation",
           "proposalExecution": "Proposal execution"
         },
-        "adminManageAdmins": {
+        "adminManageMembers": {
           "button": "Manage admins",
           "dialog": {
             "addresses": {

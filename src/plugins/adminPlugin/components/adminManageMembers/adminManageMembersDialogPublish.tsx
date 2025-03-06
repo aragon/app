@@ -14,13 +14,13 @@ import { type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { type Hex } from 'viem';
-import { adminManageAdminsDialogPublishUtils } from './adminManageAdminsDialogPublishUtils';
+import { adminManageMembersDialogPublishUtils } from './adminManageMembersDialogPublishUtils';
 
-export enum AdminManageAdminsDialogPublishStep {
+export enum AdminManageMembersDialogPublishStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
-export interface IAdminManageAdminsDialogPublishProps {
+export interface IAdminManageMembersDialogPublishProps {
     /**
      * List of current admins on the admin plugin.
      */
@@ -40,11 +40,11 @@ export interface IAdminManageAdminsDialogPublishProps {
     /**
      * Callback to close the dialog.
      */
-    close: () => void;
+    onClose: () => void;
 }
 
-export const AdminManageAdminsDialogPublish: React.FC<IAdminManageAdminsDialogPublishProps> = (props) => {
-    const { currentAdmins, updatedAdmins, pluginAddress, daoId, close } = props;
+export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialogPublishProps> = (props) => {
+    const { currentAdmins, updatedAdmins, pluginAddress, daoId, onClose } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -52,15 +52,17 @@ export const AdminManageAdminsDialogPublish: React.FC<IAdminManageAdminsDialogPu
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
 
-    const stepper = useStepper<ITransactionDialogStepMeta, AdminManageAdminsDialogPublishStep | TransactionDialogStep>({
-        initialActiveStep: AdminManageAdminsDialogPublishStep.PIN_METADATA,
-    });
+    const stepper = useStepper<ITransactionDialogStepMeta, AdminManageMembersDialogPublishStep | TransactionDialogStep>(
+        {
+            initialActiveStep: AdminManageMembersDialogPublishStep.PIN_METADATA,
+        },
+    );
 
     const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = adminManageAdminsDialogPublishUtils.prepareProposalMetadata();
+            const proposalMetadata = adminManageMembersDialogPublishUtils.prepareProposalMetadata();
             pinJson({ body: proposalMetadata }, params);
         },
         [pinJson],
@@ -78,27 +80,27 @@ export const AdminManageAdminsDialogPublish: React.FC<IAdminManageAdminsDialogPu
             daoAddress: dao.address as Hex,
         };
 
-        const actions = adminManageAdminsDialogPublishUtils.buildActionsArray(actionsParams);
+        const actions = adminManageMembersDialogPublishUtils.buildActionsArray(actionsParams);
 
-        return adminManageAdminsDialogPublishUtils.buildTransaction({
-            values: adminManageAdminsDialogPublishUtils.prepareProposalMetadata(),
+        return adminManageMembersDialogPublishUtils.buildTransaction({
+            values: adminManageMembersDialogPublishUtils.prepareProposalMetadata(),
             actions,
             metadataCid,
             pluginAddress: pluginAddress as Hex,
         });
     };
 
-    const customSteps: Array<ITransactionDialogStep<AdminManageAdminsDialogPublishStep>> = useMemo(
+    const customSteps: Array<ITransactionDialogStep<AdminManageMembersDialogPublishStep>> = useMemo(
         () => [
             {
-                id: AdminManageAdminsDialogPublishStep.PIN_METADATA,
+                id: AdminManageMembersDialogPublishStep.PIN_METADATA,
                 order: 0,
                 meta: {
                     label: t(
-                        `app.plugins.admin.adminManageAdmins.dialog.publish.step.${AdminManageAdminsDialogPublishStep.PIN_METADATA}.label`,
+                        `app.plugins.admin.adminManageMembers.dialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.label`,
                     ),
                     errorLabel: t(
-                        `app.plugins.admin.adminManageAdmins.dialog.publish.step.${AdminManageAdminsDialogPublishStep.PIN_METADATA}.errorLabel`,
+                        `app.plugins.admin.adminManageMembers.dialog.publish.step.${AdminManageMembersDialogPublishStep.PIN_METADATA}.errorLabel`,
                     ),
                     state: status,
                     action: handlePinJson,
@@ -111,16 +113,16 @@ export const AdminManageAdminsDialogPublish: React.FC<IAdminManageAdminsDialogPu
 
     const onSuccessClick = () => {
         router.refresh();
-        close();
+        onClose();
     };
     return (
         <TransactionDialog
-            title={t('app.plugins.admin.adminManageAdmins.dialog.publish.title')}
-            description={t('app.plugins.admin.adminManageAdmins.dialog.publish.description')}
-            submitLabel={t('app.plugins.admin.adminManageAdmins.dialog.publish.button.submit')}
-            onCancelClick={close}
+            title={t('app.plugins.admin.adminManageMembers.dialog.publish.title')}
+            description={t('app.plugins.admin.adminManageMembers.dialog.publish.description')}
+            submitLabel={t('app.plugins.admin.adminManageMembers.dialog.publish.button.submit')}
+            onCancelClick={onClose}
             successLink={{
-                label: t('app.plugins.admin.adminManageAdmins.dialog.publish.button.success'),
+                label: t('app.plugins.admin.adminManageMembers.dialog.publish.button.success'),
                 onClick: onSuccessClick,
             }}
             stepper={stepper}

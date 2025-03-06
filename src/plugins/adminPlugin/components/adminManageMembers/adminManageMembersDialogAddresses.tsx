@@ -5,7 +5,7 @@ import { addressUtils, Dialog, type ICompositeAddress } from '@aragon/gov-ui-kit
 import { useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
-export interface IAdminManageAdminsDialogAddressesProps {
+export interface IAdminManageMembersDialogAddressesProps {
     /**
      * List of current admins on the admin plugin.
      */
@@ -13,14 +13,14 @@ export interface IAdminManageAdminsDialogAddressesProps {
     /**
      * Callback to handle the form submission.
      */
-    handleSubmitAddresses: (data: IAdminManageAdminsFormData) => void;
+    handleSubmitAddresses: (data: IAdminManageMembersFormData) => void;
     /**
      * Callback to close the dialog.
      */
-    close: () => void;
+    onClose: () => void;
 }
 
-export interface IAdminManageAdminsFormData {
+export interface IAdminManageMembersFormData {
     /**
      * List of members in the form.
      */
@@ -29,14 +29,14 @@ export interface IAdminManageAdminsFormData {
 
 const formId = 'manageAdminsForm';
 
-export const AdminManageAdminsDialogAddresses: React.FC<IAdminManageAdminsDialogAddressesProps> = (props) => {
-    const { currentAdmins, close, handleSubmitAddresses } = props;
+export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDialogAddressesProps> = (props) => {
+    const { currentAdmins, onClose, handleSubmitAddresses } = props;
 
     const { t } = useTranslations();
 
     const initialMembers = currentAdmins.map((member) => ({ address: member.address }));
 
-    const formMethods = useForm<IAdminManageAdminsFormData>({
+    const formMethods = useForm<IAdminManageMembersFormData>({
         defaultValues: {
             members: initialMembers,
         },
@@ -63,8 +63,11 @@ export const AdminManageAdminsDialogAddresses: React.FC<IAdminManageAdminsDialog
     return (
         <>
             <FormProvider {...formMethods}>
-                <Dialog.Header title={t('app.plugins.admin.adminManageAdmins.dialog.addresses.title')} />
-                <Dialog.Content description={t('app.plugins.admin.adminManageAdmins.dialog.addresses.description')}>
+                <Dialog.Header
+                    onClose={onClose}
+                    title={t('app.plugins.admin.adminManageMembers.dialog.addresses.title')}
+                />
+                <Dialog.Content description={t('app.plugins.admin.adminManageMembers.dialog.addresses.description')}>
                     <form
                         className="flex w-full flex-col gap-3 pb-6 md:gap-2"
                         onSubmit={handleSubmit(handleSubmitAddresses)}
@@ -79,14 +82,14 @@ export const AdminManageAdminsDialogAddresses: React.FC<IAdminManageAdminsDialog
                 </Dialog.Content>
                 <Dialog.Footer
                     primaryAction={{
-                        label: t('app.plugins.admin.adminManageAdmins.dialog.addresses.action.update'),
+                        label: t('app.plugins.admin.adminManageMembers.dialog.addresses.action.update'),
                         type: 'submit',
                         form: formId,
                         disabled: !haveMembersChanged,
                     }}
                     secondaryAction={{
-                        label: t('app.plugins.admin.adminManageAdmins.dialog.addresses.action.cancel'),
-                        onClick: close,
+                        label: t('app.plugins.admin.adminManageMembers.dialog.addresses.action.cancel'),
+                        onClick: onClose,
                     }}
                 />
             </FormProvider>

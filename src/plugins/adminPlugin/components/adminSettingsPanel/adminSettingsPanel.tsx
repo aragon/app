@@ -3,7 +3,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Card, IconType } from '@aragon/gov-ui-kit';
 import { AdminGovernanceInfo } from '../adminGovernanceInfo';
-import { AdminMangeAdmins } from '../adminManageAdmins/adminManageAdmins';
+import { AdminMangeAdmins } from '../adminManageMembers/adminManageMembers';
 
 export interface IAdminSettingsPanelProps {
     /**

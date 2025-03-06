@@ -1,10 +1,10 @@
 import { useMemberList } from '@/modules/governance/api/governanceService';
 import { Dialog, type ICompositeAddress, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
-import { AdminManageAdminsDialogAddresses } from './adminManageAdminsDialogAddresses';
-import { AdminManageAdminsDialogPublish } from './adminManageAdminsDialogPublish';
+import { AdminManageMembersDialogAddresses } from './adminManageMembersDialogAddresses';
+import { AdminManageMembersDialogPublish } from './adminManageMembersDialogPublish';
 
-export interface IAdminManageAdminsDialogProps extends IDialogRootProps {
+export interface IAdminManageMembersDialogProps extends IDialogRootProps {
     /**
      * ID of the DAO.
      */
@@ -15,14 +15,14 @@ export interface IAdminManageAdminsDialogProps extends IDialogRootProps {
     pluginAddress: string;
 }
 
-export interface IManageAdminsFormData {
+export interface IManageMembersFormData {
     /**
      * List of members in the form.
      */
     members: ICompositeAddress[];
 }
 
-export const AdminManageAdminsDialog: React.FC<IAdminManageAdminsDialogProps> = (props) => {
+export const AdminManageAdminsDialog: React.FC<IAdminManageMembersDialogProps> = (props) => {
     const { onOpenChange, daoId, pluginAddress, ...otherProps } = props;
 
     const [updatedAdmins, setUpdatedAdmins] = useState<ICompositeAddress[]>([]);
@@ -36,7 +36,7 @@ export const AdminManageAdminsDialog: React.FC<IAdminManageAdminsDialogProps> = 
 
     const [showPublishManageAdmins, setShowPublishManageAdmins] = useState(false);
 
-    const handleSubmitAddresses = (data: IManageAdminsFormData) => {
+    const handleSubmitAddresses = (data: IManageMembersFormData) => {
         setUpdatedAdmins(data.members);
         setShowPublishManageAdmins(true);
     };
@@ -51,17 +51,17 @@ export const AdminManageAdminsDialog: React.FC<IAdminManageAdminsDialogProps> = 
     return (
         <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
             {showPublishManageAdmins ? (
-                <AdminManageAdminsDialogPublish
+                <AdminManageMembersDialogPublish
                     currentAdmins={currentAdmins ?? []}
                     updatedAdmins={updatedAdmins}
                     pluginAddress={pluginAddress}
                     daoId={daoId}
-                    close={onClose}
+                    onClose={onClose}
                 />
             ) : (
-                <AdminManageAdminsDialogAddresses
+                <AdminManageMembersDialogAddresses
                     currentAdmins={currentAdmins ?? []}
-                    close={onClose}
+                    onClose={onClose}
                     handleSubmitAddresses={handleSubmitAddresses}
                 />
             )}

@@ -5,9 +5,9 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import * as Viem from 'viem';
 import { adminTransactionUtils } from '../../utils/adminTransactionUtils';
-import { adminManageAdminsDialogPublishUtils } from './adminManageAdminsDialogPublishUtils';
+import { adminManageMembersDialogPublishUtils } from './adminManageMembersDialogPublishUtils';
 
-describe('AdminManageAdminsDialogPublishUtils', () => {
+describe('AdminManageMembersDialogPublishUtils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
     const buildCreateProposalDataSpy = jest.spyOn(adminTransactionUtils, 'buildCreateProposalData');
@@ -22,8 +22,8 @@ describe('AdminManageAdminsDialogPublishUtils', () => {
 
     describe('prepareProposalMetadata', () => {
         it('returns metadata for the prepare-process proposal', () => {
-            const result = adminManageAdminsDialogPublishUtils.prepareProposalMetadata();
-            expect(result).toEqual(adminManageAdminsDialogPublishUtils['proposalMetadata']);
+            const result = adminManageMembersDialogPublishUtils.prepareProposalMetadata();
+            expect(result).toEqual(adminManageMembersDialogPublishUtils['proposalMetadata']);
         });
     });
 
@@ -50,7 +50,7 @@ describe('AdminManageAdminsDialogPublishUtils', () => {
 
             encodeFunctionDataSpy.mockReturnValueOnce(encodedGrantData).mockReturnValueOnce(encodedRevokeData);
 
-            const result = adminManageAdminsDialogPublishUtils.buildActionsArray({
+            const result = adminManageMembersDialogPublishUtils.buildActionsArray({
                 currentAdmins,
                 updatedAdmins,
                 pluginAddress,
@@ -82,7 +82,7 @@ describe('AdminManageAdminsDialogPublishUtils', () => {
         it('correctly builds the transaction object using the actions array', async () => {
             const to = '0xDao' as Hex;
             const value = '0';
-            const values = adminManageAdminsDialogPublishUtils.prepareProposalMetadata();
+            const values = adminManageMembersDialogPublishUtils.prepareProposalMetadata();
             const actions = [
                 { to, value, data: '0xAction1' },
                 { to, value, data: '0xAction2' },
@@ -96,7 +96,7 @@ describe('AdminManageAdminsDialogPublishUtils', () => {
             cidToHexSpy.mockReturnValue(metadataResult);
             buildCreateProposalDataSpy.mockReturnValue(proposalDataResult);
 
-            const transaction = await adminManageAdminsDialogPublishUtils.buildTransaction({
+            const transaction = await adminManageMembersDialogPublishUtils.buildTransaction({
                 values,
                 actions,
                 metadataCid,
