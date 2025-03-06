@@ -95,6 +95,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     };
 
     const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2';
+    const emptyListLayoutClassNames = 'grid grid-cols-1';
 
     return (
         <DataListRoot
@@ -112,7 +113,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}
-                className={processedLayoutClassNames}
+                className={!daoList || daoList.length == 0 ? emptyListLayoutClassNames : processedLayoutClassNames}
                 SkeletonElement={DaoDataListItem.Skeleton}
             >
                 {daoList?.map((dao) => (
