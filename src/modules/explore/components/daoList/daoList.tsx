@@ -104,7 +104,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             state={state}
             pageSize={pageSize}
             itemsCount={itemsCount}
-            className="gap-0"
+            className="!gap-2 md:!gap-6" // TODO: should this be applied to ui-kit?
         >
             <DataListFilter
                 onSearchValueChange={setSearchValue}
