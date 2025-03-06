@@ -1358,8 +1358,28 @@
           "entity": "Votes"
         },
         "tokenWrapForm": {
+          "dialog": {
+            "success": "View members",
+            "unwrap": {
+              "description": "To unwrap the tokens you have to confirm the onchain transaction with your wallet.",
+              "submit": "Unwrap tokens",
+              "title": "Unwrap tokens"
+            },
+            "wrap": {
+              "description": "To wrap the tokens you have to confirm the onchain transaction with your wallet.",
+              "submit": "Wrap tokens",
+              "title": "Wrap tokens"
+            }
+          },
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to increase your voting power.",
+          "percentage": {
+            "0": "None",
+            "100": "100%",
+            "25": "25%",
+            "50": "50%",
+            "75": "75%"
+          },
           "submit": {
             "unwrap": "Unwrap {{amount}} {{symbol}}",
             "wrap": "Wrap {{underlyingSymbol}}"

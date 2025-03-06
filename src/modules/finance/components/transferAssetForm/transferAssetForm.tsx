@@ -38,6 +38,8 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
 
+    const fetchAssetsParams = { queryParams: { address: sender, network } };
+
     return (
         <div className="flex w-full flex-col gap-6">
             <AddressInput
@@ -49,7 +51,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
                 onAccept={onReceiverChange}
                 {...receiverField}
             />
-            <AssetInput sender={sender} network={network} />
+            <AssetInput fetchAssetsParams={fetchAssetsParams} fieldPrefix={fieldPrefix} />
         </div>
     );
 };
