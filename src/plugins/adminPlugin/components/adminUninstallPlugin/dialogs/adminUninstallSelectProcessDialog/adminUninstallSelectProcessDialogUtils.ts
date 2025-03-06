@@ -1,6 +1,6 @@
 import type { ICreateProposalFormData, IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
-import { ICreateProposalStartDateForm } from '@/modules/governance/utils/createProposalUtils';
+import type { ICreateProposalStartDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';

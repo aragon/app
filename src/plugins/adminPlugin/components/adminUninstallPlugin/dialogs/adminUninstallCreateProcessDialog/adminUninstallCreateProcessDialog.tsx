@@ -31,7 +31,7 @@ export const AdminUninstallCreateProcessDialog: React.FC<IAdminUninstallCreatePr
     const router = useRouter();
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.plugins.admin.adminUninstallCreateProcessDialog';
+    const keyNamespace = 'app.plugins.admin.adminUninstallEntry.adminUninstallCreateProcessDialog';
 
     const handlePermissionGuardSuccess = useCallback(() => {
         router.push(`/dao/${daoId}/create/process`);

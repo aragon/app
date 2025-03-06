@@ -8,7 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { DialogAlert, DialogAlertFooter } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { Hex } from 'viem';
+import type { Hex } from 'viem';
 import { adminUninstallSelectProcessDialogUtils } from './adminUninstallSelectProcessDialogUtils';
 
 export interface IAdminUninstallSelectProcessDialogProps {
@@ -35,7 +35,7 @@ export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectPr
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(adminPlugin);
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.plugins.admin.adminUninstallSelectProcessDialog';
+    const keyNamespace = 'app.plugins.admin.adminUninstallEntry.adminUninstallSelectProcessDialog';
 
     const { open } = useDialogContext();
 
