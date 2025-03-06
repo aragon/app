@@ -1,5 +1,4 @@
-import { Button, IconType } from '@aragon/gov-ui-kit';
-import { Heading } from '@aragon/gov-ui-kit-original';
+import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
 import type React from 'react';

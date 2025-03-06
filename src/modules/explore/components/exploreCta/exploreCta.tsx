@@ -29,7 +29,7 @@ export const ExploreCta: React.FC = () => {
                 subtitle={t('app.explore.cta.enterpriseService.subtitle')}
                 isPrimary={false}
                 actionLabel={t('app.explore.cta.enterpriseService.actionLabel')}
-                actionHref={'https://www.aragon.org/get-assistance-form'}
+                actionHref="https://www.aragon.org/get-assistance-form"
             />
             <CtaCard
                 imgSrc={doItYourselfIcon as string}
@@ -37,7 +37,7 @@ export const ExploreCta: React.FC = () => {
                 subtitle={t('app.explore.cta.doItYourself.subtitle')}
                 isPrimary={false}
                 actionLabel={t('app.explore.cta.doItYourself.actionLabel')}
-                actionHref={'https://docs.aragon.org/'}
+                actionHref="https://docs.aragon.org/"
             />
         </div>
     );

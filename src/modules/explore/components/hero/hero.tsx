@@ -1,7 +1,7 @@
 'use client';
 
-import { Image } from '@/shared/components/image';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import Image from 'next/image';
 import Blueprint from './net_bg.svg';
 
 export const Hero = () => {
@@ -18,6 +18,7 @@ export const Hero = () => {
                     src={Blueprint as string}
                     alt="Background Texture"
                     className="absolute left-0 top-0 size-full object-cover"
+                    priority={true}
                 />
                 {/* Wrapper*/}
                 <div className="relative flex max-w-screen-xl flex-col items-start justify-center gap-2 self-stretch px-4 py-10 lg:px-6 lg:py-12">
