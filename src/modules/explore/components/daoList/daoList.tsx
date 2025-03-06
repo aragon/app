@@ -112,7 +112,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                 errorState={errorState}
                 emptyState={emptyState}
                 SkeletonElement={DaoDataListItem.Skeleton}
-                layoutClassName="grid grid-cols-1 lg:grid-cols-2"
+                layoutClassName={layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2'}
             >
                 {daoList?.map((dao) => (
                     <DaoDataListItem.Structure
