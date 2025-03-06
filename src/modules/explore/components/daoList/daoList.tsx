@@ -95,9 +95,6 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         description: t('app.explore.daoList.errorState.description'),
     };
 
-    const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2';
-    const emptyListLayoutClassNames = 'grid grid-cols-1';
-
     return (
         <DataListRoot
             entityLabel={t('app.explore.daoList.entity')}
@@ -105,7 +102,6 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             state={state}
             pageSize={pageSize}
             itemsCount={itemsCount}
-            className="!gap-2 md:!gap-6" // TODO: should this be applied to ui-kit?
         >
             <DataListFilter
                 onSearchValueChange={setSearchValue}
@@ -115,8 +111,8 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}
-                className={!daoList || daoList.length == 0 ? emptyListLayoutClassNames : processedLayoutClassNames}
                 SkeletonElement={DaoDataListItem.Skeleton}
+                layoutClassName="grid grid-cols-1 lg:grid-cols-2"
             >
                 {daoList?.map((dao) => (
                     <DaoDataListItem.Structure

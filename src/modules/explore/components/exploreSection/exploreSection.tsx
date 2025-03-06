@@ -1,5 +1,5 @@
 import { Heading } from '@aragon/gov-ui-kit';
-import type React from 'react';
+import classNames from 'classnames';
 import { type ComponentProps } from 'react';
 
 export interface IExploreSectionProps extends ComponentProps<'section'> {
@@ -9,10 +9,12 @@ export interface IExploreSectionProps extends ComponentProps<'section'> {
     title: string;
 }
 
-export const ExploreSection: React.FC<IExploreSectionProps> = ({ children, title }) => {
+export const ExploreSection: React.FC<IExploreSectionProps> = (props) => {
+    const { children, title, className, ...otherProps } = props;
+
     return (
-        <section>
-            <Heading size="h1" as="h2" className="mb-4 xl:mb-6">
+        <section className={classNames('flex flex-col gap-4 md:gap-6', className)} {...otherProps}>
+            <Heading size="h1" as="h2">
                 {title}
             </Heading>
             {children}

@@ -2,6 +2,7 @@
 
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -18,6 +19,7 @@ export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();
     const walletUser = address != null ? { address } : undefined;
     const { open } = useDialogContext();
+    const { t } = useTranslations();
 
     const [isPostHero, setIsPostHero] = useState(false);
 
@@ -46,10 +48,6 @@ export const ExploreNav: React.FC = () => {
         open(dialog);
     };
 
-    const handleLegacyAppClick = () => {
-        window.open('https://app.aragon.org/', '_blank');
-    };
-
     return (
         <div
             className={classNames(
@@ -58,7 +56,6 @@ export const ExploreNav: React.FC = () => {
             )}
         >
             <header className="mx-auto flex max-w-screen-xl items-center justify-between gap-6 self-stretch px-4 py-3 xl:gap-12 xl:px-6 xl:py-5">
-                {/*Left - Logo*/}
                 <div className="h-10">
                     <Link href="/">
                         <Logo className="block md:hidden" />
@@ -66,16 +63,16 @@ export const ExploreNav: React.FC = () => {
                     </Link>
                 </div>
 
-                {/*Right - Navigation Group*/}
                 <nav className="flex items-center justify-end gap-4 xl:gap-6">
                     <Button
                         variant="tertiary"
                         iconRight={IconType.LINK_EXTERNAL}
-                        onClick={handleLegacyAppClick}
+                        href="https://app.aragon.org/"
+                        target="_blank noopener noreferrer"
                         size="sm"
                         responsiveSize={{ lg: 'md' }}
                     >
-                        Legacy app
+                        {t('app.explore.exploreNav.legacyAppButtonLabel')}
                     </Button>
                     <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
                 </nav>

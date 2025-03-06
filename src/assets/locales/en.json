@@ -427,15 +427,20 @@
         "searchPlaceholder": "Filter by Name, Address or ENS"
       },
       "exploreDaosPage": {
+        "sectionTitle": "Explore"
+      },
+      "exploreDao": {
         "createDao": "Create a DAO",
         "filter": {
           "all": "All DAOs",
           "member": "Member"
-        },
-        "sectionTitle": "Explore"
+        }
       },
       "featured": {
         "sectionTitle": "Featured"
+      },
+      "exploreNav": {
+        "legacyAppButtonLabel": "Legacy app"
       },
       "hero": {
         "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance.",

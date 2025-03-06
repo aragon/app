@@ -21,7 +21,7 @@ export const ExploreCta: React.FC = () => {
                 subtitle={t('app.explore.cta.noCodeSetup.subtitle')}
                 isPrimary={true}
                 actionLabel={t('app.explore.cta.noCodeSetup.actionLabel')}
-                onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                actionOnClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
             />
             <CtaCard
                 imgSrc={enterpriseServiceIcon as string}

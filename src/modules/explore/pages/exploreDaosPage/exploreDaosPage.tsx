@@ -1,7 +1,7 @@
-import { ExploreDaosPageClient } from '@/modules/explore/pages/exploreDaosPage/exploreDaosPageClient';
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
 import { daoListOptions } from '../../api/daoExplorerService';
+import { ExploreDaosPageClient } from './exploreDaosPageClient';
 
 export interface IExploreDaosPageProps {}
 
