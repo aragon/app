@@ -5,12 +5,13 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
-import { Logo } from './logo';
-import { Logotype } from './logotype';
+import AragonLogo from './icons/logo.svg';
+import AragonLogotype from './icons/logotype.svg';
 
 const gradientBg = 'bg-gradient-to-b from-primary-400 to-transparent';
 const solidBg = 'bg-primary-400';
@@ -30,8 +31,9 @@ export const ExploreNav: React.FC = () => {
             const heroElement = document.querySelector('#explore-page-hero');
             if (heroElement) {
                 const heroRect = heroElement.getBoundingClientRect();
+
                 // Consider navbar height (72px) plus small margin to avoid flickering
-                setIsPostHero(heroRect.bottom <= 80);
+                setIsPostHero(heroRect.bottom <= 90);
             }
         };
 
@@ -58,8 +60,20 @@ export const ExploreNav: React.FC = () => {
             <header className="mx-auto flex max-w-screen-xl items-center justify-between gap-6 self-stretch px-4 py-3 xl:gap-12 xl:px-6 xl:py-5">
                 <div className="h-10">
                     <Link href="/">
-                        <Logo className="block md:hidden" />
-                        <Logotype className="hidden md:block" />
+                        <Image
+                            src={AragonLogo as string}
+                            alt="Aragon logo"
+                            className="block min-w-10 md:hidden"
+                            priority={true}
+                        />
+                        <Image
+                            src={AragonLogotype as string}
+                            alt="Aragon logo"
+                            className="hidden md:block"
+                            priority={true}
+                        />
+                        {/*<Logo className="block md:hidden" />*/}
+                        {/*<Logotype className="hidden md:block" />*/}
                     </Link>
                 </div>
 

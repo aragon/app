@@ -11,7 +11,7 @@ import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
 import doItYourselfIcon from './icons/doItYourselfIcon.svg';
 import enterpriseServiceIcon from './icons/enterpriseServiceIcon.svg';
-import Blueprint from './icons/net_bg.svg';
+import NetBackground from './icons/net_bg.svg';
 import noCodeSetupIcon from './icons/noCodeSetup.svg';
 
 export interface IExploreDaosPageClientProps {
@@ -36,7 +36,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
             >
                 <div className="mx-auto w-full max-w-screen-xl">
                     <Image
-                        src={Blueprint as string}
+                        src={NetBackground as string}
                         alt="Background Texture"
                         className="absolute left-0 top-0 size-full object-cover"
                         priority={true}
