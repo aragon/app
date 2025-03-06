@@ -6,7 +6,6 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
-    addressUtils,
     DaoDataListItem,
     DataListContainer,
     DataListFilter,
@@ -119,7 +118,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         key={dao.id}
                         href={`/dao/${dao.id}/dashboard`}
                         ens={daoUtils.getDaoEns(dao)}
-                        address={addressUtils.truncateAddress(dao.address)}
+                        address={dao.address}
                         name={dao.name}
                         description={dao.description}
                         network={networkDefinitions[dao.network].name}
