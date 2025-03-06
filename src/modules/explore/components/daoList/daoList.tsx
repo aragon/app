@@ -104,6 +104,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             state={state}
             pageSize={pageSize}
             itemsCount={itemsCount}
+            className="gap-0"
         >
             <DataListFilter
                 onSearchValueChange={setSearchValue}
