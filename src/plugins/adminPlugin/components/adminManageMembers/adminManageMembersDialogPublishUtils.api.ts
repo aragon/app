@@ -1,5 +1,5 @@
 import type { IMember } from '@/modules/governance/api/governanceService';
-import type { ICompositeAddress } from '@aragon/gov-ui-kit';
+import type { ICompositeAddress, IProposalAction } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 
 export interface IBuildActionsArrayParams {
@@ -21,41 +21,11 @@ export interface IBuildActionsArrayParams {
     daoAddress: Hex;
 }
 
-interface GrantOrRevokeTransaction {
-    /**
-     * Address to which the transaction is sent.
-     */
-    to: Hex;
-    /**
-     * Value of the transaction.
-     */
-    value: string;
-    /**
-     * Encoded transaction data to be decoded.
-     */
-    data: string;
-}
-
-interface IProposalMetadata {
-    /**
-     * Title of the proposal.
-     */
-    title: string;
-    /**
-     * Short description of the proposal.
-     */
-    summary: string;
-}
-
 export interface IBuildTransactionParams {
-    /**
-     *   Proposal values (title and description).
-     */
-    values: IProposalMetadata;
     /**
      * Array of grant or revoke actions to be executed by the proposal.
      */
-    actions: GrantOrRevokeTransaction[];
+    actions: Array<Pick<IProposalAction, 'to' | 'value' | 'data'>>;
     /**
      * CID of the proposal metadata pinned on IPFS.
      */

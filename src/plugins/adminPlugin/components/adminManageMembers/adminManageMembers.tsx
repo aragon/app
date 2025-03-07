@@ -13,7 +13,7 @@ export interface IAdminMangeMembersProps {
     daoId: string;
 }
 
-export const AdminMangeMembers: React.FC<IAdminMangeMembersProps> = (props) => {
+export const AdminManageMembers: React.FC<IAdminMangeMembersProps> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();

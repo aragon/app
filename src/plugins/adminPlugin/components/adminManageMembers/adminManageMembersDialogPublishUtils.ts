@@ -56,14 +56,15 @@ class AdminManageMembersDialogPublishUtils {
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { values, actions, metadataCid, pluginAddress } = params;
+        const { actions, metadataCid, pluginAddress } = params;
 
         const metadata = transactionUtils.cidToHex(metadataCid);
 
-        const processedValues = { ...values, addActions: false, resources: [], actions: [] };
-
-        const buildDataParams: IBuildCreateProposalDataParams = { actions, metadata, values: processedValues };
-        const transactionData = adminTransactionUtils.buildCreateProposalData(buildDataParams);
+        const transactionData = adminTransactionUtils.buildCreateProposalData({
+            actions,
+            metadata,
+            values: {} as IBuildCreateProposalDataParams['values'],
+        });
 
         const transaction: TransactionDialogPrepareReturn = {
             to: pluginAddress,

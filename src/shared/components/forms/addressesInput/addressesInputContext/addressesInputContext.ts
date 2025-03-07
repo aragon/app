@@ -1,4 +1,4 @@
-import { type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
+import { invariant } from '@aragon/gov-ui-kit';
 import { createContext, useContext } from 'react';
 
 export interface IAddressesInputContext {
@@ -11,24 +11,12 @@ export interface IAddressesInputContext {
      */
     onRemoveMember: (index: number) => void;
     /**
-     * Callback to check if an address is already in the list.
-     */
-    checkIsAlreadyInList: (index: number) => boolean;
-    /**
      * Flag to determine if zero members are allowed in the list.
      */
     allowZeroMembers?: boolean;
-    /**
-     * The members array.
-     */
-    membersField: ICompositeAddress[];
-    /**
-     * Callback to add a new member.
-     */
-    addMember: () => void;
 }
 
-export const addressesInputContext = createContext<IAddressesInputContext | null>(null);
+const addressesInputContext = createContext<IAddressesInputContext | null>(null);
 
 export const AddressesInputContextProvider = addressesInputContext.Provider;
 

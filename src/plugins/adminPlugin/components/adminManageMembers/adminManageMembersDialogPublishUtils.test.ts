@@ -7,7 +7,7 @@ import * as Viem from 'viem';
 import { adminTransactionUtils } from '../../utils/adminTransactionUtils';
 import { adminManageMembersDialogPublishUtils } from './adminManageMembersDialogPublishUtils';
 
-describe('AdminManageMembersDialogPublishUtils', () => {
+describe('adminManageMembersDialogPublish utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
     const buildCreateProposalDataSpy = jest.spyOn(adminTransactionUtils, 'buildCreateProposalData');
@@ -82,7 +82,6 @@ describe('AdminManageMembersDialogPublishUtils', () => {
         it('correctly builds the transaction object using the actions array', async () => {
             const to = '0xDao' as Hex;
             const value = '0';
-            const values = adminManageMembersDialogPublishUtils.prepareProposalMetadata();
             const actions = [
                 { to, value, data: '0xAction1' },
                 { to, value, data: '0xAction2' },
@@ -97,7 +96,6 @@ describe('AdminManageMembersDialogPublishUtils', () => {
             buildCreateProposalDataSpy.mockReturnValue(proposalDataResult);
 
             const transaction = await adminManageMembersDialogPublishUtils.buildTransaction({
-                values,
                 actions,
                 metadataCid,
                 pluginAddress,
@@ -107,7 +105,7 @@ describe('AdminManageMembersDialogPublishUtils', () => {
             expect(buildCreateProposalDataSpy).toHaveBeenCalledWith({
                 actions,
                 metadata: metadataResult,
-                values: { ...values, addActions: false, resources: [], actions: [] },
+                values: {},
             });
 
             expect(transaction).toEqual({

@@ -83,7 +83,6 @@ export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialog
         const actions = adminManageMembersDialogPublishUtils.buildActionsArray(actionsParams);
 
         return adminManageMembersDialogPublishUtils.buildTransaction({
-            values: adminManageMembersDialogPublishUtils.prepareProposalMetadata(),
             actions,
             metadataCid,
             pluginAddress: pluginAddress as Hex,
@@ -115,6 +114,7 @@ export const AdminManageMembersDialogPublish: React.FC<IAdminManageMembersDialog
         router.refresh();
         onClose();
     };
+
     return (
         <TransactionDialog
             title={t('app.plugins.admin.adminManageMembers.dialog.publish.title')}

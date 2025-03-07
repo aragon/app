@@ -11,7 +11,8 @@ import {
     type ICompositeAddress,
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState, type ComponentProps } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
+import type { AddressListInputBaseForm } from '../addressesInputContainer/addressesInputContainer';
 import { useAddressesInputContext } from '../addressesInputContext';
 
 export interface IAddressesInputItemProps extends ComponentProps<'div'> {
@@ -40,7 +41,14 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
 
     const { trigger } = useFormContext();
 
-    const { fieldName, onRemoveMember, checkIsAlreadyInList, membersField } = useAddressesInputContext();
+    const { fieldName, onRemoveMember } = useAddressesInputContext();
+
+    const membersField = useWatch<AddressListInputBaseForm>({ name: fieldName });
+
+    const checkIsAlreadyInList = (currentIndex: number) =>
+        membersField
+            .slice(0, currentIndex)
+            .some((field) => addressUtils.isAddressEqual(field.address, membersField[currentIndex].address));
 
     const isAlreadyInList = checkIsAlreadyInList(index);
     const canRemove = membersField.length > 1;

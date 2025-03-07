@@ -61,38 +61,33 @@ export const AdminManageMembersDialogAddresses: React.FC<IAdminManageMembersDial
     }, [watchMembersField, currentAdmins]);
 
     return (
-        <>
-            <FormProvider {...formMethods}>
-                <Dialog.Header
-                    onClose={onClose}
-                    title={t('app.plugins.admin.adminManageMembers.dialog.addresses.title')}
-                />
-                <Dialog.Content description={t('app.plugins.admin.adminManageMembers.dialog.addresses.description')}>
-                    <form
-                        className="flex w-full flex-col gap-3 pb-6 md:gap-2"
-                        onSubmit={handleSubmit(handleSubmitAddresses)}
-                        id={formId}
-                    >
-                        <AddressesInput.Container name="members" allowZeroMembers={true}>
-                            {watchMembersField.map((field, index) => (
-                                <AddressesInput.Item key={index} index={index} />
-                            ))}
-                        </AddressesInput.Container>
-                    </form>
-                </Dialog.Content>
-                <Dialog.Footer
-                    primaryAction={{
-                        label: t('app.plugins.admin.adminManageMembers.dialog.addresses.action.update'),
-                        type: 'submit',
-                        form: formId,
-                        disabled: !haveMembersChanged,
-                    }}
-                    secondaryAction={{
-                        label: t('app.plugins.admin.adminManageMembers.dialog.addresses.action.cancel'),
-                        onClick: onClose,
-                    }}
-                />
-            </FormProvider>
-        </>
+        <FormProvider {...formMethods}>
+            <Dialog.Header onClose={onClose} title={t('app.plugins.admin.adminManageMembers.dialog.addresses.title')} />
+            <Dialog.Content description={t('app.plugins.admin.adminManageMembers.dialog.addresses.description')}>
+                <form
+                    className="flex w-full flex-col gap-3 pb-6 md:gap-2"
+                    onSubmit={handleSubmit(handleSubmitAddresses)}
+                    id={formId}
+                >
+                    <AddressesInput.Container name="members" allowEmptyList={true}>
+                        {watchMembersField.map((field, index) => (
+                            <AddressesInput.Item key={index} index={index} />
+                        ))}
+                    </AddressesInput.Container>
+                </form>
+            </Dialog.Content>
+            <Dialog.Footer
+                primaryAction={{
+                    label: t('app.plugins.admin.adminManageMembers.dialog.addresses.action.update'),
+                    type: 'submit',
+                    form: formId,
+                    disabled: !haveMembersChanged,
+                }}
+                secondaryAction={{
+                    label: t('app.plugins.admin.adminManageMembers.dialog.addresses.action.cancel'),
+                    onClick: onClose,
+                }}
+            />
+        </FormProvider>
     );
 };

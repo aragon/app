@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, Button, type ICompositeAddress, IconType } from '@aragon/gov-ui-kit';
-import { Children, cloneElement, type ComponentProps, isValidElement, useMemo } from 'react';
-import { useFieldArray, useWatch } from 'react-hook-form';
+import { Button, type ICompositeAddress, IconType } from '@aragon/gov-ui-kit';
+import { Children, cloneElement, type ComponentProps, isValidElement } from 'react';
+import { useFieldArray } from 'react-hook-form';
 import { AddressesInputContextProvider } from '../addressesInputContext';
 
 export interface IAddressesInputContainerProps extends ComponentProps<'div'> {
@@ -14,15 +14,15 @@ export interface IAddressesInputContainerProps extends ComponentProps<'div'> {
      */
     name: string;
     /**
-     * Flag to determine if zero members are allowed in the list.
+     * Flag to determine if the list can be empty.
      */
-    allowZeroMembers?: boolean;
+    allowEmptyList?: boolean;
 }
 
 export type AddressListInputBaseForm = Record<string, ICompositeAddress[]>;
 
 export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = (props) => {
-    const { children, fieldPrefix, name, allowZeroMembers } = props;
+    const { children, fieldPrefix, name, allowEmptyList } = props;
 
     const { t } = useTranslations();
 
@@ -36,17 +36,8 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
         name: membersFieldName,
     });
 
-    const watchMembersField = useWatch<AddressListInputBaseForm>({
-        name: membersFieldName,
-    });
-
-    const controlledMembersField = useMemo(
-        () => membersField.map((field, index) => ({ ...field, ...watchMembersField[index] })),
-        [membersField, watchMembersField],
-    );
-
     const handleRemoveMember = (index: number) => {
-        if (allowZeroMembers) {
+        if (allowEmptyList) {
             removeMember(index);
         } else if (membersField.length > 1) {
             removeMember(index);
@@ -55,18 +46,9 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
 
     const handleAddMember = () => addMember({ address: '' });
 
-    const checkIsAlreadyInList = (index: number) =>
-        controlledMembersField
-            .slice(0, index)
-            .some((field) => addressUtils.isAddressEqual(field.address, controlledMembersField[index].address));
-
     const contextValue = {
         fieldName: membersFieldName,
         onRemoveMember: handleRemoveMember,
-        checkIsAlreadyInList,
-        allowZeroMembers,
-        membersField: controlledMembersField,
-        addMember: handleAddMember,
     };
 
     // This is needed because in the parent we are using, useWatch, but this hook
