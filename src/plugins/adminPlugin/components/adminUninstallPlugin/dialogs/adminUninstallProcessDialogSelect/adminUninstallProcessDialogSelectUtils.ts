@@ -5,7 +5,7 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
 
-class AdminUninstallSelectProcessDialogUtils {
+class AdminUninstallProcessDialogSelectUtils {
     private permissionIds = {
         ROOT_PERMISSION: 'ROOT_PERMISSION',
     };
@@ -17,6 +17,20 @@ class AdminUninstallSelectProcessDialogUtils {
     };
 
     prepareProposalMetadata = () => this.proposalMetadata;
+
+    buildProposalParams(
+        plugin: IDaoPlugin,
+        pluginSetupProcessor: Hex,
+        daoAddress: Hex,
+        daoId: string,
+    ): IPublishProposalDialogParams {
+        return {
+            values: this.buildProposalValues(pluginSetupProcessor, daoAddress, daoId),
+            daoId,
+            pluginAddress: plugin.address,
+            prepareActions: {},
+        };
+    }
 
     private buildRevokeAction(pluginSetupProcessor: Hex, daoAddress: Hex, daoId: string): IProposalActionData {
         const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
@@ -52,20 +66,6 @@ class AdminUninstallSelectProcessDialogUtils {
             startTimeMode: 'now',
         };
     }
-
-    buildProposalParams(
-        plugin: IDaoPlugin,
-        pluginSetupProcessor: Hex,
-        daoAddress: Hex,
-        daoId: string,
-    ): IPublishProposalDialogParams {
-        return {
-            values: this.buildProposalValues(pluginSetupProcessor, daoAddress, daoId),
-            daoId,
-            pluginAddress: plugin.address,
-            prepareActions: {},
-        };
-    }
 }
 
-export const adminUninstallSelectProcessDialogUtils = new AdminUninstallSelectProcessDialogUtils();
+export const adminUninstallProcessDialogSelectUtils = new AdminUninstallProcessDialogSelectUtils();

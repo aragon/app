@@ -17,7 +17,7 @@ export interface ISelectPluginDialogParams {
     /**
      * Array of plugin IDs to filter out from the selection list.
      */
-    filteredPluginIds?: string[];
+    excludePluginIds?: string[];
     /**
      * Callback called on plugin selected.
      */
@@ -34,14 +34,14 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, filteredPluginIds, onPluginSelected, initialPlugin } = location.params;
+    const { daoId, excludePluginIds, onPluginSelected, initialPlugin } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
-    const processedDaoPlugins = daoPlugins.filter((plugin) => !filteredPluginIds?.includes(plugin.id));
+    const processedDaoPlugins = daoPlugins.filter((plugin) => !excludePluginIds?.includes(plugin.id));
 
     const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(
         initialPlugin ?? processedDaoPlugins[0],

@@ -2,11 +2,11 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Dialog, EmptyState } from '@aragon/gov-ui-kit';
+import { Dialog, EmptyState, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
-export interface IAdminUninstallCreateProcessDialogProps {
+export interface IAdminUninstallProcessDialogCreateProps extends IDialogRootProps {
     /**
      * ID of the DAO.
      */
@@ -16,22 +16,17 @@ export interface IAdminUninstallCreateProcessDialogProps {
      */
     adminPlugin: IDaoPlugin;
     /**
-     * Whether the dialog is open.
-     */
-    isOpen: boolean;
-    /**
      * Callback to close the dialog.
      */
     onClose: () => void;
 }
 
-export const AdminUninstallCreateProcessDialog: React.FC<IAdminUninstallCreateProcessDialogProps> = (props) => {
-    const { daoId, adminPlugin, isOpen, onClose } = props;
+export const AdminUninstallProcessDialogCreate: React.FC<IAdminUninstallProcessDialogCreateProps> = (props) => {
+    const { daoId, adminPlugin, open: isOpen, onClose } = props;
 
     const router = useRouter();
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.plugins.admin.adminUninstallEntry.adminUninstallCreateProcessDialog';
 
     const handlePermissionGuardSuccess = useCallback(() => {
         router.push(`/dao/${daoId}/create/process`);
@@ -52,14 +47,19 @@ export const AdminUninstallCreateProcessDialog: React.FC<IAdminUninstallCreatePr
 
     return (
         <Dialog.Root open={isOpen} size="lg">
-            <Dialog.Header title="Remove all admins" onClose={onClose} />
+            <Dialog.Header
+                title={t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.title')}
+                onClose={onClose}
+            />
             <Dialog.Content className="flex flex-col items-center gap-4">
                 <EmptyState
                     objectIllustration={{ object: 'USERS' }}
-                    heading={t(`${keyNamespace}.heading`)}
-                    description={t(`${keyNamespace}.description`)}
+                    heading={t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.heading')}
+                    description={t(
+                        'app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.description',
+                    )}
                     primaryButton={{
-                        label: t(`${keyNamespace}.label`),
+                        label: t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogCreate.label'),
                         ...primaryActionProps,
                     }}
                 />

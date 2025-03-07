@@ -1,7 +1,7 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
-import { adminUninstallSelectProcessDialogUtils } from './adminUninstallSelectProcessDialogUtils';
+import { adminUninstallProcessDialogSelectUtils } from './adminUninstallProcessDialogSelectUtils';
 
 describe('adminUninstallSelectProcessDialogUtils', () => {
     const buildRevokePermissionTransactionSpy = jest.spyOn(
@@ -28,7 +28,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
             const daoId = 'dao-123';
             const pluginSetupProcessor: Hex = '0xPluginSetupProcessor';
 
-            const result = adminUninstallSelectProcessDialogUtils.buildProposalParams(
+            const result = adminUninstallProcessDialogSelectUtils.buildProposalParams(
                 plugin,
                 pluginSetupProcessor,
                 daoAddress,
@@ -44,7 +44,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
 
             expect(result).toMatchObject({
                 values: {
-                    ...adminUninstallSelectProcessDialogUtils.prepareProposalMetadata(),
+                    ...adminUninstallProcessDialogSelectUtils.prepareProposalMetadata(),
                     actions: [
                         expect.objectContaining({
                             from: daoAddress,

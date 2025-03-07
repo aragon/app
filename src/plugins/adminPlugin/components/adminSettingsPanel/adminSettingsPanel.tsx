@@ -1,9 +1,9 @@
-import { AdminUninstallEntry } from '@/plugins/adminPlugin/components/adminUninstallPlugin/adminUninstallEntry';
 import { useAdminStatus } from '@/plugins/adminPlugin/hooks/useAdminStatus';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, Card, IconType } from '@aragon/gov-ui-kit';
 import { AdminGovernanceInfo } from '../adminGovernanceInfo';
+import { AdminUninstallPlugin } from '../adminUninstallPlugin';
 
 export interface IAdminSettingsPanelProps {
     /**
@@ -31,7 +31,7 @@ export const AdminSettingsPanel: React.FC<IAdminSettingsPanelProps> = (props) =>
                     <Button size="md" variant="secondary">
                         Manage admins
                     </Button>
-                    <AdminUninstallEntry daoId={daoId} />
+                    <AdminUninstallPlugin daoId={daoId} />
                 </div>
             </Card>
         </Page.MainSection>

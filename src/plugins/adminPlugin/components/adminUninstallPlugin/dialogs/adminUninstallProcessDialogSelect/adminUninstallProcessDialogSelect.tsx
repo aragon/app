@@ -7,12 +7,12 @@ import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { DialogAlert, DialogAlertFooter } from '@aragon/gov-ui-kit';
+import { DialogAlert, DialogAlertFooter, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { Hex } from 'viem';
-import { adminUninstallSelectProcessDialogUtils } from './adminUninstallSelectProcessDialogUtils';
+import { adminUninstallProcessDialogSelectUtils } from './adminUninstallProcessDialogSelectUtils';
 
-export interface IAdminUninstallSelectProcessDialogProps {
+export interface IAdminUninstallProcessDialogSelectProps extends IDialogRootProps {
     /**
      * ID of the DAO.
      */
@@ -22,21 +22,16 @@ export interface IAdminUninstallSelectProcessDialogProps {
      */
     adminPlugin: IDaoPlugin;
     /**
-     * Whether the dialog is open.
-     */
-    isOpen: boolean;
-    /**
      * Callback to close the dialog.
      */
     onClose: () => void;
 }
 
-export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectProcessDialogProps> = (props) => {
-    const { daoId, adminPlugin, isOpen, onClose } = props;
+export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessDialogSelectProps> = (props) => {
+    const { daoId, adminPlugin, open: isOpen, onClose } = props;
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>(adminPlugin);
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.plugins.admin.adminUninstallEntry.adminUninstallSelectProcessDialog';
 
     const { open } = useDialogContext();
 
@@ -45,7 +40,7 @@ export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectPr
     const daoAddress = dao!.address as Hex;
 
     const handleSuccess = () => {
-        const params: IPublishProposalDialogParams = adminUninstallSelectProcessDialogUtils.buildProposalParams(
+        const params: IPublishProposalDialogParams = adminUninstallProcessDialogSelectUtils.buildProposalParams(
             selectedPlugin,
             pluginSetupProcessor,
             daoAddress,
@@ -62,7 +57,7 @@ export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectPr
     const handleSelectProcessClick = () => {
         const params: ISelectPluginDialogParams = {
             daoId,
-            filteredPluginIds: ['admin'],
+            excludePluginIds: ['admin'],
             onPluginSelected: handlePluginSelected,
         };
         open(GovernanceDialog.SELECT_PLUGIN, { params });
@@ -78,17 +73,39 @@ export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectPr
     });
 
     return (
-        <DialogAlert.Root open={isOpen} variant="critical" hiddenDescription={t(`${keyNamespace}.hiddenDescription`)}>
-            <DialogAlert.Header title={t(`${keyNamespace}.title`)} />
+        <DialogAlert.Root
+            open={isOpen}
+            variant="critical"
+            hiddenDescription={t(
+                'app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.a11y.hiddenDescription',
+            )}
+        >
+            <DialogAlert.Header
+                title={t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.title')}
+            />
             <DialogAlert.Content>
                 <div className="flex flex-col gap-y-4">
-                    <p>{t(`${keyNamespace}.descriptionFirstLine`)}</p>
-                    <p>{t(`${keyNamespace}.descriptionSecondLine`)}</p>
+                    <p>
+                        {t(
+                            'app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.descriptionFirstLine',
+                        )}
+                    </p>
+                    <p>
+                        {t(
+                            'app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.descriptionSecondLine',
+                        )}
+                    </p>
                 </div>
             </DialogAlert.Content>
             <DialogAlertFooter
-                actionButton={{ label: t(`${keyNamespace}.action.select`), onClick: handleSelectProcessClick }}
-                cancelButton={{ label: t(`${keyNamespace}.action.cancel`), onClick: onClose }}
+                actionButton={{
+                    label: t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.action.select'),
+                    onClick: handleSelectProcessClick,
+                }}
+                cancelButton={{
+                    label: t('app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.action.cancel'),
+                    onClick: onClose,
+                }}
             />
         </DialogAlert.Root>
     );

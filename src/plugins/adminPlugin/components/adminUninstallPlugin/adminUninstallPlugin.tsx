@@ -3,17 +3,17 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { Button } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { AdminUninstallCreateProcessDialog } from '../dialogs/adminUninstallCreateProcessDialog';
-import { AdminUninstallSelectProcessDialog } from '../dialogs/adminUninstallSelectProcessDialog';
+import { AdminUninstallProcessDialogCreate } from './dialogs/adminUninstallProcessDialogCreate';
+import { AdminUninstallProcessDialogSelect } from './dialogs/adminUninstallProcessDialogSelect';
 
-export interface IAdminUninstallEntryProps {
+export interface IAdminUninstallPluginProps {
     /**
      * ID of the DAO.
      */
     daoId: string;
 }
 
-export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) => {
+export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props) => {
     const { daoId } = props;
     const [openDialog, setOpenDialog] = useState<'create' | 'select' | null>(null);
 
@@ -33,18 +33,18 @@ export const AdminUninstallEntry: React.FC<IAdminUninstallEntryProps> = (props) 
     return (
         <>
             <Button size="md" variant="critical" onClick={() => handleOpenDialog()}>
-                {t('app.plugins.admin.adminUninstallEntry.label')}
+                {t('app.plugins.admin.adminUninstallPlugin.label')}
             </Button>
-            <AdminUninstallCreateProcessDialog
+            <AdminUninstallProcessDialogCreate
                 daoId={daoId}
                 adminPlugin={adminPlugin}
-                isOpen={openDialog === 'create'}
+                open={openDialog === 'create'}
                 onClose={handleCloseDialog}
             />
-            <AdminUninstallSelectProcessDialog
+            <AdminUninstallProcessDialogSelect
                 daoId={daoId}
                 adminPlugin={adminPlugin}
-                isOpen={openDialog === 'select'}
+                open={openDialog === 'select'}
                 onClose={handleCloseDialog}
             />
         </>
