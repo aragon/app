@@ -65,18 +65,20 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                         {dao.name}
                     </p>
                 </button>
-                <div className="flex flex-row items-center gap-2">
-                    <Button
-                        target="_blank"
-                        href={feedbackUrl}
-                        iconRight={IconType.FEEDBACK}
-                        variant="secondary"
-                        size="md"
-                        className="hidden md:flex"
-                    >
-                        {t('app.application.navigationDao.link.feedback')}
-                    </Button>
-                    <LegacyAppLink dao={dao} />
+                <div className="flex flex-row items-center gap-2 md:gap-6">
+                    <div className="flex items-center gap-3">
+                        <Button
+                            target="_blank"
+                            href={feedbackUrl}
+                            iconRight={IconType.FEEDBACK}
+                            variant="tertiary"
+                            size="sm"
+                            className="hidden md:flex"
+                        >
+                            {t('app.application.navigationDao.link.feedback')}
+                        </Button>
+                        <LegacyAppLink dao={dao} />
+                    </div>
                     <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
                     <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
                 </div>

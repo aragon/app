@@ -446,7 +446,7 @@
         }
       },
       "exploreNav": {
-        "legacyAppButtonLabel": "Legacy app"
+        "feedbackButtonLabel": "Feedback"
       }
     },
     "finance": {

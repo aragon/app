@@ -13,6 +13,7 @@ import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import AragonLogo from './icons/logo.svg';
 import AragonLogotype from './icons/logotype.svg';
+import { LegacyAppLink } from '@/modules/application/components/legacyAppLink';
 
 export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();
@@ -48,6 +49,8 @@ export const ExploreNav: React.FC = () => {
         open(dialog);
     };
 
+    const feedbackUrl = 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
+
     return (
         <Navigation.Container
             className={classNames(
@@ -74,16 +77,19 @@ export const ExploreNav: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-end gap-4 lg:gap-6">
-                <Button
-                    variant="tertiary"
-                    iconRight={IconType.LINK_EXTERNAL}
-                    href="https://app.aragon.org/"
-                    target="_blank"
-                    size="sm"
-                    responsiveSize={{ lg: 'md' }}
-                >
-                    {t('app.explore.exploreNav.legacyAppButtonLabel')}
-                </Button>
+                <div className="flex items-center gap-3">
+                    <Button
+                        target="_blank"
+                        href={feedbackUrl}
+                        iconRight={IconType.FEEDBACK}
+                        variant="tertiary"
+                        size="sm"
+                        className="hidden md:flex"
+                    >
+                        {t('app.explore.exploreNav.feedbackButtonLabel')}
+                    </Button>
+                    <LegacyAppLink />
+                </div>
                 <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
             </div>
         </Navigation.Container>

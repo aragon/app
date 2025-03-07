@@ -28,8 +28,8 @@ export const LegacyAppLink: React.FC<ILegacyAppLinkProps> = (props) => {
 
     if (!dao) {
         return (
-            <Button target="_blank" href={baseUrl} iconRight={IconType.LINK_EXTERNAL} variant="secondary" size="md">
-                {t('app.application.legacyAppLink.link.legacy')}
+            <Button target="_blank" href={baseUrl} iconRight={IconType.LINK_EXTERNAL} variant="tertiary" size="sm">
+                {t('app.application.legacyAppLink.button')}
             </Button>
         );
     }
@@ -48,8 +48,8 @@ export const LegacyAppLink: React.FC<ILegacyAppLinkProps> = (props) => {
     const legacyDaoUrl = `https://app.aragon.org/#/daos/${legacyNetwork}/${address}`;
 
     return (
-        <Button target="_blank" href={legacyDaoUrl} iconRight={IconType.LINK_EXTERNAL} variant="secondary" size="md">
-            {t('app.application.legacyAppLink.link.legacy')}
+        <Button target="_blank" href={legacyDaoUrl} iconRight={IconType.LINK_EXTERNAL} variant="tertiary" size="sm">
+            {t('app.application.legacyAppLink.button')}
         </Button>
     );
 };
