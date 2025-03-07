@@ -22,12 +22,14 @@ export interface IManageMembersFormData {
     members: ICompositeAddress[];
 }
 
-export const AdminManageAdminsDialog: React.FC<IAdminManageMembersDialogProps> = (props) => {
+export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> = (props) => {
     const { onOpenChange, daoId, pluginAddress, ...otherProps } = props;
 
     const [updatedAdmins, setUpdatedAdmins] = useState<ICompositeAddress[]>([]);
 
-    const memberParams = { daoId, pluginAddress };
+    // TODO: (APP-4045). Setting this to the max pageSize of 300 for now to ensure we get all of the data
+    // in the future we should find a better way to handle this.
+    const memberParams = { daoId, pluginAddress, pageSize: 300 };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
 
     const currentAdmins = useMemo(() => {

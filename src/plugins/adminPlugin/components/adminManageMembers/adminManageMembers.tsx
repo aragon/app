@@ -4,7 +4,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Button } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { AdminManageAdminsDialog } from './adminManageMembersDialog';
+import { AdminManageMembersDialog } from './adminManageMembersDialog';
 
 export interface IAdminMangeMembersProps {
     /**
@@ -38,7 +38,7 @@ export const AdminManageMembers: React.FC<IAdminMangeMembersProps> = (props) => 
             <Button onClick={handleManageAdminsClick} size="md" variant="secondary">
                 {t('app.plugins.admin.adminManageMembers.button')}
             </Button>
-            <AdminManageAdminsDialog
+            <AdminManageMembersDialog
                 open={isManageMembersDialogOpen}
                 onOpenChange={setIsManageMembersDialogOpen}
                 daoId={daoId}
