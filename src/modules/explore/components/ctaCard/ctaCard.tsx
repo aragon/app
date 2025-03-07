@@ -68,19 +68,17 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                 <Heading size="h2">{title}</Heading>
                 <p className="text-base font-normal leading-normal text-neutral-500">{subtitle}</p>
             </div>
-            <div className="w-full md:w-auto">
-                <Button
-                    variant={isPrimary ? 'primary' : 'secondary'}
-                    iconRight={isPrimary ? undefined : IconType.LINK_EXTERNAL}
-                    size="md"
-                    href={actionHref}
-                    onClick={actionOnClick}
-                    target={isPrimary ? '_self' : '_blank no-referrer no-opener'}
-                    className="justify-self-stretch"
-                >
-                    {actionLabel}
-                </Button>
-            </div>
+            <Button
+                variant={isPrimary ? 'primary' : 'secondary'}
+                iconRight={isPrimary ? undefined : IconType.LINK_EXTERNAL}
+                size="md"
+                href={actionHref}
+                onClick={actionOnClick}
+                target={isPrimary ? '_self' : '_blank'}
+                className="self-stretch md:self-start"
+            >
+                {actionLabel}
+            </Button>
         </div>
     );
 };
