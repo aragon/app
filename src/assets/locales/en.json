@@ -405,14 +405,44 @@
         "errorState": {
           "description": "There was an error loading the DAOs. Please try again later.",
           "heading": "Error loading DAOs"
-        }
+        },
+        "searchPlaceholder": "Filter by Name, Address or ENS"
       },
-      "exploreDaosPage": {
-        "createDao": "DAO",
+      "exploreDao": {
+        "createDao": "Create a DAO",
         "filter": {
           "all": "All DAOs",
           "member": "Member"
         }
+      },
+      "exploreDaosPage": {
+        "doItYourself": {
+          "actionLabel": "Developer portal",
+          "subtitle": "Build your own custom Aragon OSx DAO or your own web application using our Governance UI Kit and App Template.",
+          "title": "Do it yourself"
+        },
+        "enterpriseService": {
+          "actionLabel": "Get in touch",
+          "subtitle": "Let our team manage the complexities of governance so you can focus on building your product and community.",
+          "title": "Enterprise service"
+        },
+        "hero": {
+          "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance.",
+          "title": "Governed on Aragon"
+        },
+        "noCodeSetup": {
+          "actionLabel": "Create a DAO",
+          "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
+          "title": "No code setup"
+        },
+        "section": {
+          "cta": "Getting started",
+          "daos": "Explore",
+          "featured": "Featured"
+        }
+      },
+      "exploreNav": {
+        "legacyAppButtonLabel": "Legacy app"
       }
     },
     "finance": {
@@ -812,6 +842,33 @@
           "members": "Admin members",
           "proposalCreation": "Proposal creation",
           "proposalExecution": "Proposal execution"
+        },
+        "adminManageMembers": {
+          "button": "Manage admins",
+          "dialog": {
+            "addresses": {
+              "action": {
+                "cancel": "Cancel",
+                "update": "Update admins"
+              },
+              "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
+              "title": "Manage admins"
+            },
+            "publish": {
+              "button": {
+                "submit": "Update admins",
+                "success": "View settings"
+              },
+              "description": "To update admins you have to confirm the onchain transaction with your wallet.",
+              "step": {
+                "PIN_METADATA": {
+                  "errorLabel": "Unable to pin data on IPFS",
+                  "label": "Pin data on IPFS"
+                }
+              },
+              "title": "Update admins"
+            }
+          }
         },
         "adminMemberInfo": {
           "admins": "Admins",
@@ -1279,6 +1336,22 @@
       }
     },
     "shared": {
+      "addressesInput": {
+        "container": {
+          "add": "Add"
+        },
+        "item": {
+          "input": {
+            "error": {
+              "alreadyInList": "Address has already been added",
+              "invalid": "Address is not valid"
+            },
+            "label": "Member",
+            "placeholder": "ENS or 0x …"
+          },
+          "remove": "Remove member"
+        }
+      },
       "advancedDateInput": {
         "duration": {
           "days": "Days",

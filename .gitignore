@@ -40,3 +40,6 @@ deployment-url.txt
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# code editors
+.idea
