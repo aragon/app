@@ -36,7 +36,7 @@ interface GrantOrRevokeTransaction {
     data: string;
 }
 
-interface IProposalValues {
+interface IProposalMetadata {
     /**
      * Title of the proposal.
      */
@@ -51,7 +51,7 @@ export interface IBuildTransactionParams {
     /**
      *   Proposal values (title and description).
      */
-    values: IProposalValues;
+    values: IProposalMetadata;
     /**
      * Array of grant or revoke actions to be executed by the proposal.
      */
