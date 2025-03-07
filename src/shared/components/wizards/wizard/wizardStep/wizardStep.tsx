@@ -22,6 +22,12 @@ export const WizardStep: React.FC<IWizardStepProps> = (props) => {
         }
     }, [hidden, unregisterStep, registerStep, id, order, meta]);
 
+    useEffect(() => {
+        if (activeStep === id) {
+            window.scrollTo(0, 0);
+        }
+    }, [activeStep, id]);
+
     if (activeStep !== id) {
         return null;
     }

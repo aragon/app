@@ -22,7 +22,7 @@ import { useRef, useState } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import { ActionComposer, type ActionComposerMode, type IActionComposerItem } from '../../actionComposer';
 import { ActionItemId } from '../../actionComposer/actionComposerUtils';
-import type { ICreateProposalFormData } from '../createProposalFormDefinitions';
+import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../createProposalFormProvider';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
@@ -36,10 +36,10 @@ export interface ICreateProposalFormActionsProps {
 }
 
 const coreCustomActionComponents = {
-    [ProposalActionType.TRANSFER]: TransferAssetAction as ProposalActionComponent,
-    [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction as ProposalActionComponent,
-    [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction as ProposalActionComponent,
-};
+    [ProposalActionType.TRANSFER]: TransferAssetAction,
+    [ProposalActionType.METADATA_UPDATE]: UpdateDaoMetadataAction,
+    [ProposalActionType.METADATA_PLUGIN_UPDATE]: UpdatePluginMetadataAction,
+} as unknown as Record<string, ProposalActionComponent<IProposalActionData>>;
 
 export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps> = (props) => {
     const { daoId } = props;
@@ -55,6 +55,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
     const [actionComposerMode, setActionComposerMode] = useState<ActionComposerMode>('native');
+    const [expandedActions, setExpandedActions] = useState<string[]>([]);
 
     const {
         append: addAction,
@@ -119,7 +120,9 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         const { id, defaultValue, meta } = action;
 
         if (defaultValue != null) {
-            addAction({ ...defaultValue, daoId, meta });
+            const actionId = crypto.randomUUID();
+            addAction({ ...defaultValue, id: actionId, daoId, meta });
+            setExpandedActions([actionId]);
         } else if (id === ActionItemId.ADD_CONTRACT) {
             handleVerifySmartContract();
         }
@@ -127,8 +130,20 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const handleMoveAction = (index: number, newIndex: number) => moveAction(index, newIndex);
 
+    const handleRemoveAction = (action: IProposalActionData, index: number) => {
+        removeAction(index);
+        setExpandedActions((actionIds) => {
+            // Expand the last remaining actions when only two actions are left, otherwise exclude the removed action ID
+            const defaultNewIds = actionIds.filter((id) => id !== action.id);
+            const newExpandedActions =
+                controlledActions.length === 2 ? [controlledActions[Math.abs(index - 1)].id] : defaultNewIds;
+
+            return newExpandedActions;
+        });
+    };
+
     const getActionDropdownItems = (index: number) => {
-        const dropdownItems: Array<IProposalActionsItemDropdownItem & { hidden: boolean }> = [
+        const dropdownItems: Array<IProposalActionsItemDropdownItem<IProposalActionData> & { hidden: boolean }> = [
             {
                 label: t('app.governance.createProposalForm.actions.editAction.up'),
                 icon: IconType.CHEVRON_UP,
@@ -144,7 +159,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             {
                 label: t('app.governance.createProposalForm.actions.editAction.remove'),
                 icon: IconType.CLOSE,
-                onClick: (_, index) => removeAction(index),
+                onClick: handleRemoveAction,
                 hidden: false,
             },
         ];
@@ -164,19 +179,20 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     const pluginGroups = pluginActions.flatMap((data) => data?.groups ?? []);
     const pluginComponents = pluginActions.reduce((acc, data) => ({ ...acc, ...data?.components }), {});
 
-    const customActionComponents: Record<string, ProposalActionComponent> = {
+    const customActionComponents: Record<string, ProposalActionComponent<IProposalActionData>> = {
         ...coreCustomActionComponents,
         ...pluginComponents,
     };
 
     return (
         <div className="flex flex-col gap-y-10">
-            <ProposalActions.Root>
+            <ProposalActions.Root expandedActions={expandedActions} onExpandedActionsChange={setExpandedActions}>
                 <ProposalActions.Container emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}>
                     {processedActions.map((action, index) => (
-                        <ProposalActions.Item
+                        <ProposalActions.Item<IProposalActionData>
                             key={action.id}
                             action={action}
+                            value={action.id}
                             CustomComponent={customActionComponents[action.type]}
                             dropdownItems={getActionDropdownItems(index)}
                             editMode={true}

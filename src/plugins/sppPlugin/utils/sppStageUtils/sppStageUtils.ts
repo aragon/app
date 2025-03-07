@@ -55,6 +55,7 @@ class SppStageUtils {
         const maxAdvanceDate = this.getStageMaxAdvance(proposal, stage);
         const approvalReached = this.isApprovalReached(proposal, stage);
         const isSignalingProposal = this.isSignalingProposal(proposal, stage);
+        const isActiveStage = stage.stageIndex === proposal.stageIndex;
 
         return (
             approvalReached &&
@@ -62,7 +63,8 @@ class SppStageUtils {
             maxAdvanceDate != null &&
             now > minAdvanceDate &&
             now < maxAdvanceDate &&
-            !isSignalingProposal
+            !isSignalingProposal &&
+            isActiveStage
         );
     };
 
@@ -148,13 +150,10 @@ class SppStageUtils {
         }, 0);
     };
 
-    isVeto = (stage: ISppStage): boolean => {
-        return stage.vetoThreshold > 0;
-    };
+    isVeto = (stage: ISppStage): boolean => stage.vetoThreshold > 0;
 
-    isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        return proposal.settings.stages.length - 1 === stage.stageIndex;
-    };
+    isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean =>
+        proposal.settings.stages.length - 1 === stage.stageIndex;
 }
 
 export const sppStageUtils = new SppStageUtils();
