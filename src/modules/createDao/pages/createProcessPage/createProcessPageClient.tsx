@@ -1,6 +1,7 @@
 'use client';
 
-import { useOpenDialogWithConnectedWallet } from '@/modules/application/hooks/useOpenDialogWithConnectedWallet';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
@@ -22,11 +23,12 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
     const { daoId } = props;
 
     const { t } = useTranslations();
-    const openWithConnectedWallet = useOpenDialogWithConnectedWallet();
+    const { open } = useDialogContext();
+    const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
         const dialogParams: IPrepareProcessDialogParams = { daoId, values };
-        openWithConnectedWallet(CreateDaoDialog.PREPARE_PROCESS, { params: dialogParams });
+        checkWalletConnection({ onSuccess: () => open(CreateDaoDialog.PREPARE_PROCESS, { params: dialogParams }) });
     };
 
     const processedSteps = useMemo(

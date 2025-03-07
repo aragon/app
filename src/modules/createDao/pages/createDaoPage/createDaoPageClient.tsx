@@ -1,6 +1,7 @@
 'use client';
 
-import { useOpenDialogWithConnectedWallet } from '@/modules/application/hooks/useOpenDialogWithConnectedWallet';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
@@ -14,11 +15,13 @@ export interface ICreateDaoPageClientProps {}
 
 export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
     const { t } = useTranslations();
-    const openWithConnectedWallet = useOpenDialogWithConnectedWallet();
+    const { open } = useDialogContext();
+
+    const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const handleFormSubmit = (values: ICreateDaoFormData) => {
         const params: IPublishDaoDialogParams = { values };
-        openWithConnectedWallet(CreateDaoDialog.PUBLISH_DAO, { params });
+        checkWalletConnection({ onSuccess: () => open(CreateDaoDialog.PUBLISH_DAO, { params }) });
     };
 
     const [networkStep, metadataStep] = createDaoWizardSteps;
