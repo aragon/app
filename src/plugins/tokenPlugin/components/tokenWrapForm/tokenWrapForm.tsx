@@ -6,9 +6,10 @@ import { Button, formatterUtils, NumberFormat, Toggle, ToggleGroup } from '@arag
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { formatUnits, type Hex } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
+import { useAccount, useBalance, useReadContract } from 'wagmi';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
+import { TokenWrapFormDialogApprove } from './tokenWrapFormDialogApprove';
 import { TokenWrapFormDialogUnwrap } from './tokenWrapFormDialogUnwrap';
 import { TokenWrapFormDialogWrap } from './tokenWrapFormDialogWrap';
 
@@ -47,6 +48,14 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         { enabled: address != null },
     );
 
+    const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
+        abi: erc20Abi,
+        functionName: 'allowance',
+        address: token.underlying as Hex,
+        args: [address!, token.address as Hex],
+        query: { enabled: address != null },
+    });
+
     const underlyingAddress = (token.underlying ?? undefined) as Hex | undefined;
     const { data: unwrappedBalance, queryKey: unwrappedBalanceKey } = useBalance({ address, token: underlyingAddress });
 
@@ -59,10 +68,17 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     });
 
     const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({ control, name: 'amount' });
+    const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
 
     const handleTransactionSuccess = () => {
-        void queryClient.invalidateQueries({ queryKey: [unwrappedBalanceKey] });
+        void queryClient.invalidateQueries({ queryKey: allowanceQueryKey });
+        void queryClient.invalidateQueries({ queryKey: unwrappedBalanceKey });
         void refetchMember();
+    };
+
+    const handleFormSubmit = () => {
+        const dialog = tokenAllowance == null || tokenAllowance < wrapAmountWei ? 'approve' : 'wrap';
+        setActiveDialog(dialog);
     };
 
     // Update the amount field when the percentage value or the unwrapped balance of the user change
@@ -87,7 +103,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     return (
         <FormProvider control={control} setValue={setValue} handleSubmit={handleSubmit} {...formValues}>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(() => setActiveDialog('wrap'))}>
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
                 <p className="text-base font-normal leading-normal text-neutral-500">
                     {t('app.plugins.token.tokenWrapForm.info', { underlyingSymbol })}
                 </p>
@@ -125,19 +141,23 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                     </p>
                 </div>
             </form>
-            {/* Only render the wrap dialog when active to avoid running its allowance logic when not open and reset
-            the transaction stepper mutations after a successful approve transaction */}
-            {activeDialog === 'wrap' && (
-                <TokenWrapFormDialogWrap
-                    open={true}
-                    onOpenChange={() => setActiveDialog(undefined)}
-                    onApproveSuccess={() => setActiveDialog('wrap')}
-                    token={token}
-                    amount={wrapAmount ?? '0'}
-                    network={dao!.network}
-                    onSuccess={handleTransactionSuccess}
-                />
-            )}
+            <TokenWrapFormDialogApprove
+                open={activeDialog == 'approve'}
+                onOpenChange={() => setActiveDialog(undefined)}
+                onApproveSuccess={() => setActiveDialog('wrap')}
+                token={token}
+                amount={wrapAmount ?? '0'}
+                network={dao!.network}
+                onSuccess={handleTransactionSuccess}
+            />
+            <TokenWrapFormDialogWrap
+                open={activeDialog == 'wrap'}
+                onOpenChange={() => setActiveDialog(undefined)}
+                token={token}
+                amount={wrapAmount ?? '0'}
+                network={dao!.network}
+                onSuccess={handleTransactionSuccess}
+            />
             <TokenWrapFormDialogUnwrap
                 open={activeDialog == 'unwrap'}
                 onOpenChange={() => setActiveDialog(undefined)}

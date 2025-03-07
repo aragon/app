@@ -7,19 +7,18 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AssetDataListItem, Dialog, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
 
-export interface ITokenWrapFormDialogWrapProps extends IDialogRootProps {
+export interface ITokenWrapFormDialogApproveProps extends IDialogRootProps {
     /**
      * Wrapper governance token.
      */
     token: ITokenPluginSettingsToken;
     /**
-     * Amount of tokens to be wrapped formatted using the token decimals.
+     * Amount of tokens to be approved formatted using the token decimals.
      */
     amount: string;
     /**
@@ -27,19 +26,22 @@ export interface ITokenWrapFormDialogWrapProps extends IDialogRootProps {
      */
     network: Network;
     /**
-     * Callback called on approve / wrap transaction success.
+     * Callback called when on approve success button click.
+     */
+    onApproveSuccess: () => void;
+    /**
+     * Callback called on approve transaction success.
      */
     onSuccess?: () => void;
 }
 
-export const TokenWrapFormDialogWrap: React.FC<ITokenWrapFormDialogWrapProps> = (props) => {
-    const { token, amount, network, onOpenChange, onSuccess, ...otherProps } = props;
+export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApproveProps> = (props) => {
+    const { token, amount, network, onOpenChange, onApproveSuccess, onSuccess, ...otherProps } = props;
 
     const { t } = useTranslations();
-    const router = useRouter();
     const { address } = useAccount();
 
-    invariant(address != null, 'TokenWrapFormDialogWrap: user must be connected to perform the action');
+    invariant(address != null, 'TokenWrapFormDialogApprove: user must be connected to perform the action');
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
@@ -47,7 +49,7 @@ export const TokenWrapFormDialogWrap: React.FC<ITokenWrapFormDialogWrapProps> = 
     const weiAmount = parseUnits(amount, token.decimals);
 
     const handlePrepareTransaction = () =>
-        tokenWrapFormDialogUtils.buildWrapTransaction({ token, address, amount: weiAmount });
+        tokenWrapFormDialogUtils.buildApproveTransaction({ token, amount: weiAmount });
 
     const handleCloseDialog = () => {
         stepper.updateActiveStep(initialActiveStep);
@@ -56,22 +58,22 @@ export const TokenWrapFormDialogWrap: React.FC<ITokenWrapFormDialogWrapProps> = 
 
     const onSuccessClick = () => {
         handleCloseDialog();
-        router.refresh();
+        onApproveSuccess();
     };
 
     return (
         <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
             <TransactionDialog
-                title={t(`app.plugins.token.tokenWrapForm.dialog.wrap.title`)}
-                description={t(`app.plugins.token.tokenWrapForm.dialog.wrap.description`)}
-                submitLabel={t(`app.plugins.token.tokenWrapForm.dialog.wrap.submit`)}
+                title={t('app.plugins.token.tokenWrapForm.dialog.approve.title')}
+                description={t('app.plugins.token.tokenWrapForm.dialog.approve.description')}
+                submitLabel={t('app.plugins.token.tokenWrapForm.dialog.approve.submit')}
                 stepper={stepper}
                 prepareTransaction={handlePrepareTransaction}
                 onCancelClick={handleCloseDialog}
                 network={network}
                 onSuccess={onSuccess}
                 successLink={{
-                    label: t(`app.plugins.token.tokenWrapForm.dialog.wrap.success`),
+                    label: t('app.plugins.token.tokenWrapForm.dialog.approve.success'),
                     onClick: onSuccessClick,
                 }}
             >
