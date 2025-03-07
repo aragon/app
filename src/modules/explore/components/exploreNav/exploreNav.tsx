@@ -1,5 +1,6 @@
 'use client';
 
+import { Navigation } from '@/modules/application/components/navigations/navigation';
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -48,44 +49,43 @@ export const ExploreNav: React.FC = () => {
     };
 
     return (
-        <div
+        <Navigation.Container
             className={classNames(
-                'sticky top-0 z-[var(--app-explore-navbar-z-index)] w-full',
-                isPostHero ? 'bg-primary-400' : 'bg-gradient-to-b from-primary-400 to-transparent',
+                'border-b-0',
+                isPostHero ? 'bg-primary-400' : 'bg-transparent bg-gradient-to-b from-primary-400 to-transparent',
             )}
+            containerClasses={classNames('flex items-center justify-between gap-6 px-4 py-3 lg:gap-12 lg:px-6 lg:py-5')}
         >
-            <header className="mx-auto flex max-w-screen-xl items-center justify-between gap-6 self-stretch px-4 py-3 xl:gap-12 xl:px-6 xl:py-5">
-                <div className="h-10">
-                    <Link href="/">
-                        <Image
-                            src={AragonLogo as string}
-                            alt="Aragon logo"
-                            className="block min-w-10 md:hidden"
-                            priority={true}
-                        />
-                        <Image
-                            src={AragonLogotype as string}
-                            alt="Aragon logo"
-                            className="hidden md:block"
-                            priority={true}
-                        />
-                    </Link>
-                </div>
+            <div className="h-10">
+                <Link href="/">
+                    <Image
+                        src={AragonLogo as string}
+                        alt="Aragon logo"
+                        className="block min-w-10 md:hidden"
+                        priority={true}
+                    />
+                    <Image
+                        src={AragonLogotype as string}
+                        alt="Aragon logo"
+                        className="hidden md:block"
+                        priority={true}
+                    />
+                </Link>
+            </div>
 
-                <nav className="flex items-center justify-end gap-4 xl:gap-6">
-                    <Button
-                        variant="tertiary"
-                        iconRight={IconType.LINK_EXTERNAL}
-                        href="https://app.aragon.org/"
-                        target="_blank"
-                        size="sm"
-                        responsiveSize={{ lg: 'md' }}
-                    >
-                        {t('app.explore.exploreNav.legacyAppButtonLabel')}
-                    </Button>
-                    <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
-                </nav>
-            </header>
-        </div>
+            <div className="flex items-center justify-end gap-4 lg:gap-6">
+                <Button
+                    variant="tertiary"
+                    iconRight={IconType.LINK_EXTERNAL}
+                    href="https://app.aragon.org/"
+                    target="_blank"
+                    size="sm"
+                    responsiveSize={{ lg: 'md' }}
+                >
+                    {t('app.explore.exploreNav.legacyAppButtonLabel')}
+                </Button>
+                <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
+            </div>
+        </Navigation.Container>
     );
 };
