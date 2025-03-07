@@ -49,6 +49,12 @@ describe('<CreateProposalFormActions /> component', () => {
         );
     };
 
+    it('renders an empty state', () => {
+        render(createTestComponent());
+        const emptyState = screen.getByText(/createProposalForm.actions.empty/);
+        expect(emptyState).toBeInTheDocument();
+    });
+
     it('renders a button to add an action', () => {
         render(createTestComponent());
         const actionButton = screen.getByRole('button', { name: /createProposalForm.actions.addAction.default/ });
