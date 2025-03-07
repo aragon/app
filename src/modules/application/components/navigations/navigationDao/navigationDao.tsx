@@ -13,6 +13,7 @@ import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 import { navigationDaoLinks } from './navigationDaoLinks';
+import { LegacyAppLink } from '../../legacyAppLink';
 
 export interface INavigationDaoProps extends INavigationContainerProps {
     /**
@@ -52,11 +53,6 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const feedbackUrl = 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
 
-    const [release, build] = dao.version.split('.').map(Number);
-    const showLegacyButton = release < 1 || (release === 1 && build < 4);
-    const daoNetwork = dao.network.split('-')[dao.network === 'ethereum-sepolia' ? 1 : 0];
-    const legacyDaoUrl = `https://app.aragon.org/#/daos/${daoNetwork}/${dao.address}`;
-
     return (
         <Navigation.Container
             containerClasses={classNames('flex flex-col gap-2 py-3 md:pb-0 md:pt-5 lg:gap-3', containerClasses)}
@@ -80,17 +76,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     >
                         {t('app.application.navigationDao.link.feedback')}
                     </Button>
-                    {showLegacyButton && (
-                        <Button
-                            target="_blank"
-                            href={legacyDaoUrl}
-                            iconRight={IconType.LINK_EXTERNAL}
-                            variant="secondary"
-                            size="md"
-                        >
-                            {t('app.application.navigationDao.link.legacy')}
-                        </Button>
-                    )}
+                    <LegacyAppLink dao={dao} />
                     <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
                     <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
                 </div>

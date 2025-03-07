@@ -57,6 +57,9 @@
           "title": "DAO not found"
         }
       },
+      "legacyAppLink": {
+        "button": "Legacy app"
+      },
       "navigationDao": {
         "a11y": {
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
@@ -66,7 +69,6 @@
           "assets": "Assets",
           "dashboard": "Dashboard",
           "feedback": "Feedback",
-          "legacy": "Legacy app",
           "members": "Members",
           "proposals": "Proposals",
           "settings": "Settings",
