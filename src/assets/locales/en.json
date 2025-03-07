@@ -1388,6 +1388,7 @@
             "75": "75%"
           },
           "submit": {
+            "approve": "Approve {{underlyingSymbol}}",
             "unwrap": "Unwrap {{amount}} {{symbol}}",
             "wrap": "Wrap {{underlyingSymbol}}"
           }

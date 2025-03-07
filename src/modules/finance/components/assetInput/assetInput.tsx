@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useId } from 'react';
+import { type ChangeEvent, useId } from 'react';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogs } from '../../constants/moduleDialogs';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
@@ -29,6 +29,10 @@ export interface IAssetInputProps {
      */
     fieldPrefix?: string;
     /**
+     * Callback called on asset amount change.
+     */
+    onAmountChange?: () => void;
+    /**
      * Disables the token selection when set to true.
      */
     disableAssetField?: boolean;
@@ -43,22 +47,28 @@ export interface IAssetInputProps {
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const { fetchAssetsParams, fieldPrefix, disableAssetField, hideMax, hideAmountLabel } = props;
+    const { fetchAssetsParams, fieldPrefix, onAmountChange, disableAssetField, hideMax, hideAmountLabel } = props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const inputId = useId();
 
-    const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', {
-        rules: { required: true },
-        fieldPrefix,
-    });
+    const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
 
-    const { label: amountLabel, ...amountField } = useFormField<IAssetInputFormData, 'amount'>('amount', {
+    const {
+        label: amountLabel,
+        onChange: onAmountFieldChange,
+        ...amountField
+    } = useFormField<IAssetInputFormData, 'amount'>('amount', {
         label: t('app.finance.transferAssetForm.amount.label'),
         rules: { required: true, max: assetField.value?.amount, validate: (value) => parseFloat(value ?? '') > 0 },
         fieldPrefix,
     });
+
+    const handleAmountFieldChange = (amount?: string | ChangeEvent) => {
+        onAmountFieldChange(amount);
+        onAmountChange?.();
+    };
 
     const handleOpenDialog = () => {
         if (!fetchAssetsParams || disableAssetField) {
@@ -72,7 +82,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const handleMaxAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        amountField.onChange(assetField.value?.amount);
+        handleAmountFieldChange(assetField.value?.amount);
     };
 
     const inputClassName = classNames(
@@ -113,7 +123,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                     placeholder="0"
                     className={inputClassName}
                     value={amountField.value ?? ''}
-                    onChange={amountField.onChange}
+                    onChange={handleAmountFieldChange}
                     disabled={!assetField.value}
                 />
                 <p>{formattedAmountValue}</p>

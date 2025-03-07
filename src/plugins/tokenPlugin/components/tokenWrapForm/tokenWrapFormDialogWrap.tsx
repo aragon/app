@@ -27,7 +27,7 @@ export interface ITokenWrapFormDialogWrapProps extends IDialogRootProps {
      */
     network: Network;
     /**
-     * Callback called on approve / wrap transaction success.
+     * Callback called on wrap transaction success.
      */
     onSuccess?: () => void;
 }

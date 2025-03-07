@@ -1,6 +1,6 @@
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { encodeFunctionData, erc20Abi, type Hex } from 'viem';
-import type { IBuildApproveTransactionParams, IBuildTokenWrapTransactionParams } from './tokenWrapFormDialogUtils.abi';
+import type { IBuildApproveTransactionParams, IBuildTokenWrapTransactionParams } from './tokenWrapFormDialogUtils.api';
 
 const erc20WrapperAbi = [
     {

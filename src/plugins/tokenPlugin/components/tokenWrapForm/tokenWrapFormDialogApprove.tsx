@@ -6,7 +6,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { AssetDataListItem, Dialog, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { Dialog, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
@@ -76,15 +76,7 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
                     label: t('app.plugins.token.tokenWrapForm.dialog.approve.success'),
                     onClick: onSuccessClick,
                 }}
-            >
-                <AssetDataListItem.Structure
-                    logoSrc={token.logo}
-                    name={token.name}
-                    amount={amount}
-                    symbol={token.symbol}
-                    fiatPrice={token.priceUsd}
-                />
-            </TransactionDialog>
+            />
         </Dialog.Root>
     );
 };
