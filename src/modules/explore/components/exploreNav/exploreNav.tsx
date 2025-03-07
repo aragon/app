@@ -25,7 +25,7 @@ export const ExploreNav: React.FC = () => {
     const [isPostHero, setIsPostHero] = useState(false);
 
     useEffect(() => {
-        // TODO: check if IntersectionObserver can be used instead as a more performant solution
+        // TODO: check if IntersectionObserver can be used instead as a more performant solution (APP-4042)
         const checkScrollPosition = () => {
             // Find the hero element by its id
             const heroElement = document.querySelector('#explore-page-hero');
