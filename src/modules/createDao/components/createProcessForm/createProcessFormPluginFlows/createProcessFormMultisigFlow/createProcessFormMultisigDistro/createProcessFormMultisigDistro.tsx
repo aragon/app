@@ -1,3 +1,4 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
 import type { ICreateProcessFormBody } from '../../../createProcessFormDefinitions';
@@ -8,6 +9,9 @@ export interface ICreateProcessFormMultisigDistroProps extends ICreateProcessFor
 
 export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisigDistroProps> = (props) => {
     const { fieldPrefix } = props;
+
+    const { t } = useTranslations();
+    const keyNamespace = 'app.createDao.createProcessForm.multisigFlow.distro';
 
     const membersFieldName = `${fieldPrefix}.members`;
     const { fields, append, remove } = useFieldArray<Record<string, ICreateProcessFormBody['members']>>({
@@ -20,8 +24,8 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
         <>
             <InputContainer
                 id="multisig-members"
-                label="Members"
-                helpText="These addresses will be the only ones able to participate."
+                label={t(`${keyNamespace}.label`)}
+                helpText={t(`${keyNamespace}.helpText`)}
                 useCustomWrapper={true}
             >
                 {fields.map((member, index) => (

@@ -1,4 +1,5 @@
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputText, TextArea } from '@aragon/gov-ui-kit';
 import type { ICreateProcessFormBody } from '../../createProcessFormDefinitions';
@@ -9,8 +10,11 @@ export interface ICreateProcessFormPluginMetadataProps extends ICreateProcessFor
 export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginMetadataProps> = (props) => {
     const { fieldPrefix } = props;
 
+    const { t } = useTranslations();
+    const keyNamespace = 'app.createDao.createProcessForm.pluginMetadata';
+
     const bodyNameField = useFormField<ICreateProcessFormBody, `name`>(`name`, {
-        label: 'Body name',
+        label: t(`${keyNamespace}.bodyNameFieldLabel`),
         defaultValue: '',
         fieldPrefix,
         trimOnBlur: true,
@@ -18,25 +22,21 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
     });
 
     const bodySummaryField = useFormField<ICreateProcessFormBody, 'description'>('description', {
-        label: 'Description',
+        label: t(`${keyNamespace}.bodySummaryFieldLabel`),
         fieldPrefix,
         defaultValue: '',
     });
 
     return (
         <>
-            <InputText maxLength={40} label="Body name" placeholder="" {...bodyNameField} />
+            <InputText maxLength={40} {...bodyNameField} />
             <TextArea
-                helpText="This is shown on the members list to help visitors understand what the body is responsible for."
-                placeholder=""
+                helpText={t(`${keyNamespace}.bodySummaryFieldHelpText`)}
                 isOptional={true}
                 maxLength={480}
                 {...bodySummaryField}
             />
-            <ResourcesInput
-                name={`${fieldPrefix}.resources`}
-                helpText="These are shown as links on the members list."
-            />
+            <ResourcesInput name={`${fieldPrefix}.resources`} helpText={t(`${keyNamespace}.resourcesInputHelpText`)} />
         </>
     );
 };

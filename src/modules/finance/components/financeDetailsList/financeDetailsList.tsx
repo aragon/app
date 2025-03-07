@@ -34,7 +34,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
     return (
         <Page.AsideCard title={t('app.finance.financeDetailsList.title')}>
             <DefinitionList.Container {...otherProps}>
-                <DefinitionList.Item term={t('app.finance.financeDetailsList.blockchain')}>
+                <DefinitionList.Item term={t('app.finance.financeDetailsList.chain')}>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultAddress')}>

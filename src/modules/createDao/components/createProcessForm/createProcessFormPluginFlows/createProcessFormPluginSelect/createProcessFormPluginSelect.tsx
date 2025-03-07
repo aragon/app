@@ -1,3 +1,4 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import type { ICreateProcessFormBody } from '../../createProcessFormDefinitions';
@@ -8,16 +9,19 @@ export interface ICreateProcessFormPluginSelectProps extends ICreateProcessFormB
 export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSelectProps> = (props) => {
     const { fieldPrefix } = props;
 
+    const { t } = useTranslations();
+    const keyNamespace = 'app.createDao.createProcessForm.pluginSelect';
+
     const { onChange, ...governanceTypeField } = useFormField<ICreateProcessFormBody, 'governanceType'>(
         'governanceType',
-        { label: 'Governance type', fieldPrefix },
+        { label: t(`${keyNamespace}.label`), fieldPrefix },
     );
 
     return (
         <>
             <RadioGroup
                 className="flex gap-4"
-                helpText="This determines the governance the body uses to make decisions."
+                helpText={t(`${keyNamespace}.helpText`)}
                 onValueChange={(value) => onChange(value)}
                 defaultValue={governanceTypeField.value}
                 {...governanceTypeField}
@@ -25,13 +29,13 @@ export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSel
                 <RadioCard
                     className="w-full"
                     label="Token voting"
-                    description="Majority voting based on token voting power"
+                    description={t(`${keyNamespace}.tokenDescription`)}
                     value="token-voting"
                 />
                 <RadioCard
                     className="w-full"
                     label="Multisig"
-                    description="Designated members must reach a minimum approval threshold"
+                    description={t(`${keyNamespace}.multisigDescription`)}
                     value="multisig"
                 />
             </RadioGroup>

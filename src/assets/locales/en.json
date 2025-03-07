@@ -188,6 +188,19 @@
             "process": "governance process"
           }
         },
+        "multisigFlow": {
+          "distro": {
+            "helpText": "These addresses will be the only ones able to participate.",
+            "label": "Members"
+          },
+          "params": {
+            "helpText": "At least this many members will have to approve proposals.",
+            "label": "Approval threshold",
+            "placeholder": "Enter a number",
+            "required": "Threshold must be at least 1.",
+            "suffix": "of {{members}}"
+          }
+        },
         "permissions": {
           "proposalCreationBodies": {
             "error": "You must select at least one body.",
@@ -200,6 +213,18 @@
             "bodiesLabel": "Members",
             "label": "Proposal creation eligibility"
           }
+        },
+        "pluginMetadata": {
+          "bodyNameFieldLabel": "Body name",
+          "bodySummaryFieldHelpText": "This is shown on the members list to help visitors understand what the body is responsible for.",
+          "bodySummaryFieldLabel": "Description",
+          "resourcesInputHelpText": "These are shown as links on the members list."
+        },
+        "pluginSelect": {
+          "helpText": "This determines the governance the body uses to make decisions.",
+          "label": "Governance type",
+          "multisigDescription": "Designated members must reach a minimum approval threshold",
+          "tokenDescription": "Majority voting based on token voting power"
         },
         "stages": {
           "add": "Add stage",
@@ -293,6 +318,66 @@
               }
             }
           }
+        },
+        "tokenFlow": {
+          "distro": {
+            "add": "Add",
+            "address": {
+              "inputHelpText": "The address of the token to be imported",
+              "placeholder": "Enter the token address to import"
+            },
+            "alert": {
+              "description": "In order for this body to be able to participate in governance, you must ensure that this token has these exact functions: getPastVotes, getVotes, getPastTotalSupply.",
+              "message": "Not all tokens are compatible"
+            },
+            "createToken": "Create token",
+            "distribute": {
+              "helpText": "",
+              "label": ""
+            },
+            "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
+            "import": {
+              "helpText": "The address of the token to be imported",
+              "label": "Token address",
+              "placeholder": "Enter the token address to import"
+            },
+            "importToken": "Import token",
+            "name": {
+              "helpText": "These addreses will receive newly minted tokens.",
+              "label": "Token name",
+              "required": "Token name is required"
+            },
+            "symbol": {
+              "helpText": "This is the abbreviated ticker of the token. For example: UNI",
+              "label": "Token symbol",
+              "maxLength": "Symbol cannot exceed 10 characters",
+              "onlyLetters": "Only letters are allowed",
+              "required": "Token symbol is required"
+            },
+            "typeLabel": "ERC-20 token"
+          },
+          "params": {
+            "helpText": "At least this many members will have to approve proposals.",
+            "label": "Approval threshold",
+            "minParticipation": {
+              "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
+              "label": "Minimum participation",
+              "of": "of"
+            },
+            "placeholder": "Enter a number",
+            "required": "Threshold must be at least 1.",
+            "suffix": "of {{members}}",
+            "supportThreshold": {
+              "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
+              "label": "Support threshold",
+              "success": "Proposal will require a majority.",
+              "warning": "Proposal will only require a minority."
+            },
+            "voteChange": {
+              "helpText": "",
+              "label": "Vote change"
+            }
+          }
         }
       },
       "createProcessPage": {
@@ -367,7 +452,7 @@
         "aside": {
           "details": {
             "address": "DAO address",
-            "blockchain": "Chain",
+            "chain": "Chain",
             "ens": "ENS",
             "launched": "Launched",
             "title": "Contract"
@@ -441,7 +526,7 @@
       "daoAssetsPage": {
         "aside": {
           "details": {
-            "blockchain": "Chain",
+            "chain": "Chain",
             "title": "Details"
           }
         },
@@ -452,7 +537,7 @@
       "daoTransactionsPage": {
         "aside": {
           "details": {
-            "blockchain": "Chain",
+            "chain": "Chain",
             "title": "Details"
           }
         },
@@ -461,7 +546,7 @@
         }
       },
       "financeDetailsList": {
-        "blockchain": "Chain",
+        "chain": "Chain",
         "title": "Vault",
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
@@ -1106,17 +1191,17 @@
           "membership": "Your voting power"
         },
         "tokenProcessBodyField": {
+          "disabled": "Disabled",
           "distributionTerm": "Distribution",
+          "enabled": "Enabled",
           "holders": "{{count}} token holders",
           "minParticipationDefinition": "≥ {{minimumParticipation}}%",
           "minParticipationTerm": "Minimum participation",
-          "no": "Disabled",
           "supplyTerm": "Supply",
           "supportDefinition": "> {{threshold}}%",
           "supportTerm": "Support threshold",
           "tokenTerm": "Token",
-          "voteChange": "Vote change",
-          "yes": "Enabled"
+          "voteChange": "Vote change"
         },
         "tokenProposalCreationRequirements": {
           "helpText": "The voting power or token balance required to create proposals.",
@@ -1228,7 +1313,7 @@
         }
       },
       "daoSettingsInfo": {
-        "blockchain": "Chain",
+        "chain": "Chain",
         "ens": "ENS name",
         "links": "Resources",
         "name": "Name",
