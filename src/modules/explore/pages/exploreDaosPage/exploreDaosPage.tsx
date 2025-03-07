@@ -5,7 +5,7 @@ import { ExploreDaosPageClient } from './exploreDaosPageClient';
 
 export interface IExploreDaosPageProps {}
 
-const daosPerPage = 20;
+const daosPerPage = 10;
 
 export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
     const queryClient = new QueryClient();
@@ -16,9 +16,7 @@ export const ExploreDaosPage: React.FC<IExploreDaosPageProps> = async () => {
 
     return (
         <Page.Container queryClient={queryClient}>
-            <Page.Content>
-                <ExploreDaosPageClient initialParams={daoListParams} />
-            </Page.Content>
+            <ExploreDaosPageClient initialParams={daoListParams} />
         </Page.Container>
     );
 };
