@@ -1,5 +1,6 @@
 import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
@@ -44,11 +45,11 @@ export const AdminUninstallSelectProcessDialog: React.FC<IAdminUninstallSelectPr
     const daoAddress = dao!.address as Hex;
 
     const handleSuccess = () => {
-        const params = adminUninstallSelectProcessDialogUtils.buildProposalParams(
+        const params: IPublishProposalDialogParams = adminUninstallSelectProcessDialogUtils.buildProposalParams(
             selectedPlugin,
+            pluginSetupProcessor,
             daoAddress,
             daoId,
-            pluginSetupProcessor,
         );
         open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };

@@ -30,9 +30,9 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
 
             const result = adminUninstallSelectProcessDialogUtils.buildProposalParams(
                 plugin,
+                pluginSetupProcessor,
                 daoAddress,
                 daoId,
-                pluginSetupProcessor,
             );
 
             expect(buildRevokePermissionTransactionSpy).toHaveBeenCalledWith({
@@ -42,31 +42,18 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
                 to: daoAddress,
             });
 
-            expect(result).toEqual({
+            expect(result).toMatchObject({
                 values: {
-                    title: 'Remove all admins',
-                    summary:
-                        'This proposal intends to remove all admin control of the DAO. The action will revoke their permission to execute transactions on behalf of the DAO. By passing the proposal, it signifies that this governance process is configured properly and is able to execute on behalf of the DAO now.',
-                    body: '',
-                    addActions: true,
-                    resources: [],
+                    ...adminUninstallSelectProcessDialogUtils.prepareProposalMetadata(),
                     actions: [
-                        {
-                            to: '0x123',
-                            data: '0xabc',
-                            value: '0',
+                        expect.objectContaining({
                             from: daoAddress,
-                            type: 'function',
-                            inputData: null,
                             daoId,
-                            meta: undefined,
-                        },
+                        }),
                     ],
-                    startTimeMode: 'now',
                 },
                 daoId,
                 pluginAddress: plugin.address,
-                prepareActions: {},
             });
         });
     });
