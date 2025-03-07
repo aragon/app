@@ -405,14 +405,44 @@
         "errorState": {
           "description": "There was an error loading the DAOs. Please try again later.",
           "heading": "Error loading DAOs"
-        }
+        },
+        "searchPlaceholder": "Filter by Name, Address or ENS"
       },
-      "exploreDaosPage": {
-        "createDao": "DAO",
+      "exploreDao": {
+        "createDao": "Create a DAO",
         "filter": {
           "all": "All DAOs",
           "member": "Member"
         }
+      },
+      "exploreDaosPage": {
+        "doItYourself": {
+          "actionLabel": "Developer portal",
+          "subtitle": "Build your own custom Aragon OSx DAO or your own web application using our Governance UI Kit and App Template.",
+          "title": "Do it yourself"
+        },
+        "enterpriseService": {
+          "actionLabel": "Get in touch",
+          "subtitle": "Let our team manage the complexities of governance so you can focus on building your product and community.",
+          "title": "Enterprise service"
+        },
+        "hero": {
+          "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance.",
+          "title": "Governed on Aragon"
+        },
+        "noCodeSetup": {
+          "actionLabel": "Create a DAO",
+          "subtitle": "Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.",
+          "title": "No code setup"
+        },
+        "section": {
+          "cta": "Getting started",
+          "daos": "Explore",
+          "featured": "Featured"
+        }
+      },
+      "exploreNav": {
+        "legacyAppButtonLabel": "Legacy app"
       }
     },
     "finance": {
