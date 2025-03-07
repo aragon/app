@@ -1,5 +1,6 @@
 'use client';
 
+import { LegacyAppLink } from '@/modules/application/components/legacyAppLink';
 import { Navigation } from '@/modules/application/components/navigations/navigation';
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -13,7 +14,6 @@ import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
 import AragonLogo from './icons/logo.svg';
 import AragonLogotype from './icons/logotype.svg';
-import { LegacyAppLink } from '@/modules/application/components/legacyAppLink';
 
 export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();

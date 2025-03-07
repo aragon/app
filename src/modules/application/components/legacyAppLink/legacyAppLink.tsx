@@ -26,6 +26,7 @@ export const LegacyAppLink: React.FC<ILegacyAppLinkProps> = (props) => {
 
     const { t } = useTranslations();
 
+    // If no DAO is provided use the explore page
     if (!dao) {
         return (
             <Button target="_blank" href={baseUrl} iconRight={IconType.LINK_EXTERNAL} variant="tertiary" size="sm">

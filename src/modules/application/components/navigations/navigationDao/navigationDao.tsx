@@ -11,9 +11,9 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
+import { LegacyAppLink } from '../../legacyAppLink';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 import { navigationDaoLinks } from './navigationDaoLinks';
-import { LegacyAppLink } from '../../legacyAppLink';
 
 export interface INavigationDaoProps extends INavigationContainerProps {
     /**
