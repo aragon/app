@@ -82,7 +82,7 @@ export const ExploreNav: React.FC = () => {
                         variant="tertiary"
                         iconRight={IconType.LINK_EXTERNAL}
                         href="https://app.aragon.org/"
-                        target="_blank noopener noreferrer"
+                        target="_blank"
                         size="sm"
                         responsiveSize={{ lg: 'md' }}
                     >
