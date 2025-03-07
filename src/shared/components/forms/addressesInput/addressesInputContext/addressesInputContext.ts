@@ -10,10 +10,6 @@ export interface IAddressesInputContext {
      * Callback to remove a member from the list.
      */
     onRemoveMember: (index: number) => void;
-    /**
-     * Flag to determine if zero members are allowed in the list.
-     */
-    allowZeroMembers?: boolean;
 }
 
 const addressesInputContext = createContext<IAddressesInputContext | null>(null);
