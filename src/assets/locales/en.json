@@ -65,6 +65,8 @@
         "link": {
           "assets": "Assets",
           "dashboard": "Dashboard",
+          "feedback": "Feedback",
+          "legacy": "Legacy app",
           "members": "Members",
           "proposals": "Proposals",
           "settings": "Settings",
