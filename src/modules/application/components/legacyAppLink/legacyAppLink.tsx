@@ -16,7 +16,7 @@ const baseUrl = 'https://app.aragon.org';
 
 export interface ILegacyAppLinkProps {
     /**
-     * The DAO to display the data for.
+     * The DAO to enable us to navigate to the correct dao dashboard in the legacy app.
      */
     dao?: IDao;
 }
