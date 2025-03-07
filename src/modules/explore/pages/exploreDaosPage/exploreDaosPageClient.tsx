@@ -1,6 +1,7 @@
 'use client';
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import Image from 'next/image';
@@ -32,9 +33,9 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
             <ExploreNav />
             <div
                 id="explore-page-hero"
-                className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] lg:-mt-24 lg:pt-24"
+                className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] md:-mt-24 md:pt-24"
             >
-                <div className="mx-auto w-full max-w-screen-xl">
+                <Container className="w-full py-10 md:px-6 md:py-12">
                     <Image
                         src={NetBackground as string}
                         alt="Background Texture"
@@ -42,52 +43,54 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                         priority={true}
                     />
 
-                    <div className="relative flex max-w-screen-xl flex-col items-start justify-center gap-2 self-stretch px-4 py-10 lg:px-6 lg:py-12">
-                        <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch lg:gap-3">
-                            <h1 className="text-2xl font-normal leading-tight text-neutral-0 lg:text-3xl">
+                    <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
+                        <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch md:gap-3">
+                            <h1 className="text-2xl font-normal leading-tight text-neutral-0 md:text-3xl">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
-                            <h3 className="text-base font-normal leading-normal text-primary-50 lg:text-xl">
+                            <h3 className="text-base font-normal leading-normal text-primary-50 md:text-xl">
                                 {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>
                     </div>
-                </div>
+                </Container>
             </div>
 
-            <main className="mx-auto flex max-w-screen-xl flex-col gap-10 px-4 py-10 md:gap-20 md:px-6 md:py-16">
-                <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
-                    <ExploreDaos initialParams={initialParams} />
-                </ExploreSection>
-                <ExploreSection title={t('app.explore.exploreDaosPage.section.cta')}>
-                    <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-8">
-                        <CtaCard
-                            imgSrc={noCodeSetupIcon as string}
-                            title={t('app.explore.exploreDaosPage.noCodeSetup.title')}
-                            subtitle={t('app.explore.exploreDaosPage.noCodeSetup.subtitle')}
-                            isPrimary={true}
-                            actionLabel={t('app.explore.exploreDaosPage.noCodeSetup.actionLabel')}
-                            actionOnClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
-                        />
-                        <CtaCard
-                            imgSrc={enterpriseServiceIcon as string}
-                            title={t('app.explore.exploreDaosPage.enterpriseService.title')}
-                            subtitle={t('app.explore.exploreDaosPage.enterpriseService.subtitle')}
-                            isPrimary={false}
-                            actionLabel={t('app.explore.exploreDaosPage.enterpriseService.actionLabel')}
-                            actionHref="https://www.aragon.org/get-assistance-form"
-                        />
-                        <CtaCard
-                            imgSrc={doItYourselfIcon as string}
-                            title={t('app.explore.exploreDaosPage.doItYourself.title')}
-                            subtitle={t('app.explore.exploreDaosPage.doItYourself.subtitle')}
-                            isPrimary={false}
-                            actionLabel={t('app.explore.exploreDaosPage.doItYourself.actionLabel')}
-                            actionHref="https://docs.aragon.org/"
-                        />
-                    </div>
-                </ExploreSection>
-            </main>
+            <Container className="py-10 pb-16 md:px-6 md:py-16 md:pb-20">
+                <main className="flex-col gap-10 md:gap-20">
+                    <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
+                        <ExploreDaos initialParams={initialParams} />
+                    </ExploreSection>
+                    <ExploreSection title={t('app.explore.exploreDaosPage.section.cta')}>
+                        <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-4 lg:gap-8">
+                            <CtaCard
+                                imgSrc={noCodeSetupIcon as string}
+                                title={t('app.explore.exploreDaosPage.noCodeSetup.title')}
+                                subtitle={t('app.explore.exploreDaosPage.noCodeSetup.subtitle')}
+                                isPrimary={true}
+                                actionLabel={t('app.explore.exploreDaosPage.noCodeSetup.actionLabel')}
+                                actionOnClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                            />
+                            <CtaCard
+                                imgSrc={enterpriseServiceIcon as string}
+                                title={t('app.explore.exploreDaosPage.enterpriseService.title')}
+                                subtitle={t('app.explore.exploreDaosPage.enterpriseService.subtitle')}
+                                isPrimary={false}
+                                actionLabel={t('app.explore.exploreDaosPage.enterpriseService.actionLabel')}
+                                actionHref="https://www.aragon.org/get-assistance-form"
+                            />
+                            <CtaCard
+                                imgSrc={doItYourselfIcon as string}
+                                title={t('app.explore.exploreDaosPage.doItYourself.title')}
+                                subtitle={t('app.explore.exploreDaosPage.doItYourself.subtitle')}
+                                isPrimary={false}
+                                actionLabel={t('app.explore.exploreDaosPage.doItYourself.actionLabel')}
+                                actionHref="https://docs.aragon.org/"
+                            />
+                        </div>
+                    </ExploreSection>
+                </main>
+            </Container>
         </>
     );
 };
