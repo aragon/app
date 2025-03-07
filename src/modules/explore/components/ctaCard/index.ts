@@ -1,1 +1,1 @@
-export { CtaCard } from './ctaCard';
+export { CtaCard, type ICtaCardProps } from './ctaCard';

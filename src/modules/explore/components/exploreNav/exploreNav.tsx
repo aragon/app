@@ -13,9 +13,6 @@ import { useAccount } from 'wagmi';
 import AragonLogo from './icons/logo.svg';
 import AragonLogotype from './icons/logotype.svg';
 
-const gradientBg = 'bg-gradient-to-b from-primary-400 to-transparent';
-const solidBg = 'bg-primary-400';
-
 export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();
     const walletUser = address != null ? { address } : undefined;
@@ -54,7 +51,7 @@ export const ExploreNav: React.FC = () => {
         <div
             className={classNames(
                 'sticky top-0 z-[var(--app-explore-navbar-z-index)] w-full',
-                isPostHero ? solidBg : gradientBg,
+                isPostHero ? 'bg-primary-400' : 'bg-gradient-to-b from-primary-400 to-transparent',
             )}
         >
             <header className="mx-auto flex max-w-screen-xl items-center justify-between gap-6 self-stretch px-4 py-3 xl:gap-12 xl:px-6 xl:py-5">
@@ -72,8 +69,6 @@ export const ExploreNav: React.FC = () => {
                             className="hidden md:block"
                             priority={true}
                         />
-                        {/*<Logo className="block md:hidden" />*/}
-                        {/*<Logotype className="hidden md:block" />*/}
                     </Link>
                 </div>
 

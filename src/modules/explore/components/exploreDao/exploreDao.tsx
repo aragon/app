@@ -25,13 +25,8 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
 
     const [daoFilter, setDaoFilter] = useState<string | undefined>('all');
 
-    const handleToggleChange = (value: string | undefined) => {
-        // We need to ensure that 1 of the filters is always selected, so we ignore empty values!
-        if (!value) {
-            return;
-        }
-        setDaoFilter(value);
-    };
+    // Fallback to current value to ensure that one of the filters is always selected
+    const handleToggleChange = (value?: string) => setDaoFilter((current) => value ?? current);
 
     const daoListParams = daoFilter === 'all' ? initialParams : undefined;
     const daoListMemberParams =
@@ -40,16 +35,19 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
     return (
         <div className="flex grow flex-col gap-3">
             <div className="flex items-center justify-between">
-                <div className="flex w-full items-center gap-x-2 md:gap-x-3">
-                    <ToggleGroup isMultiSelect={false} onChange={handleToggleChange} value={daoFilter}>
-                        <Toggle value="all" label={t('app.explore.exploreDao.filter.all')} />
-                        <Toggle
-                            value="member"
-                            label={t('app.explore.exploreDao.filter.member')}
-                            disabled={address == null}
-                        />
-                    </ToggleGroup>
-                </div>
+                <ToggleGroup
+                    className="flex w-full items-center gap-x-2 md:gap-x-3"
+                    isMultiSelect={false}
+                    onChange={handleToggleChange}
+                    value={daoFilter}
+                >
+                    <Toggle value="all" label={t('app.explore.exploreDao.filter.all')} />
+                    <Toggle
+                        value="member"
+                        label={t('app.explore.exploreDao.filter.member')}
+                        disabled={address == null}
+                    />
+                </ToggleGroup>
                 <Button
                     variant="primary"
                     size="md"

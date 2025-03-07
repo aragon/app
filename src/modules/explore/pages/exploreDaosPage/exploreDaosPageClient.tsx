@@ -57,7 +57,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
             </div>
 
             <Container className="py-10 pb-16 md:px-6 md:py-16 md:pb-20">
-                <main className="flex-col gap-10 md:gap-20">
+                <main className="flex flex-col gap-10 md:gap-20">
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
                         <ExploreDaos initialParams={initialParams} />
                     </ExploreSection>
