@@ -22,12 +22,13 @@ export const useConnectedWalletGuard = (params?: IUseConnectedWalletGuardParams)
 
     const checkWalletConnected = useCallback(
         (functionParams?: Partial<IUseConnectedWalletGuardParams>) => {
+            const dialogParams = { onError, onSuccess, ...functionParams };
+
             if (isConnected) {
-                onSuccess?.();
+                dialogParams.onSuccess?.();
                 return;
             }
 
-            const dialogParams = { onError, onSuccess, ...functionParams };
             open(ApplicationDialog.CONNECT_WALLET, { params: dialogParams });
         },
         [open, onSuccess, onError, isConnected],
