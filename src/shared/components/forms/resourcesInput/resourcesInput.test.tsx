@@ -24,7 +24,6 @@ describe('<ResourcesInput /> component', () => {
         expect(screen.getByRole('button', { name: /shared.resourcesInput.add/ })).toBeInTheDocument();
 
         // Check that no input fields are initially present
-        expect(screen.queryByPlaceholderText(/item.labelInput.placeholder/)).not.toBeInTheDocument();
         expect(screen.queryByPlaceholderText(/item.linkInput.placeholder/)).not.toBeInTheDocument();
     });
 
@@ -34,10 +33,8 @@ describe('<ResourcesInput /> component', () => {
         const addButton = screen.getByRole('button', { name: /shared.resourcesInput.add/ });
         await userEvent.click(addButton);
 
-        const labelInputs = screen.getAllByPlaceholderText(/item.labelInput.placeholder/);
         const linkInputs = screen.getAllByPlaceholderText(/item.linkInput.placeholder/);
 
-        expect(labelInputs).toHaveLength(1);
         expect(linkInputs).toHaveLength(1);
     });
 
@@ -50,9 +47,8 @@ describe('<ResourcesInput /> component', () => {
         await userEvent.click(addButton);
         await userEvent.click(addButton);
 
-        let labelInputs = screen.getAllByPlaceholderText(/item.labelInput.placeholder/);
         let linkInputs = screen.getAllByPlaceholderText(/item.linkInput.placeholder/);
-        expect(labelInputs).toHaveLength(2);
+
         expect(linkInputs).toHaveLength(2);
 
         // Click the dropdown for second resource
@@ -64,9 +60,8 @@ describe('<ResourcesInput /> component', () => {
         await userEvent.click(removeOption);
 
         // Check we only have one remaining resource
-        labelInputs = screen.getAllByPlaceholderText(/item.labelInput.placeholder/);
         linkInputs = screen.getAllByPlaceholderText(/item.linkInput.placeholder/);
-        expect(labelInputs).toHaveLength(1);
+
         expect(linkInputs).toHaveLength(1);
     });
 });

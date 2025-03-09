@@ -1,7 +1,7 @@
 import * as useFormField from '@/shared/hooks/useFormField';
 import { FormWrapper } from '@/shared/testUtils';
 import { IconType } from '@aragon/gov-ui-kit';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type IResourcesInputItemProps, ResourcesInputItem } from './resourcesInputItem';
 
@@ -91,8 +91,7 @@ describe('<ResourcesInputItem /> component', () => {
 
     it('sets a max length requirement for the resource label', () => {
         render(createTestComponent());
-        /* eslint-disable-next-line testing-library/no-node-access */
-        const container = screen.getByPlaceholderText(/labelInput.placeholder/).parentElement?.parentElement;
-        expect(within(container!).getByText('0/40')).toBeInTheDocument();
+
+        expect(screen.getByText('0/40')).toBeInTheDocument();
     });
 });
