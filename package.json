@@ -33,10 +33,12 @@
     "@walletconnect/utils": "^2.19.0",
     "classnames": "^2.5.1",
     "luxon": "^3.5.0",
+    "motion": "^12.4.10",
     "next": "^15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
+    "react-use-measure": "^2.1.7",
     "server-only": "^0.0.1",
     "viem": "^2.23.6",
     "wagmi": "^2.14.12"

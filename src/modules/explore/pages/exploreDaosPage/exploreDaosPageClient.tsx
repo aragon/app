@@ -4,9 +4,12 @@ import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { DaoDataListItem } from '@aragon/gov-ui-kit';
 import Image from 'next/image';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { CtaCard } from '../../components/ctaCard';
+import { DaoCarousel, featuredDaos } from '../../components/daoCarousel';
 import { ExploreDaos } from '../../components/exploreDao';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
@@ -58,6 +61,30 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
 
             <Container className="py-10 pb-16 md:px-6 md:py-16 md:pb-20">
                 <main className="flex flex-col gap-10 md:gap-20">
+                    <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
+                        <div className="mx-auto max-w-screen-xl px-4">
+                            <DaoCarousel speedOnHover={20} gap={24}>
+                                {featuredDaos.map((dao) => {
+                                    return (
+                                        <div key={dao.daoAddress} className="pointer-events-none">
+                                            <DaoDataListItem.Structure
+                                                key={dao.daoAddress}
+                                                href={`/dao/${dao.daoAddress}/dashboard`}
+                                                address={dao.daoAddress}
+                                                name={dao.name}
+                                                description={dao.description}
+                                                network={dao.network}
+                                                logoSrc={ipfsUtils.cidToSrc(dao.logo)}
+                                            />
+                                            <button className="pointer-events-auto" onClick={() => prompt('HELLO')}>
+                                                Helloe
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </DaoCarousel>
+                        </div>
+                    </ExploreSection>
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
                         <ExploreDaos initialParams={initialParams} />
                     </ExploreSection>
