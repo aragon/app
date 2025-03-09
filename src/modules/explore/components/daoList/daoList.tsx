@@ -5,7 +5,16 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { DaoDataListItem, DataListContainer, DataListPagination, DataListRoot, invariant } from '@aragon/gov-ui-kit';
+import {
+    DaoDataListItem,
+    DataListContainer,
+    DataListFilter,
+    DataListPagination,
+    DataListRoot,
+    invariant,
+    useDebouncedValue,
+} from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import {
     useDaoList,
     useDaoListByMemberAddress,
@@ -37,11 +46,28 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         'Either `initialParams` or `daoListByMemberParams` must be provided. You can not provide both.',
     );
 
+    const [searchValue, setSearchValue] = useState<string>();
+    const [searchValueDebounced] = useDebouncedValue(searchValue, { delay: 500 });
+
     const enableDaoList = initialParams != null && !daoListByMemberParams;
-    const daoListResult = useDaoList(initialParams!, { enabled: enableDaoList });
+    const daoListResult = useDaoList(
+        {
+            // Add search value to the query params
+            ...initialParams,
+            queryParams: { ...initialParams?.queryParams, search: searchValueDebounced },
+        },
+        { enabled: enableDaoList },
+    );
 
     const enableDaoListByMember = daoListByMemberParams != null && !initialParams;
-    const daoListByMember = useDaoListByMemberAddress(daoListByMemberParams!, { enabled: enableDaoListByMember });
+    const daoListByMember = useDaoListByMemberAddress(
+        {
+            // Add search value to the query params
+            ...daoListByMemberParams!,
+            queryParams: { ...daoListByMemberParams?.queryParams, search: searchValueDebounced },
+        },
+        { enabled: enableDaoListByMember },
+    );
 
     const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } = initialParams
         ? daoListResult
@@ -68,8 +94,6 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         description: t('app.explore.daoList.errorState.description'),
     };
 
-    const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2';
-
     return (
         <DataListRoot
             entityLabel={t('app.explore.daoList.entity')}
@@ -78,11 +102,16 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             pageSize={pageSize}
             itemsCount={itemsCount}
         >
+            <DataListFilter
+                onSearchValueChange={setSearchValue}
+                searchValue={searchValue}
+                placeholder={t('app.explore.daoList.searchPlaceholder')}
+            />
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}
-                className={processedLayoutClassNames}
                 SkeletonElement={DaoDataListItem.Skeleton}
+                layoutClassName={layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2'}
             >
                 {daoList?.map((dao) => (
                     <DaoDataListItem.Structure

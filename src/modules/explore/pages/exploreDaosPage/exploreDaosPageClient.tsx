@@ -1,15 +1,19 @@
 'use client';
 
-import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, Toggle, ToggleGroup, Wallet } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
-import { mainnet } from 'viem/chains';
-import { useAccount } from 'wagmi';
+import Image from 'next/image';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
-import { DaoList } from '../../components/daoList';
+import { CtaCard } from '../../components/ctaCard';
+import { ExploreDaos } from '../../components/exploreDao';
+import { ExploreNav } from '../../components/exploreNav';
+import { ExploreSection } from '../../components/exploreSection';
+import doItYourselfIcon from './icons/doItYourselfIcon.svg';
+import enterpriseServiceIcon from './icons/enterpriseServiceIcon.svg';
+import NetBackground from './icons/net_bg.svg';
+import noCodeSetupIcon from './icons/noCodeSetup.svg';
 
 export interface IExploreDaosPageClientProps {
     /**
@@ -22,49 +26,71 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
     const { initialParams } = props;
 
     const { t } = useTranslations();
-    const { address, isConnected } = useAccount();
     const { open } = useDialogContext();
 
-    const [daoFilter, setDaoFilter] = useState<string | undefined>('all');
-
-    const walletUser = address != null ? { address } : undefined;
-
-    const daoListParams = daoFilter === 'all' ? initialParams : undefined;
-    const daoListMemberParams =
-        daoFilter === 'member' ? { urlParams: { address: address! }, queryParams: { sort: 'blockNumber' } } : undefined;
-
-    const handleWalletClick = () => {
-        const dialog = isConnected ? ApplicationDialog.USER : ApplicationDialog.CONNECT_WALLET;
-        open(dialog);
-    };
-
     return (
-        <div className="flex grow flex-col gap-5">
-            <div className="flex items-center justify-between">
-                <div className="flex w-full items-center gap-x-2 md:gap-x-3">
-                    <ToggleGroup isMultiSelect={false} onChange={setDaoFilter} value={daoFilter}>
-                        <Toggle value="all" label={t('app.explore.exploreDaosPage.filter.all')} />
-                        <Toggle
-                            value="member"
-                            label={t('app.explore.exploreDaosPage.filter.member')}
-                            disabled={address == null}
-                        />
-                    </ToggleGroup>
-                </div>
-                <div className="flex items-center gap-x-2 md:gap-x-3">
-                    <Button
-                        iconLeft={IconType.PLUS}
-                        className="!rounded-full"
-                        variant="primary"
-                        size="md"
-                        onClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
-                    >
-                        {t('app.explore.exploreDaosPage.createDao')}
-                    </Button>
-                    <Wallet className="self-end" user={walletUser} onClick={handleWalletClick} chainId={mainnet.id} />
-                </div>
+        <>
+            <ExploreNav />
+            <div
+                id="explore-page-hero"
+                className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] md:-mt-24 md:pt-24"
+            >
+                <Container className="w-full py-10 md:px-6 md:py-12">
+                    <Image
+                        src={NetBackground as string}
+                        alt="Background Texture"
+                        className="absolute left-0 top-0 size-full object-cover"
+                        priority={true}
+                    />
+
+                    <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
+                        <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch md:gap-3">
+                            <h1 className="text-2xl font-normal leading-tight text-neutral-0 md:text-3xl">
+                                {t('app.explore.exploreDaosPage.hero.title')}
+                            </h1>
+                            <h3 className="text-base font-normal leading-normal text-primary-50 md:text-xl">
+                                {t('app.explore.exploreDaosPage.hero.subtitle')}
+                            </h3>
+                        </div>
+                    </div>
+                </Container>
             </div>
-            <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />
-        </div>
+
+            <Container className="py-10 pb-16 md:px-6 md:py-16 md:pb-20">
+                <main className="flex flex-col gap-10 md:gap-20">
+                    <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
+                        <ExploreDaos initialParams={initialParams} />
+                    </ExploreSection>
+                    <ExploreSection title={t('app.explore.exploreDaosPage.section.cta')}>
+                        <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-4 lg:gap-8">
+                            <CtaCard
+                                imgSrc={noCodeSetupIcon as string}
+                                title={t('app.explore.exploreDaosPage.noCodeSetup.title')}
+                                subtitle={t('app.explore.exploreDaosPage.noCodeSetup.subtitle')}
+                                isPrimary={true}
+                                actionLabel={t('app.explore.exploreDaosPage.noCodeSetup.actionLabel')}
+                                actionOnClick={() => open(CreateDaoDialog.CREATE_DAO_DETAILS)}
+                            />
+                            <CtaCard
+                                imgSrc={enterpriseServiceIcon as string}
+                                title={t('app.explore.exploreDaosPage.enterpriseService.title')}
+                                subtitle={t('app.explore.exploreDaosPage.enterpriseService.subtitle')}
+                                isPrimary={false}
+                                actionLabel={t('app.explore.exploreDaosPage.enterpriseService.actionLabel')}
+                                actionHref="https://www.aragon.org/get-assistance-form"
+                            />
+                            <CtaCard
+                                imgSrc={doItYourselfIcon as string}
+                                title={t('app.explore.exploreDaosPage.doItYourself.title')}
+                                subtitle={t('app.explore.exploreDaosPage.doItYourself.subtitle')}
+                                isPrimary={false}
+                                actionLabel={t('app.explore.exploreDaosPage.doItYourself.actionLabel')}
+                                actionHref="https://docs.aragon.org/"
+                            />
+                        </div>
+                    </ExploreSection>
+                </main>
+            </Container>
+        </>
     );
 };
