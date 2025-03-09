@@ -114,13 +114,10 @@
           },
           "description": {
             "helpText": "This is shown on the DAO's dashboard and the Explore page so visitors can easily find you.",
-            "label": "Description",
-            "placeholder": ""
+            "label": "Description"
           },
           "name": {
-            "helpText": "",
-            "label": "DAO name",
-            "placeholder": ""
+            "label": "DAO name"
           },
           "resources": {
             "helpText": "These are shown as links on the DAO dashboard. They are best suited for your website, social media, or other communication channels."
@@ -167,18 +164,14 @@
         "metadata": {
           "description": {
             "helpText": "This is shown on the proposals list.",
-            "label": "Description",
-            "placeholder": ""
+            "label": "Description"
           },
           "name": {
-            "helpText": "",
-            "label": "Process name",
-            "placeholder": ""
+            "label": "Process name"
           },
           "processKey": {
             "helpText": "The key is part of the unique identifier for proposals of this type. Something like EIP would lead to EIP-1 and increment for each proposal.",
-            "label": "Key",
-            "placeholder": ""
+            "label": "Key"
           },
           "resources": {
             "helpText": "These are shown as links on the proposal list. They can be used to help visitors understand the {{type}}."
@@ -256,8 +249,7 @@
           "more": "More",
           "name": {
             "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
-            "label": "Stage name",
-            "placeholder": ""
+            "label": "Stage name"
           },
           "remove": "Remove stage",
           "timing": {
@@ -293,7 +285,6 @@
             "edit": "Edit timing",
             "expiration": "Stage expiration",
             "expirationPeriod": "Expiration period",
-            "helpText": "",
             "label": "Timing",
             "no": "Disabled",
             "timelockPeriod": "Timelock period",
@@ -331,10 +322,6 @@
               "message": "Not all tokens are compatible"
             },
             "createToken": "Create token",
-            "distribute": {
-              "helpText": "",
-              "label": ""
-            },
             "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
             "import": {
               "helpText": "The address of the token to be imported",
@@ -374,7 +361,6 @@
               "warning": "Proposal will only require a minority."
             },
             "voteChange": {
-              "helpText": "",
               "label": "Vote change"
             }
           }
@@ -603,8 +589,7 @@
             "down": "Move down",
             "remove": "Remove",
             "up": "Move up"
-          },
-          "empty": ""
+          }
         },
         "metadata": {
           "actions": {
@@ -614,7 +599,6 @@
           },
           "body": {
             "helpText": "This is the full proposal text that is viewable only on the proposal details page.",
-            "placeholder": "",
             "title": "Body"
           },
           "resources": {
@@ -622,12 +606,9 @@
           },
           "summary": {
             "helpText": "This is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it's about.",
-            "placeholder": "",
             "title": "Summary"
           },
           "title": {
-            "helpText": "",
-            "placeholder": "",
             "title": "Proposal title"
           }
         }
@@ -728,8 +709,6 @@
         },
         "main": {
           "actions": {
-            "description": "",
-            "empty": "",
             "header": "Actions"
           },
           "description": {
@@ -1098,12 +1077,10 @@
         },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
-            "helpText": "",
             "infoText": "The minimum duration is {{days}} days, {{hours}} hours, and {{minutes}} minutes, set by DAO governance.",
             "label": "Voting duration / end time"
           },
           "startTime": {
-            "helpText": "",
             "label": "Voting start time"
           }
         },
@@ -1392,7 +1369,6 @@
         "add": "Add",
         "item": {
           "labelInput": {
-            "placeholder": "",
             "title": "Link text"
           },
           "linkInput": {

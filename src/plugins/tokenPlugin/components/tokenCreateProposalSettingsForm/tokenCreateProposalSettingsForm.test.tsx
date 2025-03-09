@@ -63,7 +63,6 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         render(createTestComponent());
         const startTimeInput = screen.getAllByTestId('advanced-date-input')[0];
         expect(startTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.startTime.label/);
-        expect(startTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.startTime.helpText/);
         expect(startTimeInput).toHaveTextContent('startTime');
     });
 
@@ -71,7 +70,6 @@ describe('<TokenCreateProposalSettingsForm /> component', () => {
         render(createTestComponent());
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
         expect(endTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.endTime.label/);
-        expect(endTimeInput).toHaveTextContent(/tokenCreateProposalSettingsForm.endTime.helpText/);
         expect(endTimeInput).toHaveTextContent('endTime');
         expect(endTimeInput).toHaveTextContent(
             /tokenCreateProposalSettingsForm.endTime.infoText \(days=0,hours=1,minutes=0\)/,

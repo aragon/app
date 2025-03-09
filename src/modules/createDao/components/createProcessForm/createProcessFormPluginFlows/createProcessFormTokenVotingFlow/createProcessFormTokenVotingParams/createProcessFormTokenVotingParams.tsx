@@ -136,7 +136,6 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                 </Card>
             </InputContainer>
             <Switch
-                helpText={t(`${keyNamespace}.voteChange.helpText`)}
                 inlineLabel={voteChangeField.value ? 'Yes' : 'No'}
                 onCheckedChanged={(checked) => setValue(voteChangeField.name, checked)}
                 checked={voteChangeField.value}

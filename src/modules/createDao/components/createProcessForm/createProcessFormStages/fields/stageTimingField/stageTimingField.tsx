@@ -77,7 +77,6 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
             id="stageTiming"
             useCustomWrapper={true}
             label={t('app.createDao.createProcessForm.stages.timing.label')}
-            helpText={t('app.createDao.createProcessForm.stages.timing.helpText')}
             className="flex flex-col items-start gap-3"
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">

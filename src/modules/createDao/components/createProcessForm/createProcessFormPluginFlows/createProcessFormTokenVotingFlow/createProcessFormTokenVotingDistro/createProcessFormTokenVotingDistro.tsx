@@ -120,12 +120,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                 <>
                     <InputText helpText={t(`${keyNamespace}.name.helpText`)} {...tokenNameField} />
                     <InputText helpText={t(`${keyNamespace}.symbol.helpText`)} {...tokenSymbolField} />
-                    <InputContainer
-                        id="distribute"
-                        label={t(`${keyNamespace}.distribute.label`)}
-                        helpText={t(`${keyNamespace}.distribute.helpText`)}
-                        useCustomWrapper={true}
-                    >
+                    <InputContainer id="distribute" useCustomWrapper={true}>
                         {fields.map((field, index) => (
                             <TokenVotingMemberInputRow
                                 key={field.id}

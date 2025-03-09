@@ -42,7 +42,6 @@ describe('<ResourcesInputItem /> component', () => {
 
     it('renders the label and link input fields', () => {
         render(createTestComponent());
-        expect(screen.getByPlaceholderText(/resourcesInput.item.labelInput.placeholder/)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/resourcesInput.item.linkInput.placeholder/)).toBeInTheDocument();
     });
 
