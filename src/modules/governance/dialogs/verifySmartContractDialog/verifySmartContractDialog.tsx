@@ -91,23 +91,16 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     ];
 
     const handleFormSubmit = (values: IVerifySmartContractFormData) => {
-        if (smartContractValue?.address && addressUtils.isAddress(smartContractValue.address)) {
-            if (!smartContractAbi) {
-                // With unverified contracts, it's possible no ABI is fetched,
-                // so submit a pseudo smart contract ABI oject using just the valid address
-                // This allows us to fallback to just a 'raw calldata' custom item w/o breaking the form
-                onSubmit?.({
-                    name: unverifiedContractName,
-                    address: smartContractValue.address,
-                    network,
-                    implementationAddress: null,
-                    functions: [],
-                });
-            } else {
-                onSubmit?.(values.abi!);
-            }
-        }
+        const defaultAbi = {
+            name: unverifiedContractName,
+            address: values.smartContract!.address,
+            network,
+            implementationAddress: null,
+            functions: [],
+        };
+        const processedAbi = smartContractAbi ?? defaultAbi;
 
+        onSubmit?.(processedAbi);
         close();
     };
 
@@ -118,9 +111,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         }
     }, [updateAbi, smartContractAbi, abiFieldValue]);
 
-    const contractName =
-        smartContractAbi?.name ??
-        (isContractVerified ? addressUtils.truncateAddress(smartContractValue?.address) : unverifiedContractName);
+    const contractName = smartContractAbi?.name ?? unverifiedContractName;
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
 
     return (
