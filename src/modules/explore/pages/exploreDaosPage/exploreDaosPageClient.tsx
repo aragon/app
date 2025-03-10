@@ -59,25 +59,26 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                 </Container>
             </div>
 
+            <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
+                <div className="w-full">
+                    <DaoCarousel speed={40} speedOnHover={10} gap={16}>
+                        {featuredDaos.map((dao, index) => (
+                            <DaoCarouselCard
+                                key={index}
+                                address={dao.daoAddress}
+                                name={dao.name}
+                                description={dao.description}
+                                network={dao.network as Network} // TODO: create a network parser/type gua
+                                logoSrc={dao.logo}
+                                overrideUrl={dao.overrideUrl}
+                            />
+                        ))}
+                    </DaoCarousel>
+                </div>
+            </ExploreSection>
+
             <Container className="py-10 pb-16 md:px-6 md:py-16 md:pb-20">
                 <main className="flex flex-col gap-10 md:gap-20">
-                    <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
-                        <div className="mx-auto max-w-screen-xl px-4">
-                            <DaoCarousel speed={100} speedOnHover={30} gap={16}>
-                                {featuredDaos.map((dao, index) => (
-                                    <DaoCarouselCard
-                                        key={index}
-                                        address={dao.daoAddress}
-                                        name={dao.name}
-                                        description={dao.description}
-                                        network={dao.network as Network} // TODO: create a network parser/type gua
-                                        logoSrc={dao.logo}
-                                        overrideUrl={dao.overrideUrl}
-                                    />
-                                ))}
-                            </DaoCarousel>
-                        </div>
-                    </ExploreSection>
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
                         <ExploreDaos initialParams={initialParams} />
                     </ExploreSection>

@@ -57,7 +57,7 @@ export const DaoCarouselCard: React.FC<IDaoCarouselCardProps> = ({
                     </span>
                     <Icon icon={IconType.BLOCKCHAIN_BLOCKCHAIN} size="sm" responsiveSize={{ md: 'md' }} />
                 </div>
-                <AvatarIcon icon={IconType.LINK_EXTERNAL} size="sm" variant="primary" />
+                {overrideUrl && <AvatarIcon icon={IconType.LINK_EXTERNAL} size="sm" variant="primary" />}
             </div>
         </DataList.Item>
     );

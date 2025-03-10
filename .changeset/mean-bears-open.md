@@ -3,4 +3,3 @@
 ---
 
 Implement featured DAOs carousel on the Explore page
-
