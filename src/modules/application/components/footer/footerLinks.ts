@@ -22,7 +22,7 @@ export const footerLinks: IFooterLink[] = [
         target: process.env.NEXT_PUBLIC_FEATURE_DEPLOYED_EXPLORE_LINK === 'true' ? '_blank' : undefined,
     },
     {
-        label: 'support',
+        label: 'help',
         link: 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3',
         target: '_blank',
     },
