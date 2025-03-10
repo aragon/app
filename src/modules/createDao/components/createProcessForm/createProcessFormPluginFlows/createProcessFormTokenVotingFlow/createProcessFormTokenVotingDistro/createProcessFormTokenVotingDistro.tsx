@@ -99,12 +99,12 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                     <div className="flex w-full flex-row gap-x-2">
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importExisting')}
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importCardLabel')}
                             value="imported"
                         />
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createNeW')}
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createCardLabel')}
                             value="new"
                         />
                     </div>
