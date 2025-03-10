@@ -35,10 +35,14 @@ export interface IDaoListProps {
      * Overrides the custom layout classes when set.
      */
     layoutClassNames?: string;
+    /**
+     * Show DAO search input.
+     */
+    showSearch?: boolean;
 }
 
 export const DaoList: React.FC<IDaoListProps> = (props) => {
-    const { initialParams, daoListByMemberParams, layoutClassNames } = props;
+    const { initialParams, daoListByMemberParams, layoutClassNames, showSearch } = props;
     const { t } = useTranslations();
 
     invariant(
@@ -102,11 +106,13 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             pageSize={pageSize}
             itemsCount={itemsCount}
         >
-            <DataListFilter
-                onSearchValueChange={setSearchValue}
-                searchValue={searchValue}
-                placeholder={t('app.explore.daoList.searchPlaceholder')}
-            />
+            {showSearch ? (
+                <DataListFilter
+                    onSearchValueChange={setSearchValue}
+                    searchValue={searchValue}
+                    placeholder={t('app.explore.daoList.searchPlaceholder')}
+                />
+            ) : null}
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}

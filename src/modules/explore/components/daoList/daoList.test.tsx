@@ -71,6 +71,28 @@ describe('<DaoList /> component', () => {
         expect(screen.getByText(daos[1].name)).toBeInTheDocument();
     });
 
+    it('renders the list of DAOs with search input when showSearch flag is set', () => {
+        const initialParams = { queryParams: { pageSize: 10 } };
+        const daoListByMemberParams = undefined;
+
+        useDaoListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [], pageParams: [] } }));
+
+        render(createTestComponent({ initialParams, daoListByMemberParams, showSearch: true }));
+
+        expect(screen.getByRole('searchbox')).toBeInTheDocument();
+    });
+
+    it('renders the list of DAOs without search input when showSearch flag is not set', () => {
+        const initialParams = { queryParams: { pageSize: 10 } };
+        const daoListByMemberParams = undefined;
+
+        useDaoListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [], pageParams: [] } }));
+
+        render(createTestComponent({ initialParams, daoListByMemberParams }));
+
+        expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
+    });
+
     it('throws an error when both initialParams and daoListByMemberParams are not provided', () => {
         testLogger.suppressErrors();
         const initialParams = undefined;
