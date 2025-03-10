@@ -1,7 +1,7 @@
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import { LegacyAppLink } from './legacyAppLink';
+import { NavigationAppLinksLegacy } from './navigationAppLinksLegacy';
 
 export interface INavigationAppLinksProps {
     /**
@@ -9,8 +9,6 @@ export interface INavigationAppLinksProps {
      */
     dao?: IDao;
 }
-
-const feedbackUrl = 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
 
 export const NavigationAppLinks: React.FC<INavigationAppLinksProps> = (props) => {
     const { dao } = props;
@@ -21,15 +19,15 @@ export const NavigationAppLinks: React.FC<INavigationAppLinksProps> = (props) =>
         <div className="flex items-center gap-3">
             <Button
                 target="_blank"
-                href={feedbackUrl}
+                href="https://aragonassociation.atlassian.net/servicedesk/customer/portal/3"
                 iconRight={IconType.FEEDBACK}
                 variant="tertiary"
                 size="sm"
                 className="hidden md:flex"
             >
-                {t('app.application.navigationAppLinks.contact')}
+                {t('app.application.navigation.appLinks.contact')}
             </Button>
-            <LegacyAppLink dao={dao} />
+            <NavigationAppLinksLegacy dao={dao} />
         </div>
     );
 };

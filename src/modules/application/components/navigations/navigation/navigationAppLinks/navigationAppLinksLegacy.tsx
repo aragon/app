@@ -12,9 +12,9 @@ const legacyNetworkMap: Partial<Record<Network, string>> = {
     [Network.ZKSYNC_SEPOLIA]: 'zksepolia',
 };
 
-const baseUrl = 'https://app.aragon.org';
-
 const getLegacyUrl = (dao?: IDao): string | null => {
+    const baseUrl = 'https://app.aragon.org';
+
     // If no DAO is provided, use the explore page
     if (!dao) {
         return baseUrl;
@@ -33,14 +33,15 @@ const getLegacyUrl = (dao?: IDao): string | null => {
 
     return `${baseUrl}/#/daos/${legacyNetwork}/${address}`;
 };
-export interface ILegacyAppLinkProps {
+
+export interface INavigationAppLinksLegacyProps {
     /**
      * The DAO to enable us to navigate to the correct dao dashboard in the legacy app.
      */
     dao?: IDao;
 }
 
-export const LegacyAppLink: React.FC<ILegacyAppLinkProps> = (props) => {
+export const NavigationAppLinksLegacy: React.FC<INavigationAppLinksLegacyProps> = (props) => {
     const { dao } = props;
 
     const { t } = useTranslations();
@@ -53,7 +54,7 @@ export const LegacyAppLink: React.FC<ILegacyAppLinkProps> = (props) => {
 
     return (
         <Button target="_blank" href={legacyUrl} iconRight={IconType.LINK_EXTERNAL} variant="tertiary" size="sm">
-            {t('app.application.navigationAppLinks.legacy')}
+            {t('app.application.navigation.appLinks.legacy')}
         </Button>
     );
 };

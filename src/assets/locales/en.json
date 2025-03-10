@@ -57,9 +57,11 @@
           "title": "DAO not found"
         }
       },
-      "navigationAppLinks": {
-        "contact": "Feedback",
-        "legacy": "Legacy App"
+      "navigation": {
+        "appLinks": {
+          "contact": "Feedback",
+          "legacy": "Legacy App"
+        }
       },
       "navigationDao": {
         "a11y": {
@@ -444,9 +446,6 @@
           "daos": "Explore",
           "featured": "Featured"
         }
-      },
-      "exploreNav": {
-        "feedbackButtonLabel": "Feedback"
       }
     },
     "finance": {
