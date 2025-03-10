@@ -854,7 +854,8 @@
             "warning": "Unable to verify contract"
           }
         },
-        "title": "Add contract address"
+        "title": "Add contract address",
+        "unverified": "Unverified contract"
       },
       "voteDialog": {
         "button": {
