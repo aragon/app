@@ -2,7 +2,7 @@
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { DaoCarouselCard } from '@/modules/explore/components/daoCarousel/daoCarouselCard';
-import { type Network } from '@/shared/api/daoService';
+import type { Network } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
