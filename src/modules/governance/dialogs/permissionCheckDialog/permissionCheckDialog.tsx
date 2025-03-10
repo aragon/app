@@ -51,7 +51,9 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     useEffect(() => {
         if (hasPermission) {
             onSuccess?.();
-            close();
+            // Using direct string here to avoid circular dependency
+            // this could change in the future if module dialogs are refactored
+            close('PERMISSION_CHECK');
         }
     }, [hasPermission, onSuccess, close]);
 

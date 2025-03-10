@@ -825,7 +825,7 @@
       "selectPluginDialog": {
         "action": {
           "cancel": "Cancel",
-          "select": "Create"
+          "select": "Create proposal"
         },
         "description": "Select the proposal type you want to create.",
         "title": "Create proposal"
@@ -946,6 +946,28 @@
         "adminSettingsPanel": {
           "title": "Admin"
         },
+        "adminUninstallPlugin": {
+          "adminUninstallProcessDialogCreate": {
+            "description": "To remove all admins, you need to first create at least one other governance process for your DAO.",
+            "heading": "No governance process found",
+            "label": "Create governance process",
+            "title": "Remove all admins"
+          },
+          "adminUninstallProcessDialogSelect": {
+            "a11y": {
+              "description": "You have to create and pass a proposal in another governance process to remove admin control from the DAO. This should only be done when the DAO is ready and no longer requires admin control."
+            },
+            "action": {
+              "cancel": "Cancel",
+              "select": "Select process"
+            },
+            "descriptionFirstLine": "You have to create and pass a proposal in another governance process to remove admin control from the DAO.",
+            "descriptionSecondLine": "This should only be done when the DAO is ready and no longer requires admin control.",
+            "title": "Remove all admins"
+          },
+          "label": "Remove all admins"
+        },
+
         "adminVotingTerminal": {
           "description": "Proposals created by admins pass automatically without any governance.",
           "title": "Automatic execution"
