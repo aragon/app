@@ -15,13 +15,17 @@ export interface ISelectPluginDialogParams {
      */
     daoId: string;
     /**
+     * Array of plugin IDs to filter out from the selection list.
+     */
+    excludePluginIds?: string[];
+    /**
      * Callback called on plugin selected.
      */
     onPluginSelected?: (plugin: IDaoPlugin) => void;
     /**
      * Plugin to preselect.
      */
-    initialPlugin: ITabComponentPlugin<IDaoPlugin>;
+    initialPlugin?: ITabComponentPlugin<IDaoPlugin>;
 }
 
 export interface ISelectPluginDialogProps extends IDialogComponentProps<ISelectPluginDialogParams> {}
@@ -30,14 +34,18 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
     const { location } = props;
 
     invariant(location.params != null, 'SelectPluginDialog: params must be set for the dialog to work correctly');
-    const { daoId, onPluginSelected, initialPlugin } = location.params;
+    const { daoId, excludePluginIds, onPluginSelected, initialPlugin } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const daoPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, includeSubPlugins: false })!;
 
-    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(initialPlugin);
+    const processedDaoPlugins = daoPlugins.filter((plugin) => !excludePluginIds?.includes(plugin.id));
+
+    const [selectedPlugin, setSelectedPlugin] = useState<ITabComponentPlugin<IDaoPlugin>>(
+        initialPlugin ?? processedDaoPlugins[0],
+    );
 
     const handleConfirm = () => {
         close();
@@ -49,7 +57,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (props) =>
             <Dialog.Header title={t('app.governance.selectPluginDialog.title')} onClose={close} />
             <Dialog.Content description={t('app.governance.selectPluginDialog.description')}>
                 <div className="flex flex-col gap-2 py-2">
-                    {daoPlugins.map((plugin) => (
+                    {processedDaoPlugins.map((plugin) => (
                         <DataList.Item
                             key={plugin.uniqueId}
                             onClick={() => setSelectedPlugin(plugin)}

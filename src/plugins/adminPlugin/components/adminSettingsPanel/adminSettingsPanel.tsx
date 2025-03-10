@@ -4,6 +4,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Card, IconType } from '@aragon/gov-ui-kit';
 import { AdminGovernanceInfo } from '../adminGovernanceInfo';
 import { AdminManageMembers } from '../adminManageMembers';
+import { AdminUninstallPlugin } from '../adminUninstallPlugin';
 
 export interface IAdminSettingsPanelProps {
     /**
@@ -29,6 +30,7 @@ export const AdminSettingsPanel: React.FC<IAdminSettingsPanelProps> = (props) =>
                 <AdminGovernanceInfo />
                 <div className="flex items-center justify-between">
                     <AdminManageMembers daoId={daoId} />
+                    <AdminUninstallPlugin daoId={daoId} />
                 </div>
             </Card>
         </Page.MainSection>
