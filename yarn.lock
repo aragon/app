@@ -81,13 +81,13 @@ __metadata:
     eslint-plugin-react-hooks: "npm:^5.2.0"
     eslint-plugin-tailwindcss: "npm:^3.18.0"
     eslint-plugin-testing-library: "npm:^7.1.1"
+    framer-motion: "npm:^12.4.10"
     husky: "npm:^9.1.7"
     jest: "npm:^29.7.0"
     jest-canvas-mock: "npm:^2.5.2"
     jest-environment-jsdom: "npm:^29.7.0"
     lint-staged: "npm:^15.4.3"
     luxon: "npm:^3.5.0"
-    motion: "npm:^12.4.10"
     next: "npm:^15.2.1"
     postcss: "npm:^8.5.3"
     prettier: "npm:^3.5.3"
@@ -12728,27 +12728,6 @@ __metadata:
     "@motionone/utils": "npm:^10.15.1"
     "@motionone/vue": "npm:^10.16.2"
   checksum: 10c0/ea3fa2c7ce881824bcefa39b96b5e2b802d4b664b8a64644cded11197c9262e2a5b14b2e9516940e06cec37d3c39e4c79b26825c447f71ba1cfd7e3370efbe61
-  languageName: node
-  linkType: hard
-
-"motion@npm:^12.4.10":
-  version: 12.4.10
-  resolution: "motion@npm:12.4.10"
-  dependencies:
-    framer-motion: "npm:^12.4.10"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    "@emotion/is-prop-valid": "*"
-    react: ^18.0.0 || ^19.0.0
-    react-dom: ^18.0.0 || ^19.0.0
-  peerDependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 10c0/b20f936d4376b8184b262f319d59af633d436f21dffb3b229dbee700a7a2c38aa7457d21685dc8d685a781821657a22cc08a9f3f293b7d8f3f98697dd53e79c2
   languageName: node
   linkType: hard
 
