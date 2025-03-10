@@ -847,6 +847,33 @@
           "proposalCreation": "Proposal creation",
           "proposalExecution": "Proposal execution"
         },
+        "adminManageMembers": {
+          "button": "Manage admins",
+          "dialog": {
+            "addresses": {
+              "action": {
+                "cancel": "Cancel",
+                "update": "Update admins"
+              },
+              "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
+              "title": "Manage admins"
+            },
+            "publish": {
+              "button": {
+                "submit": "Update admins",
+                "success": "View settings"
+              },
+              "description": "To update admins you have to confirm the onchain transaction with your wallet.",
+              "step": {
+                "PIN_METADATA": {
+                  "errorLabel": "Unable to pin data on IPFS",
+                  "label": "Pin data on IPFS"
+                }
+              },
+              "title": "Update admins"
+            }
+          }
+        },
         "adminMemberInfo": {
           "admins": "Admins",
           "membersCount": "{{count}} addresses"
@@ -1291,6 +1318,22 @@
       }
     },
     "shared": {
+      "addressesInput": {
+        "container": {
+          "add": "Add"
+        },
+        "item": {
+          "input": {
+            "error": {
+              "alreadyInList": "Address has already been added",
+              "invalid": "Address is not valid"
+            },
+            "label": "Member",
+            "placeholder": "ENS or 0x …"
+          },
+          "remove": "Remove member"
+        }
+      },
       "advancedDateInput": {
         "duration": {
           "days": "Days",
