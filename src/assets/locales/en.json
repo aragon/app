@@ -37,7 +37,7 @@
         "link": {
           "build": "Build",
           "explore": "Explore",
-          "help": "Help",
+          "help": "Support",
           "learn": "Learn",
           "privacy": "Privacy",
           "termsOfService": "Terms of Service"
@@ -854,7 +854,8 @@
             "warning": "Unable to verify contract"
           }
         },
-        "title": "Add contract address"
+        "title": "Add contract address",
+        "unverified": "Unverified contract"
       },
       "voteDialog": {
         "button": {

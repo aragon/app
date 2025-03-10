@@ -59,7 +59,6 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     });
 
     const { onChange: updateAbi, value: abiFieldValue } = useFormField<IVerifySmartContractFormData, 'abi'>('abi', {
-        rules: { required: true },
         control,
     });
 
@@ -70,6 +69,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     );
 
     const isContractVerified = smartContractAbi != null;
+    const unverifiedContractName = t('app.governance.verifySmartContractDialog.unverified');
 
     const proxyState = isLoadingAbi ? 'pending' : smartContractAbi?.implementationAddress != null ? 'success' : 'idle';
     const abiState = isLoadingAbi ? 'pending' : isContractVerified ? 'success' : 'warning';
@@ -91,7 +91,16 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     ];
 
     const handleFormSubmit = (values: IVerifySmartContractFormData) => {
-        onSubmit?.(values.abi!);
+        const defaultAbi = {
+            name: unverifiedContractName,
+            address: values.smartContract!.address,
+            network,
+            implementationAddress: null,
+            functions: [],
+        };
+        const processedAbi = smartContractAbi ?? defaultAbi;
+
+        onSubmit?.(processedAbi);
         close();
     };
 
@@ -102,7 +111,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         }
     }, [updateAbi, smartContractAbi, abiFieldValue]);
 
-    const contractName = smartContractAbi?.name ?? addressUtils.truncateAddress(smartContractValue?.address);
+    const contractName = smartContractAbi?.name ?? unverifiedContractName;
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
 
     return (
