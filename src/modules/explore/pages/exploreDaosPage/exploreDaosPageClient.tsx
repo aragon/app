@@ -1,11 +1,10 @@
 'use client';
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { DaoCarouselCard } from '@/modules/explore/components/daoCarousel/daoCarouselCard';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { DaoDataListItem } from '@aragon/gov-ui-kit';
 import Image from 'next/image';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { CtaCard } from '../../components/ctaCard';
@@ -63,23 +62,18 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                 <main className="flex flex-col gap-10 md:gap-20">
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
                         <div className="mx-auto max-w-screen-xl px-4">
-                            <DaoCarousel speed={50} gap={24}>
+                            <DaoCarousel speed={90} speedOnHover={20} gap={24}>
                                 {featuredDaos.map((dao, index) => {
                                     return (
-                                        <div key={dao.daoAddress} className="pointer-events-none max-w-52">
-                                            <DaoDataListItem.Structure
-                                                key={index}
-                                                href={`/dao/${dao.daoAddress}/dashboard`}
-                                                address={dao.daoAddress}
-                                                name={dao.name}
-                                                description={dao.description}
-                                                network={dao.network}
-                                                logoSrc={ipfsUtils.cidToSrc(dao.logo)}
-                                            />
-                                            <button className="pointer-events-auto" onClick={() => prompt('HELLO')}>
-                                                Helloe
-                                            </button>
-                                        </div>
+                                        <DaoCarouselCard
+                                            key={index}
+                                            address={dao.daoAddress}
+                                            name={dao.name}
+                                            description={dao.description}
+                                            network={dao.network}
+                                            logoSrc={dao.logo}
+                                            overrideUrl={dao.overrideUrl}
+                                        />
                                     );
                                 })}
                             </DaoCarousel>

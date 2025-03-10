@@ -4,71 +4,88 @@ import { useEffect, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
 export interface IDaoCarouselProps {
+    // TODO: add doc comments
     children: React.ReactNode;
     gap?: number;
     speed?: number;
+    speedOnHover?: number;
     className?: string;
 }
+
 // https://motion-primitives.com/docs/infinite-slider
 // https://www.ui-layouts.com/components/framer-carousel
 export const DaoCarousel: React.FC<IDaoCarouselProps> = (props) => {
-    const { children, gap = 16, speed = 100, className } = props;
+    const { children, gap = 16, speed = 100, speedOnHover, className } = props;
 
     const [currentSpeed, setCurrentSpeed] = useState(speed);
     const [ref, { width, height }] = useMeasure();
     const translation = useMotionValue(0);
 
-    const [isDragging, setIsDragging] = useState(false); // state to check if the user is dragging the carousel
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [key, setKey] = useState(0);
 
     useEffect(() => {
-        if (isDragging) {
-            // don't animate if the user is dragging the carousel
-            return;
-        }
+        let controls;
 
         const size = width;
         const contentSize = size + gap;
-        // Use the current position as starting point (to support dragging)
-        const currentPosition = translation.get();
-        const from = currentPosition;
+        const from = 0;
         const to = -contentSize / 2;
 
         const distanceToTravel = Math.abs(to - from);
         const duration = distanceToTravel / currentSpeed;
 
-        const controls = animate(translation, [from, to], {
-            ease: 'linear',
-            duration: duration,
-            repeat: Infinity,
-            repeatType: 'loop',
-            repeatDelay: 0,
-            onRepeat: () => {
-                translation.set(from);
-            },
-        });
+        if (isTransitioning) {
+            const remainingDistance = Math.abs(translation.get() - to);
+            const transitionDuration = remainingDistance / currentSpeed;
+
+            controls = animate(translation, [translation.get(), to], {
+                ease: 'linear',
+                duration: transitionDuration,
+                onComplete: () => {
+                    setIsTransitioning(false);
+                    setKey((prevKey) => prevKey + 1);
+                },
+            });
+        } else {
+            controls = animate(translation, [from, to], {
+                ease: 'linear',
+                duration: duration,
+                repeat: Infinity,
+                repeatType: 'loop',
+                repeatDelay: 0,
+                onRepeat: () => {
+                    translation.set(from);
+                },
+            });
+        }
 
         return controls.stop;
-    }, [translation, currentSpeed, width, height, gap, isDragging]);
+    }, [key, translation, currentSpeed, width, height, gap, isTransitioning]);
+
+    const hoverProps = speedOnHover
+        ? {
+              onHoverStart: () => {
+                  setIsTransitioning(true);
+                  setCurrentSpeed(speedOnHover);
+              },
+              onHoverEnd: () => {
+                  setIsTransitioning(true);
+                  setCurrentSpeed(speed);
+              },
+          }
+        : {};
 
     return (
         <div className={classNames('overflow-hidden', className)}>
             <motion.div
-                drag="x"
-                whileDrag={{ scale: 0.95 }}
-                dragElastic={0}
-                dragConstraints={{ right: 0, left: -width / 2 }}
-                dragTransition={{ bounceDamping: 30 }}
-                onDragStart={() => setIsDragging(true)}
-                onDragEnd={() => {
-                    setIsDragging(false);
-                }}
-                className="flex w-max cursor-grab will-change-transform active:cursor-grabbing"
+                className="flex w-max will-change-transform"
                 style={{
                     x: translation,
                     gap: `${String(gap)}px`,
-                    flexDirection: 'row',
                 }}
                 ref={ref}
+                {...hoverProps}
             >
                 {children}
                 {children}
