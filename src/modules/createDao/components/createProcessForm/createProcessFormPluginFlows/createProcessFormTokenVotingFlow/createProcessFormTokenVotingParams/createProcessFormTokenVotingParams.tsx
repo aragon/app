@@ -49,7 +49,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const members = watch(`${fieldPrefix}.members`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const tokenSymbolField = watch('${fieldPrefix}.tokenSymbolField');
+    const tokenSymbolField = watch(`${fieldPrefix}.tokenSymbolField`);
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
