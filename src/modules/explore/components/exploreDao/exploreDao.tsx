@@ -25,9 +25,9 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
 
     const [daoFilter, setDaoFilter] = useState<string | undefined>('all');
 
-    // Fallback to current value to ensure that one of the filters is always selected
+    // Only update filter when value is defined and not empty string to ensure that one of the filters is always selected
+    // Note: value comes back as empty string when toggle is deselected
     const handleToggleChange = (value?: string) => {
-        // value on deselect is "", not undefined!
         if (value) {
             setDaoFilter(value);
         }

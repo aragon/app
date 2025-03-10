@@ -106,13 +106,13 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             pageSize={pageSize}
             itemsCount={itemsCount}
         >
-            {showSearch ? (
+            {showSearch && (
                 <DataListFilter
                     onSearchValueChange={setSearchValue}
                     searchValue={searchValue}
                     placeholder={t('app.explore.daoList.searchPlaceholder')}
                 />
-            ) : null}
+            )}
             <DataListContainer
                 errorState={errorState}
                 emptyState={emptyState}
