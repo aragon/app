@@ -8,46 +8,50 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AssetDataListItem, Dialog, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { parseUnits } from 'viem';
+import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
 
-export interface ITokenWrapFormDialogWrapProps extends IDialogRootProps {
+export interface ITokenWrapFormDialogActionProps extends IDialogRootProps {
+    /**
+     * Action to be performed.
+     */
+    action: 'wrap' | 'unwrap';
     /**
      * Wrapper governance token.
      */
     token: ITokenPluginSettingsToken;
     /**
-     * Amount of tokens to be wrapped formatted using the token decimals.
+     * Amount of tokens to be wrapped / unwrapped in WEI format.
      */
-    amount: string;
+    amount: bigint;
     /**
      * Network used for the transaction.
      */
     network: Network;
     /**
-     * Callback called on wrap transaction success.
+     * Callback called on wrap / unwrap transaction success.
      */
     onSuccess?: () => void;
 }
 
-export const TokenWrapFormDialogWrap: React.FC<ITokenWrapFormDialogWrapProps> = (props) => {
-    const { token, amount, network, onOpenChange, onSuccess, ...otherProps } = props;
+export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps> = (props) => {
+    const { action, token, amount, network, onOpenChange, onSuccess, ...otherProps } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
     const { address } = useAccount();
 
-    invariant(address != null, 'TokenWrapFormDialogWrap: user must be connected to perform the action');
+    invariant(address != null, 'TokenWrapFormDialogAction: user must be connected to perform the action');
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const weiAmount = parseUnits(amount, token.decimals);
-
     const handlePrepareTransaction = () =>
-        tokenWrapFormDialogUtils.buildWrapTransaction({ token, address, amount: weiAmount });
+        action === 'wrap'
+            ? tokenWrapFormDialogUtils.buildWrapTransaction({ token, address, amount })
+            : tokenWrapFormDialogUtils.buildUnwrapTransaction({ token, address, amount });
 
     const handleCloseDialog = () => {
         stepper.updateActiveStep(initialActiveStep);
@@ -59,26 +63,28 @@ export const TokenWrapFormDialogWrap: React.FC<ITokenWrapFormDialogWrapProps> = 
         router.refresh();
     };
 
+    const parsedAmount = formatUnits(amount, token.decimals);
+
     return (
         <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
             <TransactionDialog
-                title={t(`app.plugins.token.tokenWrapForm.dialog.wrap.title`)}
-                description={t(`app.plugins.token.tokenWrapForm.dialog.wrap.description`)}
-                submitLabel={t(`app.plugins.token.tokenWrapForm.dialog.wrap.submit`)}
+                title={t(`app.plugins.token.tokenWrapForm.dialog.${action}.title`)}
+                description={t(`app.plugins.token.tokenWrapForm.dialog.${action}.description`)}
+                submitLabel={t(`app.plugins.token.tokenWrapForm.dialog.${action}.submit`)}
                 stepper={stepper}
                 prepareTransaction={handlePrepareTransaction}
                 onCancelClick={handleCloseDialog}
                 network={network}
                 onSuccess={onSuccess}
                 successLink={{
-                    label: t(`app.plugins.token.tokenWrapForm.dialog.wrap.success`),
+                    label: t(`app.plugins.token.tokenWrapForm.dialog.${action}.success`),
                     onClick: onSuccessClick,
                 }}
             >
                 <AssetDataListItem.Structure
                     logoSrc={token.logo}
                     name={token.name}
-                    amount={amount}
+                    amount={parsedAmount}
                     symbol={token.symbol}
                     fiatPrice={token.priceUsd}
                 />

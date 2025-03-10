@@ -7,7 +7,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { Dialog, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
-import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
@@ -18,9 +17,9 @@ export interface ITokenWrapFormDialogApproveProps extends IDialogRootProps {
      */
     token: ITokenPluginSettingsToken;
     /**
-     * Amount of tokens to be approved formatted using the token decimals.
+     * Amount of tokens to be approved in WEI format.
      */
-    amount: string;
+    amount: bigint;
     /**
      * Network used for the transaction.
      */
@@ -46,10 +45,7 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
 
-    const weiAmount = parseUnits(amount, token.decimals);
-
-    const handlePrepareTransaction = () =>
-        tokenWrapFormDialogUtils.buildApproveTransaction({ token, amount: weiAmount });
+    const handlePrepareTransaction = () => tokenWrapFormDialogUtils.buildApproveTransaction({ token, amount });
 
     const handleCloseDialog = () => {
         stepper.updateActiveStep(initialActiveStep);

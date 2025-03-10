@@ -9,9 +9,8 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
+import { TokenWrapFormDialogAction } from './tokenWrapFormDialogAction';
 import { TokenWrapFormDialogApprove } from './tokenWrapFormDialogApprove';
-import { TokenWrapFormDialogUnwrap } from './tokenWrapFormDialogUnwrap';
-import { TokenWrapFormDialogWrap } from './tokenWrapFormDialogWrap';
 
 export interface ITokenWrapFormProps {
     /**
@@ -43,6 +42,10 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const [percentageValue, setPercentageValue] = useState<string>('100');
     const [activeDialog, setActiveDialog] = useState<string | undefined>();
 
+    // Set the amount to be wrapped / unwrapped on a state because as soon as the transactions are successfully sent,
+    // the amount is refetched and an amount of "0" would be displayed on the wrap / unwrap dialogs.
+    const [confirmAmount, setConfirmAmount] = useState<bigint>(BigInt(0));
+
     const { data: tokenMember, refetch: refetchMember } = useMember<ITokenMember>(
         { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
         { enabled: address != null },
@@ -67,7 +70,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const userAsset = useMemo(() => ({ token, amount: parsedUnwrappedAmount }), [token, parsedUnwrappedAmount]);
     const formValues = useForm<ITokenWrapFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
-    const { control, setValue, formState, handleSubmit } = formValues;
+    const { control, setValue, handleSubmit } = formValues;
 
     const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({ control, name: 'amount' });
     const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
@@ -80,7 +83,12 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         void refetchMember();
     };
 
-    const handleFormSubmit = () => setActiveDialog(needsApproval ? 'approve' : 'wrap');
+    const displayFormDialog = (dialog: string, amount: bigint) => {
+        setConfirmAmount(amount);
+        setActiveDialog(dialog);
+    };
+
+    const handleFormSubmit = () => displayFormDialog(needsApproval ? 'approve' : 'wrap', wrapAmountWei);
 
     const updateAmountField = useCallback(
         (value?: string) => {
@@ -95,17 +103,29 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         [unwrappedBalance, decimals, setValue],
     );
 
-    const handlePercentageChange = (value = '') => {
-        updateAmountField(value);
-        setPercentageValue(value);
-    };
+    const handlePercentageChange = useCallback(
+        (value = '') => {
+            updateAmountField(value);
+            setPercentageValue(value);
+        },
+        [updateAmountField],
+    );
 
-    // Initialize amount field with 100% value
-    useEffect(() => {
-        if (wrapAmount == null && !formState.dirtyFields.amount) {
-            updateAmountField('100');
-        }
-    }, [wrapAmount, formState, updateAmountField]);
+    const handleUnwrapToken = () => displayFormDialog('unwrap', wrappedAmount);
+
+    const handleApproveSuccess = () => setActiveDialog('wrap');
+
+    const getDialogProps = (dialog: string) => ({
+        open: activeDialog === dialog,
+        token,
+        amount: confirmAmount,
+        onOpenChange: () => setActiveDialog(undefined),
+        network: dao!.network,
+        onSuccess: handleTransactionSuccess,
+    });
+
+    // Update amount field and percentage value to 100% of user unwrapped balance on user balance change
+    useEffect(() => handlePercentageChange('100'), [handlePercentageChange]);
 
     // Initialize asset field after fetching unwrapped balance
     useEffect(() => {
@@ -123,13 +143,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const submitLabel = needsApproval ? 'approve' : 'wrap';
     const disableSubmit = !unwrappedBalance || unwrappedBalance.value === BigInt(0);
-
-    const dialogProps = {
-        token,
-        onOpenChange: () => setActiveDialog(undefined),
-        network: dao!.network,
-        onSuccess: handleTransactionSuccess,
-    };
 
     return (
         <FormProvider {...formValues}>
@@ -164,7 +177,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                         {t(`app.plugins.token.tokenWrapForm.submit.${submitLabel}`, { underlyingSymbol })}
                     </Button>
                     {wrappedAmount > 0 && (
-                        <Button variant="secondary" size="lg" onClick={() => setActiveDialog('unwrap')}>
+                        <Button variant="secondary" size="lg" onClick={handleUnwrapToken}>
                             {t('app.plugins.token.tokenWrapForm.submit.unwrap', {
                                 amount: formattedWrappedAmount,
                                 symbol,
@@ -176,14 +189,9 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                     </p>
                 </div>
             </form>
-            <TokenWrapFormDialogApprove
-                open={activeDialog === 'approve'}
-                onApproveSuccess={() => setActiveDialog('wrap')}
-                amount={wrapAmount ?? '0'}
-                {...dialogProps}
-            />
-            <TokenWrapFormDialogWrap open={activeDialog == 'wrap'} amount={wrapAmount ?? '0'} {...dialogProps} />
-            <TokenWrapFormDialogUnwrap open={activeDialog == 'unwrap'} amount={wrappedAmount} {...dialogProps} />
+            <TokenWrapFormDialogApprove onApproveSuccess={handleApproveSuccess} {...getDialogProps('approve')} />
+            <TokenWrapFormDialogAction action="wrap" {...getDialogProps('wrap')} />
+            <TokenWrapFormDialogAction action="unwrap" {...getDialogProps('unwrap')} />
         </FormProvider>
     );
 };
