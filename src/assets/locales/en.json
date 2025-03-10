@@ -37,9 +37,9 @@
         "link": {
           "build": "Build",
           "explore": "Explore",
-          "help": "Help",
           "learn": "Learn",
           "privacy": "Privacy",
+          "support": "Support",
           "termsOfService": "Terms of Service"
         }
       },
