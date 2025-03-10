@@ -1,4 +1,3 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
 import { adminUninstallProcessDialogSelectUtils } from './adminUninstallProcessDialogSelectUtils';
@@ -23,23 +22,24 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
 
     describe('buildProposalParams', () => {
         it('builds the correct proposal parameters', () => {
-            const plugin: IDaoPlugin = { address: '0xPluginAddress', subdomain: 'admin' } as IDaoPlugin;
+            const pluginAddress: Hex = '0xPluginAddress';
             const daoAddress: Hex = '0xDaoAddress';
             const daoId = 'dao-123';
-            const pluginSetupProcessor: Hex = '0xPluginSetupProcessor';
+            const adminAddress: Hex = '0xPluginSetupProcessor';
+            const permissionId = 'EXECUTE_PERMISSION';
 
             const result = adminUninstallProcessDialogSelectUtils.buildProposalParams(
-                plugin,
-                pluginSetupProcessor,
                 daoAddress,
+                adminAddress,
+                pluginAddress,
                 daoId,
             );
 
             expect(buildRevokePermissionTransactionSpy).toHaveBeenCalledWith({
                 where: daoAddress,
-                who: pluginSetupProcessor,
-                what: 'ROOT_PERMISSION',
-                to: daoAddress,
+                who: adminAddress,
+                what: permissionId,
+                to: pluginAddress,
             });
 
             expect(result).toMatchObject({
@@ -53,7 +53,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
                     ],
                 },
                 daoId,
-                pluginAddress: plugin.address,
+                pluginAddress,
             });
         });
     });
