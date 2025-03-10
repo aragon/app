@@ -69,6 +69,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     );
 
     const isContractVerified = smartContractAbi != null;
+    const unverifiedContractName = t('app.governance.verifySmartContractDialog.unverified');
 
     const proxyState = isLoadingAbi ? 'pending' : smartContractAbi?.implementationAddress != null ? 'success' : 'idle';
     const abiState = isLoadingAbi ? 'pending' : isContractVerified ? 'success' : 'warning';
@@ -96,13 +97,13 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
                 // so submit a pseudo smart contract ABI oject using just the valid address
                 // This allows us to fallback to just a 'raw calldata' custom item w/o breaking the form
                 onSubmit?.({
-                    name: 'Unverified contract',
+                    name: unverifiedContractName,
                     address: smartContractValue.address,
                     network,
                     implementationAddress: null,
                     functions: [],
                 });
-            } else if (smartContractAbi.address !== abiFieldValue?.address) {
+            } else {
                 onSubmit?.(values.abi!);
             }
         }
@@ -117,8 +118,11 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         }
     }, [updateAbi, smartContractAbi, abiFieldValue]);
 
-    const contractName = smartContractAbi?.name ?? addressUtils.truncateAddress(smartContractValue?.address);
+    const contractName =
+        smartContractAbi?.name ??
+        (isContractVerified ? addressUtils.truncateAddress(smartContractValue?.address) : unverifiedContractName);
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
+    const buttonVariant = isContractVerified ? 'primary' : 'critical';
 
     return (
         <>
@@ -148,6 +152,7 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
             <Dialog.Footer
                 primaryAction={{
                     label: t(`app.governance.verifySmartContractDialog.action.${buttonLabel}`),
+                    variant: buttonVariant,
                     type: 'submit',
                     isLoading: isLoadingAbi,
                     form: formId,
