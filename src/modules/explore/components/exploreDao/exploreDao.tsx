@@ -25,8 +25,13 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
 
     const [daoFilter, setDaoFilter] = useState<string | undefined>('all');
 
-    // Fallback to current value to ensure that one of the filters is always selected
-    const handleToggleChange = (value?: string) => setDaoFilter((current) => value ?? current);
+    // Only update filter when value is defined and not empty string to ensure that one of the filters is always selected
+    // Note: value comes back as empty string when toggle is deselected
+    const handleToggleChange = (value?: string) => {
+        if (value) {
+            setDaoFilter(value);
+        }
+    };
 
     const daoListParams = daoFilter === 'all' ? initialParams : undefined;
     const daoListMemberParams =
@@ -57,7 +62,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
                     {t('app.explore.exploreDao.createDao')}
                 </Button>
             </div>
-            <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} />
+            <DaoList initialParams={daoListParams} daoListByMemberParams={daoListMemberParams} showSearch={true} />
         </div>
     );
 };
