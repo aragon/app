@@ -27,7 +27,7 @@ export const NavigationAppLinks: React.FC<INavigationAppLinksProps> = (props) =>
                 size="sm"
                 className="hidden md:flex"
             >
-                {t('app.application.navigationAppLinks.feedback')}
+                {t('app.application.navigationAppLinks.contact')}
             </Button>
             <LegacyAppLink dao={dao} />
         </div>
