@@ -122,7 +122,6 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
         smartContractAbi?.name ??
         (isContractVerified ? addressUtils.truncateAddress(smartContractValue?.address) : unverifiedContractName);
     const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
-    const buttonVariant = isContractVerified ? 'primary' : 'critical';
 
     return (
         <>
@@ -152,7 +151,6 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
             <Dialog.Footer
                 primaryAction={{
                     label: t(`app.governance.verifySmartContractDialog.action.${buttonLabel}`),
-                    variant: buttonVariant,
                     type: 'submit',
                     isLoading: isLoadingAbi,
                     form: formId,
