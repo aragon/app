@@ -49,7 +49,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     });
 
     const baseTranslationKey = 'app.plugins.token.tokenProcessBodyField';
-    const voteChangeLabel = voteChange ? t(`${baseTranslationKey}.yes`) : t(`${baseTranslationKey}.no`);
+    const voteChangeLabel = voteChange ? t(`${baseTranslationKey}.enabled`) : t(`${baseTranslationKey}.disabled`);
 
     return (
         <DefinitionList.Container className="w-full">

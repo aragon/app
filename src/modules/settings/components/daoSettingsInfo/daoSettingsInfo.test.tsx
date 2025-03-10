@@ -38,7 +38,7 @@ describe('<DaoSettingsInfo /> component', () => {
     it('renders the correct terms', () => {
         render(createTestComponent());
         expect(screen.getByText(/daoSettingsInfo.name/)).toBeInTheDocument();
-        expect(screen.getByText(/daoSettingsInfo.blockchain/)).toBeInTheDocument();
+        expect(screen.getByText(/daoSettingsInfo.chain/)).toBeInTheDocument();
         expect(screen.getByText(/daoSettingsInfo.summary/)).toBeInTheDocument();
     });
 

@@ -1,3 +1,4 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
 import type { ICreateProcessFormBody } from '../../../createProcessFormDefinitions';
@@ -8,6 +9,8 @@ export interface ICreateProcessFormMultisigDistroProps extends ICreateProcessFor
 
 export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisigDistroProps> = (props) => {
     const { fieldPrefix } = props;
+
+    const { t } = useTranslations();
 
     const membersFieldName = `${fieldPrefix}.members`;
     const { fields, append, remove } = useFieldArray<Record<string, ICreateProcessFormBody['members']>>({
@@ -20,8 +23,8 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
         <>
             <InputContainer
                 id="multisig-members"
-                label="Multisig Members"
-                helpText="Add the addresses that will be part of the multisig."
+                label={t('app.createDao.createProcessForm.multisigFlow.distro.label')}
+                helpText={t('app.createDao.createProcessForm.multisigFlow.distro.helpText')}
                 useCustomWrapper={true}
             >
                 {fields.map((member, index) => (
@@ -35,7 +38,7 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
             </InputContainer>
             <div className="flex w-full justify-between">
                 <Button size="md" variant="tertiary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
-                    Add Member
+                    Add member
                 </Button>
             </div>
         </>

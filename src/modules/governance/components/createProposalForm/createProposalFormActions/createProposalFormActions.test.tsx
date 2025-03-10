@@ -51,8 +51,11 @@ describe('<CreateProposalFormActions /> component', () => {
 
     it('renders an empty state', () => {
         render(createTestComponent());
-        const emptyState = screen.getByText(/createProposalForm.actions.empty/);
-        expect(emptyState).toBeInTheDocument();
+        // Heading string comes from GovKit so is not available via i18n key
+        const emptyStateHeading = screen.getByText('No actions added');
+        const emptyStateIllustration = screen.getByTestId('SMART_CONTRACT');
+        expect(emptyStateHeading).toBeInTheDocument();
+        expect(emptyStateIllustration).toBeInTheDocument();
     });
 
     it('renders a button to add an action', () => {

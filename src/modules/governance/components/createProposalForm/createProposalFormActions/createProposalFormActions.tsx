@@ -187,7 +187,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions.Root expandedActions={expandedActions} onExpandedActionsChange={setExpandedActions}>
-                <ProposalActions.Container emptyStateDescription={t('app.governance.createProposalForm.actions.empty')}>
+                <ProposalActions.Container emptyStateDescription="">
                     {processedActions.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
                             key={action.id}

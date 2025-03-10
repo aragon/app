@@ -67,16 +67,10 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
 
     return (
         <div className="flex w-full flex-col gap-10">
-            <InputText
-                helpText={t('app.createDao.createProcessForm.metadata.name.helpText', { type: typeLabel })}
-                placeholder={t('app.createDao.createProcessForm.metadata.name.placeholder')}
-                maxLength={nameMaxLength}
-                {...nameField}
-            />
+            <InputText maxLength={nameMaxLength} {...nameField} />
             {displayProcessKey && (
                 <InputText
                     helpText={t('app.createDao.createProcessForm.metadata.processKey.helpText')}
-                    placeholder={t('app.createDao.createProcessForm.metadata.processKey.placeholder')}
                     maxLength={processKeyMaxLength}
                     addon={processKeyField.value != '' ? '-01' : undefined}
                     addonPosition="right"
@@ -86,7 +80,6 @@ export const CreateProcessFormMetadata: React.FC<ICreateProcessFormMetadataProps
             )}
             <TextArea
                 helpText={t('app.createDao.createProcessForm.metadata.description.helpText', { type: typeLabel })}
-                placeholder={t('app.createDao.createProcessForm.metadata.description.placeholder')}
                 maxLength={summaryMaxLength}
                 isOptional={true}
                 {...summaryField}

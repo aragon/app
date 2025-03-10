@@ -50,7 +50,6 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
             <InputText
                 helpText={t('app.createDao.createProcessForm.stages.name.helpText')}
-                placeholder={t('app.createDao.createProcessForm.stages.name.placeholder')}
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />

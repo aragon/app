@@ -1,3 +1,4 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AlertInline,
@@ -23,6 +24,8 @@ export interface ICreateProcessFormTokenVotingParamsProps extends ICreateProcess
 export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormTokenVotingParamsProps> = (props) => {
     const { fieldPrefix } = props;
 
+    const { t } = useTranslations();
+
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
 
@@ -30,17 +33,17 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
 
     const supportThresholdField = useFormField<ICreateProcessFormBody, 'supportThreshold'>('supportThreshold', {
         fieldPrefix,
-        label: 'Support threshold',
+        label: t('app.createDao.createProcessForm.tokenFlow.params.supportThreshold.label'),
     });
 
-    const minimumParticipationField = useFormField<ICreateProcessFormBody, `minimumParticipation`>(
+    const minimumParticipationField = useFormField<ICreateProcessFormBody, 'minimumParticipation'>(
         'minimumParticipation',
-        { fieldPrefix, label: 'Minimum participation' },
+        { fieldPrefix, label: t('app.createDao.createProcessForm.tokenFlow.params.minParticipation.label') },
     );
 
     const voteChangeField = useFormField<ICreateProcessFormBody, 'voteChange'>('voteChange', {
-        label: 'Vote change',
         fieldPrefix,
+        label: t('app.createDao.createProcessForm.tokenFlow.params.voteChange.label'),
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -72,7 +75,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
         <div className="flex flex-col gap-y-6">
             <InputContainer
                 id="threshold"
-                helpText={`The percentage of tokens that vote "Yes" in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.`}
+                helpText={t('app.createDao.createProcessForm.tokenFlow.params.supportThreshold.helpText')}
                 useCustomWrapper={true}
                 {...supportThresholdField}
             >
@@ -94,16 +97,21 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                         </div>
                     </div>
                     {supportThresholdField.value >= 50 ? (
-                        <AlertInline variant="success" message="Proposal will be approved by majority" />
+                        <AlertInline
+                            variant="success"
+                            message={t('app.createDao.createProcessForm.tokenFlow.params.supportThreshold.success')}
+                        />
                     ) : (
-                        <AlertInline variant="warning" message="Proposal will be approved by minority" />
+                        <AlertInline
+                            variant="warning"
+                            message={t('app.createDao.createProcessForm.tokenFlow.params.supportThreshold.warning')}
+                        />
                     )}
                 </Card>
             </InputContainer>
             <InputContainer
                 id="participation"
-                label="Minimum participation"
-                helpText="The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value for the proposal to pass."
+                helpText={t('app.createDao.createProcessForm.tokenFlow.params.minParticipation.helpText')}
                 useCustomWrapper={true}
                 {...minimumParticipationField}
             >
@@ -125,14 +133,14 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                             </p>
                             <Progress value={minimumParticipationField.value} />
                             <p className="text-right">
-                                of {formattedTotalTokenAmount} {tokenSymbolField}
+                                {t('app.createDao.createProcessForm.tokenFlow.params.minParticipation.of')}{' '}
+                                {formattedTotalTokenAmount} {tokenSymbolField}
                             </p>
                         </div>
                     </div>
                 </Card>
             </InputContainer>
             <Switch
-                helpText="Allows voters to change their vote during the voting period. This prevents this body from approving or vetoing a proposal early so it can advance or be executed early."
                 inlineLabel={voteChangeField.value ? 'Yes' : 'No'}
                 onCheckedChanged={(checked) => setValue(voteChangeField.name, checked)}
                 checked={voteChangeField.value}
