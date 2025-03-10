@@ -25,7 +25,6 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.createDao.createProcessForm.tokenFlow.params';
 
     const [currentTotalTokenAmount, setCurrentTotalTokenAmount] = useState(0);
     const [formattedTotalTokenAmount, setFormattedTotalTokenAmount] = useState<string | null>();
@@ -34,23 +33,23 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
 
     const supportThresholdField = useFormField<ICreateProcessFormBody, 'supportThreshold'>('supportThreshold', {
         fieldPrefix,
-        label: t(`${keyNamespace}.supportThreshold.label`),
+        label: t('app.createDao.createProcessForm.tokenFlow.params.supportThreshold.label'),
     });
 
-    const minimumParticipationField = useFormField<ICreateProcessFormBody, `minimumParticipation`>(
+    const minimumParticipationField = useFormField<ICreateProcessFormBody, 'minimumParticipation'>(
         'minimumParticipation',
-        { fieldPrefix, label: t(`${keyNamespace}.minParticipation.label`) },
+        { fieldPrefix, label: t('app.createDao.createProcessForm.tokenFlow.params.minParticipation.label') },
     );
 
     const voteChangeField = useFormField<ICreateProcessFormBody, 'voteChange'>('voteChange', {
         fieldPrefix,
-        label: t(`${keyNamespace}.voteChange.label`),
+        label: t('app.createDao.createProcessForm.tokenFlow.params.voteChange.label'),
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const members = watch(`${fieldPrefix}.members`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const tokenSymbolField = watch(`${fieldPrefix}.tokenSymbolField`);
+    const tokenSymbolField = watch('${fieldPrefix}.tokenSymbolField');
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -76,7 +75,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
         <div className="flex flex-col gap-y-6">
             <InputContainer
                 id="threshold"
-                helpText={t(`${keyNamespace}.supportThreshold.helpText`)}
+                helpText={t('app.createDao.createProcessForm.tokenFlow.params.supportThreshold.helpText')}
                 useCustomWrapper={true}
                 {...supportThresholdField}
             >
@@ -98,15 +97,21 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                         </div>
                     </div>
                     {supportThresholdField.value >= 50 ? (
-                        <AlertInline variant="success" message={t(`${keyNamespace}.supportThreshold.success`)} />
+                        <AlertInline
+                            variant="success"
+                            message={t('app.createDao.createProcessForm.tokenFlow.params.supportThreshold.success')}
+                        />
                     ) : (
-                        <AlertInline variant="warning" message={t(`${keyNamespace}.supportThreshold.warning`)} />
+                        <AlertInline
+                            variant="warning"
+                            message={t('app.createDao.createProcessForm.tokenFlow.params.supportThreshold.warning')}
+                        />
                     )}
                 </Card>
             </InputContainer>
             <InputContainer
                 id="participation"
-                helpText={t(`${keyNamespace}.minParticipation.helpText`)}
+                helpText={t('app.createDao.createProcessForm.tokenFlow.params.minParticipation.helpText')}
                 useCustomWrapper={true}
                 {...minimumParticipationField}
             >
@@ -128,8 +133,8 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                             </p>
                             <Progress value={minimumParticipationField.value} />
                             <p className="text-right">
-                                {t(`${keyNamespace}.minParticipation.of`)} {formattedTotalTokenAmount}{' '}
-                                {tokenSymbolField}
+                                {t('app.createDao.createProcessForm.tokenFlow.params.minParticipation.of')}{' '}
+                                {formattedTotalTokenAmount} {tokenSymbolField}
                             </p>
                         </div>
                     </div>

@@ -11,7 +11,6 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.createDao.createProcessForm.multisigFlow.distro';
 
     const membersFieldName = `${fieldPrefix}.members`;
     const { fields, append, remove } = useFieldArray<Record<string, ICreateProcessFormBody['members']>>({
@@ -24,8 +23,8 @@ export const CreateProcessFormMultisigDistro: React.FC<ICreateProcessFormMultisi
         <>
             <InputContainer
                 id="multisig-members"
-                label={t(`${keyNamespace}.label`)}
-                helpText={t(`${keyNamespace}.helpText`)}
+                label={t('app.createDao.createProcessForm.multisigFlow.distro.label')}
+                helpText={t('app.createDao.createProcessForm.multisigFlow.distro.helpText')}
                 useCustomWrapper={true}
             >
                 {fields.map((member, index) => (

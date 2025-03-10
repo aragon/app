@@ -11,31 +11,32 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.createDao.createProcessForm.multisigFlow.params';
 
     const { watch } = useFormContext();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const members = watch(`${fieldPrefix}.members`);
 
     const multisigThresholdField = useFormField<ICreateProcessFormBody, 'multisigThreshold'>('multisigThreshold', {
-        label: t(`${keyNamespace}.label`),
+        label: t('app.createDao.createProcessForm.multisigFlow.params.label'),
         defaultValue: 1,
         fieldPrefix,
         rules: {
-            required: t(`${keyNamespace}.required`),
-            min: { value: 1, message: t(`${keyNamespace}.required`) },
+            required: t('app.createDao.createProcessForm.multisigFlow.params.required'),
+            min: { value: 1, message: t('app.createDao.createProcessForm.multisigFlow.params.required') },
         },
     });
 
     return (
         <InputNumber
-            helpText={t(`${keyNamespace}.helpText`)}
+            helpText={t('app.createDao.createProcessForm.multisigFlow.params.helpText')}
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             max={members?.length}
             min={1}
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            suffix={t(`${keyNamespace}.suffix`, { members: members?.length as number })}
-            placeholder={t(`${keyNamespace}.placeholder`)}
+            suffix={t('app.createDao.createProcessForm.multisigFlow.params.suffix', {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                members: members?.length as number,
+            })}
+            placeholder={t('app.createDao.createProcessForm.multisigFlow.params.placeholder')}
             {...multisigThresholdField}
         />
     );

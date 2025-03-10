@@ -24,7 +24,6 @@ export const TokenProposalCreationRequirements: React.FC<ITokenProposalCreationR
     );
 
     const { t } = useTranslations();
-    const keyNamespace = `app.plugins.token.tokenProposalCreationRequirements`;
 
     const minVotingPowerField = useFormField<ICreateProcessFormProposalCreationBody, 'minVotingPower'>(
         'minVotingPower',
@@ -32,7 +31,7 @@ export const TokenProposalCreationRequirements: React.FC<ITokenProposalCreationR
             fieldPrefix,
             defaultValue: '1',
             rules: { validate: (value) => Number(value) > 0 },
-            label: t(`${keyNamespace}.label`),
+            label: t('app.plugins.token.tokenProposalCreationRequirements.label'),
         },
     );
 
@@ -40,8 +39,8 @@ export const TokenProposalCreationRequirements: React.FC<ITokenProposalCreationR
         <button className="w-full text-left" onClick={(e) => e.preventDefault()}>
             <InputNumber
                 prefix="≥"
-                helpText={t(`${keyNamespace}.helpText`)}
-                placeholder={t(`${keyNamespace}.placeholder`)}
+                helpText={t('app.plugins.token.tokenProposalCreationRequirements.helpText')}
+                placeholder={t('app.plugins.token.tokenProposalCreationRequirements.placeholder')}
                 max={totalSupply}
                 {...minVotingPowerField}
             />

@@ -25,14 +25,13 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.createDao.createProcessForm.tokenFlow.distro';
 
     const {
         onChange: onTokenTypeChange,
         value: tokenType,
         ...tokenTypeField
     } = useFormField<ICreateProcessFormBody, 'tokenType'>('tokenType', {
-        label: t(`${keyNamespace}.typeLabel`),
+        label: t('app.createDao.createProcessForm.tokenFlow.distro.typeLabel'),
         defaultValue: 'new',
         fieldPrefix,
     });
@@ -42,7 +41,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
         value: importTokenAddress,
         ...importTokenAddressField
     } = useFormField<ICreateProcessFormBody, 'importTokenAddress'>('importTokenAddress', {
-        label: t(`${keyNamespace}.import.label`),
+        label: t('app.createDao.createProcessForm.tokenFlow.distro.import.label'),
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix,
@@ -55,24 +54,29 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
 
     const tokenNameField = useFormField<ICreateProcessFormBody, 'tokenName'>('tokenName', {
-        label: t(`${keyNamespace}.name.label`),
-        defaultValue: '',
-        trimOnBlur: true,
-        fieldPrefix,
-        rules: { required: tokenType === 'new' ? t(`${keyNamespace}.name.required`) : false },
-    });
-
-    const tokenSymbolField = useFormField<ICreateProcessFormBody, 'tokenSymbol'>('tokenSymbol', {
-        label: t(`${keyNamespace}.symbol.label`),
+        label: t('app.createDao.createProcessForm.tokenFlow.distro.name.label'),
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix,
         rules: {
-            maxLength: { value: 10, message: t(`${keyNamespace}.symbol.maxLength`) },
-            required: tokenType === 'new' ? t(`${keyNamespace}.symbol.required`) : false,
+            required: tokenType === 'new' ? t('app.createDao.createProcessForm.tokenFlow.distro.name.required') : false,
+        },
+    });
+
+    const tokenSymbolField = useFormField<ICreateProcessFormBody, 'tokenSymbol'>('tokenSymbol', {
+        label: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.label'),
+        defaultValue: '',
+        trimOnBlur: true,
+        fieldPrefix,
+        rules: {
+            maxLength: { value: 10, message: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.maxLength') },
+            required:
+                tokenType === 'new' ? t('app.createDao.createProcessForm.tokenFlow.distro.symbol.required') : false,
             validate:
                 tokenType === 'new'
-                    ? (value) => /^[A-Za-z]+$/.test(value ?? '') || t(`${keyNamespace}.symbol.onlyLetters`)
+                    ? (value) =>
+                          /^[A-Za-z]+$/.test(value ?? '') ||
+                          t('app.createDao.createProcessForm.tokenFlow.distro.symbol.onlyLetters')
                     : undefined,
         },
     });
@@ -87,22 +91,30 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
         <>
             <InputContainer
                 id="token"
-                helpText={t(`${keyNamespace}.helpText`)}
+                helpText={t('app.createDao.createProcessForm.tokenFlow.distro.helpText')}
                 useCustomWrapper={true}
                 {...tokenTypeField}
             >
                 <RadioGroup className="w-full" value={tokenType} onValueChange={onTokenTypeChange}>
                     <div className="flex w-full flex-row gap-x-2">
-                        <RadioCard className="w-1/2" label={t(`${keyNamespace}.importExisting`)} value="imported" />
-                        <RadioCard className="w-1/2" label={t(`${keyNamespace}.createNeW`)} value="new" />
+                        <RadioCard
+                            className="w-1/2"
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importExisting')}
+                            value="imported"
+                        />
+                        <RadioCard
+                            className="w-1/2"
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createNeW')}
+                            value="new"
+                        />
                     </div>
                 </RadioGroup>
             </InputContainer>
             {tokenType === 'imported' && (
                 <>
                     <AddressInput
-                        placeholder={t(`${keyNamespace}.import.placeholder`)}
-                        helpText={t(`${keyNamespace}.import.helpText`)}
+                        placeholder={t('app.createDao.createProcessForm.tokenFlow.distro.import.placeholder')}
+                        helpText={t('app.createDao.createProcessForm.tokenFlow.distro.import.helpText')}
                         onAccept={(value) => onImportTokenAddressChange(value?.address)}
                         value={tokenAddressInput}
                         chainId={1}
@@ -110,16 +122,22 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                         {...importTokenAddressField}
                     />
                     <AlertCard
-                        message={t(`${keyNamespace}.alert.message`)}
-                        description={t(`${keyNamespace}.alert.description`)}
+                        message={t('app.createDao.createProcessForm.tokenFlow.distro.alert.message')}
+                        description={t('app.createDao.createProcessForm.tokenFlow.distro.alert.description')}
                         variant="warning"
                     />
                 </>
             )}
             {tokenType === 'new' && (
                 <>
-                    <InputText helpText={t(`${keyNamespace}.name.helpText`)} {...tokenNameField} />
-                    <InputText helpText={t(`${keyNamespace}.symbol.helpText`)} {...tokenSymbolField} />
+                    <InputText
+                        helpText={t('app.createDao.createProcessForm.tokenFlow.distro.name.helpText')}
+                        {...tokenNameField}
+                    />
+                    <InputText
+                        helpText={t('app.createDao.createProcessForm.tokenFlow.distro.symbol.helpText')}
+                        {...tokenSymbolField}
+                    />
                     <InputContainer id="distribute" useCustomWrapper={true}>
                         {fields.map((field, index) => (
                             <TokenVotingMemberInputRow
@@ -134,7 +152,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                     </InputContainer>
                     <div className="flex w-full justify-between">
                         <Button size="md" variant="secondary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
-                            {t(`${keyNamespace}.add`)}
+                            {t('app.createDao.createProcessForm.tokenFlow.distro.add')}
                         </Button>
                     </div>
                 </>

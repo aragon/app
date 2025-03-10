@@ -11,10 +11,9 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.createDao.createProcessForm.pluginMetadata';
 
     const bodyNameField = useFormField<ICreateProcessFormBody, `name`>(`name`, {
-        label: t(`${keyNamespace}.bodyNameFieldLabel`),
+        label: t('app.createDao.createProcessForm.pluginMetadata.bodyNameFieldLabel'),
         defaultValue: '',
         fieldPrefix,
         trimOnBlur: true,
@@ -22,7 +21,7 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
     });
 
     const bodySummaryField = useFormField<ICreateProcessFormBody, 'description'>('description', {
-        label: t(`${keyNamespace}.bodySummaryFieldLabel`),
+        label: t('app.createDao.createProcessForm.pluginMetadata.bodySummaryFieldLabel'),
         fieldPrefix,
         defaultValue: '',
     });
@@ -31,12 +30,15 @@ export const CreateProcessFormPluginMetadata: React.FC<ICreateProcessFormPluginM
         <>
             <InputText maxLength={40} {...bodyNameField} />
             <TextArea
-                helpText={t(`${keyNamespace}.bodySummaryFieldHelpText`)}
+                helpText={t('app.createDao.createProcessForm.pluginMetadata.bodySummaryFieldHelpText')}
                 isOptional={true}
                 maxLength={480}
                 {...bodySummaryField}
             />
-            <ResourcesInput name={`${fieldPrefix}.resources`} helpText={t(`${keyNamespace}.resourcesInputHelpText`)} />
+            <ResourcesInput
+                name={`${fieldPrefix}.resources`}
+                helpText={t('app.createDao.createProcessForm.pluginMetadata.resourcesInputHelpText')}
+            />
         </>
     );
 };

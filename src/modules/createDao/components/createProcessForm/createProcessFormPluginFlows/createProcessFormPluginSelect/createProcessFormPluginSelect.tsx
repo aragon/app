@@ -10,18 +10,17 @@ export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSel
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
-    const keyNamespace = 'app.createDao.createProcessForm.pluginSelect';
 
     const { onChange, ...governanceTypeField } = useFormField<ICreateProcessFormBody, 'governanceType'>(
         'governanceType',
-        { label: t(`${keyNamespace}.label`), fieldPrefix },
+        { label: t('app.createDao.createProcessForm.pluginSelect.label'), fieldPrefix },
     );
 
     return (
         <>
             <RadioGroup
                 className="flex gap-4"
-                helpText={t(`${keyNamespace}.helpText`)}
+                helpText={t('app.createDao.createProcessForm.pluginSelect.helpText')}
                 onValueChange={(value) => onChange(value)}
                 defaultValue={governanceTypeField.value}
                 {...governanceTypeField}
@@ -29,13 +28,13 @@ export const CreateProcessFormPluginSelect: React.FC<ICreateProcessFormPluginSel
                 <RadioCard
                     className="w-full"
                     label="Token voting"
-                    description={t(`${keyNamespace}.tokenDescription`)}
+                    description={t('app.createDao.createProcessForm.pluginSelect.tokenDescription')}
                     value="token-voting"
                 />
                 <RadioCard
                     className="w-full"
                     label="Multisig"
-                    description={t(`${keyNamespace}.multisigDescription`)}
+                    description={t('app.createDao.createProcessForm.pluginSelect.multisigDescription')}
                     value="multisig"
                 />
             </RadioGroup>
