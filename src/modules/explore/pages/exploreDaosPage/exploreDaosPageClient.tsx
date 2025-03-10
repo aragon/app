@@ -6,6 +6,8 @@ import type { Network } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { Heading } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import Image from 'next/image';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { CtaCard } from '../../components/ctaCard';
@@ -59,7 +61,12 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                 </Container>
             </div>
 
-            <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
+            <section className={classNames('flex flex-col gap-4 pt-10 md:gap-6 md:pt-16')}>
+                <Container className="w-full">
+                    <Heading size="h1" as="h2" className="self-stretch">
+                        {t('app.explore.exploreDaosPage.section.featured')}
+                    </Heading>
+                </Container>
                 <div className="w-full">
                     <DaoCarousel speed={40} speedOnHover={10} gap={16}>
                         {featuredDaos.map((dao, index) => (
@@ -75,9 +82,9 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                         ))}
                     </DaoCarousel>
                 </div>
-            </ExploreSection>
+            </section>
 
-            <Container className="py-10 pb-16 md:px-6 md:py-16 md:pb-20">
+            <Container className="py-10 pb-16 md:px-6 md:py-20">
                 <main className="flex flex-col gap-10 md:gap-20">
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
                         <ExploreDaos initialParams={initialParams} />
