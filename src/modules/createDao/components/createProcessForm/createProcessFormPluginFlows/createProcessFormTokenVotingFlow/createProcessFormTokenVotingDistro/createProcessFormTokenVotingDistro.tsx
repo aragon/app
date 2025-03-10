@@ -32,7 +32,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
         ...tokenTypeField
     } = useFormField<ICreateProcessFormBody, 'tokenType'>('tokenType', {
         label: t('app.createDao.createProcessForm.tokenFlow.distro.typeLabel'),
-        defaultValue: 'new',
+        defaultValue: 'imported',
         fieldPrefix,
     });
 
