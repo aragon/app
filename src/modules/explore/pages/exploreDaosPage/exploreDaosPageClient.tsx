@@ -2,6 +2,7 @@
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
 import { DaoCarouselCard } from '@/modules/explore/components/daoCarousel/daoCarouselCard';
+import { type Network } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -63,19 +64,17 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
                         <div className="mx-auto max-w-screen-xl px-4">
                             <DaoCarousel speed={1} speedOnHover={1} gap={16}>
-                                {featuredDaos.map((dao, index) => {
-                                    return (
-                                        <DaoCarouselCard
-                                            key={index}
-                                            address={dao.daoAddress}
-                                            name={dao.name}
-                                            description={dao.description}
-                                            network={dao.network}
-                                            logoSrc={dao.logo}
-                                            overrideUrl={dao.overrideUrl}
-                                        />
-                                    );
-                                })}
+                                {featuredDaos.map((dao, index) => (
+                                    <DaoCarouselCard
+                                        key={index}
+                                        address={dao.daoAddress}
+                                        name={dao.name}
+                                        description={dao.description}
+                                        network={dao.network as Network} // TODO: create a network parser/type gua
+                                        logoSrc={dao.logo}
+                                        overrideUrl={dao.overrideUrl}
+                                    />
+                                ))}
                             </DaoCarousel>
                         </div>
                     </ExploreSection>

@@ -4,16 +4,28 @@ import { useEffect, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
 export interface IDaoCarouselProps {
-    // TODO: add doc comments
+    /**
+     * Children to render in the carousel. DaoCarouselCard used in the explore page.
+     */
     children: React.ReactNode;
-    gap?: number;
+    /**
+     * Gap between the children elements.
+     */
+    gap?: number; // it's passed as prop because it's used in the calculation of the content size!
+    /**
+     * Speed of the carousel.
+     */
     speed?: number;
+    /**
+     * Speed of the carousel when hovering. We slow down the carousel when hovering.
+     */
     speedOnHover?: number;
+    /**
+     * Additional class name to apply to the component.
+     */
     className?: string;
 }
 
-// https://motion-primitives.com/docs/infinite-slider
-// https://www.ui-layouts.com/components/framer-carousel
 export const DaoCarousel: React.FC<IDaoCarouselProps> = (props) => {
     const { children, gap = 16, speed = 100, speedOnHover, className } = props;
 

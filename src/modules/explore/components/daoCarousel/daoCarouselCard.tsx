@@ -1,10 +1,46 @@
+import { type Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { AvatarIcon, DaoAvatar, DataList, Heading, Icon, IconType } from '@aragon/gov-ui-kit';
 
-export const DaoCarouselCard = ({ name, address, logoSrc, network, description, overrideUrl }) => {
+export interface IDaoCarouselCardProps {
+    /**
+     * Name of the DAO.
+     */
+    name: string;
+    /**
+     * Contract address of the DAO.
+     */
+    address: string;
+    /**
+     * Logo source of the DAO.
+     */
+    logoSrc: string;
+    /**
+     * The network on which the DAO is deployed.
+     */
+    network: Network;
+    /**
+     * Description of the DAO.
+     */
+    description: string;
+    /**
+     * Override URL for the card. If set, the card will open the URL in a new tab. Otherwise, it will open the DAO dashboard in the same tab.
+     */
+    overrideUrl?: string;
+}
+
+export const DaoCarouselCard: React.FC<IDaoCarouselCardProps> = ({
+    name,
+    address,
+    logoSrc,
+    network,
+    description,
+    overrideUrl,
+}) => {
     return (
         <DataList.Item
             className="grid max-w-72 gap-y-3 py-4 md:max-w-96 md:gap-y-4 md:py-6"
-            href={overrideUrl ?? `/dao/${network}-mainnet-${address}/dashboard`}
+            href={overrideUrl ?? `/dao/${network}-${address}/dashboard`}
             target={overrideUrl ? '_blank' : undefined}
         >
             <div className="flex w-full items-center justify-between gap-2">
@@ -16,7 +52,9 @@ export const DaoCarouselCard = ({ name, address, logoSrc, network, description, 
             <p className="line-clamp-2 text-base leading-normal text-neutral-500 md:text-lg">{description}</p>
             <div className="flex justify-between">
                 <div className="mt-1 flex items-center gap-x-1 text-neutral-400 md:mt-0 md:gap-x-2">
-                    <span className="text-sm capitalize leading-tight md:text-base">{network}</span>
+                    <span className="text-sm capitalize leading-tight md:text-base">
+                        {networkDefinitions[network].name}
+                    </span>
                     <Icon icon={IconType.BLOCKCHAIN_BLOCKCHAIN} size="sm" responsiveSize={{ md: 'md' }} />
                 </div>
                 <AvatarIcon icon={IconType.LINK_EXTERNAL} size="sm" variant="primary" />
