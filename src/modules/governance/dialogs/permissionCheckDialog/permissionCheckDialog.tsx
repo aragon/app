@@ -1,4 +1,3 @@
-import { GovernanceDialog } from '@/modules/governance/constants/moduleDialogs';
 import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
 import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -52,7 +51,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
     useEffect(() => {
         if (hasPermission) {
             onSuccess?.();
-            close(GovernanceDialog.PERMISSION_CHECK);
+            close('PERMISSION_CHECK');
         }
     }, [hasPermission, onSuccess, close]);
 
