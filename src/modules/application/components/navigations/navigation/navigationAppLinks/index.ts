@@ -1,1 +1,1 @@
-export { type INavigationAppLinksProps, NavigationAppLinks } from './navigationAppLinks';
+export { NavigationAppLinks, type INavigationAppLinksProps } from './navigationAppLinks';
