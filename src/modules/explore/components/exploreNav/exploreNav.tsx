@@ -1,11 +1,9 @@
 'use client';
 
-import { LegacyAppLink } from '@/modules/application/components/legacyAppLink';
 import { Navigation } from '@/modules/application/components/navigations/navigation';
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, Wallet } from '@aragon/gov-ui-kit';
+import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,7 +17,6 @@ export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();
     const walletUser = address != null ? { address } : undefined;
     const { open } = useDialogContext();
-    const { t } = useTranslations();
 
     const [isPostHero, setIsPostHero] = useState(false);
 
@@ -49,8 +46,6 @@ export const ExploreNav: React.FC = () => {
         open(dialog);
     };
 
-    const feedbackUrl = 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
-
     return (
         <Navigation.Container
             className={classNames(
@@ -77,19 +72,7 @@ export const ExploreNav: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-end gap-4 lg:gap-6">
-                <div className="flex items-center gap-3">
-                    <Button
-                        target="_blank"
-                        href={feedbackUrl}
-                        iconRight={IconType.FEEDBACK}
-                        variant="tertiary"
-                        size="sm"
-                        className="hidden md:flex"
-                    >
-                        {t('app.explore.exploreNav.feedbackButtonLabel')}
-                    </Button>
-                    <LegacyAppLink />
-                </div>
+                <Navigation.AppLinks />
                 <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
             </div>
         </Navigation.Container>

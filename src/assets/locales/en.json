@@ -57,8 +57,9 @@
           "title": "DAO not found"
         }
       },
-      "legacyAppLink": {
-        "button": "Legacy app"
+      "navigationAppLinks": {
+        "feedback": "Feedback",
+        "legacy": "Legacy App"
       },
       "navigationDao": {
         "a11y": {
@@ -68,7 +69,6 @@
         "link": {
           "assets": "Assets",
           "dashboard": "Dashboard",
-          "feedback": "Feedback",
           "members": "Members",
           "proposals": "Proposals",
           "settings": "Settings",

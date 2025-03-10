@@ -11,7 +11,6 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
-import { LegacyAppLink } from '../../legacyAppLink';
 import { Navigation, type INavigationContainerProps } from '../navigation';
 import { navigationDaoLinks } from './navigationDaoLinks';
 
@@ -51,8 +50,6 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const walletUser = address != null ? { address } : undefined;
 
-    const feedbackUrl = 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
-
     return (
         <Navigation.Container
             containerClasses={classNames('flex flex-col gap-2 py-3 md:pb-0 md:pt-5 lg:gap-3', containerClasses)}
@@ -66,19 +63,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     </p>
                 </button>
                 <div className="flex flex-row items-center gap-2 md:gap-6">
-                    <div className="flex items-center gap-3">
-                        <Button
-                            target="_blank"
-                            href={feedbackUrl}
-                            iconRight={IconType.FEEDBACK}
-                            variant="tertiary"
-                            size="sm"
-                            className="hidden md:flex"
-                        >
-                            {t('app.application.navigationDao.link.feedback')}
-                        </Button>
-                        <LegacyAppLink dao={dao} />
-                    </div>
+                    <Navigation.AppLinks dao={dao} />
                     <Wallet onClick={handleWalletClick} user={walletUser} chainId={mainnet.id} />
                     <Navigation.Trigger className="md:hidden" onClick={() => setIsDialogOpen(true)} />
                 </div>

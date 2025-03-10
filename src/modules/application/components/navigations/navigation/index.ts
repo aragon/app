@@ -1,3 +1,4 @@
+import { NavigationAppLinks } from './navigationAppLinks';
 import { NavigationContainer } from './navigationContainer';
 import { NavigationDialog } from './navigationDialog';
 import { NavigationLinks } from './navigationLinks';
@@ -8,8 +9,10 @@ export const Navigation = {
     Links: NavigationLinks,
     Trigger: NavigationTrigger,
     Dialog: NavigationDialog,
+    AppLinks: NavigationAppLinks,
 };
 
+export * from './navigationAppLinks';
 export * from './navigationContainer';
 export * from './navigationDialog';
 export * from './navigationLinks';
