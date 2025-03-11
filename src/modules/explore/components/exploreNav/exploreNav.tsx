@@ -1,8 +1,8 @@
 'use client';
 
-import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Navigation } from '@/modules/application/components/navigations/navigation';
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
+import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';

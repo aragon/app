@@ -1,6 +1,6 @@
+import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Dialog, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { ApplicationTags } from '../../../applicationTags';
-import { AragonLogo } from '@/shared/components/aragonLogo';
 import { NavigationLinks, type INavigationLink } from '../navigationLinks';
 
 export interface INavigationDialogProps<TRouteType extends string> extends IDialogRootProps {
