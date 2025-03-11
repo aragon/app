@@ -4,7 +4,7 @@ import { AvatarIcon, Dialog, IconType, Link } from '@aragon/gov-ui-kit';
 import { useAppKit, useAppKitState } from '@reown/appkit/react';
 import { useCallback, useEffect } from 'react';
 import { useAccount } from 'wagmi';
-import { AragonLogo } from '../../components/aragonLogo';
+import { AragonLogo } from '@/shared/components/aragonLogo';
 
 export interface IConnectWalletDialogParams {
     /**

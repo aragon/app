@@ -1,6 +1,6 @@
 'use client';
 
-import { AragonLogo } from '@/modules/application/components/aragonLogo';
+import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Navigation } from '@/modules/application/components/navigations/navigation';
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
 import { useDialogContext } from '@/shared/components/dialogProvider';
