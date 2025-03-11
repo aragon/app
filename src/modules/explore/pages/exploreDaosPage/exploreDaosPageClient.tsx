@@ -73,7 +73,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                                             name={dao.name}
                                             description={dao.description}
                                             network={dao.network} // TODO: create a network parser/type guard
-                                            logoSrc={dao.logo}
+                                            logoSrc={dao.logo ?? undefined}
                                             overrideUrl={dao.overrideUrl}
                                         />
                                     ))}

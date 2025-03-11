@@ -15,5 +15,6 @@ export const adminPlugin: IPluginInfo = {
         [Network.ZKSYNC_MAINNET]: zeroAddress,
         [Network.ZKSYNC_SEPOLIA]: zeroAddress,
         [Network.PEAQ_MAINNET]: zeroAddress,
+        [Network.MODE_MAINNET]: zeroAddress,
     },
 };

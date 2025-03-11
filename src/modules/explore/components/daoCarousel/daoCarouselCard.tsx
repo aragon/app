@@ -14,7 +14,7 @@ export interface IDaoCarouselCardProps {
     /**
      * Logo source of the DAO.
      */
-    logoSrc?: string | null;
+    logoSrc?: string;
     /**
      * The network on which the DAO is deployed.
      */
