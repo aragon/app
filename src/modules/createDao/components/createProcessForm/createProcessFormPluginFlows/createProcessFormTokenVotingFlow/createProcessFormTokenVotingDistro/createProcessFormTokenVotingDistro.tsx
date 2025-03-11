@@ -98,10 +98,24 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                 {...tokenTypeField}
             >
                 <RadioGroup className="w-full" value={tokenType} onValueChange={onTokenTypeChange}>
+                    <div className="flex w-full flex-row gap-x-2">
+                        <RadioCard
+                            className="w-1/2"
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importToken')}
+                            value="imported"
+                            disabled={process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true'}
+                        />
+                        <RadioCard
+                            className="w-1/2"
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createToken')}
+                            value="new"
+                        />
+                    </div>
+                    {/* TO BE REMOVED FROM PROD: When token flow is functional again // TODO: APP-3831 */}
                     {process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true' && (
                         <div className="flex flex-row items-baseline gap-x-2">
                             <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
-                            <div className="flex flex-col">
+                            <div className="flex flex-col gap-y-1">
                                 <p className="text-sm text-neutral-400">
                                     {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabled')}{' '}
                                 </p>
@@ -118,19 +132,6 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                             </div>
                         </div>
                     )}
-                    <div className="flex w-full flex-row gap-x-2">
-                        <RadioCard
-                            className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importToken')}
-                            value="imported"
-                            disabled={process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true'}
-                        />
-                        <RadioCard
-                            className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createToken')}
-                            value="new"
-                        />
-                    </div>
                 </RadioGroup>
             </InputContainer>
             {tokenType === 'imported' && (
