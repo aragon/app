@@ -1,13 +1,12 @@
 import type { ICreateProposalFormData, IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import type { ICreateProposalStartDateForm } from '@/modules/governance/utils/createProposalUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type { Hex } from 'viem';
 
 class AdminUninstallProcessDialogSelectUtils {
     private permissionIds = {
-        ROOT_PERMISSION: 'ROOT_PERMISSION',
+        EXECUTE_PERMISSION: 'EXECUTE_PERMISSION',
     };
 
     private proposalMetadata = {
@@ -19,24 +18,24 @@ class AdminUninstallProcessDialogSelectUtils {
     prepareProposalMetadata = () => this.proposalMetadata;
 
     buildProposalParams(
-        plugin: IDaoPlugin,
-        pluginSetupProcessor: Hex,
         daoAddress: Hex,
+        adminAddress: Hex,
+        pluginAddress: Hex,
         daoId: string,
     ): IPublishProposalDialogParams {
         return {
-            values: this.buildProposalValues(pluginSetupProcessor, daoAddress, daoId),
+            values: this.buildProposalValues(daoAddress, adminAddress, daoId),
             daoId,
-            pluginAddress: plugin.address,
+            pluginAddress,
             prepareActions: {},
         };
     }
 
-    private buildRevokeAction(pluginSetupProcessor: Hex, daoAddress: Hex, daoId: string): IProposalActionData {
+    private buildRevokeAction(daoAddress: Hex, adminAddress: Hex, daoId: string): IProposalActionData {
         const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
             where: daoAddress,
-            who: pluginSetupProcessor,
-            what: this.permissionIds.ROOT_PERMISSION,
+            who: adminAddress,
+            what: this.permissionIds.EXECUTE_PERMISSION,
             to: daoAddress,
         });
 
@@ -51,11 +50,11 @@ class AdminUninstallProcessDialogSelectUtils {
     }
 
     private buildProposalValues(
-        pluginSetupProcessor: Hex,
         daoAddress: Hex,
+        adminAddress: Hex,
         daoId: string,
     ): ICreateProposalFormData & ICreateProposalStartDateForm {
-        const revokeAction = this.buildRevokeAction(pluginSetupProcessor, daoAddress, daoId);
+        const revokeAction = this.buildRevokeAction(daoAddress, adminAddress, daoId);
 
         return {
             ...this.prepareProposalMetadata(),
