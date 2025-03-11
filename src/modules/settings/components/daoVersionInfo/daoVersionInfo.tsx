@@ -1,7 +1,6 @@
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -23,20 +22,13 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
 
     const processPlugins = useDaoPlugins({ daoId: dao.id, type: PluginType.PROCESS, includeSubPlugins: true });
 
-    const version = useApplicationVersion();
-
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.settings.daoVersionInfo.app')}>
-                <Link href="/" iconRight={IconType.LINK_EXTERNAL} target="_blank">
-                    {version}
-                </Link>
-            </DefinitionList.Item>
             <DefinitionList.Item term={t('app.settings.daoVersionInfo.osLabel')}>
                 <Link
                     description={addressUtils.truncateAddress(dao.address)}
                     iconRight={IconType.LINK_EXTERNAL}
-                    href=""
+                    href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId })}
                     target="_blank"
                 >
                     {t('app.settings.daoVersionInfo.osValue', { version: dao.version })}

@@ -21,7 +21,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                 {children}
                 <NavigationLinks variant="rows" links={links} onClick={handleLinksClick} />
                 <div className="flex flex-row items-center justify-between px-4">
-                    <AragonLogo />
+                    <AragonLogo iconOnly={true} />
                     <ApplicationTags variant="neutral" />
                 </div>
             </Dialog.Content>

@@ -6,8 +6,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { ApplicationTags } from '../applicationTags';
-import { AragonLogo } from '../aragonLogo';
 import { footerLinks } from './footerLinks';
+import { AragonLogo } from '../aragonLogo';
 
 export interface IFooterProps extends ComponentProps<'footer'> {}
 
@@ -28,7 +28,10 @@ export const Footer: React.FC<IFooterProps> = (props) => {
         <footer className={classNames('border-t border-neutral-100 bg-neutral-0 py-5', className)} {...otherProps}>
             <Container className={classNames('grid items-center md:gap-6', layoutClassNames)}>
                 <div className="flex flex-row items-center justify-between gap-4 pb-4 pt-3 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
-                    <AragonLogo />
+                    <div className="flex items-center gap-2.5">
+                        <p className="leading-tight text-neutral-800">{t('app.application.footer.governed')}</p>
+                        <AragonLogo className="h-6 text-primary-400" />
+                    </div>
                     <ApplicationTags variant="primary" />
                 </div>
                 <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">

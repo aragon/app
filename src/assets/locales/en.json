@@ -1,9 +1,6 @@
 {
   "app": {
     "application": {
-      "applicationTags": {
-        "beta": "Beta"
-      },
       "bannerDao": {
         "adminMember": {
           "buttonLabel": "Add governance",
@@ -34,6 +31,7 @@
       },
       "footer": {
         "copyright": "© {{year}} Aragon",
+        "governed": "Governed on",
         "link": {
           "build": "Build",
           "explore": "Explore",
