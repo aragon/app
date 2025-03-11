@@ -6,6 +6,7 @@ import {
     AlertCard,
     Button,
     type ICompositeAddress,
+    Icon,
     IconType,
     InputContainer,
     InputText,
@@ -96,15 +97,24 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                 {...tokenTypeField}
             >
                 <RadioGroup className="w-full" value={tokenType} onValueChange={onTokenTypeChange}>
+                    {process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true' && (
+                        <div className="flex flex-row items-center gap-x-2">
+                            <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
+                            <p className="text-neutral-400">
+                                {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabled')}
+                            </p>
+                        </div>
+                    )}
                     <div className="flex w-full flex-row gap-x-2">
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importExisting')}
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importToken')}
                             value="imported"
+                            disabled={process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true'}
                         />
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createNeW')}
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createToken')}
                             value="new"
                         />
                     </div>

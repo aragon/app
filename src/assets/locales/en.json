@@ -334,6 +334,7 @@
               "label": "Token address",
               "placeholder": "Enter the token address to import"
             },
+            "importDisabled": "Token import is temporarily disabled while undergoing enhancements.",
             "importToken": "Import token",
             "name": {
               "helpText": "These addreses will receive newly minted tokens.",
