@@ -92,6 +92,7 @@ export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps
                     name={assetToken.name}
                     amount={parsedAmount}
                     symbol={assetToken.symbol}
+                    hideValue={true}
                 />
             </TransactionDialog>
         </Dialog.Root>

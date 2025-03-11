@@ -82,6 +82,7 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
                     name={underlyingToken.name}
                     amount={parsedAmount}
                     symbol={underlyingToken.symbol}
+                    hideValue={true}
                 />
             </TransactionDialog>
         </Dialog.Root>
