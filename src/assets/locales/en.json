@@ -522,7 +522,9 @@
     "finance": {
       "assetInput": {
         "maxButtonLabel": "Max",
-        "triggerLabelDefault": "Select"
+        "token": {
+          "trigger": "Select"
+        }
       },
       "assetList": {
         "emptyState": {

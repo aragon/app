@@ -1,12 +1,13 @@
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
+import { Button, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { type ChangeEvent, useId } from 'react';
 import type { IAsset } from '../../api/financeService';
 import { FinanceDialogs } from '../../constants/moduleDialogs';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
+import { AssetInputToken } from './assetInputToken';
 
 export interface IAssetInputFormData {
     /**
@@ -104,20 +105,12 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 label={hideAmountLabel ? undefined : amountLabel}
                 {...amountField}
             >
-                <Button
-                    variant="tertiary"
-                    size="sm"
-                    iconRight={disableAssetField ? undefined : IconType.CHEVRON_DOWN}
-                    onClick={handleOpenDialog}
-                    className="shrink-0"
-                >
-                    <div className="flex items-center gap-x-1.5">
-                        {assetField.value?.token && <Avatar src={assetField.value.token.logo} size="sm" />}
-                        {assetField.value?.token
-                            ? assetField.value.token.symbol
-                            : t('app.finance.assetInput.triggerLabelDefault')}
-                    </div>
-                </Button>
+                {!disableAssetField && (
+                    <Button variant="tertiary" size="sm" onClick={handleOpenDialog} className="shrink-0">
+                        <AssetInputToken token={assetField.value?.token} />
+                    </Button>
+                )}
+                {disableAssetField && <AssetInputToken token={assetField.value?.token} />}
                 <input
                     type="number"
                     placeholder="0"
