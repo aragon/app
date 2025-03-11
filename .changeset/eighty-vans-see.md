@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Use correct params for admin revoke
+Fix parameters for uninstalling the admin plugin
