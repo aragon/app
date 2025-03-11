@@ -1,3 +1,4 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputNumber } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
@@ -9,30 +10,33 @@ export interface ICreateProcessFormMultisigParamsProps extends ICreateProcessFor
 export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParamsProps> = (props) => {
     const { fieldPrefix } = props;
 
+    const { t } = useTranslations();
+
     const { watch } = useFormContext();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const members = watch(`${fieldPrefix}.members`);
 
     const multisigThresholdField = useFormField<ICreateProcessFormBody, 'multisigThreshold'>('multisigThreshold', {
-        label: 'Approval Threshold',
+        label: t('app.createDao.createProcessForm.multisigFlow.params.label'),
         defaultValue: 1,
         fieldPrefix,
         rules: {
-            required: 'Threshold must be at least 1',
-            min: { value: 1, message: 'Threshold must be at least 1' },
+            required: t('app.createDao.createProcessForm.multisigFlow.params.required'),
+            min: { value: 1, message: t('app.createDao.createProcessForm.multisigFlow.params.required') },
         },
     });
 
     return (
         <InputNumber
-            label="Approval Threshold"
-            helpText="Number of approvals required to execute a proposal."
+            helpText={t('app.createDao.createProcessForm.multisigFlow.params.helpText')}
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             max={members?.length}
             min={1}
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
-            suffix={`of ${members?.length}`}
-            placeholder="Enter a number"
+            suffix={t('app.createDao.createProcessForm.multisigFlow.params.suffix', {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                members: members?.length as number,
+            })}
+            placeholder={t('app.createDao.createProcessForm.multisigFlow.params.placeholder')}
             {...multisigThresholdField}
         />
     );

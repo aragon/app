@@ -18,13 +18,11 @@ describe('<CreateProposalFormMetadata /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByRole('textbox', { name: /createProposalForm.metadata.title.title/ })).toBeInTheDocument();
-        expect(screen.getByText(/createProposalForm.metadata.title.helpText/)).toBeInTheDocument();
 
         expect(screen.getByRole('textbox', { name: /createProposalForm.metadata.summary.title/ })).toBeInTheDocument();
         expect(screen.getByText(/createProposalForm.metadata.summary.helpText/)).toBeInTheDocument();
 
         expect(screen.getByText(/createProposalForm.metadata.body.title/)).toBeInTheDocument();
-        expect(screen.getByText(/createProposalForm.metadata.body.helpText/)).toBeInTheDocument();
 
         expect(screen.getByText(/shared.resourcesInput.title/)).toBeInTheDocument();
 

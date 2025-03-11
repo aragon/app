@@ -191,7 +191,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByText(/daoDashboardPage.aside.details.title/)).toBeInTheDocument();
-        expect(screen.getByText(/daoDashboardPage.aside.details.blockchain/)).toBeInTheDocument();
+        expect(screen.getByText(/daoDashboardPage.aside.details.chain/)).toBeInTheDocument();
         expect(screen.getByText(networkDefinitions[dao.network].name)).toBeInTheDocument();
 
         expect(screen.getByText(/daoDashboardPage.aside.details.address/)).toBeInTheDocument();

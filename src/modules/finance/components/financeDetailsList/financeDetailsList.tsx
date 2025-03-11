@@ -4,6 +4,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
+    Button,
     ChainEntityType,
     DefinitionList,
     IconType,
@@ -31,10 +32,12 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
 
     const daoEns = daoUtils.getDaoEns(dao);
 
+    const octavLink = `https://pro.octav.fi/?addresses=${address}`;
+
     return (
         <Page.AsideCard title={t('app.finance.financeDetailsList.title')}>
             <DefinitionList.Container {...otherProps}>
-                <DefinitionList.Item term={t('app.finance.financeDetailsList.blockchain')}>
+                <DefinitionList.Item term={t('app.finance.financeDetailsList.chain')}>
                     <p className="text-neutral-500">{networkDefinitions[network].name}</p>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultAddress')}>
@@ -50,6 +53,19 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
+            <div className="flex flex-col items-center gap-y-3">
+                <Button
+                    className="w-full"
+                    variant="tertiary"
+                    size="md"
+                    href={octavLink}
+                    target="_blank"
+                    iconRight={IconType.LINK_EXTERNAL}
+                >
+                    {t('app.finance.financeDetailsList.octavLabel')}
+                </Button>
+                <p className="text-sm text-neutral-500">{t('app.finance.financeDetailsList.octavDescription')}</p>
+            </div>
         </Page.AsideCard>
     );
 };

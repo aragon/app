@@ -6,12 +6,12 @@
       },
       "bannerDao": {
         "adminMember": {
-          "buttonLabel": "Add Governance",
-          "message": "Your DAO is under construction. You can create any number of custom governance processes for your DAO."
+          "buttonLabel": "Add governance",
+          "message": "Your DAO is under construction. You can add as many custom governance processes as your DAO needs."
         },
         "adminPlugin": {
-          "buttonLabel": "View Admins",
-          "message": "This DAO is under construction. One or more admins can make any change to the DAO without a proposal."
+          "buttonLabel": "View admins",
+          "message": "This DAO is under construction. Admins can make changes to the DAO without a proposal."
         }
       },
       "connectWalletDialog": {
@@ -27,9 +27,9 @@
         "auditLink": "https://github.com/aragon/osx/blob/v1.3.0/audits/AragonOSx-security-audit-report-halborn.pdf",
         "connect": "wants to connect to your wallet",
         "feature": {
-          "permissions": "View only permissions",
-          "smartContracts": "Audited Smart Contracts",
-          "stats": "Trusted by +7,500 DAOs and +$27B"
+          "permissions": "View-only permissions",
+          "smartContracts": "Audited smart contracts",
+          "stats": "Trusted by 7,500+ DAOs and $27B+"
         }
       },
       "footer": {
@@ -37,7 +37,7 @@
         "link": {
           "build": "Build",
           "explore": "Explore",
-          "help": "Help",
+          "help": "Support",
           "learn": "Learn",
           "privacy": "Privacy",
           "termsOfService": "Terms of Service"
@@ -55,6 +55,12 @@
           "action": "Explore DAOs",
           "description": "We couldn't find the DAO that you're looking for.",
           "title": "DAO not found"
+        }
+      },
+      "navigation": {
+        "appLinks": {
+          "contact": "Feedback",
+          "legacy": "Legacy App"
         }
       },
       "navigationDao": {
@@ -91,10 +97,10 @@
     "createDao": {
       "createDaoDetailsDialog": {
         "actionLabel": "Get started",
-        "description": "Start simple and learn as you go. You can always evolve your DAO in the future.",
+        "description": "Start simple and learn as you go. You can adapt your DAO at any time.",
         "steps": {
           "describe": "Describe your DAO",
-          "network": "Select blockchain"
+          "network": "Select chain"
         },
         "title": "Create new DAO"
       },
@@ -105,30 +111,27 @@
               "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, GIF).",
               "file-too-large": "The file size exceeds the maximum allowed limit of 3 MB.",
               "square-only": "The image must be square. Upload a square image.",
-              "too-many-files": "Only one file can be uploaded at a time",
+              "too-many-files": "Only one file can be uploaded at a time.",
               "unknown-file-error": "Unable to upload image",
               "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
             },
-            "helpText": "JPG, PNG or GIF of no more than 3MB and less than 1024x1024px.",
+            "helpText": "JPG, PNG, or GIF of no more than 3 MB and less than 1024x1024px.",
             "label": "Logo"
           },
           "description": {
-            "helpText": "Describe your DAO's purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
-            "label": "Description",
-            "placeholder": "Description of the DAO"
+            "helpText": "This is shown on the DAO's dashboard and the Explore page so visitors can easily find you.",
+            "label": "Description"
           },
           "name": {
-            "helpText": "Give the DAO a name that it will be recognized by.",
-            "label": "DAO Name",
-            "placeholder": "Type the DAO's name"
+            "label": "DAO name"
           },
           "resources": {
-            "helpText": "Links to your DAO's website, social media profiles, Discord, or other places your community gathers."
+            "helpText": "These are shown as links on the DAO dashboard. They are best suited for your website, social media, or other communication channels."
           }
         },
         "network": {
           "helpText": "The chain you choose is where your tokens and assets are stored.",
-          "label": "Select blockchain",
+          "label": "Select chain",
           "testnetLabel": "Testnet"
         }
       },
@@ -141,21 +144,21 @@
             "title": "Debug"
           },
           "METADATA": {
-            "description": "Name and define your DAO so members know they've come to the right place. This information will be displayed at the top of your dashboard and can be changed with a vote.",
+            "description": "Describe your DAO so visitors know they've come to the right place. Any of these fields can be changed later via governance.",
             "name": "Describe your DAO",
             "title": "Describe your DAO"
           },
           "NETWORK": {
-            "description": "The chain you choose is where your tokens and assets are stored. If you already have a token, choose the chain your token is minted on. This cannot be changed later.",
-            "name": "Select blockchain",
-            "title": "Select blockchain"
+            "description": "The chain you choose is where your DAO and tokens will be deployed. If you already have a token, select the chain your token is on.",
+            "name": "Select chain",
+            "title": "Select chain"
           }
         },
         "submitLabel": "Publish DAO"
       },
       "createProcessDetailsDialog": {
         "actionLabel": "Get started",
-        "description": "Governance should match your organization's needs. Whether it's for managing funds, upgrading your protocol, or coordinating between teams, you can always add a new governance process to your DAO.",
+        "description": "Governance should suit your DAO's needs. Whether it's for asset management, protocol upgrades, or team coordination, you can add a new governance process at any time.",
         "steps": {
           "describe": "Describe new proposal type",
           "design": "Design the governance process",
@@ -166,26 +169,35 @@
       "createProcessForm": {
         "metadata": {
           "description": {
-            "helpText": "Summarize your {{type}} in 2-3 sentences. This gives your voters a sense of the {{type}} and will help members to understand.",
-            "label": "Summary",
-            "placeholder": "Type a summary"
+            "helpText": "This is shown on the proposals list.",
+            "label": "Description"
           },
           "name": {
-            "helpText": "Give your {{type}} a name, so member can differentiate it.",
-            "label": "Name",
-            "placeholder": "Type a name"
+            "label": "Process name"
           },
           "processKey": {
-            "helpText": "Define a key for this governance process to have an unique ID. Something like DPF, which leads to DPF-01 and counting up for each proposal.",
-            "label": "Key",
-            "placeholder": "Type an key"
+            "helpText": "The key is part of the unique identifier for proposals of this type. Something like EIP would lead to EIP-1 and increment for each proposal.",
+            "label": "Key"
           },
           "resources": {
-            "helpText": "Add any additional external resources that help members understand the {{type}}."
+            "helpText": "These are shown as links on the proposal list. They can be used to help visitors understand the {{type}}."
           },
           "type": {
             "plugin": "plugin",
             "process": "governance process"
+          }
+        },
+        "multisigFlow": {
+          "distro": {
+            "helpText": "These addresses will be the only ones able to participate.",
+            "label": "Members"
+          },
+          "params": {
+            "helpText": "At least this many members will have to approve proposals.",
+            "label": "Approval threshold",
+            "placeholder": "Enter a number",
+            "required": "Threshold must be at least 1.",
+            "suffix": "of {{members}}"
           }
         },
         "permissions": {
@@ -198,14 +210,26 @@
             "anyLabel": "Anyone",
             "bodiesDescription": "Members of the selected bodies",
             "bodiesLabel": "Members",
-            "label": "Who is eligible to create this type of proposal?"
+            "label": "Proposal creation eligibility"
           }
+        },
+        "pluginMetadata": {
+          "bodyNameFieldLabel": "Body name",
+          "bodySummaryFieldHelpText": "This is shown on the members list to help visitors understand what the body is responsible for.",
+          "bodySummaryFieldLabel": "Description",
+          "resourcesInputHelpText": "These are shown as links on the members list."
+        },
+        "pluginSelect": {
+          "helpText": "This determines the governance the body uses to make decisions.",
+          "label": "Governance type",
+          "multisigDescription": "Designated members must reach a minimum approval threshold",
+          "tokenDescription": "Majority voting based on token voting power"
         },
         "stages": {
           "add": "Add stage",
           "bodies": {
-            "add": "Add",
-            "helpText": "Add the governing bodies that get to determine whether or not this stage passes.",
+            "add": "Add body",
+            "helpText": "These bodies will decide whether or not this stage passes.",
             "label": {
               "vetoing": "Vetoing bodies",
               "voting": "Voting bodies"
@@ -213,14 +237,14 @@
             "summary": {
               "edit": "Edit",
               "more": "More",
-              "no": "No",
-              "yes": "Yes"
+              "no": "Disabled",
+              "yes": "Enabled"
             },
             "threshold": {
               "bodies": "bodies",
               "helpText": {
-                "vetoing": "The amount of bodies that must veto this proposal in order to prevent the proposal from advancing to the next stage.",
-                "voting": "The amount of bodies that must approve the proposal in order for it to advance to the next stage."
+                "vetoing": "The number of bodies that must veto this proposal to stop it from advancing.",
+                "voting": "The number of bodies that must approve this proposal to advance it."
               },
               "label": {
                 "vetoing": "Veto threshold",
@@ -230,9 +254,8 @@
           },
           "more": "More",
           "name": {
-            "helpText": "Give the stage a name that describes its role in the process. Examples: Community Review, Guardian Veto, Founder Signoff, etc.",
-            "label": "Name",
-            "placeholder": "Type a name"
+            "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
+            "label": "Stage name"
           },
           "remove": "Remove stage",
           "timing": {
@@ -245,21 +268,21 @@
                 "save": "Save"
               },
               "earlyAdvance": {
-                "helpText": "Should the proposal be advanceable to subsequent stages early if it is approved prior to the end of the voting period?",
+                "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
                 "label": "Early stage advance"
               },
               "expiration": {
-                "helpText": "Should there be a limited amount of time after the voting period ends in which the proposal is eligible to be advanced to the next stage?",
+                "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
                 "infoText": "Recommended minimum expiration time is 7 days.",
                 "label": "Stage expiration"
               },
               "timelockPeriod": {
-                "helpText": "The period of time that must pass before the proposal can be advanced.",
+                "helpText": "The time that must pass before the proposal can advance.",
                 "label": "Timelock period"
               },
               "title": "Edit timing",
               "votingPeriod": {
-                "helpText": "The amount of time that the bodies in this stage have to vote on proposals.",
+                "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
                 "infoText": "Recommended minimum voting period is 7 days.",
                 "label": "Voting period"
               }
@@ -268,16 +291,15 @@
             "edit": "Edit timing",
             "expiration": "Stage expiration",
             "expirationPeriod": "Expiration period",
-            "helpText": "Configure the stage's timing settings, such as the amount of time available to vote.",
             "label": "Timing",
-            "no": "No",
+            "no": "Disabled",
             "timelockPeriod": "Timelock period",
             "votingPeriod": "Voting period",
-            "yes": "Yes"
+            "yes": "Enabled"
           },
           "type": {
-            "helpText": "Specify the role that governance plays. In a normal stage, a proposal will only pass if it approved. However, an optimistic stage reverses it this - it will pass unless vetoed.",
-            "label": "Type",
+            "helpText": "This will determine the role that governance plays in the stage.",
+            "label": "Stage type",
             "list": {
               "NORMAL": {
                 "description": "Proposals pass this stage only if approved.",
@@ -288,9 +310,64 @@
                 "label": "Optimistic"
               },
               "TIMELOCK": {
-                "description": "Proposals pass the stage after the timelock period.",
+                "description": "Proposals pass this stage after the timelock period.",
                 "label": "Timelock"
               }
+            }
+          }
+        },
+        "tokenFlow": {
+          "distro": {
+            "add": "Add",
+            "address": {
+              "inputHelpText": "The address of the token to be imported",
+              "placeholder": "Enter the token address to import"
+            },
+            "alert": {
+              "description": "In order for this body to be able to participate in governance, you must ensure that this token has these exact functions: getPastVotes, getVotes, getPastTotalSupply.",
+              "message": "Not all tokens are compatible"
+            },
+            "createCardLabel": "Create new token",
+            "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
+            "import": {
+              "helpText": "The address of the token to be imported",
+              "label": "Token address",
+              "placeholder": "Enter the token address to import"
+            },
+            "importCardLabel": "Import token",
+            "name": {
+              "helpText": "These addreses will receive newly minted tokens.",
+              "label": "Token name",
+              "required": "Token name is required"
+            },
+            "symbol": {
+              "helpText": "This is the abbreviated ticker of the token. For example: UNI",
+              "label": "Token symbol",
+              "maxLength": "Symbol cannot exceed 10 characters",
+              "onlyLetters": "Only letters are allowed",
+              "required": "Token symbol is required"
+            },
+            "typeLabel": "ERC-20 token"
+          },
+          "params": {
+            "helpText": "At least this many members will have to approve proposals.",
+            "label": "Approval threshold",
+            "minParticipation": {
+              "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
+              "label": "Minimum participation",
+              "of": "of"
+            },
+            "placeholder": "Enter a number",
+            "required": "Threshold must be at least 1.",
+            "suffix": "of {{members}}",
+            "supportThreshold": {
+              "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
+              "label": "Support threshold",
+              "success": "Proposal will require a majority.",
+              "warning": "Proposal will only require a minority."
+            },
+            "voteChange": {
+              "label": "Vote change"
             }
           }
         }
@@ -299,17 +376,17 @@
         "finalStep": "Publish process",
         "steps": {
           "METADATA": {
-            "description": "The information you provide on this page will be displayed alongside proposals of this type. It is purely informational, used to help voters understand the governance process and make a more informed decision.",
+            "description": "Describe the governance process so visitors understand its purpose and how decisions are made. Any of these fields can be changed later via governance.",
             "name": "Process description",
             "title": "Describe new proposal type"
           },
           "PERMISSIONS": {
-            "description": "Define who is eligible to create proposals of this type.",
+            "description": "Define who can create proposals of this type.",
             "name": "Proposal creation rules",
             "title": "Set proposal creation rules"
           },
           "STAGES": {
-            "description": "Design the process for deciding whether or not a proposal of this type passes and its actions executed. The proposals can go through any number of sequential stages. Within each stage, governing bodies can either approve or veto the proposal.",
+            "description": "Design how decisions are made in this type of proposal. A proposal can go through multiple sequential stages and have any number of governing bodies.",
             "name": "Governance design",
             "title": "Design the governance process"
           }
@@ -324,7 +401,7 @@
           "submit": "Prepare installation",
           "success": "Finalize installation"
         },
-        "description": "To prepare your process you have to confirm the onchain transaction with your wallet.",
+        "description": "To prepare your governance process, confirm the onchain transaction in your wallet.",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
@@ -338,7 +415,7 @@
           "submit": "Create DAO",
           "success": "View DAO"
         },
-        "description": "To publish the DAO you have to confirm the onchain transaction with your wallet.",
+        "description": "To publish the DAO, confirm the onchain transaction in your wallet.",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
@@ -352,7 +429,7 @@
           "submit": "Finalize installation",
           "success": "View proposals"
         },
-        "description": "To finalize your process you have to confirm the onchain transaction with your wallet.",
+        "description": "To finalize your governance process, confirm the onchain transaction in your wallet.",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
@@ -366,24 +443,24 @@
       "daoDashboardPage": {
         "aside": {
           "details": {
-            "address": "Contract address",
-            "blockchain": "Blockchain",
-            "ens": "ENS name",
-            "launched": "Launched at",
+            "address": "DAO address",
+            "chain": "Chain",
+            "ens": "ENS",
+            "launched": "Launched",
             "title": "Contract"
           },
-          "links": "Links"
+          "links": "Resources"
         },
         "header": {
           "stat": {
             "members": "Members",
             "proposals": "Proposals",
-            "treasury": "Treasury value"
+            "treasury": "Treasury"
           }
         },
         "main": {
           "assets": {
-            "title": "Top assets"
+            "title": "Assets"
           },
           "members": {
             "title": "Members"
@@ -403,7 +480,7 @@
         },
         "entity": "DAOs",
         "errorState": {
-          "description": "There was an error loading the DAOs. Please try again later.",
+          "description": "There was an error loading the DAOs. Try again later.",
           "heading": "Error loading DAOs"
         },
         "searchPlaceholder": "Filter by Name, Address or ENS"
@@ -440,9 +517,6 @@
           "daos": "Explore",
           "featured": "Featured"
         }
-      },
-      "exploreNav": {
-        "legacyAppButtonLabel": "Legacy app"
       }
     },
     "finance": {
@@ -457,7 +531,7 @@
         },
         "entity": "Assets",
         "errorState": {
-          "description": "There was an error loading the assets. Please try again later.",
+          "description": "There was an error loading the assets. Try again later.",
           "heading": "Error loading assets"
         },
         "searchPlaceholder": "Search assets..."
@@ -471,7 +545,7 @@
       "daoAssetsPage": {
         "aside": {
           "details": {
-            "blockchain": "Blockchain",
+            "chain": "Chain",
             "title": "Details"
           }
         },
@@ -482,7 +556,7 @@
       "daoTransactionsPage": {
         "aside": {
           "details": {
-            "blockchain": "Blockchain",
+            "chain": "Chain",
             "title": "Details"
           }
         },
@@ -491,7 +565,9 @@
         }
       },
       "financeDetailsList": {
-        "blockchain": "Blockchain",
+        "chain": "Chain",
+        "octavDescription": "Octav provides advanced treasury analytics.",
+        "octavLabel": "View on Octav",
         "title": "Vault",
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
@@ -503,7 +579,7 @@
         },
         "entity": "Transactions",
         "errorState": {
-          "description": "There was an error loading the transactions. Please try again later.",
+          "description": "There was an error loading the transactions. Try again later.",
           "heading": "Error loading transactions"
         }
       },
@@ -513,16 +589,16 @@
           "placeholder": "0"
         },
         "receiver": {
-          "helpText": "The wallet that receives the tokens",
+          "helpText": "The address to transfer assets to.",
           "label": "Recipient",
-          "placeholder": "ENS or 0x …"
+          "placeholder": "ENS or 0x…"
         }
       }
     },
     "governance": {
       "actionComposer": {
         "customItem": {
-          "ADD_CONTRACT": "Add new address",
+          "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
         },
         "nativeGroup": {
@@ -533,7 +609,7 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
-        "placeholder": "Filter by action, contract name or address",
+        "placeholder": "Filter by action, contract name, or address",
         "rawCalldataFunction": "Unknown",
         "selectItem": "Add action"
       },
@@ -548,32 +624,27 @@
             "down": "Move down",
             "remove": "Remove",
             "up": "Move up"
-          },
-          "empty": "Add actions by selecting them, interacting with custom contracts, uploading actions or connect with any DApp."
+          }
         },
         "metadata": {
           "actions": {
-            "helpText": "You may add actions to this proposal, which are onchain transactions that can only be executed if the proposal passes.",
+            "helpText": "Actions are onchain transactions that can be executed if the proposal passes.",
             "label": "Yes",
-            "title": "Would you like to add actions to this proposal?"
+            "title": "Add actions"
           },
           "body": {
-            "helpText": "Describe the proposal fully for voters.",
-            "placeholder": "Type a proposal body",
+            "helpText": "This is the full proposal text that is viewable only on the proposal details page.",
             "title": "Body"
           },
           "resources": {
-            "helpText": "Add any resources that are relevant to your proposal. This could be a link to a document, a website, or a forum post."
+            "helpText": "These are shown as links on the proposal page. They can be used to help members understand the proposal."
           },
           "summary": {
-            "helpText": "Describe your proposal in 2-3 sentences. This gives your voters a sense of the proposal and will appear in the proposal overview.",
-            "placeholder": "Type a summary",
+            "helpText": "This is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it's about.",
             "title": "Summary"
           },
           "title": {
-            "helpText": "Give your proposal a title. This will appear in the proposal overview.",
-            "placeholder": "Type a title",
-            "title": "Title"
+            "title": "Proposal title"
           }
         }
       },
@@ -581,17 +652,17 @@
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
-            "description": "These actions can be executed once the proposal passes. They will execute in the order shown on this page.",
+            "description": "Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.",
             "name": "Add actions",
             "title": "Add actions"
           },
           "METADATA": {
-            "description": "Provide the information voters will need to make their decision here.",
-            "name": "Define content",
-            "title": "Define content"
+            "description": "Describe the proposal so voters have the information they need to understand it and make a decision.",
+            "name": "Describe proposal",
+            "title": "Describe proposal"
           },
           "SETTINGS": {
-            "description": "Define the settings for this proposal.",
+            "description": "Configure the settings for this proposal.",
             "name": "Proposal settings",
             "title": "Proposal settings"
           }
@@ -635,12 +706,12 @@
       },
       "daoMemberList": {
         "empty": {
-          "description": "DAO has currently no members.",
+          "description": "This DAO currently has no members.",
           "title": "No members found"
         },
         "entity": "Members",
         "error": {
-          "description": "There was an error loading the DAO members. Please try again later.",
+          "description": "There was an error loading the DAO members. Try again later.",
           "title": "Error loading members"
         }
       },
@@ -673,8 +744,6 @@
         },
         "main": {
           "actions": {
-            "description": "The following actions will execute if all voting stages are approved.",
-            "empty": "Proposal has no actions.",
             "header": "Actions"
           },
           "description": {
@@ -697,7 +766,7 @@
         },
         "entity": "Proposals",
         "error": {
-          "description": "There was an error loading the DAO proposals. Please try again later.",
+          "description": "There was an error loading the DAO proposals. Try again later.",
           "title": "Error loading proposals"
         }
       },
@@ -712,15 +781,15 @@
           "submit": "Execute proposal",
           "success": "View proposal"
         },
-        "description": "To execute the proposal you have to confirm the onchain transaction with your wallet.",
+        "description": "To execute the proposal, confirm the onchain transaction in your wallet.",
         "title": "Execute proposal"
       },
       "layoutWizardCreateDao": {
         "name": "Create DAO"
       },
       "layoutWizardCreateProposal": {
-        "name": "Create Proposal",
-        "namePlugin": "{{plugin}}: Create Proposal"
+        "name": "Create proposal",
+        "namePlugin": "{{plugin}}: Create proposal"
       },
       "permissionCheckDialog": {
         "action": "OK",
@@ -731,7 +800,7 @@
           "title": "Not eligible to create a proposal"
         },
         "vote": {
-          "description": "You didn’t meet the voting requirements at the block that the proposal was created.",
+          "description": "You didn’t meet the voting requirements at the block the proposal was created.",
           "title": "Not eligible to vote"
         }
       },
@@ -742,14 +811,14 @@
           "failed": "Execution failed",
           "tryAgain": "Try again"
         },
-        "notExecutable": "The proposal must pass all voting stages above before the binding onchain actions are able to be executed."
+        "notExecutable": "The proposal must pass before its actions can be executed."
       },
       "publishProposalDialog": {
         "button": {
           "submit": "Publish proposal",
           "success": "View proposal"
         },
-        "description": "To publish your proposal you have to confirm the onchain transaction with your wallet.",
+        "description": "To publish your proposal, confirm the onchain transaction in your wallet.",
         "step": {
           "PIN_METADATA": {
             "errorLabel": "Unable to pin data on IPFS",
@@ -761,9 +830,9 @@
       "selectPluginDialog": {
         "action": {
           "cancel": "Cancel",
-          "select": "Create"
+          "select": "Create proposal"
         },
-        "description": "Select the proposal type that you'd like to create.",
+        "description": "Select the proposal type you want to create.",
         "title": "Create proposal"
       },
       "verifySmartContractDialog": {
@@ -772,7 +841,7 @@
           "cancel": "Cancel",
           "verify": "Verify contract"
         },
-        "description": "Enter the contract address to configure your action.",
+        "description": "The write functions on this contract can be used to add actions.",
         "smartContractLabel": "Address",
         "step": {
           "abi": {
@@ -787,7 +856,8 @@
             "warning": "Unable to verify contract"
           }
         },
-        "title": "Add contract address"
+        "title": "Add contract address",
+        "unverified": "Unverified contract"
       },
       "voteDialog": {
         "button": {
@@ -796,7 +866,7 @@
         },
         "confirmationLabelApprove": "Voting to approve",
         "confirmationLabelVeto": "Voting to veto",
-        "description": "To submit your vote you have to confirm the onchain transaction with your wallet.",
+        "description": "To submit your vote, confirm the onchain transaction in your wallet.",
         "title": "Submit vote"
       },
       "voteList": {
@@ -805,7 +875,7 @@
           "title": "No votes found"
         },
         "error": {
-          "description": "There was an error loading the votes. Please try again later.",
+          "description": "There was an error loading the votes. Try again later.",
           "title": "Error loading votes"
         }
       },
@@ -817,9 +887,9 @@
             "retry": "Retry"
           },
           "description": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
-          "title": "Connect new dApp",
+          "title": "Connect to dApp",
           "uriField": {
-            "placeholder": "wc: …"
+            "placeholder": "wc:…"
           }
         },
         "listener": {
@@ -882,39 +952,61 @@
         "adminSettingsPanel": {
           "title": "Admin"
         },
+        "adminUninstallPlugin": {
+          "adminUninstallProcessDialogCreate": {
+            "description": "To remove all admins, you need to first create at least one other governance process for your DAO.",
+            "heading": "No governance process found",
+            "label": "Create governance process",
+            "title": "Remove all admins"
+          },
+          "adminUninstallProcessDialogSelect": {
+            "a11y": {
+              "description": "You have to create and pass a proposal in another governance process to remove admin control from the DAO. This should only be done when the DAO is ready and no longer requires admin control."
+            },
+            "action": {
+              "cancel": "Cancel",
+              "select": "Select process"
+            },
+            "descriptionFirstLine": "You have to create and pass a proposal in another governance process to remove admin control from the DAO.",
+            "descriptionSecondLine": "This should only be done when the DAO is ready and no longer requires admin control.",
+            "title": "Remove all admins"
+          },
+          "label": "Remove all admins"
+        },
+
         "adminVotingTerminal": {
-          "description": "Proposals created by admins do not require governance in order to pass.",
+          "description": "Proposals created by admins pass automatically without any governance.",
           "title": "Automatic execution"
         }
       },
       "multisig": {
         "multisigActions": {
-          "MultisigAddMembers": "Add Members",
-          "MultisigRemoveMembers": "Remove Members",
+          "MultisigAddMembers": "Add members",
+          "MultisigRemoveMembers": "Remove members",
           "UpdateMultiSigSettings": "Update settings"
         },
         "multisigAddMembersAction": {
           "add": "Add",
           "addressInput": {
             "error": {
-              "alreadyInList": "Address has already been added",
-              "alreadyMember": "Address is already a member of the DAO",
-              "invalid": "Address is not valid"
+              "alreadyInList": "Address has already been added.",
+              "alreadyMember": "Address is already a member of the DAO.",
+              "invalid": "Address is not valid."
             },
             "label": "Member",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "removeMember": "Remove member"
         },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
-            "helpText": "Define when a proposal should expire. After the expiration time, there is no way to approve or execute the proposal.",
-            "infoText": "It’s recommended to have an expiration time of {{days}} days, so you have a clean proposal list.",
+            "helpText": "After a proposal expires, you can't approve or execute it.",
+            "infoText": "It’s recommended to have an expiration time of {{days}} days to maintain a clean proposal list.",
             "label": "Expiration time"
           },
           "startTime": {
-            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
-            "label": "Start time"
+            "helpText": "This is the time that the proposal becomes available for approvals.",
+            "label": "Approval start time"
           }
         },
         "multisigGovernanceSettings": {
@@ -937,7 +1029,7 @@
           "requirement": "Multisig member"
         },
         "multisigPermissionCheckVoteSubmission": {
-          "createdAt": "Created at",
+          "createdAt": "Created",
           "membership": "Your membership",
           "nonMember": "Not a member"
         },
@@ -963,9 +1055,9 @@
           "add": "Add",
           "addressInput": {
             "error": {
-              "alreadyInList": "Address has already been added"
+              "alreadyInList": "Address has already been added."
             },
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "dialog": {
             "entity": "Members",
@@ -986,7 +1078,7 @@
               "majority": "Proposal will be approved by majority",
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
-            "helpText": "Minimum approval is the amount of addresses in the authorized list that must approve a proposal for it to pass.",
+            "helpText": "Minimum approval is how many addresses must approve a proposal for it to pass.",
             "label": "Minimum approval",
             "total": "of {{total}} addresses"
           },
@@ -995,7 +1087,7 @@
               "description": "Any connected address.",
               "label": "Any wallet"
             },
-            "helpText": "Specify who is permitted to create proposals and what the minimum requirement is.",
+            "helpText": "Specify who can create proposals.",
             "label": "Proposal creation",
             "members": {
               "description": "Only approved addresses.",
@@ -1013,13 +1105,13 @@
             "submit": "Advance",
             "success": "View proposal"
           },
-          "description": "To advance the proposal to the next stage you have to confirm the onchain transaction with your wallet.",
+          "description": "To advance the proposal to the next stage, confirm the onchain transaction in your wallet.",
           "title": "Advance proposal"
         },
         "sppCreateProposalSettingsForm": {
           "startTime": {
-            "helpText": "Define when the first stage should start. If now is selected, the first stage is immediately active after publishing.",
-            "label": "Start time"
+            "helpText": "This is the time that the first stage's voting period begins.",
+            "label": "Stage 1 start time"
           }
         },
         "sppGovernanceSettings": {
@@ -1058,7 +1150,7 @@
             "heading": "Timelock ended"
           },
           "pending": {
-            "description": "Starts when previous stage is advanced",
+            "description": "Starts once the previous stage is advanced",
             "heading": "Timelock pending"
           }
         }
@@ -1070,30 +1162,28 @@
         },
         "tokenCreateProposalSettingsForm": {
           "endTime": {
-            "helpText": "Define how long the voting should last in days, or add an exact date and time for it to conclude.",
-            "infoText": "The minimum duration of {{days}} days, {{hours}} hours, and {{minutes}} minutes is defined by DAO governance settings",
-            "label": "End time"
+            "infoText": "The minimum duration is {{days}} days, {{hours}} hours, and {{minutes}} minutes, set by DAO governance.",
+            "label": "Voting duration / end time"
           },
           "startTime": {
-            "helpText": "Define when a proposal should be active to receive approvals. If now is selected, the proposal is immediately active after publishing.",
-            "label": "Start time"
+            "label": "Voting start time"
           }
         },
         "tokenDelegationForm": {
           "delegate": {
-            "helpText": "Enter the address you would like to delegate the voting power of your token balance to.",
+            "helpText": "Enter the address where you want to delegate your current or future token balance's voting power.",
             "label": "Your delegation",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "dialog": {
             "button": {
               "submit": "Delegate",
               "success": "View members"
             },
-            "description": "To delegate to this address you have to confirm the onchain transaction with your wallet.",
+            "description": "To delegate to this address, confirm the onchain transaction in your wallet.",
             "title": "Delegate"
           },
-          "info": "Delegating increases the voting power of the address you indicate above by your current or future balance. If you are delegating to somebody else, you will be unable to vote until you claim your voting power back.",
+          "info": "Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.",
           "selection": {
             "label": "Who would you like to delegate to?",
             "option": {
@@ -1145,7 +1235,7 @@
         "tokenMintTokensAction": {
           "address": {
             "label": "Address",
-            "placeholder": "ENS or 0x …"
+            "placeholder": "ENS or 0x…"
           },
           "amount": {
             "label": "Amount",
@@ -1159,24 +1249,24 @@
           "userVotingPower": "Your voting power"
         },
         "tokenPermissionCheckVoteSubmission": {
-          "createdAt": "Created at",
+          "createdAt": "Created",
           "membership": "Your voting power"
         },
         "tokenProcessBodyField": {
+          "disabled": "Disabled",
           "distributionTerm": "Distribution",
+          "enabled": "Enabled",
           "holders": "{{count}} token holders",
           "minParticipationDefinition": "≥ {{minimumParticipation}}%",
           "minParticipationTerm": "Minimum participation",
-          "no": "No",
           "supplyTerm": "Supply",
           "supportDefinition": "> {{threshold}}%",
           "supportTerm": "Support threshold",
           "tokenTerm": "Token",
-          "voteChange": "Vote change",
-          "yes": "Yes"
+          "voteChange": "Vote change"
         },
         "tokenProposalCreationRequirements": {
-          "helpText": "The voting power or token balance needed to create proposals.",
+          "helpText": "The voting power or token balance required to create proposals.",
           "label": "Minimum requirement",
           "placeholder": "≥ 1"
         },
@@ -1213,10 +1303,10 @@
         },
         "tokenUpdateSettingsAction": {
           "earlyExecution": {
-            "helpText": "Allows a proposal to be executed before the voting period ends if the support threshold is surpassed, the minimum participation is met, and the outcome cannot be changed by more voters participating.",
+            "helpText": "Allows a proposal to be executed before the voting period ends. This is only possible if the proposal meets the support threshold, satisfies the minimum participation, and can’t be overturned by remaining voters.",
             "label": "Early execution",
             "switch": {
-              "label": "Yes"
+              "label": "Enabled"
             }
           },
           "eligibleField": {
@@ -1224,7 +1314,7 @@
               "description": "Any connected address.",
               "label": "Any wallet"
             },
-            "helpText": "Specify who is permitted to create proposals and what the minimum requirement is.",
+            "helpText": "Specify who can create proposals and the minimum token requirement.",
             "label": "Who is eligible",
             "members": {
               "description": "Only members with at least this much voting power or token balance can create proposals.",
@@ -1233,14 +1323,14 @@
           },
           "minDuration": {
             "alert": {
-              "description": "Set this to a duration that is long enough for your members to have sufficient time to vote. It’s recommended to set this to at least 1 day.",
+              "description": "Ensure members have enough time to vote. It's recommended to set this to at least 1 day.",
               "message": "Minimum duration"
             },
-            "helpText": "The shortest period of time a proposal is open for voting. Proposals can be created with a longer duration, but not shorter.",
+            "helpText": "The shortest time a proposal is open for voting. Proposals can have a longer duration but not shorter.",
             "label": "Minimum duration"
           },
           "minParticipation": {
-            "helpText": "The percentage of tokens that participate in a proposal, out of the total test supply, must be greater than or equal to this value for the proposal to pass.",
+            "helpText": "This is the percentage of tokens that must participate, out of the total supply, for a proposal to pass.",
             "label": "Minimum participation"
           },
           "minVotingPower": {
@@ -1252,14 +1342,14 @@
               "majority": "Proposal will be approved by majority",
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
-            "helpText": "The percentage of tokens that vote Yes in support of a proposal, out of all tokens that have voted, must be greater than this value for the proposal to pass.",
+            "helpText": "The percentage of tokens voting Yes, out of the total votes cast, must exceed this.",
             "label": "Support threshold"
           },
           "voteChange": {
-            "helpText": "Allows voters to change their vote during the voting period. This prevents this body from approving or vetoing a proposal early so it can advance or be executed early.",
+            "helpText": "Allows voters to change their vote during the voting period. This prevents the body from giving early approval or veto.",
             "label": "Vote change",
             "switch": {
-              "label": "Yes"
+              "label": "Enabled"
             }
           }
         },
@@ -1273,7 +1363,7 @@
         "bodyName": "Body name",
         "contract": {
           "launchedAt": "Launched",
-          "plugin": "Plugin",
+          "plugin": "Plugin address",
           "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
         },
         "processKey": "Process key",
@@ -1285,14 +1375,14 @@
         }
       },
       "daoSettingsInfo": {
-        "blockchain": "Blockchain",
+        "chain": "Chain",
         "ens": "ENS name",
-        "links": "Links",
+        "links": "Resources",
         "name": "Name",
         "notChangeable": "Not changeable",
         "readLess": "Read less",
         "readMore": "Read more",
-        "summary": "Summary"
+        "summary": "Description"
       },
       "daoSettingsPage": {
         "aside": {
@@ -1354,7 +1444,7 @@
         "message": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "errorFeedback": {
-        "description": "If you'd like to help, please report the issue to our team.",
+        "description": "If you'd like to help, you can report the issue to our team!",
         "link": {
           "explore": "Explore DAOs",
           "report": "Report issue"
@@ -1363,11 +1453,11 @@
       },
       "formField": {
         "error": {
-          "max": "{{name}} must be less than {{value}}",
-          "min": "{{name}} must be greater than {{value}}",
-          "pattern": "Invalid {{name}} format",
-          "required": "{{name}} is mandatory",
-          "validate": "{{name}} is invalid"
+          "max": "{{name}} must be less than {{value}}.",
+          "min": "{{name}} must be greater than {{value}}.",
+          "pattern": "Invalid {{name}} format.",
+          "required": "{{name}} is mandatory.",
+          "validate": "{{name}} is invalid."
         }
       },
       "page": {
@@ -1380,14 +1470,13 @@
         "add": "Add",
         "item": {
           "labelInput": {
-            "placeholder": "Type a label",
-            "title": "Label"
+            "title": "Link text"
           },
           "linkInput": {
             "placeholder": "https://",
-            "title": "Link"
+            "title": "URL"
           },
-          "removeResource": "Remove Link"
+          "removeResource": "Remove"
         },
         "title": "Resources"
       },
@@ -1449,15 +1538,15 @@
           "back": "Back",
           "error": {
             "invalid": {
-              "description": "Some values are not valid. Review and fix the invalid data to proceed.",
+              "description": "Some values are invalid. Review and fix them to proceed.",
               "title": "Invalid data"
             },
             "invalid-required": {
-              "description": "Some inputs are not filled or are invalid. Review, fix, and fill out all mandatory data to proceed.",
+              "description": "Some inputs are missing or invalid. Fix them to proceed.",
               "title": "Missing and invalid data"
             },
             "required": {
-              "description": "Some inputs are not filled. Review and fill out all mandatory data to proceed.",
+              "description": "Some inputs are missing. Fill out all mandatory fields to proceed.",
               "title": "Missing data"
             }
           }

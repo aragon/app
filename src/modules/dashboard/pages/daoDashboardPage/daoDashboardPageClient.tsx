@@ -166,7 +166,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                 <Page.Aside>
                     <Page.AsideCard title={t('app.dashboard.daoDashboardPage.aside.details.title')}>
                         <DefinitionList.Container>
-                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.blockchain')}>
+                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.chain')}>
                                 <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                             </DefinitionList.Item>
                             <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>

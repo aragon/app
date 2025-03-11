@@ -53,12 +53,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     return (
         <div className="flex flex-col gap-10">
-            <InputText
-                helpText={t('app.createDao.createDaoForm.metadata.name.helpText')}
-                placeholder={t('app.createDao.createDaoForm.metadata.name.placeholder')}
-                maxLength={nameMaxLength}
-                {...nameField}
-            />
+            <InputText maxLength={nameMaxLength} {...nameField} />
             <InputFileAvatar
                 value={avatarValue}
                 helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
@@ -69,7 +64,6 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
             />
             <TextArea
                 helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}
-                placeholder={t('app.createDao.createDaoForm.metadata.description.placeholder')}
                 maxLength={descriptionMaxLength}
                 isOptional={true}
                 {...descriptionField}

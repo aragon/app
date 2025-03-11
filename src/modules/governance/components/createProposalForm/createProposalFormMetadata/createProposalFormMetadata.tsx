@@ -37,26 +37,14 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
 
     return (
         <div className="flex flex-col gap-10">
-            <InputText
-                helpText={t('app.governance.createProposalForm.metadata.title.helpText')}
-                placeholder={t('app.governance.createProposalForm.metadata.title.placeholder')}
-                maxLength={128}
-                {...titleField}
-            />
+            <InputText maxLength={128} {...titleField} />
             <TextArea
                 helpText={t('app.governance.createProposalForm.metadata.summary.helpText')}
-                placeholder={t('app.governance.createProposalForm.metadata.summary.placeholder')}
                 isOptional={true}
                 maxLength={480}
                 {...summaryField}
             />
-            <TextAreaRichText
-                helpText={t('app.governance.createProposalForm.metadata.body.helpText')}
-                placeholder={t('app.governance.createProposalForm.metadata.body.placeholder')}
-                isOptional={true}
-                immediatelyRender={false}
-                {...bodyField}
-            />
+            <TextAreaRichText isOptional={true} immediatelyRender={false} {...bodyField} />
             <ResourcesInput
                 name="resources"
                 helpText={t('app.governance.createProposalForm.metadata.resources.helpText')}

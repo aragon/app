@@ -139,14 +139,9 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                             Fallback={ProposalVotingTerminal}
                         />
                     </Page.MainSection>
-                    <Page.MainSection
-                        title={t('app.governance.daoProposalDetailsPage.main.actions.header')}
-                        description={t('app.governance.daoProposalDetailsPage.main.actions.description')}
-                    >
+                    <Page.MainSection title={t('app.governance.daoProposalDetailsPage.main.actions.header')}>
                         <ProposalActions.Root actionsCount={normalizedProposalActions.length}>
-                            <ProposalActions.Container
-                                emptyStateDescription={t('app.governance.daoProposalDetailsPage.main.actions.empty')}
-                            >
+                            <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map((action, index) => (
                                     <ProposalActions.Item key={index} action={action} chainId={chainId} />
                                 ))}

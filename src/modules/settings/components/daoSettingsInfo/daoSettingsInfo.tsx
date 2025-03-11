@@ -41,7 +41,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                         <DaoAvatar src={daoAvatar} name={dao.name} size="md" />
                     </div>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.blockchain')}>
+                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.chain')}>
                     <div className="flex items-center justify-between">
                         <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
                         <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} />
