@@ -6,8 +6,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { ApplicationTags } from '../applicationTags';
-import { footerLinks } from './footerLinks';
 import { AragonLogo } from '../aragonLogo';
+import { footerLinks } from './footerLinks';
 
 export interface IFooterProps extends ComponentProps<'footer'> {}
 
