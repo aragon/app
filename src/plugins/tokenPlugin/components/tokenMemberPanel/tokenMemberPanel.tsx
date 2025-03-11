@@ -30,15 +30,26 @@ const getTabsDefinitions = (token: ITokenPluginSettingsToken) => [
 
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
+
     const { token } = plugin.settings;
+    const { underlying } = token;
 
     const { t } = useTranslations();
 
-    const initialSelectedTab = token.underlying != null ? TokenMemberPanelTab.WRAP : TokenMemberPanelTab.DELEGATE;
+    const initialSelectedTab = underlying != null ? TokenMemberPanelTab.WRAP : TokenMemberPanelTab.DELEGATE;
     const [selectedTab, setSelectedTab] = useState<string | undefined>(initialSelectedTab);
 
     const visibleTabs = getTabsDefinitions(token).filter((tab) => !tab.hidden);
-    const cardTitle = `${token.name} (${token.symbol})`;
+
+    // Remove the "g" and "Governance" prefixes from the token symbol / name
+    const underlyingToken = {
+        ...token,
+        address: underlying!,
+        symbol: token.symbol.substring(1),
+        name: token.name.substring(11),
+    };
+    const titleToken = underlying != null ? underlyingToken : token;
+    const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
 
     if (!visibleTabs.length) {
         return null;
@@ -57,7 +68,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                     ))}
                 </Tabs.List>
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
-                    <TokenWrapForm daoId={daoId} plugin={plugin} />
+                    <TokenWrapForm daoId={daoId} plugin={plugin} underlyingToken={underlyingToken} />
                 </Tabs.Content>
                 <Tabs.Content value={TokenMemberPanelTab.DELEGATE}>
                     <TokenDelegationForm daoId={daoId} plugin={plugin} />

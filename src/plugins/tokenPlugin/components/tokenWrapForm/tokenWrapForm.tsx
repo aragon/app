@@ -1,4 +1,5 @@
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import type { IToken } from '@/modules/finance/api/financeService';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
 import { useMember } from '@/modules/governance/api/governanceService';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
@@ -22,6 +23,10 @@ export interface ITokenWrapFormProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Underlying token of the wrapper governance token.
+     */
+    underlyingToken: IToken;
 }
 
 export interface ITokenWrapFormData extends IAssetInputFormData {}
@@ -29,11 +34,11 @@ export interface ITokenWrapFormData extends IAssetInputFormData {}
 const valuePercentages = ['0', '25', '50', '75', '100'];
 
 export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
-    const { plugin, daoId } = props;
+    const { plugin, daoId, underlyingToken } = props;
 
     const { token } = plugin.settings;
     const { symbol, decimals } = token;
-    const underlyingSymbol = symbol.substring(1);
+    const underlyingAddress = underlyingToken.address as Hex;
 
     const { t } = useTranslations();
     const { address } = useAccount();
@@ -57,12 +62,11 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
         abi: erc20Abi,
         functionName: 'allowance',
-        address: token.underlying as Hex,
+        address: underlyingAddress,
         args: [address!, token.address as Hex],
         query: { enabled: address != null },
     });
 
-    const underlyingAddress = (token.underlying ?? undefined) as Hex | undefined;
     const {
         data: unwrappedBalance,
         queryKey: unwrappedBalanceKey,
@@ -71,7 +75,11 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
 
-    const userAsset = useMemo(() => ({ token, amount: parsedUnwrappedAmount }), [token, parsedUnwrappedAmount]);
+    const userAsset = useMemo(
+        () => ({ token: underlyingToken, amount: parsedUnwrappedAmount }),
+        [underlyingToken, parsedUnwrappedAmount],
+    );
+
     const formValues = useForm<ITokenWrapFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
     const { control, setValue, handleSubmit } = formValues;
 
@@ -121,6 +129,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const getDialogProps = (dialog: string) => ({
         open: activeDialog === dialog,
         token,
+        underlyingToken,
         amount: confirmAmount,
         onOpenChange: () => setActiveDialog(undefined),
         network: dao!.network,
@@ -150,7 +159,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         <FormProvider {...formValues}>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
                 <p className="text-base font-normal leading-normal text-neutral-500">
-                    {t('app.plugins.token.tokenWrapForm.info', { underlyingSymbol })}
+                    {t('app.plugins.token.tokenWrapForm.info', { underlyingSymbol: underlyingToken.symbol })}
                 </p>
                 <div className="flex flex-col gap-3">
                     <AssetInput
@@ -181,7 +190,9 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                         variant="primary"
                         size="lg"
                     >
-                        {t(`app.plugins.token.tokenWrapForm.submit.${submitLabel}`, { underlyingSymbol })}
+                        {t(`app.plugins.token.tokenWrapForm.submit.${submitLabel}`, {
+                            underlyingSymbol: underlyingToken.symbol,
+                        })}
                     </Button>
                     {wrappedAmount > 0 && (
                         <Button variant="secondary" size="lg" onClick={handleUnwrapToken}>

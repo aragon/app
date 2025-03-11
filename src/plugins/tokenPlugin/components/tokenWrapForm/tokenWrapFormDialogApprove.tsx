@@ -1,3 +1,4 @@
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import {
     TransactionDialog,
@@ -6,7 +7,8 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { Dialog, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { AssetDataListItem, Dialog, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
 
@@ -15,6 +17,10 @@ export interface ITokenWrapFormDialogApproveProps extends IDialogRootProps {
      * Wrapper governance token.
      */
     token: ITokenPluginSettingsToken;
+    /**
+     * Underlying token of the wrapper governance token.
+     */
+    underlyingToken: IToken;
     /**
      * Amount of tokens to be approved in WEI format.
      */
@@ -34,7 +40,7 @@ export interface ITokenWrapFormDialogApproveProps extends IDialogRootProps {
 }
 
 export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApproveProps> = (props) => {
-    const { token, amount, network, onOpenChange, onApproveSuccess, onSuccess, ...otherProps } = props;
+    const { token, underlyingToken, amount, network, onOpenChange, onApproveSuccess, onSuccess, ...otherProps } = props;
 
     const { t } = useTranslations();
 
@@ -53,6 +59,8 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
         onApproveSuccess();
     };
 
+    const parsedAmount = formatUnits(amount, token.decimals);
+
     return (
         <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
             <TransactionDialog
@@ -68,7 +76,14 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
                     label: t('app.plugins.token.tokenWrapForm.dialog.approve.success'),
                     onClick: onSuccessClick,
                 }}
-            />
+            >
+                <AssetDataListItem.Structure
+                    logoSrc={underlyingToken.logo}
+                    name={underlyingToken.name}
+                    amount={parsedAmount}
+                    symbol={underlyingToken.symbol}
+                />
+            </TransactionDialog>
         </Dialog.Root>
     );
 };

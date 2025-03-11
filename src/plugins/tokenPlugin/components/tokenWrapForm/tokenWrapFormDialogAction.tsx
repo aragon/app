@@ -1,3 +1,4 @@
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import {
     TransactionDialog,
@@ -23,6 +24,10 @@ export interface ITokenWrapFormDialogActionProps extends IDialogRootProps {
      */
     token: ITokenPluginSettingsToken;
     /**
+     * Underlying token of the wrapper governance token.
+     */
+    underlyingToken: IToken;
+    /**
      * Amount of tokens to be wrapped / unwrapped in WEI format.
      */
     amount: bigint;
@@ -37,7 +42,7 @@ export interface ITokenWrapFormDialogActionProps extends IDialogRootProps {
 }
 
 export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps> = (props) => {
-    const { action, token, amount, network, onOpenChange, onSuccess, ...otherProps } = props;
+    const { action, token, underlyingToken, amount, network, onOpenChange, onSuccess, ...otherProps } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -64,6 +69,7 @@ export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps
     };
 
     const parsedAmount = formatUnits(amount, token.decimals);
+    const assetToken = action === 'wrap' ? underlyingToken : token;
 
     return (
         <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
@@ -82,11 +88,10 @@ export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps
                 }}
             >
                 <AssetDataListItem.Structure
-                    logoSrc={token.logo}
-                    name={token.name}
+                    logoSrc={assetToken.logo}
+                    name={assetToken.name}
                     amount={parsedAmount}
-                    symbol={token.symbol}
-                    fiatPrice={token.priceUsd}
+                    symbol={assetToken.symbol}
                 />
             </TransactionDialog>
         </Dialog.Root>

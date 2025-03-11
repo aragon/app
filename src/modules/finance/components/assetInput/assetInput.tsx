@@ -110,7 +110,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                         <AssetInputToken token={assetField.value?.token} />
                     </Button>
                 )}
-                {disableAssetField && <AssetInputToken token={assetField.value?.token} />}
+                {disableAssetField && (
+                    <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
+                )}
                 <input
                     type="number"
                     placeholder="0"
