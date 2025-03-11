@@ -39,7 +39,7 @@ describe('adminUninstallSelectProcessDialogUtils', () => {
                 where: daoAddress,
                 who: adminAddress,
                 what: permissionId,
-                to: pluginAddress,
+                to: daoAddress,
             });
 
             expect(result).toMatchObject({

@@ -37,9 +37,7 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const daoAddress = dao!.address as Hex;
 
-    const handleSuccess = () => {
-        console.log('admin', adminPlugin.address);
-        console.log('plugin', selectedPlugin.address);
+    const handleSuccess = (selectedPlugin: IDaoPlugin) => {
         const params: IPublishProposalDialogParams = adminUninstallProcessDialogSelectUtils.buildProposalParams(
             daoAddress,
             adminPlugin.address as Hex,
@@ -50,8 +48,8 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
     };
 
     const handlePluginSelected = (plugin: IDaoPlugin) => {
-        createProposalGuard({ plugin, onSuccess: () => handleSuccess() });
         setSelectedPlugin(plugin);
+        createProposalGuard({ plugin, onSuccess: () => handleSuccess(plugin) });
     };
 
     const handleSelectProcessClick = () => {
@@ -67,7 +65,6 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
     const { check: createProposalGuard } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onSuccess: () => handleSuccess(),
         plugin: selectedPlugin,
         daoId,
     });
@@ -77,7 +74,7 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
             open={isOpen}
             variant="critical"
             hiddenDescription={t(
-                'app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.a11y.hiddenDescription',
+                'app.plugins.admin.adminUninstallPlugin.adminUninstallProcessDialogSelect.a11y.description',
             )}
         >
             <DialogAlert.Header
