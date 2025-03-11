@@ -21,14 +21,17 @@ export interface IDaoCarouselProps {
      */
     speedOnHover?: number;
     /**
+     * Delay before starting the animation. In milliseconds.
+     */
+    animationDelay?: number;
+    /**
      * Additional class name to apply to the component.
      */
     className?: string;
 }
 
 export const DaoCarousel: React.FC<IDaoCarouselProps> = (props) => {
-    const { children, gap = 16, speed = 100, speedOnHover, className } = props;
-
+    const { children, gap = 16, speed = 100, speedOnHover, animationDelay, className } = props;
     const [currentSpeed, setCurrentSpeed] = useState(speed);
     const [ref, { width, height }] = useMeasure();
     const translation = useMotionValue(0);
@@ -36,7 +39,23 @@ export const DaoCarousel: React.FC<IDaoCarouselProps> = (props) => {
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [key, setKey] = useState(0);
 
+    const [isAnimationRunning, setIsAnimationRunning] = useState(!animationDelay);
+
     useEffect(() => {
+        if (isAnimationRunning) {
+            return;
+        }
+
+        setTimeout(() => {
+            setIsAnimationRunning(true);
+        }, animationDelay);
+    }, [animationDelay, isAnimationRunning]);
+
+    useEffect(() => {
+        if (!isAnimationRunning) {
+            return;
+        }
+
         let controls;
 
         const size = width;
@@ -73,7 +92,7 @@ export const DaoCarousel: React.FC<IDaoCarouselProps> = (props) => {
         }
 
         return controls.stop;
-    }, [key, translation, currentSpeed, width, height, gap, isTransitioning]);
+    }, [key, translation, currentSpeed, width, height, gap, isTransitioning, isAnimationRunning]);
 
     const hoverProps = speedOnHover
         ? {
@@ -89,7 +108,9 @@ export const DaoCarousel: React.FC<IDaoCarouselProps> = (props) => {
         : {};
 
     return (
-        <div className={classNames('overflow-hidden', className)}>
+        // overflow-visible is used to prevent the carousel from being clipped by the parent container, but some of the
+        // containers above may need to have overflow-hidden to prevent the carousel from overflowing the whole page.
+        <div className={classNames('overflow-visible', className)}>
             <motion.div
                 className="flex w-max will-change-transform"
                 style={{
