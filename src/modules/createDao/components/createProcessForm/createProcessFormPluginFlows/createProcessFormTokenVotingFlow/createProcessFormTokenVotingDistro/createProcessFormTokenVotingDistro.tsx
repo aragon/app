@@ -1,4 +1,3 @@
-import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
@@ -11,6 +10,7 @@ import {
     IconType,
     InputContainer,
     InputText,
+    Link,
     RadioCard,
     RadioGroup,
 } from '@aragon/gov-ui-kit';
@@ -99,14 +99,23 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
             >
                 <RadioGroup className="w-full" value={tokenType} onValueChange={onTokenTypeChange}>
                     {process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true' && (
-                        <div className="flex flex-row items-center gap-x-2">
+                        <div className="flex flex-row items-baseline gap-x-2">
                             <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
-                            <p className="text-neutral-400">
-                                {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabled')}
-                            </p>
-                            <Link href="https://app.aragon.org/" target="_blank">
-                                {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabledLink')}
-                            </Link>
+                            <div className="flex flex-col">
+                                <p className="text-sm text-neutral-400">
+                                    {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabled')}{' '}
+                                </p>
+                                <Link
+                                    href="https://app.aragon.org/"
+                                    target="_blank"
+                                    iconRight={IconType.LINK_EXTERNAL}
+                                    className="text-sm"
+                                >
+                                    <span className="text-sm">
+                                        {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabledLink')}
+                                    </span>
+                                </Link>
+                            </div>
                         </div>
                     )}
                     <div className="flex w-full flex-row gap-x-2">
