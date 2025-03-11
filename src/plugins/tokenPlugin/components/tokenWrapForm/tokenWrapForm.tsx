@@ -4,6 +4,7 @@ import { AssetInput, type IAssetInputFormData } from '@/modules/finance/componen
 import { useMember } from '@/modules/governance/api/governanceService';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, formatterUtils, NumberFormat, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -59,19 +60,21 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         { enabled: address != null },
     );
 
+    const { id: chainId } = networkDefinitions[dao!.network];
     const { data: tokenAllowance, queryKey: allowanceQueryKey } = useReadContract({
         abi: erc20Abi,
         functionName: 'allowance',
         address: underlyingAddress,
         args: [address!, token.address as Hex],
         query: { enabled: address != null },
+        chainId,
     });
 
     const {
         data: unwrappedBalance,
         queryKey: unwrappedBalanceKey,
         status: unwrappedBalanceStatus,
-    } = useBalance({ address, token: underlyingAddress });
+    } = useBalance({ address, token: underlyingAddress, chainId });
 
     const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
 
