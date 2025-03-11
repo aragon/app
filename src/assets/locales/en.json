@@ -566,6 +566,8 @@
       },
       "financeDetailsList": {
         "chain": "Chain",
+        "octavDescription": "Octav provides advanced treasury analytics.",
+        "octavLabel": "View on Octav",
         "title": "Vault",
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
