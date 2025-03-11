@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { useFeaturedDaos } from '../../api/cmsService';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { CtaCard } from '../../components/ctaCard';
-import { DaoCarouselCard } from '../../components/daoCarousel';
+import { DaoCarouselCard } from '../../components/daoCarouselCard';
 import { ExploreDaos } from '../../components/exploreDao';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
@@ -65,7 +65,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                     <main className="flex flex-col gap-10 md:gap-20">
                         {featuredDaos && (
                             <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
-                                <Carousel speed={40} speedOnHover={10} animationDelay={500} gap={16}>
+                                <Carousel speed={40} speedOnHover={10} animationDelay={1000} gap={16}>
                                     {featuredDaos.map((dao, index) => (
                                         <DaoCarouselCard
                                             key={index}
