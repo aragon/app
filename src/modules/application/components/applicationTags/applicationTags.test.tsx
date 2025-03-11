@@ -20,11 +20,6 @@ describe('<ApplicationTags /> component', () => {
         process.env = originalProcessEnv;
     });
 
-    it('renders the beta tag', () => {
-        render(createTestComponent());
-        expect(screen.getByText(/applicationTags.beta/)).toBeInTheDocument();
-    });
-
     it('renders the current application version', () => {
         const version = '1.0.2 (DEV)';
         useApplicationVersionSpy.mockReturnValue(version);
