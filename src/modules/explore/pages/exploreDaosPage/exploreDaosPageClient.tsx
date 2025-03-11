@@ -1,15 +1,15 @@
 'use client';
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
-import { DaoCarouselCard } from '@/modules/explore/components/daoCarousel/daoCarouselCard';
 import type { Network } from '@/shared/api/daoService';
+import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import Image from 'next/image';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { CtaCard } from '../../components/ctaCard';
-import { DaoCarousel, featuredDaos } from '../../components/daoCarousel';
+import { DaoCarouselCard, featuredDaos } from '../../components/daoCarousel';
 import { ExploreDaos } from '../../components/exploreDao';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
@@ -63,19 +63,19 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                 <Container className="py-10 pb-16 md:px-6 md:py-16 md:pb-20">
                     <main className="flex flex-col gap-10 md:gap-20">
                         <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
-                            <DaoCarousel speed={40} speedOnHover={10} animationDelay={500} gap={16}>
+                            <Carousel speed={40} speedOnHover={10} animationDelay={500} gap={16}>
                                 {featuredDaos.map((dao, index) => (
                                     <DaoCarouselCard
                                         key={index}
                                         address={dao.daoAddress}
                                         name={dao.name}
                                         description={dao.description}
-                                        network={dao.network as Network} // TODO: create a network parser/type gua
+                                        network={dao.network as Network} // TODO: create a network parser/type guard
                                         logoSrc={dao.logo}
                                         overrideUrl={dao.overrideUrl}
                                     />
                                 ))}
-                            </DaoCarousel>
+                            </Carousel>
                         </ExploreSection>
 
                         <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>

@@ -3,9 +3,9 @@ import { animate, motion, useMotionValue } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
-export interface IDaoCarouselProps {
+export interface ICarouselProps {
     /**
-     * Children to render in the carousel. DaoCarouselCard used in the explore page.
+     * Children to render in the carousel.
      */
     children: React.ReactNode;
     /**
@@ -30,7 +30,7 @@ export interface IDaoCarouselProps {
     className?: string;
 }
 
-export const DaoCarousel: React.FC<IDaoCarouselProps> = (props) => {
+export const Carousel: React.FC<ICarouselProps> = (props) => {
     const { children, gap = 16, speed = 100, speedOnHover, animationDelay, className } = props;
     const [currentSpeed, setCurrentSpeed] = useState(speed);
     const [ref, { width, height }] = useMeasure();
@@ -46,9 +46,11 @@ export const DaoCarousel: React.FC<IDaoCarouselProps> = (props) => {
             return;
         }
 
-        setTimeout(() => {
+        const timeoutHandle = setTimeout(() => {
             setIsAnimationRunning(true);
         }, animationDelay);
+
+        return () => clearTimeout(timeoutHandle);
     }, [animationDelay, isAnimationRunning]);
 
     useEffect(() => {
