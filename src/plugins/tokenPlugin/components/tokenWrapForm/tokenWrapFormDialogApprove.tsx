@@ -6,8 +6,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { Dialog, invariant, type IDialogRootProps } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
+import { Dialog, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapFormDialogUtils } from './tokenWrapFormDialogUtils';
 
@@ -38,9 +37,6 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
     const { token, amount, network, onOpenChange, onApproveSuccess, onSuccess, ...otherProps } = props;
 
     const { t } = useTranslations();
-    const { address } = useAccount();
-
-    invariant(address != null, 'TokenWrapFormDialogApprove: user must be connected to perform the action');
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });

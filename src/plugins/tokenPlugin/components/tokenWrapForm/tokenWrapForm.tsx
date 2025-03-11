@@ -1,3 +1,4 @@
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
 import { useMember } from '@/modules/governance/api/governanceService';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
@@ -46,6 +47,8 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     // the amount is refetched and an amount of "0" would be displayed on the wrap / unwrap dialogs.
     const [confirmAmount, setConfirmAmount] = useState<bigint>(BigInt(0));
 
+    const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
+
     const { data: tokenMember, refetch: refetchMember } = useMember<ITokenMember>(
         { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
         { enabled: address != null },
@@ -75,7 +78,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({ control, name: 'amount' });
     const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
 
-    const needsApproval = tokenAllowance == null || tokenAllowance < wrapAmountWei;
+    const needsApproval = isConnected && (tokenAllowance == null || tokenAllowance < wrapAmountWei);
 
     const handleTransactionSuccess = () => {
         void queryClient.invalidateQueries({ queryKey: allowanceQueryKey });
@@ -142,7 +145,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     });
 
     const submitLabel = needsApproval ? 'approve' : 'wrap';
-    const disableSubmit = !unwrappedBalance || unwrappedBalance.value === BigInt(0);
 
     return (
         <FormProvider {...formValues}>
@@ -173,7 +175,12 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                     </ToggleGroup>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <Button type="submit" variant="primary" size="lg" disabled={disableSubmit}>
+                    <Button
+                        type={isConnected ? 'submit' : undefined}
+                        onClick={isConnected ? undefined : () => walletGuard()}
+                        variant="primary"
+                        size="lg"
+                    >
                         {t(`app.plugins.token.tokenWrapForm.submit.${submitLabel}`, { underlyingSymbol })}
                     </Button>
                     {wrappedAmount > 0 && (
@@ -190,8 +197,12 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                 </div>
             </form>
             <TokenWrapFormDialogApprove onApproveSuccess={handleApproveSuccess} {...getDialogProps('approve')} />
-            <TokenWrapFormDialogAction action="wrap" {...getDialogProps('wrap')} />
-            <TokenWrapFormDialogAction action="unwrap" {...getDialogProps('unwrap')} />
+            {isConnected && (
+                <>
+                    <TokenWrapFormDialogAction action="wrap" {...getDialogProps('wrap')} />
+                    <TokenWrapFormDialogAction action="unwrap" {...getDialogProps('unwrap')} />
+                </>
+            )}
         </FormProvider>
     );
 };
