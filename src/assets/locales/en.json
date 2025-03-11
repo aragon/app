@@ -676,6 +676,9 @@
             "ens": "ENS",
             "firstActivity": "First activity",
             "title": "Details"
+          },
+          "efpCard": {
+            "title": "Ethereum Follow Protocol"
           }
         },
         "header": {
@@ -1442,6 +1445,12 @@
       },
       "confirmWizardExit": {
         "message": "If you leave this process, you'll lose all the information you've entered so far."
+      },
+      "efpCard": {
+        "cta": "View on EFP",
+        "followers": "Followers",
+        "following": "Following",
+        "info": "The Ethereum Follow Protocol is an onchain social graph for Ethereum"
       },
       "errorFeedback": {
         "description": "If you'd like to help, you can report the issue to our team!",

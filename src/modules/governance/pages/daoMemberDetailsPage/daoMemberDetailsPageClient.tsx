@@ -2,6 +2,7 @@
 
 import { DaoList } from '@/modules/explore/components/daoList';
 import { useDao } from '@/shared/api/daoService';
+import { EfpCard } from '@/shared/components/efpCard';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -182,6 +183,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                                 {formattedFirstActivity ?? '-'}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
+                    </Page.AsideCard>
+                    <Page.AsideCard title={t('app.governance.daoMemberDetailsPage.aside.efpCard.title')}>
+                        <EfpCard address={address} />
                     </Page.AsideCard>
                 </Page.Aside>
             </Page.Content>

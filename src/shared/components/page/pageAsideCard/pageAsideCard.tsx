@@ -16,7 +16,7 @@ export const PageAsideCard: React.FC<IPageAsideCardProps> = (props) => {
     const { children, className, title, ...otherProps } = props;
 
     return (
-        <Card className={classNames('flex shrink-0 flex-col gap-4 p-6', className)} {...otherProps}>
+        <Card className={classNames('relative flex shrink-0 flex-col gap-4 p-6', className)} {...otherProps}>
             <Heading size="h3">{title}</Heading>
             {children}
         </Card>
