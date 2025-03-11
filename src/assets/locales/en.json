@@ -334,7 +334,8 @@
               "label": "Token address",
               "placeholder": "Enter the token address to import"
             },
-            "importDisabled": "Token import is temporarily disabled while undergoing enhancements.",
+            "importDisabled": "Token importing is not yet available in the new version of the Aragon app.",
+            "importDisabledLink": "Legacy app",
             "importToken": "Import token",
             "name": {
               "helpText": "These addreses will receive newly minted tokens.",
