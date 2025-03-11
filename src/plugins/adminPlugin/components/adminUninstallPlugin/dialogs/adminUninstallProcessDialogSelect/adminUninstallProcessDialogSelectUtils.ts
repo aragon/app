@@ -24,24 +24,19 @@ class AdminUninstallProcessDialogSelectUtils {
         daoId: string,
     ): IPublishProposalDialogParams {
         return {
-            values: this.buildProposalValues(daoAddress, adminAddress, pluginAddress, daoId),
+            values: this.buildProposalValues(daoAddress, adminAddress, daoId),
             daoId,
             pluginAddress,
             prepareActions: {},
         };
     }
 
-    private buildRevokeAction(
-        daoAddress: Hex,
-        adminAddress: Hex,
-        pluginAddress: Hex,
-        daoId: string,
-    ): IProposalActionData {
+    private buildRevokeAction(daoAddress: Hex, adminAddress: Hex, daoId: string): IProposalActionData {
         const rawAction = permissionTransactionUtils.buildRevokePermissionTransaction({
             where: daoAddress,
             who: adminAddress,
             what: this.permissionIds.EXECUTE_PERMISSION,
-            to: pluginAddress,
+            to: daoAddress,
         });
 
         return {
@@ -57,10 +52,9 @@ class AdminUninstallProcessDialogSelectUtils {
     private buildProposalValues(
         daoAddress: Hex,
         adminAddress: Hex,
-        pluginAddress: Hex,
         daoId: string,
     ): ICreateProposalFormData & ICreateProposalStartDateForm {
-        const revokeAction = this.buildRevokeAction(daoAddress, adminAddress, pluginAddress, daoId);
+        const revokeAction = this.buildRevokeAction(daoAddress, adminAddress, daoId);
 
         return {
             ...this.prepareProposalMetadata(),

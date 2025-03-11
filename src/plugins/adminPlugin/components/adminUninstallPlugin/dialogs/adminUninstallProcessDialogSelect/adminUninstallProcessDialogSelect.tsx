@@ -38,6 +38,8 @@ export const AdminUninstallProcessDialogSelect: React.FC<IAdminUninstallProcessD
     const daoAddress = dao!.address as Hex;
 
     const handleSuccess = () => {
+        console.log('admin', adminPlugin.address);
+        console.log('plugin', selectedPlugin.address);
         const params: IPublishProposalDialogParams = adminUninstallProcessDialogSelectUtils.buildProposalParams(
             daoAddress,
             adminPlugin.address as Hex,
