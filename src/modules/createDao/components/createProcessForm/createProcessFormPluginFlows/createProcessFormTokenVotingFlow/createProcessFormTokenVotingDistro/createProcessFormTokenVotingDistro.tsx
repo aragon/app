@@ -34,7 +34,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
         ...tokenTypeField
     } = useFormField<ICreateProcessFormBody, 'tokenType'>('tokenType', {
         label: t('app.createDao.createProcessForm.tokenFlow.distro.typeLabel'),
-        defaultValue: 'new',
+        defaultValue: 'imported',
         fieldPrefix,
     });
 
@@ -101,13 +101,13 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                     <div className="flex w-full flex-row gap-x-2">
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importToken')}
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importCardLabel')}
                             value="imported"
                             disabled={process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true'}
                         />
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createToken')}
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createCardLabel')}
                             value="new"
                         />
                     </div>
