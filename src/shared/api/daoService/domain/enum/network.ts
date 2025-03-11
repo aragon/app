@@ -7,5 +7,4 @@ export enum Network {
     ZKSYNC_MAINNET = 'zksync-mainnet',
     ZKSYNC_SEPOLIA = 'zksync-sepolia',
     PEAQ_MAINNET = 'peaq-mainnet',
-    MODE_MAINNET = 'mode-mainnet',
 }

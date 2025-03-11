@@ -1,6 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { zeroAddress, type Chain, type Hex } from 'viem';
-import { arbitrum, base, mainnet, mode, peaq, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
+import { arbitrum, base, mainnet, peaq, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
 
 export interface INetworkDefinitionAddresses {
     /**
@@ -97,16 +97,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...peaq,
         name: 'Peaq',
         logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
-        addresses: {
-            daoFactory: zeroAddress,
-            pluginSetupProcessor: zeroAddress,
-            globalExecutor: zeroAddress,
-        },
-    },
-    [Network.MODE_MAINNET]: {
-        ...mode,
-        name: 'Mode',
-        logo: 'https://pbs.twimg.com/profile_images/1688569679877390338/IYXD4bdy_400x400.jpg',
         addresses: {
             daoFactory: zeroAddress,
             pluginSetupProcessor: zeroAddress,
