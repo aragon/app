@@ -3,7 +3,9 @@ import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
 
 jest.mock('../applicationTags', () => ({ ApplicationTags: () => <div data-testid="application-tags-mock" /> }));
-jest.mock('../aragonLogo', () => ({ AragonLogo: () => <div data-testid="aragon-logo-mock" /> }));
+jest.mock('../../../../shared/components/aragonLogo', () => ({
+    AragonLogo: () => <div data-testid="aragon-logo-mock" />,
+}));
 
 describe('<Footer /> component', () => {
     const originalProcessEnv = process.env;
