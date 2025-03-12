@@ -4,11 +4,11 @@ import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Container } from '@/shared/components/container';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
+import { Tag } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { footerLinks } from './footerLinks';
-import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
-import { Tag } from '@aragon/gov-ui-kit';
 
 export interface IFooterProps extends ComponentProps<'footer'> {}
 
