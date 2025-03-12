@@ -49,7 +49,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         const distanceToTravel = Math.abs(to - from);
         const duration = distanceToTravel / currentSpeed;
 
-        const isInitialAnimation = !translation.isAnimating();
+        const isInitialAnimation = translation.get() === 0;
 
         const controls = animate(translation, [from, to], {
             ease: 'linear',
