@@ -6,11 +6,12 @@
       },
       "bannerDao": {
         "adminMember": {
-          "buttonLabel": "Add governance",
+          "action": "Add governance",
+          "manage": "Manage admins",
           "message": "Your DAO is under construction. You can add as many custom governance processes as your DAO needs."
         },
         "adminPlugin": {
-          "buttonLabel": "View admins",
+          "action": "View admins",
           "message": "This DAO is under construction. Admins can make changes to the DAO without a proposal."
         }
       },

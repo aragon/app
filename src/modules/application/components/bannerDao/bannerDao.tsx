@@ -31,9 +31,20 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const displayAdminMemberBanner = isAdminMember && process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
     const bannerType = displayAdminMemberBanner ? 'adminMember' : hasAdminPlugin ? 'adminPlugin' : null;
 
-    const bannerActionProps = displayAdminMemberBanner
+    const actionButtonActionProps = displayAdminMemberBanner
         ? { onClick: handleBannerActionClick }
         : { href: `/dao/${id}/members` };
+
+    const actionButtonIconProps = displayAdminMemberBanner
+        ? { iconLeft: IconType.PLUS }
+        : { iconRight: IconType.CHEVRON_RIGHT };
+
+    const actionButtonProps = {
+        size: 'sm',
+        variant: isAdminMember ? 'secondary' : 'tertiary',
+        ...actionButtonIconProps,
+        ...actionButtonActionProps,
+    } as const;
 
     if (bannerType == null) {
         return null;
@@ -41,9 +52,14 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
 
     return (
         <Banner message={t(`app.application.bannerDao.${bannerType}.message`)}>
-            <Button variant="tertiary" size="sm" iconRight={IconType.CHEVRON_RIGHT} {...bannerActionProps}>
-                {t(`app.application.bannerDao.${bannerType}.buttonLabel`)}
-            </Button>
+            <div className="flex gap-3">
+                <Button {...actionButtonProps}>{t(`app.application.bannerDao.${bannerType}.action`)}</Button>
+                {isAdminMember && (
+                    <Button href={`/dao/${id}/settings`} size="sm" variant="tertiary">
+                        {t('app.application.bannerDao.adminMember.manage')}
+                    </Button>
+                )}
+            </div>
         </Banner>
     );
 };
