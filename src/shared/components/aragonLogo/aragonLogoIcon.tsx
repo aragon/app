@@ -1,4 +1,4 @@
-export const AragonIconLogo = () => (
+export const AragonLogoIcon = () => (
     <svg
         viewBox="0 0 32 32"
         fill="none"

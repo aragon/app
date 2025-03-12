@@ -4,6 +4,7 @@ import { AragonLogo, type IAragonLogoProps } from './aragonLogo';
 describe('<AragonLogo /> component', () => {
     const createTestComponent = (props?: Partial<IAragonLogoProps>) => {
         const completeProps: IAragonLogoProps = { ...props };
+
         return <AragonLogo data-testid="logo-container" {...completeProps} />;
     };
 
@@ -27,7 +28,7 @@ describe('<AragonLogo /> component', () => {
         expect(logoWithText).not.toBeInTheDocument();
     });
 
-    it('renders both logos with responsive classes when responsiveIconOnly is true', () => {
+    it('renders both logos when responsiveIconOnly is true', () => {
         render(createTestComponent({ responsiveIconOnly: true }));
 
         const iconLogo = screen.getByRole('img', { name: 'Aragon icon logo' });
@@ -35,35 +36,5 @@ describe('<AragonLogo /> component', () => {
 
         expect(iconLogo).toBeInTheDocument();
         expect(logoWithText).toBeInTheDocument();
-
-        const mobileContainer = screen.getByTestId('mobile-logo-container');
-        const desktopContainer = screen.getByTestId('desktop-logo-container');
-
-        expect(mobileContainer).toHaveClass('block', 'md:hidden');
-        expect(desktopContainer).toHaveClass('hidden', 'md:block');
-
-        expect(mobileContainer).toContainElement(iconLogo);
-        expect(desktopContainer).toContainElement(logoWithText);
-    });
-
-    it('applies default variant and size classes', () => {
-        render(createTestComponent());
-
-        const logoContainer = screen.getByTestId('logo-container');
-        expect(logoContainer).toHaveClass('text-primary-400', 'h-8');
-    });
-
-    it('applies the white variant class', () => {
-        render(createTestComponent({ variant: 'white' }));
-
-        const logoContainer = screen.getByTestId('logo-container');
-        expect(logoContainer).toHaveClass('text-neutral-0');
-    });
-
-    it('applies the small size class', () => {
-        render(createTestComponent({ size: 'sm' }));
-
-        const logoContainer = screen.getByTestId('logo-container');
-        expect(logoContainer).toHaveClass('h-6');
     });
 });

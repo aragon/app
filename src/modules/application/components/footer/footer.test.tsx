@@ -8,9 +8,6 @@ jest.mock('../../../../shared/components/aragonLogo', () => ({
 }));
 
 describe('<Footer /> component', () => {
-    const originalProcessEnv = process.env;
-    const mockVersion = 'v1.0.0';
-
     const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
     const createTestComponent = (props?: Partial<IFooterProps>) => {
@@ -21,11 +18,9 @@ describe('<Footer /> component', () => {
 
     beforeEach(() => {
         jest.useFakeTimers();
-        useApplicationVersionSpy.mockReturnValue(mockVersion);
     });
 
     afterEach(() => {
-        process.env = originalProcessEnv;
         jest.useRealTimers();
     });
 
@@ -34,9 +29,11 @@ describe('<Footer /> component', () => {
         expect(screen.getByTestId('aragon-logo-mock')).toBeInTheDocument();
     });
 
-    it('renders the application tags', () => {
+    it('renders the application version', () => {
+        const version = 'v1.0.0';
+        useApplicationVersionSpy.mockReturnValue(version);
         render(createTestComponent());
-        expect(screen.getByText(mockVersion)).toBeInTheDocument();
+        expect(screen.getByText(version)).toBeInTheDocument();
     });
 
     it('renders the footer links', () => {

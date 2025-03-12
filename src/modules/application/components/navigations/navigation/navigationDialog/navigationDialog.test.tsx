@@ -12,13 +12,11 @@ jest.mock('../../../../../../shared/components/aragonLogo', () => ({
 }));
 
 describe('<Navigation.Dialog /> component', () => {
-    const mockVersion = 'v1.0.0';
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
     beforeEach(() => {
         usePathnameSpy.mockReturnValue('');
-        useApplicationVersionSpy.mockReturnValue(mockVersion);
     });
 
     const createTestComponent = (props?: Partial<INavigationDialogProps<string>>) => {
@@ -27,10 +25,12 @@ describe('<Navigation.Dialog /> component', () => {
         return <NavigationDialog {...completeProps} />;
     };
 
-    it('renders the Aragon logo and app tags', () => {
+    it('renders the Aragon logo and app version', () => {
+        const version = 'v1.0.0';
+        useApplicationVersionSpy.mockReturnValue(version);
         render(createTestComponent({ open: true }));
         expect(screen.getByTestId('aragon-logo-mock')).toBeInTheDocument();
-        expect(screen.getByText(mockVersion)).toBeInTheDocument();
+        expect(screen.getByText(version)).toBeInTheDocument();
     });
 
     it('renders the children component when open', () => {

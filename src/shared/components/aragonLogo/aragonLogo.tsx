@@ -1,10 +1,11 @@
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
-import { AragonIconLogo } from './aragonIconLogo';
+import { AragonLogoIcon } from './aragonLogoIcon';
 import { AragonLogoWithText } from './aragonLogoWithText';
 
 export type LogoVariant = 'primary' | 'white';
 export type LogoSize = 'sm' | 'md' | 'lg';
+
 export interface IAragonLogoProps extends ComponentProps<'div'> {
     /**
      * Logo color variant
@@ -45,7 +46,7 @@ export const AragonLogo: React.FC<IAragonLogoProps> = (props) => {
     if (!responsiveIconOnly) {
         return (
             <div className={containerClasses} {...otherProps}>
-                {iconOnly ? <AragonIconLogo /> : <AragonLogoWithText />}
+                {iconOnly ? <AragonLogoIcon /> : <AragonLogoWithText />}
             </div>
         );
     }
@@ -53,11 +54,11 @@ export const AragonLogo: React.FC<IAragonLogoProps> = (props) => {
     return (
         <div className={containerClasses} {...otherProps}>
             {/* Show icon only on mobile, hide on larger screens */}
-            <div className="block h-full w-auto md:hidden" data-testid="mobile-logo-container">
-                <AragonIconLogo />
+            <div className="block h-full w-auto md:hidden">
+                <AragonLogoIcon />
             </div>
             {/* Hide on mobile, show on larger screens */}
-            <div className="hidden h-full w-auto md:block" data-testid="desktop-logo-container">
+            <div className="hidden h-full w-auto md:block">
                 <AragonLogoWithText />
             </div>
         </div>
