@@ -57,7 +57,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         }
 
         const contentSize = width + gap;
-        const from = 0;
+        const from = translation.get();
         const to = -contentSize / 2;
 
         const distanceToTravel = Math.abs(to - from);

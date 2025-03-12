@@ -69,11 +69,11 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                                     {featuredDaos.map((dao, index) => (
                                         <DaoCarouselCard
                                             key={index}
-                                            address={dao.daoAddress}
+                                            address={dao.address}
                                             name={dao.name}
                                             description={dao.description}
                                             network={dao.network}
-                                            logoSrc={dao.logo}
+                                            logo={dao.logo}
                                             overrideUrl={dao.overrideUrl}
                                         />
                                     ))}

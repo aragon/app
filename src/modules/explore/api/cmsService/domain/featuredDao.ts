@@ -16,11 +16,15 @@ export interface IFeaturedDao {
     /**
      * The network on which the DAO is deployed.
      */
-    network: Network;
+    network?: Network;
+    /**
+     * Preferred network label. Used as a fallback if the network is not defined.
+     */
+    networkLabel?: string;
     /**
      * Contract address of the DAO.
      */
-    daoAddress: string;
+    address?: string;
     /**
      * External URL of the DAO. Overrides the default internal URL.
      */

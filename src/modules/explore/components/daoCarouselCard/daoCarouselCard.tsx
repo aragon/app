@@ -1,54 +1,23 @@
-import { type Network } from '@/shared/api/daoService';
+import { IFeaturedDao } from '@/modules/explore/api/cmsService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { DaoDataListItem } from '@aragon/gov-ui-kit';
 
-export interface IDaoCarouselCardProps {
-    /**
-     * Name of the DAO.
-     */
-    name: string;
-    /**
-     * Contract address of the DAO.
-     */
-    address: string;
-    /**
-     * Logo source of the DAO.
-     */
-    logoSrc?: string;
-    /**
-     * The network on which the DAO is deployed.
-     */
-    network: Network | string;
-    /**
-     * Description of the DAO.
-     */
-    description: string;
-    /**
-     * Override URL for the card. If set, the card will open the URL in a new tab. Otherwise, it will open the DAO dashboard in the same tab.
-     */
-    overrideUrl?: string;
-}
+export interface IDaoCarouselCardProps extends IFeaturedDao {}
 
-export const DaoCarouselCard: React.FC<IDaoCarouselCardProps> = ({
-    name,
-    address,
-    logoSrc,
-    network,
-    description,
-    overrideUrl,
-}) => {
-    const networkName =
-        network in networkDefinitions ? networkDefinitions[network as Network].name : network.split('-')[0];
+export const DaoCarouselCard: React.FC<IDaoCarouselCardProps> = (props) => {
+    const { name, address, logo, network, networkLabel, description, overrideUrl } = props;
+
+    const networkName = network ? networkDefinitions[network].name : networkLabel;
 
     return (
         <div className="max-w-72 md:max-w-96">
             <DaoDataListItem.Structure
-                href={overrideUrl ?? `/dao/${network}-${address}/dashboard`}
+                href={overrideUrl ?? `/dao/${network!}-${address!}/dashboard`}
                 target={overrideUrl ? '_blank' : undefined}
                 name={name}
                 description={description}
                 network={networkName}
-                logoSrc={logoSrc}
+                logoSrc={logo}
                 isExternal={!!overrideUrl}
             />
         </div>
