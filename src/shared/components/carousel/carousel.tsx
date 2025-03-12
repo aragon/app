@@ -41,30 +41,55 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     const [ref, { width }] = useMeasure();
     const translation = useMotionValue(0);
 
+    // Each time we change any of the animation properties, we need to first animate from the current position to the
+    // end (with new props), and then we start a new infinite animation.
+    const [shouldScheduleTransitionAnimation, setShouldScheduleTransitionAnimation] = useState(false);
+
     useEffect(() => {
         const contentSize = width + gap;
-        const from = translation.get();
-        const to = -contentSize / 2;
+        const finalPosition = -contentSize / 2;
 
-        const distanceToTravel = Math.abs(to - from);
+        if (shouldScheduleTransitionAnimation) {
+            // animate until the end of the current cycle
+            const currentPosition = translation.get();
+            const remainingDistance = Math.abs(currentPosition - finalPosition);
+            const transitionDuration = remainingDistance / currentSpeed;
+
+            const animationControls = animate(translation, [currentPosition, finalPosition], {
+                ease: 'linear',
+                duration: transitionDuration,
+                onComplete: () => {
+                    setShouldScheduleTransitionAnimation(false);
+                },
+            });
+
+            return animationControls.stop;
+        }
+
+        // start of the cycle - schedule new infinite animation
+        const distanceToTravel = Math.abs(finalPosition);
         const duration = distanceToTravel / currentSpeed;
-
-        const isInitialAnimation = translation.get() === 0;
-
-        const controls = animate(translation, [from, to], {
+        const animationControls = animate(translation, [0, finalPosition], {
             ease: 'linear',
             duration: duration,
-            delay: isInitialAnimation ? animationDelay : 0,
+            delay: animationDelay,
             repeat: Infinity,
             repeatType: 'loop',
             repeatDelay: 0,
-            onRepeat: () => {
-                translation.set(from);
-            },
         });
 
-        return controls.stop;
-    }, [translation, currentSpeed, width, gap, animationDelay]);
+        return animationControls.stop;
+    }, [animationDelay, currentSpeed, gap, shouldScheduleTransitionAnimation, translation, width]);
+
+    useEffect(() => {
+        if (translation.get() === 0) {
+            // if the carousel is at the start, we don't need to schedule the transition animation!
+            return;
+        }
+
+        // schedule the transition animation when any of the relevant props change
+        setShouldScheduleTransitionAnimation(true);
+    }, [animationDelay, currentSpeed, gap, translation, width]);
 
     return (
         // overflow-visible is used to prevent the carousel from being clipped by the parent container, but some of the

@@ -65,7 +65,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                     <main className="flex flex-col gap-10 md:gap-20">
                         {featuredDaos && (
                             <ExploreSection title={t('app.explore.exploreDaosPage.section.featured')}>
-                                <Carousel speed={40} speedOnHover={10} animationDelay={1} gap={16}>
+                                <Carousel speed={40} speedOnHover={10} animationDelay={0.5} gap={16}>
                                     {featuredDaos.map((dao, index) => (
                                         <DaoCarouselCard key={index} {...dao} />
                                     ))}
