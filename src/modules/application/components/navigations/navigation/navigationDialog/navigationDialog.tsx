@@ -1,7 +1,7 @@
 import { AragonLogo } from '@/shared/components/aragonLogo';
-import { Dialog, type IDialogRootProps } from '@aragon/gov-ui-kit';
-import { ApplicationTags } from '../../../applicationTags';
+import { Dialog, Tag, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { NavigationLinks, type INavigationLink } from '../navigationLinks';
+import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
 
 export interface INavigationDialogProps<TRouteType extends string> extends IDialogRootProps {
     /**
@@ -13,6 +13,8 @@ export interface INavigationDialogProps<TRouteType extends string> extends IDial
 export const NavigationDialog = <TRouteType extends string>(props: INavigationDialogProps<TRouteType>) => {
     const { links, children, onOpenChange, ...otherProps } = props;
 
+    const version = useApplicationVersion();
+
     const handleLinksClick = () => onOpenChange?.(false);
 
     return (
@@ -22,7 +24,7 @@ export const NavigationDialog = <TRouteType extends string>(props: INavigationDi
                 <NavigationLinks variant="rows" links={links} onClick={handleLinksClick} />
                 <div className="flex flex-row items-center justify-between px-4">
                     <AragonLogo iconOnly={true} />
-                    <ApplicationTags variant="neutral" />
+                    <Tag variant="neutral" label={version} />
                 </div>
             </Dialog.Content>
         </Dialog.Root>
