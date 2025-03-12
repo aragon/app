@@ -146,6 +146,7 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                         ? t('app.createDao.createProcessForm.tokenFlow.params.voteChange.yes')
                         : t('app.createDao.createProcessForm.tokenFlow.params.voteChange.no')
                 }
+                helpText={t('app.createDao.createProcessForm.tokenFlow.params.voteChange.helpText')}
                 onCheckedChanged={(checked) => setValue(voteChangeField.name, checked)}
                 checked={voteChangeField.value}
                 {...voteChangeField}
