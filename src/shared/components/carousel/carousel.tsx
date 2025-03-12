@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { animate, motion, useMotionValue } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
 export interface ICarouselProps {
@@ -41,35 +41,27 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     const [ref, { width }] = useMeasure();
     const translation = useMotionValue(0);
 
-    // Each time we change any of the animation properties, we need to first animate from the current position to the
-    // end (with new props), and then we start a new infinite animation.
-    const [shouldScheduleTransitionAnimation, setShouldScheduleTransitionAnimation] = useState(false);
+    const contentSize = width + gap;
+    const finalPosition = -contentSize / 2;
 
-    useEffect(() => {
-        const contentSize = width + gap;
-        const finalPosition = -contentSize / 2;
+    const animationControlsRef = useRef<ReturnType<typeof animate> | null>(null);
 
-        if (shouldScheduleTransitionAnimation) {
-            // animate until the end of the current cycle
-            const currentPosition = translation.get();
-            const remainingDistance = Math.abs(currentPosition - finalPosition);
-            const transitionDuration = remainingDistance / currentSpeed;
-
-            const animationControls = animate(translation, [currentPosition, finalPosition], {
-                ease: 'linear',
-                duration: transitionDuration,
-                onComplete: () => {
-                    setShouldScheduleTransitionAnimation(false);
-                },
-            });
-
-            return animationControls.stop;
-        }
-
-        // start of the cycle - schedule new infinite animation
+    /**
+     * Animates the carousel infinitely with the current params.
+     *
+     * Each time we change any of the animation properties, we need to first animate from the current position to the
+     * end (with new props), and then we start a new infinite animation.
+     */
+    const startInfiniteAnimation = useCallback(() => {
         const distanceToTravel = Math.abs(finalPosition);
         const duration = distanceToTravel / currentSpeed;
-        const animationControls = animate(translation, [0, finalPosition], {
+
+        // Stop any existing animation
+        if (animationControlsRef.current) {
+            animationControlsRef.current.stop();
+        }
+
+        animationControlsRef.current = animate(translation, [0, finalPosition], {
             ease: 'linear',
             duration: duration,
             delay: animationDelay,
@@ -77,19 +69,35 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
             repeatType: 'loop',
             repeatDelay: 0,
         });
+    }, [animationDelay, currentSpeed, finalPosition, translation]);
 
-        return animationControls.stop;
-    }, [animationDelay, currentSpeed, gap, shouldScheduleTransitionAnimation, translation, width]);
+    /**
+     * Animate the carousel with the current params until the end of the current cycle.
+     */
+    const startTransitionAnimation = useCallback(() => {
+        const currentPosition = translation.get();
+        const remainingDistance = Math.abs(currentPosition - finalPosition);
+        const transitionDuration = remainingDistance / currentSpeed;
 
-    useEffect(() => {
-        if (translation.get() === 0) {
-            // if the carousel is at the start, we don't need to schedule the transition animation!
-            return;
+        // Stop any existing animation
+        if (animationControlsRef.current) {
+            animationControlsRef.current.stop();
         }
 
-        // schedule the transition animation when any of the relevant props change
-        setShouldScheduleTransitionAnimation(true);
-    }, [animationDelay, currentSpeed, gap, translation, width]);
+        animationControlsRef.current = animate(translation, [currentPosition, finalPosition], {
+            ease: 'linear',
+            duration: transitionDuration,
+            onComplete: () => {
+                startInfiniteAnimation();
+            },
+        });
+    }, [currentSpeed, finalPosition, startInfiniteAnimation, translation]);
+
+    useEffect(() => {
+        // trigger the transition animation when the component mounts and when any of the relevant animation properties change
+        // infinite animation is always started through the transition animation to avoid a jump in the carousel
+        startTransitionAnimation();
+    }, [animationDelay, currentSpeed, gap, startTransitionAnimation, translation, width]);
 
     return (
         // overflow-visible is used to prevent the carousel from being clipped by the parent container, but some of the
