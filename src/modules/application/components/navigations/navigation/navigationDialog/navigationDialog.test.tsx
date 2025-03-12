@@ -1,3 +1,4 @@
+import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { testLogger } from '@/test/utils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
@@ -6,11 +7,13 @@ import type { Route } from 'next';
 import * as NextNavigation from 'next/navigation';
 import { NavigationDialog, type INavigationDialogProps } from './navigationDialog';
 
-jest.mock('../../../aragonLogo', () => ({ AragonLogo: () => <div data-testid="aragon-logo-mock" /> }));
-jest.mock('../../../applicationTags', () => ({ ApplicationTags: () => <div data-testid="app-tags-mock" /> }));
+jest.mock('../../../../../../shared/components/aragonLogo', () => ({
+    AragonLogo: () => <div data-testid="aragon-logo-mock" />,
+}));
 
 describe('<Navigation.Dialog /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+    const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
     beforeEach(() => {
         usePathnameSpy.mockReturnValue('');
@@ -22,10 +25,12 @@ describe('<Navigation.Dialog /> component', () => {
         return <NavigationDialog {...completeProps} />;
     };
 
-    it('renders the Aragon logo and app tags', () => {
+    it('renders the Aragon logo and app version', () => {
+        const version = 'v1.0.0';
+        useApplicationVersionSpy.mockReturnValue(version);
         render(createTestComponent({ open: true }));
         expect(screen.getByTestId('aragon-logo-mock')).toBeInTheDocument();
-        expect(screen.getByTestId('app-tags-mock')).toBeInTheDocument();
+        expect(screen.getByText(version)).toBeInTheDocument();
     });
 
     it('renders the children component when open', () => {
@@ -61,6 +66,6 @@ describe('<Navigation.Dialog /> component', () => {
         const links = [{ link: '/link' as Route, label: 'link', icon: IconType.APP_ASSETS }];
         render(createTestComponent({ links, open: true, onOpenChange: undefined }));
         await userEvent.click(screen.getByRole('link'));
-        expect(screen.getByTestId('app-tags-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('aragon-logo-mock')).toBeInTheDocument();
     });
 });
