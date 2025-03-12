@@ -1,52 +1,89 @@
-import { type ITransferAssetFormData } from '@/modules/finance/components/transferAssetForm';
-import { type Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type IUseFormFieldReturn } from '@/shared/hooks/useFormField';
-import { Avatar, Button, formatterUtils, IconType, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { Button, formatterUtils, InputContainer, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import { type ChangeEvent, useId } from 'react';
+import type { IAsset } from '../../api/financeService';
 import { FinanceDialogs } from '../../constants/moduleDialogs';
 import type { IAssetSelectionDialogParams } from '../../dialogs/assetSelectionDialog';
+import { AssetInputToken } from './assetInputToken';
+
+export interface IAssetInputFormData {
+    /**
+     * The amount of tokens to be sent.
+     */
+    amount?: string;
+    /**
+     * The token to be transfered.
+     */
+    asset?: IAsset;
+}
 
 export interface IAssetInputProps {
     /**
-     * Sender address of the DAO.
+     * Parameters for fetching the list of assets to be displayed on the asset selection dialog.
      */
-    sender: string;
+    fetchAssetsParams?: IAssetSelectionDialogParams['initialParams'];
     /**
-     * Network of the DAO.
+     * Prefix to be prepended to all form fields.
      */
-    network: Network;
+    fieldPrefix?: string;
     /**
-     * Form field for the asset.
+     * Callback called on asset amount change.
      */
-    assetField: IUseFormFieldReturn<ITransferAssetFormData, 'asset'>;
+    onAmountChange?: () => void;
     /**
-     * Form field for the amount.
+     * Disables the token selection when set to true.
      */
-    amountField: IUseFormFieldReturn<ITransferAssetFormData, 'amount'>;
+    disableAssetField?: boolean;
+    /**
+     * Hides the max button when set to true.
+     */
+    hideMax?: boolean;
+    /**
+     * Hides the amount label when set to true.
+     */
+    hideAmountLabel?: boolean;
 }
 
 export const AssetInput: React.FC<IAssetInputProps> = (props) => {
-    const { assetField, amountField, sender, network } = props;
+    const { fetchAssetsParams, fieldPrefix, onAmountChange, disableAssetField, hideMax, hideAmountLabel } = props;
 
     const { t } = useTranslations();
-
     const { open, close } = useDialogContext();
+    const inputId = useId();
 
-    const initialParams = {
-        queryParams: { address: sender, network },
+    const assetField = useFormField<IAssetInputFormData, 'asset'>('asset', { rules: { required: true }, fieldPrefix });
+
+    const {
+        label: amountLabel,
+        onChange: onAmountFieldChange,
+        ...amountField
+    } = useFormField<IAssetInputFormData, 'amount'>('amount', {
+        label: t('app.finance.transferAssetForm.amount.label'),
+        rules: { required: true, max: assetField.value?.amount, validate: (value) => parseFloat(value ?? '') > 0 },
+        fieldPrefix,
+    });
+
+    const handleAmountFieldChange = (amount?: string | ChangeEvent) => {
+        onAmountFieldChange(amount);
+        onAmountChange?.();
     };
 
-    const params: IAssetSelectionDialogParams = { initialParams, onAssetClick: assetField.onChange, close };
-
     const handleOpenDialog = () => {
+        if (!fetchAssetsParams || disableAssetField) {
+            return;
+        }
+
+        const { onChange: onAssetClick } = assetField;
+        const params: IAssetSelectionDialogParams = { initialParams: fetchAssetsParams, onAssetClick, close };
         open(FinanceDialogs.ASSET_SELECTION, { params });
     };
 
     const handleMaxAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        amountField.onChange(assetField.value?.amount);
+        handleAmountFieldChange(assetField.value?.amount);
     };
 
     const inputClassName = classNames(
@@ -62,32 +99,31 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-y-3">
-            <InputContainer id={sender} wrapperClassName="pl-1.5 pr-4 items-center" {...amountField}>
-                <Button
-                    variant="tertiary"
-                    size="sm"
-                    iconRight={IconType.CHEVRON_DOWN}
-                    onClick={handleOpenDialog}
-                    className="shrink-0"
-                >
-                    <div className="flex items-center gap-x-1.5">
-                        {assetField.value?.token && <Avatar src={assetField.value.token.logo} size="md" />}
-                        {assetField.value?.token
-                            ? assetField.value.token.symbol
-                            : t('app.finance.assetInput.triggerLabelDefault')}
-                    </div>
-                </Button>
+            <InputContainer
+                id={inputId}
+                wrapperClassName="pl-1.5 pr-4 items-center"
+                label={hideAmountLabel ? undefined : amountLabel}
+                {...amountField}
+            >
+                {!disableAssetField && (
+                    <Button variant="tertiary" size="sm" onClick={handleOpenDialog} className="shrink-0">
+                        <AssetInputToken token={assetField.value?.token} />
+                    </Button>
+                )}
+                {disableAssetField && (
+                    <AssetInputToken token={assetField.value?.token} className="cursor-default px-2" />
+                )}
                 <input
                     type="number"
                     placeholder="0"
                     className={inputClassName}
-                    value={amountField.value}
-                    onChange={amountField.onChange}
+                    value={amountField.value ?? ''}
+                    onChange={handleAmountFieldChange}
                     disabled={!assetField.value}
                 />
                 <p>{formattedAmountValue}</p>
             </InputContainer>
-            {assetField.value?.amount && (
+            {assetField.value?.amount && !hideMax && (
                 <div className="flex items-center gap-x-1 self-end pr-4">
                     <button className="text-primary-400 hover:text-primary-600" onClick={(e) => handleMaxAmount(e)}>
                         {t('app.finance.assetInput.maxButtonLabel')}
