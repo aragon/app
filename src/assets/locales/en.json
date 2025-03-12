@@ -369,7 +369,9 @@
               "warning": "Proposal will only require a minority."
             },
             "voteChange": {
-              "label": "Vote change"
+              "label": "Vote change",
+              "no": "No",
+              "yes": "Yes"
             }
           }
         }
