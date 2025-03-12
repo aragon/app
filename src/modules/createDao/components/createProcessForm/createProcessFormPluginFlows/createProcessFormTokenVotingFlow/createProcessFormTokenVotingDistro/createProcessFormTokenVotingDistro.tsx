@@ -6,9 +6,11 @@ import {
     AlertCard,
     Button,
     type ICompositeAddress,
+    Icon,
     IconType,
     InputContainer,
     InputText,
+    Link,
     RadioCard,
     RadioGroup,
 } from '@aragon/gov-ui-kit';
@@ -99,15 +101,36 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                     <div className="flex w-full flex-row gap-x-2">
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importCardLabel')}
-                            value="imported"
-                        />
-                        <RadioCard
-                            className="w-1/2"
                             label={t('app.createDao.createProcessForm.tokenFlow.distro.createCardLabel')}
                             value="new"
                         />
+                        <RadioCard
+                            className="w-1/2"
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importCardLabel')}
+                            value="imported"
+                            disabled={process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true'}
+                        />
                     </div>
+                    {process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true' && (
+                        <div className="flex flex-row items-baseline gap-x-2">
+                            <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
+                            <div className="flex flex-col gap-y-1">
+                                <p className="text-sm text-neutral-400">
+                                    {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabled')}{' '}
+                                </p>
+                                <Link
+                                    href="https://app.aragon.org/"
+                                    target="_blank"
+                                    iconRight={IconType.LINK_EXTERNAL}
+                                    className="text-sm"
+                                >
+                                    <span className="text-sm">
+                                        {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabledLink')}
+                                    </span>
+                                </Link>
+                            </div>
+                        </div>
+                    )}
                 </RadioGroup>
             </InputContainer>
             {tokenType === 'imported' && (

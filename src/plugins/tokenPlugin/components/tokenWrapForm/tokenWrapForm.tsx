@@ -176,7 +176,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                         isMultiSelect={false}
                         value={percentageValue}
                         onChange={handlePercentageChange}
-                        className="justify-between !gap-x-0 gap-y-1"
+                        variant="space-between"
                     >
                         {valuePercentages.map((value) => (
                             <Toggle
