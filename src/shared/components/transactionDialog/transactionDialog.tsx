@@ -2,7 +2,7 @@ import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
 import {
     TransactionStatus,
@@ -25,6 +25,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         children,
         prepareTransaction,
         onCancelClick,
+        onSuccess,
         network = Network.ETHEREUM_MAINNET,
     } = props;
 
@@ -33,6 +34,9 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
 
     const { t } = useTranslations();
     const { switchChain, status: switchChainStatus } = useSwitchChain();
+
+    // Make the onSuccess property stable to only trigger it once on transaction success
+    const onSuccessRef = useRef(onSuccess);
 
     const { chainId, address } = useAccount();
     const { id: requiredChainId } = networkDefinitions[network];
@@ -163,6 +167,12 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             handleTransactionError(TransactionDialogStep.CONFIRM)(waitTxError, { transaction });
         }
     }, [waitTxError, transaction, handleTransactionError]);
+
+    useEffect(() => {
+        if (waitTxStatus === 'success') {
+            onSuccessRef.current?.();
+        }
+    }, [waitTxStatus]);
 
     return (
         <>

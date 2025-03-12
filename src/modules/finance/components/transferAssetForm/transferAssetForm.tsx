@@ -38,16 +38,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
 
     const [receiverInput, setReceiverInput] = useState<string | undefined>(value?.address);
 
-    const assetField = useFormField<ITransferAssetFormData, 'asset'>('asset', {
-        rules: { required: true },
-        fieldPrefix,
-    });
-
-    const amountField = useFormField<ITransferAssetFormData, 'amount'>('amount', {
-        label: t('app.finance.transferAssetForm.amount.label'),
-        rules: { required: true, max: assetField.value?.amount, validate: (value) => parseFloat(value ?? '') > 0 },
-        fieldPrefix,
-    });
+    const fetchAssetsParams = { queryParams: { address: sender, network } };
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -60,7 +51,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
                 onAccept={onReceiverChange}
                 {...receiverField}
             />
-            <AssetInput sender={sender} network={network} amountField={amountField} assetField={assetField} />
+            <AssetInput fetchAssetsParams={fetchAssetsParams} fieldPrefix={fieldPrefix} />
         </div>
     );
 };

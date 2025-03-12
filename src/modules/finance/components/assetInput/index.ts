@@ -1,1 +1,1 @@
-export { AssetInput, type IAssetInputProps } from './assetInput';
+export { AssetInput, type IAssetInputFormData, type IAssetInputProps } from './assetInput';
