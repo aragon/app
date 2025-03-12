@@ -1,4 +1,3 @@
-import { efpOptions } from '@/modules/governance/api/efpService/queries';
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
 import { memberOptions } from '../../api/governanceService';
@@ -21,9 +20,6 @@ export const DaoMemberDetailsPage: React.FC<IDaoMemberDetailsPageProps> = async 
     const memberUrlParams = { address };
     const memberQueryParams = { daoId };
     const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
-
-    const efpParams = { urlParams: { address } };
-    await queryClient.fetchQuery(efpOptions(efpParams));
 
     try {
         await queryClient.fetchQuery(memberOptions(memberParams));

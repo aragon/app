@@ -1,7 +1,7 @@
 'use client';
 
 import { DaoList } from '@/modules/explore/components/daoList';
-import { useEfpStats } from '@/modules/governance/api/efpService/queries';
+import { useEfpStats } from '@/modules/governance/api/efpService';
 import { EfpCard } from '@/modules/governance/components/efpCard';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
