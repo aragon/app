@@ -157,6 +157,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     });
 
     const submitLabel = needsApproval ? 'approve' : 'wrap';
+    const disableSubmit = unwrappedBalance?.value === BigInt(0);
 
     return (
         <FormProvider {...formValues}>
@@ -190,6 +191,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                     <Button
                         type={isConnected ? 'submit' : undefined}
                         onClick={isConnected ? undefined : () => walletGuard()}
+                        disabled={disableSubmit}
                         variant="primary"
                         size="lg"
                     >
