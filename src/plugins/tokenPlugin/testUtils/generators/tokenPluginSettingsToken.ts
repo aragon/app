@@ -5,6 +5,7 @@ export const generateTokenPluginSettingsToken = (
     token?: Partial<ITokenPluginSettingsToken>,
 ): ITokenPluginSettingsToken => ({
     hasDelegate: false,
+    underlying: null,
     ...generateToken(),
     ...token,
 });
