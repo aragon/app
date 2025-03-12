@@ -101,17 +101,17 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                     <div className="flex w-full flex-row gap-x-2">
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importCardLabel')}
-                            value="imported"
-                            disabled={process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true'}
-                        />
-                        <RadioCard
-                            className="w-1/2"
                             label={t('app.createDao.createProcessForm.tokenFlow.distro.createCardLabel')}
                             value="new"
                         />
+                        <RadioCard
+                            className="w-1/2"
+                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importCardLabel')}
+                            value="imported"
+                            disabled={process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true'}
+                        />
                     </div>
-                    {process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true' && (
+                    {process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true' && (
                         <div className="flex flex-row items-baseline gap-x-2">
                             <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
                             <div className="flex flex-col gap-y-1">
