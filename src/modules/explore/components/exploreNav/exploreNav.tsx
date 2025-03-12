@@ -54,7 +54,7 @@ export const ExploreNav: React.FC = () => {
         >
             <div className="h-10">
                 <Link href="/">
-                    <AragonLogo responsiveIconOnly={true} className="h-full text-neutral-0" />
+                    <AragonLogo responsiveIconOnly={true} variant="white" size="lg" />
                 </Link>
             </div>
 

@@ -35,7 +35,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         <p className="text-sm leading-tight text-neutral-800 md:text-base">
                             {t('app.application.footer.governed')}
                         </p>
-                        <AragonLogo className="h-6 text-primary-400" />
+                        <AragonLogo size="sm" />
                     </div>
                     <Tag variant="primary" label={version} />
                 </div>

@@ -46,12 +46,24 @@ describe('<AragonLogo /> component', () => {
         expect(desktopContainer).toContainElement(logoWithText);
     });
 
-    it('applies the correct className to the logo container', () => {
-        const testClass = 'h-10 text-red-500';
-        render(createTestComponent({ className: testClass }));
+    it('applies default variant and size classes', () => {
+        render(createTestComponent());
 
         const logoContainer = screen.getByTestId('logo-container');
+        expect(logoContainer).toHaveClass('text-primary-400', 'h-8');
+    });
 
-        expect(logoContainer).toHaveClass(testClass);
+    it('applies the white variant class', () => {
+        render(createTestComponent({ variant: 'white' }));
+
+        const logoContainer = screen.getByTestId('logo-container');
+        expect(logoContainer).toHaveClass('text-neutral-0');
+    });
+
+    it('applies the small size class', () => {
+        render(createTestComponent({ size: 'sm' }));
+
+        const logoContainer = screen.getByTestId('logo-container');
+        expect(logoContainer).toHaveClass('h-6');
     });
 });
