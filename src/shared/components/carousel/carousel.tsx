@@ -9,19 +9,23 @@ export interface ICarouselProps {
      */
     children: React.ReactNode;
     /**
-     * Gap between the children elements.
+     * Gap between the children elements in pixels, required to calculate the content size.
+     * @default 16
      */
-    gap?: number; // it's passed as prop because it's used in the calculation of the content size!
+    gap?: number;
     /**
      * Speed of the carousel.
+     * @default 100
      */
     speed?: number;
     /**
      * Speed of the carousel when hovering. We slow down the carousel when hovering.
+     * @default speed
      */
     speedOnHover?: number;
     /**
-     * Delay before starting the animation. In seconds.
+     * Delay in seconds before starting the animation.
+     * @default 0
      */
     animationDelay?: number;
     /**
@@ -31,7 +35,7 @@ export interface ICarouselProps {
 }
 
 export const Carousel: React.FC<ICarouselProps> = (props) => {
-    const { children, gap = 16, speed = 100, speedOnHover, animationDelay, className } = props;
+    const { children, gap = 16, speed = 100, speedOnHover = speed, animationDelay = 0, className } = props;
 
     const [currentSpeed, setCurrentSpeed] = useState(speed);
     const [ref, { width }] = useMeasure();
@@ -60,18 +64,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         });
 
         return controls.stop;
-    }, [translation, currentSpeed, width, gap]);
-
-    const hoverProps = speedOnHover
-        ? {
-              onHoverStart: () => {
-                  setCurrentSpeed(speedOnHover);
-              },
-              onHoverEnd: () => {
-                  setCurrentSpeed(speed);
-              },
-          }
-        : {};
+    }, [translation, currentSpeed, width, gap, animationDelay]);
 
     return (
         // overflow-visible is used to prevent the carousel from being clipped by the parent container, but some of the
@@ -84,7 +77,12 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
                     gap: `${String(gap)}px`,
                 }}
                 ref={ref}
-                {...hoverProps}
+                onHoverStart={() => {
+                    setCurrentSpeed(speedOnHover);
+                }}
+                onHoverEnd={() => {
+                    setCurrentSpeed(speed);
+                }}
             >
                 {children}
                 {children}
