@@ -59,11 +59,9 @@ describe('<AssetList /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('1.23')).toBeInTheDocument();
-        expect(screen.getByText(assets[0].token.symbol)).toBeInTheDocument();
+        expect(screen.getByText(`1.23 ${assets[0].token.symbol}`)).toBeInTheDocument();
 
-        expect(screen.getByText('987.65M')).toBeInTheDocument();
-        expect(screen.getByText(assets[1].token.symbol)).toBeInTheDocument();
+        expect(screen.getByText(`987.65M ${assets[1].token.symbol}`)).toBeInTheDocument();
     });
 
     it('does not render the data-list pagination when hidePagination is set to true', () => {
