@@ -21,7 +21,7 @@ export interface ICarouselProps {
      */
     speedOnHover?: number;
     /**
-     * Delay before starting the animation. In milliseconds.
+     * Delay before starting the animation. In seconds.
      */
     animationDelay?: number;
     /**
@@ -37,25 +37,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     const [ref, { width }] = useMeasure();
     const translation = useMotionValue(0);
 
-    const [isAnimationRunning, setIsAnimationRunning] = useState(!animationDelay);
-
     useEffect(() => {
-        if (isAnimationRunning) {
-            return;
-        }
-
-        const timeoutHandle = setTimeout(() => {
-            setIsAnimationRunning(true);
-        }, animationDelay);
-
-        return () => clearTimeout(timeoutHandle);
-    }, [animationDelay, isAnimationRunning]);
-
-    useEffect(() => {
-        if (!isAnimationRunning) {
-            return;
-        }
-
         const contentSize = width + gap;
         const from = translation.get();
         const to = -contentSize / 2;
@@ -63,9 +45,12 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         const distanceToTravel = Math.abs(to - from);
         const duration = distanceToTravel / currentSpeed;
 
+        const isInitialAnimation = !translation.isAnimating();
+
         const controls = animate(translation, [from, to], {
             ease: 'linear',
             duration: duration,
+            delay: isInitialAnimation ? animationDelay : 0,
             repeat: Infinity,
             repeatType: 'loop',
             repeatDelay: 0,
@@ -75,7 +60,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         });
 
         return controls.stop;
-    }, [translation, currentSpeed, width, gap, isAnimationRunning]);
+    }, [translation, currentSpeed, width, gap]);
 
     const hoverProps = speedOnHover
         ? {
