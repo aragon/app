@@ -19,10 +19,10 @@ export const EfpCard: React.FC<IEfpCardProps> = (props) => {
     return (
         <div className="flex flex-col gap-6">
             <DefinitionList.Container>
-                <DefinitionList.Item term={t('app.shared.efpCard.following')}>
+                <DefinitionList.Item term={t('app.governance.efpCard.following')}>
                     <p className="text-neutral-500">{following}</p>
                 </DefinitionList.Item>
-                <DefinitionList.Item term={t('app.shared.efpCard.followers')}>
+                <DefinitionList.Item term={t('app.governance.efpCard.followers')}>
                     <p className="text-neutral-500">{followers}</p>
                 </DefinitionList.Item>
             </DefinitionList.Container>
@@ -35,9 +35,9 @@ export const EfpCard: React.FC<IEfpCardProps> = (props) => {
                     iconRight={IconType.LINK_EXTERNAL}
                     size="md"
                 >
-                    {t('app.shared.efpCard.cta')}
+                    {t('app.governance.efpCard.cta')}
                 </Button>
-                <p className="text-center text-sm text-neutral-500">{t('app.shared.efpCard.info')}</p>
+                <p className="text-center text-sm text-neutral-500">{t('app.governance.efpCard.info')}</p>
             </div>
         </div>
     );
