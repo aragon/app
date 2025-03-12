@@ -3,7 +3,13 @@ import { Button, DefinitionList, IconType } from '@aragon/gov-ui-kit';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 
 export interface IEfpCardProps {
+    /**
+     * The EFP stats for the member (following and followers).
+     */
     efpStats: EfpStats;
+    /**
+     * The address of the member.
+     */
     address: string;
 }
 

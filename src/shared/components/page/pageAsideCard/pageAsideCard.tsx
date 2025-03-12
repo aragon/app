@@ -20,7 +20,7 @@ export const PageAsideCard: React.FC<IPageAsideCardProps> = (props) => {
     const { children, className, title, icon, ...otherProps } = props;
 
     return (
-        <Card className={classNames('relative flex shrink-0 flex-col gap-4 p-6', className)} {...otherProps}>
+        <Card className={classNames('flex shrink-0 flex-col gap-4 p-6', className)} {...otherProps}>
             <div className="flex items-center justify-between gap-2">
                 <Heading size="h3">{title}</Heading>
                 {icon && <Image src={icon} alt={title} className="w-8 rounded-full" />}
