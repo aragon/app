@@ -111,7 +111,6 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                             value="new"
                         />
                     </div>
-                    {/* TO BE REMOVED FROM PROD: When token flow is functional again // TODO: APP-3831 */}
                     {process.env.NEXT_PUBLIC_DISABLE_TOKEN_IMPORT === 'true' && (
                         <div className="flex flex-row items-baseline gap-x-2">
                             <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
