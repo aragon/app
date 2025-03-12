@@ -1,4 +1,4 @@
-import type { IRequestUrlParams } from '../httpService';
+import type { IRequestUrlParams } from '../../../../shared/api/httpService';
 
 export interface EfpStats {
     followers_count: number;

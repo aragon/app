@@ -2,7 +2,7 @@ import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
 import { efpService } from '../../efpService';
 import type { EfpStats, IGetEfpStatsParams } from '../../efpService.api';
-import { efpServiceKeys } from './../../efpServiceKeys';
+import { efpServiceKeys } from '../../efpServiceKeys';
 
 export const efpOptions = (
     params: IGetEfpStatsParams,

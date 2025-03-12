@@ -1,4 +1,4 @@
-import { HttpService } from '../httpService';
+import { HttpService } from '../../../../shared/api/httpService';
 import type { EfpStats, IGetEfpStatsParams } from './efpService.api';
 
 export class EfpService extends HttpService {
