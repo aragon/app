@@ -3,7 +3,7 @@ import type { IFeaturedDao } from './domain';
 
 class CmsService extends HttpService {
     constructor() {
-        super('https://raw.githubusercontent.com/aragon/app-featured-daos');
+        super('https://raw.githubusercontent.com/aragon/app-cms');
     }
 
     private urls = {

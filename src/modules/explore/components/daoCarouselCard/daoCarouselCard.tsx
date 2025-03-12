@@ -1,4 +1,4 @@
-import { IFeaturedDao } from '@/modules/explore/api/cmsService';
+import type { IFeaturedDao } from '@/modules/explore/api/cmsService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { DaoDataListItem } from '@aragon/gov-ui-kit';
 
