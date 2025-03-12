@@ -1,11 +1,9 @@
 import { HttpService } from '@/shared/api/httpService';
 import type { IFeaturedDao } from './domain';
 
-const FEATURED_DAOS_BASE_URL = 'https://raw.githubusercontent.com/aragon/app-featured-daos';
-
 class CmsService extends HttpService {
     constructor() {
-        super(FEATURED_DAOS_BASE_URL);
+        super('https://raw.githubusercontent.com/aragon/app-featured-daos');
     }
 
     private urls = {

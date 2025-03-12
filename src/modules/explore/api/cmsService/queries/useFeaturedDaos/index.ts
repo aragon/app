@@ -1,1 +1,1 @@
-export { useFeaturedDaos } from './useFeaturedDaos';
+export { featuredDaosOptions, useFeaturedDaos } from './useFeaturedDaos';

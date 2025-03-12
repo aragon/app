@@ -1,6 +1,6 @@
 import { Page } from '@/shared/components/page';
 import { QueryClient } from '@tanstack/react-query';
-import { featuredDaosOptions } from '../../api/cmsService/queries/useFeaturedDaos/useFeaturedDaos';
+import { featuredDaosOptions } from '../../api/cmsService';
 import { daoListOptions } from '../../api/daoExplorerService';
 import { ExploreDaosPageClient } from './exploreDaosPageClient';
 

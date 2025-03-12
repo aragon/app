@@ -10,9 +10,9 @@ export interface IFeaturedDao {
      */
     description: string;
     /**
-     * Avatar of the DAO or null when DAO has no avatar.
+     * Avatar of the DAO.
      */
-    logo: string | null;
+    logo?: string;
     /**
      * The network on which the DAO is deployed.
      */
