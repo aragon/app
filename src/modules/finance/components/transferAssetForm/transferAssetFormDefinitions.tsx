@@ -1,17 +1,9 @@
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
-import type { IAsset } from '../../api/financeService';
+import type { IAssetInputFormData } from '../assetInput';
 
-export interface ITransferAssetFormData {
+export interface ITransferAssetFormData extends IAssetInputFormData {
     /**
      * The address receiving the tokens.
      */
     receiver?: ICompositeAddress;
-    /**
-     * The amount of tokens to be sent.
-     */
-    amount?: string;
-    /**
-     * The token to be transfered.
-     */
-    asset?: IAsset;
 }
