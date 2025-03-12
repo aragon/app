@@ -5,11 +5,18 @@ import type {
     IAutocompleteInputProps,
 } from '@/shared/components/forms/autocompleteInput';
 
+export type IProposalActionForm = Omit<IProposalAction, 'data'> & {
+    /**
+     * The data to send with the transaction.
+     */
+    data: string | null;
+};
+
 export interface IActionComposerItem<TMeta = undefined> extends IAutocompleteInputItem<TMeta> {
     /**
      * Default value for the action.
      */
-    defaultValue?: IProposalAction;
+    defaultValue?: IProposalActionForm;
 }
 
 export type ActionComposerMode = 'native' | 'custom';

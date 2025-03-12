@@ -193,7 +193,7 @@ class ActionComposerUtils {
             type: ActionItemId.RAW_CALLDATA,
             to: address,
             from: '',
-            data: '0x',
+            data: null,
             value: '0',
             inputData: {
                 function: t(`app.governance.actionComposer.rawCalldataFunction`),
