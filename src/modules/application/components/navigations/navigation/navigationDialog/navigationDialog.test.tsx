@@ -1,3 +1,4 @@
+import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { testLogger } from '@/test/utils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
@@ -9,13 +10,15 @@ import { NavigationDialog, type INavigationDialogProps } from './navigationDialo
 jest.mock('../../../../../../shared/components/aragonLogo', () => ({
     AragonLogo: () => <div data-testid="aragon-logo-mock" />,
 }));
-jest.mock('../../../applicationTags', () => ({ ApplicationTags: () => <div data-testid="app-tags-mock" /> }));
 
 describe('<Navigation.Dialog /> component', () => {
+    const mockVersion = 'v1.0.0';
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+    const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
     beforeEach(() => {
         usePathnameSpy.mockReturnValue('');
+        useApplicationVersionSpy.mockReturnValue(mockVersion);
     });
 
     const createTestComponent = (props?: Partial<INavigationDialogProps<string>>) => {
@@ -27,7 +30,7 @@ describe('<Navigation.Dialog /> component', () => {
     it('renders the Aragon logo and app tags', () => {
         render(createTestComponent({ open: true }));
         expect(screen.getByTestId('aragon-logo-mock')).toBeInTheDocument();
-        expect(screen.getByTestId('app-tags-mock')).toBeInTheDocument();
+        expect(screen.getByText(mockVersion)).toBeInTheDocument();
     });
 
     it('renders the children component when open', () => {
@@ -63,6 +66,6 @@ describe('<Navigation.Dialog /> component', () => {
         const links = [{ link: '/link' as Route, label: 'link', icon: IconType.APP_ASSETS }];
         render(createTestComponent({ links, open: true, onOpenChange: undefined }));
         await userEvent.click(screen.getByRole('link'));
-        expect(screen.getByTestId('app-tags-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('aragon-logo-mock')).toBeInTheDocument();
     });
 });

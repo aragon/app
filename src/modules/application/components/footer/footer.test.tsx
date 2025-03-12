@@ -1,14 +1,17 @@
+import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { render, screen } from '@testing-library/react';
 import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
 
-jest.mock('../applicationTags', () => ({ ApplicationTags: () => <div data-testid="application-tags-mock" /> }));
 jest.mock('../../../../shared/components/aragonLogo', () => ({
     AragonLogo: () => <div data-testid="aragon-logo-mock" />,
 }));
 
 describe('<Footer /> component', () => {
     const originalProcessEnv = process.env;
+    const mockVersion = 'v1.0.0';
+
+    const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
     const createTestComponent = (props?: Partial<IFooterProps>) => {
         const completeProps: IFooterProps = { ...props };
@@ -18,6 +21,7 @@ describe('<Footer /> component', () => {
 
     beforeEach(() => {
         jest.useFakeTimers();
+        useApplicationVersionSpy.mockReturnValue(mockVersion);
     });
 
     afterEach(() => {
@@ -32,7 +36,7 @@ describe('<Footer /> component', () => {
 
     it('renders the application tags', () => {
         render(createTestComponent());
-        expect(screen.getByTestId('application-tags-mock')).toBeInTheDocument();
+        expect(screen.getByText(mockVersion)).toBeInTheDocument();
     });
 
     it('renders the footer links', () => {
