@@ -32,12 +32,10 @@ export interface ICarouselProps {
 
 export const Carousel: React.FC<ICarouselProps> = (props) => {
     const { children, gap = 16, speed = 100, speedOnHover, animationDelay, className } = props;
-    const [currentSpeed, setCurrentSpeed] = useState(speed);
-    const [ref, { width, height }] = useMeasure();
-    const translation = useMotionValue(0);
 
-    const [isTransitioning, setIsTransitioning] = useState(false);
-    const [key, setKey] = useState(0);
+    const [currentSpeed, setCurrentSpeed] = useState(speed);
+    const [ref, { width }] = useMeasure();
+    const translation = useMotionValue(0);
 
     const [isAnimationRunning, setIsAnimationRunning] = useState(!animationDelay);
 
@@ -58,52 +56,33 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
             return;
         }
 
-        let controls;
-
-        const size = width;
-        const contentSize = size + gap;
+        const contentSize = width + gap;
         const from = 0;
         const to = -contentSize / 2;
 
         const distanceToTravel = Math.abs(to - from);
         const duration = distanceToTravel / currentSpeed;
 
-        if (isTransitioning) {
-            const remainingDistance = Math.abs(translation.get() - to);
-            const transitionDuration = remainingDistance / currentSpeed;
-
-            controls = animate(translation, [translation.get(), to], {
-                ease: 'linear',
-                duration: transitionDuration,
-                onComplete: () => {
-                    setIsTransitioning(false);
-                    setKey((prevKey) => prevKey + 1);
-                },
-            });
-        } else {
-            controls = animate(translation, [from, to], {
-                ease: 'linear',
-                duration: duration,
-                repeat: Infinity,
-                repeatType: 'loop',
-                repeatDelay: 0,
-                onRepeat: () => {
-                    translation.set(from);
-                },
-            });
-        }
+        const controls = animate(translation, [from, to], {
+            ease: 'linear',
+            duration: duration,
+            repeat: Infinity,
+            repeatType: 'loop',
+            repeatDelay: 0,
+            onRepeat: () => {
+                translation.set(from);
+            },
+        });
 
         return controls.stop;
-    }, [key, translation, currentSpeed, width, height, gap, isTransitioning, isAnimationRunning]);
+    }, [translation, currentSpeed, width, gap, isAnimationRunning]);
 
     const hoverProps = speedOnHover
         ? {
               onHoverStart: () => {
-                  setIsTransitioning(true);
                   setCurrentSpeed(speedOnHover);
               },
               onHoverEnd: () => {
-                  setIsTransitioning(true);
                   setCurrentSpeed(speed);
               },
           }

@@ -31,7 +31,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { data: featuredDaos } = useFeaturedDaos();
-
+    console.log('featuredDaosfeaturedDaos', featuredDaos);
     return (
         <>
             <ExploreNav />
