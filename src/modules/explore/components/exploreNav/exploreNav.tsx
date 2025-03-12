@@ -2,16 +2,14 @@
 
 import { Navigation } from '@/modules/application/components/navigations/navigation';
 import { ApplicationDialog } from '@/modules/application/constants/moduleDialogs';
+import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount } from 'wagmi';
-import AragonLogo from './icons/logo.svg';
-import AragonLogotype from './icons/logotype.svg';
 
 export const ExploreNav: React.FC = () => {
     const { address, isConnected } = useAccount();
@@ -56,18 +54,7 @@ export const ExploreNav: React.FC = () => {
         >
             <div className="h-10">
                 <Link href="/">
-                    <Image
-                        src={AragonLogo as string}
-                        alt="Aragon logo"
-                        className="block min-w-10 md:hidden"
-                        priority={true}
-                    />
-                    <Image
-                        src={AragonLogotype as string}
-                        alt="Aragon logo"
-                        className="hidden md:block"
-                        priority={true}
-                    />
+                    <AragonLogo responsiveIconOnly={true} variant="white" size="lg" />
                 </Link>
             </div>
 

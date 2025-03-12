@@ -1,12 +1,14 @@
+import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { render, screen } from '@testing-library/react';
 import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
 
-jest.mock('../applicationTags', () => ({ ApplicationTags: () => <div data-testid="application-tags-mock" /> }));
-jest.mock('../aragonLogo', () => ({ AragonLogo: () => <div data-testid="aragon-logo-mock" /> }));
+jest.mock('../../../../shared/components/aragonLogo', () => ({
+    AragonLogo: () => <div data-testid="aragon-logo-mock" />,
+}));
 
 describe('<Footer /> component', () => {
-    const originalProcessEnv = process.env;
+    const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
     const createTestComponent = (props?: Partial<IFooterProps>) => {
         const completeProps: IFooterProps = { ...props };
@@ -19,7 +21,6 @@ describe('<Footer /> component', () => {
     });
 
     afterEach(() => {
-        process.env = originalProcessEnv;
         jest.useRealTimers();
     });
 
@@ -28,9 +29,11 @@ describe('<Footer /> component', () => {
         expect(screen.getByTestId('aragon-logo-mock')).toBeInTheDocument();
     });
 
-    it('renders the application tags', () => {
+    it('renders the application version', () => {
+        const version = 'v1.0.0';
+        useApplicationVersionSpy.mockReturnValue(version);
         render(createTestComponent());
-        expect(screen.getByTestId('application-tags-mock')).toBeInTheDocument();
+        expect(screen.getByText(version)).toBeInTheDocument();
     });
 
     it('renders the footer links', () => {

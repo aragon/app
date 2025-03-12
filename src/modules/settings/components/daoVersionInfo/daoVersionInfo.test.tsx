@@ -1,4 +1,3 @@
-import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import { generateDao, generateDaoPlugin, generateTabComponentPlugin } from '@/shared/testUtils';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
@@ -7,7 +6,6 @@ import { DaoVersionInfo, type IDaoVersionInfoProps } from './daoVersionInfo';
 
 describe('<DaoVersionInfo /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
-    const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([]);
@@ -15,7 +13,6 @@ describe('<DaoVersionInfo /> component', () => {
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
-        useApplicationVersionSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDaoVersionInfoProps>) => {
@@ -36,21 +33,17 @@ describe('<DaoVersionInfo /> component', () => {
 
         render(createTestComponent({ dao: dao }));
 
-        expect(screen.getByText(/daoVersionInfo.app/)).toBeInTheDocument();
         expect(screen.getByText(/daoVersionInfo.osLabel/)).toBeInTheDocument();
     });
 
     it('renders the correct values', () => {
         const plugin = generateDaoPlugin({ release: '1', build: '3', subdomain: 'multisig' });
         const dao = generateDao({ plugins: [plugin], version: '1.3.0' });
-        const appVersion = '1.0.0';
 
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
-        useApplicationVersionSpy.mockReturnValue(appVersion);
 
         render(createTestComponent({ dao: dao }));
 
-        expect(screen.getByText(appVersion)).toBeInTheDocument();
         expect(screen.getByText(/daoVersionInfo.osValue \(version=1.3.0\)/)).toBeInTheDocument();
         expect(
             screen.getByText(/daoVersionInfo.governanceValue \(name=Multisig,release=1,build=3\)/),
