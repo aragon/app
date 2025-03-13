@@ -44,7 +44,12 @@ export const CreateProposalFormMetadata: React.FC<ICreateProposalFormMetadataPro
                 maxLength={480}
                 {...summaryField}
             />
-            <TextAreaRichText isOptional={true} immediatelyRender={false} {...bodyField} />
+            <TextAreaRichText
+                isOptional={true}
+                immediatelyRender={false}
+                helpText={t('app.governance.createProposalForm.metadata.body.helpText')}
+                {...bodyField}
+            />
             <ResourcesInput
                 name="resources"
                 helpText={t('app.governance.createProposalForm.metadata.resources.helpText')}

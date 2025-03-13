@@ -141,7 +141,12 @@ export const CreateProcessFormTokenVotingParams: React.FC<ICreateProcessFormToke
                 </Card>
             </InputContainer>
             <Switch
-                inlineLabel={voteChangeField.value ? 'Yes' : 'No'}
+                inlineLabel={
+                    voteChangeField.value
+                        ? t('app.createDao.createProcessForm.tokenFlow.params.voteChange.yes')
+                        : t('app.createDao.createProcessForm.tokenFlow.params.voteChange.no')
+                }
+                helpText={t('app.createDao.createProcessForm.tokenFlow.params.voteChange.helpText')}
                 onCheckedChanged={(checked) => setValue(voteChangeField.name, checked)}
                 checked={voteChangeField.value}
                 {...voteChangeField}

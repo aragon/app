@@ -368,7 +368,10 @@
               "warning": "Proposal will only require a minority."
             },
             "voteChange": {
-              "label": "Vote change"
+              "helpText": "Allows voters to change their vote during the voting period. This prevents this body from approving or vetoing a proposal early so it can advance or be executed early.",
+              "label": "Vote change",
+              "no": "No",
+              "yes": "Yes"
             }
           }
         }
