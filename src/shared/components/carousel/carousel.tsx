@@ -57,32 +57,28 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
 
     // useMeasure is used to get and track (on resize) the width of the carousel content in a performant way.
     const [ref, { width }] = useMeasure();
+    const translation = useMotionValue(0);
+
     const contentSize = width + gap - initialOffset;
     const finalPosition = -contentSize / 2;
-    const translation = useMotionValue(0);
 
     const animationControlsRef = useRef<ReturnType<typeof animate> | null>(null);
 
-    useEffect(() => {
-        if (!hasAnimationStarted) {
-            const timeoutHandle = setTimeout(() => {
-                setHasAnimationStarted(true);
-            }, animationDelay * 1000);
-
-            return () => {
-                clearTimeout(timeoutHandle);
-            };
+    const updateAnimationSpeed = (value: number) => {
+        if (animationControlsRef.current) {
+            animationControlsRef.current.speed = value;
         }
-    }, [animationDelay, hasAnimationStarted]);
+    };
 
     useEffect(() => {
-        // wait for defined animation delay to pass before starting the animation
-        if (!hasAnimationStarted) {
-            return;
-        }
+        const timeoutHandle = setTimeout(() => setHasAnimationStarted(true), animationDelay * 1000);
 
-        // wait for width to be calculated
-        if (finalPosition === 0) {
+        return () => clearTimeout(timeoutHandle);
+    }, [animationDelay]);
+
+    useEffect(() => {
+        // wait for animation delay and width to be calculated before starting the animation
+        if (!hasAnimationStarted || finalPosition === 0) {
             return;
         }
 
@@ -100,26 +96,16 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         });
     }, [speed, finalPosition, translation, hasAnimationStarted]);
 
+    const containerStyle = { x: translation, gap: `${String(gap)}px`, paddingLeft: `${String(initialOffset)}px` };
+
     return (
         <div className={classNames('overflow-hidden', className)}>
             <motion.div
                 className="flex w-max will-change-transform"
-                style={{
-                    x: translation,
-                    gap: `${String(gap)}px`,
-                    paddingLeft: `${String(initialOffset)}px`,
-                }}
+                style={containerStyle}
                 ref={ref}
-                onHoverStart={() => {
-                    if (animationControlsRef.current) {
-                        animationControlsRef.current.speed = speedOnHoverFactor;
-                    }
-                }}
-                onHoverEnd={() => {
-                    if (animationControlsRef.current) {
-                        animationControlsRef.current.speed = 1;
-                    }
-                }}
+                onHoverStart={() => updateAnimationSpeed(speedOnHoverFactor)}
+                onHoverEnd={() => updateAnimationSpeed(1)}
             >
                 {children}
                 {children}
