@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Implement admin signposting and update messaging
+Add manage admins button to admin banner and update banner messaging
