@@ -56,7 +56,6 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         const distanceToTravel = Math.abs(finalPosition);
         const duration = distanceToTravel / currentSpeed;
 
-        // Stop any existing animation
         if (animationControlsRef.current) {
             animationControlsRef.current.stop();
         }
@@ -79,7 +78,6 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         const remainingDistance = Math.abs(currentPosition - finalPosition);
         const transitionDuration = remainingDistance / currentSpeed;
 
-        // Stop any existing animation
         if (animationControlsRef.current) {
             animationControlsRef.current.stop();
         }
@@ -94,8 +92,8 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     }, [currentSpeed, finalPosition, startInfiniteAnimation, translation]);
 
     useEffect(() => {
-        // trigger the transition animation when the component mounts and when any of the relevant animation properties change
-        // infinite animation is always started through the transition animation to avoid a jump in the carousel
+        // Trigger the transition animation when the component mounts and when any of the relevant animation properties change.
+        // Infinite animation is always started through the transition animation's `onComplete` to avoid potential race conditions and sudden jumps to the start.
         startTransitionAnimation();
     }, [animationDelay, currentSpeed, gap, startTransitionAnimation, translation, width]);
 
