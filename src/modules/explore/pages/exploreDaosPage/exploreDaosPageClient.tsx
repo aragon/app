@@ -8,6 +8,10 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Heading } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
+import doItYourselfIcon from '../../../../assets/images/doItYourselfIcon.svg';
+import enterpriseServiceIcon from '../../../../assets/images/enterpriseServiceIcon.svg';
+import NetBackground from '../../../../assets/images/net_bg.svg';
+import noCodeSetupIcon from '../../../../assets/images/noCodeSetup.svg';
 import { useFeaturedDaos } from '../../api/cmsService';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { CtaCard } from '../../components/ctaCard';
@@ -15,10 +19,6 @@ import { DaoCarouselCard } from '../../components/daoCarouselCard';
 import { ExploreDaos } from '../../components/exploreDao';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
-import doItYourselfIcon from '../../../../assets/images/doItYourselfIcon.svg';
-import enterpriseServiceIcon from '../../../../assets/images/enterpriseServiceIcon.svg';
-import NetBackground from '../../../../assets/images/net_bg.svg';
-import noCodeSetupIcon from '../../../../assets/images/noCodeSetup.svg';
 
 export interface IExploreDaosPageClientProps {
     /**

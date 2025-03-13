@@ -1,6 +1,6 @@
 import { HttpService } from '@/shared/api/httpService';
-import type { IGetEfpStatsParams } from './efpService.api';
 import type { IEfpStats } from './domain';
+import type { IGetEfpStatsParams } from './efpService.api';
 
 export class EfpService extends HttpService {
     urls = {

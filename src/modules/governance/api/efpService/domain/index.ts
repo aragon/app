@@ -1,1 +1,1 @@
-export type { IEfpStats } from './efpStats'
+export type { IEfpStats } from './efpStats';
