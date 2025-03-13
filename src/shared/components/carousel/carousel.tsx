@@ -38,6 +38,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     const { children, gap = 16, speed = 100, speedOnHover = speed, animationDelay = 0, className } = props;
 
     const [currentSpeed, setCurrentSpeed] = useState(speed);
+    // useMeasure is used to get and track (on resize) the width of the carousel content in a performant way.
     const [ref, { width }] = useMeasure();
     const translation = useMotionValue(0);
 
@@ -56,10 +57,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         const distanceToTravel = Math.abs(finalPosition);
         const duration = distanceToTravel / currentSpeed;
 
-        if (animationControlsRef.current) {
-            animationControlsRef.current.stop();
-        }
-
+        animationControlsRef.current?.stop();
         animationControlsRef.current = animate(translation, [0, finalPosition], {
             ease: 'linear',
             duration: duration,
@@ -78,16 +76,11 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         const remainingDistance = Math.abs(currentPosition - finalPosition);
         const transitionDuration = remainingDistance / currentSpeed;
 
-        if (animationControlsRef.current) {
-            animationControlsRef.current.stop();
-        }
-
+        animationControlsRef.current?.stop();
         animationControlsRef.current = animate(translation, [currentPosition, finalPosition], {
             ease: 'linear',
             duration: transitionDuration,
-            onComplete: () => {
-                startInfiniteAnimation();
-            },
+            onComplete: startInfiniteAnimation,
         });
     }, [currentSpeed, finalPosition, startInfiniteAnimation, translation]);
 
@@ -108,12 +101,8 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
                     gap: `${String(gap)}px`,
                 }}
                 ref={ref}
-                onHoverStart={() => {
-                    setCurrentSpeed(speedOnHover);
-                }}
-                onHoverEnd={() => {
-                    setCurrentSpeed(speed);
-                }}
+                onHoverStart={() => setCurrentSpeed(speedOnHover)}
+                onHoverEnd={() => setCurrentSpeed(speed)}
             >
                 {children}
                 {children}
