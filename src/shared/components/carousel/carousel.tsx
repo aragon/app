@@ -14,6 +14,11 @@ export interface ICarouselProps {
      */
     gap?: number;
     /**
+     * Offset to apply to the beginning of the carousel, left padding essentially.
+     * @default gap
+     */
+    initialOffset?: number;
+    /**
      * Speed of the carousel.
      * @default 100
      */
@@ -35,14 +40,22 @@ export interface ICarouselProps {
 }
 
 export const Carousel: React.FC<ICarouselProps> = (props) => {
-    const { children, gap = 16, speed = 100, speedOnHover = speed, animationDelay = 0, className } = props;
+    const {
+        children,
+        gap = 16,
+        initialOffset = gap,
+        speed = 100,
+        speedOnHover = speed,
+        animationDelay = 0,
+        className,
+    } = props;
 
     const [currentSpeed, setCurrentSpeed] = useState(speed);
     // useMeasure is used to get and track (on resize) the width of the carousel content in a performant way.
     const [ref, { width }] = useMeasure();
     const translation = useMotionValue(0);
 
-    const contentSize = width + gap;
+    const contentSize = width + gap - initialOffset;
     const finalPosition = -contentSize / 2;
 
     const animationControlsRef = useRef<ReturnType<typeof animate> | null>(null);
@@ -91,14 +104,13 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     }, [animationDelay, currentSpeed, gap, startTransitionAnimation, translation, width]);
 
     return (
-        // overflow-visible is used to prevent the carousel from being clipped by the parent container, but some of the
-        // containers above may need to have overflow-hidden to prevent the carousel from overflowing the whole page.
-        <div className={classNames('overflow-visible', className)}>
+        <div className={classNames('overflow-hidden', className)}>
             <motion.div
                 className="flex w-max will-change-transform"
                 style={{
                     x: translation,
                     gap: `${String(gap)}px`,
+                    paddingLeft: `${String(initialOffset)}px`,
                 }}
                 ref={ref}
                 onHoverStart={() => setCurrentSpeed(speedOnHover)}
