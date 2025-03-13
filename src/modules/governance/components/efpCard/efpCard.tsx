@@ -1,12 +1,12 @@
-import type { EfpStats } from '@/modules/governance/api/efpService';
 import { Button, DefinitionList, IconType } from '@aragon/gov-ui-kit';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
+import type { IEfpStats } from '../../api/efpService/domain';
 
 export interface IEfpCardProps {
     /**
      * The EFP stats for the member (following and followers).
      */
-    efpStats: EfpStats;
+    efpStats: IEfpStats;
     /**
      * The address of the member.
      */

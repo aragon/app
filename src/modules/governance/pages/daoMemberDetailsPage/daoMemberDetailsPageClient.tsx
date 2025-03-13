@@ -23,7 +23,7 @@ import {
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
-import EfpLogo from '../../../..//assets/images/efp-logo.svg';
+import EfpLogo from '../../../../assets/images/efp-logo.svg';
 import { useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { VoteList } from '../../components/voteList';

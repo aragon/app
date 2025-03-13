@@ -1,9 +1,9 @@
 import type { IGetEfpStatsParams } from './efpService.api';
 
 export enum EfpServiceKey {
-    EFP = 'EFP',
+    STATS = 'STATS',
 }
 
 export const efpServiceKeys = {
-    stats: (params: IGetEfpStatsParams) => [EfpServiceKey.EFP, params],
+    stats: (params: IGetEfpStatsParams) => [EfpServiceKey.STATS, params],
 };

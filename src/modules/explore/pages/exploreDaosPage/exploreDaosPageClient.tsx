@@ -15,10 +15,10 @@ import { DaoCarouselCard } from '../../components/daoCarouselCard';
 import { ExploreDaos } from '../../components/exploreDao';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
-import doItYourselfIcon from './icons/doItYourselfIcon.svg';
-import enterpriseServiceIcon from './icons/enterpriseServiceIcon.svg';
-import NetBackground from './icons/net_bg.svg';
-import noCodeSetupIcon from './icons/noCodeSetup.svg';
+import doItYourselfIcon from '../../../../assets/images/doItYourselfIcon.svg';
+import enterpriseServiceIcon from '../../../../assets/images/enterpriseServiceIcon.svg';
+import NetBackground from '../../../../assets/images/net_bg.svg';
+import noCodeSetupIcon from '../../../../assets/images/noCodeSetup.svg';
 
 export interface IExploreDaosPageClientProps {
     /**

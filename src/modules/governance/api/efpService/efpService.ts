@@ -1,5 +1,6 @@
 import { HttpService } from '@/shared/api/httpService';
-import type { EfpStats, IGetEfpStatsParams } from './efpService.api';
+import type { IGetEfpStatsParams } from './efpService.api';
+import type { IEfpStats } from './domain';
 
 export class EfpService extends HttpService {
     urls = {
@@ -10,8 +11,8 @@ export class EfpService extends HttpService {
         super('https://api.ethfollow.xyz');
     }
 
-    getStats = async (params: IGetEfpStatsParams): Promise<EfpStats> => {
-        const result = await this.request<EfpStats>(this.urls.stats, params);
+    getStats = async (params: IGetEfpStatsParams): Promise<IEfpStats> => {
+        const result = await this.request<IEfpStats>(this.urls.stats, params);
 
         return result;
     };
