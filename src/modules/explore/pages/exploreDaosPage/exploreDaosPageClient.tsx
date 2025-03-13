@@ -1,12 +1,17 @@
 'use client';
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
+import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { Heading } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import Image from 'next/image';
+import { useFeaturedDaos } from '../../api/cmsService';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { CtaCard } from '../../components/ctaCard';
+import { DaoCarouselCard } from '../../components/daoCarouselCard';
 import { ExploreDaos } from '../../components/exploreDao';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
@@ -27,6 +32,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const { data: featuredDaos } = useFeaturedDaos();
 
     return (
         <>
@@ -45,10 +51,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
 
                     <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
                         <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch md:gap-3">
-                            <h1 className="text-2xl font-normal leading-tight text-neutral-0 md:text-3xl">
+                            <h1 className="text-3xl font-normal leading-tight text-neutral-0 md:text-5xl">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
-                            <h3 className="text-base font-normal leading-normal text-primary-50 md:text-xl">
+                            <h3 className="text-lg font-normal leading-normal text-primary-50 md:text-2xl">
                                 {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>
@@ -56,7 +62,24 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                 </Container>
             </div>
 
-            <Container className="py-10 pb-16 md:px-6 md:py-16 md:pb-20">
+            {featuredDaos && (
+                <section className={classNames('flex flex-col gap-4 pt-10 md:gap-6 md:pt-16')}>
+                    <Container className="w-full">
+                        <Heading size="h1" as="h2" className="self-stretch">
+                            {t('app.explore.exploreDaosPage.section.featured')}
+                        </Heading>
+                    </Container>
+                    <div className="w-full">
+                        <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={16}>
+                            {featuredDaos.map((dao, index) => (
+                                <DaoCarouselCard key={index} {...dao} />
+                            ))}
+                        </Carousel>
+                    </div>
+                </section>
+            )}
+
+            <Container className="py-10 pb-16 md:px-6 md:py-20">
                 <main className="flex flex-col gap-10 md:gap-20">
                     <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
                         <ExploreDaos initialParams={initialParams} />
