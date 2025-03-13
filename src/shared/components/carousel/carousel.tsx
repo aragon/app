@@ -74,7 +74,6 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         animationControlsRef.current = animate(translation, [0, finalPosition], {
             ease: 'linear',
             duration: duration,
-            delay: animationDelay,
             repeat: Infinity,
             repeatType: 'loop',
             repeatDelay: 0,
@@ -93,6 +92,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         animationControlsRef.current = animate(translation, [currentPosition, finalPosition], {
             ease: 'linear',
             duration: transitionDuration,
+            delay: currentPosition === 0 ? animationDelay : 0,
             onComplete: startInfiniteAnimation,
         });
     }, [currentSpeed, finalPosition, startInfiniteAnimation, translation]);
