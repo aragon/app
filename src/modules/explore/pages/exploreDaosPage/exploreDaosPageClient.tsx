@@ -70,7 +70,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                         </Heading>
                     </Container>
                     <div className="w-full">
-                        <Carousel speed={40} speedOnHover={10} animationDelay={2} gap={16}>
+                        <Carousel speed={40} speedOnHoverFactor={0.2} animationDelay={2} gap={16}>
                             {featuredDaos.map((dao, index) => (
                                 <DaoCarouselCard key={index} {...dao} />
                             ))}

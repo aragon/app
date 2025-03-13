@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { animate, motion, useMotionValue } from 'framer-motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
 export interface ICarouselProps {
@@ -24,10 +24,11 @@ export interface ICarouselProps {
      */
     speed?: number;
     /**
-     * Speed of the carousel when hovering. We slow down the carousel when hovering.
-     * @default speed
+     * Factor applied to the speed when hovering over the carousel.
+     * Values lower than 1 will slow down the carousel. Values higher than 1 will speed up the carousel.
+     * @default 1
      */
-    speedOnHover?: number;
+    speedOnHoverFactor?: number;
     /**
      * Delay in seconds before starting the animation.
      * @default 0
@@ -45,31 +46,50 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
         gap = 16,
         initialOffset = gap,
         speed = 100,
-        speedOnHover = speed,
+        speedOnHoverFactor = 1,
         animationDelay = 0,
         className,
     } = props;
 
-    const [currentSpeed, setCurrentSpeed] = useState(speed);
+    // animation `delay` is not working as expected in combination with the `speed` mutation, so we need to track the animation start manually!
+    // issue observed in framer-motion version ^12.4.0
+    const [hasAnimationStarted, setHasAnimationStarted] = useState(false);
+
     // useMeasure is used to get and track (on resize) the width of the carousel content in a performant way.
     const [ref, { width }] = useMeasure();
-    const translation = useMotionValue(0);
-
     const contentSize = width + gap - initialOffset;
     const finalPosition = -contentSize / 2;
+    const translation = useMotionValue(0);
 
     const animationControlsRef = useRef<ReturnType<typeof animate> | null>(null);
 
-    /**
-     * Animates the carousel infinitely with the current params.
-     *
-     * Each time we change any of the animation properties, we need to first animate from the current position to the
-     * end (with new props), and then we start a new infinite animation.
-     */
-    const startInfiniteAnimation = useCallback(() => {
-        const distanceToTravel = Math.abs(finalPosition);
-        const duration = distanceToTravel / currentSpeed;
+    useEffect(() => {
+        if (!hasAnimationStarted) {
+            const timeoutHandle = setTimeout(() => {
+                setHasAnimationStarted(true);
+            }, animationDelay * 1000);
 
+            return () => {
+                clearTimeout(timeoutHandle);
+            };
+        }
+    }, [animationDelay, hasAnimationStarted]);
+
+    useEffect(() => {
+        // wait for defined animation delay to pass before starting the animation
+        if (!hasAnimationStarted) {
+            return;
+        }
+
+        // wait for width to be calculated
+        if (finalPosition === 0) {
+            return;
+        }
+
+        const distanceToTravel = Math.abs(finalPosition);
+        const duration = distanceToTravel / speed;
+
+        // speed is mutated directly on hover, but all other properties will trigger a new animation, causing position to reset!
         animationControlsRef.current?.stop();
         animationControlsRef.current = animate(translation, [0, finalPosition], {
             ease: 'linear',
@@ -78,30 +98,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
             repeatType: 'loop',
             repeatDelay: 0,
         });
-    }, [currentSpeed, finalPosition, translation]);
-
-    /**
-     * Animate the carousel with the current params until the end of the current cycle.
-     */
-    const startTransitionAnimation = useCallback(() => {
-        const currentPosition = translation.get();
-        const remainingDistance = Math.abs(currentPosition - finalPosition);
-        const transitionDuration = remainingDistance / currentSpeed;
-
-        animationControlsRef.current?.stop();
-        animationControlsRef.current = animate(translation, [currentPosition, finalPosition], {
-            ease: 'linear',
-            duration: transitionDuration,
-            delay: currentPosition === 0 ? animationDelay : 0,
-            onComplete: startInfiniteAnimation,
-        });
-    }, [animationDelay, currentSpeed, finalPosition, startInfiniteAnimation, translation]);
-
-    useEffect(() => {
-        // Trigger the transition animation when the component mounts and when any of the relevant animation properties change.
-        // Infinite animation is always started through the transition animation's `onComplete` to avoid potential race conditions and sudden jumps to the start.
-        startTransitionAnimation();
-    }, [animationDelay, currentSpeed, gap, startTransitionAnimation, translation, width]);
+    }, [speed, finalPosition, translation, hasAnimationStarted]);
 
     return (
         <div className={classNames('overflow-hidden', className)}>
@@ -113,8 +110,16 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
                     paddingLeft: `${String(initialOffset)}px`,
                 }}
                 ref={ref}
-                onHoverStart={() => setCurrentSpeed(speedOnHover)}
-                onHoverEnd={() => setCurrentSpeed(speed)}
+                onHoverStart={() => {
+                    if (animationControlsRef.current) {
+                        animationControlsRef.current.speed = speedOnHoverFactor;
+                    }
+                }}
+                onHoverEnd={() => {
+                    if (animationControlsRef.current) {
+                        animationControlsRef.current.speed = 1;
+                    }
+                }}
             >
                 {children}
                 {children}
