@@ -44,7 +44,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
                         {t(`app.application.bannerDao.adminMember.action`)}
                     </Button>
                 )}
-                {bannerType === 'adminMember' && (
+                {bannerType === 'adminPlugin' && (
                     <Button size="sm" variant="tertiary" href={`/dao/${id}/members`} iconRight={IconType.CHEVRON_RIGHT}>
                         {t(`app.application.bannerDao.adminPlugin.action`)}
                     </Button>
