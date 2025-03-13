@@ -78,7 +78,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
             repeatType: 'loop',
             repeatDelay: 0,
         });
-    }, [animationDelay, currentSpeed, finalPosition, translation]);
+    }, [currentSpeed, finalPosition, translation]);
 
     /**
      * Animate the carousel with the current params until the end of the current cycle.
@@ -95,7 +95,7 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
             delay: currentPosition === 0 ? animationDelay : 0,
             onComplete: startInfiniteAnimation,
         });
-    }, [currentSpeed, finalPosition, startInfiniteAnimation, translation]);
+    }, [animationDelay, currentSpeed, finalPosition, startInfiniteAnimation, translation]);
 
     useEffect(() => {
         // Trigger the transition animation when the component mounts and when any of the relevant animation properties change.
