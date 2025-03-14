@@ -13,12 +13,12 @@ export const WizardDialogContainerFooter: React.FC<IWizardDialogContainerFooterP
     const { formId } = props;
 
     const { t } = useTranslations();
-    const { hasPrevious, previousStep } = useWizardContext();
-    const { displayValidationError, submitLabel } = useWizardFooter();
+    const { hasPrevious } = useWizardContext();
+    const { displayValidationError, submitLabel, onPreviousClick } = useWizardFooter();
 
     const secondaryAction = {
         label: t('app.shared.wizardDialog.container.back'),
-        onClick: previousStep,
+        onClick: onPreviousClick,
     };
 
     return (

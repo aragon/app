@@ -41,14 +41,15 @@ describe('<WizardDialogContainerFooter /> component', () => {
     });
 
     it('renders a back button when step is not the first step', async () => {
-        const previousStep = jest.fn();
+        const onPreviousClick = jest.fn();
         const hasPrevious = true;
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ previousStep, hasPrevious }));
+        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
+        useWizardFooterSpy.mockReturnValue({ onPreviousClick } as unknown as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
         const backButton = screen.getByRole('button', { name: /wizardDialog.container.back/ });
         expect(backButton).toBeInTheDocument();
         await userEvent.click(backButton);
-        expect(previousStep).toHaveBeenCalled();
+        expect(onPreviousClick).toHaveBeenCalled();
     });
 
     it('does not render the back button when current step is the first step', () => {
