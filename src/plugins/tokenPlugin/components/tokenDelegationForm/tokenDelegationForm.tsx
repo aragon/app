@@ -53,7 +53,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const { data: tokenMember } = useMember<ITokenMember>(
+    const { data: tokenMember, isLoading: isMemberLoading } = useMember<ITokenMember>(
         { urlParams: { address: address as string }, queryParams: { daoId, pluginAddress: plugin.address } },
         { enabled: address != null },
     );
@@ -68,7 +68,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         };
     }, [address, tokenMember]);
 
-    const { handleSubmit, reset, control, formState } = useForm<ITokenDelegationFormData>({
+    const { handleSubmit, reset, control } = useForm<ITokenDelegationFormData>({
         mode: 'onTouched',
         defaultValues,
     });
@@ -111,6 +111,15 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
         setDelegateInput(defaultValues.delegate);
     }, [reset, defaultValues]);
 
+    const isDelegateUnchanged = useMemo(
+        () => addressUtils.isAddressEqual(delegate, tokenMember?.currentDelegate ?? undefined),
+        [delegate, tokenMember?.currentDelegate],
+    );
+
+    // disable submit button if delegate address has not been changed, but also, disable while isMemberLoading to prevent
+    // multiple button state changes during page refresh
+    const isSubmitDisabled = isMemberLoading || isDelegateUnchanged;
+
     return (
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
             <RadioGroup onValueChange={handleSelectionChange} value={selectionValue} {...selectionField}>
@@ -137,7 +146,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (props) 
                 <Button
                     type={isConnected ? 'submit' : undefined}
                     onClick={isConnected ? undefined : () => walletGuard()}
-                    disabled={!formState.isDirty}
+                    disabled={isSubmitDisabled}
                 >
                     {t('app.plugins.token.tokenDelegationForm.submit')}
                 </Button>
