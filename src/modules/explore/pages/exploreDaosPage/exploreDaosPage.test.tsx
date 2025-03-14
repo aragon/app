@@ -2,6 +2,7 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { featuredDaosOptions } from '../../api/cmsService';
 import { daoListOptions } from '../../api/daoExplorerService';
 import { ExploreDaosPage, type IExploreDaosPageProps } from './exploreDaosPage';
 
@@ -20,13 +21,16 @@ jest.mock('./exploreDaosPageClient', () => ({
 
 describe('<ExploreDaosPage /> component', () => {
     const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
+    const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
 
     beforeEach(() => {
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
+        prefetchQuerySpy.mockImplementation(jest.fn());
     });
 
     afterEach(() => {
         prefetchInfiniteQuerySpy.mockReset();
+        prefetchQuerySpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<IExploreDaosPageProps>) => {
@@ -41,6 +45,11 @@ describe('<ExploreDaosPage /> component', () => {
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             daoListOptions({ queryParams: { pageSize: 10, page: 1, sort: 'metrics.tvlUSD' } }).queryKey,
         );
+    });
+
+    it('prefetches the featured DAOs', async () => {
+        render(await createTestComponent());
+        expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(featuredDaosOptions().queryKey);
     });
 
     it('renders the page client component', async () => {
