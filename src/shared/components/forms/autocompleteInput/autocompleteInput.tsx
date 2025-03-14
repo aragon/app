@@ -50,7 +50,8 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
 
     const handleItemSelected = (item: IAutocompleteInputItem) => {
         updateOpenState(false);
-        onChange?.(item.id);
+        setInputValue('');
+        onChange?.(item.id, inputValue);
     };
 
     const {
@@ -98,7 +99,10 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
         const { name: groupName, info: groupInfo, indexData } = getGroupById(groupId) ?? {};
         const searchStrings = [name, groupName, groupInfo, ...(indexData ?? [])];
 
-        return searchStrings.some((stringValue) => stringValue?.toLowerCase().includes(inputValue.toLowerCase()));
+        return (
+            searchStrings.some((stringValue) => stringValue?.toLowerCase().includes(inputValue.toLowerCase())) ||
+            item.alwaysVisible
+        );
     };
 
     const processedItems: IAutocompleteInputItemIndex[] = items

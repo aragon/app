@@ -18,6 +18,10 @@ export interface IVerifySmartContractDialogParams {
      * Callback called on verification submit.
      */
     onSubmit?: (abi: ISmartContractAbi) => void;
+    /**
+     * Initial value to prepopulate the address input field.
+     */
+    initialValue?: string;
 }
 
 export interface IVerifySmartContractDialogProps extends IDialogComponentProps<IVerifySmartContractDialogParams> {}
@@ -39,14 +43,18 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     const { location } = props;
 
     invariant(location.params != null, 'VerifySmartContractDialog: params must be defined.');
-    const { network, onSubmit } = location.params;
+    const { network, onSubmit, initialValue = '' } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const { handleSubmit, control } = useForm({ mode: 'onTouched' });
+    const defaultAddressValue = addressUtils.isAddress(initialValue) ? initialValue : undefined;
+    const { handleSubmit, control } = useForm<IVerifySmartContractFormData>({
+        mode: 'onTouched',
+        defaultValues: { smartContract: { address: defaultAddressValue } },
+    });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>('');
+    const [addressInput, setAddressInput] = useState<string | undefined>(initialValue);
     const {
         label,
         value: smartContractValue,

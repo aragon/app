@@ -19,7 +19,7 @@ export interface IActionComposerProps<TMeta = undefined>
     /**
      * Callback called on action selected.
      */
-    onActionSelected: (item: IActionComposerItem<TMeta>) => void;
+    onActionSelected: (item: IActionComposerItem<TMeta>, inputValue: string) => void;
     /**
      * ID of the DAO.
      */

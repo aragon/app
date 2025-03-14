@@ -45,6 +45,10 @@ export interface IAutocompleteInputItem<TMeta = undefined> {
      * Hides the item from the autocomplete list when set to true.
      */
     hidden?: boolean;
+    /**
+     * Always show the item regardless of current input value when set to true.
+     */
+    alwaysVisible?: boolean;
 }
 
 export interface IAutocompleteInputItemIndex extends IAutocompleteInputItem {
@@ -68,9 +72,9 @@ export interface IAutocompleteInputProps extends Omit<IInputTextProps, 'onChange
      */
     value?: string;
     /**
-     * Callback called with the ID of the item selected.
+     * Callback called with the ID of the item selected and the current input value.
      */
-    onChange?: (value: string) => void;
+    onChange?: (value: string, inputValue: string) => void;
     /**
      * Callback called on open property change.
      */
