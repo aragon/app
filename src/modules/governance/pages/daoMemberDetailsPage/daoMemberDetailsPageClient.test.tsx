@@ -1,4 +1,5 @@
 import { DaoList } from '@/modules/explore/components/daoList';
+import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
 import { generateDao, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
 import { addressUtils, clipboardUtils, DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
@@ -26,16 +27,21 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
+    const useEfpStatsSpy = jest.spyOn(efpService, 'useEfpStats');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
         useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember() }));
+        useEfpStatsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { followers_count: 1, following_count: 2 } }),
+        );
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
         useMemberSpy.mockReset();
         clipboardCopySpy.mockReset();
+        useEfpStatsSpy.mockReset();
         (DaoList as jest.Mock).mockClear();
     });
 

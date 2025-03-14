@@ -1,6 +1,8 @@
 'use client';
 
 import { DaoList } from '@/modules/explore/components/daoList';
+import { useEfpStats } from '@/modules/governance/api/efpService';
+import { EfpCard } from '@/modules/governance/components/efpCard';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
@@ -21,6 +23,7 @@ import {
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import EfpLogo from '../../../../assets/images/efp-logo.svg';
 import { useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { VoteList } from '../../components/voteList';
@@ -53,6 +56,9 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
     const memberQueryParams = { daoId };
     const memberParams = { urlParams: memberUrlParams, queryParams: memberQueryParams };
     const { data: member } = useMember(memberParams);
+
+    const efpParams = { urlParams: { address } };
+    const { data: efpStats } = useEfpStats(efpParams);
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -183,6 +189,14 @@ export const DaoMemberDetailsPageClient: React.FC<IDaoMemberDetailsPageClientPro
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>
+                    {efpStats && (
+                        <Page.AsideCard
+                            title={t('app.governance.daoMemberDetailsPage.aside.efpCard.title')}
+                            icon={EfpLogo as string}
+                        >
+                            <EfpCard efpStats={efpStats} address={address} />
+                        </Page.AsideCard>
+                    )}
                 </Page.Aside>
             </Page.Content>
         </>
