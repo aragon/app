@@ -36,6 +36,7 @@ createAppKit({
         email: false,
         socials: false,
         analytics: true,
+        legalCheckbox: true,
     },
     themeVariables: {
         '--w3m-font-family': 'var(--guk-font-family)',
@@ -43,4 +44,6 @@ createAppKit({
         '--w3m-color-mix': 'var(--guk-color-neutral-100)',
         '--w3m-border-radius-master': '1.3px',
     },
+    privacyPolicyUrl: 'https://www.aragon.org/privacy-policy',
+    termsConditionsUrl: 'https://www.aragon.org/terms-and-conditions',
 });
