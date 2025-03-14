@@ -98,9 +98,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         name: 'Peaq',
         logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
         addresses: {
-            daoFactory: 0x35B62715459cB60bf6dC17fF8cfe138EA305E7Ee,
-            pluginSetupProcessor: 0x08633901DdF9cD8e2DC3a073594d0A7DaD6f3f57,
-            globalExecutor: 0x07f49c49Ce2A99CF7C28F66673d406386BDD8Ff4,
+            daoFactory: '0x35B62715459cB60bf6dC17fF8cfe138EA305E7Ee',
+            pluginSetupProcessor: '0x08633901DdF9cD8e2DC3a073594d0A7DaD6f3f57',
+            globalExecutor: '0x07f49c49Ce2A99CF7C28F66673d406386BDD8Ff4',
         },
     },
 
