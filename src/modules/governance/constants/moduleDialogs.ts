@@ -23,6 +23,9 @@ export const governanceDialogs: Record<GovernanceDialog, IDialogComponentDefinit
     [GovernanceDialog.VOTE]: { Component: VoteDialog },
     [GovernanceDialog.SELECT_PLUGIN]: { Component: SelectPluginDialog },
     [GovernanceDialog.VERIFY_SMART_CONTRACT]: { Component: VerifySmartContractDialog, useFocusTrap: false },
-    [GovernanceDialog.PERMISSION_CHECK]: { Component: PermissionCheckDialog },
+    [GovernanceDialog.PERMISSION_CHECK]: {
+        Component: PermissionCheckDialog,
+        hiddenDescription: 'app.governance.permissionCheckDialog.a11y.description',
+    },
     [GovernanceDialog.WALLET_CONNECT_ACTION]: { Component: WalletConnectActionDialog },
 };

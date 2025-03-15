@@ -15,7 +15,7 @@ export const WizardPageContainerProgress = (props: IWizardPageContainerProgressP
     const { t } = useTranslations();
     const { steps, activeStepIndex, hasNext } = useWizardContext();
 
-    const nextStepName = hasNext ? steps[activeStepIndex + 1].meta.name : finalStep;
+    const nextStepName = hasNext ? steps[activeStepIndex + 1]?.meta.name : finalStep;
     const wizardProgress = ((activeStepIndex + 1) * 100) / steps.length;
 
     return (

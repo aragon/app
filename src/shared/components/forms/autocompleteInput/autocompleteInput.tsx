@@ -76,7 +76,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
 
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
         updateOpenState(true);
-        onInputFocus!(event);
+        onInputFocus?.(event);
         onFocus?.(event);
     };
 
@@ -116,7 +116,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     const isBottomPlacement = context.placement === 'bottom';
 
     const inputWrapperClassName = classNames(
-        { 'shadow-primary-lg': isOpen },
+        { 'shadow-primary-lg border-primary-400 hover:border-primary-400': isOpen },
         { 'rounded-b-none border-b-0': isOpen && isBottomPlacement },
         { 'rounded-t-none border-t-0 z-10': isOpen && !isBottomPlacement },
         wrapperClassName,

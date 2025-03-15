@@ -807,6 +807,9 @@
         "namePlugin": "{{plugin}}: Create proposal"
       },
       "permissionCheckDialog": {
+        "a11y": {
+          "description": "Checking if user has the permission to perform the action."
+        },
         "action": "OK",
         "loading": "Checking permissions",
         "or": "or",

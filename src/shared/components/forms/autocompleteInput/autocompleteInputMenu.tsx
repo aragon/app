@@ -20,16 +20,17 @@ export interface IAutocompleteInputMenuProps extends ComponentProps<'div'> {
 }
 
 export const AutocompleteInputMenu = forwardRef<HTMLDivElement, IAutocompleteInputMenuProps>((props, ref) => {
-    const { isOpen, context, selectItemLabel, children, ...otherProps } = props;
+    const { isOpen, context, selectItemLabel, children, className, ...otherProps } = props;
 
     const { t } = useTranslations();
 
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
-        'flex flex-col gap-3 overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg',
+        'flex flex-col gap-3 overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
         { 'rounded-b-xl border-b pt-1 md:pb-12': isBottomPlacement },
         { 'rounded-t-xl border-t pb-1 md:pt-12': !isBottomPlacement },
+        className,
     );
 
     const footerClassName = classNames(
@@ -41,7 +42,12 @@ export const AutocompleteInputMenu = forwardRef<HTMLDivElement, IAutocompleteInp
     return (
         <FloatingPortal>
             {isOpen && (
-                <FloatingFocusManager context={context} initialFocus={-1} visuallyHiddenDismiss={true}>
+                <FloatingFocusManager
+                    context={context}
+                    initialFocus={-1}
+                    visuallyHiddenDismiss={true}
+                    returnFocus={false}
+                >
                     <div className={menuClassName} ref={ref} {...otherProps}>
                         <div className="flex max-h-[268px] flex-col overflow-auto px-3">{children}</div>
                         <div className={footerClassName}>
