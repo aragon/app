@@ -98,9 +98,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         name: 'Peaq',
         logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
         addresses: {
-            daoFactory: zeroAddress,
-            pluginSetupProcessor: zeroAddress,
-            globalExecutor: zeroAddress,
+            daoFactory: '0x35B62715459cB60bf6dC17fF8cfe138EA305E7Ee',
+            pluginSetupProcessor: '0x08633901DdF9cD8e2DC3a073594d0A7DaD6f3f57',
+            globalExecutor: '0x07f49c49Ce2A99CF7C28F66673d406386BDD8Ff4',
         },
     },
 
@@ -111,9 +111,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
         privateRpc: 'https://eth-sepolia.g.alchemy.com/v2/',
         addresses: {
-            daoFactory: '0x20A8bDAbF02fcAca65CB799C0ed9CE4Ff25F3a90',
-            pluginSetupProcessor: '0x9e99D11b513dD2cc5e117a5793412106502FF04B',
-            globalExecutor: '0x67744773b8C29aaDc8a11010C09306c0029219Ff',
+            daoFactory: '0xB815791c233807D39b7430127975244B36C19C8e',
+            pluginSetupProcessor: '0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f',
+            globalExecutor: '0x7a20760b89EF507759DD2c5A0d1f1657614341A9',
         },
     },
     [Network.ZKSYNC_SEPOLIA]: {

@@ -49,8 +49,8 @@ class TokenActionUtils {
         const { address, release, build, settings } = plugin;
         const { address: tokenAddress, name } = settings.token;
 
-        // The setMetadata function on the TokenVoting plugin is only supported from version 1.4 onwards
-        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 4);
+        // The setMetadata function on the TokenVoting plugin is only supported from version 1.3 onwards
+        const includePluginMetadataItem = Number(release) > 1 || (Number(release) === 1 && Number(build) >= 3);
 
         return {
             groups: [
