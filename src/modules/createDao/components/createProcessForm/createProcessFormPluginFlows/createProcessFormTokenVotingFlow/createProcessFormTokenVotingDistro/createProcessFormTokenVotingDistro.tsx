@@ -119,7 +119,7 @@ export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormToke
                                     {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabled')}{' '}
                                 </p>
                                 <Link
-                                    href="https://app.aragon.org/"
+                                    href="https://app-legacy.aragon.org/"
                                     target="_blank"
                                     iconRight={IconType.LINK_EXTERNAL}
                                     className="text-sm"

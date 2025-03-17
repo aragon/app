@@ -13,7 +13,7 @@ const legacyNetworkMap: Partial<Record<Network, string>> = {
 };
 
 const getLegacyUrl = (dao?: IDao): string | null => {
-    const baseUrl = 'https://app.aragon.org';
+    const baseUrl = 'https://app-legacy.aragon.org';
 
     // If no DAO is provided, use the explore page
     if (!dao) {
