@@ -23,5 +23,5 @@ jobs:
     needs: build
     secrets: inherit
     with:
-      domain: "app-next.aragon.org"
+      domain: "app.aragon.org"
       env: "production"
