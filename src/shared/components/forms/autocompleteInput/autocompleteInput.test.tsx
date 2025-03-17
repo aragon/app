@@ -135,9 +135,7 @@ describe('<AutocompleteInput /> component', () => {
             { id: '1', name: 'item-1', icon: IconType.APP_ASSETS },
         ];
         render(createTestComponent({ items, onOpenChange, onChange }));
-        const input = screen.getByRole('combobox');
-        await userEvent.type(input, searchValue);
-        await userEvent.click(screen.getByRole('combobox'));
+        await userEvent.type(screen.getByRole('combobox'), searchValue);
         await userEvent.click(screen.getByRole('option', { name: items[1].name }));
         expect(onOpenChange).toHaveBeenCalledWith(false);
         expect(onChange).toHaveBeenCalledWith(items[1].id, searchValue);
