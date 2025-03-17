@@ -89,8 +89,12 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         handleAddAction('custom');
     };
 
-    const handleVerifySmartContract = () => {
-        const params: IVerifySmartContractDialogParams = { network: dao!.network, onSubmit: handleAbiSubmit };
+    const handleVerifySmartContract = (initialValue?: string) => {
+        const params: IVerifySmartContractDialogParams = {
+            network: dao!.network,
+            onSubmit: handleAbiSubmit,
+            initialValue,
+        };
         open(GovernanceDialog.VERIFY_SMART_CONTRACT, { params });
     };
 
@@ -116,7 +120,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         open(GovernanceDialog.WALLET_CONNECT_ACTION, { params });
     };
 
-    const handleItemSelected = (action: IActionComposerItem) => {
+    const handleItemSelected = (action: IActionComposerItem, inputValue: string) => {
         const { id, defaultValue, meta } = action;
 
         if (defaultValue != null) {
@@ -124,7 +128,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
             addAction({ ...defaultValue, id: actionId, daoId, meta });
             setExpandedActions([actionId]);
         } else if (id === ActionItemId.ADD_CONTRACT) {
-            handleVerifySmartContract();
+            handleVerifySmartContract(inputValue);
         }
     };
 

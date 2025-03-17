@@ -79,6 +79,7 @@ class ActionComposerUtils {
                 id: ActionItemId.ADD_CONTRACT,
                 name: t(`app.governance.actionComposer.customItem.${ActionItemId.ADD_CONTRACT}`),
                 icon: IconType.PLUS,
+                alwaysVisible: true,
             },
             ...customActionItems.flat(),
         ];

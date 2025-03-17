@@ -50,7 +50,8 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
 
     const handleItemSelected = (item: IAutocompleteInputItem) => {
         updateOpenState(false);
-        onChange?.(item.id);
+        setInputValue('');
+        onChange?.(item.id, inputValue);
     };
 
     const {
@@ -75,7 +76,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
 
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
         updateOpenState(true);
-        onInputFocus!(event);
+        onInputFocus?.(event);
         onFocus?.(event);
     };
 
@@ -98,7 +99,10 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
         const { name: groupName, info: groupInfo, indexData } = getGroupById(groupId) ?? {};
         const searchStrings = [name, groupName, groupInfo, ...(indexData ?? [])];
 
-        return searchStrings.some((stringValue) => stringValue?.toLowerCase().includes(inputValue.toLowerCase()));
+        return (
+            searchStrings.some((stringValue) => stringValue?.toLowerCase().includes(inputValue.toLowerCase())) ||
+            item.alwaysVisible
+        );
     };
 
     const processedItems: IAutocompleteInputItemIndex[] = items
@@ -112,7 +116,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
     const isBottomPlacement = context.placement === 'bottom';
 
     const inputWrapperClassName = classNames(
-        { 'shadow-primary-lg': isOpen },
+        { 'shadow-primary-lg border-primary-400 hover:border-primary-400': isOpen },
         { 'rounded-b-none border-b-0': isOpen && isBottomPlacement },
         { 'rounded-t-none border-t-0 z-10': isOpen && !isBottomPlacement },
         wrapperClassName,

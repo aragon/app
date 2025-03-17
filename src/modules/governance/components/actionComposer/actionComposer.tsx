@@ -24,9 +24,9 @@ export const ActionComposer = forwardRef<HTMLInputElement, IActionComposerProps>
     const [items, groups] =
         mode === 'native' ? [completeNativeItems, completeNativeGroups] : [customItems, customGroups];
 
-    const handleActionSelected = (itemId: string) => {
+    const handleActionSelected = (itemId: string, inputValue: string) => {
         const action = items.find((item) => item.id === itemId)!;
-        onActionSelected(action);
+        onActionSelected(action, inputValue);
     };
 
     return (

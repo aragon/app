@@ -126,18 +126,29 @@ describe('<AutocompleteInput /> component', () => {
         expect(onOpenChange).toHaveBeenCalledWith(true);
     });
 
-    it('closes the menu and triggers the onChange callback with the selected item-id on option click', async () => {
+    it('closes the menu and triggers the onChange callback with the selected item-id and input value on option click', async () => {
         const onOpenChange = jest.fn();
         const onChange = jest.fn();
+        const searchValue = 'item';
         const items = [
             { id: '0', name: 'item-0', icon: IconType.APP_ASSETS },
             { id: '1', name: 'item-1', icon: IconType.APP_ASSETS },
         ];
         render(createTestComponent({ items, onOpenChange, onChange }));
-        await userEvent.click(screen.getByRole('combobox'));
+        await userEvent.type(screen.getByRole('combobox'), searchValue);
         await userEvent.click(screen.getByRole('option', { name: items[1].name }));
         expect(onOpenChange).toHaveBeenCalledWith(false);
-        expect(onChange).toHaveBeenCalledWith(items[1].id);
+        expect(onChange).toHaveBeenCalledWith(items[1].id, searchValue);
+    });
+
+    it('clears the input value on item selected', async () => {
+        const searchValue = 'item';
+        const items = [{ id: '0', name: 'item-0', icon: IconType.APP_ASSETS }];
+        render(createTestComponent({ items }));
+        const input = screen.getByRole('combobox');
+        await userEvent.type(input, searchValue);
+        await userEvent.click(screen.getByRole('option'));
+        expect(input).toHaveDisplayValue('');
     });
 
     it('triggers the onFocus callback on input focus', async () => {
@@ -173,7 +184,7 @@ describe('<AutocompleteInput /> component', () => {
         expect(screen.getByRole('option', { name: items[1].name }).getAttribute('aria-selected')).toEqual('true');
 
         await userEvent.keyboard('{Enter}');
-        expect(onChange).toHaveBeenCalledWith(items[1].id);
+        expect(onChange).toHaveBeenCalledWith(items[1].id, '');
     });
 
     it('correctly select items on enter press when filtered', async () => {
@@ -190,6 +201,13 @@ describe('<AutocompleteInput /> component', () => {
         await userEvent.type(inputElement, 'bbb');
 
         await userEvent.keyboard('{Enter}');
-        expect(onChange).toHaveBeenCalledWith(items[1].id);
+        expect(onChange).toHaveBeenCalledWith(items[1].id, 'bbb');
+    });
+
+    it('always renders items regardless of search value when alwaysVisible property is set to true', async () => {
+        const items = [{ id: '1', name: 'one', icon: IconType.APP_ASSETS, alwaysVisible: true }];
+        render(createTestComponent({ items }));
+        await userEvent.type(screen.getByRole('combobox'), 'two');
+        expect(screen.getByRole('option', { name: 'one' })).toBeInTheDocument();
     });
 });
