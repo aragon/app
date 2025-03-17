@@ -16,7 +16,7 @@ class GovernanceService extends AragonBackendService {
         member: '/members/:address',
         memberExists: '/members/:memberAddress/:pluginAddress/exists',
         proposals: '/proposals',
-        proposalBySlug: '/proposals/slug/:slug',
+        proposalBySlug: '/proposals/:slug',
         canVote: '/proposals/:id/can-vote',
         votes: '/votes',
     };
@@ -52,7 +52,8 @@ class GovernanceService extends AragonBackendService {
     getProposalBySlug = async <TProposal extends IProposal = IProposal>(
         params: IGetProposalBySlugParams,
     ): Promise<TProposal> => {
-        const result = await this.request<TProposal>(this.urls.proposalBySlug, params);
+        const test = { urlParams: { slug: params.urlParams.slug } };
+        const result = await this.request<TProposal>(this.urls.proposalBySlug, test);
 
         return result;
     };
