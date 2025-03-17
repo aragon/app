@@ -143,6 +143,16 @@ describe('<AutocompleteInput /> component', () => {
         expect(onChange).toHaveBeenCalledWith(items[1].id, searchValue);
     });
 
+    it('clears the input value on item selected', async () => {
+        const searchValue = 'item';
+        const items = [{ id: '0', name: 'item-0', icon: IconType.APP_ASSETS }];
+        render(createTestComponent({ items }));
+        const input = screen.getByRole('combobox');
+        await userEvent.type(input, searchValue);
+        await userEvent.click(screen.getByRole('option'));
+        expect(input).toHaveDisplayValue('');
+    });
+
     it('triggers the onFocus callback on input focus', async () => {
         const onFocus = jest.fn();
         render(createTestComponent({ onFocus }));
