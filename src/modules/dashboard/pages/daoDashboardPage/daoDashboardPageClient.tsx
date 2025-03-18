@@ -1,14 +1,14 @@
 'use client';
 
+import { DaoSlotId } from '@/daos/constants/slots';
 import { AssetList } from '@/modules/finance/components/assetList';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { PageHeaderCustom } from '@/shared/components/page/pageHeaderCustom';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     Button,
@@ -22,6 +22,7 @@ import {
     formatterUtils,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { DefaultHeader } from '../../components';
 
 export interface IDaoDashboardPageClientProps {
     /**
@@ -38,8 +39,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const { daoId } = props;
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useBlockExplorer();
-    const pageUrl = useCurrentUrl();
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
@@ -60,6 +59,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
     ];
 
+    const { buildEntityUrl } = useBlockExplorer();
+
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
@@ -75,8 +76,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
 
-    const dropdownLabel = daoEns ?? truncatedAddress;
-
     const daoLaunchedAt = formatterUtils.formatDate(dao.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
     });
@@ -87,7 +86,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     return (
         <>
-            <PageHeaderCustom
+            <PluginSingleComponent
+                slotId={DaoSlotId.DASHBOARD_HEADER}
+                Fallback={DefaultHeader}
                 title={dao.name}
                 description={dao.description}
                 daoId={dao.id}
