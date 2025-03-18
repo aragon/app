@@ -5,23 +5,20 @@ import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { PageHeaderCustom } from '@/shared/components/page/pageHeaderCustom';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     Button,
     ChainEntityType,
-    DaoAvatar,
     DateFormat,
     DefinitionList,
-    Dropdown,
     IconType,
     Link,
     NumberFormat,
     addressUtils,
-    clipboardUtils,
     formatterUtils,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -90,33 +87,13 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     return (
         <>
-            <Page.Header
+            <PageHeaderCustom
                 title={dao.name}
                 description={dao.description}
-                stats={stats}
-                avatar={<DaoAvatar src={ipfsUtils.cidToSrc(dao.avatar)} name={dao.name} size="2xl" />}
-            >
-                <div className="flex flex-row gap-4">
-                    <Dropdown.Container
-                        contentClassNames="max-w-52"
-                        constrainContentWidth={false}
-                        size="md"
-                        label={dropdownLabel}
-                    >
-                        {daoEns != null && (
-                            <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(daoEns)}>
-                                {daoEns}
-                            </Dropdown.Item>
-                        )}
-                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.address)}>
-                            {truncatedAddress}
-                        </Dropdown.Item>
-                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(pageUrl)}>
-                            {pageUrl}
-                        </Dropdown.Item>
-                    </Dropdown.Container>
-                </div>
-            </Page.Header>
+                daoId={dao.id}
+                pluginId="OxPlugin"
+                stats={stats.filter((stat) => stat.value !== membersCount)}
+            />
             <Page.Content>
                 <Page.Main>
                     {hasSupportedPlugins && (

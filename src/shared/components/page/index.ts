@@ -1,9 +1,9 @@
+import { PageHeader } from '@/shared/components/page/pageHeader';
 import { PageAside } from './pageAside';
 import { PageAsideCard } from './pageAsideCard';
 import { PageContainer } from './pageContainer';
 import { PageContent } from './pageContent';
 import { PageError } from './pageError';
-import { PageHeader } from './pageHeader';
 import { PageMain } from './pageMain';
 import { PageMainSection } from './pageMainSection';
 
