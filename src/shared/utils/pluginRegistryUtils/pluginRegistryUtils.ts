@@ -76,7 +76,7 @@ export class PluginRegistryUtils {
         slotComponents: {},
         slotFunctions: {},
     };
-
+    // tofo
     registerPlugin = (plugin: IPlugin): this => {
         this.pluginRegistry.plugins.push(plugin);
 
