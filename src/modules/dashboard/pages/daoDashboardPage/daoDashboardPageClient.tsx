@@ -1,10 +1,13 @@
 'use client';
 
+import { DaoSlotId } from '@/daos/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482';
+import { HeaderFallback } from '@/daos/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482/headerFallback';
 import { AssetList } from '@/modules/finance/components/assetList';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
@@ -90,33 +93,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     return (
         <>
-            <Page.Header
-                title={dao.name}
-                description={dao.description}
-                stats={stats}
-                avatar={<DaoAvatar src={ipfsUtils.cidToSrc(dao.avatar)} name={dao.name} size="2xl" />}
-            >
-                <div className="flex flex-row gap-4">
-                    <Dropdown.Container
-                        contentClassNames="max-w-52"
-                        constrainContentWidth={false}
-                        size="md"
-                        label={dropdownLabel}
-                    >
-                        {daoEns != null && (
-                            <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(daoEns)}>
-                                {daoEns}
-                            </Dropdown.Item>
-                        )}
-                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(dao.address)}>
-                            {truncatedAddress}
-                        </Dropdown.Item>
-                        <Dropdown.Item icon={IconType.COPY} onClick={() => clipboardUtils.copy(pageUrl)}>
-                            {pageUrl}
-                        </Dropdown.Item>
-                    </Dropdown.Container>
-                </div>
-            </Page.Header>
+            <PluginSingleComponent
+                pluginId={dao.id}
+                slotId={DaoSlotId.DASHBOARD_HEADER}
+                Fallback={HeaderFallback}
+                dao={dao}
+            />
             <Page.Content>
                 <Page.Main>
                     {hasSupportedPlugins && (

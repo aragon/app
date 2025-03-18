@@ -14,6 +14,7 @@ import { initialisePlugins } from '../../../../plugins';
 import { wagmiConfig } from '../../constants/wagmi';
 import { queryClientUtils } from '../../utils/queryClientUtils';
 import { providersDialogs } from './providersDialogs';
+import { initialiseDaos } from '@/daos';
 
 export interface IProvidersProps {
     /**
@@ -37,6 +38,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
 
     const queryClient = queryClientUtils.getQueryClient();
     initialisePlugins();
+    initialiseDaos();
 
     return (
         <TranslationsProvider translations={translations}>
