@@ -29,6 +29,10 @@ export interface IBuildTransactionParams {
      * Connected user to be used as admin.
      */
     connectedAddress: string;
+    /**
+     * Custom DAO factory address to use for the transaction.
+     */
+    daoFactoryAddress?: Hex;
 }
 
 class PublishDaoDialogUtils {
@@ -45,7 +49,7 @@ class PublishDaoDialogUtils {
     };
 
     buildTransaction = (params: IBuildTransactionParams) => {
-        const { values, metadataCid, connectedAddress } = params;
+        const { values, metadataCid, connectedAddress, daoFactoryAddress } = params;
         const { network } = values;
 
         const { daoFactory } = networkDefinitions[network].addresses;
@@ -61,7 +65,7 @@ class PublishDaoDialogUtils {
         });
 
         const transaction: TransactionDialogPrepareReturn = {
-            to: daoFactory,
+            to: daoFactoryAddress?.length ? daoFactoryAddress : daoFactory,
             data: transactionData,
         };
 

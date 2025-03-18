@@ -1,6 +1,7 @@
 'use client';
 
 import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
+import { DebugContextProvider } from '@/shared/components/debugProvider/debugProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { DialogRoot } from '@/shared/components/dialogRoot';
 import { Image } from '@/shared/components/image';
@@ -39,20 +40,22 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
     initialisePlugins();
 
     return (
-        <TranslationsProvider translations={translations}>
-            <BlockNavigationContextProvider>
-                <GukModulesProvider
-                    wagmiConfig={wagmiConfig}
-                    wagmiInitialState={wagmiInitialState}
-                    queryClient={queryClient}
-                    coreProviderValues={coreProviderValues}
-                >
-                    <DialogProvider>
-                        {children}
-                        <DialogRoot dialogs={providersDialogs} />
-                    </DialogProvider>
-                </GukModulesProvider>
-            </BlockNavigationContextProvider>
-        </TranslationsProvider>
+        <DebugContextProvider>
+            <TranslationsProvider translations={translations}>
+                <BlockNavigationContextProvider>
+                    <GukModulesProvider
+                        wagmiConfig={wagmiConfig}
+                        wagmiInitialState={wagmiInitialState}
+                        queryClient={queryClient}
+                        coreProviderValues={coreProviderValues}
+                    >
+                        <DialogProvider>
+                            {children}
+                            <DialogRoot dialogs={providersDialogs} />
+                        </DialogProvider>
+                    </GukModulesProvider>
+                </BlockNavigationContextProvider>
+            </TranslationsProvider>
+        </DebugContextProvider>
     );
 };

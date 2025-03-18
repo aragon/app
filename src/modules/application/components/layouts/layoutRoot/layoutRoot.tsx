@@ -4,6 +4,7 @@ import '@aragon/gov-ui-kit/index.css';
 import { headers } from 'next/headers';
 import type { ReactNode } from 'react';
 import { cookieToInitialState } from 'wagmi';
+import { DebugPanel } from '../../debugPanel';
 import { ErrorBoundary } from '../../errorBoundary';
 import { Footer } from '../../footer';
 import { Providers } from '../../providers';
@@ -30,6 +31,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                 <Providers translations={translationAssets} wagmiInitialState={wagmiInitialState}>
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
+                        <DebugPanel />
                     </ErrorBoundary>
                     <Footer />
                 </Providers>

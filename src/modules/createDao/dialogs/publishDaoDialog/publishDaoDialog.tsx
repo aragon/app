@@ -1,6 +1,7 @@
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
+import { useDebugContext } from '@/shared/components/debugProvider';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogActionParams,
@@ -14,7 +15,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { DaoDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
-import type { TransactionReceipt } from 'viem';
+import type { Hex, TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
@@ -46,6 +47,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
 
     const { t } = useTranslations();
     const { setIsBlocked } = useBlockNavigationContext();
+    const { values: debugValues } = useDebugContext();
 
     const stepper = useStepper<ITransactionDialogStepMeta, PublishDaoStep | TransactionDialogStep>({
         initialActiveStep: PublishDaoStep.PIN_METADATA,
@@ -102,7 +104,12 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         invariant(pinJsonData != null, 'PublishDaoDialog: metadata not pinned for prepare transaction step.');
         const { IpfsHash: metadataCid } = pinJsonData;
 
-        return publishDaoDialogUtils.buildTransaction({ values: values, metadataCid, connectedAddress: address });
+        return publishDaoDialogUtils.buildTransaction({
+            values: values,
+            metadataCid,
+            connectedAddress: address,
+            daoFactoryAddress: debugValues.daoFactoryAddress as Hex | undefined,
+        });
     };
 
     const getDaoLink = (txReceipt: TransactionReceipt) => {
