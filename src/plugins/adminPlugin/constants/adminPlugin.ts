@@ -13,7 +13,7 @@ export const adminPlugin: IPluginInfo = {
         [Network.ETHEREUM_SEPOLIA]: '0x152c9E28995E418870b85cbbc0AEE4e53020edb2',
         [Network.POLYGON_MAINNET]: zeroAddress,
         [Network.ZKSYNC_MAINNET]: zeroAddress,
-        [Network.ZKSYNC_SEPOLIA]: zeroAddress,
+        [Network.ZKSYNC_SEPOLIA]: '0x2e23fD7985979AE78561adD5D76d2fa10f20fbB1',
         [Network.PEAQ_MAINNET]: '0x86C87Aa7C09a447048adf4197fec7C12eF62A07F',
     },
 };
