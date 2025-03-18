@@ -1,35 +1,40 @@
-import { Button, IconType } from '@aragon/gov-ui-kit';
+import type { IDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
 import type { ComponentProps } from 'react';
 import AragonXHeader from '../../../../assets/images/aragon-x-header.jpg';
 import { Container } from '../../container';
-import { PageHeaderCustomStat, type IPageHeaderCustomStat } from './pageHeaderCustomStat';
+import { PageHeaderCustomStat } from './pageHeaderCustomStat';
 export interface IPageHeaderCustomProps extends ComponentProps<'header'> {
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
-    /**
-     * ID of the plugin.
-     */
-    pluginId: string;
-    /**
-     * Title of the page.
-     */
-    title?: string;
-    /**
-     * Description of the page.
-     */
-    description?: string;
-    /**
-     * Statistics displayed on the header.
-     */
-    stats?: IPageHeaderCustomStat[];
+    dao: IDao;
 }
 
 export const PageHeaderCustom: React.FC<IPageHeaderCustomProps> = (props) => {
-    const { daoId, pluginId, title, description, stats, className, ...otherProps } = props;
+    const { dao, className, ...otherProps } = props;
+
+    const { t } = useTranslations();
+
+    const title = dao.name;
+    const description = dao.description;
+    const daoId = dao.id;
+
+    const proposalsCreated = formatterUtils.formatNumber(dao.metrics.proposalsCreated, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+
+    const daoTvl = formatterUtils.formatNumber(dao.metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
+
+    const stats = [
+        { value: proposalsCreated, label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
+        { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
+    ];
+
+    //   TODO -
+    //   - Add Guard for create proposal
+    //   - Strings to locale
+    //   - Rename file & move to new home
 
     return (
         <header
@@ -52,17 +57,15 @@ export const PageHeaderCustom: React.FC<IPageHeaderCustomProps> = (props) => {
                             <Button
                                 className="w-full md:max-w-fit"
                                 iconLeft={IconType.PLUS}
-                                href={`/dao/${daoId}/create/${pluginId}/proposal`}
+                                href={`/dao/${daoId}/create/multisig/proposal`}
                             >
                                 Create Proposal
                             </Button>
-                            {stats != null && stats.length > 0 && (
-                                <div className="flex flex-row gap-6 py-4 lg:gap-10 xl:gap-16">
-                                    {stats.map((stat) => (
-                                        <PageHeaderCustomStat key={stat.label} {...stat} />
-                                    ))}
-                                </div>
-                            )}
+                            <div className="flex flex-row gap-6 py-4 lg:gap-10 xl:gap-16">
+                                {stats.map((stat) => (
+                                    <PageHeaderCustomStat key={stat.label} {...stat} />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

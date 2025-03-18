@@ -17,7 +17,6 @@ import {
     DefinitionList,
     IconType,
     Link,
-    NumberFormat,
     addressUtils,
     formatterUtils,
     useBlockExplorer,
@@ -42,22 +41,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
-
-    const proposalsCreated = formatterUtils.formatNumber(dao?.metrics.proposalsCreated, {
-        format: NumberFormat.GENERIC_SHORT,
-    });
-
-    const membersCount = formatterUtils.formatNumber(dao?.metrics.members, {
-        format: NumberFormat.GENERIC_SHORT,
-    });
-
-    const daoTvl = formatterUtils.formatNumber(dao?.metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
-
-    const stats = [
-        { value: proposalsCreated, label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
-        { value: membersCount, label: t('app.dashboard.daoDashboardPage.header.stat.members') },
-        { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
-    ];
 
     const { buildEntityUrl } = useBlockExplorer();
 
@@ -89,11 +72,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             <PluginSingleComponent
                 slotId={DaoSlotId.DASHBOARD_HEADER}
                 Fallback={DefaultHeader}
-                title={dao.name}
-                description={dao.description}
-                daoId={dao.id}
-                pluginId="OxPlugin"
-                stats={stats.filter((stat) => stat.value !== membersCount)}
+                dao={dao}
+                pluginId={dao.id}
             />
             <Page.Content>
                 <Page.Main>
