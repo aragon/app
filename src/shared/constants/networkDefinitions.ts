@@ -122,9 +122,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
         privateRpc: 'https://zksync-sepolia.g.alchemy.com/v2/',
         addresses: {
-            daoFactory: zeroAddress,
-            pluginSetupProcessor: zeroAddress,
-            globalExecutor: zeroAddress,
+            daoFactory: '0xee321f16f7F0a0F0d8b850E70c4eAde4A288ECd7',
+            pluginSetupProcessor: '0xe2Ef39f1be2269644cBfa9b70003A143bF1fdf4d',
+            globalExecutor: '0x0ED69b3b690e10Fb509FA1b081C1b74EF3FeB36D',
         },
     },
 };
