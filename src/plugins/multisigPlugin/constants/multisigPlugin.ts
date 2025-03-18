@@ -13,7 +13,7 @@ export const multisigPlugin: IPluginInfo = {
         [Network.ETHEREUM_SEPOLIA]: '0x9e7956C8758470dE159481e5DD0d08F8B59217A2',
         [Network.POLYGON_MAINNET]: zeroAddress,
         [Network.ZKSYNC_MAINNET]: zeroAddress,
-        [Network.ZKSYNC_SEPOLIA]: zeroAddress,
+        [Network.ZKSYNC_SEPOLIA]: '0x2cae809b6ca149b49cBcA8B887Da2805174052F3',
         [Network.PEAQ_MAINNET]: '0x83a977d564349586936f17D9536b2c5702B4Fe20',
     },
 };
