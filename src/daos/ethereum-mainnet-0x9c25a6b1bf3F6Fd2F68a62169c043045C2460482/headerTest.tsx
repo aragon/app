@@ -1,4 +1,4 @@
-import { IDao } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoAvatar } from '@aragon/gov-ui-kit';

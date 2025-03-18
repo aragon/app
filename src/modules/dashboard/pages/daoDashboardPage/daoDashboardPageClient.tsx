@@ -1,6 +1,6 @@
 'use client';
 
-import { DaoSlotId } from '@/daos/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482';
+import { DaoSlotId } from '@/daos/constants/slots';
 import { HeaderFallback } from '@/daos/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482/headerFallback';
 import { AssetList } from '@/modules/finance/components/assetList';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
@@ -10,21 +10,15 @@ import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     Button,
     ChainEntityType,
-    DaoAvatar,
     DateFormat,
     DefinitionList,
-    Dropdown,
     IconType,
     Link,
-    NumberFormat,
     addressUtils,
-    clipboardUtils,
     formatterUtils,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -45,26 +39,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer();
-    const pageUrl = useCurrentUrl();
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
-
-    const proposalsCreated = formatterUtils.formatNumber(dao?.metrics.proposalsCreated, {
-        format: NumberFormat.GENERIC_SHORT,
-    });
-
-    const membersCount = formatterUtils.formatNumber(dao?.metrics.members, {
-        format: NumberFormat.GENERIC_SHORT,
-    });
-
-    const daoTvl = formatterUtils.formatNumber(dao?.metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
-
-    const stats = [
-        { value: proposalsCreated, label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
-        { value: membersCount, label: t('app.dashboard.daoDashboardPage.header.stat.members') },
-        { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
-    ];
 
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
@@ -80,8 +57,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
-
-    const dropdownLabel = daoEns ?? truncatedAddress;
 
     const daoLaunchedAt = formatterUtils.formatDate(dao.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
