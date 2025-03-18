@@ -1,7 +1,6 @@
 'use client';
 
 import { DaoSlotId } from '@/daos/constants/slots';
-import { HeaderFallback } from '@/daos/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482/headerFallback';
 import { AssetList } from '@/modules/finance/components/assetList';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
@@ -22,6 +21,7 @@ import {
     formatterUtils,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { DefaultHeader } from '../../components';
 
 export interface IDaoDashboardPageClientProps {
     /**
@@ -71,7 +71,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             <PluginSingleComponent
                 pluginId={dao.id}
                 slotId={DaoSlotId.DASHBOARD_HEADER}
-                Fallback={HeaderFallback}
+                Fallback={DefaultHeader}
                 dao={dao}
             />
             <Page.Content>

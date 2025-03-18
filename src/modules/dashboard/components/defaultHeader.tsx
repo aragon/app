@@ -1,26 +1,19 @@
-import { IDao } from '@/shared/api/daoService';
-import { Page } from '@/shared/components/page';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useCurrentUrl } from '@/shared/hooks/useCurrentUrl';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import {
-    addressUtils,
-    clipboardUtils,
-    DaoAvatar,
-    Dropdown,
-    formatterUtils,
-    IconType,
-    NumberFormat,
-} from '@aragon/gov-ui-kit';
-import React from 'react';
+import type { IDao } from "@/shared/api/daoService";
+import { Page } from "@/shared/components/page";
+import { useTranslations } from "@/shared/components/translationsProvider";
+import { useCurrentUrl } from "@/shared/hooks/useCurrentUrl";
+import { daoUtils } from "@/shared/utils/daoUtils";
+import { ipfsUtils } from "@/shared/utils/ipfsUtils";
+import { addressUtils, clipboardUtils, DaoAvatar, Dropdown, formatterUtils, IconType, NumberFormat } from "@aragon/gov-ui-kit";
 
-export interface IHeaderFallbackProps {
+
+export interface IDefaultHeaderProps {
     dao: IDao;
 }
 
-export const HeaderFallback: React.FC<IHeaderFallbackProps> = (props) => {
+export const DefaultHeader: React.FC<IDefaultHeaderProps> = (props) => {
     const { dao } = props;
+
     const { t } = useTranslations();
 
     const proposalsCreated = formatterUtils.formatNumber(dao.metrics.proposalsCreated, {
