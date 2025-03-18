@@ -8,10 +8,20 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Button, IconType } from '@aragon/gov-ui-kit';
-import { DefaultHeader } from '../../components/defaultHeader';
-import { DefaultAside } from '../../components/defaaultAside';
+import {
+    Button,
+    ChainEntityType,
+    DateFormat,
+    DefinitionList,
+    IconType,
+    Link,
+    addressUtils,
+    formatterUtils,
+    useBlockExplorer,
+} from '@aragon/gov-ui-kit';
+import { DefaultHeader } from '../../components';
 
 export interface IDaoDashboardPageClientProps {
     /**
@@ -28,9 +38,13 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const { daoId } = props;
 
     const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer();
 
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
+
+    const daoEns = daoUtils.getDaoEns(dao);
+    const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
     if (dao == null) {
         return null;
@@ -43,6 +57,14 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     };
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
+
+    const daoLaunchedAt = formatterUtils.formatDate(dao.blockTimestamp * 1000, {
+        format: DateFormat.YEAR_MONTH,
+    });
+
+    const { id: chainId } = networkDefinitions[dao.network];
+    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address, chainId });
+    const daoCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: dao.transactionHash, chainId });
 
     return (
         <>
@@ -98,12 +120,44 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                         </Page.MainSection>
                     )}
                 </Page.Main>
-                <PluginSingleComponent
-                    pluginId={dao.id}
-                    slotId={DaoSlotId.DASHBOARD_ASIDE}
-                    Fallback={DefaultAside}
-                    dao={dao}
-                />
+                <Page.Aside>
+                    <Page.AsideCard title={t('app.dashboard.daoDashboardPage.aside.details.title')}>
+                        <DefinitionList.Container>
+                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.chain')}>
+                                <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
+                            </DefinitionList.Item>
+                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.address')}>
+                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
+                                    {truncatedAddress}
+                                </Link>
+                            </DefinitionList.Item>
+                            {daoEns != null && (
+                                <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
+                                    <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
+                                        {daoEns}
+                                    </Link>
+                                </DefinitionList.Item>
+                            )}
+                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.launched')}>
+                                <Link iconRight={IconType.LINK_EXTERNAL} href={daoCreationLink} target="_blank">
+                                    {daoLaunchedAt}
+                                </Link>
+                            </DefinitionList.Item>
+                        </DefinitionList.Container>
+                    </Page.AsideCard>
+                    {dao.links.length > 0 && (
+                        <Page.AsideCard
+                            title={t('app.dashboard.daoDashboardPage.aside.links')}
+                            className="flex flex-col gap-4"
+                        >
+                            {dao.links.map(({ url, name }) => (
+                                <Link key={url} iconRight={IconType.LINK_EXTERNAL} description={url} href={url}>
+                                    {name}
+                                </Link>
+                            ))}
+                        </Page.AsideCard>
+                    )}
+                </Page.Aside>
             </Page.Content>
         </>
     );
