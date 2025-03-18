@@ -1,4 +1,4 @@
-export const eagleOpsDao = {
-    id: 'ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
-    name: 'ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
+export const aragonX = {
+    id: 'ethereum-mainnet-0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722',
+    name: 'ethereum-mainnet-0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722',
 };

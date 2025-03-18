@@ -1,15 +1,15 @@
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { DaoSlotId } from '../constants/slots';
-import { eagleOpsDao } from '../constants/daos';
-import { EagleOpsDashboardHeader } from './components/eagleOpsDashboardHeader';
+import { aragonX } from '../constants/daos';
+import { AragonXDashboardHeader } from './components/aragonXDashboardHeader';
 
 export const initialiseEagleOps = () => {
     pluginRegistryUtils
-        .registerPlugin(eagleOpsDao)
+        .registerPlugin(aragonX)
 
         .registerSlotComponent({
             slotId: DaoSlotId.DASHBOARD_HEADER,
-            pluginId: eagleOpsDao.id,
-            component: EagleOpsDashboardHeader,
+            pluginId: aragonX.id,
+            component: AragonXDashboardHeader,
         });
 };
