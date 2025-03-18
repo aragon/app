@@ -2,6 +2,7 @@
 
 import { translationUtils, type ITFuncOptions, type Translations } from '@/shared/utils/translationsUtils';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { useDebugContext } from '../debugProvider/debugProvider';
 
 export interface ITranslationContext {
     /**
@@ -28,7 +29,10 @@ export interface ITranslationsProviderProps {
 export const TranslationsProvider: React.FC<ITranslationsProviderProps> = (props) => {
     const { translations, children } = props;
 
-    const contextValues = useMemo(() => ({ t: translationUtils.t(translations) }), [translations]);
+    const { values } = useDebugContext();
+    const showKey = values.displayKeys as boolean;
+
+    const contextValues = useMemo(() => ({ t: translationUtils.t(translations, showKey) }), [translations, showKey]);
 
     return <translationsContext.Provider value={contextValues}>{children}</translationsContext.Provider>;
 };
