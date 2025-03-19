@@ -8,7 +8,7 @@ const legacyNetworkMap: Partial<Record<Network, string>> = {
     [Network.POLYGON_MAINNET]: 'polygon',
     [Network.BASE_MAINNET]: 'base',
     [Network.ARBITRUM_MAINNET]: 'arbitrum',
-    [Network.ZKSYNC_MAINNET]: 'zksync',
+    [Network.ZKSYNC_MAINNET]: 'zksyncMainnet',
     [Network.ZKSYNC_SEPOLIA]: 'zksepolia',
 };
 
