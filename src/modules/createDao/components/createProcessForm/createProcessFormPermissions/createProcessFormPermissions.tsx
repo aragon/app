@@ -48,6 +48,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     } = useFieldArray<ICreateProcessFormData, typeof proposalCreationBodiesName>({
         name: proposalCreationBodiesName,
         rules: { validate: validateProposalCreationBodies(proposalCreationMode) },
+        shouldUnregister: true,
     });
 
     // Initialise proposalCreationBodies to all process bodies and update value on bodies list change
