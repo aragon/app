@@ -1,6 +1,5 @@
 'use client';
 
-import { initialiseDaos } from '@/daos';
 import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { DialogRoot } from '@/shared/components/dialogRoot';
@@ -8,6 +7,7 @@ import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { Translations } from '@/shared/utils/translationsUtils';
+import { initialiseThemes } from '@/themes/daos';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { type State } from 'wagmi';
@@ -38,7 +38,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
 
     const queryClient = queryClientUtils.getQueryClient();
     initialisePlugins();
-    initialiseDaos();
+    initialiseThemes();
 
     return (
         <TranslationsProvider translations={translations}>

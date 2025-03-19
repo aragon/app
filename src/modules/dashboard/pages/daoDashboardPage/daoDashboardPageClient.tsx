@@ -1,6 +1,5 @@
 'use client';
 
-import { DaoSlotId } from '@/daos/constants/slots';
 import { AssetList } from '@/modules/finance/components/assetList';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
@@ -10,6 +9,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { DaoSlotId } from '@/themes/daos/constants/slots';
 import {
     Button,
     ChainEntityType,

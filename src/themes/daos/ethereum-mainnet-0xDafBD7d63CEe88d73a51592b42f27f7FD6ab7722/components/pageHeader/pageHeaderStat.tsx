@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 
-export interface IPageHeaderCustomStat {
+export interface IPageHeaderStat {
     /**
      * Value of the stat.
      * @default 0
@@ -17,9 +17,9 @@ export interface IPageHeaderCustomStat {
     suffix?: string;
 }
 
-export interface IPageHeaderCustomStatProps extends IPageHeaderCustomStat, ComponentProps<'div'> {}
+export interface IPageHeaderStatProps extends IPageHeaderStat, ComponentProps<'div'> {}
 
-export const PageHeaderCustomStat: React.FC<IPageHeaderCustomStatProps> = (props) => {
+export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
     const { value, label, suffix, className, ...otherProps } = props;
     const parsedValue = value ?? 0;
 
