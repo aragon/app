@@ -1,5 +1,5 @@
 ---
-'@aragon/app-next': patch
+'@aragon/app-next': minor
 ---
 
-Add 1.4.0 address constants for plugins
+Add contract addresses for remaining chains
