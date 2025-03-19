@@ -7,7 +7,7 @@ export const adminPlugin: IPluginInfo = {
     name: 'Admin',
     installVersion: { release: 1, build: 2 },
     repositoryAddresses: {
-        [Network.ARBITRUM_MAINNET]: zeroAddress,
+        [Network.ARBITRUM_MAINNET]: '0x326A2aee6A8eE78D79E7E956DE60C6E452f76a8e',
         [Network.BASE_MAINNET]: zeroAddress,
         [Network.ETHEREUM_MAINNET]: zeroAddress,
         [Network.ETHEREUM_SEPOLIA]: '0x152c9E28995E418870b85cbbc0AEE4e53020edb2',
