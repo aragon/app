@@ -143,6 +143,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
             network={network}
+            transactionType={'daoCreate'}
         >
             <DaoDataListItem.Structure
                 name={name}

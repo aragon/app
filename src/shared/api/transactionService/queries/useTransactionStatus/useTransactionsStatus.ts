@@ -1,5 +1,5 @@
-import { type SharedQueryOptions } from '@/shared/types';
-import { type QueryOptions, useQuery } from '@tanstack/react-query';
+import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
+import { useQuery } from '@tanstack/react-query';
 import { type ITransactionStatus } from '../../domain';
 import { transactionService } from '../../transactionService';
 import { type IGetTransactionStatusParams } from '../../transactionService.api';

@@ -13,6 +13,7 @@ import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
+import { useTransactionStatus } from '@/shared/api/transactionService/queries';
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
@@ -27,6 +28,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         onCancelClick,
         onSuccess,
         network = Network.ETHEREUM_MAINNET,
+        transactionType,
     } = props;
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
@@ -59,6 +61,20 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         status: approveTransactionStatus,
         data: transactionHash,
     } = useSendTransaction({ mutation: { onSuccess: nextStep } });
+
+    const indexingUrlParams = { network, transactionHash: transactionHash ?? '' };
+    const indexingQueryParams = { type: transactionType! };
+    const indexingParams = { urlParams: indexingUrlParams, queryParams: indexingQueryParams };
+    const {
+        data: indexingData,
+        status: indexingStatus,
+        refetch,
+    } = useTransactionStatus(indexingParams, {
+        enabled: transactionHash != null,
+        refetchInterval: 1000,
+    });
+
+    console.log('DATA', indexingData?.isProcessed);
 
     const {
         data: txReceipt,
@@ -95,8 +111,9 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
             [TransactionDialogStep.APPROVE]: approveStepAction,
             [TransactionDialogStep.CONFIRM]: handleRetryTransaction,
+            [TransactionDialogStep.INDEXING]: () => refetch(),
         }),
-        [prepareTransactionMutate, approveStepAction, handleRetryTransaction],
+        [prepareTransactionMutate, approveStepAction, handleRetryTransaction, refetch],
     );
 
     const approveStepStatus = chainId === requiredChainId ? approveTransactionStatus : switchChainStatus;
@@ -105,8 +122,16 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
             [TransactionDialogStep.APPROVE]: approveStepStatus,
             [TransactionDialogStep.CONFIRM]: transactionDialogUtils.queryToStepState(waitTxStatus, waitTxFetchStatus),
+            [TransactionDialogStep.INDEXING]: indexingData?.isProcessed ? 'success' : indexingStatus,
         }),
-        [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus],
+        [
+            prepareTransactionStatus,
+            approveStepStatus,
+            waitTxStatus,
+            waitTxFetchStatus,
+            indexingData?.isProcessed,
+            indexingStatus,
+        ],
     );
 
     const transactionStepAddon: Record<TransactionDialogStep, ITransactionStatusStepMetaAddon | undefined> = useMemo(
@@ -123,6 +148,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                           href: buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash }),
                       }
                     : undefined,
+            [TransactionDialogStep.INDEXING]: undefined,
         }),
         [t, buildEntityUrl, transactionHash],
     );

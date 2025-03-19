@@ -2,11 +2,16 @@ import type { Network } from "../daoService";
 import type { IRequestUrlQueryParams } from "../httpService";
 
 export interface IGetTransactionStatusUrlParams {
-  network: Network;
-  transactionsHash: string;
+    network: Network;
+    transactionHash: string;
 }
 
-type TransactionType = "daoCreate" | "proposalCreate" | "proposalAdvanceStage" | "proposalVote" | "proposalExecute";
+export type TransactionType =
+    | 'daoCreate'
+    | 'proposalCreate'
+    | 'proposalAdvanceStage'
+    | 'proposalVote'
+    | 'proposalExecute';
 
 export interface IGetTransactionStatusQueryParams {
   type: TransactionType;

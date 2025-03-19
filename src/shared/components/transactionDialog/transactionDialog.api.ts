@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import type { TransactionReceipt } from 'viem';
 import type { SendTransactionParameters } from 'wagmi/actions';
 import type { ITransactionStatusStepMeta } from '../transactionStatus';
+import type { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 // Return type for the prepareTransaction property of the TransactionDialog component
 export type TransactionDialogPrepareReturn = SendTransactionParameters;
@@ -24,6 +25,7 @@ export enum TransactionDialogStep {
     PREPARE = 'PREPARE',
     APPROVE = 'APPROVE',
     CONFIRM = 'CONFIRM',
+    INDEXING = 'INDEXING',
 }
 
 export interface ITransactionDialogStepMeta extends ITransactionStatusStepMeta {
@@ -101,4 +103,8 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      * Children of the component.
      */
     children?: ReactNode;
+    /**
+     * Type of the transaction to determine whether or not to show the indexing step.
+     */
+    transactionType?: TransactionType;
 }
