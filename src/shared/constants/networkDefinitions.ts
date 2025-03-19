@@ -77,9 +77,9 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         logo: 'https://docs.arbitrum.io/img/logo.svg',
         privateRpc: 'https://arb-mainnet.g.alchemy.com/v2/',
         addresses: {
-            daoFactory: zeroAddress,
-            pluginSetupProcessor: zeroAddress,
-            globalExecutor: zeroAddress,
+            daoFactory: '0x49e04AB7af7A263b8ac802c1cAe22f5b4E4577Cd',
+            pluginSetupProcessor: '0x308a1DC5020c4B5d992F5543a7236c465997fecB',
+            globalExecutor: '0x198b64a53b39f454e56626d9262cBf67E7C13138',
         },
     },
     [Network.ZKSYNC_MAINNET]: {

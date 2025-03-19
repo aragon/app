@@ -7,7 +7,7 @@ export const tokenPlugin: IPluginInfo = {
     name: 'Token',
     installVersion: { release: 1, build: 3 },
     repositoryAddresses: {
-        [Network.ARBITRUM_MAINNET]: zeroAddress,
+        [Network.ARBITRUM_MAINNET]: '0x1AeD2BEb470aeFD65B43f905Bd5371b1E4749d18',
         [Network.BASE_MAINNET]: zeroAddress,
         [Network.ETHEREUM_MAINNET]: zeroAddress,
         [Network.ETHEREUM_SEPOLIA]: '0x424F4cA6FA9c24C03f2396DF0E96057eD11CF7dF',

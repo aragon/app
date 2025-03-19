@@ -7,7 +7,7 @@ export const multisigPlugin: IPluginInfo = {
     name: 'Multisig',
     installVersion: { release: 1, build: 3 },
     repositoryAddresses: {
-        [Network.ARBITRUM_MAINNET]: zeroAddress,
+        [Network.ARBITRUM_MAINNET]: '0x7553E6Fb020c5740768cF289e603770AA09b7aE2',
         [Network.BASE_MAINNET]: zeroAddress,
         [Network.ETHEREUM_MAINNET]: zeroAddress,
         [Network.ETHEREUM_SEPOLIA]: '0x9e7956C8758470dE159481e5DD0d08F8B59217A2',
