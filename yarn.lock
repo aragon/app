@@ -96,7 +96,7 @@ __metadata:
     prettier-plugin-tailwindcss: "npm:^0.6.11"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    react-hook-form: "npm:^7.54.2"
+    react-hook-form: "npm:^7.55.0-next.9"
     react-use-measure: "npm:^2.1.7"
     server-only: "npm:^0.0.1"
     tailwindcss: "npm:^3.4.17"
@@ -14602,12 +14602,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.54.2":
-  version: 7.54.2
-  resolution: "react-hook-form@npm:7.54.2"
+"react-hook-form@npm:^7.55.0-next.9":
+  version: 7.55.0-next.9
+  resolution: "react-hook-form@npm:7.55.0-next.9"
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18 || ^19
-  checksum: 10c0/6eebead2900e3d369a989e7a20429f390dc75b3897142aa3107f1f6dabb9ae64fed201ea98cdcd8676e40466c97748aeb0c0d83264f5bd3a84dbc0b8e4863415
+  checksum: 10c0/13208ad4cc7025c18628135a15aa18d727c443970e6e65d9280a2c87a98cc54844dfbc15e7a8b99fe8ad9f488d108225c0ada2f7763092700d13d595e5e9f9d8
   languageName: node
   linkType: hard
 
