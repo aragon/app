@@ -1,5 +1,6 @@
 'use client';
 
+import { type IDebugContextControl } from '@/shared/components/debugProvider';
 import { useDebugContext } from '@/shared/components/debugProvider/debugProvider';
 import { Button, Heading, IconType, InputText, Switch } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
@@ -27,6 +28,11 @@ export const DebugPanel: React.FC = () => {
     const togglePanel = () => setIsOpen((current) => !current);
 
     const groupedControls = groupBy(controls, (control) => control.group ?? 'Global');
+
+    const handleValueChange = (name: string, value: unknown, onChange?: IDebugContextControl['onChange']) => {
+        updateValue(name, value);
+        onChange?.(value);
+    };
 
     useEffect(() => {
         registerControl({ name: 'displayKeys', type: 'boolean', label: 'Display keys' });
@@ -69,19 +75,21 @@ export const DebugPanel: React.FC = () => {
                         <div className="flex flex-col gap-2" key={group}>
                             <Heading size="h3">{group}</Heading>
                             <div className="flex flex-col gap-1">
-                                {groupedControls[group].map(({ type, name, label }) => (
+                                {groupedControls[group].map(({ type, name, label, onChange }) => (
                                     <React.Fragment key={name}>
                                         {type === 'boolean' && (
                                             <Switch
                                                 checked={values[name] as boolean}
-                                                onCheckedChanged={(event) => updateValue(name, event)}
+                                                onCheckedChanged={(event) => handleValueChange(name, event, onChange)}
                                                 inlineLabel={label}
                                             />
                                         )}
                                         {type === 'string' && (
                                             <InputText
                                                 value={(values[name] as string | undefined) ?? ''}
-                                                onChange={(event) => updateValue(name, event.target.value)}
+                                                onChange={(event) =>
+                                                    handleValueChange(name, event.target.value, onChange)
+                                                }
                                                 label={label}
                                             />
                                         )}

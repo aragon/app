@@ -21,6 +21,10 @@ export interface IDebugContextControl {
      * Group of the control.
      */
     group?: string;
+    /**
+     * Callback called on value change.
+     */
+    onChange?: (value: unknown) => void;
 }
 
 export interface IDebugContext {
