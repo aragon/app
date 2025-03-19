@@ -87,8 +87,8 @@ export const DebugPanel: React.FC = () => {
                                         {type === 'string' && (
                                             <InputText
                                                 value={(values[name] as string | undefined) ?? ''}
-                                                onChange={(event) =>
-                                                    handleValueChange(name, event.target.value, onChange)
+                                                onChange={({ target }) =>
+                                                    handleValueChange(name, target.value, onChange)
                                                 }
                                                 label={label}
                                             />
