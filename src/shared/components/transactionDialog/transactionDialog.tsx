@@ -65,16 +65,10 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const indexingUrlParams = { network, transactionHash: transactionHash ?? '' };
     const indexingQueryParams = { type: transactionType! };
     const indexingParams = { urlParams: indexingUrlParams, queryParams: indexingQueryParams };
-    const {
-        data: indexingData,
-        status: indexingStatus,
-        refetch,
-    } = useTransactionStatus(indexingParams, {
+    const { data: indexingData, refetch } = useTransactionStatus(indexingParams, {
         enabled: transactionHash != null,
         refetchInterval: 1000,
     });
-
-    console.log('DATA', indexingData?.isProcessed);
 
     const {
         data: txReceipt,
@@ -105,15 +99,23 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         handleSendTransaction();
     }, [updateActiveStep, handleSendTransaction]);
 
+    const handleIndexing = useCallback(async () => {
+        console.log('indexing step');
+        await refetch();
+    }, [refetch]);
+
+    console.log('ACTIVE STEP', activeStep);
+    console.log('TX HASH', transactionHash);
+
     const approveStepAction = requiredChainId === chainId ? handleSendTransaction : handleSwitchNetwork;
     const transactionStepActions: Record<TransactionDialogStep, () => void> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
             [TransactionDialogStep.APPROVE]: approveStepAction,
             [TransactionDialogStep.CONFIRM]: handleRetryTransaction,
-            [TransactionDialogStep.INDEXING]: () => refetch(),
+            [TransactionDialogStep.INDEXING]: handleIndexing,
         }),
-        [prepareTransactionMutate, approveStepAction, handleRetryTransaction, refetch],
+        [prepareTransactionMutate, approveStepAction, handleRetryTransaction, handleIndexing],
     );
 
     const approveStepStatus = chainId === requiredChainId ? approveTransactionStatus : switchChainStatus;
@@ -122,7 +124,11 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
             [TransactionDialogStep.APPROVE]: approveStepStatus,
             [TransactionDialogStep.CONFIRM]: transactionDialogUtils.queryToStepState(waitTxStatus, waitTxFetchStatus),
-            [TransactionDialogStep.INDEXING]: indexingData?.isProcessed ? 'success' : indexingStatus,
+            [TransactionDialogStep.INDEXING]: indexingData?.isProcessed
+                ? 'success'
+                : transactionHash && activeStep === TransactionDialogStep.INDEXING
+                  ? 'pending'
+                  : 'idle',
         }),
         [
             prepareTransactionStatus,
@@ -130,7 +136,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             waitTxStatus,
             waitTxFetchStatus,
             indexingData?.isProcessed,
-            indexingStatus,
+            transactionHash,
+            activeStep,
         ],
     );
 
@@ -197,8 +204,11 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     useEffect(() => {
         if (waitTxStatus === 'success') {
             onSuccessRef.current?.();
+            nextStep();
         }
-    }, [waitTxStatus]);
+    }, [waitTxStatus, nextStep]);
+
+
 
     return (
         <>

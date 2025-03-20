@@ -1556,6 +1556,10 @@
             "errorLabel": "Confirmation failed",
             "label": "Onchain confirmation"
           },
+          "INDEXING": {
+            "errorLabel": "Indexing failed",
+            "label": "Indexing"
+          },
           "PREPARE": {
             "errorLabel": "Unable to prepare transaction",
             "label": "Prepare transaction"
