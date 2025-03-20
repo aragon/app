@@ -136,3 +136,15 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         disabled: true,
     },
 };
+
+/**
+ * Future networks that are not yet available, but we want to show in the network selection.
+ */
+export const futureNetworks = {
+    'optimism-mainnet': {
+        name: 'Optimism',
+        logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
+        disabled: true,
+        testnet: false,
+    },
+};

@@ -1,9 +1,17 @@
 import { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type INetworkDefinition, networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { futureNetworks, networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
+
+interface INetworkListData {
+    key: string;
+    name: string;
+    logo: string;
+    disabled?: boolean;
+    testnet?: boolean;
+}
 
 export interface ICreateDaoFormNetworkProps {}
 
@@ -18,10 +26,32 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
     const testnetTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.testnetLabel') };
     const disabledTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.disabledLabel') };
 
-    const enabledNetworkEntries = Object.entries(networkDefinitions).filter(([, network]) => !network.disabled);
-    const disabledNetworkEntries = Object.entries(networkDefinitions).filter(([, network]) => network.disabled);
+    const enabledNetworksListData: INetworkListData[] = Object.entries(networkDefinitions)
+        .filter(([, network]) => !network.disabled)
+        .map(([key, network]) => ({
+            key,
+            name: network.name,
+            logo: network.logo,
+            testnet: network.testnet,
+        }));
+    const disabledNetworksListData = Object.entries(networkDefinitions)
+        .filter(([, network]) => network.disabled)
+        .map(([key, network]) => ({
+            key,
+            name: network.name,
+            logo: network.logo,
+            testnet: network.testnet,
+            disabled: true,
+        }));
+    const futureNetworksListData = Object.entries(futureNetworks).map(([key, network]) => ({
+        key,
+        name: network.name,
+        logo: network.logo,
+        testnet: network.testnet,
+        disabled: true,
+    }));
 
-    const getNetworkTag = (network: INetworkDefinition) => {
+    const getNetworkTag = (network: INetworkListData) => {
         if (network.disabled) {
             return disabledTag;
         }
@@ -35,18 +65,20 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
 
     return (
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
-            {[...enabledNetworkEntries, ...disabledNetworkEntries].map(([key, network]) => {
-                return (
-                    <RadioCard
-                        tag={getNetworkTag(network)}
-                        key={key}
-                        value={key}
-                        label={network.name}
-                        disabled={network.disabled}
-                        avatar={network.logo}
-                    />
-                );
-            })}
+            {[...enabledNetworksListData, ...futureNetworksListData, ...disabledNetworksListData].map(
+                (networkListData) => {
+                    return (
+                        <RadioCard
+                            tag={getNetworkTag(networkListData)}
+                            key={networkListData.key}
+                            value={networkListData.key}
+                            label={networkListData.name}
+                            disabled={networkListData.disabled}
+                            avatar={networkListData.logo}
+                        />
+                    );
+                },
+            )}
         </RadioGroup>
     );
 };
