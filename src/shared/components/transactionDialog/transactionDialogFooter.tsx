@@ -10,6 +10,7 @@ import {
     TransactionDialogStep,
     type TransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export interface ITransactionDialogFooterProps<TCustomStepId extends string = string> {
     /**
@@ -36,6 +37,10 @@ export interface ITransactionDialogFooterProps<TCustomStepId extends string = st
      * Callback called on cancel button click.
      */
     onCancelClick?: ITransactionDialogProps['onCancelClick'];
+    /**
+     * Type of the transaction to determine whether or not to show the indexing step.
+     */
+    transactionType?: TransactionType;
 }
 
 const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record<TransactionStatusState, string>>>> = {
@@ -57,7 +62,7 @@ const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, txRecei
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
-    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick } = props;
+    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick, transactionType } = props;
 
     const { label: successLabel, href: successHref, onClick: successOnClick } = successLink;
     const { id: stepId, meta } = activeStep ?? {};
@@ -70,8 +75,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const isSuccessState = state === 'success';
     const isPendingState = state === 'pending';
 
-    const displaySuccessLink = stepId === TransactionDialogStep.INDEXING && isSuccessState;
-    const isCancelDisabled = stepId === TransactionDialogStep.INDEXING && (isSuccessState || isPendingState);
+    const successStep = transactionType ? TransactionDialogStep.INDEXING : TransactionDialogStep.CONFIRM;
+
+    const displaySuccessLink = stepId === successStep && isSuccessState;
+    const isCancelDisabled = stepId === successStep && (isSuccessState || isPendingState);
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState
