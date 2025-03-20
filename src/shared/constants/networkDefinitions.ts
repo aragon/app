@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { type Chain, type Hex } from 'viem';
+import type { Chain, Hex } from 'viem';
 import { arbitrum, base, mainnet, peaq, polygon, sepolia, zksync, zksyncSepoliaTestnet } from 'wagmi/chains';
 
 export interface INetworkDefinitionAddresses {
@@ -35,7 +35,7 @@ export interface INetworkDefinition extends Chain {
      */
     addresses: INetworkDefinitionAddresses;
     /**
-     * Whether the network is disabled.
+     * Whether the network is disabled in DAO creation.
      */
     disabled?: boolean;
 }
@@ -134,17 +134,5 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             globalExecutor: '0x0ED69b3b690e10Fb509FA1b081C1b74EF3FeB36D',
         },
         disabled: true,
-    },
-};
-
-/**
- * Future networks that are not yet available, but we want to show in the network selection.
- */
-export const futureNetworks = {
-    'optimism-mainnet': {
-        name: 'Optimism',
-        logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
-        disabled: true,
-        testnet: false,
     },
 };

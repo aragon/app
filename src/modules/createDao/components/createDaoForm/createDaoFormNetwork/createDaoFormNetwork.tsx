@@ -1,11 +1,11 @@
 import { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { futureNetworks, networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
-interface INetworkListData {
+interface INetworkListItem {
     key: string;
     name: string;
     logo: string;
@@ -26,57 +26,44 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
     const testnetTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.testnetLabel') };
     const disabledTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.disabledLabel') };
 
-    const enabledNetworksListData: INetworkListData[] = Object.entries(networkDefinitions)
-        .filter(([, network]) => !network.disabled)
-        .map(([key, network]) => ({
-            key,
-            name: network.name,
-            logo: network.logo,
-            testnet: network.testnet,
-        }));
-    const disabledNetworksListData = Object.entries(networkDefinitions)
-        .filter(([, network]) => network.disabled)
-        .map(([key, network]) => ({
-            key,
-            name: network.name,
-            logo: network.logo,
-            testnet: network.testnet,
-            disabled: true,
-        }));
-    const futureNetworksListData = Object.entries(futureNetworks).map(([key, network]) => ({
-        key,
-        name: network.name,
-        logo: network.logo,
-        testnet: network.testnet,
-        disabled: true,
-    }));
+    const enabledNetworksListItems: INetworkListItem[] = [];
+    const disabledNetworksListItems: INetworkListItem[] = [];
 
-    const getNetworkTag = (network: INetworkListData) => {
+    for (const [key, network] of Object.entries(networkDefinitions)) {
+        const networkListItem: INetworkListItem = {
+            key,
+            name: network.name,
+            logo: network.logo,
+            testnet: network.testnet,
+            disabled: network.disabled,
+        };
+
         if (network.disabled) {
-            return disabledTag;
+            disabledNetworksListItems.push(networkListItem);
+        } else {
+            enabledNetworksListItems.push(networkListItem);
         }
+    }
 
-        if (network.testnet) {
-            return testnetTag;
-        }
-
-        return undefined;
+    const optimismListItem: INetworkListItem = {
+        key: 'optimism-mainnet',
+        name: 'Optimism',
+        logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
+        disabled: true,
     };
 
     return (
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
-            {[...enabledNetworksListData, ...futureNetworksListData, ...disabledNetworksListData].map(
-                (networkListData) => (
-                    <RadioCard
-                        tag={getNetworkTag(networkListData)}
-                        key={networkListData.key}
-                        value={networkListData.key}
-                        label={networkListData.name}
-                        disabled={networkListData.disabled}
-                        avatar={networkListData.logo}
-                    />
-                ),
-            )}
+            {[...enabledNetworksListItems, ...disabledNetworksListItems, optimismListItem].map((networkListData) => (
+                <RadioCard
+                    tag={networkListData.disabled ? disabledTag : networkListData.testnet ? testnetTag : undefined}
+                    key={networkListData.key}
+                    value={networkListData.key}
+                    label={networkListData.name}
+                    disabled={networkListData.disabled}
+                    avatar={networkListData.logo}
+                />
+            ))}
         </RadioGroup>
     );
 };
