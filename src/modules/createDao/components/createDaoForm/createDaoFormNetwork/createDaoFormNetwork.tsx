@@ -12,6 +12,7 @@ const optimismMainnet = {
     logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
     disabled: true,
     testnet: false,
+    order: 7,
 };
 
 export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => {
@@ -26,8 +27,7 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
     const disabledTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.disabledLabel') };
 
     const sortedNetworks = Object.entries({ ...networkDefinitions, 'optimism-mainnet': optimismMainnet }).sort(
-        ([, networkA], [, networkB]) =>
-            networkA.disabled === networkB.disabled ? (networkA.testnet ? 1 : -1) : networkA.disabled ? 1 : -1,
+        ([, networkA], [, networkB]) => networkA.order - networkB.order,
     );
 
     return (
