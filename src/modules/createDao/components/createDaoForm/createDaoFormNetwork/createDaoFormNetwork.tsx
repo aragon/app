@@ -45,16 +45,16 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
         }
     }
 
-    const optimismListItem: INetworkListItem = {
+    disabledNetworksListItems.push({
         key: 'optimism-mainnet',
         name: 'Optimism',
         logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
         disabled: true,
-    };
+    });
 
     return (
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
-            {[...enabledNetworksListItems, ...disabledNetworksListItems, optimismListItem].map((networkListData) => (
+            {[...enabledNetworksListItems, ...disabledNetworksListItems].map((networkListData) => (
                 <RadioCard
                     tag={networkListData.disabled ? disabledTag : networkListData.testnet ? testnetTag : undefined}
                     key={networkListData.key}
