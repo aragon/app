@@ -85,7 +85,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             pluginSetupProcessor: '0x308a1DC5020c4B5d992F5543a7236c465997fecB',
             globalExecutor: '0x198b64a53b39f454e56626d9262cBf67E7C13138',
         },
-        disabled: true,
     },
     [Network.ZKSYNC_MAINNET]: {
         ...zksync,
@@ -97,7 +96,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             pluginSetupProcessor: '0x8E3e98ECF5CdBF2bEcCD91d3BA580D472df5A0cB',
             globalExecutor: '0x581F87d3d3aE015c912Cb6E7B521A130493Cc497',
         },
-        disabled: true,
     },
     [Network.PEAQ_MAINNET]: {
         ...peaq,
@@ -133,6 +131,5 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             pluginSetupProcessor: '0xe2Ef39f1be2269644cBfa9b70003A143bF1fdf4d',
             globalExecutor: '0x0ED69b3b690e10Fb509FA1b081C1b74EF3FeB36D',
         },
-        disabled: true,
     },
 };
