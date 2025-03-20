@@ -1,6 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { INetworkDefinition, networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { type INetworkDefinition, networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
