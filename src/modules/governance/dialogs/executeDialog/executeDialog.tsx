@@ -13,6 +13,7 @@ import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { executeDialogUtils } from './executeDialogUtils';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export interface IExecuteDialogParams {
     /**
@@ -70,6 +71,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={network}
+            transactionType={TransactionType.PROPOSAL_EXECUTE}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure

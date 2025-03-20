@@ -14,6 +14,7 @@ import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { voteDialogUtils } from './voteDialogUtils';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export interface IVoteDialogParams {
     /**
@@ -74,6 +75,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
             network={proposal.network}
+            transactionType={TransactionType.PROPOSAL_VOTE}
         >
             <VoteProposalDataListItemStructure
                 proposalId={slug}

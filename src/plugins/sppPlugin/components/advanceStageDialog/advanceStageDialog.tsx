@@ -11,6 +11,7 @@ import { Dialog, ProposalDataListItem, ProposalStatus, type IDialogRootProps } f
 import { useRouter } from 'next/navigation';
 import type { ISppProposal } from '../../types';
 import { advanceStageDialogUtils } from './advanceStageDialogUtils';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export interface IAdvanceStageDialogProps extends IDialogRootProps {
     /**
@@ -64,6 +65,7 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                     label: t('app.plugins.spp.advanceStageDialog.button.success'),
                     onClick: onSuccessClick,
                 }}
+                transactionType={TransactionType.PROPOSAL_ADVANCE_STAGE}
             >
                 <ProposalDataListItem.Structure
                     title={proposal.title}

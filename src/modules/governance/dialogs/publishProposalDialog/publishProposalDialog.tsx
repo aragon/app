@@ -17,6 +17,7 @@ import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import type { ICreateProposalFormData, PrepareProposalActionMap } from '../../components/createProposalForm';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export enum PublishProposalStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -129,6 +130,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
+            transactionType={TransactionType.PROPOSAL_CREATE}
         >
             <ProposalDataListItem.Structure
                 title={title}

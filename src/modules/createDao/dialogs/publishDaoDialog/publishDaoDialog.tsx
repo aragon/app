@@ -18,6 +18,7 @@ import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export enum PublishDaoStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -143,7 +144,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
             network={network}
-            transactionType={'daoCreate'}
+            transactionType={TransactionType.DAO_CREATE}
         >
             <DaoDataListItem.Structure
                 name={name}

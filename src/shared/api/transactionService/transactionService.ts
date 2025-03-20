@@ -3,15 +3,15 @@ import type { ITransactionStatus } from "./domain";
 import type { IGetTransactionStatusParams } from "./transactionService.api";
 
 class TransactionService extends AragonBackendService {
-  private urls ={
-    status: '/transactions/:network/:transactionsHash/status',
-  }
+    private urls = {
+        status: '/transactions/:network/:transactionHash/status',
+    };
 
-  getTransactionStatus = async (params: IGetTransactionStatusParams): Promise<ITransactionStatus> => {
-    const result = await this.request<ITransactionStatus>(this.urls.status, params);
+    getTransactionStatus = async (params: IGetTransactionStatusParams): Promise<ITransactionStatus> => {
+        const result = await this.request<ITransactionStatus>(this.urls.status, params);
 
-    return result;
-  }
+        return result;
+    };
 }
 
 export const transactionService = new TransactionService();
