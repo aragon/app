@@ -24,7 +24,8 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
                     tag={network.testnet ? testnetTag : undefined}
                     key={key}
                     value={key}
-                    label={network.name}
+                    label={network.disabled ? `${network.name} (Coming soon)` : network.name}
+                    disabled={network.disabled}
                     avatar={network.logo}
                 />
             ))}
