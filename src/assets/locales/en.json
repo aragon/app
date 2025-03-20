@@ -131,7 +131,8 @@
         "network": {
           "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select chain",
-          "testnetLabel": "Testnet"
+          "testnetLabel": "Testnet",
+          "disabledLabel": "Soon"
         }
       },
       "createDaoPage": {
