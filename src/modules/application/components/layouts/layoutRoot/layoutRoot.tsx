@@ -29,7 +29,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
         <html lang="en" className="h-full">
             <body className="flex h-full flex-col bg-neutral-50">
                 <NextTopLoader
-                    color="#3164FA"
+                    color="var(--guk-color-primary-400)"
                     height={4}
                     showSpinner={false}
                     easing="ease-in-out"
