@@ -10,7 +10,7 @@ import {
     TransactionDialogStep,
     type TransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import type { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export interface ITransactionDialogFooterProps<TCustomStepId extends string = string> {
     /**

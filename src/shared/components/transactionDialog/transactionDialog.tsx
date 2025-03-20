@@ -104,6 +104,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     }, [refetchTransactionStatus]);
 
     const approveStepAction = requiredChainId === chainId ? handleSendTransaction : handleSwitchNetwork;
+
     const transactionStepActions: Record<TransactionDialogStep, () => void> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
@@ -158,7 +159,11 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const transactionSteps = useMemo(() => {
         const stepKeys = Object.keys(TransactionDialogStep) as TransactionDialogStep[];
 
-        return stepKeys.map((stepId, index) => ({
+        const filteredSteps = transactionType
+            ? stepKeys
+            : stepKeys.filter((step) => step !== TransactionDialogStep.INDEXING);
+
+        return filteredSteps.map((stepId, index) => ({
             id: stepId,
             order: (customSteps?.length ?? 0) + index,
             meta: {
@@ -170,7 +175,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 addon: transactionStepAddon[stepId],
             },
         }));
-    }, [transactionStepActions, transactionStepStates, transactionStepAddon, customSteps, t]);
+    }, [transactionType, customSteps?.length, t, transactionStepStates, transactionStepActions, transactionStepAddon]);
 
     useEffect(() => {
         const { state, action, auto } = activeStepInfo?.meta ?? {};
