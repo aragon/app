@@ -53,5 +53,5 @@ jobs:
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:
-      domain: "dev.app-next.aragon.org"
+      domain: "dev.app.aragon.org"
       env: "development"

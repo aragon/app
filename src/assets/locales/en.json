@@ -22,7 +22,7 @@
           "connect": "Connect"
         },
         "app": "Aragon App",
-        "auditLink": "https://github.com/aragon/osx/blob/v1.3.0/audits/AragonOSx-security-audit-report-halborn.pdf",
+        "auditLink": "https://github.com/aragon/osx/blob/main/audits/Halborn_AragonOSx_v1_4_Smart_Contract_Security_Assessment_Report_2025_01_03.pdf",
         "connect": "wants to connect to your wallet",
         "feature": {
           "permissions": "View-only permissions",
