@@ -5,15 +5,15 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
-interface INetworkListItem {
-    key: string;
-    name: string;
-    logo: string;
-    disabled?: boolean;
-    testnet?: boolean;
-}
-
 export interface ICreateDaoFormNetworkProps {}
+
+const optimismMainnet = {
+    key: 'optimism-mainnet',
+    name: 'Optimism',
+    logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
+    disabled: true,
+    testnet: false,
+};
 
 export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => {
     const { t } = useTranslations();
@@ -26,39 +26,18 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
     const testnetTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.testnetLabel') };
     const disabledTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.disabledLabel') };
 
-    const enabledNetworksListItems: INetworkListItem[] = [];
-    const disabledNetworksListItems: INetworkListItem[] = [];
-
-    for (const [key, network] of Object.entries(networkDefinitions)) {
-        const networkListItem: INetworkListItem = {
-            key,
-            name: network.name,
-            logo: network.logo,
-            testnet: network.testnet,
-            disabled: network.disabled,
-        };
-
-        if (network.disabled) {
-            disabledNetworksListItems.push(networkListItem);
-        } else {
-            enabledNetworksListItems.push(networkListItem);
-        }
-    }
-
-    disabledNetworksListItems.push({
-        key: 'optimism-mainnet',
-        name: 'Optimism',
-        logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
-        disabled: true,
-    });
+    const sortedNetworks = Object.entries({ ...networkDefinitions, optimismMainnet }).sort(
+        ([, networkA], [, networkB]) =>
+            networkA.disabled === networkB.disabled ? (networkA.testnet ? 1 : -1) : networkA.disabled ? 1 : -1,
+    );
 
     return (
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
-            {[...enabledNetworksListItems, ...disabledNetworksListItems].map((networkListData) => (
+            {sortedNetworks.map(([key, networkListData]) => (
                 <RadioCard
+                    key={key}
                     tag={networkListData.disabled ? disabledTag : networkListData.testnet ? testnetTag : undefined}
-                    key={networkListData.key}
-                    value={networkListData.key}
+                    value={key}
                     label={networkListData.name}
                     disabled={networkListData.disabled}
                     avatar={networkListData.logo}
