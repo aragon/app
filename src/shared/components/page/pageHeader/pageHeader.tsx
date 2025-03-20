@@ -47,15 +47,19 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                 {breadcrumbs && <Breadcrumbs links={breadcrumbs} tag={breadcrumbsTag} />}
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
                     <div className="flex w-full flex-col">
-                        <Heading size="h1">{title}</Heading>
-                        <Collapsible
-                            buttonLabelClosed={t('app.shared.page.header.readMore')}
-                            buttonLabelOpened={t('app.shared.page.header.readLess')}
-                            customCollapsedHeight={48}
-                            className="text-neutral-500"
-                        >
-                            {description}
-                        </Collapsible>
+                        <div className="flex flex-col gap-y-2 md:gap-y-3">
+                            <Heading size="h1">{title}</Heading>
+                            {description && (
+                                <Collapsible
+                                    buttonLabelClosed={t('app.shared.page.header.readMore')}
+                                    buttonLabelOpened={t('app.shared.page.header.readLess')}
+                                    customCollapsedHeight={48}
+                                    className="text-neutral-500"
+                                >
+                                    {description}
+                                </Collapsible>
+                            )}
+                        </div>
                         {stats != null && stats.length > 0 && (
                             <div className="flex flex-row gap-6 py-4 lg:gap-10 xl:gap-16">
                                 {stats.map((stat) => (
