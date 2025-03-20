@@ -66,18 +66,16 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
     return (
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
             {[...enabledNetworksListData, ...futureNetworksListData, ...disabledNetworksListData].map(
-                (networkListData) => {
-                    return (
-                        <RadioCard
-                            tag={getNetworkTag(networkListData)}
-                            key={networkListData.key}
-                            value={networkListData.key}
-                            label={networkListData.name}
-                            disabled={networkListData.disabled}
-                            avatar={networkListData.logo}
-                        />
-                    );
-                },
+                (networkListData) => (
+                    <RadioCard
+                        tag={getNetworkTag(networkListData)}
+                        key={networkListData.key}
+                        value={networkListData.key}
+                        label={networkListData.name}
+                        disabled={networkListData.disabled}
+                        avatar={networkListData.logo}
+                    />
+                ),
             )}
         </RadioGroup>
     );
