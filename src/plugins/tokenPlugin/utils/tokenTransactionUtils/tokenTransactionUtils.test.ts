@@ -101,7 +101,7 @@ describe('tokenTransaction utils', () => {
                 votingSettingsMock,
                 { addr: zeroAddress, name: '', symbol: '' },
                 { amounts: [], receivers: [] },
-                { operation: 1, target: zeroAddress },
+                { operation: 1, target: '0x56ce4D8006292Abf418291FaE813C1E3769240A4' },
                 BigInt(0),
                 metadataCid,
             ]);
