@@ -89,6 +89,7 @@ __metadata:
     lint-staged: "npm:^15.4.3"
     luxon: "npm:^3.5.0"
     next: "npm:^15.2.1"
+    nextjs-toploader: "npm:^3.7.15"
     postcss: "npm:^8.5.3"
     prettier: "npm:^3.5.3"
     prettier-plugin-organize-imports: "npm:^4.1.0"
@@ -12985,6 +12986,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nextjs-toploader@npm:^3.7.15":
+  version: 3.7.15
+  resolution: "nextjs-toploader@npm:3.7.15"
+  dependencies:
+    nprogress: "npm:^0.2.0"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    next: ">= 6.0.0"
+    react: ">= 16.0.0"
+    react-dom: ">= 16.0.0"
+  checksum: 10c0/0ef7bd5ae034b1bb4ef05c68bd7808e311b9eaa26d8b33582f414708a852b5d2ad4dfc2291c07e5863f131a1e086ba485eef9df1fe21a727dd550dc699800ceb
+  languageName: node
+  linkType: hard
+
 "node-addon-api@npm:^2.0.0":
   version: 2.0.2
   resolution: "node-addon-api@npm:2.0.2"
@@ -13155,6 +13170,13 @@ __metadata:
   dependencies:
     path-key: "npm:^4.0.0"
   checksum: 10c0/124df74820c40c2eb9a8612a254ea1d557ddfab1581c3e751f825e3e366d9f00b0d76a3c94ecd8398e7f3eee193018622677e95816e8491f0797b21e30b2deba
+  languageName: node
+  linkType: hard
+
+"nprogress@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "nprogress@npm:0.2.0"
+  checksum: 10c0/eab9a923a1ad1eed71a455ecfbc358442dd9bcd71b9fa3fa1c67eddf5159360b182c218f76fca320c97541a1b45e19ced04e6dcb044a662244c5419f8ae9e821
   languageName: node
   linkType: hard
 
