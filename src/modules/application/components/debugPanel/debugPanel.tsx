@@ -36,6 +36,7 @@ export const DebugPanel: React.FC = () => {
 
     useEffect(() => {
         registerControl({ name: 'displayKeys', type: 'boolean', label: 'Display keys' });
+        registerControl({ name: 'highlightSlot', type: 'boolean', label: 'Highlight slots' });
     }, [registerControl]);
 
     useEffect(() => {
