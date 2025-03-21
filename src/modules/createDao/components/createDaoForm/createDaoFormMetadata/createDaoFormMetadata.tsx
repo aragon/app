@@ -14,7 +14,7 @@ export interface ICreateDaoFormMetadataProps {
 
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
-const maxAvatarFileSize = 3 * 1024 * 1024; // 3 MB in bytes
+const maxAvatarFileSize = 1 * 1024 * 1024; // 1 MB in bytes
 const maxAvatarDimension = 1024;
 
 export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
