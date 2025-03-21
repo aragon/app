@@ -33,7 +33,7 @@ export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (pro
     const LoadedComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId });
 
     return (
-        <div className={classNames('relative border-primary-400', { border: highlightSlots })}>
+        <div className={classNames('relative rounded border-primary-400', { border: highlightSlots })}>
             {highlightSlots && (
                 <p className="absolute -top-6 right-0 text-neutral-500">
                     {slotId} / {pluginId}
