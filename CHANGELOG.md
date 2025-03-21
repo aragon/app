@@ -1,5 +1,15 @@
 # @aragon/app-next
 
+## 1.0.1
+
+### Patch Changes
+
+- [#439](https://github.com/aragon/app-next/pull/439) [`a88f690`](https://github.com/aragon/app-next/commit/a88f690dad88f373498f77b5bbc0f55c36713e61) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Open DAO links on a new page
+
+- [#439](https://github.com/aragon/app-next/pull/439) [`a88f690`](https://github.com/aragon/app-next/commit/a88f690dad88f373498f77b5bbc0f55c36713e61) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update gov-ui-kit library to fix bug when changing order of proposal actions
+
+- [#439](https://github.com/aragon/app-next/pull/439) [`a88f690`](https://github.com/aragon/app-next/commit/a88f690dad88f373498f77b5bbc0f55c36713e61) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Reduce max image size of DAO avatar on create-dao form
+
 ## 1.0.0
 
 ### Major Changes
