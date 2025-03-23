@@ -14,17 +14,6 @@ import { useAutocompleteProps } from './useAutocompleteProps';
 
 const ungroupedKey = '_ungrouped';
 
-// TODO: Object.groupBy is supported on Node v21, update code to use Object.groupBy and update engines.node version to 22 (APP-3603)
-const groupBy = <TItem extends object>(iterable: TItem[], fn: (item: TItem) => string | number) => {
-    return [...iterable].reduce<Record<string, TItem[]>>((groups, curr) => {
-        const key = fn(curr);
-        const group = groups[key] ?? [];
-        group.push(curr);
-
-        return { ...groups, [key]: group };
-    }, {});
-};
-
 export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInputProps>((props, ref) => {
     const {
         items,
@@ -111,7 +100,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
         .sort((itemOne, itemTwo) => (!itemTwo.groupId ? 1 : !itemOne.groupId ? -1 : 0))
         .map((item, index) => ({ ...item, index }));
 
-    const groupedItems = groupBy(processedItems, (item) => item.groupId ?? ungroupedKey);
+    const groupedItems = Object.groupBy(processedItems, (item) => item.groupId ?? ungroupedKey);
 
     const isBottomPlacement = context.placement === 'bottom';
 
@@ -142,7 +131,7 @@ export const AutocompleteInput = forwardRef<HTMLInputElement, IAutocompleteInput
             >
                 {Object.keys(groupedItems).map((groupId) => (
                     <AutocompleteInputGroup key={groupId} group={getGroupById(groupId)}>
-                        {groupedItems[groupId].map((item) => (
+                        {groupedItems[groupId]?.map((item) => (
                             <AutocompleteInputItem
                                 key={item.id}
                                 isActive={activeIndex === item.index}
