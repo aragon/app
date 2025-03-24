@@ -2,6 +2,7 @@ import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { translations } from '@/shared/constants/translations';
 import '@aragon/gov-ui-kit/index.css';
 import { headers } from 'next/headers';
+import NextTopLoader from 'nextjs-toploader';
 import type { ReactNode } from 'react';
 import { cookieToInitialState } from 'wagmi';
 import { ErrorBoundary } from '../../errorBoundary';
@@ -27,6 +28,13 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     return (
         <html lang="en" className="h-full">
             <body className="flex h-full flex-col bg-neutral-50">
+                <NextTopLoader
+                    color="var(--guk-color-primary-400)"
+                    height={4}
+                    showSpinner={false}
+                    easing="ease-in-out"
+                    shadow="0 1px 3px 0 #003BF510, 0 1px 2px -1px #003BF510"
+                />
                 <Providers translations={translationAssets} wagmiInitialState={wagmiInitialState}>
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>

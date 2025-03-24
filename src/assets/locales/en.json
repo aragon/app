@@ -22,7 +22,7 @@
           "connect": "Connect"
         },
         "app": "Aragon App",
-        "auditLink": "https://github.com/aragon/osx/blob/v1.3.0/audits/AragonOSx-security-audit-report-halborn.pdf",
+        "auditLink": "https://github.com/aragon/osx/blob/main/audits/Halborn_AragonOSx_v1_4_Smart_Contract_Security_Assessment_Report_2025_01_03.pdf",
         "connect": "wants to connect to your wallet",
         "feature": {
           "permissions": "View-only permissions",
@@ -108,13 +108,13 @@
           "avatar": {
             "error": {
               "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, GIF).",
-              "file-too-large": "The file size exceeds the maximum allowed limit of 3 MB.",
+              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
               "square-only": "The image must be square. Upload a square image.",
               "too-many-files": "Only one file can be uploaded at a time.",
               "unknown-file-error": "Unable to upload image",
               "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
             },
-            "helpText": "JPG, PNG, or GIF of no more than 3 MB and less than 1024x1024px.",
+            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
             "label": "Logo"
           },
           "description": {
@@ -129,6 +129,7 @@
           }
         },
         "network": {
+          "disabledLabel": "Soon",
           "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select chain",
           "testnetLabel": "Testnet"

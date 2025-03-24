@@ -17,7 +17,7 @@ inputs:
   node-version:
     description: "The version of Node.js to use for the workflow"
     required: false
-    default: "20"
+    default: "22"
   node-cache:
     description: "Specifies which package manager to use for caching"
     required: false

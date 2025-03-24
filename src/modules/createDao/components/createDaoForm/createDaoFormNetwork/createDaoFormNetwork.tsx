@@ -7,6 +7,14 @@ import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormNetworkProps {}
 
+const optimismMainnet = {
+    name: 'Optimism',
+    logo: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
+    disabled: true,
+    testnet: false,
+    order: 7,
+};
+
 export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => {
     const { t } = useTranslations();
 
@@ -16,16 +24,22 @@ export const CreateDaoFormNetwork: React.FC<ICreateDaoFormNetworkProps> = () => 
     });
 
     const testnetTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.testnetLabel') };
+    const disabledTag = { variant: 'info' as const, label: t('app.createDao.createDaoForm.network.disabledLabel') };
+
+    const sortedNetworks = Object.entries({ ...networkDefinitions, 'optimism-mainnet': optimismMainnet }).sort(
+        ([, networkA], [, networkB]) => networkA.order - networkB.order,
+    );
 
     return (
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
-            {Object.entries(networkDefinitions).map(([key, network]) => (
+            {sortedNetworks.map(([key, networkListData]) => (
                 <RadioCard
-                    tag={network.testnet ? testnetTag : undefined}
                     key={key}
+                    tag={networkListData.disabled ? disabledTag : networkListData.testnet ? testnetTag : undefined}
                     value={key}
-                    label={network.name}
-                    avatar={network.logo}
+                    label={networkListData.name}
+                    disabled={networkListData.disabled}
+                    avatar={networkListData.logo}
                 />
             ))}
         </RadioGroup>

@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Setup
         uses: aragon/app-next/.github/actions/setup@main
+        with:
+          node-version: 22
       - name: Restore NextJs cache
         uses: actions/cache@v4.2.2
         with:
