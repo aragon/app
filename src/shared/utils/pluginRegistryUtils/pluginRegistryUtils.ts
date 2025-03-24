@@ -76,6 +76,7 @@ export class PluginRegistryUtils {
         slotComponents: {},
         slotFunctions: {},
     };
+
     registerPlugin = (plugin: IPlugin): this => {
         this.pluginRegistry.plugins.push(plugin);
 
