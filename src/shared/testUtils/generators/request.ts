@@ -1,4 +1,4 @@
-export const generateRequest = (request?: Partial<Request>): Request & { bytes: unknown } => ({
+export const generateRequest = (request?: Partial<Request>): Request => ({
     cache: 'default',
     credentials: 'omit',
     destination: '',
@@ -20,7 +20,6 @@ export const generateRequest = (request?: Partial<Request>): Request & { bytes: 
     formData: jest.fn(),
     json: jest.fn(),
     text: jest.fn(),
-    // TODO tsc command is failing without the "bytes" attribute after update to typescript@5.7.2
     bytes: jest.fn(),
     ...request,
 });

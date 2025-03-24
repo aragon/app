@@ -8,12 +8,12 @@ const legacyNetworkMap: Partial<Record<Network, string>> = {
     [Network.POLYGON_MAINNET]: 'polygon',
     [Network.BASE_MAINNET]: 'base',
     [Network.ARBITRUM_MAINNET]: 'arbitrum',
-    [Network.ZKSYNC_MAINNET]: 'zksync',
+    [Network.ZKSYNC_MAINNET]: 'zksyncMainnet',
     [Network.ZKSYNC_SEPOLIA]: 'zksepolia',
 };
 
 const getLegacyUrl = (dao?: IDao): string | null => {
-    const baseUrl = 'https://app.aragon.org';
+    const baseUrl = 'https://app-legacy.aragon.org';
 
     // If no DAO is provided, use the explore page
     if (!dao) {

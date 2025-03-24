@@ -1,4 +1,4 @@
-export const generateResponse = (response?: Partial<Response>): Response & { bytes: unknown } => ({
+export const generateResponse = (response?: Partial<Response>): Response => ({
     headers: {
         append: jest.fn(),
         delete: jest.fn(),
@@ -26,7 +26,6 @@ export const generateResponse = (response?: Partial<Response>): Response & { byt
     formData: jest.fn(),
     text: jest.fn(),
     json: jest.fn(),
-    // TODO tsc command is failing without the "bytes" attribute after update to typescript@5.7.2
     bytes: jest.fn(),
     ...response,
 });

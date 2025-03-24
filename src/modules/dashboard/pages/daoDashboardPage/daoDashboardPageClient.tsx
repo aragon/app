@@ -152,7 +152,13 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             className="flex flex-col gap-4"
                         >
                             {dao.links.map(({ url, name }) => (
-                                <Link key={url} iconRight={IconType.LINK_EXTERNAL} description={url} href={url}>
+                                <Link
+                                    key={url}
+                                    iconRight={IconType.LINK_EXTERNAL}
+                                    description={url}
+                                    href={url}
+                                    target="_blank"
+                                >
                                     {name}
                                 </Link>
                             ))}

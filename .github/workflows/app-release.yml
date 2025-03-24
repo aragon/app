@@ -19,6 +19,7 @@ jobs:
         uses: aragon/app-next/.github/actions/setup@main
         with:
           token: ${{ secrets.ARABOT_PAT }}
+          node-version: 22
       - name: Setup Git config
         run: |
           git config --global user.name "Arabot-1"
