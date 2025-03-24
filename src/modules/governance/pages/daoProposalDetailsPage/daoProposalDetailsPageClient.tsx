@@ -175,7 +175,7 @@ export const DaoProposalDetailsPageClient: React.FC<IDaoProposalDetailsPageClien
                                     href={creationBlockLink}
                                     target="_blank"
                                     iconRight={IconType.LINK_EXTERNAL}
-                                    className="first-letter:capitalize"
+                                    textClassName="first-letter:capitalize"
                                 >
                                     {formattedCreationDate}
                                 </Link>
