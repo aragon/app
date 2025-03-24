@@ -10,7 +10,9 @@ import {
     TransactionDialogStep,
     type TransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';
-import type { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export interface ITransactionDialogFooterProps<TCustomStepId extends string = string> {
     /**
@@ -59,6 +61,17 @@ const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, txRecei
     return txReceipt ? successHref(txReceipt) : undefined;
 };
 
+const getRouteByTransactionType = (type?: TransactionType) => {
+    switch (type) {
+        case TransactionType.DAO_CREATE:
+            return '/';
+        case TransactionType.PROPOSAL_CREATE:
+            return '/proposals';
+        default:
+            return '/dashboard';
+    }
+};
+
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
@@ -70,6 +83,26 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const { close } = useDialogContext();
     const { t } = useTranslations();
+    const router = useRouter();
+
+    const isIndexing = stepId === TransactionDialogStep.INDEXING;
+
+    const [showProceedAnyway, setShowProceedAnyway] = useState(false);
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (isIndexing && state === 'pending') {
+            timer = setTimeout(() => {
+                setShowProceedAnyway(true);
+            }, 8000);
+        } else {
+            setShowProceedAnyway(false);
+        }
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [isIndexing, state]);
 
     const isErrorState = state === 'error';
     const isSuccessState = state === 'success';
@@ -78,7 +111,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const successStep = transactionType ? TransactionDialogStep.INDEXING : TransactionDialogStep.CONFIRM;
 
     const displaySuccessLink = stepId === successStep && isSuccessState;
-    const isCancelDisabled = stepId === successStep && (isSuccessState || isPendingState);
+    const isCancelDisabled = stepId === successStep && (isSuccessState || isPendingState) && !showProceedAnyway;
 
     const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
     const defaultSubmitLabel = isErrorState
@@ -103,8 +136,25 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         onCancelClick?.();
     };
 
+    const handleProceedAnyway = () => {
+        close();
+        onCancelClick?.();
+
+        const route = getRouteByTransactionType(transactionType);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        router.push(route as any);
+    };
+
     const processedSuccessLink =
         displaySuccessLink && successHref ? buildSuccessLink(successHref, txReceipt) : undefined;
+
+    // The cancel button becomes "Proceed anyway" during indexing after 8 seconds
+    // and navigates the user to a different page based on transaction type
+    const cancelButtonLabel = showProceedAnyway
+        ? t('app.shared.transactionDialog.footer.proceedAnyway')
+        : t('app.shared.transactionDialog.footer.cancel');
+
+    const onCancelAction = isIndexing && showProceedAnyway ? handleProceedAnyway : handleCancelClick;
 
     return (
         <DialogFooter
@@ -116,8 +166,8 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
                 href: processedSuccessLink,
             }}
             secondaryAction={{
-                label: t('app.shared.transactionDialog.footer.cancel'),
-                onClick: handleCancelClick,
+                label: cancelButtonLabel,
+                onClick: onCancelAction,
                 disabled: isCancelDisabled,
             }}
         />

@@ -1544,6 +1544,7 @@
             "pending": "Awaiting approval"
           },
           "cancel": "Cancel",
+          "proceedAnyway": "Proceed anyway",
           "retry": "Retry"
         },
         "step": {
@@ -1559,7 +1560,7 @@
           },
           "INDEXING": {
             "errorLabel": "Indexing failed",
-            "label": "Indexing"
+            "label": "Index onchain data"
           },
           "PREPARE": {
             "errorLabel": "Unable to prepare transaction",
