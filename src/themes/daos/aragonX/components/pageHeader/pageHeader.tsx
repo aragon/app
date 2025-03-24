@@ -65,16 +65,18 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
             />
             <Container className="flex w-full flex-col gap-6">
                 <div className="flex min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
-                    <div className="flex w-full flex-col gap-y-10 pb-4 pt-10 md:py-16">
-                        <div className="flex flex-col gap-y-3">
-                            <h1 className="text-[56px] !text-neutral-0">{title}</h1>
-                            <p className="text-neutral-0">{description}</p>
+                    <div className="flex w-full flex-col gap-y-6 pb-4 pt-10 md:gap-y-10 md:py-16">
+                        <div className="flex flex-col gap-y-2 md:gap-y-3">
+                            <h1 className="text-3xl font-normal leading-tight text-neutral-0 md:text-5xl">{title}</h1>
+                            <p className="max-w-screen-md text-base font-normal leading-normal text-neutral-0 md:text-xl">
+                                {description}
+                            </p>
                         </div>
-                        <div className="flex w-full flex-col-reverse md:flex-row md:items-center md:justify-between">
+                        <div className="flex w-full flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                             <Button className="w-full md:max-w-fit" iconLeft={IconType.PLUS} onClick={handleCtaClick}>
                                 {t(`app.themes.${aragonX.id}.components.pageHeader.cta`)}
                             </Button>
-                            <div className="flex flex-row gap-6 py-4 lg:gap-10 xl:gap-16">
+                            <div className="flex flex-row gap-10 md:gap-12">
                                 {stats.map((stat) => (
                                     <PageHeaderStat key={stat.label} {...stat} />
                                 ))}

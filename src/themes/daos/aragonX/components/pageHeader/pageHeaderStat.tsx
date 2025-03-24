@@ -24,12 +24,15 @@ export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
     const parsedValue = value ?? 0;
 
     return (
-        <div className={classNames('flex flex-col gap-1 font-normal leading-tight', className)} {...otherProps}>
-            <div className="flex flex-row items-baseline gap-1">
-                <p className="text-2xl text-neutral-0 md:text-4xl">{parsedValue}</p>
-                {suffix && <p className="text-base text-neutral-0">{suffix}</p>}
+        <div
+            className={classNames('flex flex-col gap-1 font-normal leading-tight text-neutral-0', className)}
+            {...otherProps}
+        >
+            <div className="flex flex-row items-baseline gap-1 leading-tight">
+                <p className="text-2xl md:text-4xl">{parsedValue}</p>
+                {suffix && <p className="text-base md:text-lg">{suffix}</p>}
             </div>
-            <p className="text-base text-neutral-0">{label}</p>
+            <p className="text-base md:text-lg">{label}</p>
         </div>
     );
 };
