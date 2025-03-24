@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import type { IDao } from '@/shared/api/daoService';
+import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
@@ -9,8 +10,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
 import AragonXHeader from '../../../../../assets/images/aragon-x-header.jpg';
-import { Container } from '../../../../../shared/components/container';
 import { PageHeaderStat } from './pageHeaderStat';
+
 export interface IPageHeaderProps extends ComponentProps<'header'> {
     dao: IDao;
 }
