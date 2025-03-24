@@ -4,6 +4,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { aragonX } from '@/themes/daos/constants/daos';
 import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
@@ -71,9 +72,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                         </div>
                         <div className="flex w-full flex-col-reverse md:flex-row md:items-center md:justify-between">
                             <Button className="w-full md:max-w-fit" iconLeft={IconType.PLUS} onClick={handleCtaClick}>
-                                {t(
-                                    'app.themes.ethereum-mainnet-0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722.components.pageHeader.cta',
-                                )}
+                                {t(`app.themes.${aragonX.id}.components.pageHeader.cta`)}
                             </Button>
                             <div className="flex flex-row gap-6 py-4 lg:gap-10 xl:gap-16">
                                 {stats.map((stat) => (

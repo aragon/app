@@ -1610,6 +1610,7 @@
     },
     "themes": {
       "ethereum-mainnet-0xDafBD7d63CEe88d73a51592b42f27f7FD6ab7722": {
+        "_name" : "Aragon X",
         "components": {
           "pageHeader": {
             "cta": "Create proposal"
