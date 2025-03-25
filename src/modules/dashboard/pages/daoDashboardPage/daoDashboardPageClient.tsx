@@ -176,7 +176,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </DefinitionList.Item>
                             {daoEns != null && (
                                 <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
-                                    <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
+                                    <Link
+                                        iconRight={IconType.LINK_EXTERNAL}
+                                        href={daoAddressLink}
+                                        target="_blank"
+                                        className="max-w-full"
+                                    >
                                         {daoEns}
                                     </Link>
                                 </DefinitionList.Item>

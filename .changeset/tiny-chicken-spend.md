@@ -2,5 +2,5 @@
 '@aragon/app-next': patch
 ---
 
-Implement UX improvements including header alignment, external links, text adjust ments, data list page sizes, and
-dashboard sections order
+Improve UX with heading tweaks, external link behavior, larger data list page sizes, dashboard reordering, GovKit 1.0.72
+update, and minor fixes
