@@ -44,6 +44,10 @@ export interface ITransactionDialogFooterProps<TCustomStepId extends string = st
      * Type of the transaction to determine whether or not to show the indexing step.
      */
     transactionType?: TransactionType;
+    /**
+     * ID of the DAO
+     */
+    daoId?: string;
 }
 
 const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record<TransactionStatusState, string>>>> = {
@@ -62,21 +66,24 @@ const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, txRecei
     return txReceipt ? successHref(txReceipt) : undefined;
 };
 
-const getFallbackRouteByTransactionType = (type?: TransactionType) => {
+const getFallbackRouteByTransactionType = (type?: TransactionType, daoId?: string) => {
+    if (!daoId) {
+        return '/';
+    }
     switch (type) {
         case TransactionType.DAO_CREATE:
             return '/';
         case TransactionType.PROPOSAL_CREATE:
-            return '/proposals';
+            return `/dao/${daoId}/proposals`;
         default:
-            return '/dashboard';
+            return `dao/${daoId}/dashboard`;
     }
 };
 
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
-    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick, transactionType } = props;
+    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick, transactionType, daoId } = props;
 
     const { label: successLabel, href: successHref, onClick: successOnClick } = successLink;
     const { id: stepId, meta } = activeStep ?? {};
@@ -141,7 +148,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         close();
         onCancelClick?.();
 
-        const route = getFallbackRouteByTransactionType(transactionType);
+        const route = getFallbackRouteByTransactionType(transactionType, daoId);
         router.push(route as Route);
     };
 

@@ -29,6 +29,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         onSuccess,
         network = Network.ETHEREUM_MAINNET,
         transactionType,
+        daoId,
     } = props;
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
@@ -105,7 +106,6 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     }, [refetchTransactionStatus]);
 
     const approveStepAction = requiredChainId === chainId ? handleSendTransaction : handleSwitchNetwork;
-
     const transactionStepActions: Record<TransactionDialogStep, () => void> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
@@ -117,25 +117,16 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     );
 
     const approveStepStatus = chainId === requiredChainId ? approveTransactionStatus : switchChainStatus;
+    const isIndexing = activeStep === TransactionDialogStep.INDEXING;
+    const indexingStepStatus = transactionStatus?.isProcessed ? 'success' : isIndexing ? 'pending' : 'idle';
     const transactionStepStates: Record<TransactionDialogStep, TransactionStatusState> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionStatus,
             [TransactionDialogStep.APPROVE]: approveStepStatus,
             [TransactionDialogStep.CONFIRM]: transactionDialogUtils.queryToStepState(waitTxStatus, waitTxFetchStatus),
-            [TransactionDialogStep.INDEXING]: transactionStatus?.isProcessed
-                ? 'success'
-                : activeStep === TransactionDialogStep.INDEXING
-                  ? 'pending'
-                  : 'idle',
+            [TransactionDialogStep.INDEXING]: indexingStepStatus,
         }),
-        [
-            prepareTransactionStatus,
-            approveStepStatus,
-            waitTxStatus,
-            waitTxFetchStatus,
-            transactionStatus?.isProcessed,
-            activeStep,
-        ],
+        [prepareTransactionStatus, approveStepStatus, waitTxStatus, waitTxFetchStatus, indexingStepStatus],
     );
 
     const transactionStepAddon: Record<TransactionDialogStep, ITransactionStatusStepMetaAddon | undefined> = useMemo(
@@ -176,7 +167,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 addon: transactionStepAddon[stepId],
             },
         }));
-    }, [transactionType, customSteps?.length, t, transactionStepStates, transactionStepActions, transactionStepAddon]);
+    }, [transactionType, customSteps, t, transactionStepStates, transactionStepActions, transactionStepAddon]);
 
     useEffect(() => {
         const { state, action, auto } = activeStepInfo?.meta ?? {};
@@ -230,6 +221,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 onError={handleTransactionError(activeStepInfo?.id)}
                 onCancelClick={onCancelClick}
                 transactionType={transactionType}
+                daoId={daoId}
             />
         </>
     );

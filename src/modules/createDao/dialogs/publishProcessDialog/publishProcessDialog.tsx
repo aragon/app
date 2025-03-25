@@ -122,6 +122,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
             transactionType={TransactionType.PROPOSAL_CREATE}
+            daoId={daoId}
         />
     );
 };

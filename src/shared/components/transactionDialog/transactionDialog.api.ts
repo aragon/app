@@ -107,4 +107,8 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      * Type of the transaction to determine whether or not to show the indexing step.
      */
     transactionType?: TransactionType;
+    /**
+     * ID of the dao
+     */
+    daoId?: string;
 }

@@ -198,7 +198,7 @@ describe('<TransactionDialogFooter /> component', () => {
 
         it('navigates to the proposals page when type is PROPOSAL_CREATE', () => {
             const close = jest.fn();
-            const onCancelClick = jest.fn();
+            const daoId = 'test-dao-proposal';
 
             useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
 
@@ -210,8 +210,8 @@ describe('<TransactionDialogFooter /> component', () => {
             render(
                 createTestComponent({
                     activeStep,
-                    onCancelClick,
                     transactionType: TransactionType.PROPOSAL_CREATE,
+                    daoId,
                 }),
             );
 
@@ -226,11 +226,12 @@ describe('<TransactionDialogFooter /> component', () => {
             });
 
             expect(close).toHaveBeenCalled();
-            expect(mockRouterPush).toHaveBeenCalledWith('/proposals');
+            expect(mockRouterPush).toHaveBeenCalledWith(`/dao/${daoId}/proposals`);
         });
 
         it('navigates to the explore page when type is DAO_CREATE', () => {
             const close = jest.fn();
+            const daoId = 'test-dao-proposal';
 
             useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
 
@@ -243,6 +244,7 @@ describe('<TransactionDialogFooter /> component', () => {
                 createTestComponent({
                     activeStep,
                     transactionType: TransactionType.DAO_CREATE,
+                    daoId,
                 }),
             );
 
@@ -257,7 +259,7 @@ describe('<TransactionDialogFooter /> component', () => {
             });
 
             expect(close).toHaveBeenCalled();
-            expect(mockRouterPush).toHaveBeenCalledWith('/');
+            expect(mockRouterPush).toHaveBeenCalledWith(`/`);
         });
     });
 });
