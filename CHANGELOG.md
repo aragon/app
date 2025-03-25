@@ -1,5 +1,93 @@
 # @aragon/app-next
 
+## 1.0.1
+
+### Patch Changes
+
+- [#439](https://github.com/aragon/app-next/pull/439) [`a88f690`](https://github.com/aragon/app-next/commit/a88f690dad88f373498f77b5bbc0f55c36713e61) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Open DAO links on a new page
+
+- [#439](https://github.com/aragon/app-next/pull/439) [`a88f690`](https://github.com/aragon/app-next/commit/a88f690dad88f373498f77b5bbc0f55c36713e61) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update gov-ui-kit library to fix bug when changing order of proposal actions
+
+- [#439](https://github.com/aragon/app-next/pull/439) [`a88f690`](https://github.com/aragon/app-next/commit/a88f690dad88f373498f77b5bbc0f55c36713e61) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Reduce max image size of DAO avatar on create-dao form
+
+## 1.0.0
+
+### Major Changes
+
+- [#406](https://github.com/aragon/app-next/pull/406) [`195eba1`](https://github.com/aragon/app-next/commit/195eba107564b52008db0bc7130310285c50b440) Thanks [@shan8851](https://github.com/shan8851)! - Update app branding and version display
+
+### Minor Changes
+
+- [#392](https://github.com/aragon/app-next/pull/392) [`8d80a64`](https://github.com/aragon/app-next/commit/8d80a641ef0a255f56755193ff217f0f5df4c34b) Thanks [@shan8851](https://github.com/shan8851)! - Implement manage admins flow and introduce new AddressesInput component
+
+- [#379](https://github.com/aragon/app-next/pull/379) [`3caf174`](https://github.com/aragon/app-next/commit/3caf174330c4db739126f3bef0f57eee0aff3afb) Thanks [@evanaronson](https://github.com/evanaronson)! - Refactor of proposal status utility to fix an issue where active proposals were being marked as rejected
+
+- [#416](https://github.com/aragon/app-next/pull/416) [`a87e931`](https://github.com/aragon/app-next/commit/a87e931031fba87a0e13d6cea5f98753c5157fc3) Thanks [@evanaronson](https://github.com/evanaronson)! - Add production Sepolia and Peaq OSx contract addresses and versions
+
+- [#428](https://github.com/aragon/app-next/pull/428) [`b28abfa`](https://github.com/aragon/app-next/commit/b28abfa0637317b925d174d385092d9e8d26da2b) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Add contract addresses for Arbitrum mainnet
+
+- [#422](https://github.com/aragon/app-next/pull/422) [`be5cba7`](https://github.com/aragon/app-next/commit/be5cba7a50f82086158920a24d29a1281ab8bb53) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update workflows and configs to use production domains
+
+- [#388](https://github.com/aragon/app-next/pull/388) [`e01ebb6`](https://github.com/aragon/app-next/commit/e01ebb6039bd70306f7f24fa53064c9e351fa1e2) Thanks [@milosh86](https://github.com/milosh86)! - Implement explore page new design with DAO search functionality
+
+- [#395](https://github.com/aragon/app-next/pull/395) [`28e5cf0`](https://github.com/aragon/app-next/commit/28e5cf06a9f452f73616196204986867bb0d0f62) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Implement token wrap and unwrap feature
+
+- [#433](https://github.com/aragon/app-next/pull/433) [`c09e6b3`](https://github.com/aragon/app-next/commit/c09e6b38168ac6a169d2ae29ef5053da1bcb4508) Thanks [@milosh86](https://github.com/milosh86)! - Disable unsupported networks and add "Soon" tag
+
+- [#390](https://github.com/aragon/app-next/pull/390) [`f6c192d`](https://github.com/aragon/app-next/commit/f6c192de169a78e5ee8334dfba3569adb79c1abe) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update integration of E2E tests
+
+- [#426](https://github.com/aragon/app-next/pull/426) [`b38f03a`](https://github.com/aragon/app-next/commit/b38f03a5e17ac9904238056cdd417b29831fffab) Thanks [@evanaronson](https://github.com/evanaronson)! - Add ZKsync Sepolia OSx contract addresses
+
+- [#410](https://github.com/aragon/app-next/pull/410) [`cfe2208`](https://github.com/aragon/app-next/commit/cfe2208f35e65542a7500ab24b6e049f37addac0) Thanks [@dependabot](https://github.com/apps/dependabot)! - Bump @babel dependencies to fix Dependabot alerts
+
+- [#430](https://github.com/aragon/app-next/pull/430) [`3e32c3d`](https://github.com/aragon/app-next/commit/3e32c3d69b2d7e01f031cbfa3a0d116ed68eaeea) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add contract addresses for remaining chains
+
+- [#385](https://github.com/aragon/app-next/pull/385) [`c6c3f65`](https://github.com/aragon/app-next/commit/c6c3f6597b74eaea0af83002809e516ba2c69d39) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch NPM dependencies
+
+- [#411](https://github.com/aragon/app-next/pull/411) [`5e03398`](https://github.com/aragon/app-next/commit/5e033981ef0c42a093eda93743235f98a5bf8623) Thanks [@shan8851](https://github.com/shan8851)! - Implement EFP social graph info on member profiles
+
+- [#399](https://github.com/aragon/app-next/pull/399) [`00089c6`](https://github.com/aragon/app-next/commit/00089c6f4a36ed63d2f5df0481d4c4838cbad7e2) Thanks [@milosh86](https://github.com/milosh86)! - Implement featured DAOs carousel on the Explore page
+
+- [#387](https://github.com/aragon/app-next/pull/387) [`38952f8`](https://github.com/aragon/app-next/commit/38952f84bae3baf40959f78b94b7eca3410e187c) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update minor and patch Github action dependencies
+
+- [#384](https://github.com/aragon/app-next/pull/384) [`b7b9856`](https://github.com/aragon/app-next/commit/b7b98563b53fda9838bb889e424ce72974963d1f) Thanks [@evanaronson](https://github.com/evanaronson)! - Update strings across whole app to match style guide
+
+### Patch Changes
+
+- [#393](https://github.com/aragon/app-next/pull/393) [`6fd1ea9`](https://github.com/aragon/app-next/commit/6fd1ea943fac474d67c85aa23ac0cbf111acd793) Thanks [@milosh86](https://github.com/milosh86)! - Fix crashes due to missing wallet connection guard
+
+- [#420](https://github.com/aragon/app-next/pull/420) [`1ccce51`](https://github.com/aragon/app-next/commit/1ccce515b5c71aef4e3a4b9963939def10d8661d) Thanks [@milosh86](https://github.com/milosh86)! - Fix token delegation submit button disabled state transitions
+
+- [#398](https://github.com/aragon/app-next/pull/398) [`cf4e8aa`](https://github.com/aragon/app-next/commit/cf4e8aaab35b213d5440e658b07596aace0c5ff2) Thanks [@milosh86](https://github.com/milosh86)! - Fix DAO filter double click crash and add showSearch flag to DaoList component
+
+- [#396](https://github.com/aragon/app-next/pull/396) [`b0e1300`](https://github.com/aragon/app-next/commit/b0e13009d2bef03987d31a89f6d1af81fe9404ed) Thanks [@milosh86](https://github.com/milosh86)! - Fix onSuccess callback bug in useConnectedWalletGuard hook
+
+- [#405](https://github.com/aragon/app-next/pull/405) [`c0fcfc5`](https://github.com/aragon/app-next/commit/c0fcfc57125144904729d47fbf37892638993026) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix parameters for uninstalling the admin plugin
+
+- [#407](https://github.com/aragon/app-next/pull/407) [`b6461bc`](https://github.com/aragon/app-next/commit/b6461bc4dbb4cb75f4035c2d5de1442123ea9fb2) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement feature flag to disable token import with help text on production environment
+
+- [#394](https://github.com/aragon/app-next/pull/394) [`67d996b`](https://github.com/aragon/app-next/commit/67d996b8e3cf409f272b559df47a0fe95fd28aa0) Thanks [@shan8851](https://github.com/shan8851)! - Add feedback link to explore page and legacy app and feedback links to dao pages.
+
+- [#391](https://github.com/aragon/app-next/pull/391) [`80c140a`](https://github.com/aragon/app-next/commit/80c140a1e2a9f79c4aae34f0bd35b6302be9f4c6) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement 'Remove all admins' flow with dialogs & guards
+
+- [#434](https://github.com/aragon/app-next/pull/434) [`71d6c15`](https://github.com/aragon/app-next/commit/71d6c15e7a7adff783d51baf0ac65cc37d6b69c7) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement NextTopLoader component to app layout
+
+- [#402](https://github.com/aragon/app-next/pull/402) [`4e60a57`](https://github.com/aragon/app-next/commit/4e60a57e27b20da1a317bd311ef2a5c6f735e0ad) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement external Octav link on FinanceDetailsList
+
+- [#421](https://github.com/aragon/app-next/pull/421) [`e1c5192`](https://github.com/aragon/app-next/commit/e1c51924bf9260248220896d7c5b83c6626ea212) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Fix open/close state of Autocomplete input, always display "add contract address" item
+
+- [#437](https://github.com/aragon/app-next/pull/437) [`ee9833b`](https://github.com/aragon/app-next/commit/ee9833b08cda475d68bb5296f93340310d5cb1b9) Thanks [@cgero-eth](https://github.com/cgero-eth)! - Update order of networks on DAO creation
+
+- [#412](https://github.com/aragon/app-next/pull/412) [`0e810ed`](https://github.com/aragon/app-next/commit/0e810ed199b269b6ebfe1177a6ab3cbd320e2e26) Thanks [@shan8851](https://github.com/shan8851)! - Add manage admins button to admin banner and update banner messaging
+
+- [#400](https://github.com/aragon/app-next/pull/400) [`d830381`](https://github.com/aragon/app-next/commit/d830381707a6d908107b6f3234cff220209b27f6) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Adjust additional localizations for launch overhaul
+
+- [#401](https://github.com/aragon/app-next/pull/401) [`db5f123`](https://github.com/aragon/app-next/commit/db5f123284457f24353e7a607965022d8a5adaf3) Thanks [@shan8851](https://github.com/shan8851)! - Update Help link in footer to support and change url to the customer service form
+
+- [#418](https://github.com/aragon/app-next/pull/418) [`62feea0`](https://github.com/aragon/app-next/commit/62feea0b08fac2635f9e32a2dc19c0ed1378d4da) Thanks [@shan8851](https://github.com/shan8851)! - Add terms and conditions agreement to wallet connect
+
+- [#397](https://github.com/aragon/app-next/pull/397) [`296b536`](https://github.com/aragon/app-next/commit/296b536b1edfae9367de3a6789342f5e6c42c6fe) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Allow unverified contracts to be added to action builder
+
 ## 0.3.0
 
 ### Minor Changes
