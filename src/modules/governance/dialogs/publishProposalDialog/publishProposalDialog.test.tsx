@@ -121,7 +121,7 @@ describe('<PublishProposalDialog /> component', () => {
         expect(screen.getByText(modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT)).toBeInTheDocument();
         expect(screen.getByText(values.title)).toBeInTheDocument();
         expect(screen.getByText(values.summary)).toBeInTheDocument();
-        expect(screen.getByText('0xD7…129A')).toBeInTheDocument();
+        expect(screen.getByText('0xD740…129A')).toBeInTheDocument();
     });
 
     it('set a custom step to pin the proposal metadata before preparing the transaction', () => {

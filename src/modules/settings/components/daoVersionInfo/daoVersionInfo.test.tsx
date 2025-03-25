@@ -57,7 +57,7 @@ describe('<DaoVersionInfo /> component', () => {
         useDaoPluginsSpy.mockReturnValue([generateTabComponentPlugin({ meta: plugin })]);
         render(createTestComponent({ dao: dao }));
 
-        const linkElement = screen.getByRole('link', { name: /daoVersionInfo.governanceValue .* 0x89…437c/ });
+        const linkElement = screen.getByRole('link', { name: /daoVersionInfo.governanceValue .* 0x899d…437c/ });
         expect(linkElement).toHaveAttribute(
             'href',
             'https://etherscan.io/address/0x899d49F22E105C2Be505FC6c19C36ABa285D437c',
