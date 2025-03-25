@@ -1,1 +1,1 @@
-export * from './useTransactionStatus'
+export * from './useTransactionStatus';

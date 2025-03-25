@@ -1,5 +1,5 @@
-import type { Network } from "../daoService";
-import type { IRequestUrlQueryParams } from "../httpService";
+import type { Network } from '../daoService';
+import type { IRequestUrlQueryParams } from '../httpService';
 
 export interface IGetTransactionStatusUrlParams {
     network: Network;
@@ -14,7 +14,8 @@ export enum TransactionType {
     PROPOSAL_EXECUTE = 'proposalExecute',
 }
 export interface IGetTransactionStatusQueryParams {
-  type: TransactionType;
+    type: TransactionType;
 }
 
-export interface IGetTransactionStatusParams extends IRequestUrlQueryParams<IGetTransactionStatusUrlParams, IGetTransactionStatusQueryParams> {}
+export interface IGetTransactionStatusParams
+    extends IRequestUrlQueryParams<IGetTransactionStatusUrlParams, IGetTransactionStatusQueryParams> {}

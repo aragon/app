@@ -1,4 +1,7 @@
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import { DialogFooter, IconType } from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useDialogContext } from '../dialogProvider';
 import { type TransactionStatusState } from '../transactionStatus';
@@ -10,9 +13,6 @@ import {
     TransactionDialogStep,
     type TransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export interface ITransactionDialogFooterProps<TCustomStepId extends string = string> {
     /**

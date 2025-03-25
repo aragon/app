@@ -1,17 +1,26 @@
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import { generateDialogContext } from '@/shared/testUtils';
 import { IconType } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { TransactionReceipt } from 'viem';
 import * as useDialogContext from '../dialogProvider';
 import { type ITransactionDialogStep, TransactionDialogStep } from './transactionDialog.api';
 import { type ITransactionDialogFooterProps, TransactionDialogFooter } from './transactionDialogFooter';
 
+const mockRouterPush = jest.fn();
+jest.mock('next/navigation', () => ({
+    useRouter: jest.fn(() => ({
+        push: mockRouterPush,
+    })),
+}));
+
 describe('<TransactionDialogFooter /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
+        mockRouterPush.mockClear();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogFooterProps>) => {
@@ -155,5 +164,100 @@ describe('<TransactionDialogFooter /> component', () => {
         render(createTestComponent({ successLink, activeStep }));
         await userEvent.click(screen.getByText(successLink.label));
         expect(close).toHaveBeenCalled();
+    });
+
+    describe('shouldProceedAnywayFeature', () => {
+        // Fake timers outside of this block causes issues with other tests
+        beforeEach(() => {
+            jest.useFakeTimers();
+        });
+
+        afterEach(() => {
+            jest.useRealTimers();
+        });
+
+        it('changes the cancel button text to "Proceed anyway" after 8 seconds in the indexing step', () => {
+            const activeStep = {
+                id: TransactionDialogStep.INDEXING,
+                meta: { state: 'pending' },
+            } as ITransactionDialogStep;
+
+            render(createTestComponent({ activeStep }));
+
+            // Cancel button is the default button
+            expect(screen.getByRole('button', { name: /transactionDialog.footer.cancel/ })).toBeInTheDocument();
+
+            // simulate 8 seconds passing
+            act(() => {
+                jest.advanceTimersByTime(8000);
+            });
+
+            // Cancel button should now be Proceed anyway
+            expect(screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
+        });
+
+        it('navigates to the proposals page when type is PROPOSAL_CREATE', () => {
+            const close = jest.fn();
+            const onCancelClick = jest.fn();
+
+            useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+
+            const activeStep = {
+                id: TransactionDialogStep.INDEXING,
+                meta: { state: 'pending' },
+            } as ITransactionDialogStep;
+
+            render(
+                createTestComponent({
+                    activeStep,
+                    onCancelClick,
+                    transactionType: TransactionType.PROPOSAL_CREATE,
+                }),
+            );
+
+            act(() => {
+                jest.advanceTimersByTime(8000);
+            });
+
+            const proceedButton = screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ });
+
+            act(() => {
+                proceedButton.click();
+            });
+
+            expect(close).toHaveBeenCalled();
+            expect(mockRouterPush).toHaveBeenCalledWith('/proposals');
+        });
+
+        it('navigates to the explore page when type is DAO_CREATE', () => {
+            const close = jest.fn();
+
+            useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+
+            const activeStep = {
+                id: TransactionDialogStep.INDEXING,
+                meta: { state: 'pending' },
+            } as ITransactionDialogStep;
+
+            render(
+                createTestComponent({
+                    activeStep,
+                    transactionType: TransactionType.DAO_CREATE,
+                }),
+            );
+
+            act(() => {
+                jest.advanceTimersByTime(8000);
+            });
+
+            const proceedButton = screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ });
+
+            act(() => {
+                proceedButton.click();
+            });
+
+            expect(close).toHaveBeenCalled();
+            expect(mockRouterPush).toHaveBeenCalledWith('/');
+        });
     });
 });

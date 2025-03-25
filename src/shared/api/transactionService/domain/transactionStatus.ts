@@ -1,4 +1,3 @@
 export interface ITransactionStatus {
-  isProcessed: boolean;
+    isProcessed: boolean;
 }
-

@@ -1,11 +1,11 @@
 import type { Network } from '@/shared/api/daoService';
+import type { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ReactNode } from 'react';
 import type { TransactionReceipt } from 'viem';
 import type { SendTransactionParameters } from 'wagmi/actions';
 import type { ITransactionStatusStepMeta } from '../transactionStatus';
-import type { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 // Return type for the prepareTransaction property of the TransactionDialog component
 export type TransactionDialogPrepareReturn = SendTransactionParameters;

@@ -1,5 +1,6 @@
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -18,7 +19,6 @@ import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import { publishProcessDialogUtils } from './publishProcessDialogUtils';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export enum PublishProcessStep {
     PIN_METADATA = 'PIN_METADATA',

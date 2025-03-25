@@ -1,3 +1,4 @@
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -13,7 +14,6 @@ import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { executeDialogUtils } from './executeDialogUtils';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export interface IExecuteDialogParams {
     /**

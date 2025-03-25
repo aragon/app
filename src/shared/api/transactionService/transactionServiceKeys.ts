@@ -1,4 +1,4 @@
-import type { IGetTransactionStatusParams } from "./transactionService.api";
+import type { IGetTransactionStatusParams } from './transactionService.api';
 
 export enum TransactionServiceKey {
     STATUS = 'STATUS',

@@ -1,4 +1,5 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogStepMeta,
@@ -14,7 +15,6 @@ import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { voteDialogUtils } from './voteDialogUtils';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export interface IVoteDialogParams {
     /**

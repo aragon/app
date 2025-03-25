@@ -1,6 +1,6 @@
-import { AragonBackendService } from "../aragonBackendService";
-import type { ITransactionStatus } from "./domain";
-import type { IGetTransactionStatusParams } from "./transactionService.api";
+import { AragonBackendService } from '../aragonBackendService';
+import type { ITransactionStatus } from './domain';
+import type { IGetTransactionStatusParams } from './transactionService.api';
 
 class TransactionService extends AragonBackendService {
     private urls = {

@@ -1,4 +1,5 @@
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import {
     TransactionDialog,
     TransactionDialogStep,
@@ -11,7 +12,6 @@ import { Dialog, ProposalDataListItem, ProposalStatus, type IDialogRootProps } f
 import { useRouter } from 'next/navigation';
 import type { ISppProposal } from '../../types';
 import { advanceStageDialogUtils } from './advanceStageDialogUtils';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export interface IAdvanceStageDialogProps extends IDialogRootProps {
     /**

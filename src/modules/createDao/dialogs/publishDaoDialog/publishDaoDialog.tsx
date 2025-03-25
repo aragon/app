@@ -1,5 +1,6 @@
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -18,7 +19,6 @@ import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export enum PublishDaoStep {
     PIN_METADATA = 'PIN_METADATA',

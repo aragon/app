@@ -1,4 +1,5 @@
 import { Network } from '@/shared/api/daoService';
+import { useTransactionStatus } from '@/shared/api/transactionService/queries';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
@@ -13,7 +14,6 @@ import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
-import { useTransactionStatus } from '@/shared/api/transactionService/queries';
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
