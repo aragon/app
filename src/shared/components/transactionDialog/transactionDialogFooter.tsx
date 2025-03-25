@@ -1,5 +1,6 @@
 import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 import { DialogFooter, IconType } from '@aragon/gov-ui-kit';
+import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
@@ -141,8 +142,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         onCancelClick?.();
 
         const route = getFallbackRouteByTransactionType(transactionType);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        router.push(route as any);
+        router.push(route as Route);
     };
 
     const processedSuccessLink =

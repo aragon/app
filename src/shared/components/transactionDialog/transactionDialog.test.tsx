@@ -113,13 +113,8 @@ describe('<TransactionDialog /> component', () => {
 
     it('excludes the indexing step when transactionType is not provided', () => {
         const updateSteps = jest.fn();
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
 
-        render(
-            createTestComponent({
-                stepper,
-            }),
-        );
+        render(createTestComponent());
 
         expect(updateSteps).not.toHaveBeenCalledWith(
             expect.arrayContaining([

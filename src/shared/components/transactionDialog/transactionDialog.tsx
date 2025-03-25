@@ -71,6 +71,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         hash: transactionHash,
     });
 
+    // Using the `!` operator here as this hook is only enabled when the transactionHash and transactionType are defined
     const indexingUrlParams = { network, transactionHash: transactionHash! };
     const indexingQueryParams = { type: transactionType! };
     const indexingParams = { urlParams: indexingUrlParams, queryParams: indexingQueryParams };
