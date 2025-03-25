@@ -10,10 +10,8 @@ class QueryClientUtils {
             return this.makeQueryClient();
         }
 
-        if (this.browserQueryClient == null) {
-            // Create new client as browser query client hasn't been initialized yet
-            this.browserQueryClient = this.makeQueryClient();
-        }
+        // Create new client as browser query client hasn't been initialized yet
+        this.browserQueryClient ??= this.makeQueryClient();
 
         return this.browserQueryClient;
     };

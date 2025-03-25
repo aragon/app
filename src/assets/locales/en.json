@@ -1540,8 +1540,8 @@
         "footer": {
           "approve": {
             "error": "Resend to wallet",
-            "idle": "Approve transaction",
-            "pending": "Awaiting approval"
+            "idle": "Sign transaction",
+            "pending": "Awaiting signature"
           },
           "cancel": "Cancel",
           "proceedAnyway": "Proceed anyway",
@@ -1551,7 +1551,7 @@
           "APPROVE": {
             "addon": "Wallet",
             "errorLabel": "Rejected by wallet",
-            "label": "Approve transaction"
+            "label": "Sign transaction"
           },
           "CONFIRM": {
             "addon": "Details",
