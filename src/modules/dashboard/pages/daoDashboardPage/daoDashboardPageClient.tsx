@@ -21,7 +21,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { DefaultHeader } from '../../components';
-import { DashboardThemeSlotId } from '../../constants/moduleThemeSlots';
+import { DashboardDaoSlotId } from '../../constants/moduleDaoSlots';
 
 export interface IDaoDashboardPageClientProps {
     /**
@@ -70,7 +70,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     return (
         <>
             <PluginSingleComponent
-                slotId={DashboardThemeSlotId.DASHBOARD_THEME_HEADER}
+                slotId={DashboardDaoSlotId.DASHBOARD_DAO_HEADER}
                 Fallback={DefaultHeader}
                 dao={dao}
                 pluginId={dao.id}

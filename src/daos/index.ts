@@ -1,5 +1,5 @@
 import { initialiseAragonX } from './aragonX';
 
-export const initialiseThemes = () => {
+export const initialiseDaos = () => {
     initialiseAragonX();
 };
