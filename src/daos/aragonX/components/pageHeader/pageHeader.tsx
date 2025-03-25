@@ -4,13 +4,12 @@ import type { IDao } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { aragonX } from '@/themes/daos/constants/daos';
 import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
-import AragonXHeader from '../../../../../assets/images/aragon-x-header.jpg';
+import AragonXHeader from '../../../../assets/images/aragon-x-header.jpg';
 import { PageHeaderStat } from './pageHeaderStat';
 
 export interface IPageHeaderProps extends ComponentProps<'header'> {
@@ -74,7 +73,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                         </div>
                         <div className="flex w-full flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                             <Button className="w-full md:max-w-fit" iconLeft={IconType.PLUS} onClick={handleCtaClick}>
-                                {t(`app.themes.${aragonX.id}.components.pageHeader.cta`)}
+                                {t(`app.daos.aragonX.components.pageHeader.cta`)}
                             </Button>
                             <div className="flex flex-row gap-10 md:gap-12">
                                 {stats.map((stat) => (

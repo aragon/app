@@ -9,7 +9,6 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DaoSlotId } from '@/themes/daos/constants/slots';
 import {
     Button,
     ChainEntityType,
@@ -22,6 +21,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { DefaultHeader } from '../../components';
+import { DashboardThemeSlotId } from '../../constants/moduleThemeSlots';
 
 export interface IDaoDashboardPageClientProps {
     /**
@@ -70,7 +70,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     return (
         <>
             <PluginSingleComponent
-                slotId={DaoSlotId.DASHBOARD_HEADER}
+                slotId={DashboardThemeSlotId.DASHBOARD_THEME_HEADER}
                 Fallback={DefaultHeader}
                 dao={dao}
                 pluginId={dao.id}
