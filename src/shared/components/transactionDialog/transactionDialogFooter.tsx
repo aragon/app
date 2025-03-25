@@ -61,7 +61,7 @@ const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, txRecei
     return txReceipt ? successHref(txReceipt) : undefined;
 };
 
-const getRouteByTransactionType = (type?: TransactionType) => {
+const getFallbackRouteByTransactionType = (type?: TransactionType) => {
     switch (type) {
         case TransactionType.DAO_CREATE:
             return '/';
@@ -140,7 +140,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         close();
         onCancelClick?.();
 
-        const route = getRouteByTransactionType(transactionType);
+        const route = getFallbackRouteByTransactionType(transactionType);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         router.push(route as any);
     };

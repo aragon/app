@@ -18,6 +18,7 @@ import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import { publishProcessDialogUtils } from './publishProcessDialogUtils';
+import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
 
 export enum PublishProcessStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -120,6 +121,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
             customSteps={customSteps}
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
+            transactionType={TransactionType.PROPOSAL_CREATE}
         />
     );
 };
