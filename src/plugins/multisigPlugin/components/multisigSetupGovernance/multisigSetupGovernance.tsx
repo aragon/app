@@ -1,28 +1,9 @@
-import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
-
-export interface IMultisigSetupGovernanceForm extends Pick<IMultisigPluginSettings, 'minApprovals' | 'onlyListed'> {}
-
-export interface IMultisigSetupGovernanceProps {
-    /**
-     * Field prefix for the form fields. This is expected to always be a sub-form of the main form.
-     */
-    fieldPrefix: string;
-    /**
-     * Total number of members in the body of the DAO. It is a prop because it can either come from the API (actions) or
-     * from the local members field (create process form).
-     */
-    membersCount: number;
-    /**
-     * Whether to show the proposal creation settings (who can vote, any vs members). This option is only used for the
-     * update-multisig-settings action.
-     */
-    showProposalCreationSettings?: boolean;
-}
+import type { IMultisigSetupGovernanceForm, IMultisigSetupGovernanceProps } from './multisigSetupGovernance.api';
 
 export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = (props) => {
     const { fieldPrefix, membersCount, showProposalCreationSettings = false } = props;
