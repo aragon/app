@@ -47,8 +47,17 @@ export const TokenDelegationFormDialog: React.FC<ITokenDelegationFormDialogProps
         stepper.updateActiveStep(initialActiveStep);
     };
 
+      const handlePreventClose = (e: Event) => {
+          e.preventDefault();
+      };
+
     return (
-        <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
+        <Dialog.Root
+            onInteractOutside={handlePreventClose}
+            onEscapeKeyDown={handlePreventClose}
+            onOpenChange={handleCloseDialog}
+            {...otherProps}
+        >
             <TransactionDialog
                 title={t('app.plugins.token.tokenDelegationForm.dialog.title')}
                 description={t('app.plugins.token.tokenDelegationForm.dialog.description')}

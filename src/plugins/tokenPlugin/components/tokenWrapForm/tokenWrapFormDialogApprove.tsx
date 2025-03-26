@@ -61,8 +61,17 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
+              const handlePreventClose = (e: Event) => {
+                  e.preventDefault();
+              };
+
     return (
-        <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
+        <Dialog.Root
+            onInteractOutside={handlePreventClose}
+            onEscapeKeyDown={handlePreventClose}
+            onOpenChange={handleCloseDialog}
+            {...otherProps}
+        >
             <TransactionDialog
                 title={t('app.plugins.token.tokenWrapForm.dialog.approve.title')}
                 description={t('app.plugins.token.tokenWrapForm.dialog.approve.description')}

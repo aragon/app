@@ -50,8 +50,19 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
         onOpenChange?.(false);
     };
 
+    const handlePreventClose = (e: Event) => {
+        if (showPublishManageAdmins) {
+            e.preventDefault();
+        }
+    };
+
     return (
-        <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
+        <Dialog.Root
+            onOpenChange={onOpenChange}
+            onInteractOutside={handlePreventClose}
+            onEscapeKeyDown={handlePreventClose}
+            {...otherProps}
+        >
             {showPublishManageAdmins ? (
                 <AdminManageMembersDialogPublish
                     currentAdmins={currentAdmins ?? []}
