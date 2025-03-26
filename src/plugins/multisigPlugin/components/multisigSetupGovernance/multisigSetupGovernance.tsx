@@ -3,7 +3,6 @@ import { NumberProgressInput } from '@/shared/components/forms/numberProgressInp
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 
 export interface IMultisigSetupGovernanceForm extends Pick<IMultisigPluginSettings, 'minApprovals' | 'onlyListed'> {}
@@ -19,19 +18,14 @@ export interface IMultisigSetupGovernanceProps {
      */
     membersCount: number;
     /**
-     * Callback to be called when the form data changes. Used to sync the form data with any external state, like action
-     * data.
-     */
-    onDataChange?: (data: IMultisigSetupGovernanceForm) => void;
-    /**
      * Whether to show the proposal creation settings (who can vote, any vs members). This option is only used for the
-     * update-multisig-settings action when the plugin is not a sub-plugin.
+     * update-multisig-settings action.
      */
     showProposalCreationSettings?: boolean;
 }
 
 export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = (props) => {
-    const { fieldPrefix, membersCount, onDataChange, showProposalCreationSettings = false } = props;
+    const { fieldPrefix, membersCount, showProposalCreationSettings = false } = props;
 
     const { t } = useTranslations();
 
@@ -63,10 +57,6 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
         message: t(`app.plugins.multisig.multisigSetupGovernance.minimumApproval.alert.${minApprovalContext}`),
         variant: isMinApprovalsMajority ? 'success' : 'warning',
     } as const;
-
-    useEffect(() => {
-        onDataChange?.({ minApprovals: minimumApproval, onlyListed: onlyListedFieldValue });
-    }, [onlyListedFieldValue, minimumApproval, onDataChange]);
 
     return (
         <div className="flex w-full flex-col gap-y-6 md:gap-y-10">

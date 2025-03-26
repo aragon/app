@@ -4,8 +4,8 @@ import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useCallback } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import { MultisigSetupGovernance, type IMultisigSetupGovernanceForm } from '../../multisigSetupGovernance';
 
@@ -38,26 +38,35 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
+    const fieldPrefix = `${actionFieldName}.proposedSettings`;
+
+    // Set default values to minimumApproval and onlyListed values as values are reset when deleting an item from the
+    // useArrayField causing the useWatch / useFormField to return undefined before unmounting the component
+    const minApprovalsFieldValue = useWatch<Record<string, IMultisigSetupGovernanceForm['minApprovals']>>({
+        name: `${fieldPrefix}.minApprovals`,
+        defaultValue: 0,
+    });
+    const onlyListedFieldValue = useWatch<Record<string, IMultisigSetupGovernanceForm['onlyListed']>>({
+        name: `${fieldPrefix}.onlyListed`,
+        defaultValue: false,
+    });
+
     const memberParams = { pluginAddress: action.to, daoId: action.daoId };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 1;
 
-    const handleDataChange = useCallback(
-        ({ minApprovals, onlyListed }: IMultisigSetupGovernanceForm) => {
-            const updateSettingsParams = { onlyListed, minApprovals };
-            const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
+    useEffect(() => {
+        const updateSettingsParams = { onlyListed: onlyListedFieldValue, minApprovals: minApprovalsFieldValue };
+        const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
 
-            setValue(`${actionFieldName}.data`, newData);
-            setValue(`${actionFieldName}.inputData.parameters[0].value`, [onlyListed, minApprovals]);
-        },
-        [setValue, actionFieldName],
-    );
+        setValue(`${actionFieldName}.data`, newData);
+        setValue(`${actionFieldName}.inputData.parameters[0].value`, [onlyListedFieldValue, minApprovalsFieldValue]);
+    }, [setValue, actionFieldName, onlyListedFieldValue, minApprovalsFieldValue]);
 
     return (
         <MultisigSetupGovernance
-            fieldPrefix={`${actionFieldName}.proposedSettings`}
+            fieldPrefix={fieldPrefix}
             membersCount={membersCount}
-            onDataChange={handleDataChange}
             showProposalCreationSettings={true}
         />
     );

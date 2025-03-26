@@ -1,5 +1,6 @@
 import { MultisigSetupGovernance } from '@/plugins/multisigPlugin/components/multisigSetupGovernance';
-import { useFormContext } from 'react-hook-form';
+import type { ICompositeAddress } from '@aragon/gov-ui-kit';
+import { useWatch } from 'react-hook-form';
 import type { ICreateProcessFormBodyDialogStepsProps } from '../../../createProcessFormStages/fields/stageBodiesField/stageBodiesFieldDefinitions';
 
 export interface ICreateProcessFormMultisigParamsProps extends ICreateProcessFormBodyDialogStepsProps {}
@@ -7,11 +8,7 @@ export interface ICreateProcessFormMultisigParamsProps extends ICreateProcessFor
 export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisigParamsProps> = (props) => {
     const { fieldPrefix } = props;
 
-    const { watch } = useFormContext();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const members = watch(`${fieldPrefix}.members`);
+    const members = useWatch<Record<string, ICompositeAddress[] | undefined>>({ name: `${fieldPrefix}.members` }) ?? [];
 
-    return (
-        <MultisigSetupGovernance fieldPrefix={fieldPrefix} membersCount={Array.isArray(members) ? members.length : 0} />
-    );
+    return <MultisigSetupGovernance fieldPrefix={fieldPrefix} membersCount={members.length} />;
 };
