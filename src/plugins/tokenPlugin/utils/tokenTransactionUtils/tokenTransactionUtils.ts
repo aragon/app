@@ -96,19 +96,20 @@ class TokenTransactionUtils {
         const { minVotingPower } = permissionSettings ?? {};
 
         const { earlyStageAdvance, votingPeriod } = stage.timing;
-        const { voteChange, supportThreshold, minimumParticipation } = body;
-        const votingMode = voteChange
-            ? DaoTokenVotingMode.VOTE_REPLACEMENT
-            : earlyStageAdvance
-              ? DaoTokenVotingMode.EARLY_EXECUTION
-              : DaoTokenVotingMode.STANDARD;
+        const { votingMode, supportThreshold, minParticipation } = body;
+        const processedVotingMode =
+            votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT
+                ? DaoTokenVotingMode.VOTE_REPLACEMENT
+                : earlyStageAdvance
+                  ? DaoTokenVotingMode.EARLY_EXECUTION
+                  : DaoTokenVotingMode.STANDARD;
 
         const minProposerVotingPower = minVotingPower ? parseUnits(minVotingPower, 18) : BigInt(0);
 
         const votingSettings = {
-            votingMode,
-            supportThreshold: tokenSettingsUtils.fromPercentageToRatio(supportThreshold),
-            minParticipation: tokenSettingsUtils.fromPercentageToRatio(minimumParticipation),
+            votingMode: processedVotingMode,
+            supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
+            minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
             minDuration: BigInt(dateUtils.durationToSeconds(votingPeriod)),
             minProposerVotingPower: minProposerVotingPower,
         };

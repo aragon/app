@@ -350,30 +350,6 @@
               "required": "Token symbol is required"
             },
             "typeLabel": "ERC-20 token"
-          },
-          "params": {
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
-            "minParticipation": {
-              "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
-              "label": "Minimum participation",
-              "of": "of"
-            },
-            "placeholder": "Enter a number",
-            "required": "Threshold must be at least 1.",
-            "suffix": "of {{members}}",
-            "supportThreshold": {
-              "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
-              "label": "Support threshold",
-              "success": "Proposal will require a majority.",
-              "warning": "Proposal will only require a minority."
-            },
-            "voteChange": {
-              "helpText": "Allows voters to change their vote during the voting period. This prevents this body from approving or vetoing a proposal early so it can advance or be executed early.",
-              "label": "Vote change",
-              "no": "No",
-              "yes": "Yes"
-            }
           }
         }
       },
@@ -1287,7 +1263,7 @@
           "distributionTerm": "Distribution",
           "enabled": "Enabled",
           "holders": "{{count}} token holders",
-          "minParticipationDefinition": "≥ {{minimumParticipation}}%",
+          "minParticipationDefinition": "≥ {{minParticipation}}%",
           "minParticipationTerm": "Minimum participation",
           "supplyTerm": "Supply",
           "supportDefinition": "> {{threshold}}%",
@@ -1312,26 +1288,7 @@
           "vetoed": "vetoed",
           "votesDescription": "of {{details}}"
         },
-        "tokenSubmitVote": {
-          "buttons": {
-            "cancel": "Cancel",
-            "change": "Change vote",
-            "default": "Vote on proposal",
-            "submit": "Submit vote",
-            "submitChange": "Submit change",
-            "submitted": "Vote submitted"
-          },
-          "options": {
-            "abstain": "Abstain",
-            "approveLabel": "approve",
-            "current": "Current",
-            "label": "Do you want to {{label}} this proposal?",
-            "no": "No",
-            "vetoLabel": "veto",
-            "yes": "Yes"
-          }
-        },
-        "tokenUpdateSettingsAction": {
+        "tokenSetupGovernance": {
           "earlyExecution": {
             "helpText": "Allows a proposal to be executed before the voting period ends. This is only possible if the proposal meets the support threshold, satisfies the minimum participation, and can’t be overturned by remaining voters.",
             "label": "Early execution",
@@ -1360,7 +1317,7 @@
             "label": "Minimum duration"
           },
           "minParticipation": {
-            "helpText": "This is the percentage of tokens that must participate, out of the total supply, for a proposal to pass.",
+            "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
             "label": "Minimum participation"
           },
           "minVotingPower": {
@@ -1372,7 +1329,7 @@
               "majority": "Proposal will be approved by majority",
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
-            "helpText": "The percentage of tokens voting Yes, out of the total votes cast, must exceed this.",
+            "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
             "label": "Support threshold"
           },
           "voteChange": {
@@ -1381,6 +1338,25 @@
             "switch": {
               "label": "Enabled"
             }
+          }
+        },
+        "tokenSubmitVote": {
+          "buttons": {
+            "cancel": "Cancel",
+            "change": "Change vote",
+            "default": "Vote on proposal",
+            "submit": "Submit vote",
+            "submitChange": "Submit change",
+            "submitted": "Vote submitted"
+          },
+          "options": {
+            "abstain": "Abstain",
+            "approveLabel": "approve",
+            "current": "Current",
+            "label": "Do you want to {{label}} this proposal?",
+            "no": "No",
+            "vetoLabel": "veto",
+            "yes": "Yes"
           }
         },
         "tokenVoteList": {

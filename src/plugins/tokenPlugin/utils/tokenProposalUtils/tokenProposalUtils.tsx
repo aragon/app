@@ -67,7 +67,7 @@ class TokenProposalUtils {
         const { minParticipation, historicalTotalSupply } = proposal.settings;
 
         const parsedTotalSupply = BigInt(historicalTotalSupply!);
-        const parsedMinParticipation = BigInt(tokenSettingsUtils.fromRatioToPercentage(minParticipation));
+        const parsedMinParticipation = BigInt(tokenSettingsUtils.ratioToPercentage(minParticipation));
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;
@@ -83,7 +83,7 @@ class TokenProposalUtils {
         const { supportThreshold, historicalTotalSupply } = proposal.settings;
         const { votesByOption } = proposal.metrics;
 
-        const parsedSupport = BigInt(tokenSettingsUtils.fromRatioToPercentage(supportThreshold));
+        const parsedSupport = BigInt(tokenSettingsUtils.ratioToPercentage(supportThreshold));
 
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
         const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);
