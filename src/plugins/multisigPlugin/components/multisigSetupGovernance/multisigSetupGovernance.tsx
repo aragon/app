@@ -23,11 +23,15 @@ export interface IMultisigSetupGovernanceProps {
      * data.
      */
     onDataChange?: (data: IMultisigSetupGovernanceForm) => void;
+    /**
+     * Whether to show the proposal creation settings (who can vote, any vs members). This option is only used for the
+     * update-multisig-settings action when the plugin is not a sub-plugin.
+     */
+    showProposalCreationSettings?: boolean;
 }
 
-// TODO: when refactoring create process page, remember to remove "app.createDao.createProcessForm.multisigFlow.*" from the translations
 export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = (props) => {
-    const { fieldPrefix, membersCount, onDataChange } = props;
+    const { fieldPrefix, membersCount, onDataChange, showProposalCreationSettings = false } = props;
 
     const { t } = useTranslations();
 
@@ -45,7 +49,7 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
         ...onlyListedField
     } = useFormField<IMultisigSetupGovernanceForm, 'onlyListed'>('onlyListed', {
         fieldPrefix,
-        label: t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.label'),
+        label: t('app.plugins.multisig.multisigSetupGovernance.onlyListed.label'),
         defaultValue: false,
     });
 
@@ -56,7 +60,7 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
 
     const minApprovalContext = isMinApprovalsMajority ? 'majority' : 'minority';
     const minApprovalAlert = {
-        message: t(`app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.alert.${minApprovalContext}`),
+        message: t(`app.plugins.multisig.multisigSetupGovernance.minimumApproval.alert.${minApprovalContext}`),
         variant: isMinApprovalsMajority ? 'success' : 'warning',
     } as const;
 
@@ -68,35 +72,35 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
         <div className="flex w-full flex-col gap-y-6 md:gap-y-10">
             <NumberProgressInput
                 fieldName={minimumApprovalFieldName}
-                label={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.label')}
-                helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.helpText')}
+                label={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.label')}
+                helpText={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.helpText')}
                 valueLabel={minimumApproval.toString()}
                 total={membersCount}
-                totalLabel={t('app.plugins.multisig.multisigUpdateSettingsAction.minimumApproval.total', {
+                totalLabel={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.total', {
                     total: membersCount,
                 })}
                 alert={minApprovalAlert}
             />
-            <RadioGroup
-                helpText={t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.helpText')}
-                className="w-full"
-                onValueChange={handleRadioChange}
-                value={onlyListedFieldValue ? 'members' : 'any'}
-                {...onlyListedField}
-            >
-                <RadioCard
-                    label={t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.members.label')}
-                    description={t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.members.description')}
-                    value="members"
-                />
-                <RadioCard
-                    label={t('app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.anyWallet.label')}
-                    description={t(
-                        'app.plugins.multisig.multisigUpdateSettingsAction.onlyListed.anyWallet.description',
-                    )}
-                    value="any"
-                />
-            </RadioGroup>
+            {showProposalCreationSettings && (
+                <RadioGroup
+                    helpText={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.helpText')}
+                    className="w-full"
+                    onValueChange={handleRadioChange}
+                    value={onlyListedFieldValue ? 'members' : 'any'}
+                    {...onlyListedField}
+                >
+                    <RadioCard
+                        label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.members.label')}
+                        description={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.members.description')}
+                        value="members"
+                    />
+                    <RadioCard
+                        label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.label')}
+                        description={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.description')}
+                        value="any"
+                    />
+                </RadioGroup>
+            )}
         </div>
     );
 };

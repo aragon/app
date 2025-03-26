@@ -7,7 +7,7 @@ import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
-import { IMultisigSetupGovernanceForm, MultisigSetupGovernance } from '../../multisigSetupGovernance';
+import { MultisigSetupGovernance, type IMultisigSetupGovernanceForm } from '../../multisigSetupGovernance';
 
 export interface IMultisigUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
@@ -42,14 +42,6 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const { data: memberList } = useMemberList({ queryParams: memberParams });
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 1;
 
-    // useEffect(() => {
-    //     const updateSettingsParams = { onlyListed: onlyListedFieldValue, minApprovals: minimumApproval };
-    //     const newData = encodeFunctionData({ abi: [updateMultisigSettingsAbi], args: [updateSettingsParams] });
-    //
-    //     setValue(`${actionFieldName}.data`, newData);
-    //     setValue(`${actionFieldName}.inputData.parameters[0].value`, [onlyListedFieldValue, minimumApproval]);
-    // }, [setValue, actionFieldName, onlyListedFieldValue, minimumApproval]);
-
     const handleDataChange = useCallback(
         ({ minApprovals, onlyListed }: IMultisigSetupGovernanceForm) => {
             const updateSettingsParams = { onlyListed, minApprovals };
@@ -66,6 +58,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
             fieldPrefix={`${actionFieldName}.proposedSettings`}
             membersCount={membersCount}
             onDataChange={handleDataChange}
+            showProposalCreationSettings={true}
         />
     );
 };

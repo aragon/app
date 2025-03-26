@@ -1091,7 +1091,7 @@
           "veto": "Veto proposal",
           "vetoed": "Vetoed"
         },
-        "multisigUpdateSettingsAction": {
+        "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
               "majority": "Proposal will be approved by majority",
