@@ -92,19 +92,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </DaoProposalList.Container>
                         </Page.MainSection>
                     )}
-                    <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
-                        <AssetList initialParams={assetListParams} hidePagination={true}>
-                            <Button
-                                className="self-start"
-                                variant="tertiary"
-                                size="md"
-                                iconRight={IconType.CHEVRON_RIGHT}
-                                href={`/dao/${daoId}/assets`}
-                            >
-                                {t('app.dashboard.daoDashboardPage.main.viewAll')}
-                            </Button>
-                        </AssetList>
-                    </Page.MainSection>
                     {hasSupportedPlugins && (
                         <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.members.title')}>
                             <DaoMemberList.Container initialParams={memberListParams} hidePagination={true}>
@@ -120,6 +107,19 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </DaoMemberList.Container>
                         </Page.MainSection>
                     )}
+                    <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
+                        <AssetList initialParams={assetListParams} hidePagination={true}>
+                            <Button
+                                className="self-start"
+                                variant="tertiary"
+                                size="md"
+                                iconRight={IconType.CHEVRON_RIGHT}
+                                href={`/dao/${daoId}/assets`}
+                            >
+                                {t('app.dashboard.daoDashboardPage.main.viewAll')}
+                            </Button>
+                        </AssetList>
+                    </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
                     <Page.AsideCard title={t('app.dashboard.daoDashboardPage.aside.details.title')}>
@@ -134,7 +134,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                             </DefinitionList.Item>
                             {daoEns != null && (
                                 <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.ens')}>
-                                    <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
+                                    <Link
+                                        iconRight={IconType.LINK_EXTERNAL}
+                                        href={daoAddressLink}
+                                        target="_blank"
+                                        className="max-w-full"
+                                    >
                                         {daoEns}
                                     </Link>
                                 </DefinitionList.Item>
