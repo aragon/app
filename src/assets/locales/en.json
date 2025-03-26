@@ -446,9 +446,11 @@
     },
     "daos": {
       "aragonX": {
-        "components": {
-          "pageHeader": {
-            "cta": "Create proposal"
+        "aragonXPageHeader": {
+          "cta": "Create proposal",
+          "stat": {
+            "proposals": "Proposals",
+            "treasury": "Treasury"
           }
         }
       }
@@ -1001,7 +1003,6 @@
           },
           "label": "Remove all admins"
         },
-
         "adminVotingTerminal": {
           "description": "Proposals created by admins pass automatically without any governance.",
           "title": "Automatic execution"

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 
-export interface IPageHeaderStat {
+export interface IAragonXPageHeaderStatProps extends ComponentProps<'div'> {
     /**
      * Value of the stat.
      * @default 0
@@ -17,11 +17,8 @@ export interface IPageHeaderStat {
     suffix?: string;
 }
 
-export interface IPageHeaderStatProps extends IPageHeaderStat, ComponentProps<'div'> {}
-
-export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
-    const { value, label, suffix, className, ...otherProps } = props;
-    const parsedValue = value ?? 0;
+export const AragonXPageHeaderStat: React.FC<IAragonXPageHeaderStatProps> = (props) => {
+    const { value = 0, label, suffix, className, ...otherProps } = props;
 
     return (
         <div
@@ -29,7 +26,7 @@ export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
             {...otherProps}
         >
             <div className="flex flex-row items-baseline gap-1 leading-tight">
-                <p className="text-2xl md:text-4xl">{parsedValue}</p>
+                <p className="text-2xl md:text-4xl">{value}</p>
                 {suffix && <p className="text-base md:text-lg">{suffix}</p>}
             </div>
             <p className="text-base md:text-lg">{label}</p>

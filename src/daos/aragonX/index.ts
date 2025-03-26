@@ -1,6 +1,6 @@
 import { DashboardDaoSlotId } from '@/modules/dashboard/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { PageHeader } from './components/pageHeader';
+import { AragonXPageHeader } from './components/aragonXPageHeader';
 import { aragonXDao } from './constants/aragonXDao';
 
 export const initialiseAragonX = () => {
@@ -10,6 +10,6 @@ export const initialiseAragonX = () => {
         .registerSlotComponent({
             slotId: DashboardDaoSlotId.DASHBOARD_DAO_HEADER,
             pluginId: aragonXDao.id,
-            component: PageHeader,
+            component: AragonXPageHeader,
         });
 };

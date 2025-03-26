@@ -10,32 +10,33 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
 import AragonXHeader from '../../../../assets/images/aragon-x-header.jpg';
-import { PageHeaderStat } from './pageHeaderStat';
+import { AragonXPageHeaderStat } from './aragonXPageHeaderStat';
 
-export interface IPageHeaderProps extends ComponentProps<'header'> {
+export interface IAragonXPageHeaderProps extends ComponentProps<'header'> {
+    /**
+     * DAO to display in the header.
+     */
     dao: IDao;
 }
 
-export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
+export const AragonXPageHeader: React.FC<IAragonXPageHeaderProps> = (props) => {
     const { dao, className, ...otherProps } = props;
 
     const router = useRouter();
 
     const { t } = useTranslations();
 
-    const title = dao.name;
-    const description = dao.description;
-    const daoId = dao.id;
+    const { name: title, description, id: daoId, metrics } = dao;
 
-    const proposalsCreated = formatterUtils.formatNumber(dao.metrics.proposalsCreated, {
+    const proposalsCreated = formatterUtils.formatNumber(metrics.proposalsCreated, {
         format: NumberFormat.GENERIC_SHORT,
     });
 
-    const daoTvl = formatterUtils.formatNumber(dao.metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
+    const daoTvl = formatterUtils.formatNumber(metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const stats = [
-        { value: proposalsCreated, label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
-        { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
+        { value: proposalsCreated, label: t('app.daos.aragonX.aragonXPageHeader.stat.proposals') },
+        { value: daoTvl, label: t('app.daos.aragonX.aragonXPageHeader.stat.treasury'), suffix: 'USD' },
     ];
 
     const plugin = useDaoPlugins({ daoId, subdomain: 'multisig' })![0];
@@ -73,11 +74,11 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                         </div>
                         <div className="flex w-full flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                             <Button className="w-full md:max-w-fit" iconLeft={IconType.PLUS} onClick={handleCtaClick}>
-                                {t(`app.daos.aragonX.components.pageHeader.cta`)}
+                                {t(`app.daos.aragonX.aragonXPageHeader.cta`)}
                             </Button>
                             <div className="flex flex-row gap-10 md:gap-12">
                                 {stats.map((stat) => (
-                                    <PageHeaderStat key={stat.label} {...stat} />
+                                    <AragonXPageHeaderStat key={stat.label} {...stat} />
                                 ))}
                             </div>
                         </div>

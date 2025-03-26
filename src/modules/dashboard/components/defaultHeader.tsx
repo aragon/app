@@ -15,6 +15,9 @@ import {
 } from '@aragon/gov-ui-kit';
 
 export interface IDefaultHeaderProps {
+    /**
+     * DAO to display in the header.
+     */
     dao: IDao;
 }
 
