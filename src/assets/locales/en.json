@@ -1085,12 +1085,6 @@
           "removeMember": "Remove member",
           "select": "select"
         },
-        "multisigSubmitVote": {
-          "approve": "Approve proposal",
-          "approved": "Approved",
-          "veto": "Veto proposal",
-          "vetoed": "Vetoed"
-        },
         "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
@@ -1113,6 +1107,12 @@
               "label": "Members"
             }
           }
+        },
+        "multisigSubmitVote": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed"
         },
         "multisigVoteList": {
           "entity": "Votes"
