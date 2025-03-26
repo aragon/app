@@ -1330,7 +1330,11 @@
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
             "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
-            "label": "Support threshold"
+            "label": "Support threshold",
+            "tag": {
+              "no": "No",
+              "yes": "Yes"
+            }
           },
           "voteChange": {
             "helpText": "Allows voters to change their vote during the voting period. This prevents the body from giving early approval or veto.",

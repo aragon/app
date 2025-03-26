@@ -1,4 +1,3 @@
-import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWatch } from 'react-hook-form';
@@ -16,7 +15,7 @@ export interface ISupportThresholdFieldProps {
 }
 
 export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (props) => {
-    const { formPrefix, initialValue } = props;
+    const { formPrefix } = props;
 
     const { t } = useTranslations();
 
@@ -26,8 +25,12 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
         defaultValue: 0,
     });
 
-    const thresholdIndicator = initialValue ? tokenSettingsUtils.ratioToPercentage(initialValue) : undefined;
     const context = value >= 50 ? 'majority' : 'minority';
+
+    const alert = {
+        message: t(`app.plugins.token.tokenSetupGovernance.supportThreshold.alert.${context}`),
+        variant: context === 'majority' ? 'success' : 'warning',
+    } as const;
 
     return (
         <NumberProgressInput
@@ -38,14 +41,10 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             total={100}
             prefix=">"
             suffix="%"
-            alert={{
-                message: t(`app.plugins.token.tokenSetupGovernance.supportThreshold.alert.${context}`),
-                variant: context === 'majority' ? 'success' : 'warning',
-            }}
-            thresholdIndicator={thresholdIndicator}
+            alert={alert}
             tags={[
-                { label: 'Yes', variant: 'primary' },
-                { label: 'No', variant: 'neutral' },
+                { label: t('app.plugins.token.tokenSetupGovernance.supportThreshold.tag.yes'), variant: 'primary' },
+                { label: t('app.plugins.token.tokenSetupGovernance.supportThreshold.tag.no'), variant: 'neutral' },
             ]}
         />
     );

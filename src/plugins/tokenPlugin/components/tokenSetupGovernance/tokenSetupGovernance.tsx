@@ -9,7 +9,7 @@ import { SupportThresholdField } from './fields/supportThresholdField';
 import type { ITokenSetupGovernanceForm, ITokenSetupGovernanceProps } from './tokenSetupGovernance.api';
 
 export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props) => {
-    const { formPrefix, token, initialValues, isSubPlugin, showProposalCreationSettings } = props;
+    const { formPrefix, token, isSubPlugin, showProposalCreationSettings } = props;
 
     const { t } = useTranslations();
 
@@ -30,7 +30,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
 
     return (
         <div className="flex w-full flex-col gap-y-6">
-            <SupportThresholdField formPrefix={formPrefix} initialValue={initialValues?.supportThreshold} />
+            <SupportThresholdField formPrefix={formPrefix} />
             <MinParticipationField formPrefix={formPrefix} token={token} />
             {!isSubPlugin && (
                 <InputContainer

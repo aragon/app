@@ -11,10 +11,6 @@ export interface ITokenSetupGovernanceProps {
      */
     token: Pick<IToken, 'symbol' | 'totalSupply' | 'decimals'>;
     /**
-     * Initial values for the form.
-     */
-    initialValues?: ITokenSetupGovernanceForm;
-    /**
      * Hides the minimum-duration and early-execution fields when set to true.
      */
     isSubPlugin?: boolean;
