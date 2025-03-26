@@ -63,25 +63,21 @@ export const AragonXPageHeader: React.FC<IAragonXPageHeaderProps> = (props) => {
                 alt="Aragon X Header"
                 className="absolute left-0 top-0 -z-10 size-full object-cover"
             />
-            <Container className="flex w-full flex-col gap-6">
-                <div className="flex min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
-                    <div className="flex w-full flex-col gap-y-6 pb-4 pt-10 md:gap-y-10 md:py-16">
-                        <div className="flex flex-col gap-y-2 md:gap-y-3">
-                            <h1 className="text-3xl font-normal leading-tight text-neutral-0 md:text-5xl">{title}</h1>
-                            <p className="max-w-screen-md text-base font-normal leading-normal text-neutral-0 md:text-xl">
-                                {description}
-                            </p>
-                        </div>
-                        <div className="flex w-full flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
-                            <Button className="w-full md:max-w-fit" iconLeft={IconType.PLUS} onClick={handleCtaClick}>
-                                {t(`app.daos.aragonX.aragonXPageHeader.cta`)}
-                            </Button>
-                            <div className="flex flex-row gap-10 md:gap-12">
-                                {stats.map((stat) => (
-                                    <AragonXPageHeaderStat key={stat.label} {...stat} />
-                                ))}
-                            </div>
-                        </div>
+            <Container className="flex w-full flex-col gap-6 pb-4 pt-10 md:gap-y-10 md:py-16">
+                <div className="flex flex-col gap-y-2 md:gap-y-3">
+                    <h1 className="text-3xl font-normal leading-tight text-neutral-0 md:text-5xl">{title}</h1>
+                    <p className="max-w-screen-md text-base font-normal leading-normal text-neutral-0 md:text-xl">
+                        {description}
+                    </p>
+                </div>
+                <div className="flex w-full flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
+                    <Button className="w-full md:max-w-fit" iconLeft={IconType.PLUS} onClick={handleCtaClick}>
+                        {t(`app.daos.aragonX.aragonXPageHeader.cta`)}
+                    </Button>
+                    <div className="flex flex-row gap-10 md:gap-12">
+                        {stats.map((stat) => (
+                            <AragonXPageHeaderStat key={stat.label} {...stat} />
+                        ))}
                     </div>
                 </div>
             </Container>
