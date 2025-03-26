@@ -16,7 +16,7 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const members = watch(`${fieldPrefix}.members`);
 
-    const multisigThresholdField = useFormField<ICreateProcessFormBody, 'multisigThreshold'>('multisigThreshold', {
+    const multisigThresholdField = useFormField<ICreateProcessFormBody, 'minApprovals'>('minApprovals', {
         label: t('app.createDao.createProcessForm.multisigFlow.params.label'),
         defaultValue: 1,
         fieldPrefix,

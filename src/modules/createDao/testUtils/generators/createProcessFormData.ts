@@ -16,7 +16,7 @@ export const generateCreateProcessFormBody = (values?: Partial<ICreateProcessFor
     supportThreshold: 1,
     minimumParticipation: 1,
     voteChange: false,
-    multisigThreshold: 1,
+    minApprovals: 1,
     ...values,
 });
 

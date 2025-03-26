@@ -151,7 +151,7 @@ export interface ICreateProcessFormBody {
     /**
      * Amount of addresses in the authorized list that must approve a proposal for it to pass.
      */
-    multisigThreshold: number;
+    minApprovals: number;
 }
 
 export interface ICreateProcessFormPermissions {
