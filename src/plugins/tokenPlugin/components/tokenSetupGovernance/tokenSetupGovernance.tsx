@@ -17,16 +17,11 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
         fieldPrefix: formPrefix,
     });
 
-    const handleModeChange = (checked: boolean) =>
+    const handleEarlyExecutionToggle = (checked: boolean) =>
         votingModeField.onChange(checked ? DaoTokenVotingMode.EARLY_EXECUTION : DaoTokenVotingMode.STANDARD);
 
-    const handleVoteChange = (checked: boolean) => {
-        if (votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION) {
-            return;
-        }
-
+    const handleVoteChangeToggle = (checked: boolean) =>
         votingModeField.onChange(checked ? DaoTokenVotingMode.VOTE_REPLACEMENT : DaoTokenVotingMode.STANDARD);
-    };
 
     return (
         <div className="flex w-full flex-col gap-y-6">
@@ -61,7 +56,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
                     label={t('app.plugins.token.tokenSetupGovernance.earlyExecution.label')}
                     helpText={t('app.plugins.token.tokenSetupGovernance.earlyExecution.helpText')}
                     inlineLabel={t('app.plugins.token.tokenSetupGovernance.earlyExecution.switch.label')}
-                    onCheckedChanged={handleModeChange}
+                    onCheckedChanged={handleEarlyExecutionToggle}
                     checked={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
                     disabled={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
                 />
@@ -70,7 +65,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
                 helpText={t('app.plugins.token.tokenSetupGovernance.voteChange.helpText')}
                 inlineLabel={t('app.plugins.token.tokenSetupGovernance.voteChange.switch.label')}
                 label={t('app.plugins.token.tokenSetupGovernance.voteChange.label')}
-                onCheckedChanged={handleVoteChange}
+                onCheckedChanged={handleVoteChangeToggle}
                 checked={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
                 disabled={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
             />
