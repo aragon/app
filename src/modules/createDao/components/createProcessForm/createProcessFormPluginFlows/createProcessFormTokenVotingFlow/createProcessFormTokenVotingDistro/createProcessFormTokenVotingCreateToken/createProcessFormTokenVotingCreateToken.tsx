@@ -1,0 +1,76 @@
+import type { ITokenSetupMembershipForm } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
+import { TokenVotingMemberInputRow } from '@/modules/createDao/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingMemberInputRow';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
+import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
+import { useFieldArray } from 'react-hook-form';
+
+export interface ICreateProcessFormTokenVotingCreateToken {
+    fieldPrefix: string;
+}
+
+export const CreateProcessFormTokenVotingCreateToken: React.FC<ICreateProcessFormTokenVotingCreateToken> = (props) => {
+    const { fieldPrefix } = props;
+
+    const { t } = useTranslations();
+
+    const tokenNameField = useFormField<ITokenSetupMembershipForm, 'tokenName'>('tokenName', {
+        label: t('app.createDao.createProcessForm.tokenFlow.distro.name.label'),
+        defaultValue: '',
+        trimOnBlur: true,
+        fieldPrefix,
+        rules: {
+            required: t('app.createDao.createProcessForm.tokenFlow.distro.name.required'),
+        },
+    });
+
+    const tokenSymbolField = useFormField<ITokenSetupMembershipForm, 'tokenSymbol'>('tokenSymbol', {
+        label: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.label'),
+        defaultValue: '',
+        trimOnBlur: true,
+        fieldPrefix,
+        rules: {
+            maxLength: { value: 10, message: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.maxLength') },
+            required: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.required'),
+            validate: (value) =>
+                /^[A-Za-z]+$/.test(value ?? '') ||
+                t('app.createDao.createProcessForm.tokenFlow.distro.symbol.onlyLetters'),
+        },
+    });
+
+    const { fields, append, remove } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
+        name: `${fieldPrefix}.members`,
+    });
+
+    const handleAddMember = () => append({ address: '', tokenAmount: 1 });
+
+    return (
+        <>
+            <InputText
+                helpText={t('app.createDao.createProcessForm.tokenFlow.distro.name.helpText')}
+                {...tokenNameField}
+            />
+            <InputText
+                helpText={t('app.createDao.createProcessForm.tokenFlow.distro.symbol.helpText')}
+                {...tokenSymbolField}
+            />
+            <InputContainer id="distribute" useCustomWrapper={true}>
+                {fields.map((field, index) => (
+                    <TokenVotingMemberInputRow
+                        key={field.id}
+                        fieldNamePrefix={fieldPrefix}
+                        index={index}
+                        initialValue={field.address}
+                        onRemoveMember={remove}
+                        canRemove={fields.length > 1}
+                    />
+                ))}
+            </InputContainer>
+            <div className="flex w-full justify-between">
+                <Button size="md" variant="secondary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
+                    {t('app.createDao.createProcessForm.tokenFlow.distro.add')}
+                </Button>
+            </div>
+        </>
+    );
+};

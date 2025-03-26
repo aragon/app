@@ -1,3 +1,4 @@
+import { IMember } from '@/modules/governance/api/governanceService';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
@@ -89,7 +90,7 @@ export interface ICreateProcessFormStage {
     bodies: ICreateProcessFormBody[];
 }
 
-export interface ICreateProcessFormBody {
+export interface ICreateProcessFormBody<TMembership = ITokenSetupMembershipForm | IMultisigSetupMembershipForm> {
     /**
      * Name of the body.
      */
@@ -111,15 +112,12 @@ export interface ICreateProcessFormBody {
      */
     governanceType: string;
     /**
-     * Members of the voting body.
+     * Membership info of the voting body.
      */
-    members: ICompositeAddress[] | ITokenVotingMember[];
+    membership: TMembership;
+}
 
-    // Token-specific values
-    /**
-     * Type of the token used on the body.
-     */
-    tokenType: 'imported' | 'new';
+export interface ITokenSetupMembershipForm {
     /**
      * Address of the token to be imported.
      */
@@ -146,12 +144,21 @@ export interface ICreateProcessFormBody {
      * Allows voters to change their vote during the voting period.
      */
     voteChange: boolean;
+    /**
+     * Members of the token voting body.
+     */
+    members: ITokenVotingMember[];
+}
 
-    // Multisig-specific values
+export interface IMultisigSetupMembershipForm {
     /**
      * Amount of addresses in the authorized list that must approve a proposal for it to pass.
      */
     multisigThreshold: number;
+    /**
+     * Members of the multisig body.
+     */
+    members: IMember[];
 }
 
 export interface ICreateProcessFormPermissions {
