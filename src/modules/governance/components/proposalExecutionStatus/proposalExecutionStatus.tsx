@@ -51,7 +51,7 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
 
     const openTransactionDialog = () => {
         const params: IExecuteDialogParams = { daoId, proposal, status: proposalStatus };
-        open(GovernanceDialog.EXECUTE, { params });
+        open(GovernanceDialog.EXECUTE, { params, disableOutsideClick: true });
     };
 
     const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({

@@ -28,7 +28,9 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
         const dialogParams: IPrepareProcessDialogParams = { daoId, values };
-        checkWalletConnection({ onSuccess: () => open(CreateDaoDialog.PREPARE_PROCESS, { params: dialogParams }) });
+        checkWalletConnection({
+            onSuccess: () => open(CreateDaoDialog.PREPARE_PROCESS, { params: dialogParams, disableOutsideClick: true }),
+        });
     };
 
     const processedSteps = useMemo(
