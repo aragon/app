@@ -5,11 +5,11 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
 
-export interface ICreateProcessFormTokenVotingCreateToken {
+export interface ITokenSetupMembershipCreateTokenProps {
     fieldPrefix: string;
 }
 
-export const CreateProcessFormTokenVotingCreateToken: React.FC<ICreateProcessFormTokenVotingCreateToken> = (props) => {
+export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCreateTokenProps> = (props) => {
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();

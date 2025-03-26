@@ -4,13 +4,11 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, AlertCard } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 
-export interface ICreateProcessFormTokenVotingImportTokenProps {
+export interface ITokenSetupMembershipImportTokenProps {
     fieldPrefix: string;
 }
 
-export const CreateProcessFormTokenVotingImportToken: React.FC<ICreateProcessFormTokenVotingImportTokenProps> = (
-    props,
-) => {
+export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImportTokenProps> = (props) => {
     const { fieldPrefix } = props;
     const { t } = useTranslations();
 
