@@ -51,9 +51,9 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
 
     const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
-        const handlePreventClose = (e: Event) => {
-            e.preventDefault();
-        };
+    const handlePreventClose = (e: Event) => {
+        e.preventDefault();
+    };
 
     return (
         <Dialog.Root

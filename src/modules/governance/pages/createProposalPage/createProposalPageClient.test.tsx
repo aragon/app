@@ -65,6 +65,9 @@ describe('<CreateProposalPageClient /> component', () => {
             prepareActions: {},
             values: { actions: [] },
         };
-        expect(open).toHaveBeenCalledWith(GovernanceDialog.PUBLISH_PROPOSAL, { params: expectedParams });
+        expect(open).toHaveBeenCalledWith(GovernanceDialog.PUBLISH_PROPOSAL, {
+            params: expectedParams,
+            disableOutsideClick: true,
+        });
     });
 });

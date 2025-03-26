@@ -61,9 +61,9 @@ export const TokenWrapFormDialogApprove: React.FC<ITokenWrapFormDialogApprovePro
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
-              const handlePreventClose = (e: Event) => {
-                  e.preventDefault();
-              };
+    const handlePreventClose = (e: Event) => {
+        e.preventDefault();
+    };
 
     return (
         <Dialog.Root

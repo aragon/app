@@ -47,9 +47,9 @@ export const TokenDelegationFormDialog: React.FC<ITokenDelegationFormDialogProps
         stepper.updateActiveStep(initialActiveStep);
     };
 
-      const handlePreventClose = (e: Event) => {
-          e.preventDefault();
-      };
+    const handlePreventClose = (e: Event) => {
+        e.preventDefault();
+    };
 
     return (
         <Dialog.Root
