@@ -47,7 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@aragon/app-next@workspace:."
   dependencies:
-    "@aragon/gov-ui-kit": "npm:^1.0.71"
+    "@aragon/gov-ui-kit": "npm:^1.0.72"
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "npm:^2.28.1"
     "@floating-ui/react": "npm:^0.27.5"
@@ -111,9 +111,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@aragon/gov-ui-kit@npm:^1.0.71":
-  version: 1.0.71
-  resolution: "@aragon/gov-ui-kit@npm:1.0.71"
+"@aragon/gov-ui-kit@npm:^1.0.72":
+  version: 1.0.72
+  resolution: "@aragon/gov-ui-kit@npm:1.0.72"
   dependencies:
     "@radix-ui/react-accordion": "npm:^1.2.0"
     "@radix-ui/react-alert-dialog": "npm:^1.1.0"
@@ -139,22 +139,22 @@ __metadata:
     "@tiptap/starter-kit": "npm:^2.11.0"
     blockies-ts: "npm:^1.0.0"
     classnames: "npm:^2.5.0"
-    framer-motion: "npm:^12.4.0"
+    framer-motion: "npm:^12.5.0"
     luxon: "npm:^3.5.0"
     react-dropzone: "npm:^14.3.0"
     react-imask: "npm:^7.6.0"
-    sanitize-html: "npm:^2.14.0"
+    sanitize-html: "npm:^2.15.0"
     tiptap-markdown: "npm:^0.8.10"
   peerDependencies:
     "@tailwindcss/typography": ^0.5.0
-    "@tanstack/react-query": ^5.67.0
+    "@tanstack/react-query": ^5.69.0
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
     react-hook-form: ^7.54.0
     tailwindcss: ^3.4.0
     viem: ^2.23.0
     wagmi: ^2.14.0
-  checksum: 10c0/3d7405439e92898ee39f01100e592489c20ab8c1a87501a0e525f20bcf681f3430e9de148130fd8789def477fda7091661a67b8e69cd8d0be3b4a4b1425cde57
+  checksum: 10c0/30d740a5a6a3928d3331e27feec1b2a4e40a30b86cc1306dd638e7a73b46aa078a01a111c50a819005b8ecacaebc38e67158bf63b939a91fe69293861b45d725
   languageName: node
   linkType: hard
 
@@ -9428,7 +9428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^12.4.0, framer-motion@npm:^12.5.0":
+"framer-motion@npm:^12.5.0":
   version: 12.5.0
   resolution: "framer-motion@npm:12.5.0"
   dependencies:
@@ -14630,9 +14630,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sanitize-html@npm:^2.14.0":
-  version: 2.14.0
-  resolution: "sanitize-html@npm:2.14.0"
+"sanitize-html@npm:^2.15.0":
+  version: 2.15.0
+  resolution: "sanitize-html@npm:2.15.0"
   dependencies:
     deepmerge: "npm:^4.2.2"
     escape-string-regexp: "npm:^4.0.0"
@@ -14640,7 +14640,7 @@ __metadata:
     is-plain-object: "npm:^5.0.0"
     parse-srcset: "npm:^1.0.2"
     postcss: "npm:^8.3.11"
-  checksum: 10c0/7e001ab18d09ce5c4d0dbb6837c7a36f132874267e5b724cdef79b21188b55e652a591d79d297f9473aaf80cf96bb1894c3fa1046ccba977ed9aa365d6eb3a5c
+  checksum: 10c0/ad0086cbaa53f06d9c0c551cfd057ea03a35834bd77f37393bc83ab042ade2f19b41a43bf78ddadd95ad33b54ffd8ecf26d38b73690d41c239ab042b4815bb46
   languageName: node
   linkType: hard
 

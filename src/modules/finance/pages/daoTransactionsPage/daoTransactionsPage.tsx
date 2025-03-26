@@ -12,7 +12,7 @@ export interface IDaoTransactionsPageProps {
     params: Promise<IDaoPageParams>;
 }
 
-export const daoTransactionsCount = 6;
+export const daoTransactionsCount = 20;
 
 export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (props) => {
     const { params } = props;
