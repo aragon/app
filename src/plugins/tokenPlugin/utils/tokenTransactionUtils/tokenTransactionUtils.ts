@@ -3,7 +3,6 @@ import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/t
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
@@ -95,19 +94,13 @@ class TokenTransactionUtils {
         const { body, stage, permissionSettings } = params;
         const { minVotingPower } = permissionSettings ?? {};
 
-        const { earlyStageAdvance, votingPeriod } = stage.timing;
+        const { votingPeriod } = stage.timing;
         const { votingMode, supportThreshold, minParticipation } = body;
-        const processedVotingMode =
-            votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT
-                ? DaoTokenVotingMode.VOTE_REPLACEMENT
-                : earlyStageAdvance
-                  ? DaoTokenVotingMode.EARLY_EXECUTION
-                  : DaoTokenVotingMode.STANDARD;
 
         const minProposerVotingPower = minVotingPower ? parseUnits(minVotingPower, 18) : BigInt(0);
 
         const votingSettings = {
-            votingMode: processedVotingMode,
+            votingMode,
             supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
             minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
             minDuration: BigInt(dateUtils.durationToSeconds(votingPeriod)),
