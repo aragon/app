@@ -11,6 +11,7 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const members = watch(`${fieldPrefix}.members`);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    return <MultisigSetupGovernance fieldPrefix={fieldPrefix} membersCount={members?.length ?? 0} />;
+    return (
+        <MultisigSetupGovernance fieldPrefix={fieldPrefix} membersCount={Array.isArray(members) ? members.length : 0} />
+    );
 };
