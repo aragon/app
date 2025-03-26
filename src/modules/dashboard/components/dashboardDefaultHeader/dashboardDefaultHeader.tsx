@@ -14,14 +14,14 @@ import {
     NumberFormat,
 } from '@aragon/gov-ui-kit';
 
-export interface IDefaultHeaderProps {
+export interface IDashboardDefaultHeaderProps {
     /**
      * DAO to display in the header.
      */
     dao: IDao;
 }
 
-export const DefaultHeader: React.FC<IDefaultHeaderProps> = (props) => {
+export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (props) => {
     const { dao } = props;
 
     const { t } = useTranslations();
@@ -37,9 +37,9 @@ export const DefaultHeader: React.FC<IDefaultHeaderProps> = (props) => {
     const daoTvl = formatterUtils.formatNumber(dao.metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
 
     const stats = [
-        { value: proposalsCreated, label: t('app.dashboard.daoDashboardPage.header.stat.proposals') },
-        { value: membersCount, label: t('app.dashboard.daoDashboardPage.header.stat.members') },
-        { value: daoTvl, label: t('app.dashboard.daoDashboardPage.header.stat.treasury'), suffix: 'USD' },
+        { value: proposalsCreated, label: t('app.dashboard.dashboardDefaultHeader.stat.proposals') },
+        { value: membersCount, label: t('app.dashboard.dashboardDefaultHeader.stat.members') },
+        { value: daoTvl, label: t('app.dashboard.dashboardDefaultHeader.stat.treasury'), suffix: 'USD' },
     ];
     const pageUrl = useCurrentUrl();
 

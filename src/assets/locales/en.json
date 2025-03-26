@@ -467,13 +467,6 @@
           },
           "links": "Resources"
         },
-        "header": {
-          "stat": {
-            "members": "Members",
-            "proposals": "Proposals",
-            "treasury": "Treasury"
-          }
-        },
         "main": {
           "assets": {
             "title": "Assets"
@@ -485,6 +478,13 @@
             "title": "Latest proposals"
           },
           "viewAll": "View all"
+        }
+      },
+      "dashboardDefaultHeader": {
+        "stat": {
+          "members": "Members",
+          "proposals": "Proposals",
+          "treasury": "Treasury"
         }
       }
     },
