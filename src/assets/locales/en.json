@@ -1003,9 +1003,6 @@
           "optimisticApprovalLabel": "veto approval",
           "vetoed": "vetoed"
         },
-        "multisigSetupMembershipItem": {
-          "alreadyMember": "Address is already a member of the DAO"
-        },
         "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
@@ -1028,6 +1025,9 @@
               "label": "Members"
             }
           }
+        },
+        "multisigSetupMembershipItem": {
+          "alreadyMember": "Address is already a member of the DAO"
         },
         "multisigSubmitVote": {
           "approve": "Approve proposal",
