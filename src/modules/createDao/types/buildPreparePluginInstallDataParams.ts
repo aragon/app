@@ -1,15 +1,15 @@
 import {
-    type ICreateProcessFormBody,
     type ICreateProcessFormProposalCreationBody,
     type ICreateProcessFormStage,
 } from '@/modules/createDao/components/createProcessForm';
 import type { IDao } from '@/shared/api/daoService';
+import type { ISetupBodyForm } from '../dialogs/setupBodyDialog';
 
-export interface IBuildPreparePluginInstallDataParams {
+export interface IBuildPreparePluginInstallDataParams<TGovernance = unknown, TMembership = unknown> {
     /**
      * The required form data for a body to be installed with a process.
      */
-    body: ICreateProcessFormBody;
+    body: ISetupBodyForm<TGovernance, TMembership>;
     /**
      * The metadata CID of the process.
      */

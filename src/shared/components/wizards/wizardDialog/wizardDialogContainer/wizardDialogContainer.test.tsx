@@ -17,7 +17,6 @@ describe('<WizardDialogContainer /> component', () => {
             title: 'title',
             descriptionKey: 'description',
             formId: 'formId',
-            onClose: jest.fn(),
             submitLabel: 'submit',
             ...props,
         };
@@ -25,17 +24,11 @@ describe('<WizardDialogContainer /> component', () => {
         return <WizardDialogContainer {...completeProps} />;
     };
 
-    it('returns empty container when isOpen property is set to false', () => {
-        const isOpen = false;
-        const { container } = render(createTestComponent({ isOpen }));
-        expect(container).toBeEmptyDOMElement();
-    });
-
     it('renders a dialog with the specified title, description, content and footer when dialog is open', () => {
         const title = 'wizard-title';
         const descriptionKey = 'wizard-description';
         const children = 'wizard-steps';
-        render(createTestComponent({ title, descriptionKey, children, isOpen: true }));
+        render(createTestComponent({ title, descriptionKey, children }));
         expect(screen.getByText(title)).toBeInTheDocument();
         expect(screen.getByText(descriptionKey)).toBeInTheDocument();
         expect(screen.getByText(children)).toBeInTheDocument();
