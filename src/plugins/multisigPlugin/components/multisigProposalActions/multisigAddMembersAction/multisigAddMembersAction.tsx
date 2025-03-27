@@ -8,7 +8,7 @@ import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import type { IMultisigSetupMembershipForm } from '../../multisigSetupMembership';
-import { MultisigSetupMembership } from '../../multisigSetupMembership/multisigSetupMembership';
+import { MultisigSetupMembership } from '../../multisigSetupMembership';
 
 export interface IMultisigAddMembersActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}

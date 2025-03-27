@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import type { IMultisigSetupMembershipForm } from '../../multisigSetupMembership';
-import { MultisigSetupMembership } from '../../multisigSetupMembership/multisigSetupMembership';
+import { MultisigSetupMembership } from '../../multisigSetupMembership';
 import { MultisigRemoveMembersActionDialog } from './multisigRemoveMembersActionDialog';
 
 export interface IMultisigRemoveMembersActionProps
