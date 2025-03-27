@@ -378,6 +378,31 @@
           }
         },
         "title": "Finalize governance process"
+      },
+      "setupBodyDialog": {
+        "a11y": {
+          "description": "Create a new voting body for your DAO"
+        },
+        "metadata": {
+          "name": {
+            "label": "Body name"
+          },
+          "resources": {
+            "helpText": "These are shown as links on the members list."
+          },
+          "summary": {
+            "helpText": "This is shown on the members list to help visitors understand what the body is responsible for.",
+            "label": "Description"
+          }
+        },
+        "select": {
+          "plugin": {
+            "helpText": "This determines the governance the body uses to make decisions.",
+            "label": "Governance type"
+          }
+        },
+        "submit": "Save",
+        "title": "Add voting body"
       }
     },
     "daos": {
@@ -1037,6 +1062,10 @@
         },
         "multisigVoteList": {
           "entity": "Votes"
+        },
+        "setup": {
+          "description": "Designated members must reach a minimum approval threshold",
+          "name": "Multisig"
         }
       },
       "spp": {
@@ -1096,6 +1125,10 @@
         }
       },
       "token": {
+        "setup": {
+          "description": "Majority voting based on token voting power",
+          "name": "Token voting"
+        },
         "tokenActions": {
           "Mint": "Mint",
           "UpdateVoteSettings": "Update settings"
@@ -1540,7 +1573,8 @@
       },
       "wizardDialog": {
         "container": {
-          "back": "Back"
+          "back": "Back",
+          "close": "Close"
         }
       },
       "wizardPage": {

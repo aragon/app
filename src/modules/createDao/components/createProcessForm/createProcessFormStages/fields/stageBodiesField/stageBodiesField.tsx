@@ -1,4 +1,5 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { SetupBodyDialog } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialog';
 import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -7,7 +8,6 @@ import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useAccount } from 'wagmi';
 import type { ICreateProcessFormBody, ICreateProcessFormData } from '../../../createProcessFormDefinitions';
-import { StageBodiesFieldDialog } from './stageBodiesFieldDialog';
 
 export interface IStageBodiesFieldProps {
     /**
@@ -75,7 +75,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
     const {
         fields: bodyField,
         remove: removeBody,
-        update: updateBody,
+        // update: updateBody,
         append: appendBody,
     } = useFieldArray<Record<string, ICreateProcessFormBody[]>>({ name: bodyFieldName });
     const watchBodyField = watch(bodyFieldName as `stages.${number}.bodies`);
@@ -158,6 +158,12 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                     >
                         {t('app.createDao.createProcessForm.stages.bodies.add')}
                     </Button>
+                    <SetupBodyDialog
+                        isOpen={bodyDialogState.isOpen}
+                        onClose={() => setBodyDialogState({ isOpen: false, bodyIndex: 0 })}
+                        onSubmit={(values) => console.log(values)}
+                    />
+                    {/*
                     {bodyDialogState.isOpen && (
                         <StageBodiesFieldDialog
                             stageFieldName={stageFieldName}
@@ -167,6 +173,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                             {...bodyDialogState}
                         />
                     )}
+                        */}
                 </div>
             </InputContainer>
         </>

@@ -15,4 +15,8 @@ export const multisigPlugin: IPluginInfo = {
         [Network.ZKSYNC_SEPOLIA]: '0x2cae809b6ca149b49cBcA8B887Da2805174052F3',
         [Network.PEAQ_MAINNET]: '0x83a977d564349586936f17D9536b2c5702B4Fe20',
     },
+    setup: {
+        nameKey: 'app.plugins.multisig.setup.name',
+        descriptionKey: 'app.plugins.multisig.setup.description',
+    },
 };
