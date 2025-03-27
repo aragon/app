@@ -48,7 +48,6 @@ class TokenProposalUtils {
 
     hasSucceeded = (proposal: ITokenProposal) => {
         const isApprovalReached = this.isApprovalReached(proposal);
-        const isApprovalReachedEarly = this.isApprovalReached(proposal, true);
 
         const now = DateTime.utc();
         const startDate = DateTime.fromMillis(proposal.startDate * 1000);
@@ -57,7 +56,9 @@ class TokenProposalUtils {
         const isProposalOpen = now > startDate && now < endDate;
 
         if (isProposalOpen) {
-            return proposal.settings.votingMode === DaoTokenVotingMode.EARLY_EXECUTION && isApprovalReachedEarly;
+            const isApprovalReachedEarly = this.isApprovalReached(proposal, true);
+
+            return proposal.settings.votingMode !== DaoTokenVotingMode.VOTE_REPLACEMENT && isApprovalReachedEarly;
         }
 
         return isApprovalReached;
@@ -67,7 +68,7 @@ class TokenProposalUtils {
         const { minParticipation, historicalTotalSupply } = proposal.settings;
 
         const parsedTotalSupply = BigInt(historicalTotalSupply!);
-        const parsedMinParticipation = BigInt(tokenSettingsUtils.fromRatioToPercentage(minParticipation));
+        const parsedMinParticipation = BigInt(tokenSettingsUtils.ratioToPercentage(minParticipation));
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;
@@ -83,7 +84,7 @@ class TokenProposalUtils {
         const { supportThreshold, historicalTotalSupply } = proposal.settings;
         const { votesByOption } = proposal.metrics;
 
-        const parsedSupport = BigInt(tokenSettingsUtils.fromRatioToPercentage(supportThreshold));
+        const parsedSupport = BigInt(tokenSettingsUtils.ratioToPercentage(supportThreshold));
 
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
         const abstainVotes = this.getVoteByType(votesByOption, VoteOption.ABSTAIN);

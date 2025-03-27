@@ -1,4 +1,5 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Accordion, Button, Card, Dropdown, Heading, IconType, InputContainer } from '@aragon/gov-ui-kit';
@@ -58,8 +59,8 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
             tokenName: '',
             tokenSymbol: '',
             supportThreshold: 50,
-            minimumParticipation: 0,
-            voteChange: false,
+            minParticipation: 0,
+            votingMode: DaoTokenVotingMode.STANDARD,
             minApprovals: 1,
         });
         setBodyDialogState({ isOpen: true, bodyIndex: controlledBodyField.length, isNewBody: true });

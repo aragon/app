@@ -77,7 +77,7 @@ describe('tokenTransaction utils', () => {
             const permissionSettings = { minVotingPower: '2', bodyId: '1' };
             const body = generateCreateProcessFormBody({
                 supportThreshold: 2,
-                minimumParticipation: 2,
+                minParticipation: 2,
                 tokenType: 'new',
             });
             const stage = generateCreateProcessFormStage({
@@ -134,39 +134,12 @@ describe('tokenTransaction utils', () => {
     });
 
     describe('buildInstallDataVotingSettings', () => {
-        it('returns the correct voting mode when vote change is enabled', () => {
-            const body = generateCreateProcessFormBody({ voteChange: true });
+        it('returns the correct voting mode', () => {
+            const body = generateCreateProcessFormBody({ votingMode: DaoTokenVotingMode.VOTE_REPLACEMENT });
             const stage = generateCreateProcessFormStage();
             const permissionSettings = { minVotingPower: '1', bodyId: '' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
-
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings']({ body, stage, permissionSettings });
             expect(result.votingMode).toBe(DaoTokenVotingMode.VOTE_REPLACEMENT);
-        });
-
-        it('returns the correct voting mode when early execution is enabled', () => {
-            const body = generateCreateProcessFormBody();
-            const stage = generateCreateProcessFormStage({
-                timing: { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: true },
-            });
-            const permissionSettings = { minVotingPower: '1', bodyId: '' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
-
-            expect(result.votingMode).toBe(DaoTokenVotingMode.EARLY_EXECUTION);
-        });
-
-        it('returns standard voting mode when vote replacement and early execution are not set', () => {
-            const body = generateCreateProcessFormBody();
-            const stage = generateCreateProcessFormStage();
-            const permissionSettings = { minVotingPower: '3', bodyId: '' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
-
-            expect(result.votingMode).toBe(DaoTokenVotingMode.STANDARD);
         });
 
         it('returns 0 for min proposer voting power when permissionSettings are undefined', () => {
@@ -179,7 +152,7 @@ describe('tokenTransaction utils', () => {
         });
 
         it('correctly calculates the voting settings', () => {
-            const body = generateCreateProcessFormBody({ supportThreshold: 3, minimumParticipation: 4 });
+            const body = generateCreateProcessFormBody({ supportThreshold: 3, minParticipation: 4 });
             const stage = generateCreateProcessFormStage({
                 timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
             });

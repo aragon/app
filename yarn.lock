@@ -89,7 +89,7 @@ __metadata:
     lint-staged: "npm:^15.5.0"
     luxon: "npm:^3.5.0"
     next: "npm:^15.2.4"
-    nextjs-toploader: "npm:^3.8.15"
+    nextjs-toploader: "npm:^3.8.16"
     postcss: "npm:^8.5.3"
     prettier: "npm:^3.5.3"
     prettier-plugin-organize-imports: "npm:^4.1.0"
@@ -12422,9 +12422,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nextjs-toploader@npm:^3.8.15":
-  version: 3.8.15
-  resolution: "nextjs-toploader@npm:3.8.15"
+"nextjs-toploader@npm:^3.8.16":
+  version: 3.8.16
+  resolution: "nextjs-toploader@npm:3.8.16"
   dependencies:
     nprogress: "npm:^0.2.0"
     prop-types: "npm:^15.8.1"
@@ -12432,7 +12432,7 @@ __metadata:
     next: ">= 6.0.0"
     react: ">= 16.0.0"
     react-dom: ">= 16.0.0"
-  checksum: 10c0/c66771a25ce3aafd9aae0748ae6a020447440ef106e19d719a46c236d409bc6da8bd19a164d58564d086ea9f59d3159a040cec17ac11c556bdfcbbe30ef56933
+  checksum: 10c0/b705a81638dbf68d6c278b391ae00be1e59e823e7085ad3a4f638b804b007603d6bfe7c5d84e94770dd04cae3eb7101acf8df7bdcf0144bcc40f6a9f8a25e85b
   languageName: node
   linkType: hard
 

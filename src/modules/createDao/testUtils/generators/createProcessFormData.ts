@@ -1,3 +1,4 @@
+import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import {
     type ICreateProcessFormBody,
     type ICreateProcessFormData,
@@ -14,8 +15,8 @@ export const generateCreateProcessFormBody = (values?: Partial<ICreateProcessFor
     members: [],
     tokenType: 'new',
     supportThreshold: 1,
-    minimumParticipation: 1,
-    voteChange: false,
+    minParticipation: 1,
+    votingMode: DaoTokenVotingMode.STANDARD,
     minApprovals: 1,
     ...values,
 });

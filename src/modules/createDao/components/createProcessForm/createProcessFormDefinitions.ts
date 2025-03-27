@@ -1,3 +1,4 @@
+import type { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
@@ -141,11 +142,11 @@ export interface ICreateProcessFormBody {
      * The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal
      * to this value.
      */
-    minimumParticipation: number;
+    minParticipation: number;
     /**
      * Allows voters to change their vote during the voting period.
      */
-    voteChange: boolean;
+    votingMode: DaoTokenVotingMode;
 
     // Multisig-specific values
     /**

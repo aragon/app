@@ -108,7 +108,7 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
 
         let fieldPaths: string[];
         if (bodyGovernanceType === 'token-voting') {
-            fieldPaths = [`${basePath}.supportThreshold`, `${basePath}.minimumParticipation`, `${basePath}.voteChange`];
+            fieldPaths = [`${basePath}.supportThreshold`, `${basePath}.minParticipation`, `${basePath}.voteChange`];
         } else {
             fieldPaths = [`${basePath}.supportThreshold`];
         }
