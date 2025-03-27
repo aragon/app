@@ -31,9 +31,9 @@ const setupBodySteps = [
 export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { isOpen, onClose, onSubmit } = props;
 
-    const [selectStep, metadataStep, membershipStep, governanceStep] = setupBodySteps;
-
     const { t } = useTranslations();
+
+    const [selectStep, metadataStep, membershipStep, governanceStep] = setupBodySteps;
 
     return (
         <WizardDialog.Container
