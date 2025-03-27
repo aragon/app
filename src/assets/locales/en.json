@@ -1000,19 +1000,6 @@
           "MultisigRemoveMembers": "Remove members",
           "UpdateMultiSigSettings": "Update settings"
         },
-        "multisigAddMembersAction": {
-          "add": "Add",
-          "addressInput": {
-            "error": {
-              "alreadyInList": "Address has already been added.",
-              "alreadyMember": "Address is already a member of the DAO.",
-              "invalid": "Address is not valid."
-            },
-            "label": "Member",
-            "placeholder": "ENS or 0x…"
-          },
-          "removeMember": "Remove member"
-        },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "After a proposal expires, you can't approve or execute it.",
@@ -1065,21 +1052,6 @@
           "notVetoed": "did not veto",
           "optimisticApprovalLabel": "veto approval",
           "vetoed": "vetoed"
-        },
-        "multisigRemoveMembersAction": {
-          "add": "Add",
-          "addressInput": {
-            "error": {
-              "alreadyInList": "Address has already been added."
-            },
-            "placeholder": "ENS or 0x…"
-          },
-          "dialog": {
-            "entity": "Members",
-            "heading": "Remove members"
-          },
-          "removeMember": "Remove member",
-          "select": "select"
         },
         "multisigSetupMembershipItem": {
           "alreadyMember": "Address is already a member of the DAO"
