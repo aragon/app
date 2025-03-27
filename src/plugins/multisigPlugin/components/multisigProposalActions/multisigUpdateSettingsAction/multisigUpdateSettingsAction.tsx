@@ -38,16 +38,16 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
-    const fieldPrefix = `${actionFieldName}.proposedSettings`;
+    const formPrefix = `${actionFieldName}.proposedSettings`;
 
     // Set default values to minApprovals and onlyListed values as values are reset when deleting an item from the
     // useArrayField causing the useWatch / useFormField to return undefined before unmounting the component
     const minApprovalsFieldValue = useWatch<Record<string, IMultisigSetupGovernanceForm['minApprovals']>>({
-        name: `${fieldPrefix}.minApprovals`,
+        name: `${formPrefix}.minApprovals`,
         defaultValue: 0,
     });
     const onlyListedFieldValue = useWatch<Record<string, IMultisigSetupGovernanceForm['onlyListed']>>({
-        name: `${fieldPrefix}.onlyListed`,
+        name: `${formPrefix}.onlyListed`,
         defaultValue: false,
     });
 
@@ -65,7 +65,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
 
     return (
         <MultisigSetupGovernance
-            fieldPrefix={fieldPrefix}
+            formPrefix={formPrefix}
             membersCount={membersCount}
             showProposalCreationSettings={true}
         />

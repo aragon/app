@@ -10,5 +10,5 @@ export const CreateProcessFormMultisigParams: React.FC<ICreateProcessFormMultisi
 
     const members = useWatch<Record<string, ICompositeAddress[] | undefined>>({ name: `${fieldPrefix}.members` }) ?? [];
 
-    return <MultisigSetupGovernance fieldPrefix={fieldPrefix} membersCount={members.length} />;
+    return <MultisigSetupGovernance formPrefix={fieldPrefix} membersCount={members.length} />;
 };
