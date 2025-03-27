@@ -1,5 +1,5 @@
-import type { ITokenSetupMembershipForm } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
 import { TokenVotingMemberInputRow } from '@/modules/createDao/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingMemberInputRow';
+import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';

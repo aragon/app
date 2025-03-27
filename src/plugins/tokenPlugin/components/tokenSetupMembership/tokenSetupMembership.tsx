@@ -1,16 +1,9 @@
+import type { ITokenSetupMembershipProps } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembership.api';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Icon, IconType, InputContainer, Link, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import { TokenSetupMembershipCreateToken } from './tokenSetupMembershipCreateToken';
 import { TokenSetupMembershipImportToken } from './tokenSetupMembershipImportToken';
-
-import { useState } from 'react';
-
-export interface ITokenSetupMembershipProps {
-    /**
-     * Prefix to be appended to all form fields.
-     */
-    formPrefix: string;
-}
 
 export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props) => {
     const { formPrefix } = props;

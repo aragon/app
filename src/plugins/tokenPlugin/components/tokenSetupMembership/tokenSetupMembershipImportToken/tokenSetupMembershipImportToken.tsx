@@ -1,4 +1,4 @@
-import type { ITokenSetupMembershipForm } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
+import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, AlertCard } from '@aragon/gov-ui-kit';
