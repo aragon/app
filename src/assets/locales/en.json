@@ -191,13 +191,6 @@
           "distro": {
             "helpText": "These addresses will be the only ones able to participate.",
             "label": "Members"
-          },
-          "params": {
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
-            "placeholder": "Enter a number",
-            "required": "Threshold must be at least 1.",
-            "suffix": "of {{members}}"
           }
         },
         "permissions": {
@@ -1071,20 +1064,14 @@
           "removeMember": "Remove member",
           "select": "select"
         },
-        "multisigSubmitVote": {
-          "approve": "Approve proposal",
-          "approved": "Approved",
-          "veto": "Veto proposal",
-          "vetoed": "Vetoed"
-        },
-        "multisigUpdateSettingsAction": {
+        "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
               "majority": "Proposal will be approved by majority",
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
-            "helpText": "Minimum approval is how many addresses must approve a proposal for it to pass.",
-            "label": "Minimum approval",
+            "helpText": "At least this many members will have to approve proposals.",
+            "label": "Approval threshold",
             "total": "of {{total}} addresses"
           },
           "onlyListed": {
@@ -1099,6 +1086,12 @@
               "label": "Members"
             }
           }
+        },
+        "multisigSubmitVote": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed"
         },
         "multisigVoteList": {
           "entity": "Votes"

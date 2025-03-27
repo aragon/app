@@ -61,7 +61,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
             supportThreshold: 50,
             minParticipation: 0,
             votingMode: DaoTokenVotingMode.STANDARD,
-            multisigThreshold: 1,
+            minApprovals: 1,
         });
         setBodyDialogState({ isOpen: true, bodyIndex: controlledBodyField.length, isNewBody: true });
     };
