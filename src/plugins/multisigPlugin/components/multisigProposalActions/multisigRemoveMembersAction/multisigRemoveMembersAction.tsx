@@ -2,30 +2,17 @@ import { type IProposalAction } from '@/modules/governance/api/governanceService
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
 import { type IDaoPlugin } from '@/shared/api/daoService';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    addressUtils,
-    Button,
-    type ICompositeAddress,
-    IconType,
-    type IProposalActionComponentProps,
-} from '@aragon/gov-ui-kit';
+import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
+import type { IMultisigSetupMembershipForm } from '../../multisigSetupMembership';
+import { MultisigSetupMembership } from '../../multisigSetupMembership/multisigSetupMembership';
 import { MultisigRemoveMembersActionDialog } from './multisigRemoveMembersActionDialog';
-import { MultisigRemoveMembersActionItem } from './multisigRemoveMembersActionItem';
 
 export interface IMultisigRemoveMembersActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
-
-export interface IMultisigRemoveMembersActionFormData {
-    /**
-     * List of members to be removed.
-     */
-    members: ICompositeAddress[];
-}
 
 const removeMembersAbi = {
     type: 'function',
@@ -38,7 +25,6 @@ const removeMembersAbi = {
 export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionProps> = (props) => {
     const { action, index } = props;
 
-    const { t } = useTranslations();
     const { setValue } = useFormContext();
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -47,29 +33,22 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
     const membersFieldName: `${string}.members` = `${actionFieldName}.members`;
-    const {
-        fields: membersField,
-        append: addMember,
-        remove: removeMember,
-    } = useFieldArray<Record<string, IMultisigRemoveMembersActionFormData>>({
-        name: membersFieldName,
-        rules: { required: true, minLength: 1 },
-    });
 
-    const watchFieldArray = useWatch<Record<string, IMultisigRemoveMembersActionFormData['members']>>({
+    const watchFieldArray = useWatch<Record<string, IMultisigSetupMembershipForm['members']>>({
         name: membersFieldName,
     });
     const controlledMembersField = useMemo(
-        () => membersField.map((field, index) => ({ ...field, ...watchFieldArray[index] })),
-        [membersField, watchFieldArray],
+        () => watchFieldArray.map((field, index) => ({ ...field, ...watchFieldArray[index] })),
+        [watchFieldArray],
     );
 
-    const handleMemberClick = (memberAddress: string) => addMember({ address: memberAddress });
+    const handleMemberClick = (memberAddress: string) => {
+        const memberExists = watchFieldArray.some((member) => member.address === memberAddress);
 
-    const checkIsAlreadyInList = (index: number) =>
-        controlledMembersField
-            .slice(0, index)
-            .some((field) => addressUtils.isAddressEqual(field.address, controlledMembersField[index].address));
+        if (!memberExists) {
+            setValue(membersFieldName, [...watchFieldArray, { address: memberAddress }]);
+        }
+    };
 
     useEffect(() => {
         if (controlledMembersField.some((field) => !addressUtils.isAddress(field.address))) {
@@ -84,28 +63,11 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
 
     return (
         <>
-            {membersField.length > 0 && (
-                <div className="flex w-full flex-col gap-3 md:gap-2">
-                    {membersField.map((field, index) => (
-                        <MultisigRemoveMembersActionItem
-                            key={field.id}
-                            index={index}
-                            onRemoveClick={removeMember}
-                            fieldName={membersFieldName}
-                            isAlreadyInList={checkIsAlreadyInList(index)}
-                        />
-                    ))}
-                </div>
-            )}
-            <Button
-                size="md"
-                variant="tertiary"
-                className="w-fit"
-                iconLeft={IconType.PLUS}
-                onClick={() => setIsDialogOpen(true)}
-            >
-                {t('app.plugins.multisig.multisigRemoveMembersAction.add')}
-            </Button>
+            <MultisigSetupMembership
+                formPrefix={actionFieldName}
+                disabled={true}
+                onAddClick={() => setIsDialogOpen(true)}
+            />
             <MultisigRemoveMembersActionDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}

@@ -188,10 +188,6 @@
           }
         },
         "multisigFlow": {
-          "distro": {
-            "helpText": "These addresses will be the only ones able to participate.",
-            "label": "Members"
-          },
           "params": {
             "helpText": "At least this many members will have to approve proposals.",
             "label": "Approval threshold",
@@ -1084,6 +1080,9 @@
           },
           "removeMember": "Remove member",
           "select": "select"
+        },
+        "multisigSetupMembershipItem": {
+          "alreadyMember": "Address is already a member of the DAO"
         },
         "multisigSubmitVote": {
           "approve": "Approve proposal",

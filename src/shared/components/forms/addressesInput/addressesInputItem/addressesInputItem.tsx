@@ -20,9 +20,21 @@ export interface IAddressesInputItemProps extends ComponentProps<'div'> {
      * The index of the member.
      */
     index: number;
+    /**
+     * Flag indicating if the input should be disabled.
+     */
+    disabled?: boolean;
+    /**
+     * Optional custom validator function that extends the default validation
+     */
+    customValidator?: (member: ICompositeAddress) => string | boolean;
 }
 
-const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean) => {
+const validateMember = (
+    member: ICompositeAddress,
+    isAlreadyInList: boolean,
+    customValidator?: IAddressesInputItemProps['customValidator'],
+) => {
     const errorNamespace = 'app.shared.addressesInput.item.input.error';
 
     if (!addressUtils.isAddress(member.address)) {
@@ -31,11 +43,15 @@ const validateMember = (member: ICompositeAddress, isAlreadyInList: boolean) => 
         return `${errorNamespace}.alreadyInList`;
     }
 
+    if (customValidator) {
+        return customValidator(member);
+    }
+
     return true;
 };
 
 export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) => {
-    const { index } = props;
+    const { index, disabled, customValidator } = props;
 
     const { t } = useTranslations();
 
@@ -63,7 +79,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
         label: t('app.shared.addressesInput.item.input.label'),
         rules: {
             required: true,
-            validate: (value) => validateMember(value, isAlreadyInList),
+            validate: (value) => validateMember(value, isAlreadyInList, customValidator),
         },
     });
 
@@ -89,6 +105,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
                 value={addressInput}
                 onAccept={handleAddressAccept}
                 placeholder={t('app.shared.addressesInput.item.input.placeholder')}
+                disabled={disabled}
                 {...addressField}
             />
 
