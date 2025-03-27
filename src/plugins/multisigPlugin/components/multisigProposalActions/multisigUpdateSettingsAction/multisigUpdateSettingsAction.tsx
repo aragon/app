@@ -67,7 +67,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
         <MultisigSetupGovernance
             formPrefix={formPrefix}
             membersCount={membersCount}
-            showProposalCreationSettings={true}
+            showProposalCreationSettings={!action.meta.isSubPlugin}
         />
     );
 };

@@ -17,6 +17,7 @@ export const SetupBodyDialogGovernance: React.FC<ISetupBodyDialogGovernanceProps
             showProposalCreationSettings={false}
             // TODO: to be removed, pass the body.membership generic field instead
             token={{ symbol: 'test', decimals: 18, totalSupply: 100 }}
+            membersCount={3}
         />
     );
 };
