@@ -6,13 +6,13 @@ import { useWatch } from 'react-hook-form';
 import type { IMultisigSetupGovernanceForm, IMultisigSetupGovernanceProps } from './multisigSetupGovernance.api';
 
 export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = (props) => {
-    const { fieldPrefix, membersCount, showProposalCreationSettings = false } = props;
+    const { formPrefix, membersCount, showProposalCreationSettings = false } = props;
 
     const { t } = useTranslations();
 
     // Set default values to minApprovals and onlyListed values as values are reset when deleting an item from the
     // useArrayField causing the useWatch / useFormField to return undefined before unmounting the component
-    const minApprovalsFieldName = `${fieldPrefix}.minApprovals`;
+    const minApprovalsFieldName = `${formPrefix}.minApprovals`;
     const minApprovalsFieldValue = useWatch<Record<string, IMultisigSetupGovernanceForm['minApprovals']>>({
         name: minApprovalsFieldName,
         defaultValue: 0,
@@ -23,7 +23,7 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
         onChange: onOnlyListedFieldChange,
         ...onlyListedField
     } = useFormField<IMultisigSetupGovernanceForm, 'onlyListed'>('onlyListed', {
-        fieldPrefix,
+        fieldPrefix: formPrefix,
         label: t('app.plugins.multisig.multisigSetupGovernance.onlyListed.label'),
         defaultValue: false,
     });

@@ -345,8 +345,6 @@
             "typeLabel": "ERC-20 token"
           },
           "params": {
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
             "minParticipation": {
               "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
               "label": "Minimum participation",
@@ -1094,8 +1092,8 @@
               "majority": "Proposal will be approved by majority",
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
-            "helpText": "Minimum approval is how many addresses must approve a proposal for it to pass.",
-            "label": "Minimum approval",
+            "helpText": "At least this many members will have to approve proposals.",
+            "label": "Approval threshold",
             "total": "of {{total}} addresses"
           },
           "onlyListed": {

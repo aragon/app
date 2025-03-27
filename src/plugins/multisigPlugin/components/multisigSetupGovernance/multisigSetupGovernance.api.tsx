@@ -4,9 +4,9 @@ export interface IMultisigSetupGovernanceForm extends Pick<IMultisigPluginSettin
 
 export interface IMultisigSetupGovernanceProps {
     /**
-     * Field prefix for the form fields. This is expected to always be a sub-form of the main form.
+     * Prefix to be appended to all form fields. This is expected to always be a sub-form of the main form.
      */
-    fieldPrefix: string;
+    formPrefix: string;
     /**
      * Total number of members in the body of the DAO. It is a prop because it can either come from the API (actions) or
      * from the local members field (create process form).
