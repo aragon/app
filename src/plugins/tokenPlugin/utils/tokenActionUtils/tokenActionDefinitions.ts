@@ -45,8 +45,8 @@ export const defaultUpdateSettings = ({
     value: '0',
     proposedSettings: {
         ...settings,
-        minParticipation: tokenSettingsUtils.fromRatioToPercentage(settings.minParticipation),
-        supportThreshold: tokenSettingsUtils.fromRatioToPercentage(settings.supportThreshold),
+        minParticipation: tokenSettingsUtils.ratioToPercentage(settings.minParticipation),
+        supportThreshold: tokenSettingsUtils.ratioToPercentage(settings.supportThreshold),
         minProposerVotingPower: formatUnits(BigInt(settings.minProposerVotingPower), settings.token.decimals),
     },
     inputData: {

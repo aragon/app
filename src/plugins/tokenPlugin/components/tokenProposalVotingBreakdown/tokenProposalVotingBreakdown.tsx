@@ -32,8 +32,8 @@ export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdow
             totalYes={yesVotes}
             totalNo={noVotes}
             totalAbstain={abstainVotes}
-            minParticipation={tokenSettingsUtils.fromRatioToPercentage(minParticipation)}
-            supportThreshold={tokenSettingsUtils.fromRatioToPercentage(supportThreshold)}
+            minParticipation={tokenSettingsUtils.ratioToPercentage(minParticipation)}
+            supportThreshold={tokenSettingsUtils.ratioToPercentage(supportThreshold)}
             tokenSymbol={symbol}
             tokenTotalSupply={formatUnits(BigInt(historicalTotalSupply!), decimals)}
         >
