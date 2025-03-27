@@ -191,13 +191,6 @@
           "distro": {
             "helpText": "These addresses will be the only ones able to participate.",
             "label": "Members"
-          },
-          "params": {
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
-            "placeholder": "Enter a number",
-            "required": "Threshold must be at least 1.",
-            "suffix": "of {{members}}"
           }
         },
         "permissions": {
