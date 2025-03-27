@@ -16,7 +16,8 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
         <>
             <InputContainer
                 id="token"
-                helpText={t('app.createDao.createProcessForm.tokenFlow.distro.helpText')}
+                label={t('app.plugins.token.tokenSetupMembership.typeLabel')}
+                helpText={t('app.plugins.token.tokenSetupMembership.helpText')}
                 useCustomWrapper={true}
             >
                 <RadioGroup
@@ -27,12 +28,12 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                     <div className="flex w-full flex-row gap-x-2">
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.createCardLabel')}
+                            label={t('app.plugins.token.tokenSetupMembership.createCardLabel')}
                             value="new"
                         />
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.createDao.createProcessForm.tokenFlow.distro.importCardLabel')}
+                            label={t('app.plugins.token.tokenSetupMembership.importCardLabel')}
                             value="imported"
                             disabled={process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true'}
                         />
@@ -42,7 +43,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                             <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
                             <div className="flex flex-col gap-y-1">
                                 <p className="text-sm text-neutral-400">
-                                    {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabled')}{' '}
+                                    {t('app.plugins.token.tokenSetupMembership.importDisabled')}{' '}
                                 </p>
                                 <Link
                                     href="https://app-legacy.aragon.org/"
@@ -51,7 +52,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                                     className="text-sm"
                                 >
                                     <span className="text-sm">
-                                        {t('app.createDao.createProcessForm.tokenFlow.distro.importDisabledLink')}
+                                        {t('app.plugins.token.tokenSetupMembership.importDisabledLink')}
                                     </span>
                                 </Link>
                             </div>
