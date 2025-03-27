@@ -444,6 +444,17 @@
         "title": "Finalize governance process"
       }
     },
+    "daos": {
+      "aragonX": {
+        "aragonXPageHeader": {
+          "cta": "Create proposal",
+          "stat": {
+            "proposals": "Proposals",
+            "treasury": "Treasury"
+          }
+        }
+      }
+    },
     "dashboard": {
       "daoDashboardPage": {
         "aside": {
@@ -456,13 +467,6 @@
           },
           "links": "Resources"
         },
-        "header": {
-          "stat": {
-            "members": "Members",
-            "proposals": "Proposals",
-            "treasury": "Treasury"
-          }
-        },
         "main": {
           "assets": {
             "title": "Assets"
@@ -474,6 +478,13 @@
             "title": "Latest proposals"
           },
           "viewAll": "View all"
+        }
+      },
+      "dashboardDefaultHeader": {
+        "stat": {
+          "members": "Members",
+          "proposals": "Proposals",
+          "treasury": "Treasury"
         }
       }
     },
@@ -992,7 +1003,6 @@
           },
           "label": "Remove all admins"
         },
-
         "adminVotingTerminal": {
           "description": "Proposals created by admins pass automatically without any governance.",
           "title": "Automatic execution"
