@@ -5,7 +5,7 @@ import {
     CreateProcessFormMultisigParams,
     CreateProcessFormPluginMetadata,
     CreateProcessFormPluginSelect,
-    CreateProcessFormTokenVotingDistro,
+    CreateProcessFormTokenVotingMembership,
     CreateProcessFormTokenVotingParams,
 } from '../../../../../components/createProcessForm/createProcessFormPluginFlows';
 
@@ -36,7 +36,7 @@ export const CreateProcessFormBodyDialogSteps: Record<
     [BodyCreationDialogSteps.PLUGIN_METADATA]: (props) => <CreateProcessFormPluginMetadata {...props} />,
     [BodyCreationDialogSteps.GOVERNANCE_DISTRO]: (props) =>
         props.bodyGovernanceType === 'token-voting' ? (
-            <CreateProcessFormTokenVotingDistro {...props} />
+            <CreateProcessFormTokenVotingMembership {...props} />
         ) : (
             <CreateProcessFormMultisigMembership {...props} />
         ),
@@ -96,7 +96,7 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
         if (bodyGovernanceType === 'token-voting') {
             fieldPaths = [`${basePath}.tokenName`, `${basePath}.tokenSymbol`, `${basePath}.members`];
         } else {
-            fieldPaths = [`${basePath}.multisigThreshold`, `${basePath}.members`];
+            fieldPaths = [`${basePath}.minApprovals`, `${basePath}.members`];
         }
 
         const result = await trigger(fieldPaths);
