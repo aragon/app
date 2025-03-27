@@ -8,19 +8,19 @@ export interface IMultisigSetupMembershipItemProps {
      */
     disabled?: boolean;
     /**
-     * Index of the item
+     * Index of the item.
      */
     index: number;
     /**
-     * Address of the plugin
+     * Address of the plugin.
      */
     pluginAddress?: string;
     /**
-     * Current member
+     * Current member.
      */
     member: ICompositeAddress;
     /**
-     * Custom validator function that extends the default validation
+     * Custom validator function that extends the default validation.
      */
     customValidator?: (member: ICompositeAddress) => string | boolean;
 }

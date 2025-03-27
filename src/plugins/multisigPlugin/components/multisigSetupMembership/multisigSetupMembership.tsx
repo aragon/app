@@ -4,7 +4,7 @@ import type { IMultisigSetupMembershipForm, IMultisigSetupMembershipProps } from
 import { MultisigSetupMembershipItem } from './multisigSetupMembershipItem';
 
 export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = (props) => {
-    const { formPrefix, disabled, onAddClick, customValidator, pluginAddress } = props;
+    const { formPrefix, disabled, onAddClick, pluginAddress } = props;
 
     const watchMembersField = useWatch<Record<string, IMultisigSetupMembershipForm['members']>>({
         name: `${formPrefix}.members`,
@@ -18,7 +18,6 @@ export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = 
                         key={index}
                         index={index}
                         disabled={disabled}
-                        customValidator={customValidator}
                         member={watchMembersField[index]}
                         pluginAddress={pluginAddress}
                     />

@@ -25,7 +25,7 @@ export interface IAddressesInputItemProps extends ComponentProps<'div'> {
      */
     disabled?: boolean;
     /**
-     * Custom validator function that extends the default validation
+     * Custom validator function that extends the default validation.
      */
     customValidator?: (member: ICompositeAddress) => string | boolean;
 }

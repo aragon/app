@@ -14,11 +14,7 @@ export interface IMultisigSetupMembershipProps {
      */
     onAddClick?: () => void;
     /**
-     * Custom validator function that extends the default validation
-     */
-    customValidator?: (member: ICompositeAddress) => string | boolean;
-    /**
-     * Address of the plugin
+     * Address of the plugin, used to validate if the entered user address is already a member of the plugin.
      */
     pluginAddress?: string;
 }
@@ -28,8 +24,4 @@ export interface IMultisigSetupMembershipForm {
      * Members of the voting body.
      */
     members: ICompositeAddress[];
-    /**
-     * Amount of addresses in the authorized list that must approve a proposal for it to pass.
-     */
-    multisigThreshold: number;
 }
