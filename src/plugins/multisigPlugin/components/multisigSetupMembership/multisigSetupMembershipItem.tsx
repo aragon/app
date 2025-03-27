@@ -20,7 +20,7 @@ export interface IMultisigSetupMembershipItemProps {
      */
     member: ICompositeAddress;
     /**
-     * Optional custom validator function that extends the default validation
+     * Custom validator function that extends the default validation
      */
     customValidator?: (member: ICompositeAddress) => string | boolean;
 }
