@@ -1,7 +1,7 @@
-import { TokenSetupMembershipCreateToken } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembershipCreateToken';
-import { TokenSetupMembershipImportToken } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembershipImportToken';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Icon, IconType, InputContainer, Link, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { TokenSetupMembershipCreateToken } from './tokenSetupMembershipCreateToken';
+import { TokenSetupMembershipImportToken } from './tokenSetupMembershipImportToken';
 
 import { useState } from 'react';
 
