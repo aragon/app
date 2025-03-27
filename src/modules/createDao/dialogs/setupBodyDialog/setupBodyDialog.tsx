@@ -2,6 +2,8 @@ import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { invariant } from '@aragon/gov-ui-kit';
+import { useMemo } from 'react';
+import { useAccount } from 'wagmi';
 import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
 import { SetupBodyDialogGovernance } from './setupBodyDialogGovernance';
 import { SetupBodyDialogMemberhip } from './setupBodyDialogMembership';
@@ -35,17 +37,25 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { onSubmit, initialValues } = location.params;
 
     const { t } = useTranslations();
+    const { address } = useAccount();
+
+    const processedInitialValues = useMemo(() => {
+        if (initialValues?.membership.members.length) {
+            return initialValues;
+        }
+
+        return { ...initialValues, membership: { ...initialValues?.membership, members: [{ address }] } };
+    }, [initialValues, address]);
 
     const [selectStep, metadataStep, membershipStep, governanceStep] = setupBodySteps;
 
     return (
         <WizardDialog.Container
             title={t('app.createDao.setupBodyDialog.title')}
-            descriptionKey="app.createDao.setupBodyDialog.a11y.description"
             formId="bodySetup"
             onSubmit={onSubmit}
             initialSteps={setupBodySteps}
-            defaultValues={initialValues}
+            defaultValues={processedInitialValues}
             submitLabel={t('app.createDao.setupBodyDialog.submit')}
         >
             <WizardDialog.Step {...selectStep}>

@@ -1,6 +1,11 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
+import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
-export interface ISetupBodyForm<TGovernance = unknown, TMembership = unknown> {
+export interface ISetupBodyForm<
+    TGovernance = unknown,
+    TMember extends ICompositeAddress = ICompositeAddress,
+    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
+> {
     /**
      * Name of the body.
      */
@@ -33,4 +38,11 @@ export interface ISetupBodyForm<TGovernance = unknown, TMembership = unknown> {
      * Plugin-specific membership settings of the body.
      */
     membership: TMembership;
+}
+
+export interface ISetupBodyFormMembership<TMember extends ICompositeAddress = ICompositeAddress> {
+    /**
+     * Members of the plugin.
+     */
+    members: TMember[];
 }

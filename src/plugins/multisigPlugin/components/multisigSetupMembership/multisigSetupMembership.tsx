@@ -11,18 +11,16 @@ export const MultisigSetupMembership: React.FC<IMultisigSetupMembershipProps> = 
     });
 
     return (
-        <>
-            <AddressesInput.Container name={`${formPrefix}.members`} onAddClick={onAddClick}>
-                {watchMembersField.map((_, index) => (
-                    <MultisigSetupMembershipItem
-                        key={index}
-                        index={index}
-                        disabled={disabled}
-                        member={watchMembersField[index]}
-                        pluginAddress={pluginAddress}
-                    />
-                ))}
-            </AddressesInput.Container>
-        </>
+        <AddressesInput.Container name={`${formPrefix}.members`} onAddClick={onAddClick}>
+            {watchMembersField.map((_, index) => (
+                <MultisigSetupMembershipItem
+                    key={index}
+                    index={index}
+                    disabled={disabled}
+                    member={watchMembersField[index]}
+                    pluginAddress={pluginAddress}
+                />
+            ))}
+        </AddressesInput.Container>
     );
 };

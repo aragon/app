@@ -1,7 +1,7 @@
-import type { ITokenVotingMember } from '@/modules/createDao/components/createProcessForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
 import { DaoTokenVotingMode } from '../../types';
+import type { ITokenSetupMembershipMember } from '../tokenSetupMembership';
 
 export interface ITokenProcessBody {
     /**
@@ -15,7 +15,7 @@ export interface ITokenProcessBody {
     /**
      * The members of the body holding the token.
      */
-    members: ITokenVotingMember[];
+    members: ITokenSetupMembershipMember[];
     /**
      * The support threshold of the body.
      */
