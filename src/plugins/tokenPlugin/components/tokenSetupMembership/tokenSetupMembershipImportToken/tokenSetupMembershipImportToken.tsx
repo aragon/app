@@ -5,11 +5,14 @@ import { AddressInput, addressUtils, AlertCard } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 
 export interface ITokenSetupMembershipImportTokenProps {
-    fieldPrefix: string;
+    /**
+     * Prefix to be appended to all form fields.
+     */
+    formPrefix: string;
 }
 
 export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImportTokenProps> = (props) => {
-    const { fieldPrefix } = props;
+    const { formPrefix } = props;
     const { t } = useTranslations();
 
     const {
@@ -20,7 +23,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         label: t('app.createDao.createProcessForm.tokenFlow.distro.import.label'),
         defaultValue: '',
         trimOnBlur: true,
-        fieldPrefix,
+        fieldPrefix: formPrefix,
         rules: {
             required: true,
             validate: (value) => addressUtils.isAddress(value),

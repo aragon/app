@@ -6,11 +6,14 @@ import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit'
 import { useFieldArray } from 'react-hook-form';
 
 export interface ITokenSetupMembershipCreateTokenProps {
-    fieldPrefix: string;
+    /**
+     * Prefix to be appended to all form fields.
+     */
+    formPrefix: string;
 }
 
 export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCreateTokenProps> = (props) => {
-    const { fieldPrefix } = props;
+    const { formPrefix } = props;
 
     const { t } = useTranslations();
 
@@ -18,7 +21,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         label: t('app.createDao.createProcessForm.tokenFlow.distro.name.label'),
         defaultValue: '',
         trimOnBlur: true,
-        fieldPrefix,
+        fieldPrefix: formPrefix,
         rules: {
             required: t('app.createDao.createProcessForm.tokenFlow.distro.name.required'),
         },
@@ -28,7 +31,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         label: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.label'),
         defaultValue: '',
         trimOnBlur: true,
-        fieldPrefix,
+        fieldPrefix: formPrefix,
         rules: {
             maxLength: { value: 10, message: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.maxLength') },
             required: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.required'),
@@ -39,7 +42,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
     });
 
     const { fields, append, remove } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
-        name: `${fieldPrefix}.members`,
+        name: `${formPrefix}.members`,
     });
 
     const handleAddMember = () => append({ address: '', tokenAmount: 1 });
@@ -58,7 +61,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
                 {fields.map((field, index) => (
                     <TokenVotingMemberInputRow
                         key={field.id}
-                        fieldNamePrefix={fieldPrefix}
+                        fieldNamePrefix={formPrefix}
                         index={index}
                         initialValue={field.address}
                         onRemoveMember={remove}

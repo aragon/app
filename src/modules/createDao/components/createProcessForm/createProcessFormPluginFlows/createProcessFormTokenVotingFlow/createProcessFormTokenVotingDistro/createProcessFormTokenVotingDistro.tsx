@@ -6,5 +6,5 @@ export interface ICreateProcessFormTokenVotingDistroProps extends ICreateProcess
 export const CreateProcessFormTokenVotingDistro: React.FC<ICreateProcessFormTokenVotingDistroProps> = (props) => {
     const { fieldPrefix } = props;
 
-    return <TokenSetupMembership fieldPrefix={fieldPrefix} />;
+    return <TokenSetupMembership formPrefix={fieldPrefix} />;
 };

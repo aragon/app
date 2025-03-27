@@ -7,13 +7,13 @@ import { useState } from 'react';
 
 export interface ITokenSetupMembershipProps {
     /**
-     * The prefix for the field names
+     * Prefix to be appended to all form fields.
      */
-    fieldPrefix: string;
+    formPrefix: string;
 }
 
 export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props) => {
-    const { fieldPrefix } = props;
+    const { formPrefix } = props;
 
     const [tokenType, setTokenType] = useState<'imported' | 'new'>('new');
 
@@ -66,8 +66,8 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                     )}
                 </RadioGroup>
             </InputContainer>
-            {tokenType === 'imported' && <TokenSetupMembershipImportToken fieldPrefix={fieldPrefix} />}
-            {tokenType === 'new' && <TokenSetupMembershipCreateToken fieldPrefix={fieldPrefix} />}
+            {tokenType === 'imported' && <TokenSetupMembershipImportToken formPrefix={formPrefix} />}
+            {tokenType === 'new' && <TokenSetupMembershipCreateToken formPrefix={formPrefix} />}
         </>
     );
 };
