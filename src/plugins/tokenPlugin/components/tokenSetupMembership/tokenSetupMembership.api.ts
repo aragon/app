@@ -29,7 +29,7 @@ export interface ITokenSetupMembershipForm {
      * The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal
      * to this value.
      */
-    minimumParticipation: number;
+    minParticipation: number;
     /**
      * Allows voters to change their vote during the voting period.
      */
