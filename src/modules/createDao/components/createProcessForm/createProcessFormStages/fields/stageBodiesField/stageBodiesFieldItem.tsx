@@ -35,7 +35,7 @@ export const StageBodiesFieldItem: React.FC<IStageBodiesFieldItemProps> = (props
                         <PluginSingleComponent
                             pluginId={body.plugin}
                             slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
-                            field={body}
+                            body={body}
                         />
                         <div className="flex w-full grow justify-between">
                             <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>

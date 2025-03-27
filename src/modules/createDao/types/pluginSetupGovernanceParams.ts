@@ -1,4 +1,6 @@
-export interface IPluginSetupGovernanceParams {
+import type { ISetupBodyFormMembership } from '../dialogs/setupBodyDialog';
+
+export interface IPluginSetupGovernanceParams<TMembership extends ISetupBodyFormMembership = ISetupBodyFormMembership> {
     /**
      * Prefix to be appended to all form fields.
      */
@@ -11,4 +13,8 @@ export interface IPluginSetupGovernanceParams {
      * Shows the settings for creating proposals when set to true.
      */
     showProposalCreationSettings?: boolean;
+    /**
+     * Membership settings of the plugin.
+     */
+    membershipSettings: TMembership;
 }

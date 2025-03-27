@@ -1,12 +1,20 @@
 import type { IPluginSetupGovernanceParams } from '@/modules/createDao/types';
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import type { IMultisigSetupMembershipForm } from '../multisigSetupMembership';
 
 export interface IMultisigSetupGovernanceForm extends Pick<IMultisigPluginSettings, 'minApprovals' | 'onlyListed'> {}
 
-export interface IMultisigSetupGovernanceProps extends IPluginSetupGovernanceParams {
+export interface IMultisigSetupGovernanceMembershipSettings
+    extends Partial<Pick<IMultisigSetupMembershipForm, 'members'>> {
     /**
-     * Total number of members in the body of the DAO. It is a prop because it can either come from the API (actions) or
-     * from the local members field (create process form).
+     * Number of members used as fallback when the members list is not defined.
      */
-    membersCount: number;
+    membersCount?: number;
+}
+
+export interface IMultisigSetupGovernanceProps extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
+    /**
+     * Membership settings of the multisig body.
+     */
+    membershipSettings: IMultisigSetupGovernanceMembershipSettings;
 }

@@ -1,10 +1,7 @@
-import type { ICompositeAddress } from '@aragon/gov-ui-kit';
+import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { IPluginSetupMembershipParams } from '@/modules/createDao/types';
 
-export interface IMultisigSetupMembershipProps {
-    /**
-     * Prefix to be appended to all form fields.
-     */
-    formPrefix: string;
+export interface IMultisigSetupMembershipProps extends IPluginSetupMembershipParams {
     /**
      * When true show a read only mode of the address field.
      */
@@ -17,11 +14,10 @@ export interface IMultisigSetupMembershipProps {
      * Address of the plugin, used to validate if the entered user address is already a member of the plugin.
      */
     pluginAddress?: string;
+    /**
+     * Hides the field label and help-text when set to true.
+     */
+    hideLabel?: boolean;
 }
 
-export interface IMultisigSetupMembershipForm {
-    /**
-     * Members of the voting body.
-     */
-    members: ICompositeAddress[];
-}
+export interface IMultisigSetupMembershipForm extends ISetupBodyFormMembership {}

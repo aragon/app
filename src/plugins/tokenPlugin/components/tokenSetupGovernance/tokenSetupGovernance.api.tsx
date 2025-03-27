@@ -1,12 +1,16 @@
 import type { IPluginSetupGovernanceParams } from '@/modules/createDao/types';
-import type { IToken } from '@/modules/finance/api/financeService';
 import type { ITokenPluginSettings } from '../../types';
+import type { ITokenSetupMembershipForm } from '../tokenSetupMembership';
 
-export interface ITokenSetupGovernanceProps extends IPluginSetupGovernanceParams {
+export interface ITokenSetupGovernanceMembershipSettings
+    extends Partial<Pick<ITokenSetupMembershipForm, 'members'>>,
+        Pick<ITokenSetupMembershipForm, 'token'> {}
+
+export interface ITokenSetupGovernanceProps extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
     /**
-     * The token used by the plugin.
+     * Membership settings of the multisig body.
      */
-    token: Pick<IToken, 'symbol' | 'totalSupply' | 'decimals'>;
+    membershipSettings: ITokenSetupGovernanceMembershipSettings;
 }
 
 export interface ITokenSetupGovernanceForm

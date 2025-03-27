@@ -1,10 +1,18 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, type ICompositeAddress, IconType } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    type ICompositeAddress,
+    IconType,
+    type IInputComponentProps,
+    InputContainer,
+} from '@aragon/gov-ui-kit';
 import { Children, cloneElement, type ComponentProps, isValidElement } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { AddressesInputContextProvider } from '../addressesInputContext';
 
-export interface IAddressesInputContainerProps extends ComponentProps<'div'> {
+export interface IAddressesInputContainerProps
+    extends ComponentProps<'div'>,
+        Pick<IInputComponentProps, 'label' | 'helpText'> {
     /**
      * The prefix of the field in the form.
      */
@@ -26,7 +34,7 @@ export interface IAddressesInputContainerProps extends ComponentProps<'div'> {
 export type AddressListInputBaseForm = Record<string, ICompositeAddress[]>;
 
 export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = (props) => {
-    const { children, fieldPrefix, name, allowEmptyList, onAddClick } = props;
+    const { children, fieldPrefix, name, allowEmptyList, onAddClick, label, helpText } = props;
 
     const { t } = useTranslations();
 
@@ -48,7 +56,13 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
         }
     };
 
-    const handleAddMember = () => onAddClick?.() ?? addMember({ address: '' });
+    const handleAddMember = () => {
+        if (onAddClick) {
+            onAddClick();
+        } else {
+            addMember({ address: '' });
+        }
+    };
 
     const contextValue = {
         fieldName: membersFieldName,
@@ -72,8 +86,16 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
 
     return (
         <AddressesInputContextProvider value={contextValue}>
-            <div className="flex grow flex-col gap-6">
-                <div className="flex w-full flex-col gap-3 md:gap-2">{childrenWithKeys}</div>
+            <div className="flex w-full grow flex-col gap-6">
+                <InputContainer
+                    id="addresses"
+                    label={label}
+                    helpText={helpText}
+                    useCustomWrapper={true}
+                    className="gap-3 md:gap-2"
+                >
+                    {childrenWithKeys}
+                </InputContainer>
                 <Button
                     size="md"
                     variant="tertiary"

@@ -63,10 +63,12 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
         setValue(`${actionFieldName}.inputData.parameters[0].value`, [onlyListedFieldValue, minApprovalsFieldValue]);
     }, [setValue, actionFieldName, onlyListedFieldValue, minApprovalsFieldValue]);
 
+    const membershipSettings = { membersCount };
+
     return (
         <MultisigSetupGovernance
             formPrefix={formPrefix}
-            membersCount={membersCount}
+            membershipSettings={membershipSettings}
             showProposalCreationSettings={!action.meta.isSubPlugin}
         />
     );

@@ -47,6 +47,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
     const tokenAmountField = useFormField<ITokenSetupMembershipMember, 'tokenAmount'>('tokenAmount', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.member.tokens.label'),
         rules: { required: true, validate: (value) => Number(value) > 0, min: 0 },
+        defaultValue: 1,
         fieldPrefix: formPrefix,
     });
 

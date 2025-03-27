@@ -85,6 +85,7 @@ class MultisigActionUtils {
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
+                    meta: plugin,
                 },
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),

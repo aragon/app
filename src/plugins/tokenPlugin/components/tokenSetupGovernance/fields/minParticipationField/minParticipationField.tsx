@@ -13,7 +13,7 @@ export interface IMinParticipationFieldProps {
     /**
      * The token linked to the plugin.
      */
-    token: ITokenSetupGovernanceProps['token'];
+    token: ITokenSetupGovernanceProps['membershipSettings']['token'];
 }
 
 export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (props) => {

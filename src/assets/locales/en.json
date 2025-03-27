@@ -187,15 +187,6 @@
             "process": "governance process"
           }
         },
-        "multisigFlow": {
-          "params": {
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
-            "placeholder": "Enter a number",
-            "required": "Threshold must be at least 1.",
-            "suffix": "of {{members}}"
-          }
-        },
         "permissions": {
           "proposalCreationBodies": {
             "error": "You must select at least one body.",
@@ -1041,8 +1032,12 @@
             }
           }
         },
-        "multisigSetupMembershipItem": {
-          "alreadyMember": "Address is already a member of the DAO"
+        "multisigSetupMembership": {
+          "helpText": "These addresses will be the only ones able to participate",
+          "item": {
+            "alreadyMember": "Address is already a member of the DAO"
+          },
+          "label": "Members"
         },
         "multisigSubmitVote": {
           "approve": "Approve proposal",

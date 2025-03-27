@@ -16,15 +16,17 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
     const { t } = useTranslations();
 
+    const tokenFormPrefix = `${formPrefix}.token`;
+
     const {
         onChange: onImportTokenAddressChange,
         value: importTokenAddress,
         ...importTokenAddressField
-    } = useFormField<ITokenSetupMembershipForm, 'importTokenAddress'>('importTokenAddress', {
+    } = useFormField<ITokenSetupMembershipForm['token'], 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.importToken.label'),
         defaultValue: '',
         trimOnBlur: true,
-        fieldPrefix: formPrefix,
+        fieldPrefix: tokenFormPrefix,
         rules: {
             required: true,
             validate: (value) => addressUtils.isAddress(value),

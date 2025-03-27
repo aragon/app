@@ -2,7 +2,9 @@ import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
-import { useFieldArray } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { parseUnits } from 'viem';
 import { TokenSetupMembershipCreateTokenMember } from './tokenSetupMembershipCreateTokenMember';
 
 export interface ITokenSetupMembershipCreateTokenProps {
@@ -13,58 +15,75 @@ export interface ITokenSetupMembershipCreateTokenProps {
 }
 
 const symbolMaxLength = 10;
+const defaultTokenDecimals = 18;
 
 export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCreateTokenProps> = (props) => {
     const { formPrefix } = props;
 
     const { t } = useTranslations();
+    const { setValue } = useFormContext();
 
-    const tokenNameField = useFormField<ITokenSetupMembershipForm, 'tokenName'>('tokenName', {
+    const tokenFormPrefix = `${formPrefix}.token`;
+
+    const nameField = useFormField<ITokenSetupMembershipForm['token'], 'name'>('name', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.name.label'),
         defaultValue: '',
         trimOnBlur: true,
-        fieldPrefix: formPrefix,
+        fieldPrefix: tokenFormPrefix,
         rules: { required: true },
     });
 
-    const tokenSymbolField = useFormField<ITokenSetupMembershipForm, 'tokenSymbol'>('tokenSymbol', {
+    const symbolField = useFormField<ITokenSetupMembershipForm['token'], 'symbol'>('symbol', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.symbol.label'),
         defaultValue: '',
         trimOnBlur: true,
-        fieldPrefix: formPrefix,
+        fieldPrefix: tokenFormPrefix,
         rules: {
             required: true,
             validate: (value) =>
-                /^[A-Za-z]+$/.test(value ?? '') ||
-                t('app.plugins.token.tokenSetupMembership.createToken.symbol.onlyLetters'),
+                /^[A-Za-z]+$/.test(value) || t('app.plugins.token.tokenSetupMembership.createToken.symbol.onlyLetters'),
         },
     });
 
     const membersFieldName = `${formPrefix}.members`;
-    const { fields, append, remove } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
+    const {
+        fields: membersField,
+        append: addMember,
+        remove: removeMember,
+    } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
         name: membersFieldName,
     });
+    const watchMembersField = useWatch<Record<string, ITokenSetupMembershipForm['members']>>({
+        name: membersFieldName,
+    });
+    const controlledMembersField = membersField.map((field, index) => ({ ...field, ...watchMembersField[index] }));
 
-    const handleAddMember = () => append({ address: '', tokenAmount: 1 });
+    const handleAddMember = () => addMember({ address: '', tokenAmount: 1 });
+
+    useEffect(() => {
+        const totalSupply = controlledMembersField.reduce((current, member) => current + Number(member.tokenAmount), 0);
+        const totalSupplyWei = parseUnits(totalSupply.toString(), defaultTokenDecimals);
+        setValue(`${tokenFormPrefix}.totalSupply`, totalSupplyWei.toString());
+    }, [controlledMembersField, setValue, tokenFormPrefix]);
 
     return (
         <>
             <InputText
                 helpText={t('app.plugins.token.tokenSetupMembership.createToken.name.helpText')}
-                {...tokenNameField}
+                {...nameField}
             />
             <InputText
                 helpText={t('app.plugins.token.tokenSetupMembership.createToken.symbol.helpText')}
                 maxLength={symbolMaxLength}
-                {...tokenSymbolField}
+                {...symbolField}
             />
             <InputContainer id="distribute" useCustomWrapper={true}>
-                {fields.map((field, index) => (
+                {membersField.map((member, index) => (
                     <TokenSetupMembershipCreateTokenMember
-                        key={field.id}
+                        key={member.id}
                         formPrefix={`${membersFieldName}.${index.toString()}`}
-                        initialValue={field.address}
-                        onRemove={fields.length > 1 ? () => remove(index) : undefined}
+                        initialValue={member.address}
+                        onRemove={membersField.length > 1 ? () => removeMember(index) : undefined}
                     />
                 ))}
             </InputContainer>
