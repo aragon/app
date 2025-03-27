@@ -20,7 +20,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         value: importTokenAddress,
         ...importTokenAddressField
     } = useFormField<ITokenSetupMembershipForm, 'importTokenAddress'>('importTokenAddress', {
-        label: t('app.plugins.token.tokenSetupMembership.import.label'),
+        label: t('app.plugins.token.tokenSetupMembership.importToken.label'),
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix: formPrefix,
@@ -35,8 +35,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     return (
         <>
             <AddressInput
-                placeholder={t('app.plugins.token.tokenSetupMembership.import.placeholder')}
-                helpText={t('app.plugins.token.tokenSetupMembership.import.helpText')}
+                placeholder={t('app.plugins.token.tokenSetupMembership.importToken.placeholder')}
+                helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
                 onAccept={(value) => onImportTokenAddressChange(value?.address)}
                 value={tokenAddressInput}
                 chainId={1}
@@ -44,8 +44,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 {...importTokenAddressField}
             />
             <AlertCard
-                message={t('app.plugins.token.tokenSetupMembership.alert.message')}
-                description={t('app.plugins.token.tokenSetupMembership.alert.description')}
+                message={t('app.plugins.token.tokenSetupMembership.importToken.alert.message')}
+                description={t('app.plugins.token.tokenSetupMembership.importToken.alert.description')}
                 variant="warning"
             />
         </>
