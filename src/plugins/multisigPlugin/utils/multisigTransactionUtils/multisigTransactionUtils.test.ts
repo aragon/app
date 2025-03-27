@@ -69,7 +69,7 @@ describe('multisigTransaction utils', () => {
             const metadataCid = 'test-metadata';
             const members = [{ address: '0x1' }, { address: '0x2' }];
             const permissionSettings = { bodyId: '1' };
-            const body = generateCreateProcessFormBody({ members, multisigThreshold: 3 });
+            const body = generateCreateProcessFormBody({ members, minApprovals: 3 });
             const stage = generateCreateProcessFormStage();
             const dao = generateDao();
 
@@ -80,7 +80,7 @@ describe('multisigTransaction utils', () => {
                 target: networkDefinitions[dao.network].addresses.globalExecutor,
                 operation: 1,
             };
-            const expectedPluginSettings = { onlyListed: true, minApprovals: body.multisigThreshold };
+            const expectedPluginSettings = { onlyListed: true, minApprovals: body.minApprovals };
 
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginSetupAbi, [
                 members.map((member) => member.address),

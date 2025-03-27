@@ -96,7 +96,7 @@ export const validationMap: Record<BodyCreationDialogSteps, ValidationFunction> 
         if (bodyGovernanceType === 'token-voting') {
             fieldPaths = [`${basePath}.tokenName`, `${basePath}.tokenSymbol`, `${basePath}.members`];
         } else {
-            fieldPaths = [`${basePath}.multisigThreshold`, `${basePath}.members`];
+            fieldPaths = [`${basePath}.minApprovals`, `${basePath}.members`];
         }
 
         const result = await trigger(fieldPaths);

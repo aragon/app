@@ -9,7 +9,7 @@ export interface IMultisigProcessBody {
     /**
      * Threshold of the body.
      */
-    multisigThreshold: number;
+    minApprovals: number;
 }
 
 export interface IMultisigProcessBodyFieldProps {
@@ -23,7 +23,7 @@ export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) 
     const { t } = useTranslations();
 
     const { field } = props;
-    const { members, multisigThreshold } = field;
+    const { members, minApprovals } = field;
 
     const baseTranslationKey = 'app.plugins.multisig.multisigProcessBodyField';
 
@@ -34,7 +34,7 @@ export const MultisigProcessBodyField = (props: IMultisigProcessBodyFieldProps) 
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.thresholdTerm`)}>
                 {t(`${baseTranslationKey}.thresholdDefinition`, {
-                    threshold: multisigThreshold,
+                    threshold: minApprovals,
                     count: members.length,
                 })}
             </DefinitionList.Item>
