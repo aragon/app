@@ -17,12 +17,16 @@ export interface IAddressesInputContainerProps extends ComponentProps<'div'> {
      * Flag to determine if the list can be empty.
      */
     allowEmptyList?: boolean;
+    /**
+     * Callback to overwrite the general add button behavior.
+     */
+    onAddClick?: () => void;
 }
 
 export type AddressListInputBaseForm = Record<string, ICompositeAddress[]>;
 
 export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = (props) => {
-    const { children, fieldPrefix, name, allowEmptyList } = props;
+    const { children, fieldPrefix, name, allowEmptyList, onAddClick } = props;
 
     const { t } = useTranslations();
 
@@ -44,7 +48,7 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
         }
     };
 
-    const handleAddMember = () => addMember({ address: '' });
+    const handleAddMember = () => onAddClick?.() ?? addMember({ address: '' });
 
     const contextValue = {
         fieldName: membersFieldName,

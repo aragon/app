@@ -188,9 +188,12 @@
           }
         },
         "multisigFlow": {
-          "distro": {
-            "helpText": "These addresses will be the only ones able to participate.",
-            "label": "Members"
+          "params": {
+            "helpText": "At least this many members will have to approve proposals.",
+            "label": "Approval threshold",
+            "placeholder": "Enter a number",
+            "required": "Threshold must be at least 1.",
+            "suffix": "of {{members}}"
           }
         },
         "permissions": {
@@ -947,19 +950,6 @@
           "MultisigRemoveMembers": "Remove members",
           "UpdateMultiSigSettings": "Update settings"
         },
-        "multisigAddMembersAction": {
-          "add": "Add",
-          "addressInput": {
-            "error": {
-              "alreadyInList": "Address has already been added.",
-              "alreadyMember": "Address is already a member of the DAO.",
-              "invalid": "Address is not valid."
-            },
-            "label": "Member",
-            "placeholder": "ENS or 0x…"
-          },
-          "removeMember": "Remove member"
-        },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
             "helpText": "After a proposal expires, you can't approve or execute it.",
@@ -1013,21 +1003,6 @@
           "optimisticApprovalLabel": "veto approval",
           "vetoed": "vetoed"
         },
-        "multisigRemoveMembersAction": {
-          "add": "Add",
-          "addressInput": {
-            "error": {
-              "alreadyInList": "Address has already been added."
-            },
-            "placeholder": "ENS or 0x…"
-          },
-          "dialog": {
-            "entity": "Members",
-            "heading": "Remove members"
-          },
-          "removeMember": "Remove member",
-          "select": "select"
-        },
         "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
@@ -1050,6 +1025,9 @@
               "label": "Members"
             }
           }
+        },
+        "multisigSetupMembershipItem": {
+          "alreadyMember": "Address is already a member of the DAO"
         },
         "multisigSubmitVote": {
           "approve": "Approve proposal",

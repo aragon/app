@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { UseFormGetValues, UseFormSetError, UseFormTrigger } from 'react-hook-form';
 import {
-    CreateProcessFormMultisigDistro,
+    CreateProcessFormMultisigMembership,
     CreateProcessFormMultisigParams,
     CreateProcessFormPluginMetadata,
     CreateProcessFormPluginSelect,
@@ -38,7 +38,7 @@ export const CreateProcessFormBodyDialogSteps: Record<
         props.bodyGovernanceType === 'token-voting' ? (
             <CreateProcessFormTokenVotingMembership {...props} />
         ) : (
-            <CreateProcessFormMultisigDistro {...props} />
+            <CreateProcessFormMultisigMembership {...props} />
         ),
     [BodyCreationDialogSteps.GOVERNANCE_PARAMS]: (props) =>
         props.bodyGovernanceType === 'token-voting' ? (
