@@ -18,26 +18,25 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
     const { t } = useTranslations();
 
     const tokenNameField = useFormField<ITokenSetupMembershipForm, 'tokenName'>('tokenName', {
-        label: t('app.createDao.createProcessForm.tokenFlow.distro.name.label'),
+        label: t('app.plugins.token.tokenSetupMembership.name.label'),
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix: formPrefix,
         rules: {
-            required: t('app.createDao.createProcessForm.tokenFlow.distro.name.required'),
+            required: t('app.plugins.token.tokenSetupMembership.name.required'),
         },
     });
 
     const tokenSymbolField = useFormField<ITokenSetupMembershipForm, 'tokenSymbol'>('tokenSymbol', {
-        label: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.label'),
+        label: t('app.plugins.token.tokenSetupMembership.symbol.label'),
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix: formPrefix,
         rules: {
-            maxLength: { value: 10, message: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.maxLength') },
-            required: t('app.createDao.createProcessForm.tokenFlow.distro.symbol.required'),
+            maxLength: { value: 10, message: t('app.plugins.token.tokenSetupMembership.symbol.maxLength') },
+            required: t('app.plugins.token.tokenSetupMembership.symbol.required'),
             validate: (value) =>
-                /^[A-Za-z]+$/.test(value ?? '') ||
-                t('app.createDao.createProcessForm.tokenFlow.distro.symbol.onlyLetters'),
+                /^[A-Za-z]+$/.test(value ?? '') || t('app.plugins.token.tokenSetupMembership.symbol.onlyLetters'),
         },
     });
 
@@ -49,14 +48,8 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
 
     return (
         <>
-            <InputText
-                helpText={t('app.createDao.createProcessForm.tokenFlow.distro.name.helpText')}
-                {...tokenNameField}
-            />
-            <InputText
-                helpText={t('app.createDao.createProcessForm.tokenFlow.distro.symbol.helpText')}
-                {...tokenSymbolField}
-            />
+            <InputText helpText={t('app.plugins.token.tokenSetupMembership.name.helpText')} {...tokenNameField} />
+            <InputText helpText={t('app.plugins.token.tokenSetupMembership.symbol.helpText')} {...tokenSymbolField} />
             <InputContainer id="distribute" useCustomWrapper={true}>
                 {fields.map((field, index) => (
                     <TokenVotingMemberInputRow
@@ -71,7 +64,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             </InputContainer>
             <div className="flex w-full justify-between">
                 <Button size="md" variant="secondary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
-                    {t('app.createDao.createProcessForm.tokenFlow.distro.add')}
+                    {t('app.plugins.token.tokenSetupMembership.add')}
                 </Button>
             </div>
         </>

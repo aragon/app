@@ -20,7 +20,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         value: importTokenAddress,
         ...importTokenAddressField
     } = useFormField<ITokenSetupMembershipForm, 'importTokenAddress'>('importTokenAddress', {
-        label: t('app.createDao.createProcessForm.tokenFlow.distro.import.label'),
+        label: t('app.plugins.token.tokenSetupMembership.import.label'),
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix: formPrefix,
@@ -35,8 +35,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     return (
         <>
             <AddressInput
-                placeholder={t('app.createDao.createProcessForm.tokenFlow.distro.import.placeholder')}
-                helpText={t('app.createDao.createProcessForm.tokenFlow.distro.import.helpText')}
+                placeholder={t('app.plugins.token.tokenSetupMembership.import.placeholder')}
+                helpText={t('app.plugins.token.tokenSetupMembership.import.helpText')}
                 onAccept={(value) => onImportTokenAddressChange(value?.address)}
                 value={tokenAddressInput}
                 chainId={1}
@@ -44,8 +44,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 {...importTokenAddressField}
             />
             <AlertCard
-                message={t('app.createDao.createProcessForm.tokenFlow.distro.alert.message')}
-                description={t('app.createDao.createProcessForm.tokenFlow.distro.alert.description')}
+                message={t('app.plugins.token.tokenSetupMembership.alert.message')}
+                description={t('app.plugins.token.tokenSetupMembership.alert.description')}
                 variant="warning"
             />
         </>
