@@ -16,8 +16,8 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
         <>
             <InputContainer
                 id="token"
-                label={t('app.plugins.token.tokenSetupMembership.typeLabel')}
-                helpText={t('app.plugins.token.tokenSetupMembership.helpText')}
+                label={t('app.plugins.token.tokenSetupMembership.type.label')}
+                helpText={t('app.plugins.token.tokenSetupMembership.type.helpText')}
                 useCustomWrapper={true}
             >
                 <RadioGroup
@@ -28,12 +28,12 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                     <div className="flex w-full flex-row gap-x-2">
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.plugins.token.tokenSetupMembership.createCardLabel')}
+                            label={t('app.plugins.token.tokenSetupMembership.type.option.create')}
                             value="new"
                         />
                         <RadioCard
                             className="w-1/2"
-                            label={t('app.plugins.token.tokenSetupMembership.importCardLabel')}
+                            label={t('app.plugins.token.tokenSetupMembership.type.option.import')}
                             value="imported"
                             disabled={process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true'}
                         />

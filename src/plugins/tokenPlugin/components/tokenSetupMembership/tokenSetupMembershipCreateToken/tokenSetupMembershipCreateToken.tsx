@@ -1,9 +1,9 @@
-import { TokenVotingMemberInputRow } from '@/modules/createDao/components/createProcessForm/createProcessFormPluginFlows/createProcessFormTokenVotingFlow/createProcessFormTokenVotingMemberInputRow';
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
+import { TokenSetupMemberhipCreateTokenMember } from './tokenSetupMemberhipCreateTokenMember';
 
 export interface ITokenSetupMembershipCreateTokenProps {
     /**
@@ -23,7 +23,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         trimOnBlur: true,
         fieldPrefix: formPrefix,
         rules: {
-            required: t('app.plugins.token.tokenSetupMembership.createToken.name.required'),
+            required: true,
         },
     });
 
@@ -34,7 +34,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         fieldPrefix: formPrefix,
         rules: {
             maxLength: { value: 10, message: t('app.plugins.token.tokenSetupMembership.createToken.symbol.maxLength') },
-            required: t('app.plugins.token.tokenSetupMembership.createToken.symbol.required'),
+            required: true,
             validate: (value) =>
                 /^[A-Za-z]+$/.test(value ?? '') ||
                 t('app.plugins.token.tokenSetupMembership.createToken.symbol.onlyLetters'),
@@ -59,7 +59,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             />
             <InputContainer id="distribute" useCustomWrapper={true}>
                 {fields.map((field, index) => (
-                    <TokenVotingMemberInputRow
+                    <TokenSetupMemberhipCreateTokenMember
                         key={field.id}
                         fieldNamePrefix={formPrefix}
                         index={index}

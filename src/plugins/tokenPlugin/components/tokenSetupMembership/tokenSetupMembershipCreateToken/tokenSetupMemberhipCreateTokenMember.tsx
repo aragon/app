@@ -1,13 +1,28 @@
+import type { ICreateProcessFormBody } from '@/modules/createDao/components/createProcessForm';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AddressInput, addressUtils, Button, Dropdown, IconType, InputNumber } from '@aragon/gov-ui-kit';
 import { useCallback, useState } from 'react';
-import type { ICreateProcessFormBody } from '../../../createProcessFormDefinitions';
 
-export interface ITokenVotingMemberInputRowProps {
+interface ITokenSetupMemberhipCreateTokenMemberProps {
+    /**
+     * Prefix to be appended to all form fields.
+     */
     fieldNamePrefix: string;
+    /**
+     * Initial value of the member address.
+     */
     initialValue: string;
+    /**
+     * Callback to remove the member.
+     */
     onRemoveMember: (index: number) => void;
+    /**
+     * Index of the member in the list.
+     */
     index: number;
+    /**
+     * Whether the member can be removed.
+     */
     canRemove: boolean;
 }
 
@@ -16,7 +31,7 @@ export interface IAddressResolvedValue {
     name?: string;
 }
 
-export const TokenVotingMemberInputRow: React.FC<ITokenVotingMemberInputRowProps> = (props) => {
+export const TokenSetupMemberhipCreateTokenMember: React.FC<ITokenSetupMemberhipCreateTokenMemberProps> = (props) => {
     const { fieldNamePrefix, onRemoveMember, index, initialValue, canRemove } = props;
 
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
