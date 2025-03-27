@@ -308,42 +308,6 @@
               }
             }
           }
-        },
-        "tokenFlow": {
-          "distro": {
-            "add": "Add",
-            "address": {
-              "inputHelpText": "The address of the token to be imported",
-              "placeholder": "Enter the token address to import"
-            },
-            "alert": {
-              "description": "In order for this body to be able to participate in governance, you must ensure that this token has these exact functions: getPastVotes, getVotes, getPastTotalSupply.",
-              "message": "Not all tokens are compatible"
-            },
-            "createCardLabel": "Create new token",
-            "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
-            "import": {
-              "helpText": "The address of the token to be imported",
-              "label": "Token address",
-              "placeholder": "Enter the token address to import"
-            },
-            "importCardLabel": "Import token",
-            "importDisabled": "Token importing is not yet available in the new version of the Aragon app.",
-            "importDisabledLink": "Legacy app",
-            "name": {
-              "helpText": "These addreses will receive newly minted tokens.",
-              "label": "Token name",
-              "required": "Token name is required"
-            },
-            "symbol": {
-              "helpText": "This is the abbreviated ticker of the token. For example: UNI",
-              "label": "Token symbol",
-              "maxLength": "Symbol cannot exceed 10 characters",
-              "onlyLetters": "Only letters are allowed",
-              "required": "Token symbol is required"
-            },
-            "typeLabel": "ERC-20 token"
-          }
         }
       },
       "createProcessPage": {
@@ -1334,6 +1298,40 @@
             "label": "Vote change",
             "switch": {
               "label": "Enabled"
+            }
+          }
+        },
+        "tokenSetupMembership": {
+          "createToken": {
+            "add": "Add",
+            "name": {
+              "helpText": "These addreses will receive newly minted tokens.",
+              "label": "Token name"
+            },
+            "symbol": {
+              "helpText": "This is the abbreviated ticker of the token. For example: UNI",
+              "label": "Token symbol",
+              "maxLength": "Symbol cannot exceed 10 characters",
+              "onlyLetters": "Only letters are allowed"
+            }
+          },
+          "importDisabled": "Token importing is not yet available in the new version of the Aragon app.",
+          "importDisabledLink": "Legacy app",
+          "importToken": {
+            "alert": {
+              "description": "In order for this body to be able to participate in governance, you must ensure that this token has these exact functions: getPastVotes, getVotes, getPastTotalSupply.",
+              "message": "Not all tokens are compatible"
+            },
+            "helpText": "The address of the token to be imported",
+            "label": "Token address",
+            "placeholder": "Enter the token address to import"
+          },
+          "type": {
+            "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
+            "label": "ERC-20 token",
+            "option": {
+              "create": "Create new token",
+              "import": "Import token"
             }
           }
         },
