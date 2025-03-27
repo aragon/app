@@ -1,7 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import {
     ProposalCreationMode,
@@ -25,6 +25,10 @@ const validateProposalCreationBodies =
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
+
+    // TODO: temporary workaround to prevent race condition of rendering the plugin-specific proposal creation form
+    // fields (e.g. minProposerVotingPower) before the proposalCreationBodies array field is initialized (APP-3679)
+    const [isInitialized, setIsInitialized] = useState(false);
 
     const processStages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
     const processBodies = useMemo(() => processStages.flatMap((stage) => stage.bodies), [processStages]);
@@ -53,6 +57,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     // Initialise proposalCreationBodies to all process bodies and update value on bodies list change
     useEffect(() => {
         setValue(proposalCreationBodiesName, defaultBodiesValue);
+        setIsInitialized(true);
     }, [setValue, defaultBodiesValue]);
 
     const handleProposalCreationModeChange = (value: string) => {
@@ -95,7 +100,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     value={ProposalCreationMode.ANY_WALLET}
                 />
             </RadioGroup>
-            {proposalCreationMode === ProposalCreationMode.LISTED_BODIES && (
+            {isInitialized && proposalCreationMode === ProposalCreationMode.LISTED_BODIES && (
                 <InputContainer
                     id="proposalCreationBodies"
                     label={t('app.createDao.createProcessForm.permissions.proposalCreationBodies.label')}

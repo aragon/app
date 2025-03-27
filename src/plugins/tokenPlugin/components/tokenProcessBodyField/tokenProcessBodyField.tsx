@@ -1,6 +1,7 @@
 import type { ITokenVotingMember } from '@/modules/createDao/components/createProcessForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { DefinitionList, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
+import { DaoTokenVotingMode } from '../../types';
 
 export interface ITokenProcessBody {
     /**
@@ -22,11 +23,11 @@ export interface ITokenProcessBody {
     /**
      * The minimum participation of the body.
      */
-    minimumParticipation: number;
+    minParticipation: number;
     /**
      * Defines if vote change is enabled on the body.
      */
-    voteChange: boolean;
+    votingMode: DaoTokenVotingMode;
 }
 
 export interface ITokenProcessBodyFieldProps {
@@ -40,7 +41,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { t } = useTranslations();
 
     const { field } = props;
-    const { members, tokenName, tokenSymbol, supportThreshold, minimumParticipation, voteChange } = field;
+    const { members, tokenName, tokenSymbol, supportThreshold, minParticipation, votingMode } = field;
 
     const supply = members.reduce((sum, member) => sum + Number(member.tokenAmount), 0);
     const formattedSupply = formatterUtils.formatNumber(supply, {
@@ -49,6 +50,8 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     });
 
     const baseTranslationKey = 'app.plugins.token.tokenProcessBodyField';
+
+    const voteChange = votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT;
     const voteChangeLabel = voteChange ? t(`${baseTranslationKey}.enabled`) : t(`${baseTranslationKey}.disabled`);
 
     return (
@@ -66,7 +69,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 {t(`${baseTranslationKey}.supportDefinition`, { threshold: supportThreshold })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.minParticipationTerm`)}>
-                {t(`${baseTranslationKey}.minParticipationDefinition`, { minimumParticipation })}
+                {t(`${baseTranslationKey}.minParticipationDefinition`, { minParticipation })}
             </DefinitionList.Item>
             <DefinitionList.Item term={t(`${baseTranslationKey}.voteChange`)}>
                 <Tag label={voteChangeLabel} variant={voteChange ? 'primary' : 'neutral'} className="max-w-fit" />

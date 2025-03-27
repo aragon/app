@@ -33,7 +33,7 @@ describe('<FinanceDetailsList /> component', () => {
         render(createTestComponent({ dao }));
         expect(screen.getByText(networkDefinitions[dao.network].name)).toBeInTheDocument();
 
-        const daoAddressLink = screen.getByRole('link', { name: '0x1b…0cDB' });
+        const daoAddressLink = screen.getByRole('link', { name: '0x1b76…0cDB' });
         expect(daoAddressLink).toBeInTheDocument();
         expect(daoAddressLink).toHaveAttribute('href', expect.stringMatching(dao.address));
 

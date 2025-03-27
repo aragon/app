@@ -87,7 +87,8 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
 
     const progressValue = (value * 100) / total;
 
-    const valueLabelLeft = valueLabel ? Math.max(progressValue, valueLabel.length * 0.6) : 0;
+    const valueLabelLength = valueLabel?.length ?? 0;
+    const valueLabelLeft = Math.min(100 - valueLabelLength, Math.max(progressValue, valueLabelLength));
     const valueLabelStyle = { left: `${valueLabelLeft.toString()}%`, transform: 'translateX(-50%)' };
 
     const processedAlert = alertProp ?? alert;
@@ -113,25 +114,20 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         {...numberField}
                         {...otherProps}
                     />
-                    <div
-                        className={classNames('relative mt-4 flex grow flex-col gap-2 md:mt-0', {
-                            'self-end': totalLabel,
-                        })}
-                    >
-                        {valueLabel && (
-                            <p
-                                className={classNames(
-                                    'absolute -top-4 whitespace-nowrap text-xs text-primary-400 transition-all duration-500 ease-in-out',
-                                    { 'ml-12': tags },
-                                )}
-                                style={valueLabelStyle}
-                            >
-                                {valueLabel}
-                            </p>
-                        )}
+                    <div className={classNames('mt-4 flex grow flex-col gap-2 md:mt-0', { 'self-end': totalLabel })}>
                         <div className="flex items-center gap-3">
                             {tags && <Tag {...tags[0]} />}
-                            <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
+                            <div className="relative flex grow">
+                                {valueLabel && (
+                                    <p
+                                        className="absolute -top-5 whitespace-nowrap text-xs text-primary-400 transition-all duration-500 ease-in-out"
+                                        style={valueLabelStyle}
+                                    >
+                                        {valueLabel}
+                                    </p>
+                                )}
+                                <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
+                            </div>
                             {tags && <Tag {...tags[1]} />}
                         </div>
 

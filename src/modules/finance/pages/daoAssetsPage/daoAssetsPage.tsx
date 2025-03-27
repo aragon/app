@@ -12,7 +12,7 @@ export interface IDaoAssetsPageProps {
     params: Promise<IDaoPageParams>;
 }
 
-export const daoAssetsCount = 6;
+export const daoAssetsCount = 20;
 
 export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
     const { params } = props;
