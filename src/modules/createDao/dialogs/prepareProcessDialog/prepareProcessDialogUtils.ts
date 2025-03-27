@@ -8,12 +8,9 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
-import {
-    ProposalCreationMode,
-    type ICreateProcessFormBody,
-    type ICreateProcessFormData,
-} from '../../components/createProcessForm';
+import { ProposalCreationMode, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
+import type { ISetupBodyForm } from '../setupBodyDialog/setupBodyDialogDefinitions';
 
 export interface IPrepareProcessMetadata {
     /**
@@ -57,7 +54,7 @@ class PrepareProcessDialogUtils {
 
     prepareProposalMetadata = () => this.proposalMetadata;
 
-    preparePluginMetadata = (plugin: ICreateProcessFormBody) => {
+    preparePluginMetadata = (plugin: ISetupBodyForm) => {
         const { name, description, resources: links } = plugin;
 
         return { name, description, links };
@@ -110,8 +107,9 @@ class PrepareProcessDialogUtils {
 
         const sppInstallData = sppTransactionUtils.buildPreparePluginInstallData(sppMetadata, dao);
 
-        const pluginsInstallData = stages.map((stage) => {
-            const installData = stage.bodies.map((body) => {
+        const pluginsInstallData = stages.map((stage, index) => {
+            const stageBodies = values.bodies.filter((body) => body.stageIndex === index);
+            const installData = stageBodies.map((body) => {
                 const metadataCid = pluginsMetadata.shift()!;
 
                 const permissionSettings =
@@ -122,7 +120,7 @@ class PrepareProcessDialogUtils {
                 const params = { metadataCid, dao, permissionSettings, body, stage };
                 const prepareFunction = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginInstallDataParams, Hex>({
                     slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
-                    pluginId: body.governanceType,
+                    pluginId: body.plugin,
                 })!;
 
                 return prepareFunction(params);

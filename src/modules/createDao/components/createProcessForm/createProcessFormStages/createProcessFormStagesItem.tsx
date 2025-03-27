@@ -1,10 +1,13 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { Card, InputText } from '@aragon/gov-ui-kit';
+import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
 import type React from 'react';
-import type { ReactNode } from 'react';
 import { useWatch } from 'react-hook-form';
-import { ProcessStageType, type ICreateProcessFormStage } from '../createProcessFormDefinitions';
+import {
+    ProcessStageType,
+    type ICreateProcessFormData,
+    type ICreateProcessFormStage,
+} from '../createProcessFormDefinitions';
 import { StageBodiesField } from './fields/stageBodiesField';
 import { StageRequiredApprovalsField } from './fields/stageRequiredApprovalsField';
 import { StageTimingField } from './fields/stageTimingField';
@@ -20,20 +23,26 @@ export interface ICreateProcessFormStagesItemProps {
      */
     name: string;
     /**
-     * Children of the component.
+     * Current number of stages.
      */
-    children?: ReactNode;
+    stagesCount: number;
+    /**
+     * Callback called on delete button click.
+     */
+    onDelete: (index: number) => void;
 }
 
 const nameMaxLength = 40;
 
 export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemProps> = (props) => {
-    const { index, name, children } = props;
+    const { index, name, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
 
     const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${name}.type` });
-    const stageBodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({ name: `${name}.bodies` });
+
+    const processBodies = useWatch<Record<string, ICreateProcessFormData['bodies']>>({ name: 'bodies' });
+    const stageBodies = processBodies.filter((body) => body.stageIndex === index);
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -55,9 +64,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
             />
             <StageTypeField fieldPrefix={name} />
             <StageTimingField fieldPrefix={`${name}.timing`} stageType={stageType} />
-            {!isTimelockStage && (
-                <StageBodiesField index={index} isOptimisticStage={isOptimisticStage} stageFieldName={name} />
-            )}
+            {!isTimelockStage && <StageBodiesField stageIndex={index} isOptimisticStage={isOptimisticStage} />}
             {stageBodies.length > 0 && (
                 <StageRequiredApprovalsField
                     fieldPrefix={name}
@@ -65,7 +72,21 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                     isOptimisticStage={isOptimisticStage}
                 />
             )}
-            {children}
+            {stagesCount > 1 && (
+                <Dropdown.Container
+                    constrainContentWidth={false}
+                    size="md"
+                    customTrigger={
+                        <Button variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL} className="self-end">
+                            {t('app.createDao.createProcessForm.stages.more')}
+                        </Button>
+                    }
+                >
+                    <Dropdown.Item onClick={() => onDelete(index)}>
+                        {t('app.createDao.createProcessForm.stages.remove')}
+                    </Dropdown.Item>
+                </Dropdown.Container>
+            )}
         </Card>
     );
 };

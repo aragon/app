@@ -14,6 +14,10 @@ export interface ISetupBodyForm<TGovernance = unknown, TMembership = unknown> {
      */
     description?: string;
     /**
+     * Index of the stage the body is associated with, only defined when setting up advanced governance processes.
+     */
+    stageIndex?: number;
+    /**
      * Resources of the body.
      */
     resources: IResourcesInputResource[];

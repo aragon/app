@@ -137,7 +137,7 @@ class SppTransactionUtils {
         sppSetupData: IPluginSetupData,
         pluginSetupData: IPluginSetupData[],
     ) => {
-        const { permissions, stages } = values;
+        const { permissions, bodies } = values;
         const { proposalCreationBodies, proposalCreationMode } = permissions;
 
         const sppRuleConditionContract = sppSetupData.preparedSetupData.helpers[0];
@@ -146,8 +146,7 @@ class SppTransactionUtils {
             return undefined;
         }
 
-        const sppBodies = stages.flatMap((stage) => stage.bodies);
-        const conditionAddresses = sppBodies.reduce<string[]>((current, body, bodyIndex) => {
+        const conditionAddresses = bodies.reduce<string[]>((current, body, bodyIndex) => {
             const isBodyAllowed = proposalCreationBodies.find((bodySettings) => bodySettings.bodyId === body.id);
             const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
@@ -169,8 +168,9 @@ class SppTransactionUtils {
         const { stages } = values;
 
         const processedBodyAddresses = [...bodyAddresses];
-        const processedStages = stages.map((stage) => {
-            const { type, bodies, timing, requiredApprovals } = stage;
+        const processedStages = stages.map((stage, index) => {
+            const { type, timing, requiredApprovals } = stage;
+            const stageBodies = values.bodies.filter((body) => body.stageIndex === index);
 
             const stageTiming = this.processStageTiming(timing);
             const stageApprovals = this.processStageApprovals(requiredApprovals, type);
@@ -178,7 +178,7 @@ class SppTransactionUtils {
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
             const bodySettings = { isManual: false, tryAdvance: true };
-            const processedBodies = bodies.map(() => ({
+            const processedBodies = stageBodies.map(() => ({
                 addr: processedBodyAddresses.shift()!,
                 resultType,
                 ...bodySettings,
