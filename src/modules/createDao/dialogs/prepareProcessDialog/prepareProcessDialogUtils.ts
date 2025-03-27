@@ -10,7 +10,6 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import { ProposalCreationMode, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
-import type { ISetupBodyForm } from '../setupBodyDialog/setupBodyDialogDefinitions';
 
 export interface IPrepareProcessMetadata {
     /**
@@ -54,7 +53,7 @@ class PrepareProcessDialogUtils {
 
     prepareProposalMetadata = () => this.proposalMetadata;
 
-    preparePluginMetadata = (plugin: ISetupBodyForm) => {
+    preparePluginMetadata = (plugin: ICreateProcessFormData['bodies'][number]) => {
         const { name, description, resources: links } = plugin;
 
         return { name, description, links };

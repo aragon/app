@@ -1,6 +1,6 @@
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
-import type { ISetupBodyForm } from '../../dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import type { ISetupBodyForm } from '../../dialogs/setupBodyDialog';
 
 export enum ProposalCreationMode {
     LISTED_BODIES = 'LISTED_BODIES',

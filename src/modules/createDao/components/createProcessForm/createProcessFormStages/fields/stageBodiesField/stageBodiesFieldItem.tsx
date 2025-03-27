@@ -8,7 +8,7 @@ export interface IStageBodiesFieldItemProps {
     /**
      * Body to display the details for.
      */
-    body: ISetupBodyForm & { id: string };
+    body: ISetupBodyForm;
     /**
      * Callback called on edit button click.
      */
@@ -39,7 +39,7 @@ export const StageBodiesFieldItem: React.FC<IStageBodiesFieldItemProps> = (props
                         />
                         <div className="flex w-full grow justify-between">
                             <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
-                                {t('app.createDao.createProcessForm.stages.bodies.summary.edit')}
+                                {t('app.createDao.createProcessForm.stages.bodies.action.edit')}
                             </Button>
                             <Dropdown.Container
                                 constrainContentWidth={false}
@@ -51,11 +51,13 @@ export const StageBodiesFieldItem: React.FC<IStageBodiesFieldItemProps> = (props
                                         size="md"
                                         iconRight={IconType.DOTS_VERTICAL}
                                     >
-                                        {t('app.createDao.createProcessForm.stages.bodies.summary.more')}
+                                        {t('app.createDao.createProcessForm.stages.bodies.action.more')}
                                     </Button>
                                 }
                             >
-                                <Dropdown.Item onClick={onDelete}>Remove body</Dropdown.Item>
+                                <Dropdown.Item onClick={onDelete}>
+                                    {t('app.createDao.createProcessForm.stages.bodies.action.remove')}
+                                </Dropdown.Item>
                             </Dropdown.Container>
                         </div>
                     </Accordion.ItemContent>

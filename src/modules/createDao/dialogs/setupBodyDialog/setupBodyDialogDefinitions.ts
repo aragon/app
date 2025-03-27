@@ -22,7 +22,7 @@ export interface ISetupBodyForm<TGovernance = unknown, TMembership = unknown> {
      */
     resources: IResourcesInputResource[];
     /**
-     * Plugin that defines the membership and governance of the body.
+     * ID of the plugin defining the membership and governance settings of the body.
      */
     plugin: string;
     /**

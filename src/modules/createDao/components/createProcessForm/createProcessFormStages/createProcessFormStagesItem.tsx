@@ -78,12 +78,12 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                     size="md"
                     customTrigger={
                         <Button variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL} className="self-end">
-                            {t('app.createDao.createProcessForm.stages.more')}
+                            {t('app.createDao.createProcessForm.stages.action.more')}
                         </Button>
                     }
                 >
                     <Dropdown.Item onClick={() => onDelete(index)}>
-                        {t('app.createDao.createProcessForm.stages.remove')}
+                        {t('app.createDao.createProcessForm.stages.action.remove')}
                     </Dropdown.Item>
                 </Dropdown.Container>
             )}

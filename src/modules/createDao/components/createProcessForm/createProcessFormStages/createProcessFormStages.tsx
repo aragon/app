@@ -37,7 +37,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
                 iconLeft={IconType.PLUS}
                 onClick={handleAddStage}
             >
-                {t('app.createDao.createProcessForm.stages.add')}
+                {t('app.createDao.createProcessForm.stages.action.add')}
             </Button>
         </div>
     );

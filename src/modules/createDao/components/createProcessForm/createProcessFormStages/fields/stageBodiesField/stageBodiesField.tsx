@@ -85,7 +85,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                         iconLeft={IconType.PLUS}
                         onClick={handleAddBody}
                     >
-                        {t('app.createDao.createProcessForm.stages.bodies.add')}
+                        {t('app.createDao.createProcessForm.stages.bodies.action.add')}
                     </Button>
                 </div>
             </InputContainer>

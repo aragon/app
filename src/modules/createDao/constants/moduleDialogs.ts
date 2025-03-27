@@ -4,7 +4,7 @@ import { CreateProcessDetailsDialog } from '../dialogs/createProcessDetailsDialo
 import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
 import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
 import { PublishProcessDialog } from '../dialogs/publishProcessDialog';
-import { SetupBodyDialog } from '../dialogs/setupBodyDialog/setupBodyDialog';
+import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
 
 export enum CreateDaoDialog {
     PUBLISH_DAO = ' PUBLISH_DAO',
