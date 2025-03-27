@@ -13,8 +13,7 @@ export interface IMultisigSetupGovernanceProps {
      */
     membersCount: number;
     /**
-     * Whether to show the proposal creation settings (who can vote, any vs members). This option is only used for the
-     * update-multisig-settings action.
+     * Whether to show the proposal creation settings (who can vote, any vs members).
      */
     showProposalCreationSettings?: boolean;
 }
