@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
 import { useFieldArray } from 'react-hook-form';
-import { TokenSetupMemberhipCreateTokenMember } from './tokenSetupMemberhipCreateTokenMember';
+import { TokenSetupMembershipCreateTokenMember } from './tokenSetupMembershipCreateTokenMember';
 
 export interface ITokenSetupMembershipCreateTokenProps {
     /**
@@ -11,6 +11,8 @@ export interface ITokenSetupMembershipCreateTokenProps {
      */
     formPrefix: string;
 }
+
+const symbolMaxLength = 10;
 
 export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCreateTokenProps> = (props) => {
     const { formPrefix } = props;
@@ -22,9 +24,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         defaultValue: '',
         trimOnBlur: true,
         fieldPrefix: formPrefix,
-        rules: {
-            required: true,
-        },
+        rules: { required: true },
     });
 
     const tokenSymbolField = useFormField<ITokenSetupMembershipForm, 'tokenSymbol'>('tokenSymbol', {
@@ -33,7 +33,6 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         trimOnBlur: true,
         fieldPrefix: formPrefix,
         rules: {
-            maxLength: { value: 10, message: t('app.plugins.token.tokenSetupMembership.createToken.symbol.maxLength') },
             required: true,
             validate: (value) =>
                 /^[A-Za-z]+$/.test(value ?? '') ||
@@ -41,8 +40,9 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         },
     });
 
+    const membersFieldName = `${formPrefix}.members`;
     const { fields, append, remove } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
-        name: `${formPrefix}.members`,
+        name: membersFieldName,
     });
 
     const handleAddMember = () => append({ address: '', tokenAmount: 1 });
@@ -55,17 +55,16 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             />
             <InputText
                 helpText={t('app.plugins.token.tokenSetupMembership.createToken.symbol.helpText')}
+                maxLength={symbolMaxLength}
                 {...tokenSymbolField}
             />
             <InputContainer id="distribute" useCustomWrapper={true}>
                 {fields.map((field, index) => (
-                    <TokenSetupMemberhipCreateTokenMember
+                    <TokenSetupMembershipCreateTokenMember
                         key={field.id}
-                        fieldNamePrefix={formPrefix}
-                        index={index}
+                        formPrefix={`${membersFieldName}.${index.toString()}`}
                         initialValue={field.address}
-                        onRemoveMember={remove}
-                        canRemove={fields.length > 1}
+                        onRemove={fields.length > 1 ? () => remove(index) : undefined}
                     />
                 ))}
             </InputContainer>

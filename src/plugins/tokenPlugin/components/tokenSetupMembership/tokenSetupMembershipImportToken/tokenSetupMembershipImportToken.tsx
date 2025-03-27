@@ -13,6 +13,7 @@ export interface ITokenSetupMembershipImportTokenProps {
 
 export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImportTokenProps> = (props) => {
     const { formPrefix } = props;
+
     const { t } = useTranslations();
 
     const {

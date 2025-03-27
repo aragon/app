@@ -1312,7 +1312,6 @@
             "symbol": {
               "helpText": "This is the abbreviated ticker of the token. For example: UNI",
               "label": "Token symbol",
-              "maxLength": "Symbol cannot exceed 10 characters",
               "onlyLetters": "Only letters are allowed"
             }
           },

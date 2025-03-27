@@ -1,4 +1,4 @@
-import type { ITokenVotingMember } from '@/modules/createDao/components/createProcessForm';
+import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
 export interface ITokenSetupMembershipProps {
     /**
@@ -23,5 +23,12 @@ export interface ITokenSetupMembershipForm {
     /**
      * Members of the token voting body.
      */
-    members: ITokenVotingMember[];
+    members: ITokenSetupMembershipMember[];
+}
+
+export interface ITokenSetupMembershipMember extends ICompositeAddress {
+    /**
+     * Token amount to be distributed.
+     */
+    tokenAmount: string | number;
 }
