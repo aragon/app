@@ -10,11 +10,11 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
 
     const { t } = useTranslations();
 
-    // Set default values to minimumApproval and onlyListed values as values are reset when deleting an item from the
+    // Set default values to minApprovals and onlyListed values as values are reset when deleting an item from the
     // useArrayField causing the useWatch / useFormField to return undefined before unmounting the component
-    const minimumApprovalFieldName = `${fieldPrefix}.minApprovals`;
-    const minimumApproval = useWatch<Record<string, IMultisigSetupGovernanceForm['minApprovals']>>({
-        name: minimumApprovalFieldName,
+    const minApprovalsFieldName = `${fieldPrefix}.minApprovals`;
+    const minApprovalsFieldValue = useWatch<Record<string, IMultisigSetupGovernanceForm['minApprovals']>>({
+        name: minApprovalsFieldName,
         defaultValue: 0,
     });
 
@@ -31,7 +31,7 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
     const handleRadioChange = (value: string) => onOnlyListedFieldChange(value === 'members');
 
     const majorityThreshold = Math.floor(membersCount / 2);
-    const isMinApprovalsMajority = minimumApproval > majorityThreshold;
+    const isMinApprovalsMajority = minApprovalsFieldValue > majorityThreshold;
 
     const minApprovalContext = isMinApprovalsMajority ? 'majority' : 'minority';
     const minApprovalAlert = {
@@ -42,10 +42,10 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
     return (
         <div className="flex w-full flex-col gap-y-6 md:gap-y-10">
             <NumberProgressInput
-                fieldName={minimumApprovalFieldName}
+                fieldName={minApprovalsFieldName}
                 label={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.label')}
                 helpText={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.helpText')}
-                valueLabel={minimumApproval.toString()}
+                valueLabel={minApprovalsFieldValue.toString()}
                 total={membersCount}
                 totalLabel={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.total', {
                     total: membersCount,

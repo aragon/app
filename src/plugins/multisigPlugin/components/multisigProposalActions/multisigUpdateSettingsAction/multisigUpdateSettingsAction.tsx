@@ -40,7 +40,7 @@ export const MultisigUpdateSettingsAction: React.FC<IMultisigUpdateSettingsActio
 
     const fieldPrefix = `${actionFieldName}.proposedSettings`;
 
-    // Set default values to minimumApproval and onlyListed values as values are reset when deleting an item from the
+    // Set default values to minApprovals and onlyListed values as values are reset when deleting an item from the
     // useArrayField causing the useWatch / useFormField to return undefined before unmounting the component
     const minApprovalsFieldValue = useWatch<Record<string, IMultisigSetupGovernanceForm['minApprovals']>>({
         name: `${fieldPrefix}.minApprovals`,
