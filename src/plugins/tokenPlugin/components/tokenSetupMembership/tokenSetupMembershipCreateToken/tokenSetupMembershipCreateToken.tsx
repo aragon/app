@@ -70,7 +70,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
             </InputContainer>
             <div className="flex w-full justify-between">
                 <Button size="md" variant="secondary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
-                    {t('app.plugins.token.tokenSetupMembership.createToken.add')}
+                    {t('app.plugins.token.tokenSetupMembership.createToken.member.action.add')}
                 </Button>
             </div>
         </>

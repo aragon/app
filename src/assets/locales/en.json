@@ -1304,7 +1304,19 @@
         },
         "tokenSetupMembership": {
           "createToken": {
-            "add": "Add",
+            "member": {
+              "action": {
+                "add": "Add",
+                "remove": "Remove"
+              },
+              "address": {
+                "label": "Address",
+                "placeholder": "ENS or 0x…"
+              },
+              "tokens": {
+                "label": "Tokens"
+              }
+            },
             "name": {
               "helpText": "These addreses will receive newly minted tokens.",
               "label": "Token name"

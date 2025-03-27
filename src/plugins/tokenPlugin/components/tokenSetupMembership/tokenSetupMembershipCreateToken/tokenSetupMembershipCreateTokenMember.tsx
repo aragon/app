@@ -1,3 +1,4 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AddressInput,
@@ -29,6 +30,8 @@ export interface ITokenSetupMembershipCreateTokenMemberProps {
 export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembershipCreateTokenMemberProps> = (props) => {
     const { formPrefix, onRemove, initialValue } = props;
 
+    const { t } = useTranslations();
+
     const [memberInput, setMemberInput] = useState<string | undefined>(initialValue);
 
     const {
@@ -36,13 +39,13 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         value: memberValue,
         ...memberField
     } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
-        label: 'Address',
+        label: t('app.plugins.token.tokenSetupMembership.createToken.member.address.label'),
         rules: { required: true, validate: (value) => addressUtils.isAddress(value) },
         fieldPrefix: formPrefix,
     });
 
     const tokenAmountField = useFormField<ITokenSetupMembershipMember, 'tokenAmount'>('tokenAmount', {
-        label: 'Tokens',
+        label: t('app.plugins.token.tokenSetupMembership.createToken.member.tokens.label'),
         rules: { required: true, validate: (value) => Number(value) > 0, min: 0 },
         fieldPrefix: formPrefix,
     });
@@ -56,7 +59,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
         <div className="flex items-start gap-x-4 rounded-xl border border-neutral-100 p-6">
             <div className="flex w-full gap-x-4">
                 <AddressInput
-                    placeholder="ENS or 0x…"
+                    placeholder={t('app.plugins.token.tokenSetupMembership.createToken.member.address.placeholder')}
                     chainId={1}
                     value={memberInput}
                     onChange={setMemberInput}
@@ -72,7 +75,9 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                         <Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="mt-[34.5px] shrink-0" />
                     }
                 >
-                    <Dropdown.Item onClick={onRemove}>Remove</Dropdown.Item>
+                    <Dropdown.Item onClick={onRemove}>
+                        {t('app.plugins.token.tokenSetupMembership.createToken.member.action.remove')}
+                    </Dropdown.Item>
                 </Dropdown.Container>
             )}
         </div>
