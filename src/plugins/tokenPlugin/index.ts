@@ -1,7 +1,6 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { TokenProposalCreationRequirements } from '@/plugins/tokenPlugin/components/tokenProposalCreationRequirements';
 import { useTokenPermissionCheckProposalCreation } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
 import { useTokenPermissionCheckVoteSubmission } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckVoteSubmission';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -16,6 +15,7 @@ import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBr
 import { TokenProposalVotingSummary } from './components/tokenProposalVotingSummary';
 import { TokenSubmitVote } from './components/tokenSubmitVote';
 import { TokenVoteList } from './components/tokenVoteList';
+import { TokenVotingBodyCheckboxCard } from './components/tokenVotingBodyCheckboxCard';
 import { tokenPlugin } from './constants/tokenPlugin';
 import { useTokenActions } from './hooks/useTokenActions';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
@@ -147,6 +147,6 @@ export const initialiseTokenPlugin = () => {
         .registerSlotComponent({
             slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
             pluginId: tokenPlugin.id,
-            component: TokenProposalCreationRequirements,
+            component: TokenVotingBodyCheckboxCard,
         });
 };

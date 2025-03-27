@@ -13,6 +13,7 @@ import { MultisigProposalVotingBreakdown } from './components/multisigProposalVo
 import { MultisigProposalVotingSummary } from './components/multisigProposalVotingSummary';
 import { MultisigSubmitVote } from './components/multisigSubmitVote';
 import { MultisigVoteList } from './components/multisigVoteList';
+import { MultisigVotingBodyCheckboxCard } from './components/multisigVotingBodyCheckboxCard';
 import { multisigPlugin } from './constants/multisigPlugin';
 import { useMultisigActions } from './hooks/useMultisigActions';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
@@ -124,5 +125,10 @@ export const initialiseMultisigPlugin = () => {
             slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
             pluginId: multisigPlugin.id,
             component: MultisigProcessBodyField,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
+            pluginId: multisigPlugin.id,
+            component: MultisigVotingBodyCheckboxCard,
         });
 };
