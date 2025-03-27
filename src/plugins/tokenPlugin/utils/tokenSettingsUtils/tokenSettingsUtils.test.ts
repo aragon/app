@@ -4,21 +4,21 @@ import { mockTranslations } from '@/test/utils';
 import { tokenSettingsUtils } from './tokenSettingsUtils';
 
 describe('tokenSettings utils', () => {
-    describe('fromRatioToPercentage', () => {
+    describe('ratioToPercentage', () => {
         it('correctly parses the percentage setting', () => {
-            expect(tokenSettingsUtils.fromRatioToPercentage(500000)).toEqual(50);
-            expect(tokenSettingsUtils.fromRatioToPercentage(123456)).toEqual(12.3456);
-            expect(tokenSettingsUtils.fromRatioToPercentage(0)).toEqual(0);
-            expect(tokenSettingsUtils.fromRatioToPercentage(1000000)).toEqual(100);
+            expect(tokenSettingsUtils.ratioToPercentage(500000)).toEqual(50);
+            expect(tokenSettingsUtils.ratioToPercentage(123456)).toEqual(12.3456);
+            expect(tokenSettingsUtils.ratioToPercentage(0)).toEqual(0);
+            expect(tokenSettingsUtils.ratioToPercentage(1000000)).toEqual(100);
         });
     });
 
-    describe('fromPercentageToRatio', () => {
+    describe('percentageToRatio', () => {
         it('correctly converts percentage to ratio', () => {
-            expect(tokenSettingsUtils.fromPercentageToRatio(50)).toEqual(500000);
-            expect(tokenSettingsUtils.fromPercentageToRatio(12.3456)).toEqual(123456);
-            expect(tokenSettingsUtils.fromPercentageToRatio(0)).toEqual(0);
-            expect(tokenSettingsUtils.fromPercentageToRatio(100)).toEqual(1000000);
+            expect(tokenSettingsUtils.percentageToRatio(50)).toEqual(500000);
+            expect(tokenSettingsUtils.percentageToRatio(12.3456)).toEqual(123456);
+            expect(tokenSettingsUtils.percentageToRatio(0)).toEqual(0);
+            expect(tokenSettingsUtils.percentageToRatio(100)).toEqual(1000000);
         });
     });
 
