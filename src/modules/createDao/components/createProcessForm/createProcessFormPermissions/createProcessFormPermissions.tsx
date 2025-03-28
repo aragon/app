@@ -8,24 +8,22 @@ import { ProposalCreationMode, type ICreateProcessFormData } from '../createProc
 
 export interface ICreateProcessFormPermissionProps {}
 
-const validateProposalCreationBodies = (bodies: ICreateProcessFormData['bodies']) => {
-    const canBodiesCreateProposals = bodies.some((body) => body.canCreateProposal);
-
-    return canBodiesCreateProposals || 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
-};
-
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
     const { t } = useTranslations();
 
     const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
+    const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
+    const createProposalsError = 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
 
     const {
         onChange: onModeChange,
         value: mode,
+        alert: permissionsAlert,
         ...modeField
     } = useFormField<ICreateProcessFormData, 'proposalCreationMode'>('proposalCreationMode', {
         label: t('app.createDao.createProcessForm.permissions.proposalCreation.mode.label'),
-        rules: { validate: () => validateProposalCreationBodies(processBodies) },
+        rules: { validate: () => canBodiesCreateProposals || createProposalsError },
+        defaultValue: ProposalCreationMode.LISTED_BODIES,
     });
 
     return (
@@ -51,6 +49,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                 label={t('app.createDao.createProcessForm.permissions.proposalCreation.bodies.label')}
                 useCustomWrapper={true}
                 className={mode === ProposalCreationMode.ANY_WALLET ? 'hidden' : ''}
+                alert={permissionsAlert}
             >
                 {processBodies.map((body, index) => (
                     <PluginSingleComponent
