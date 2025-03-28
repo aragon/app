@@ -1,5 +1,6 @@
 import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
+import { erc20VotesAbi } from './erc20VotingAbi';
 
 export interface IUseERC20VotingTokenCheckParams {
     /**
@@ -18,84 +19,6 @@ interface IUseERC20VotingTokenCheckQueryParams {
      */
     enabled?: boolean;
 }
-
-// ERC20Votes ABI with the methods we need to check compatibility.
-const ERC20VotesABI = [
-    {
-        type: 'function',
-        name: 'getPastTotalSupply',
-        stateMutability: 'view',
-        inputs: [
-            {
-                name: 'blockNumber',
-                type: 'uint256',
-            },
-        ],
-        outputs: [
-            {
-                name: '',
-                type: 'uint256',
-            },
-        ],
-    },
-    {
-        type: 'function',
-        name: 'getVotes',
-        stateMutability: 'view',
-        inputs: [
-            {
-                name: 'account',
-                type: 'address',
-            },
-        ],
-        outputs: [
-            {
-                name: '',
-                type: 'uint256',
-            },
-        ],
-    },
-    {
-        type: 'function',
-        name: 'getPastVotes',
-        stateMutability: 'view',
-        inputs: [
-            {
-                name: 'account',
-                type: 'address',
-            },
-            {
-                name: 'blockNumber',
-                type: 'uint256',
-            },
-        ],
-        outputs: [
-            {
-                name: '',
-                type: 'uint256',
-            },
-        ],
-    },
-    {
-        type: 'function',
-        name: 'delegates',
-        stateMutability: 'view',
-        inputs: [
-            {
-                internalType: 'address',
-                name: 'account',
-                type: 'address',
-            },
-        ],
-        outputs: [
-            {
-                internalType: 'address',
-                name: '',
-                type: 'address',
-            },
-        ],
-    },
-] as const;
 
 // A random address for testing vote functions
 const testAddress = '0x0000000000000000000000000000000000000001' as Hash;
@@ -124,28 +47,28 @@ export const useERC20VotingTokenCheck = (
             {
                 chainId,
                 address,
-                abi: ERC20VotesABI,
+                abi: erc20VotesAbi,
                 functionName: 'getPastTotalSupply',
                 args: [BigInt(0)],
             },
             {
                 chainId,
                 address,
-                abi: ERC20VotesABI,
+                abi: erc20VotesAbi,
                 functionName: 'getVotes',
                 args: [testAddress],
             },
             {
                 chainId,
                 address,
-                abi: ERC20VotesABI,
+                abi: erc20VotesAbi,
                 functionName: 'getPastVotes',
                 args: [testAddress, BigInt(0)],
             },
             {
                 chainId,
                 address,
-                abi: ERC20VotesABI,
+                abi: erc20VotesAbi,
                 functionName: 'delegates',
                 args: [testAddress],
             },
