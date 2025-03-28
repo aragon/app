@@ -1,1 +1,2 @@
-export { useToken, type IUseTokenParams, type IUseTokenResult, type IUseTokenReturn } from './useToken';
+export { useToken } from './useToken';
+export type * from './useToken.api';
