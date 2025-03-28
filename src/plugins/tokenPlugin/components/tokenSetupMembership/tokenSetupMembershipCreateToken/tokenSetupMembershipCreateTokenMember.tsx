@@ -57,8 +57,8 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
     );
 
     return (
-        <div className="flex items-start gap-x-4 rounded-xl border border-neutral-100 p-6">
-            <div className="flex w-full gap-x-4">
+        <div className="flex items-end gap-x-4 rounded-xl border border-neutral-100 p-6">
+            <div className="flex w-full flex-col gap-4 md:flex-row">
                 <AddressInput
                     placeholder={t('app.plugins.token.tokenSetupMembership.createToken.member.address.placeholder')}
                     chainId={1}
@@ -68,13 +68,11 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<ITokenSetupMembersh
                     className="basis-[65%]"
                     {...memberField}
                 />
-                <InputNumber className="basis-[35%]" min={0} {...tokenAmountField} />
+                <InputNumber className="basis-1/3" min={0} {...tokenAmountField} />
             </div>
             {onRemove != null && (
                 <Dropdown.Container
-                    customTrigger={
-                        <Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="mt-[34.5px] shrink-0" />
-                    }
+                    customTrigger={<Button variant="tertiary" iconLeft={IconType.DOTS_VERTICAL} className="shrink-0" />}
                 >
                     <Dropdown.Item onClick={onRemove}>
                         {t('app.plugins.token.tokenSetupMembership.createToken.member.action.remove')}

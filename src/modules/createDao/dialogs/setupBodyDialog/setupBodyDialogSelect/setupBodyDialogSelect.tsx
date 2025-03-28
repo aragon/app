@@ -20,7 +20,6 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = () =
 
     return (
         <RadioGroup
-            className="flex gap-4"
             helpText={t('app.createDao.setupBodyDialog.select.plugin.helpText')}
             onValueChange={onChange}
             {...governanceTypeField}
@@ -28,7 +27,6 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = () =
             {availablePlugins.map((plugin) => (
                 <RadioCard
                     key={plugin.id}
-                    className="w-full"
                     label={t(plugin.setup!.nameKey)}
                     description={t(plugin.setup!.descriptionKey)}
                     value={plugin.id}

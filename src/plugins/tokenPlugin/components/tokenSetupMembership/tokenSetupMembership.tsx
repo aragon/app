@@ -37,13 +37,8 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                     onValueChange={(value) => setTokenType(value as typeof tokenType)}
                 >
                     <div className="flex w-full flex-row gap-x-2">
+                        <RadioCard label={t('app.plugins.token.tokenSetupMembership.type.option.create')} value="new" />
                         <RadioCard
-                            className="w-1/2"
-                            label={t('app.plugins.token.tokenSetupMembership.type.option.create')}
-                            value="new"
-                        />
-                        <RadioCard
-                            className="w-1/2"
                             label={t('app.plugins.token.tokenSetupMembership.type.option.import')}
                             value="imported"
                             disabled={isImportDisabled}

@@ -61,13 +61,12 @@ class TokenTransactionUtils {
 
         const tokenSettings = { addr: tokenAddress as Hex, name: tokenName, symbol: tokenSymbol };
 
-        const defaultMintSettings = { receivers: [], amounts: [] };
         const mintSettings = members.reduce<{ receivers: Hex[]; amounts: bigint[] }>(
             (current, member) => ({
                 receivers: current.receivers.concat(member.address as Hex),
                 amounts: current.amounts.concat(parseUnits(member.tokenAmount?.toString() ?? '0', 18)),
             }),
-            defaultMintSettings,
+            { receivers: [], amounts: [] },
         );
 
         const votingSettings = this.buildInstallDataVotingSettings(params);
