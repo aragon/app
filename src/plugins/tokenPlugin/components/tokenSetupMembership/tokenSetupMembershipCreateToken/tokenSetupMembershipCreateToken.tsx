@@ -25,6 +25,11 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
 
     const tokenFormPrefix = `${formPrefix}.token`;
 
+    useFormField<ITokenSetupMembershipForm['token'], 'decimals'>('decimals', {
+        defaultValue: defaultTokenDecimals,
+        fieldPrefix: tokenFormPrefix,
+    });
+
     const nameField = useFormField<ITokenSetupMembershipForm['token'], 'name'>('name', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.name.label'),
         defaultValue: '',
@@ -61,7 +66,10 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
     const handleAddMember = () => addMember({ address: '', tokenAmount: 1 });
 
     useEffect(() => {
-        const totalSupply = controlledMembersField.reduce((current, member) => current + Number(member.tokenAmount), 0);
+        const totalSupply = controlledMembersField.reduce(
+            (current, member) => current + Number(member.tokenAmount ?? 0),
+            0,
+        );
         const totalSupplyWei = parseUnits(totalSupply.toString(), defaultTokenDecimals);
         setValue(`${tokenFormPrefix}.totalSupply`, totalSupplyWei.toString());
     }, [controlledMembersField, setValue, tokenFormPrefix]);

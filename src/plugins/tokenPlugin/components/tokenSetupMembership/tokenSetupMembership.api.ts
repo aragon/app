@@ -16,5 +16,5 @@ export interface ITokenSetupMembershipMember extends ICompositeAddress {
     /**
      * Token amount to be distributed.
      */
-    tokenAmount: string | number;
+    tokenAmount?: string | number;
 }
