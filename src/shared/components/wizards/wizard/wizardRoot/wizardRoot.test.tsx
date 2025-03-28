@@ -31,8 +31,9 @@ describe('<WizardRoot /> component', () => {
         expect(useFormSpy).toHaveBeenCalledWith({ mode: 'onTouched', defaultValues });
     });
 
-    it('renders the dev-tools for the form manager', () => {
-        render(createTestComponent());
+    it('renders the dev-tools for the form manager when useDevTool is set to true', () => {
+        const useDevTool = true;
+        render(createTestComponent({ useDevTool }));
         expect(screen.getByTestId('dev-tool')).toBeInTheDocument();
     });
 
