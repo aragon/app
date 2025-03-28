@@ -115,7 +115,7 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
             submitLabel={t('app.createDao.publishProcessDialog.button.submit')}
             successLink={{
                 label: t('app.createDao.publishProcessDialog.button.success'),
-                href: `/dao/${daoId}/proposals`,
+                href: `/dao/${daoId}/dashboard`,
             }}
             stepper={stepper}
             customSteps={customSteps}
