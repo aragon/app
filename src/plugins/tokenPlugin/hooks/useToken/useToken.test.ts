@@ -30,7 +30,7 @@ describe('useToken hook', () => {
             data: mockData,
             isError: null,
             isLoading: false,
-        } as unknown as wagmi.UseReadContractsReturnType<[number, string, string, string], false, unknown>);
+        } as unknown as wagmi.UseReadContractsReturnType<[string, string, number, string], false, unknown>);
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
@@ -47,7 +47,7 @@ describe('useToken hook', () => {
             data: [] as [],
             isError: true,
             isLoading: false,
-        } as unknown as wagmi.UseReadContractsReturnType<[], false, unknown>);
+        } as unknown as wagmi.UseReadContractsReturnType<[string, string, number, string], false, unknown>);
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
@@ -64,7 +64,7 @@ describe('useToken hook', () => {
             data: undefined,
             isError: null,
             isLoading: true,
-        } as unknown as wagmi.UseReadContractsReturnType<[number, string, string, bigint], false, unknown>);
+        } as unknown as wagmi.UseReadContractsReturnType<[string, string, number, string], false, unknown>);
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
