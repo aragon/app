@@ -19,7 +19,7 @@ interface IUseERC20VotingTokenCheckQueryParams {
     enabled?: boolean;
 }
 
-// ERC20Votes ABI with the methods we need to check compatibility, aligned with https://github.com/aragon/token-voting-plugin/blob/develop/packages/contracts/src/TokenVotingSetup.sol
+// ERC20Votes ABI with the methods we need to check compatibility.
 const ERC20VotesABI = [
     {
         type: 'function',
@@ -102,6 +102,8 @@ const testAddress = '0x0000000000000000000000000000000000000001' as Hash;
 
 /**
  * Just an internal hook, not to be used outside useGovernanceToken.
+ *
+ * Checks governance compatibility according to the following logic https://github.com/aragon/token-voting-plugin/blob/develop/packages/contracts/src/TokenVotingSetup.sol
  */
 export const useERC20VotingTokenCheck = (
     params: IUseERC20VotingTokenCheckParams,
