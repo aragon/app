@@ -1,4 +1,5 @@
 import type { ButtonVariant } from '@aragon/gov-ui-kit';
+import { useCallback } from 'react';
 import { useFormContext, type FieldErrors } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
 import { useWizardContext } from './wizardProvider';
@@ -35,13 +36,17 @@ export interface IUseWizardFooterReturn {
      * Label of the submit button.
      */
     submitLabel: string;
+    /**
+     * Callback to be triggered to navigate to a previous step.
+     */
+    onPreviousClick: () => void;
 }
 
 export const useWizardFooter = (): IUseWizardFooterReturn => {
     const { t } = useTranslations();
-    const { submitLabel, hasNext } = useWizardContext();
+    const { submitLabel, hasNext, previousStep } = useWizardContext();
 
-    const { formState } = useFormContext();
+    const { formState, reset } = useFormContext();
     const { isSubmitted, errors } = formState;
 
     const validationStatus = getValidationStatus(errors);
@@ -50,10 +55,17 @@ export const useWizardFooter = (): IUseWizardFooterReturn => {
     const submitVariant = displayValidationError ? 'critical' : !hasNext ? 'primary' : 'secondary';
     const processedSubmitLabel = hasNext ? t('app.shared.wizard.footer.next') : submitLabel;
 
+    const onPreviousClick = useCallback(() => {
+        // Reset submitted status when going on a previous step to display validation error when submitting again
+        reset(undefined, { keepDefaultValues: true, keepValues: true });
+        previousStep();
+    }, [reset, previousStep]);
+
     return {
         validationStatus,
         displayValidationError,
         submitVariant,
         submitLabel: processedSubmitLabel,
+        onPreviousClick,
     };
 };

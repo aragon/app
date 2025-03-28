@@ -17,13 +17,13 @@ export const WizardDialogContainerFooter: React.FC<IWizardDialogContainerFooterP
     const { formId, onClose } = props;
 
     const { t } = useTranslations();
-    const { hasPrevious, previousStep } = useWizardContext();
-    const { displayValidationError, submitLabel } = useWizardFooter();
+    const { hasPrevious } = useWizardContext();
+    const { displayValidationError, submitLabel, onPreviousClick } = useWizardFooter();
 
     const secondaryActionLabel = hasPrevious ? 'back' : 'close';
     const secondaryAction = {
         label: t(`app.shared.wizardDialog.container.${secondaryActionLabel}`),
-        onClick: hasPrevious ? previousStep : onClose,
+        onClick: hasPrevious ? onPreviousClick : onClose,
     };
 
     return (

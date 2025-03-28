@@ -18,7 +18,12 @@ export const WizardPageContainer = <TFormData extends FieldValues = FieldValues>
     const { submitLabel, initialSteps, defaultValues, finalStep, children, className, ...wizardFormProps } = props;
 
     return (
-        <Wizard.Root submitLabel={submitLabel} initialSteps={initialSteps} defaultValues={defaultValues}>
+        <Wizard.Root
+            submitLabel={submitLabel}
+            initialSteps={initialSteps}
+            defaultValues={defaultValues}
+            useDevTool={true}
+        >
             <Wizard.Form className={classNames('flex h-full flex-col gap-4 md:gap-6', className)} {...wizardFormProps}>
                 <WizardPageContainerProgress finalStep={finalStep} />
                 {children}

@@ -4,6 +4,12 @@ import { type IWizardContext, WizardProvider } from '../wizardProvider';
 import { type IWizardStepProps, WizardStep } from './wizardStep';
 
 describe('<WizardStep /> component', () => {
+    const scrollToSpy = jest.spyOn(window, 'scrollTo');
+
+    afterEach(() => {
+        scrollToSpy.mockReset();
+    });
+
     const createTestComponent = (values?: { props?: Partial<IWizardStepProps>; context?: Partial<IWizardContext> }) => {
         const completeProps: IWizardStepProps = {
             title: 'step-title',
@@ -58,5 +64,13 @@ describe('<WizardStep /> component', () => {
         const props = { id, children };
         render(createTestComponent({ context, props }));
         expect(screen.getByText(children)).toBeInTheDocument();
+    });
+
+    it('scrolls to the top of the page when step is active', () => {
+        const id = 'step-id';
+        const context = { activeStep: id };
+        const props = { id };
+        render(createTestComponent({ context, props }));
+        expect(scrollToSpy).toHaveBeenCalledWith(0, 0);
     });
 });
