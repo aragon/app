@@ -34,7 +34,7 @@ describe('useToken hook', () => {
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
-        expect(result.current.data).toEqual(mockReturn);
+        expect(result.current.token).toEqual(mockReturn);
         expect(result.current.error).toBeNull();
         expect(result.current.isLoading).toBe(false);
     });
@@ -52,7 +52,7 @@ describe('useToken hook', () => {
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
-        expect(result.current.data).toBeNull();
+        expect(result.current.token).toBeNull();
         expect(result.current.error).toBe(error);
         expect(result.current.isLoading).toBe(false);
     });
@@ -69,7 +69,7 @@ describe('useToken hook', () => {
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
-        expect(result.current.data).toBeNull();
+        expect(result.current.token).toBeNull();
         expect(result.current.error).toBeNull();
         expect(result.current.isLoading).toBe(true);
     });

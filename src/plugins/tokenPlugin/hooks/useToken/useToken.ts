@@ -1,5 +1,4 @@
 import type { IToken } from '@/modules/finance/api/financeService';
-import { useMemo } from 'react';
 import { erc20Abi, type Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
 import type { ReadContractsErrorType } from 'wagmi/actions';
@@ -17,11 +16,11 @@ export interface IUseTokenParams {
 
 export interface IUseTokenReturn extends Pick<IToken, 'decimals' | 'name' | 'symbol' | 'totalSupply'> {}
 
-export interface UseTokenResult {
+export interface IUseTokenResult {
     /**
      * Token data result.
      */
-    data: IUseTokenReturn | null;
+    token: IUseTokenReturn | null;
     /**
      * Possible error result.
      */
@@ -32,36 +31,29 @@ export interface UseTokenResult {
     isLoading: boolean;
 }
 
-export const useToken = (params: IUseTokenParams): UseTokenResult => {
+export const useToken = (params: IUseTokenParams): IUseTokenResult => {
     const { address, chainId } = params;
 
     const { data, error, isLoading } = useReadContracts({
         allowFailure: false,
-
         contracts: [
             { chainId, address, abi: erc20Abi, functionName: 'decimals' },
             { chainId, address, abi: erc20Abi, functionName: 'name' },
             { chainId, address, abi: erc20Abi, functionName: 'symbol' },
             { chainId, address, abi: erc20Abi, functionName: 'totalSupply' },
         ],
-    }) as {
-        data: [number, string, string, bigint] | undefined;
-        error: ReadContractsErrorType | null;
-        isLoading: boolean;
-    };
-
-    const token = useMemo(() => {
-        if (!data || error) {
-            return null;
-        }
-
-        const [decimals, name, symbol, totalSupply] = data;
-
-        return { name, symbol, decimals, totalSupply: totalSupply.toString() };
-    }, [data, error]);
+    });
 
     return {
-        data: token,
+        token:
+            data && !error
+                ? {
+                      name: data[1],
+                      symbol: data[2],
+                      decimals: data[0],
+                      totalSupply: data[3].toString(),
+                  }
+                : null,
         error,
         isLoading,
     };
