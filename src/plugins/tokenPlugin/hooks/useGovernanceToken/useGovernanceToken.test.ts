@@ -4,7 +4,7 @@ import * as useTokenModule from '../useToken';
 import * as useERC20VotingTokenCheckModule from './useERC20VotingTokenCheck';
 import { useGovernanceToken } from './useGovernanceToken';
 
-describe('useGovernanceToken', () => {
+describe('useGovernanceToken hook', () => {
     const useTokenSpy = jest.spyOn(useTokenModule, 'useToken');
     const useERC20VotingTokenCheckSpy = jest.spyOn(useERC20VotingTokenCheckModule, 'useERC20VotingTokenCheck');
 

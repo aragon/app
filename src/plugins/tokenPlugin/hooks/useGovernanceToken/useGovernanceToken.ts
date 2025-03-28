@@ -1,7 +1,6 @@
-import { useToken } from '@/plugins/tokenPlugin/hooks/useToken';
-import type { IUseTokenResult } from '@/plugins/tokenPlugin/hooks/useToken/useToken';
 import type { Hash } from 'viem';
 import type { ReadContractsErrorType } from 'wagmi/actions';
+import { useToken, type IUseTokenResult } from '../useToken';
 import { useERC20VotingTokenCheck } from './useERC20VotingTokenCheck';
 
 export interface IUseGovernanceTokenParams {
@@ -38,9 +37,6 @@ export interface IUseGovernanceTokenResult {
     isDelegationCompatible: boolean;
 }
 
-/**
- * Just an internal hook, not to be used outside useGovernanceToken.
- */
 export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGovernanceTokenResult => {
     const { isLoading: isTokenLoading, error: tokenError, token } = useToken(params);
     const {
@@ -69,6 +65,6 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
         error: tokenError ?? error,
         isGovernanceCompatible,
         isDelegationCompatible,
-        token: token,
+        token,
     };
 };

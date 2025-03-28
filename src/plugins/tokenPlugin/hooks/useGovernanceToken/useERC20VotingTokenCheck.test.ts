@@ -3,7 +3,7 @@ import type { Hash } from 'viem';
 import * as wagmi from 'wagmi';
 import { useERC20VotingTokenCheck } from './useERC20VotingTokenCheck';
 
-describe('useToken hook', () => {
+describe('useERC20VotingTokenCheck hook', () => {
     const useReadContractsSpy = jest.spyOn(wagmi, 'useReadContracts');
 
     const successCaseResponse = [
