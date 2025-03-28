@@ -15,7 +15,7 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = () =
 
     const { onChange, ...governanceTypeField } = useFormField<ISetupBodyForm, 'plugin'>('plugin', {
         label: t('app.createDao.setupBodyDialog.select.plugin.label'),
-        defaultValue: availablePlugins[0].id,
+        defaultValue: availablePlugins[0]?.id,
     });
 
     return (
