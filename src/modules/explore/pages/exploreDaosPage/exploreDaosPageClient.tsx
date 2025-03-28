@@ -1,7 +1,6 @@
 'use client';
 
 import { CreateDaoDialog } from '@/modules/createDao/constants/moduleDialogs';
-import { useGovernanceToken } from '@/plugins/tokenPlugin/hooks/useGovernanceToken';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -35,16 +34,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { data: featuredDaos } = useFeaturedDaos();
-    const [adr, setAdr] = React.useState<string | null>('0x114B56ed5aEbad95176e33c39BefD444E90fe3Db');
-
-    let res = useGovernanceToken({ address: adr, chainId: 1 });
-    console.log('RESS', res);
-    return (
-        <>
-            <h1>Hello</h1>
-            <input type="text" value={adr} onChange={(e) => setAdr(e.target.value)} />
-        </>
-    );
 
     return (
         <>
