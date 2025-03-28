@@ -1,5 +1,3 @@
-export {
-    useGovernanceToken,
-    type IUseGovernanceTokenParams,
-    type IUseGovernanceTokenResult,
-} from './useGovernanceToken';
+export { useGovernanceToken } from './useGovernanceToken';
+
+export type { IUseGovernanceTokenParams, IUseGovernanceTokenResult } from './useGovernanceToken.api';

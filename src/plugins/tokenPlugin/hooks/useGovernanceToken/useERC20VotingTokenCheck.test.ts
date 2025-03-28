@@ -6,6 +6,7 @@ import { useERC20VotingTokenCheck } from './useERC20VotingTokenCheck';
 describe('useERC20VotingTokenCheck hook', () => {
     const useReadContractsSpy = jest.spyOn(wagmi, 'useReadContracts');
 
+    const tokenAddress: Hash = '0x1234567890abcdef1234567890abcdef123456789';
     const successCaseResponse = [
         { result: 0, status: 'success' },
         { result: 0, status: 'success' },
@@ -18,16 +19,13 @@ describe('useERC20VotingTokenCheck hook', () => {
     });
 
     it('returns positive isGovernanceCompatible and isDelegationCompatible flags when ERC20Votes checks pass', () => {
-        const address: Hash = '0x1234567890abcdef1234567890abcdef123456789';
-        const chainId = 42;
-
         useReadContractsSpy.mockReturnValue({
             data: successCaseResponse,
             isError: false,
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address, chainId }));
+        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: tokenAddress, chainId: 123 }));
 
         expect(result.current.isGovernanceCompatible).toEqual(true);
         expect(result.current.isDelegationCompatible).toEqual(true);
@@ -36,9 +34,6 @@ describe('useERC20VotingTokenCheck hook', () => {
     });
 
     it('returns negative isGovernanceCompatible flag when governance checks fail', () => {
-        const address: Hash = '0x1234567890abcdef1234567890abcdef123456789';
-        const chainId = 42;
-
         const governanceFailureResponse = successCaseResponse.map((item, index) =>
             index === 1 ? { ...item, status: 'failure' } : item,
         );
@@ -48,7 +43,7 @@ describe('useERC20VotingTokenCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address, chainId }));
+        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: tokenAddress, chainId: 123 }));
 
         expect(result.current.isGovernanceCompatible).toEqual(false);
         expect(result.current.isDelegationCompatible).toEqual(true);
@@ -57,9 +52,6 @@ describe('useERC20VotingTokenCheck hook', () => {
     });
 
     it('returns negative isDelegationCompatible flag when delegation checks fail', () => {
-        const address: Hash = '0x1234567890abcdef1234567890abcdef123456789';
-        const chainId = 42;
-
         const delegationFailureResponse = successCaseResponse.map((item, index) =>
             index === 3 ? { ...item, status: 'failure' } : item,
         );
@@ -69,7 +61,7 @@ describe('useERC20VotingTokenCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address, chainId }));
+        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: tokenAddress, chainId: 123 }));
 
         expect(result.current.isGovernanceCompatible).toEqual(true);
         expect(result.current.isDelegationCompatible).toEqual(false);
