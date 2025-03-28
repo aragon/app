@@ -14,7 +14,8 @@ export interface ITokenSetupMembershipCreateTokenProps {
     formPrefix: string;
 }
 
-const symbolMaxLength = 10;
+const nameMaxLength = 40;
+const symbolMaxLength = 12;
 const defaultTokenDecimals = 18;
 const defaultTokenAddress = zeroAddress;
 
@@ -84,6 +85,7 @@ export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCrea
         <>
             <InputText
                 helpText={t('app.plugins.token.tokenSetupMembership.createToken.name.helpText')}
+                maxLength={nameMaxLength}
                 {...nameField}
             />
             <InputText
