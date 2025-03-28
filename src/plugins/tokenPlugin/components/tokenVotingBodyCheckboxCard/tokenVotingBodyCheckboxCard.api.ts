@@ -1,4 +1,6 @@
-import type { ICreateProcessFormData } from '@/modules/createDao/components/createProcessForm';
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { ITokenMember } from '../../types';
+
 export interface ITokenVotingBodySettings {
     /**
      * Min voting power / balance the user needs to have for creating proposals
@@ -10,7 +12,7 @@ export interface ITokenVotingBodyCheckboxCardProps {
     /**
      * Body to render the checkbox card for.
      */
-    body: ICreateProcessFormData['bodies'][number];
+    body: ISetupBodyForm<ITokenVotingBodySettings, ITokenMember>;
     /**
      * Callback called on body checkbox change.
      */

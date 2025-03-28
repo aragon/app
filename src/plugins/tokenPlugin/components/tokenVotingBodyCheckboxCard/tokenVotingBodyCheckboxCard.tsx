@@ -1,10 +1,9 @@
-import type { ICreateProcessFormProposalCreationBody } from '@/modules/createDao/components/createProcessForm';
+import { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { CheckboxCard, InputNumber } from '@aragon/gov-ui-kit';
+import { ITokenMember } from '../../types';
 import type { ITokenVotingBodyCheckboxCardProps, ITokenVotingBodySettings } from './tokenVotingBodyCheckboxCard.api';
-
-type TokenVotingBody = ICreateProcessFormProposalCreationBody<ITokenVotingBodySettings>;
 
 export const TokenVotingBodyCheckboxCard: React.FC<ITokenVotingBodyCheckboxCardProps> = (props) => {
     const { body, onChange, checked, fieldPrefix } = props;
@@ -17,12 +16,18 @@ export const TokenVotingBodyCheckboxCard: React.FC<ITokenVotingBodyCheckboxCardP
 
     const { t } = useTranslations();
 
-    const minVotingPowerField = useFormField<TokenVotingBody, 'settings.minVotingPower'>('settings.minVotingPower', {
+    const minVotingPowerField = useFormField<
+        ISetupBodyForm<ITokenVotingBodySettings, ITokenMember>,
+        'governance.minVotingPower'
+    >('governance.minVotingPower', {
         fieldPrefix,
         defaultValue: '1',
         rules: { validate: (value) => Number(value) > 0 },
         label: t('app.plugins.token.tokenProposalCreationRequirements.label'),
     });
+
+    console.log('body', body);
+    console.log('minVotingPowerField', minVotingPowerField);
 
     return (
         <CheckboxCard

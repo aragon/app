@@ -75,6 +75,8 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         }
     };
 
+    console.log('processBodies', processBodies);
+
     return (
         <>
             <RadioGroup
