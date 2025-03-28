@@ -1,5 +1,4 @@
 import type { Hash } from 'viem';
-import type { ReadContractsErrorType } from 'wagmi/actions';
 import { useToken, type IUseTokenResult } from '../useToken';
 import { useERC20VotingTokenCheck } from './useERC20VotingTokenCheck';
 
@@ -20,9 +19,9 @@ export interface IUseGovernanceTokenResult {
      */
     token: IUseTokenResult['token'];
     /**
-     * Possible error result.
+     * Error flag.
      */
-    error: ReadContractsErrorType | null;
+    isError: boolean;
     /**
      * Whether the token data and governance checks are loading.
      */
@@ -38,12 +37,12 @@ export interface IUseGovernanceTokenResult {
 }
 
 export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGovernanceTokenResult => {
-    const { isLoading: isTokenLoading, error: tokenError, token } = useToken(params);
+    const { isLoading: isTokenLoading, isError: isTokenError, token } = useToken(params);
     const {
         isLoading: areGovernanceChecksLoading,
         isGovernanceCompatible,
         isDelegationCompatible,
-        error,
+        isError,
     } = useERC20VotingTokenCheck(params, {
         enabled: token != null && !isTokenLoading,
     });
@@ -53,7 +52,7 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
     if (isLoading) {
         return {
             isLoading: true,
-            error: null,
+            isError: false,
             token: null,
             isGovernanceCompatible: false,
             isDelegationCompatible: false,
@@ -62,7 +61,7 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
 
     return {
         isLoading: false,
-        error: tokenError ?? error,
+        isError: isTokenError || isError,
         isGovernanceCompatible,
         isDelegationCompatible,
         token,

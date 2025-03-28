@@ -23,7 +23,7 @@ describe('useERC20VotingTokenCheck hook', () => {
 
         useReadContractsSpy.mockReturnValue({
             data: successCaseResponse,
-            error: null,
+            isError: false,
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
@@ -31,7 +31,7 @@ describe('useERC20VotingTokenCheck hook', () => {
 
         expect(result.current.isGovernanceCompatible).toEqual(true);
         expect(result.current.isDelegationCompatible).toEqual(true);
-        expect(result.current.error).toBeNull();
+        expect(result.current.isError).toBe(false);
         expect(result.current.isLoading).toBe(false);
     });
 
@@ -44,7 +44,7 @@ describe('useERC20VotingTokenCheck hook', () => {
         );
         useReadContractsSpy.mockReturnValue({
             data: governanceFailureResponse,
-            error: 'error',
+            isError: true,
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
@@ -52,7 +52,7 @@ describe('useERC20VotingTokenCheck hook', () => {
 
         expect(result.current.isGovernanceCompatible).toEqual(false);
         expect(result.current.isDelegationCompatible).toEqual(true);
-        expect(result.current.error).toBe('error');
+        expect(result.current.isError).toBe(true);
         expect(result.current.isLoading).toBe(false);
     });
 
@@ -65,7 +65,7 @@ describe('useERC20VotingTokenCheck hook', () => {
         );
         useReadContractsSpy.mockReturnValue({
             data: delegationFailureResponse,
-            error: 'error',
+            isError: true,
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
@@ -73,7 +73,7 @@ describe('useERC20VotingTokenCheck hook', () => {
 
         expect(result.current.isGovernanceCompatible).toEqual(true);
         expect(result.current.isDelegationCompatible).toEqual(false);
-        expect(result.current.error).toBe('error');
+        expect(result.current.isError).toBe(true);
         expect(result.current.isLoading).toBe(false);
     });
 });

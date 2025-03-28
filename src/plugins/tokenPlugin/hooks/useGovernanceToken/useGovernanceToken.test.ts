@@ -15,14 +15,11 @@ describe('useGovernanceToken hook', () => {
         useERC20VotingTokenCheckSpy.mockReset();
     });
 
-    it('does not trigger ERC20Votes checks if ERC20 check fails (and returns token error)', () => {
+    it('does not trigger ERC20Votes checks if ERC20 check fails', () => {
         // Mock the useToken hook failure
         useTokenSpy.mockReturnValue({
             isLoading: false,
-            error: {
-                name: 'Error',
-                message: 'Test token error',
-            },
+            isError: true,
             token: null,
         });
 
@@ -31,13 +28,13 @@ describe('useGovernanceToken hook', () => {
             isLoading: false,
             isGovernanceCompatible: false,
             isDelegationCompatible: false,
-            error: null,
+            isError: false,
         });
 
         const { result } = renderHook(() => useGovernanceToken({ address: tokenAddress, chainId: 123 }));
 
         expect(result.current.token).toBe(null);
-        expect(result.current.error?.message).toBe('Test token error');
+        expect(result.current.isError).toBe(true);
         expect(result.current.isLoading).toBe(false);
         expect(result.current.isGovernanceCompatible).toBe(false);
         expect(result.current.isDelegationCompatible).toBe(false);
@@ -54,7 +51,7 @@ describe('useGovernanceToken hook', () => {
         // Mock the useToken hook success
         useTokenSpy.mockReturnValue({
             isLoading: false,
-            error: null,
+            isError: false,
             token: {
                 name: 'Test Token',
                 symbol: 'TT',
@@ -68,7 +65,7 @@ describe('useGovernanceToken hook', () => {
             isLoading: true,
             isGovernanceCompatible: false,
             isDelegationCompatible: false,
-            error: null,
+            isError: false,
         });
 
         const { result } = renderHook(() => useGovernanceToken({ address: tokenAddress, chainId: 123 }));
@@ -83,7 +80,7 @@ describe('useGovernanceToken hook', () => {
         // Mock the useToken hook success
         useTokenSpy.mockReturnValue({
             isLoading: false,
-            error: null,
+            isError: false,
             token: {
                 name: 'Test Token',
                 symbol: 'TT',
@@ -97,7 +94,7 @@ describe('useGovernanceToken hook', () => {
             isLoading: false,
             isGovernanceCompatible: true,
             isDelegationCompatible: true,
-            error: null,
+            isError: false,
         });
 
         const { result } = renderHook(() => useGovernanceToken({ address: tokenAddress, chainId: 123 }));
@@ -111,6 +108,6 @@ describe('useGovernanceToken hook', () => {
         expect(result.current.isGovernanceCompatible).toBe(true);
         expect(result.current.isDelegationCompatible).toBe(true);
         expect(result.current.isLoading).toBe(false);
-        expect(result.current.error).toBe(null);
+        expect(result.current.isError).toBe(false);
     });
 });

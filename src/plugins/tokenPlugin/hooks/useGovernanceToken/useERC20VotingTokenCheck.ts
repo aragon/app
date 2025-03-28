@@ -114,7 +114,7 @@ export const useERC20VotingTokenCheck = (
 
     const {
         data: contractResults,
-        error,
+        isError,
         isLoading,
     } = useReadContracts({
         query: {
@@ -159,6 +159,6 @@ export const useERC20VotingTokenCheck = (
         isGovernanceCompatible: governanceCheckResults.every((result) => result.status === 'success'),
         isDelegationCompatible: delegationCheckResults.every((result) => result.status === 'success'),
         isLoading,
-        error,
+        isError,
     };
 };
