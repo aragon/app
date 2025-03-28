@@ -44,16 +44,18 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
         ],
     });
 
+    const token =
+        data && !error
+            ? {
+                  name: data[0],
+                  symbol: data[1],
+                  decimals: data[2],
+                  totalSupply: data[3].toString(),
+              }
+            : null;
+
     return {
-        token:
-            data && !error
-                ? {
-                      name: data[0],
-                      symbol: data[1],
-                      decimals: data[2],
-                      totalSupply: data[3].toString(),
-                  }
-                : null,
+        token,
         error,
         isLoading,
     };
