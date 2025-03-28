@@ -1,7 +1,4 @@
-import {
-    type ICreateProcessFormProposalCreationBody,
-    type ICreateProcessFormStage,
-} from '@/modules/createDao/components/createProcessForm';
+import type { ICreateProcessFormStage } from '@/modules/createDao/components/createProcessForm';
 import type { IDao } from '@/shared/api/daoService';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { ISetupBodyForm, ISetupBodyFormMembership } from '../dialogs/setupBodyDialog';
@@ -23,10 +20,6 @@ export interface IBuildPreparePluginInstallDataParams<
      * The DAO to install the process to.
      */
     dao: IDao;
-    /**
-     * The permission settings for creating proposals.
-     */
-    permissionSettings?: ICreateProcessFormProposalCreationBody;
     /**
      * The required form data for a stage to be installed with a process.
      */

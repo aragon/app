@@ -1,24 +1,46 @@
-import { CheckboxCard } from '@aragon/gov-ui-kit';
-import type { IMultisigProposalCreationSettingsProps } from './multisigProposalCreationSettings.api';
+import { ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/types';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { CheckboxCard, type CheckboxState } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import type { IMultisigSetupGovernanceForm } from '../multisigSetupGovernance';
+
+export interface IMultisigProposalCreationSettingsProps extends IPluginProposalCreationSettingsParams {}
 
 export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreationSettingsProps> = (props) => {
-    const { body, onChange, checked } = props;
-    const { name, description, internalId } = body;
+    const { body, formPrefix, mode } = props;
+    const { name, description } = body;
 
-    const onlyListedField = useFormField<ISetupBodyForm>('onlyListed', {
-        fieldPrefix:
-    });
+    const { onChange: onCreateProposalChange } = useFormField<ISetupBodyForm, 'canCreateProposal'>(
+        'canCreateProposal',
+        { fieldPrefix: formPrefix },
+    );
 
-    const handleChange = () => {...}
+    const { onChange: onOnlyListedChange, value: onlyListed } = useFormField<
+        IMultisigSetupGovernanceForm,
+        'onlyListed'
+    >('onlyListed', { fieldPrefix: `${formPrefix}.governance`, defaultValue: false });
+
+    const handleCheckedChange = (checked: CheckboxState) => onOnlyListedChange(checked === false);
+
+    // Update the onlyListed parameter when user selects "anyone" button as proposal creation setting.
+    useEffect(() => {
+        if (mode === ProposalCreationMode.ANY_WALLET) {
+            onOnlyListedChange(false);
+        }
+    }, [mode, onOnlyListedChange]);
+
+    useEffect(() => {
+        onCreateProposalChange(!onlyListed);
+    }, [onlyListed, onCreateProposalChange]);
 
     return (
         <CheckboxCard
             label={name}
             description={description}
-            onCheckedChange={(isChecked) => onChange(internalId, Boolean(isChecked))}
-            checked={checked}
+            onCheckedChange={handleCheckedChange}
+            checked={!onlyListed}
         />
     );
 };

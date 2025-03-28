@@ -39,9 +39,9 @@ export interface ICreateProcessFormData {
      */
     bodies: ISetupBodyForm[];
     /**
-     * Permissions for creating proposals.
+     * Defines who can create proposals for this process.
      */
-    permissions: ICreateProcessFormPermissions;
+    proposalCreationMode: ProposalCreationMode;
 }
 
 export interface ICreateProcessFormStageTiming {
@@ -80,30 +80,4 @@ export interface ICreateProcessFormStage {
      * Number of bodies required to veto (for optimistic type) or approve.
      */
     requiredApprovals: number;
-}
-
-export interface ICreateProcessFormPermissions {
-    /**
-     * Defines who can create proposals on the process.
-     */
-    proposalCreationMode: ProposalCreationMode;
-    /**
-     * List of bodies that can create proposals when proposalCreationMode is set to "LISTED_BODIES".
-     */
-    proposalCreationBodies: ICreateProcessFormProposalCreationBody[];
-}
-
-export interface ICreateProcessFormProposalCreationBody<TSettings = Record<string, unknown>> {
-    /**
-     * ID of the body.
-     */
-    bodyId: string;
-    /**
-     * Flag to determine if the checkbox is checked
-     */
-    checked?: boolean;
-    /**
-     * Settings containing plugin-specific values.
-     */
-    settings?: TSettings;
 }

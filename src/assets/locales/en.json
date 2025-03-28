@@ -188,16 +188,18 @@
           }
         },
         "permissions": {
-          "proposalCreationBodies": {
-            "error": "You must select at least one body.",
-            "label": "Bodies"
-          },
-          "proposalCreationMode": {
-            "anyDescription": "Any address can create proposals",
-            "anyLabel": "Anyone",
-            "bodiesDescription": "Members of the selected bodies",
-            "bodiesLabel": "Members",
-            "label": "Proposal creation eligibility"
+          "proposalCreation": {
+            "bodies": {
+              "error": "You must select at least one body.",
+              "label": "Bodies"
+            },
+            "mode": {
+              "anyDescription": "Any address can create proposals",
+              "anyLabel": "Anyone",
+              "bodiesDescription": "Members of the selected bodies",
+              "bodiesLabel": "Members",
+              "label": "Proposal creation eligibility"
+            }
           }
         },
         "stages": {

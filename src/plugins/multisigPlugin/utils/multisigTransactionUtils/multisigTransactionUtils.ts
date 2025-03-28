@@ -35,16 +35,16 @@ class MultisigTransactionUtils {
     };
 
     buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams<IMultisigSetupGovernanceForm>) => {
-        const { metadataCid, dao, permissionSettings, body } = params;
+        const { metadataCid, dao, body } = params;
         const { members } = body.membership;
-        const { minApprovals } = body.governance;
+        const { minApprovals, onlyListed } = body.governance;
 
         const { globalExecutor } = networkDefinitions[dao.network].addresses;
         const repositoryAddress = multisigPlugin.repositoryAddresses[dao.network];
 
         const memberAddresses = members.map((member) => member.address as Hex);
         const multisigTarget = { target: globalExecutor, operation: 1 };
-        const pluginSettings = { onlyListed: permissionSettings != null, minApprovals };
+        const pluginSettings = { onlyListed, minApprovals };
 
         const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [
             memberAddresses,

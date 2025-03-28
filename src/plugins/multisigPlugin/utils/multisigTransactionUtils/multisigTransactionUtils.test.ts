@@ -69,12 +69,14 @@ describe('multisigTransaction utils', () => {
         it('encodes the plugin settings correctly using encodeAbiParameters', () => {
             const metadataCid = 'test-metadata';
             const members = [{ address: '0x1' }, { address: '0x2' }];
-            const permissionSettings = { bodyId: '1' };
-            const body = generateCreateProcessFormBody({ membership: { members }, governance: { minApprovals: 3 } });
+            const body = generateCreateProcessFormBody({
+                membership: { members },
+                governance: { minApprovals: 3, onlyListed: true },
+            });
             const stage = generateCreateProcessFormStage();
             const dao = generateDao();
 
-            const params = [{ metadataCid, body, stage, dao, permissionSettings }] as Parameters<
+            const params = [{ metadataCid, body, stage, dao }] as Parameters<
                 typeof multisigTransactionUtils.buildPrepareInstallData
             >;
 
@@ -86,7 +88,7 @@ describe('multisigTransaction utils', () => {
                 operation: 1,
             };
             const expectedPluginSettings = {
-                onlyListed: true,
+                onlyListed: (body.governance as IMultisigSetupGovernanceForm).onlyListed,
                 minApprovals: (body.governance as IMultisigSetupGovernanceForm).minApprovals,
             };
 

@@ -14,6 +14,13 @@ import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
 
 export interface ICreateTokenProposalFormData extends ICreateProposalFormData, ICreateProposalEndDateForm {}
 
+export interface IPrepareTokenInstallDataParams
+    extends IBuildPreparePluginInstallDataParams<
+        ITokenSetupGovernanceForm,
+        ITokenSetupMembershipMember,
+        ITokenSetupMembershipForm
+    > {}
+
 class TokenTransactionUtils {
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateTokenProposalFormData>): Hex => {
         const { metadata, actions, values } = params;
@@ -45,13 +52,7 @@ class TokenTransactionUtils {
         return data;
     };
 
-    buildPrepareInstallData = (
-        params: IBuildPreparePluginInstallDataParams<
-            ITokenSetupGovernanceForm,
-            ITokenSetupMembershipMember,
-            ITokenSetupMembershipForm
-        >,
-    ) => {
+    buildPrepareInstallData = (params: IPrepareTokenInstallDataParams) => {
         const { body, metadataCid, dao } = params;
         const { members } = body.membership;
         const { name: tokenName, symbol: tokenSymbol, address: tokenAddress } = body.membership.token;
@@ -91,30 +92,21 @@ class TokenTransactionUtils {
         return transactionData;
     };
 
-    private buildInstallDataVotingSettings = (
-        params: Pick<
-            IBuildPreparePluginInstallDataParams<
-                ITokenSetupGovernanceForm,
-                ITokenSetupMembershipMember,
-                ITokenSetupMembershipForm
-            >,
-            'body' | 'stage' | 'permissionSettings'
-        >,
-    ) => {
-        const { body, stage, permissionSettings } = params;
-        const { minVotingPower } = permissionSettings ?? {};
+    private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
+        const { body, stage } = params;
 
         const { votingPeriod } = stage.timing;
-        const { votingMode, supportThreshold, minParticipation } = body.governance;
+        const { votingMode, supportThreshold, minParticipation, minProposerVotingPower } = body.governance;
+        const { decimals } = body.membership.token;
 
-        const minProposerVotingPower = minVotingPower ? parseUnits(minVotingPower, 18) : BigInt(0);
+        const parsedProposerVotingPower = parseUnits(minProposerVotingPower, decimals);
 
         const votingSettings = {
             votingMode,
             supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
             minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
             minDuration: BigInt(dateUtils.durationToSeconds(votingPeriod)),
-            minProposerVotingPower: minProposerVotingPower,
+            minProposerVotingPower: parsedProposerVotingPower,
         };
 
         return votingSettings;

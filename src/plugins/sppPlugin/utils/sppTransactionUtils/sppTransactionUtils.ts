@@ -137,8 +137,7 @@ class SppTransactionUtils {
         sppSetupData: IPluginSetupData,
         pluginSetupData: IPluginSetupData[],
     ) => {
-        const { permissions, bodies } = values;
-        const { proposalCreationBodies, proposalCreationMode } = permissions;
+        const { bodies, proposalCreationMode } = values;
 
         const sppRuleConditionContract = sppSetupData.preparedSetupData.helpers[0];
 
@@ -147,9 +146,7 @@ class SppTransactionUtils {
         }
 
         const conditionAddresses = bodies.reduce<string[]>((current, body, bodyIndex) => {
-            const isBodyAllowed = proposalCreationBodies.find(
-                (bodySettings) => bodySettings.bodyId === body.internalId,
-            );
+            const isBodyAllowed = body.canCreateProposal;
             const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
             return isBodyAllowed ? [...current, bodyConditionAddress] : current;

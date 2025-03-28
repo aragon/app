@@ -14,6 +14,7 @@ export const generateCreateProcessFormBody = (
     plugin: 'multisig',
     governance: {},
     membership: { members: [] },
+    canCreateProposal: false,
     ...values,
 });
 
@@ -36,9 +37,6 @@ export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFor
     resources: [],
     stages: [],
     bodies: [],
-    permissions: {
-        proposalCreationMode: ProposalCreationMode.ANY_WALLET,
-        proposalCreationBodies: [],
-    },
+    proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
     ...values,
 });

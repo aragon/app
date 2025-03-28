@@ -4,4 +4,4 @@ export const TokenProposalCreationSettings = dynamic(() =>
     import('./tokenProposalCreationSettings').then((mod) => mod.TokenProposalCreationSettings),
 );
 
-export type { ITokenProposalCreationSettingsProps } from './tokenProposalCreationSettings.api';
+export type { ITokenProposalCreationSettingsProps } from './tokenProposalCreationSettings';

@@ -38,6 +38,11 @@ export interface ISetupBodyForm<
      * Plugin-specific membership settings of the body.
      */
     membership: TMembership;
+    /**
+     * Generic boolean which reflects the internal plugin-specific proposal creation settings, used for validation and
+     * for setting the correct condition rules when the plugin is installed as SPP sub-plugin.
+     */
+    canCreateProposal: boolean;
 }
 
 export interface ISetupBodyFormMembership<TMember extends ICompositeAddress = ICompositeAddress> {

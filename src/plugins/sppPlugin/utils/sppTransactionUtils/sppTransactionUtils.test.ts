@@ -200,23 +200,19 @@ describe('sppTransaction utils', () => {
         const buildRuleConditionsSpy = jest.spyOn(permissionTransactionUtils, 'buildRuleConditions');
 
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
-            const permissions = { proposalCreationMode: ProposalCreationMode.ANY_WALLET, proposalCreationBodies: [] };
-            const values = generateCreateProcessFormData({ permissions });
+            const values = generateCreateProcessFormData({ proposalCreationMode: ProposalCreationMode.ANY_WALLET });
             const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, generatePluginSetupData(), []);
             expect(result).toBeUndefined();
         });
 
         it('correctly builds the update rules transaction', () => {
-            const sppAllowedBody = generateCreateProcessFormBody({ internalId: 'body-1' });
+            const sppAllowedBody = generateCreateProcessFormBody({ internalId: 'body-1', canCreateProposal: true });
             const sppNotAllowedBody = generateCreateProcessFormBody({ internalId: 'body-2' });
             const sppStage = generateCreateProcessFormStage({});
             const values = generateCreateProcessFormData({
                 stages: [sppStage],
                 bodies: [sppAllowedBody, sppNotAllowedBody],
-                permissions: {
-                    proposalCreationBodies: [{ bodyId: sppAllowedBody.internalId }],
-                    proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
-                },
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
             });
 
             const sppSetupData = generatePluginSetupData({
