@@ -116,7 +116,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             pluginSetupProcessor: '0x08633901DdF9cD8e2DC3a073594d0A7DaD6f3f57',
             globalExecutor: '0x07f49c49Ce2A99CF7C28F66673d406386BDD8Ff4',
         },
-        disabled: true,
     },
 
     // Testnets
