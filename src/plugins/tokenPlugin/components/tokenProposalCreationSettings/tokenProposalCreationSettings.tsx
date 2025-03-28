@@ -80,17 +80,21 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
 
     return (
         <CheckboxCard label={name} description={description} onCheckedChange={handleCheckedChange} checked={isChecked}>
-            <button className="w-full text-left" onClick={(e) => e.preventDefault()}>
-                <InputNumber
-                    prefix="≥"
-                    helpText={t('app.plugins.token.tokenProposalCreationSettings.helpText')}
-                    placeholder={t('app.plugins.token.tokenProposalCreationSettings.placeholder')}
-                    max={Number(parsedTotalSupply)}
-                    onChange={onMinVotingPowerChange}
-                    value={minVotingPower}
-                    {...minVotingPowerField}
-                />
-            </button>
+            {
+                // Stop onClick event propagation to avoid unchecking the card when clicking on the number-input buttons
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+                <object onClick={(event) => event.preventDefault()} className="text-left" type="unknown">
+                    <InputNumber
+                        prefix="≥"
+                        helpText={t('app.plugins.token.tokenProposalCreationSettings.helpText')}
+                        placeholder={t('app.plugins.token.tokenProposalCreationSettings.placeholder')}
+                        max={Number(parsedTotalSupply)}
+                        onChange={onMinVotingPowerChange}
+                        value={minVotingPower}
+                        {...minVotingPowerField}
+                    />
+                </object>
+            }
         </CheckboxCard>
     );
 };
