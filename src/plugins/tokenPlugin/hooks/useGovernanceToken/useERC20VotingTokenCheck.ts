@@ -1,6 +1,6 @@
 import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
-import { erc20VotesAbi } from './erc20VotingAbi';
+import { erc20VotesAbi } from './erc20VotesAbi';
 
 export interface IUseERC20VotingTokenCheckParams {
     /**
