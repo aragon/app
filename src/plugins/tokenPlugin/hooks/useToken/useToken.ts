@@ -14,13 +14,13 @@ export interface IUseTokenParams {
     chainId: number;
 }
 
-export interface IUseTokenReturn extends Pick<IToken, 'decimals' | 'name' | 'symbol' | 'totalSupply'> {}
+export interface IUseTokenData extends Pick<IToken, 'decimals' | 'name' | 'symbol' | 'totalSupply'> {}
 
 export interface IUseTokenResult {
     /**
      * Token data result.
      */
-    token: IUseTokenReturn | null;
+    token: IUseTokenData | null;
     /**
      * Possible error result.
      */
@@ -44,7 +44,7 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
         ],
     });
 
-    const token = useMemo<IUseTokenReturn | null>(() => {
+    const token = useMemo<IUseTokenData | null>(() => {
         if (data == null || isError) {
             return null;
         }
