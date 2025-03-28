@@ -13,9 +13,10 @@ import { TokenProcessBodyField } from './components/tokenProcessBodyField';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
 import { TokenProposalVotingSummary } from './components/tokenProposalVotingSummary';
+import { TokenSetupGovernance } from './components/tokenSetupGovernance';
+import { TokenSetupMembership } from './components/tokenSetupMembership';
 import { TokenSubmitVote } from './components/tokenSubmitVote';
 import { TokenVoteList } from './components/tokenVoteList';
-import { TokenVotingBodyCheckboxCard } from './components/tokenVotingBodyCheckboxCard';
 import { tokenPlugin } from './constants/tokenPlugin';
 import { useTokenActions } from './hooks/useTokenActions';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
@@ -23,6 +24,7 @@ import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
+import { TokenVotingBodyCheckboxCard } from './components/tokenVotingBodyCheckboxCard';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
@@ -148,5 +150,15 @@ export const initialiseTokenPlugin = () => {
             slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
             pluginId: tokenPlugin.id,
             component: TokenVotingBodyCheckboxCard,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_MEMBERSHIP,
+            pluginId: tokenPlugin.id,
+            component: TokenSetupMembership,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE,
+            pluginId: tokenPlugin.id,
+            component: TokenSetupGovernance,
         });
 };

@@ -3,12 +3,12 @@ import type { IMultisigVotingBodyCheckboxCardProps } from './multisigVotingBodyC
 
 export const MultisigVotingBodyCheckboxCard: React.FC<IMultisigVotingBodyCheckboxCardProps> = (props) => {
     const { body, onChange, checked } = props;
-    const { name, description, id } = body;
+    const { name, description, internalId } = body;
     return (
         <CheckboxCard
             label={name}
             description={description}
-            onCheckedChange={(isChecked) => onChange(id, Boolean(isChecked))}
+            onCheckedChange={(isChecked) => onChange(internalId, Boolean(isChecked))}
             checked={checked}
         />
     );

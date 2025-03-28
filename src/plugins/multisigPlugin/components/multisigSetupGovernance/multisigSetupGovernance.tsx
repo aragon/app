@@ -6,7 +6,7 @@ import { useWatch } from 'react-hook-form';
 import type { IMultisigSetupGovernanceForm, IMultisigSetupGovernanceProps } from './multisigSetupGovernance.api';
 
 export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = (props) => {
-    const { formPrefix, membersCount, showProposalCreationSettings = false } = props;
+    const { formPrefix, membershipSettings, showProposalCreationSettings = false } = props;
 
     const { t } = useTranslations();
 
@@ -30,6 +30,7 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
 
     const handleRadioChange = (value: string) => onOnlyListedFieldChange(value === 'members');
 
+    const membersCount = membershipSettings.members?.length ?? membershipSettings.membersCount ?? 0;
     const majorityThreshold = Math.floor(membersCount / 2);
     const isMinApprovalsMajority = minApprovalsFieldValue > majorityThreshold;
 

@@ -6,7 +6,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useMemo } from 'react';
-import { defaultStage, type ICreateProcessFormData } from '../../components/createProcessForm';
+import { createProcessFormUtils, type ICreateProcessFormData } from '../../components/createProcessForm';
 import { CreateDaoDialog } from '../../constants/moduleDialogs';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
@@ -43,7 +43,7 @@ export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = 
                 submitLabel={t('app.createDao.createProcessPage.submitLabel')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                defaultValues={{ stages: [defaultStage] }}
+                defaultValues={{ stages: [createProcessFormUtils.buildDefaultStage()], bodies: [] }}
             >
                 <CreateProcessPageClientSteps steps={processedSteps} daoId={daoId} />
             </WizardPage.Container>

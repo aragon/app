@@ -7,6 +7,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
+import type { IMultisigSetupGovernanceForm } from '../../components/multisigSetupGovernance';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 import { type ICreateMultisigProposalFormData, multisigTransactionUtils } from './multisigTransactionUtils';
 
@@ -69,18 +70,25 @@ describe('multisigTransaction utils', () => {
             const metadataCid = 'test-metadata';
             const members = [{ address: '0x1' }, { address: '0x2' }];
             const permissionSettings = { bodyId: '1' };
-            const body = generateCreateProcessFormBody({ members, minApprovals: 3 });
+            const body = generateCreateProcessFormBody({ membership: { members }, governance: { minApprovals: 3 } });
             const stage = generateCreateProcessFormStage();
             const dao = generateDao();
 
+            const params = [{ metadataCid, body, stage, dao, permissionSettings }] as Parameters<
+                typeof multisigTransactionUtils.buildPrepareInstallData
+            >;
+
             encodeAbiParametersSpy.mockReturnValue('0x');
-            multisigTransactionUtils.buildPrepareInstallData({ metadataCid, body, stage, dao, permissionSettings });
+            multisigTransactionUtils.buildPrepareInstallData(...params);
 
             const expectedMultisigTarget = {
                 target: networkDefinitions[dao.network].addresses.globalExecutor,
                 operation: 1,
             };
-            const expectedPluginSettings = { onlyListed: true, minApprovals: body.minApprovals };
+            const expectedPluginSettings = {
+                onlyListed: true,
+                minApprovals: (body.governance as IMultisigSetupGovernanceForm).minApprovals,
+            };
 
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginSetupAbi, [
                 members.map((member) => member.address),
@@ -100,7 +108,11 @@ describe('multisigTransaction utils', () => {
             encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
 
-            const result = multisigTransactionUtils.buildPrepareInstallData({ dao, body, stage, metadataCid: '' });
+            const params = [{ metadataCid: '', body, stage, dao }] as Parameters<
+                typeof multisigTransactionUtils.buildPrepareInstallData
+            >;
+
+            const result = multisigTransactionUtils.buildPrepareInstallData(...params);
 
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 multisigPlugin.repositoryAddresses[dao.network],

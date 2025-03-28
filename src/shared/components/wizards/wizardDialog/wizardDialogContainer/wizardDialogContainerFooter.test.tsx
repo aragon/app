@@ -24,6 +24,7 @@ describe('<WizardDialogContainerFooter /> component', () => {
     const createTestComponent = (props?: Partial<IWizardDialogContainerFooterProps>) => {
         const completeProps: IWizardDialogContainerFooterProps = {
             formId: 'id',
+            onClose: jest.fn(),
             ...props,
         };
 
@@ -38,6 +39,17 @@ describe('<WizardDialogContainerFooter /> component', () => {
         } as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
         expect(screen.getByRole('button', { name: submitLabel })).toBeInTheDocument();
+    });
+
+    it('renders a close button when step is the first step', async () => {
+        const hasPrevious = false;
+        const onClose = jest.fn();
+        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
+        render(createTestComponent({ onClose }));
+        const closeButton = screen.getByRole('button', { name: /wizardDialog.container.close/ });
+        expect(closeButton).toBeInTheDocument();
+        await userEvent.click(closeButton);
+        expect(onClose).toHaveBeenCalled();
     });
 
     it('renders a back button when step is not the first step', async () => {

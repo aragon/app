@@ -11,15 +11,17 @@ import { MultisigProcessBodyField } from './components/multisigProcessBodyField'
 import { MultisigProposalList } from './components/multisigProposalList';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
 import { MultisigProposalVotingSummary } from './components/multisigProposalVotingSummary';
+import { MultisigSetupGovernance } from './components/multisigSetupGovernance';
+import { MultisigSetupMembership } from './components/multisigSetupMembership';
 import { MultisigSubmitVote } from './components/multisigSubmitVote';
 import { MultisigVoteList } from './components/multisigVoteList';
-import { MultisigVotingBodyCheckboxCard } from './components/multisigVotingBodyCheckboxCard';
 import { multisigPlugin } from './constants/multisigPlugin';
 import { useMultisigActions } from './hooks/useMultisigActions';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
+import { MultisigVotingBodyCheckboxCard } from './components/multisigVotingBodyCheckboxCard';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -125,6 +127,16 @@ export const initialiseMultisigPlugin = () => {
             slotId: CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD,
             pluginId: multisigPlugin.id,
             component: MultisigProcessBodyField,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_MEMBERSHIP,
+            pluginId: multisigPlugin.id,
+            component: MultisigSetupMembership,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE,
+            pluginId: multisigPlugin.id,
+            component: MultisigSetupGovernance,
         })
         .registerSlotComponent({
             slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,

@@ -16,6 +16,12 @@ describe('pluginRegistry utils', () => {
             expect(pluginRegistryUtils['pluginRegistry'].plugins).toEqual([firstPlugin, secondPlugin]);
         });
 
+        it('does not register the same plugin twice', () => {
+            const plugin = generatePlugin({ id: 'plugin-1' });
+            pluginRegistryUtils.registerPlugin(plugin).registerPlugin(plugin);
+            expect(pluginRegistryUtils['pluginRegistry'].plugins).toEqual([plugin]);
+        });
+
         it('returns the class instance', () => {
             expect(pluginRegistryUtils.registerPlugin(generatePlugin())).toEqual(pluginRegistryUtils);
         });
@@ -30,6 +36,18 @@ describe('pluginRegistry utils', () => {
 
         it('returns undefined when the plugin is not registered', () => {
             expect(pluginRegistryUtils.getPlugin('no-plugin')).toBeUndefined();
+        });
+    });
+
+    describe('getPlugins', () => {
+        it('returns empty list when no plugin is registered', () => {
+            expect(pluginRegistryUtils.getPlugins()).toHaveLength(0);
+        });
+
+        it('returns the list of registered plugins', () => {
+            const plugins = [generatePlugin({ id: '1' }), generatePlugin({ id: '2' })];
+            pluginRegistryUtils.registerPlugin(plugins[0]).registerPlugin(plugins[1]);
+            expect(pluginRegistryUtils.getPlugins()).toEqual(plugins);
         });
     });
 

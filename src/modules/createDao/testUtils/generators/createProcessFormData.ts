@@ -1,27 +1,24 @@
-import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import {
-    type ICreateProcessFormBody,
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
     ProcessStageType,
     ProposalCreationMode,
 } from '../../components/createProcessForm';
 
-export const generateCreateProcessFormBody = (values?: Partial<ICreateProcessFormBody>): ICreateProcessFormBody => ({
-    id: 'body1',
+export const generateCreateProcessFormBody = (
+    values?: Partial<ICreateProcessFormData['bodies'][number]>,
+): ICreateProcessFormData['bodies'][number] => ({
+    internalId: 'body1',
     name: 'body1',
     resources: [],
-    governanceType: 'multisig',
-    members: [],
-    tokenType: 'new',
-    supportThreshold: 1,
-    minParticipation: 1,
-    votingMode: DaoTokenVotingMode.STANDARD,
-    minApprovals: 1,
+    plugin: 'multisig',
+    governance: {},
+    membership: { members: [] },
     ...values,
 });
 
 export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFormStage>): ICreateProcessFormStage => ({
+    internalId: '0',
     name: 'stage',
     type: ProcessStageType.NORMAL,
     timing: {
@@ -29,7 +26,6 @@ export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFo
         earlyStageAdvance: false,
     },
     requiredApprovals: 1,
-    bodies: [],
     ...values,
 });
 
@@ -39,6 +35,7 @@ export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFor
     description: 'Description',
     resources: [],
     stages: [],
+    bodies: [],
     permissions: {
         proposalCreationMode: ProposalCreationMode.ANY_WALLET,
         proposalCreationBodies: [],

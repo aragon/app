@@ -1,7 +1,8 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
-import { useFieldArray } from 'react-hook-form';
-import { defaultStage, type ICreateProcessFormData } from '../createProcessFormDefinitions';
+import { Button, IconType } from '@aragon/gov-ui-kit';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { type ICreateProcessFormData } from '../createProcessFormDefinitions';
+import { createProcessFormUtils } from '../createProcessFormUtils';
 import { CreateProcessFormStagesItem } from './createProcessFormStagesItem';
 
 export interface ICreateProcessFormStagesProps {}
@@ -9,42 +10,34 @@ export interface ICreateProcessFormStagesProps {}
 export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = () => {
     const { t } = useTranslations();
 
+    const { setValue, getValues } = useFormContext<ICreateProcessFormData>();
+
     const {
         fields: stages,
-        append,
-        remove,
-    } = useFieldArray<Record<string, ICreateProcessFormData['stages']>>({
-        name: 'stages',
-    });
+        append: appendStage,
+        remove: removeStage,
+    } = useFieldArray<Record<string, ICreateProcessFormData['stages']>>({ name: 'stages' });
 
-    const handleAddStage = () => append(defaultStage);
+    const handleAddStage = () => appendStage(createProcessFormUtils.buildDefaultStage());
+
+    const handleRemoveStage = (index: number) => {
+        const currentBodies = getValues('bodies');
+        const updatedBodies = currentBodies.filter((body) => body.stageId !== stages[index].internalId);
+        removeStage(index);
+        setValue('bodies', updatedBodies);
+    };
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
             <div className="flex flex-col gap-3 md:gap-2">
-                {stages.map((field, index) => (
-                    <CreateProcessFormStagesItem key={field.id} index={index} name={`stages.${index.toString()}`}>
-                        {stages.length > 1 && (
-                            <Dropdown.Container
-                                constrainContentWidth={false}
-                                size="md"
-                                customTrigger={
-                                    <Button
-                                        variant="tertiary"
-                                        size="md"
-                                        iconRight={IconType.DOTS_VERTICAL}
-                                        className="self-end"
-                                    >
-                                        {t('app.createDao.createProcessForm.stages.more')}
-                                    </Button>
-                                }
-                            >
-                                <Dropdown.Item onClick={() => remove(index)}>
-                                    {t('app.createDao.createProcessForm.stages.remove')}
-                                </Dropdown.Item>
-                            </Dropdown.Container>
-                        )}
-                    </CreateProcessFormStagesItem>
+                {stages.map((stage, index) => (
+                    <CreateProcessFormStagesItem
+                        key={stage.id}
+                        formPrefix={`stages.${index.toString()}`}
+                        stage={stage}
+                        stagesCount={stages.length}
+                        onDelete={() => handleRemoveStage(index)}
+                    />
                 ))}
             </div>
             <Button
@@ -54,7 +47,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
                 iconLeft={IconType.PLUS}
                 onClick={handleAddStage}
             >
-                {t('app.createDao.createProcessForm.stages.add')}
+                {t('app.createDao.createProcessForm.stages.action.add')}
             </Button>
         </div>
     );

@@ -8,9 +8,9 @@ type TokenVotingBody = ICreateProcessFormProposalCreationBody<ITokenVotingBodySe
 
 export const TokenVotingBodyCheckboxCard: React.FC<ITokenVotingBodyCheckboxCardProps> = (props) => {
     const { body, onChange, checked, fieldPrefix } = props;
-    const { name, description, id } = body;
+    const { name, description, internalId } = body;
 
-    const totalSupply = body.members.reduce(
+    const totalSupply = body.membership.members.reduce(
         (supply, member) => ('tokenAmount' in member ? supply + Number(member.tokenAmount) : supply),
         0,
     );
@@ -28,7 +28,7 @@ export const TokenVotingBodyCheckboxCard: React.FC<ITokenVotingBodyCheckboxCardP
         <CheckboxCard
             label={name}
             description={description}
-            onCheckedChange={(isChecked) => onChange(id, Boolean(isChecked))}
+            onCheckedChange={(isChecked) => onChange(internalId, Boolean(isChecked))}
             checked={checked}
         >
             <button className="w-full text-left" onClick={(e) => e.preventDefault()}>

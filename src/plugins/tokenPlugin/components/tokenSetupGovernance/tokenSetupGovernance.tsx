@@ -9,12 +9,13 @@ import { SupportThresholdField } from './fields/supportThresholdField';
 import type { ITokenSetupGovernanceForm, ITokenSetupGovernanceProps } from './tokenSetupGovernance.api';
 
 export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props) => {
-    const { formPrefix, token, isSubPlugin, showProposalCreationSettings } = props;
+    const { formPrefix, membershipSettings, isSubPlugin, showProposalCreationSettings } = props;
 
     const { t } = useTranslations();
 
     const votingModeField = useFormField<ITokenSetupGovernanceForm, 'votingMode'>('votingMode', {
         fieldPrefix: formPrefix,
+        defaultValue: DaoTokenVotingMode.STANDARD,
     });
 
     const handleEarlyExecutionToggle = (checked: boolean) =>
@@ -26,7 +27,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
     return (
         <div className="flex w-full flex-col gap-y-6">
             <SupportThresholdField formPrefix={formPrefix} />
-            <MinParticipationField formPrefix={formPrefix} token={token} />
+            <MinParticipationField formPrefix={formPrefix} token={membershipSettings.token} />
             {!isSubPlugin && (
                 <InputContainer
                     className="flex flex-col gap-6"
@@ -69,7 +70,9 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
                 checked={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
                 disabled={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
             />
-            {showProposalCreationSettings && <ProposalCreationEligibilityField formPrefix={formPrefix} token={token} />}
+            {showProposalCreationSettings && (
+                <ProposalCreationEligibilityField formPrefix={formPrefix} token={membershipSettings.token} />
+            )}
         </div>
     );
 };

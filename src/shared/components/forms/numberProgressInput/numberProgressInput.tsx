@@ -1,63 +1,15 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    AlertInline,
-    Card,
-    type IAlertInlineProps,
-    type IInputNumberProps,
-    InputContainer,
-    InputNumber,
-    invariant,
-    type ITagProps,
-    Progress,
-    Tag,
-} from '@aragon/gov-ui-kit';
+import { AlertInline, Card, InputContainer, InputNumber, invariant, Progress, Tag } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useId } from 'react';
-
-export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'value' | 'alert'> {
-    /**
-     * Name of the form field.
-     */
-    fieldName: string;
-    /**
-     * Label displayed above the progress component.
-     */
-    valueLabel?: string;
-    /**
-     * Prefix for the input component.
-     */
-    prefix?: string;
-    /**
-     * Suffix for the input component.
-     */
-    suffix?: string;
-    /**
-     * Value used for normalising the value and display it on the progress.
-     */
-    total: number;
-    /**
-     * Label displayed below the progress component.
-     */
-    totalLabel?: string;
-    /**
-     * Alert displayed below the input component.
-     */
-    alert?: Pick<IAlertInlineProps, 'message' | 'variant'>;
-    /**
-     * Threshold indicator for the progress component
-     */
-    thresholdIndicator?: number;
-    /**
-     * Optional tags to be displayed to the left and right of the progress component. The first tag will be displayed to the left and the second to the right.
-     */
-    tags?: [ITagProps, ITagProps];
-}
+import type { INumberProgressInputProps } from './numberProgressInput.api';
 
 export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) => {
     const {
         label,
         helpText,
         fieldName,
+        defaultValue,
         valueLabel,
         total,
         totalLabel,
@@ -83,6 +35,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
     } = useFormField<Record<string, number | undefined>, typeof fieldName>(fieldName, {
         label,
         rules: { required: true },
+        defaultValue,
     });
 
     const progressValue = (value * 100) / total;

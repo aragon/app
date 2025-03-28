@@ -6,6 +6,7 @@ import { createProposalUtils } from '@/modules/governance/utils/createProposalUt
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
+import type { IMultisigSetupGovernanceForm } from '../../components/multisigSetupGovernance';
 import { multisigPlugin } from '../../constants/multisigPlugin';
 import { multisigPluginAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
 
@@ -33,9 +34,10 @@ class MultisigTransactionUtils {
         return data;
     };
 
-    buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams) => {
+    buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams<IMultisigSetupGovernanceForm>) => {
         const { metadataCid, dao, permissionSettings, body } = params;
-        const { members, minApprovals } = body;
+        const { members } = body.membership;
+        const { minApprovals } = body.governance;
 
         const { globalExecutor } = networkDefinitions[dao.network].addresses;
         const repositoryAddress = multisigPlugin.repositoryAddresses[dao.network];

@@ -1,3 +1,4 @@
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog } from '@aragon/gov-ui-kit';
 import type { FieldValues } from 'react-hook-form';
 import { type IWizardFormProps, type IWizardRootProps, Wizard } from '../../wizard';
@@ -11,54 +12,29 @@ export interface IWizardDialogContainerProps<TFormData extends FieldValues = Fie
      */
     title: string;
     /**
-     * Translation key of the wizard description, hidden and only used for dialog accessibility.
-     */
-    descriptionKey: string;
-    /**
      * ID of the form, needed to link the submit button to the form element.
      */
     formId: string;
-    /**
-     * Callback called on dialog close.
-     */
-    onClose: () => void;
-    /**
-     * Defines if the dialog should be rendered or not.
-     */
-    isOpen?: boolean;
 }
 
 export const WizardDialogContainer = <TFormData extends FieldValues = FieldValues>(
     props: IWizardDialogContainerProps<TFormData>,
 ) => {
-    const {
-        title,
-        descriptionKey,
-        formId,
-        onClose,
-        isOpen,
-        initialSteps,
-        submitLabel,
-        onSubmit,
-        children,
-        ...formProps
-    } = props;
+    const { title, formId, initialSteps, submitLabel, onSubmit, children, defaultValues, ...formProps } = props;
 
-    if (!isOpen) {
-        return null;
-    }
+    const { close } = useDialogContext();
 
     return (
-        <Dialog.Root size="lg" open={true} hiddenDescription={descriptionKey} onOpenChange={onClose}>
-            <Wizard.Root submitLabel={submitLabel} initialSteps={initialSteps}>
-                <Dialog.Header title={title} />
-                <Dialog.Content>
+        <>
+            <Wizard.Root submitLabel={submitLabel} initialSteps={initialSteps} defaultValues={defaultValues}>
+                <Dialog.Header title={title} onClose={close} />
+                <Dialog.Content className="pb-1.5 pt-6">
                     <Wizard.Form onSubmit={onSubmit} id={formId} {...formProps}>
                         {children}
                     </Wizard.Form>
                 </Dialog.Content>
-                <WizardDialogContainerFooter formId={formId} />
+                <WizardDialogContainerFooter formId={formId} onClose={close} />
             </Wizard.Root>
-        </Dialog.Root>
+        </>
     );
 };

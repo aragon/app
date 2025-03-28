@@ -27,9 +27,11 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
-    const processStages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
-    const processBodies = useMemo(() => processStages.flatMap((stage) => stage.bodies), [processStages]);
-    const defaultBodiesValue = useMemo(() => processBodies.map((body) => ({ bodyId: body.id })), [processBodies]);
+    const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
+    const defaultBodiesValue = useMemo(
+        () => processBodies.map((body) => ({ bodyId: body.internalId })),
+        [processBodies],
+    );
 
     const {
         onChange: onProposalCreationModeChange,
@@ -104,13 +106,13 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                 >
                     {processBodies.map((body) => (
                         <PluginSingleComponent
+                            key={body.internalId}
+                            pluginId={body.plugin}
                             slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS}
-                            key={body.id}
-                            pluginId={body.governanceType}
                             body={body}
                             onChange={handleBodyCheckboxChange}
-                            checked={proposalCreationBodies.some(({ bodyId }) => body.id === bodyId)}
-                            fieldPrefix={`${proposalCreationBodiesName}.${proposalCreationBodies.findIndex(({ bodyId }) => body.id === bodyId).toString()}`}
+                            checked={proposalCreationBodies.some(({ bodyId }) => body.internalId === bodyId)}
+                            fieldPrefix={`${proposalCreationBodiesName}.${proposalCreationBodies.findIndex(({ bodyId }) => body.internalId === bodyId).toString()}`}
                         />
                     ))}
                 </InputContainer>

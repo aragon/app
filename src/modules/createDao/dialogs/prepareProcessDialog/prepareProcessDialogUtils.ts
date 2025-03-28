@@ -8,11 +8,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
-import {
-    ProposalCreationMode,
-    type ICreateProcessFormBody,
-    type ICreateProcessFormData,
-} from '../../components/createProcessForm';
+import { ProposalCreationMode, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 
 export interface IPrepareProcessMetadata {
@@ -57,7 +53,7 @@ class PrepareProcessDialogUtils {
 
     prepareProposalMetadata = () => this.proposalMetadata;
 
-    preparePluginMetadata = (plugin: ICreateProcessFormBody) => {
+    preparePluginMetadata = (plugin: ICreateProcessFormData['bodies'][number]) => {
         const { name, description, resources: links } = plugin;
 
         return { name, description, links };
@@ -111,18 +107,19 @@ class PrepareProcessDialogUtils {
         const sppInstallData = sppTransactionUtils.buildPreparePluginInstallData(sppMetadata, dao);
 
         const pluginsInstallData = stages.map((stage) => {
-            const installData = stage.bodies.map((body) => {
+            const stageBodies = values.bodies.filter((body) => body.stageId === stage.internalId);
+            const installData = stageBodies.map((body) => {
                 const metadataCid = pluginsMetadata.shift()!;
 
                 const permissionSettings =
                     proposalCreationMode === ProposalCreationMode.ANY_WALLET
                         ? undefined
-                        : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.id);
+                        : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.internalId);
 
                 const params = { metadataCid, dao, permissionSettings, body, stage };
                 const prepareFunction = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginInstallDataParams, Hex>({
                     slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
-                    pluginId: body.governanceType,
+                    pluginId: body.plugin,
                 })!;
 
                 return prepareFunction(params);

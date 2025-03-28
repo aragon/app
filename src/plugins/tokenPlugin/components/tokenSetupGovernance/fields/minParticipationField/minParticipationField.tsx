@@ -13,8 +13,10 @@ export interface IMinParticipationFieldProps {
     /**
      * The token linked to the plugin.
      */
-    token: ITokenSetupGovernanceProps['token'];
+    token: ITokenSetupGovernanceProps['membershipSettings']['token'];
 }
+
+const defaultMinParticipation = 1;
 
 export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (props) => {
     const { formPrefix, token } = props;
@@ -25,7 +27,7 @@ export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (pro
     const fieldName = `${formPrefix}.minParticipation`;
     const value = useWatch<Record<string, ITokenSetupGovernanceForm['minParticipation']>>({
         name: fieldName,
-        defaultValue: 0,
+        defaultValue: defaultMinParticipation,
     });
 
     const amount = (Number(totalSupply) * Number(value)) / 100;
@@ -39,6 +41,7 @@ export const MinParticipationField: React.FC<IMinParticipationFieldProps> = (pro
             helpText={t('app.plugins.token.tokenSetupGovernance.minParticipation.helpText')}
             valueLabel={`${formattedAmount} ${symbol}`}
             total={100}
+            defaultValue={defaultMinParticipation}
             prefix="≥"
             suffix="%"
         />

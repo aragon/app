@@ -169,13 +169,13 @@ describe('prepareProcessDialog utils', () => {
         });
 
         it('prepares the plugin install data with no permissions when proposal creation mode is any wallet', () => {
-            const body = generateCreateProcessFormBody({ id: 'body1', governanceType: 'multisig' });
-            const stage = generateCreateProcessFormStage({ bodies: [body] });
+            const body = generateCreateProcessFormBody({ internalId: 'body1', plugin: 'multisig', stageId: '0' });
+            const stage = generateCreateProcessFormStage({ internalId: '0' });
             const permissions = {
                 proposalCreationMode: ProposalCreationMode.ANY_WALLET,
                 proposalCreationBodies: [],
             };
-            const values = generateCreateProcessFormData({ stages: [stage], permissions });
+            const values = generateCreateProcessFormData({ stages: [stage], permissions, bodies: [body] });
             const dao = generateDao({ address: '0xDaoAddress' });
 
             const slotFunction = jest.fn().mockReturnValue('0xPluginInstallData');
@@ -186,22 +186,22 @@ describe('prepareProcessDialog utils', () => {
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
-                pluginId: body.governanceType,
+                pluginId: body.plugin,
             });
 
             expect(slotFunction).toHaveBeenCalledWith(expect.objectContaining({ permissionSettings: undefined }));
         });
 
         it('prepares the plugin install data with defined permissions when proposal creation mode is listed bodies', () => {
-            const body = generateCreateProcessFormBody({ id: 'body1', governanceType: 'token-voting' });
-            const listedBody = { bodyId: body.id };
-            const stage = generateCreateProcessFormStage({ bodies: [body] });
+            const body = generateCreateProcessFormBody({ internalId: 'body1', plugin: 'token-voting', stageId: '0' });
+            const listedBody = { bodyId: body.internalId };
+            const stage = generateCreateProcessFormStage();
             const permissions = {
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
                 proposalCreationBodies: [listedBody],
             };
 
-            const values = generateCreateProcessFormData({ stages: [stage], permissions });
+            const values = generateCreateProcessFormData({ stages: [stage], permissions, bodies: [body] });
             const dao = generateDao({ address: '0xDaoAddress' });
 
             const slotFunction = jest.fn().mockReturnValue('0xPluginInstallData');
@@ -212,7 +212,7 @@ describe('prepareProcessDialog utils', () => {
 
             expect(getSlotFunctionSpy).toHaveBeenCalledWith({
                 slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
-                pluginId: body.governanceType,
+                pluginId: body.plugin,
             });
 
             expect(slotFunction).toHaveBeenCalledWith(expect.objectContaining({ permissionSettings: listedBody }));
