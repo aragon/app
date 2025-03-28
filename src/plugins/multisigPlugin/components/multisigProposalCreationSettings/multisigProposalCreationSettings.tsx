@@ -31,6 +31,7 @@ export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreatio
         }
     }, [mode, onOnlyListedChange]);
 
+    // Update the generic canCreateProposal field whenever the onlyListed parameter is updated
     useEffect(() => {
         onCreateProposalChange(!onlyListed);
     }, [onlyListed, onCreateProposalChange]);

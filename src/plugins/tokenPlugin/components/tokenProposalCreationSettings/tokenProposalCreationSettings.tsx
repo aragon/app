@@ -66,12 +66,14 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
         void trigger(`${formPrefix}.governance.minProposerVotingPower`);
     }, [trigger, formPrefix, isChecked]);
 
+    // Make sure to set minVotingPower to 0 when user selects any-wallet
     useEffect(() => {
         if (mode === ProposalCreationMode.ANY_WALLET) {
             onMinVotingPowerChange('0');
         }
     }, [mode, onMinVotingPowerChange]);
 
+    // Update the canCreateProposal generic field whenever the card is selected
     useEffect(() => {
         onCreateProposalChange(isChecked);
     }, [isChecked, onCreateProposalChange]);
