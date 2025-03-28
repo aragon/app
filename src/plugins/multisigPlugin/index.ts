@@ -21,6 +21,7 @@ import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSett
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
+import { MultisigProposalCreationSettings } from './components/multisigProposalCreationSettings';
 
 export const initialiseMultisigPlugin = () => {
     pluginRegistryUtils
@@ -136,5 +137,10 @@ export const initialiseMultisigPlugin = () => {
             slotId: CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE,
             pluginId: multisigPlugin.id,
             component: MultisigSetupGovernance,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS,
+            pluginId: multisigPlugin.id,
+            component: MultisigProposalCreationSettings,
         });
 };

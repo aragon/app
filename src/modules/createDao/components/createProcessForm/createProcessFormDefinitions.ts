@@ -93,15 +93,17 @@ export interface ICreateProcessFormPermissions {
     proposalCreationBodies: ICreateProcessFormProposalCreationBody[];
 }
 
-export interface ICreateProcessFormProposalCreationBody {
+export interface ICreateProcessFormProposalCreationBody<TSettings = Record<string, unknown>> {
     /**
      * ID of the body.
      */
     bodyId: string;
-
-    // Token-specific values
     /**
-     * Min voting power / balance the user needs to have for creating proposals
+     * Flag to determine if the checkbox is checked
      */
-    minVotingPower?: string;
+    checked?: boolean;
+    /**
+     * Settings containing plugin-specific values.
+     */
+    settings?: TSettings;
 }

@@ -1224,7 +1224,7 @@
           "tokenTerm": "Token",
           "voteChange": "Vote change"
         },
-        "tokenProposalCreationRequirements": {
+        "tokenProposalCreationSettings": {
           "helpText": "The voting power or token balance required to create proposals.",
           "label": "Minimum requirement",
           "placeholder": "≥ 1"

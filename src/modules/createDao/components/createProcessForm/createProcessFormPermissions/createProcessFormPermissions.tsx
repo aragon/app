@@ -1,14 +1,15 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import {
     ProposalCreationMode,
     type ICreateProcessFormData,
     type ICreateProcessFormPermissions,
 } from '../createProcessFormDefinitions';
-import { VotingBodyCheckboxCard } from './components/votingBodyCheckboxCard';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 
 export interface ICreateProcessFormPermissionProps {}
 
@@ -25,10 +26,6 @@ const validateProposalCreationBodies =
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
-
-    // TODO: temporary workaround to prevent race condition of rendering the plugin-specific proposal creation form
-    // fields (e.g. minProposerVotingPower) before the proposalCreationBodies array field is initialized (APP-3679)
-    const [isInitialized, setIsInitialized] = useState(false);
 
     const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
     const defaultBodiesValue = useMemo(
@@ -59,7 +56,6 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     // Initialise proposalCreationBodies to all process bodies and update value on bodies list change
     useEffect(() => {
         setValue(proposalCreationBodiesName, defaultBodiesValue);
-        setIsInitialized(true);
     }, [setValue, defaultBodiesValue]);
 
     const handleProposalCreationModeChange = (value: string) => {
@@ -78,6 +74,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
             removeProposalCreationBody(checkedBodyIndex);
         }
     };
+
 
     return (
         <>
@@ -102,15 +99,17 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     value={ProposalCreationMode.ANY_WALLET}
                 />
             </RadioGroup>
-            {isInitialized && proposalCreationMode === ProposalCreationMode.LISTED_BODIES && (
+            {proposalCreationMode === ProposalCreationMode.LISTED_BODIES && (
                 <InputContainer
                     id="proposalCreationBodies"
                     label={t('app.createDao.createProcessForm.permissions.proposalCreationBodies.label')}
                     useCustomWrapper={true}
                 >
                     {processBodies.map((body) => (
-                        <VotingBodyCheckboxCard
+                        <PluginSingleComponent
                             key={body.internalId}
+                            pluginId={body.plugin}
+                            slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS}
                             body={body}
                             onChange={handleBodyCheckboxChange}
                             checked={proposalCreationBodies.some(({ bodyId }) => body.internalId === bodyId)}
