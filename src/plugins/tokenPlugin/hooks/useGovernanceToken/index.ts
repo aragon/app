@@ -1,0 +1,1 @@
+export { useGovernanceToken } from './useGovernanceToken';
