@@ -12,6 +12,13 @@ export interface IUseERC20VotingTokenCheckParams {
     chainId: number;
 }
 
+interface IUseERC20VotingTokenCheckQueryParams {
+    /**
+     * Flag to enable or disable the query.
+     */
+    enabled?: boolean;
+}
+
 // ERC20Votes ABI with the methods we need to check compatibility, aligned with https://github.com/aragon/token-voting-plugin/blob/develop/packages/contracts/src/TokenVotingSetup.sol
 const ERC20VotesABI = [
     {
@@ -96,14 +103,21 @@ const testAddress = '0x0000000000000000000000000000000000000001' as Hash;
 /**
  * Just an internal hook, not to be used outside useGovernanceToken.
  */
-export const useERC20VotingTokenCheck = (params: IUseERC20VotingTokenCheckParams) => {
+export const useERC20VotingTokenCheck = (
+    params: IUseERC20VotingTokenCheckParams,
+    queryParams: IUseERC20VotingTokenCheckQueryParams = {},
+) => {
     const { address, chainId } = params;
+    const { enabled = true } = queryParams;
 
     const {
         data: contractResults,
         error,
         isLoading,
     } = useReadContracts({
+        query: {
+            enabled,
+        },
         contracts: [
             {
                 chainId,
@@ -136,7 +150,6 @@ export const useERC20VotingTokenCheck = (params: IUseERC20VotingTokenCheckParams
         ],
     });
 
-    console.log('contractResults', contractResults);
     const governanceCheckResults = contractResults ? contractResults.slice(0, 3) : [];
     const delegationCheckResults = contractResults ? [contractResults[3]] : [];
 
