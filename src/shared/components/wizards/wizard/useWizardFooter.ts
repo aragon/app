@@ -46,7 +46,7 @@ export const useWizardFooter = (): IUseWizardFooterReturn => {
     const { t } = useTranslations();
     const { submitLabel, hasNext, previousStep } = useWizardContext();
 
-    const { formState, reset } = useFormContext();
+    const { formState, clearErrors } = useFormContext();
     const { isSubmitted, errors } = formState;
 
     const validationStatus = getValidationStatus(errors);
@@ -56,10 +56,10 @@ export const useWizardFooter = (): IUseWizardFooterReturn => {
     const processedSubmitLabel = hasNext ? t('app.shared.wizard.footer.next') : submitLabel;
 
     const onPreviousClick = useCallback(() => {
-        // Reset submitted status when going on a previous step to display validation error when submitting again
-        reset(undefined, { keepDefaultValues: true, keepValues: true });
+        // Clear form errors when going on a previous step to avoid displaying validation error for next steps
+        clearErrors();
         previousStep();
-    }, [reset, previousStep]);
+    }, [clearErrors, previousStep]);
 
     return {
         validationStatus,

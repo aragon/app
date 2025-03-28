@@ -39,6 +39,8 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
 
     const { t } = useTranslations();
 
+    useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix);
+
     const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${formPrefix}.type` });
 
     const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });

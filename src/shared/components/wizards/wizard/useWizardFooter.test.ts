@@ -105,15 +105,15 @@ describe('useWizardFooter hook', () => {
         expect(result.current.submitLabel).toMatch(/wizard.footer.next/);
     });
 
-    it('returns a onPrevious click function to reset the submit state of the form and navigate to the previous step', () => {
-        const reset = jest.fn();
+    it('returns a onPrevious click function to clear the form errors and navigate to the previous step', () => {
+        const clearErrors = jest.fn();
         const previousStep = jest.fn();
-        useFormContextSpy.mockReturnValue(generateFormContext({ reset }));
+        useFormContextSpy.mockReturnValue(generateFormContext({ clearErrors }));
         useWizardContextSpy.mockReturnValue(generateWizardContext({ previousStep }));
         const { result } = renderHook(() => useWizardFooter());
 
         result.current.onPreviousClick();
-        expect(reset).toHaveBeenCalledWith(undefined, { keepDefaultValues: true, keepValues: true });
+        expect(clearErrors).toHaveBeenCalled();
         expect(previousStep).toHaveBeenCalled();
     });
 });
