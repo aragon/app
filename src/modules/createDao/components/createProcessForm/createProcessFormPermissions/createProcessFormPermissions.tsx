@@ -30,8 +30,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     // fields (e.g. minProposerVotingPower) before the proposalCreationBodies array field is initialized (APP-3679)
     const [isInitialized, setIsInitialized] = useState(false);
 
-    const processStages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
-    const processBodies = useMemo(() => processStages.flatMap((stage) => stage.bodies), [processStages]);
+    const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
     const defaultBodiesValue = useMemo(() => processBodies.map((body) => ({ bodyId: body.id })), [processBodies]);
 
     const {

@@ -1,14 +1,17 @@
 import type { ICreateProcessFormProposalCreationBody } from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
-import type { ITokenProcessBody } from '@/plugins/tokenPlugin/components/tokenProcessBodyField';
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputNumber } from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
+import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
+import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../tokenSetupMembership';
 
 export interface ITokenProposalCreationRequirementsProps {
     /**
      * The body of the process.
      */
-    body: ITokenProcessBody;
+    body: ISetupBodyForm<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm>;
     /**
      * Prefix to be prepended to the form field.
      */
@@ -18,12 +21,10 @@ export interface ITokenProposalCreationRequirementsProps {
 export const TokenProposalCreationRequirements: React.FC<ITokenProposalCreationRequirementsProps> = (props) => {
     const { fieldPrefix, body } = props;
 
-    const totalSupply = body.members.reduce(
-        (supply, member) => ('tokenAmount' in member ? supply + Number(member.tokenAmount) : supply),
-        0,
-    );
-
     const { t } = useTranslations();
+
+    const { totalSupply, decimals } = body.membership.token;
+    const parsedTotalSupply = formatUnits(BigInt(totalSupply), decimals);
 
     const minVotingPowerField = useFormField<ICreateProcessFormProposalCreationBody, 'minVotingPower'>(
         'minVotingPower',
@@ -41,7 +42,7 @@ export const TokenProposalCreationRequirements: React.FC<ITokenProposalCreationR
                 prefix="≥"
                 helpText={t('app.plugins.token.tokenProposalCreationRequirements.helpText')}
                 placeholder={t('app.plugins.token.tokenProposalCreationRequirements.placeholder')}
-                max={totalSupply}
+                max={Number(parsedTotalSupply)}
                 {...minVotingPowerField}
             />
         </button>

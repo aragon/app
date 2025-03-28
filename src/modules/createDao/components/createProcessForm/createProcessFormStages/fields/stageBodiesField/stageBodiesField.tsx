@@ -37,7 +37,8 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
 
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
         if (index == null) {
-            appendBody({ ...values, stageIndex });
+            const bodyId = crypto.randomUUID();
+            appendBody({ ...values, id: bodyId, stageIndex });
         } else {
             updateBody(index, values);
         }

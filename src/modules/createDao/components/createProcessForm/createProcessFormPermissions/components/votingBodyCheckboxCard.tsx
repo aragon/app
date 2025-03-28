@@ -1,13 +1,13 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { CheckboxCard } from '@aragon/gov-ui-kit';
-import { type ICreateProcessFormBody } from '../../createProcessFormDefinitions';
+import type { ICreateProcessFormData } from '../../createProcessFormDefinitions';
 
 export interface IVotingBodyCheckboxCardProps {
     /**
      * Body to render the checkbox card for.
      */
-    body: ICreateProcessFormBody;
+    body: ICreateProcessFormData['bodies'][number];
     /**
      * Callback called on body checkbox change.
      */
@@ -24,11 +24,11 @@ export interface IVotingBodyCheckboxCardProps {
 
 export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (props) => {
     const { body, onChange, checked, fieldPrefix } = props;
-    const { name, description, governanceType, id } = body;
+    const { name, description, plugin, id } = body;
 
     const LoadedComponent = pluginRegistryUtils.getSlotComponent({
         slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
-        pluginId: governanceType,
+        pluginId: plugin,
     });
 
     return (
