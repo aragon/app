@@ -13,7 +13,7 @@ export const generateCreateProcessFormBody = (
     resources: [],
     plugin: 'multisig',
     governance: null,
-    membership: null,
+    membership: { members: [] },
     ...values,
 });
 

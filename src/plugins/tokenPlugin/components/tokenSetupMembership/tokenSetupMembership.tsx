@@ -1,6 +1,7 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Icon, IconType, InputContainer, Link, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import type { ITokenSetupMembershipProps } from './tokenSetupMembership.api';
 import { TokenSetupMembershipCreateToken } from './tokenSetupMembershipCreateToken';
 import { TokenSetupMembershipImportToken } from './tokenSetupMembershipImportToken';
@@ -9,10 +10,18 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
     const { formPrefix } = props;
 
     const { t } = useTranslations();
+    const { setValue } = useFormContext();
 
     const [tokenType, setTokenType] = useState<'imported' | 'new'>('new');
 
     const isImportDisabled = process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true';
+
+    // Reset members array when selecting import token
+    useEffect(() => {
+        if (tokenType === 'imported') {
+            setValue(`${formPrefix}.members`, []);
+        }
+    }, [tokenType, formPrefix, setValue]);
 
     return (
         <div className="flex flex-col gap-6">

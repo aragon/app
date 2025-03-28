@@ -209,9 +209,10 @@ describe('sppTransaction utils', () => {
         it('correctly builds the update rules transaction', () => {
             const sppAllowedBody = generateCreateProcessFormBody({ id: 'body-1' });
             const sppNotAllowedBody = generateCreateProcessFormBody({ id: 'body-2' });
-            const sppStage = generateCreateProcessFormStage({ bodies: [sppAllowedBody, sppNotAllowedBody] });
+            const sppStage = generateCreateProcessFormStage({});
             const values = generateCreateProcessFormData({
                 stages: [sppStage],
+                bodies: [sppAllowedBody, sppNotAllowedBody],
                 permissions: {
                     proposalCreationBodies: [{ bodyId: sppAllowedBody.id }],
                     proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
@@ -266,8 +267,8 @@ describe('sppTransaction utils', () => {
 
         it('correctly builds the update stages transaction', () => {
             const sppBody = generateCreateProcessFormBody();
-            const sppStage = generateCreateProcessFormStage({ bodies: [sppBody] });
-            const values = generateCreateProcessFormData({ stages: [sppStage] });
+            const sppStage = generateCreateProcessFormStage();
+            const values = generateCreateProcessFormData({ stages: [sppStage], bodies: [sppBody] });
             const transactionData = '0xupdate-stages';
 
             const timing = {

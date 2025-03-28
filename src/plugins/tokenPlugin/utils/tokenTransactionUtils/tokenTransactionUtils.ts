@@ -1,4 +1,3 @@
-import type { ITokenVotingMember } from '@/modules/createDao/components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
 import type { ICreateProposalFormData } from '@/modules/governance/components/createProposalForm';
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
@@ -6,7 +5,9 @@ import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { encodeAbiParameters, encodeFunctionData, parseUnits, zeroAddress, type Hex } from 'viem';
+import { encodeAbiParameters, encodeFunctionData, parseUnits, type Hex } from 'viem';
+import type { ITokenSetupGovernanceForm } from '../../components/tokenSetupGovernance';
+import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../../components/tokenSetupMembership';
 import { tokenPlugin } from '../../constants/tokenPlugin';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 import { tokenPluginAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
@@ -44,24 +45,27 @@ class TokenTransactionUtils {
         return data;
     };
 
-    buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams) => {
+    buildPrepareInstallData = (
+        params: IBuildPreparePluginInstallDataParams<
+            ITokenSetupGovernanceForm,
+            ITokenSetupMembershipMember,
+            ITokenSetupMembershipForm
+        >,
+    ) => {
         const { body, metadataCid, dao } = params;
-        const { tokenType, importTokenAddress, tokenName, tokenSymbol, members } = body;
+        const { members } = body.membership;
+        const { name: tokenName, symbol: tokenSymbol, address: tokenAddress } = body.membership.token;
 
         const { globalExecutor } = networkDefinitions[dao.network].addresses;
         const repositoryAddress = tokenPlugin.repositoryAddresses[dao.network];
 
-        const tokenSettings = {
-            addr: tokenType === 'imported' ? (importTokenAddress as Hex) : zeroAddress,
-            name: tokenName ?? '',
-            symbol: tokenSymbol ?? '',
-        };
+        const tokenSettings = { addr: tokenAddress as Hex, name: tokenName, symbol: tokenSymbol };
 
         const defaultMintSettings = { receivers: [], amounts: [] };
         const mintSettings = members.reduce<{ receivers: Hex[]; amounts: bigint[] }>(
             (current, member) => ({
                 receivers: current.receivers.concat(member.address as Hex),
-                amounts: current.amounts.concat(parseUnits((member as ITokenVotingMember).tokenAmount.toString(), 18)),
+                amounts: current.amounts.concat(parseUnits(member.tokenAmount?.toString() ?? '0', 18)),
             }),
             defaultMintSettings,
         );
@@ -72,7 +76,7 @@ class TokenTransactionUtils {
         const pluginSettingsData = encodeAbiParameters(tokenPluginSetupAbi, [
             votingSettings,
             tokenSettings,
-            tokenType === 'imported' ? defaultMintSettings : mintSettings,
+            mintSettings,
             tokenTarget,
             BigInt(0),
             metadataCid as Hex,
@@ -89,13 +93,20 @@ class TokenTransactionUtils {
     };
 
     private buildInstallDataVotingSettings = (
-        params: Pick<IBuildPreparePluginInstallDataParams, 'body' | 'stage' | 'permissionSettings'>,
+        params: Pick<
+            IBuildPreparePluginInstallDataParams<
+                ITokenSetupGovernanceForm,
+                ITokenSetupMembershipMember,
+                ITokenSetupMembershipForm
+            >,
+            'body' | 'stage' | 'permissionSettings'
+        >,
     ) => {
         const { body, stage, permissionSettings } = params;
         const { minVotingPower } = permissionSettings ?? {};
 
         const { votingPeriod } = stage.timing;
-        const { votingMode, supportThreshold, minParticipation } = body;
+        const { votingMode, supportThreshold, minParticipation } = body.governance;
 
         const minProposerVotingPower = minVotingPower ? parseUnits(minVotingPower, 18) : BigInt(0);
 
