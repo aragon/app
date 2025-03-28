@@ -2,9 +2,14 @@ import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { Accordion, Button, Card, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
 
 export interface IStageBodiesFieldItemProps {
+    /**
+     * Name of the body field.
+     */
+    fieldName: string;
     /**
      * Body to display the details for.
      */
@@ -20,9 +25,10 @@ export interface IStageBodiesFieldItemProps {
 }
 
 export const StageBodiesFieldItem: React.FC<IStageBodiesFieldItemProps> = (props) => {
-    const { body, onEdit, onDelete } = props;
+    const { fieldName, body, onEdit, onDelete } = props;
 
     const { t } = useTranslations();
+    useFormField<Record<string, ISetupBodyForm>, typeof fieldName>(fieldName);
 
     return (
         <Card className="overflow-hidden border border-neutral-100">

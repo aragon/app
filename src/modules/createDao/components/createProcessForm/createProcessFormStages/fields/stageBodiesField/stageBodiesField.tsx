@@ -30,7 +30,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
         update: updateBody,
         append: appendBody,
     } = useFieldArray<ICreateProcessFormData>({ name: 'bodies' });
-    const watchBodiesField = useWatch<Record<string, ICreateProcessFormData['bodies']>>({ name: 'bodies' });
+    const watchBodiesField = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
     const controlledBodiesField = bodiesField.map((field, index) => ({ ...field, ...watchBodiesField[index] }));
 
     const stageBodies = controlledBodiesField.filter((body) => body.stageId === stageId);
@@ -73,6 +73,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                     {stageBodies.map((body, index) => (
                         <StageBodiesFieldItem
                             key={body.id}
+                            fieldName={`bodies.${index.toString()}`}
                             body={body}
                             onEdit={() => handleEditBody(index)}
                             onDelete={() => removeBody(index)}

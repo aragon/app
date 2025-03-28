@@ -33,7 +33,7 @@ export const WizardDialogContainer = <TFormData extends FieldValues = FieldValue
                         {children}
                     </Wizard.Form>
                 </Dialog.Content>
-                <WizardDialogContainerFooter formId={formId} onClose={close} />
+                <WizardDialogContainerFooter formId={formId} />
             </Wizard.Root>
         </>
     );

@@ -1,4 +1,5 @@
-import { generateWizardContext } from '@/shared/testUtils';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDialogContext, generateWizardContext } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as Wizard from '../../wizard';
@@ -7,6 +8,7 @@ import { WizardDialogContainerFooter, type IWizardDialogContainerFooterProps } f
 describe('<WizardDialogContainerFooter /> component', () => {
     const useWizardContextSpy = jest.spyOn(Wizard, 'useWizardContext');
     const useWizardFooterSpy = jest.spyOn(Wizard, 'useWizardFooter');
+    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
 
     beforeEach(() => {
         useWizardContextSpy.mockReturnValue(generateWizardContext());
@@ -14,17 +16,18 @@ describe('<WizardDialogContainerFooter /> component', () => {
             submitLabel: '',
             displayValidationError: false,
         } as Wizard.IUseWizardFooterReturn);
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
     afterEach(() => {
         useWizardContextSpy.mockReset();
         useWizardFooterSpy.mockReset();
+        useDialogContextSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IWizardDialogContainerFooterProps>) => {
         const completeProps: IWizardDialogContainerFooterProps = {
             formId: 'id',
-            onClose: jest.fn(),
             ...props,
         };
 
@@ -43,13 +46,14 @@ describe('<WizardDialogContainerFooter /> component', () => {
 
     it('renders a close button when step is the first step', async () => {
         const hasPrevious = false;
-        const onClose = jest.fn();
+        const close = jest.fn();
         useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
-        render(createTestComponent({ onClose }));
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+        render(createTestComponent());
         const closeButton = screen.getByRole('button', { name: /wizardDialog.container.close/ });
         expect(closeButton).toBeInTheDocument();
         await userEvent.click(closeButton);
-        expect(onClose).toHaveBeenCalled();
+        expect(close).toHaveBeenCalled();
     });
 
     it('renders a back button when step is not the first step', async () => {

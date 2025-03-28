@@ -48,19 +48,22 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     }, [initialValues, address]);
 
     const [selectStep, metadataStep, membershipStep, governanceStep] = setupBodySteps;
+    const initialSteps = initialValues == null ? setupBodySteps : setupBodySteps.filter((step) => step.id !== 'select');
 
     return (
         <WizardDialog.Container
             title={t('app.createDao.setupBodyDialog.title')}
             formId="bodySetup"
             onSubmit={onSubmit}
-            initialSteps={setupBodySteps}
             defaultValues={processedInitialValues}
+            initialSteps={initialSteps}
             submitLabel={t('app.createDao.setupBodyDialog.submit')}
         >
-            <WizardDialog.Step {...selectStep}>
-                <SetupBodyDialogSelect />
-            </WizardDialog.Step>
+            {initialValues == null && (
+                <WizardDialog.Step {...selectStep}>
+                    <SetupBodyDialogSelect />
+                </WizardDialog.Step>
+            )}
             <WizardDialog.Step {...metadataStep}>
                 <SetupBodyDialogMetadata />
             </WizardDialog.Step>
