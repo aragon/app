@@ -40,6 +40,7 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             label={t('app.plugins.token.tokenSetupGovernance.supportThreshold.label')}
             helpText={t('app.plugins.token.tokenSetupGovernance.supportThreshold.helpText')}
             valueLabel={`> ${value.toString()} %`}
+            min={1}
             total={100}
             prefix=">"
             suffix="%"

@@ -48,6 +48,7 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
                 helpText={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.helpText')}
                 valueLabel={minApprovalsFieldValue.toString()}
                 total={membersCount}
+                min={1}
                 totalLabel={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.total', {
                     total: membersCount,
                 })}

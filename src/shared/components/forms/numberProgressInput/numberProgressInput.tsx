@@ -34,7 +34,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
         ...numberField
     } = useFormField<Record<string, number | undefined>, typeof fieldName>(fieldName, {
         label,
-        rules: { required: true },
+        rules: { required: true, max: total },
         defaultValue,
     });
 
@@ -59,7 +59,6 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                     <InputNumber
                         value={value}
                         className="w-full md:max-w-40"
-                        min={1}
                         max={total}
                         onChange={(value) => onChange(Number(value))}
                         prefix={prefix}
