@@ -1,152 +1,83 @@
-import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import type { ISetupBodyDialogParams } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialog';
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Accordion, Button, Card, Dropdown, Heading, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import { useAccount } from 'wagmi';
-import type { ICreateProcessFormBody, ICreateProcessFormData } from '../../../createProcessFormDefinitions';
-import { StageBodiesFieldDialog } from './stageBodiesFieldDialog';
+import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { useFieldArray, useWatch } from 'react-hook-form';
+import type { ICreateProcessFormData } from '../../../createProcessFormDefinitions';
+import { StageBodiesFieldItem } from './stageBodiesFieldItem';
 
 export interface IStageBodiesFieldProps {
     /**
-     * Field name of the current stage.
+     * Defines if current stage is optimistic or not, only set for advanced governance processes.
      */
-    stageFieldName: string;
+    isOptimisticStage?: boolean;
     /**
-     * Defines if current stage is optimistic or not.
+     * ID of the stage to add the governance bodies for.
      */
-    isOptimisticStage: boolean;
-    /**
-     * Index of the current stage.
-     */
-    index: number;
+    stageId?: string;
 }
-
-interface IBodyDialogState {
-    /**
-     * Dialog open state.
-     */
-    isOpen: boolean;
-    /**
-     * Index of the body to edit.
-     */
-    bodyIndex: number;
-    /**
-     * Displays the select governance type view when creating a new body.
-     */
-    isNewBody?: boolean;
-}
-
-let bodyId = 0;
 
 export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
-    const { stageFieldName, isOptimisticStage, index } = props;
+    const { isOptimisticStage, stageId } = props;
 
-    const [bodyDialogState, setBodyDialogState] = useState<IBodyDialogState>({ isOpen: false, bodyIndex: 0 });
-
-    const { address } = useAccount();
-
-    const handleAddBody = () => {
-        appendBody({
-            name: '',
-            id: (bodyId++).toString(),
-            governanceType: 'token-voting',
-            tokenType: 'new',
-            resources: [],
-            members: [{ address: address ?? '', tokenAmount: 1 }],
-            tokenName: '',
-            tokenSymbol: '',
-            supportThreshold: 50,
-            minimumParticipation: 0,
-            voteChange: false,
-            multisigThreshold: 1,
-        });
-        setBodyDialogState({ isOpen: true, bodyIndex: controlledBodyField.length, isNewBody: true });
-    };
-
-    const handleEditBody = (bodyIndex: number) => setBodyDialogState({ isOpen: true, bodyIndex: bodyIndex });
-
+    const { open, close } = useDialogContext();
     const { t } = useTranslations();
-    const { watch, formState } = useFormContext<ICreateProcessFormData>();
 
-    const bodyFieldName = `${stageFieldName}.bodies`;
     const {
-        fields: bodyField,
+        fields: bodiesField,
         remove: removeBody,
         update: updateBody,
         append: appendBody,
-    } = useFieldArray<Record<string, ICreateProcessFormBody[]>>({ name: bodyFieldName });
-    const watchBodyField = watch(bodyFieldName as `stages.${number}.bodies`);
+    } = useFieldArray<ICreateProcessFormData>({ name: 'bodies' });
+    const watchBodiesField = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
+    const controlledBodiesField = bodiesField.map((field, index) => ({ ...field, ...watchBodiesField[index] }));
 
-    const controlledBodyField = bodyField.map((field, index) => ({ ...field, ...watchBodyField[index] }));
+    const stageBodies = controlledBodiesField.filter((body) => body.stageId === stageId);
 
-    const bodiesErrorMessage = formState.errors.stages?.[index]?.bodies?.message;
-    const bodyFieldAlert =
-        bodiesErrorMessage != null ? { message: bodiesErrorMessage, variant: 'critical' as const } : undefined;
+    const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
+        if (index == null) {
+            const bodyId = crypto.randomUUID();
+            appendBody({ ...values, internalId: bodyId, stageId });
+        } else {
+            updateBody(index, values);
+        }
+        close();
+    };
+
+    const handleAddBody = () => {
+        const params: ISetupBodyDialogParams = { onSubmit: handleBodySubmit() };
+        open('SETUP_BODY', { params });
+    };
+
+    const handleEditBody = (index: number) => {
+        const params: ISetupBodyDialogParams = {
+            onSubmit: handleBodySubmit(index),
+            initialValues: controlledBodiesField[index],
+        };
+        open('SETUP_BODY', { params });
+    };
+
+    const bodiesLabelContext = isOptimisticStage ? 'vetoing' : 'voting';
 
     return (
         <>
             <InputContainer
                 className="flex flex-col gap-2"
-                id={bodyFieldName}
-                label={
-                    isOptimisticStage
-                        ? t('app.createDao.createProcessForm.stages.bodies.label.vetoing')
-                        : t('app.createDao.createProcessForm.stages.bodies.label.voting')
-                }
+                id="bodies"
+                label={t(`app.createDao.createProcessForm.stages.bodies.label.${bodiesLabelContext}`)}
                 helpText={t('app.createDao.createProcessForm.stages.bodies.helpText')}
                 useCustomWrapper={true}
-                alert={bodyFieldAlert}
             >
                 <div className="flex flex-col gap-3 md:gap-2">
-                    {controlledBodyField.map((field, index) => (
-                        <Card key={field.id} className="overflow-hidden border border-neutral-100">
-                            <Accordion.Container isMulti={true}>
-                                <Accordion.Item value={field.id}>
-                                    <Accordion.ItemHeader>
-                                        <Heading size="h4">{field.name}</Heading>
-                                    </Accordion.ItemHeader>
-                                    <Accordion.ItemContent>
-                                        <PluginSingleComponent
-                                            pluginId={field.governanceType}
-                                            slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
-                                            field={field}
-                                        />
-                                        <div className="flex w-full grow justify-between">
-                                            <Button
-                                                className="justify-end"
-                                                variant="secondary"
-                                                size="md"
-                                                onClick={() => handleEditBody(index)}
-                                            >
-                                                {t('app.createDao.createProcessForm.stages.bodies.summary.edit')}
-                                            </Button>
-                                            <Dropdown.Container
-                                                constrainContentWidth={false}
-                                                size="md"
-                                                customTrigger={
-                                                    <Button
-                                                        className="w-fit"
-                                                        variant="tertiary"
-                                                        size="md"
-                                                        iconRight={IconType.DOTS_VERTICAL}
-                                                    >
-                                                        {t(
-                                                            'app.createDao.createProcessForm.stages.bodies.summary.more',
-                                                        )}
-                                                    </Button>
-                                                }
-                                            >
-                                                <Dropdown.Item onClick={() => removeBody(index)}>
-                                                    Remove body
-                                                </Dropdown.Item>
-                                            </Dropdown.Container>
-                                        </div>
-                                    </Accordion.ItemContent>
-                                </Accordion.Item>
-                            </Accordion.Container>
-                        </Card>
+                    {stageBodies.map((body, index) => (
+                        <StageBodiesFieldItem
+                            key={body.id}
+                            fieldName={`bodies.${index.toString()}`}
+                            body={body}
+                            onEdit={() => handleEditBody(index)}
+                            onDelete={() => removeBody(index)}
+                        />
                     ))}
                     <Button
                         size="md"
@@ -155,17 +86,8 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                         iconLeft={IconType.PLUS}
                         onClick={handleAddBody}
                     >
-                        {t('app.createDao.createProcessForm.stages.bodies.add')}
+                        {t('app.createDao.createProcessForm.stages.bodies.action.add')}
                     </Button>
-                    {bodyDialogState.isOpen && (
-                        <StageBodiesFieldDialog
-                            stageFieldName={stageFieldName}
-                            removeBody={removeBody}
-                            updateBody={updateBody}
-                            onClose={() => setBodyDialogState({ isOpen: false, bodyIndex: 0 })}
-                            {...bodyDialogState}
-                        />
-                    )}
                 </div>
             </InputContainer>
         </>

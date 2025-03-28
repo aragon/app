@@ -92,13 +92,13 @@ describe('<DaoDashboardPageClient /> component', () => {
         useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
         render(createTestComponent());
 
-        expect(screen.getByText(/daoDashboardPage.header.stat.proposals/)).toBeInTheDocument();
+        expect(screen.getByText(/dashboardDefaultHeader.stat.proposals/)).toBeInTheDocument();
         expect(screen.getByText('2.34K')).toBeInTheDocument();
 
-        expect(screen.getByText(/daoDashboardPage.header.stat.members/)).toBeInTheDocument();
+        expect(screen.getByText(/dashboardDefaultHeader.stat.members/)).toBeInTheDocument();
         expect(screen.getByText('123')).toBeInTheDocument();
 
-        expect(screen.getByText(/daoDashboardPage.header.stat.treasury/)).toBeInTheDocument();
+        expect(screen.getByText(/dashboardDefaultHeader.stat.treasury/)).toBeInTheDocument();
         expect(screen.getByText('$4.73T')).toBeInTheDocument();
     });
 

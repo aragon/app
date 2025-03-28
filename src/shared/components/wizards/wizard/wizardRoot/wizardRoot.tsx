@@ -24,13 +24,17 @@ export interface IWizardRootProps<TFormData extends FieldValues = FieldValues> {
      */
     defaultValues?: UseFormProps<TFormData>['defaultValues'];
     /**
+     * Renders the form library dev-tool when set to true.
+     */
+    useDevTool?: boolean;
+    /**
      * Children of the component.
      */
     children?: ReactNode;
 }
 
 export const WizardRoot = <TFormData extends FieldValues = FieldValues>(props: IWizardRootProps<TFormData>) => {
-    const { initialSteps = [], children, submitLabel, defaultValues } = props;
+    const { initialSteps = [], children, submitLabel, defaultValues, useDevTool } = props;
 
     const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
     const { formState, reset, control } = formMethods;
@@ -51,7 +55,7 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(props: I
     return (
         <FormProvider {...formMethods}>
             <WizardProvider value={wizardContextValues}>{children}</WizardProvider>
-            <DevTool control={control} />
+            {useDevTool && <DevTool control={control} />}
         </FormProvider>
     );
 };

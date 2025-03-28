@@ -200,22 +200,19 @@ describe('sppTransaction utils', () => {
         const buildRuleConditionsSpy = jest.spyOn(permissionTransactionUtils, 'buildRuleConditions');
 
         it('returns undefined when proposalCreationMode is ANY_WALLET', () => {
-            const permissions = { proposalCreationMode: ProposalCreationMode.ANY_WALLET, proposalCreationBodies: [] };
-            const values = generateCreateProcessFormData({ permissions });
+            const values = generateCreateProcessFormData({ proposalCreationMode: ProposalCreationMode.ANY_WALLET });
             const result = sppTransactionUtils['buildUpdateRulesTransaction'](values, generatePluginSetupData(), []);
             expect(result).toBeUndefined();
         });
 
         it('correctly builds the update rules transaction', () => {
-            const sppAllowedBody = generateCreateProcessFormBody({ id: 'body-1' });
-            const sppNotAllowedBody = generateCreateProcessFormBody({ id: 'body-2' });
-            const sppStage = generateCreateProcessFormStage({ bodies: [sppAllowedBody, sppNotAllowedBody] });
+            const sppAllowedBody = generateCreateProcessFormBody({ internalId: 'body-1', canCreateProposal: true });
+            const sppNotAllowedBody = generateCreateProcessFormBody({ internalId: 'body-2' });
+            const sppStage = generateCreateProcessFormStage({});
             const values = generateCreateProcessFormData({
                 stages: [sppStage],
-                permissions: {
-                    proposalCreationBodies: [{ bodyId: sppAllowedBody.id }],
-                    proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
-                },
+                bodies: [sppAllowedBody, sppNotAllowedBody],
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
             });
 
             const sppSetupData = generatePluginSetupData({
@@ -265,9 +262,9 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the update stages transaction', () => {
-            const sppBody = generateCreateProcessFormBody();
-            const sppStage = generateCreateProcessFormStage({ bodies: [sppBody] });
-            const values = generateCreateProcessFormData({ stages: [sppStage] });
+            const sppBody = generateCreateProcessFormBody({ stageId: '0' });
+            const sppStage = generateCreateProcessFormStage({ internalId: '0' });
+            const values = generateCreateProcessFormData({ stages: [sppStage], bodies: [sppBody] });
             const transactionData = '0xupdate-stages';
 
             const timing = {

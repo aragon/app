@@ -1,19 +1,15 @@
 import { type IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
-import { DaoTokenVotingMode, type ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { AlertCard, Card, InputContainer, Switch, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData, parseUnits } from 'viem';
-import { MinParticipationField } from './fields/minParticipationField';
-import { ProposalCreationEligibilityField } from './fields/proposalCreationEligibilityField';
-import { SupportThresholdField } from './fields/supportThresholdField';
+import { type ITokenSetupGovernanceForm, TokenSetupGovernance } from '../../tokenSetupGovernance';
 
 export interface ITokenUpdateSettingsActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
@@ -49,41 +45,39 @@ const updateTokenSettingsAbi = {
 
 export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps> = (props) => {
     const { index, action } = props;
-
-    const { symbol: tokenSymbol, decimals: tokenDecimals } = action.meta.settings.token;
-
-    const { t } = useTranslations();
+    const { decimals } = action.meta.settings.token;
 
     const { setValue } = useFormContext();
 
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
 
-    /* Set default values to supportThreshold, minParticipation and minVotingPower values
-    as the values are reset when deleting an item from the useArrayField causing the useWatch/useFormField
-    to return undefined before unmounting the component */
-    const supportThresholdFieldName = `${actionFieldName}.proposedSettings.supportThreshold`;
-    const supportThreshold = useWatch<Record<string, ITokenPluginSettings['supportThreshold']>>({
-        name: supportThresholdFieldName,
+    const formPrefix = `${actionFieldName}.proposedSettings`;
+
+    // Set default values to form values as the values are reset when deleting an item from the useArrayField causing
+    // the useWatch to return undefined before unmounting the component
+    const supportThreshold = useWatch<Record<string, ITokenSetupGovernanceForm['supportThreshold']>>({
+        name: `${formPrefix}.supportThreshold`,
         defaultValue: 0,
     });
 
-    const minParticipationFieldName = `${actionFieldName}.proposedSettings.minParticipation`;
-    const minParticipation = useWatch<Record<string, ITokenPluginSettings['minParticipation']>>({
-        name: minParticipationFieldName,
+    const minParticipation = useWatch<Record<string, ITokenSetupGovernanceForm['minParticipation']>>({
+        name: `${formPrefix}.minParticipation`,
         defaultValue: 0,
     });
 
-    const minVotingPowerFieldName = `${actionFieldName}.proposedSettings.minProposerVotingPower`;
-    const minVotingPowerValue = useWatch<Record<string, ITokenPluginSettings['minProposerVotingPower']>>({
-        name: minVotingPowerFieldName,
+    const minVotingPowerValue = useWatch<Record<string, ITokenSetupGovernanceForm['minProposerVotingPower']>>({
+        name: `${formPrefix}.minProposerVotingPower`,
         defaultValue: '0',
     });
 
-    const minDurationFieldName = `${actionFieldName}.proposedSettings.minDuration`;
-    const minDuration = useWatch<Record<string, ITokenPluginSettings['minDuration']>>({
-        name: minDurationFieldName,
+    const minDuration = useWatch<Record<string, ITokenSetupGovernanceForm['minDuration']>>({
+        name: `${formPrefix}.minDuration`,
         defaultValue: 3600,
+    });
+
+    const votingMode = useWatch<Record<string, ITokenSetupGovernanceForm['votingMode']>>({
+        name: `${formPrefix}.votingMode`,
     });
 
     /* For the transaction we need the value in seconds, but for the UI it is nicer to use the days/hours/mins object
@@ -92,34 +86,13 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     const minDurationInSeconds =
         typeof minDuration === 'object' ? dateUtils.durationToSeconds(minDuration) : minDuration;
 
-    const minDurationAlert = {
-        message: t('app.plugins.token.tokenUpdateSettingsAction.minDuration.alert.message'),
-        description: t('app.plugins.token.tokenUpdateSettingsAction.minDuration.alert.description'),
-        variant: 'info',
-    } as const;
-
-    const votingModeField = useFormField<ITokenPluginSettings, 'votingMode'>('votingMode', {
-        fieldPrefix: `${actionFieldName}.proposedSettings`,
-    });
-
-    const handleModeChange = (checked: boolean) =>
-        votingModeField.onChange(checked ? DaoTokenVotingMode.EARLY_EXECUTION : DaoTokenVotingMode.STANDARD);
-
-    const handleVoteChange = (checked: boolean) => {
-        if (votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION) {
-            return;
-        }
-
-        votingModeField.onChange(checked ? DaoTokenVotingMode.VOTE_REPLACEMENT : DaoTokenVotingMode.STANDARD);
-    };
-
     useEffect(() => {
         const updateSettingsParams = {
-            votingMode: votingModeField.value,
-            supportThreshold: tokenSettingsUtils.fromPercentageToRatio(supportThreshold),
-            minParticipation: tokenSettingsUtils.fromPercentageToRatio(minParticipation),
+            votingMode,
+            supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
+            minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
             minDuration: minDurationInSeconds,
-            minProposerVotingPower: parseUnits(minVotingPowerValue, tokenDecimals),
+            minProposerVotingPower: parseUnits(minVotingPowerValue, decimals),
         };
 
         const newData = encodeFunctionData({ abi: [updateTokenSettingsAbi], args: [updateSettingsParams] });
@@ -136,59 +109,18 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         minVotingPowerValue,
         setValue,
         supportThreshold,
-        votingModeField.value,
-        tokenDecimals,
+        votingMode,
+        decimals,
     ]);
 
+    const membershipSettings = { token: action.meta.settings.token };
+
     return (
-        <div className="flex w-full flex-col gap-y-6">
-            <SupportThresholdField
-                supportThreshold={supportThreshold}
-                supportThresholdFieldName={supportThresholdFieldName}
-                currentSupportThreshold={tokenSettingsUtils.fromRatioToPercentage(
-                    action.meta.settings.supportThreshold,
-                )}
-            />
-            <MinParticipationField
-                minParticipationFieldName={minParticipationFieldName}
-                minParticipation={minParticipation}
-                plugin={action.meta}
-            />
-            <InputContainer
-                className="flex flex-col gap-6"
-                id="minDuration"
-                useCustomWrapper={true}
-                helpText={t('app.plugins.token.tokenUpdateSettingsAction.minDuration.helpText')}
-                label={t('app.plugins.token.tokenUpdateSettingsAction.minDuration.label')}
-            >
-                <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
-                    <AdvancedDateInputDuration
-                        field={`${actionFieldName}.proposedSettings.minDuration`}
-                        label={t('app.plugins.token.tokenUpdateSettingsAction.minDuration.label')}
-                        className="!p-0"
-                        minDuration={{ days: 0, hours: 1, minutes: 0 }}
-                        validateMinDuration={true}
-                    />
-                    <AlertCard {...minDurationAlert} />
-                </Card>
-            </InputContainer>
-            <Switch
-                label={t('app.plugins.token.tokenUpdateSettingsAction.earlyExecution.label')}
-                helpText={t('app.plugins.token.tokenUpdateSettingsAction.earlyExecution.helpText')}
-                inlineLabel={t('app.plugins.token.tokenUpdateSettingsAction.earlyExecution.switch.label')}
-                onCheckedChanged={handleModeChange}
-                checked={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
-                disabled={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
-            />
-            <Switch
-                helpText={t('app.plugins.token.tokenUpdateSettingsAction.voteChange.helpText')}
-                inlineLabel={t('app.plugins.token.tokenUpdateSettingsAction.voteChange.switch.label')}
-                label={t('app.plugins.token.tokenUpdateSettingsAction.voteChange.label')}
-                onCheckedChanged={handleVoteChange}
-                checked={votingModeField.value === DaoTokenVotingMode.VOTE_REPLACEMENT}
-                disabled={votingModeField.value === DaoTokenVotingMode.EARLY_EXECUTION}
-            />
-            <ProposalCreationEligibilityField tokenSymbol={tokenSymbol} actionFieldName={actionFieldName} />
-        </div>
+        <TokenSetupGovernance
+            formPrefix={`${actionFieldName}.proposedSettings`}
+            membershipSettings={membershipSettings}
+            isSubPlugin={action.meta.isSubPlugin}
+            showProposalCreationSettings={!action.meta.isSubPlugin}
+        />
     );
 };

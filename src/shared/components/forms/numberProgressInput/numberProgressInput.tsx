@@ -1,63 +1,15 @@
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    AlertInline,
-    Card,
-    type IAlertInlineProps,
-    type IInputNumberProps,
-    InputContainer,
-    InputNumber,
-    invariant,
-    type ITagProps,
-    Progress,
-    Tag,
-} from '@aragon/gov-ui-kit';
+import { AlertInline, Card, InputContainer, InputNumber, invariant, Progress, Tag } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useId } from 'react';
-
-export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'value' | 'alert'> {
-    /**
-     * Name of the form field.
-     */
-    fieldName: string;
-    /**
-     * Label displayed above the progress component.
-     */
-    valueLabel?: string;
-    /**
-     * Prefix for the input component.
-     */
-    prefix?: string;
-    /**
-     * Suffix for the input component.
-     */
-    suffix?: string;
-    /**
-     * Value used for normalising the value and display it on the progress.
-     */
-    total: number;
-    /**
-     * Label displayed below the progress component.
-     */
-    totalLabel?: string;
-    /**
-     * Alert displayed below the input component.
-     */
-    alert?: Pick<IAlertInlineProps, 'message' | 'variant'>;
-    /**
-     * Threshold indicator for the progress component
-     */
-    thresholdIndicator?: number;
-    /**
-     * Optional tags to be displayed to the left and right of the progress component. The first tag will be displayed to the left and the second to the right.
-     */
-    tags?: [ITagProps, ITagProps];
-}
+import type { INumberProgressInputProps } from './numberProgressInput.api';
 
 export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) => {
     const {
         label,
         helpText,
         fieldName,
+        defaultValue,
         valueLabel,
         total,
         totalLabel,
@@ -82,12 +34,14 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
         ...numberField
     } = useFormField<Record<string, number | undefined>, typeof fieldName>(fieldName, {
         label,
-        rules: { required: true },
+        rules: { required: true, max: total },
+        defaultValue,
     });
 
     const progressValue = (value * 100) / total;
 
-    const valueLabelLeft = valueLabel ? Math.max(progressValue, valueLabel.length * 0.6) : 0;
+    const valueLabelLength = valueLabel?.length ?? 0;
+    const valueLabelLeft = Math.min(100 - valueLabelLength, Math.max(progressValue, valueLabelLength));
     const valueLabelStyle = { left: `${valueLabelLeft.toString()}%`, transform: 'translateX(-50%)' };
 
     const processedAlert = alertProp ?? alert;
@@ -105,7 +59,6 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                     <InputNumber
                         value={value}
                         className="w-full md:max-w-40"
-                        min={1}
                         max={total}
                         onChange={(value) => onChange(Number(value))}
                         prefix={prefix}
@@ -113,25 +66,20 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         {...numberField}
                         {...otherProps}
                     />
-                    <div
-                        className={classNames('relative mt-4 flex grow flex-col gap-2 md:mt-0', {
-                            'self-end': totalLabel,
-                        })}
-                    >
-                        {valueLabel && (
-                            <p
-                                className={classNames(
-                                    'absolute -top-4 whitespace-nowrap text-xs text-primary-400 transition-all duration-500 ease-in-out',
-                                    { 'ml-12': tags },
-                                )}
-                                style={valueLabelStyle}
-                            >
-                                {valueLabel}
-                            </p>
-                        )}
+                    <div className={classNames('mt-4 flex grow flex-col gap-2 md:mt-0', { 'self-end': totalLabel })}>
                         <div className="flex items-center gap-3">
                             {tags && <Tag {...tags[0]} />}
-                            <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
+                            <div className="relative flex grow">
+                                {valueLabel && (
+                                    <p
+                                        className="absolute -top-5 whitespace-nowrap text-xs text-primary-400 transition-all duration-500 ease-in-out"
+                                        style={valueLabelStyle}
+                                    >
+                                        {valueLabel}
+                                    </p>
+                                )}
+                                <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
+                            </div>
                             {tags && <Tag {...tags[1]} />}
                         </div>
 

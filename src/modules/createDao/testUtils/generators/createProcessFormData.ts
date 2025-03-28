@@ -1,26 +1,25 @@
 import {
-    type ICreateProcessFormBody,
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
     ProcessStageType,
     ProposalCreationMode,
 } from '../../components/createProcessForm';
 
-export const generateCreateProcessFormBody = (values?: Partial<ICreateProcessFormBody>): ICreateProcessFormBody => ({
-    id: 'body1',
+export const generateCreateProcessFormBody = (
+    values?: Partial<ICreateProcessFormData['bodies'][number]>,
+): ICreateProcessFormData['bodies'][number] => ({
+    internalId: 'body1',
     name: 'body1',
     resources: [],
-    governanceType: 'multisig',
-    members: [],
-    tokenType: 'new',
-    supportThreshold: 1,
-    minimumParticipation: 1,
-    voteChange: false,
-    multisigThreshold: 1,
+    plugin: 'multisig',
+    governance: {},
+    membership: { members: [] },
+    canCreateProposal: false,
     ...values,
 });
 
 export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFormStage>): ICreateProcessFormStage => ({
+    internalId: '0',
     name: 'stage',
     type: ProcessStageType.NORMAL,
     timing: {
@@ -28,7 +27,6 @@ export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFo
         earlyStageAdvance: false,
     },
     requiredApprovals: 1,
-    bodies: [],
     ...values,
 });
 
@@ -38,9 +36,7 @@ export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFor
     description: 'Description',
     resources: [],
     stages: [],
-    permissions: {
-        proposalCreationMode: ProposalCreationMode.ANY_WALLET,
-        proposalCreationBodies: [],
-    },
+    bodies: [],
+    proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
     ...values,
 });

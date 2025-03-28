@@ -93,19 +93,19 @@ describe('tokenProposal utils', () => {
             isApprovalReachedSpy.mockRestore();
         });
 
-        it('returns true if proposal is open, early execution is enabled, and approval is reached early', () => {
+        it('returns true if proposal is open, vote mode is not vote-replacement and approval is reached early', () => {
             const now = '2025-01-24T10:00:00.000Z';
             const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toMillis() / 1000;
 
             isApprovalReachedSpy.mockReturnValue(true);
-            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.EARLY_EXECUTION });
+            const settings = generateTokenPluginSettings({ votingMode: DaoTokenVotingMode.STANDARD });
             const proposal = generateTokenProposal({ startDate, endDate, settings });
             timeUtils.setTime(now);
             expect(tokenProposalUtils.hasSucceeded(proposal)).toBe(true);
         });
 
-        it('returns false if proposal is open, early execute is enabled and approval is not reached early', () => {
+        it('returns false if proposal is open, vote mode is not vote-replacement and approval is not reached early', () => {
             const now = '2025-01-24T10:00:00.000Z';
             const startDate = DateTime.fromISO('2025-01-20T10:00:00.000Z').toMillis() / 1000;
             const endDate = DateTime.fromISO('2025-01-30T10:00:00.000Z').toMillis() / 1000;

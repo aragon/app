@@ -187,77 +187,56 @@
             "process": "governance process"
           }
         },
-        "multisigFlow": {
-          "distro": {
-            "helpText": "These addresses will be the only ones able to participate.",
-            "label": "Members"
-          },
-          "params": {
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
-            "placeholder": "Enter a number",
-            "required": "Threshold must be at least 1.",
-            "suffix": "of {{members}}"
-          }
-        },
         "permissions": {
-          "proposalCreationBodies": {
-            "error": "You must select at least one body.",
-            "label": "Bodies"
-          },
-          "proposalCreationMode": {
-            "anyDescription": "Any address can create proposals",
-            "anyLabel": "Anyone",
-            "bodiesDescription": "Members of the selected bodies",
-            "bodiesLabel": "Members",
-            "label": "Proposal creation eligibility"
+          "proposalCreation": {
+            "bodies": {
+              "error": "You must select at least one body.",
+              "label": "Bodies"
+            },
+            "mode": {
+              "anyDescription": "Any address can create proposals",
+              "anyLabel": "Anyone",
+              "bodiesDescription": "Members of the selected bodies",
+              "bodiesLabel": "Members",
+              "label": "Proposal creation eligibility"
+            }
           }
-        },
-        "pluginMetadata": {
-          "bodyNameFieldLabel": "Body name",
-          "bodySummaryFieldHelpText": "This is shown on the members list to help visitors understand what the body is responsible for.",
-          "bodySummaryFieldLabel": "Description",
-          "resourcesInputHelpText": "These are shown as links on the members list."
-        },
-        "pluginSelect": {
-          "helpText": "This determines the governance the body uses to make decisions.",
-          "label": "Governance type",
-          "multisigDescription": "Designated members must reach a minimum approval threshold",
-          "tokenDescription": "Majority voting based on token voting power"
         },
         "stages": {
-          "add": "Add stage",
+          "action": {
+            "add": "Add stage",
+            "more": "More",
+            "remove": "Remove stage"
+          },
           "bodies": {
+            "action": {
+              "add": "Add body",
+              "edit": "Edit",
+              "more": "More",
+              "remove": "Remove body"
+            },
             "add": "Add body",
             "helpText": "These bodies will decide whether or not this stage passes.",
             "label": {
               "vetoing": "Vetoing bodies",
               "voting": "Voting bodies"
-            },
-            "summary": {
-              "edit": "Edit",
-              "more": "More",
-              "no": "Disabled",
-              "yes": "Enabled"
-            },
-            "threshold": {
-              "bodies": "bodies",
-              "helpText": {
-                "vetoing": "The number of bodies that must veto this proposal to stop it from advancing.",
-                "voting": "The number of bodies that must approve this proposal to advance it."
-              },
-              "label": {
-                "vetoing": "Veto threshold",
-                "voting": "Approval threshold"
-              }
             }
           },
-          "more": "More",
           "name": {
             "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
             "label": "Stage name"
           },
-          "remove": "Remove stage",
+          "requiredApprovals": {
+            "approve": {
+              "helpText": "The number of bodies that must approve this proposal to advance it.",
+              "label": "Approval threshold"
+            },
+            "summary": "of {{count}} bodies",
+            "veto": {
+              "helpText": "The number of bodies that must veto this proposal to stop it from advancing.",
+              "label": "Veto threshold"
+            }
+          },
           "timing": {
             "dialog": {
               "a11y": {
@@ -313,66 +292,6 @@
                 "description": "Proposals pass this stage after the timelock period.",
                 "label": "Timelock"
               }
-            }
-          }
-        },
-        "tokenFlow": {
-          "distro": {
-            "add": "Add",
-            "address": {
-              "inputHelpText": "The address of the token to be imported",
-              "placeholder": "Enter the token address to import"
-            },
-            "alert": {
-              "description": "In order for this body to be able to participate in governance, you must ensure that this token has these exact functions: getPastVotes, getVotes, getPastTotalSupply.",
-              "message": "Not all tokens are compatible"
-            },
-            "createCardLabel": "Create new token",
-            "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
-            "import": {
-              "helpText": "The address of the token to be imported",
-              "label": "Token address",
-              "placeholder": "Enter the token address to import"
-            },
-            "importCardLabel": "Import token",
-            "importDisabled": "Token importing is not yet available in the new version of the Aragon app.",
-            "importDisabledLink": "Legacy app",
-            "name": {
-              "helpText": "These addreses will receive newly minted tokens.",
-              "label": "Token name",
-              "required": "Token name is required"
-            },
-            "symbol": {
-              "helpText": "This is the abbreviated ticker of the token. For example: UNI",
-              "label": "Token symbol",
-              "maxLength": "Symbol cannot exceed 10 characters",
-              "onlyLetters": "Only letters are allowed",
-              "required": "Token symbol is required"
-            },
-            "typeLabel": "ERC-20 token"
-          },
-          "params": {
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
-            "minParticipation": {
-              "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
-              "label": "Minimum participation",
-              "of": "of"
-            },
-            "placeholder": "Enter a number",
-            "required": "Threshold must be at least 1.",
-            "suffix": "of {{members}}",
-            "supportThreshold": {
-              "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
-              "label": "Support threshold",
-              "success": "Proposal will require a majority.",
-              "warning": "Proposal will only require a minority."
-            },
-            "voteChange": {
-              "helpText": "Allows voters to change their vote during the voting period. This prevents this body from approving or vetoing a proposal early so it can advance or be executed early.",
-              "label": "Vote change",
-              "no": "No",
-              "yes": "Yes"
             }
           }
         }
@@ -442,6 +361,42 @@
           }
         },
         "title": "Finalize governance process"
+      },
+      "setupBodyDialog": {
+        "a11y": {
+          "description": "Create a new voting body for your DAO"
+        },
+        "metadata": {
+          "name": {
+            "label": "Body name"
+          },
+          "resources": {
+            "helpText": "These are shown as links on the members list."
+          },
+          "summary": {
+            "helpText": "This is shown on the members list to help visitors understand what the body is responsible for.",
+            "label": "Description"
+          }
+        },
+        "select": {
+          "plugin": {
+            "helpText": "This determines the governance the body uses to make decisions.",
+            "label": "Governance type"
+          }
+        },
+        "submit": "Save",
+        "title": "Add voting body"
+      }
+    },
+    "daos": {
+      "aragonX": {
+        "aragonXPageHeader": {
+          "cta": "Create proposal",
+          "stat": {
+            "proposals": "Proposals",
+            "treasury": "Treasury"
+          }
+        }
       }
     },
     "dashboard": {
@@ -456,13 +411,6 @@
           },
           "links": "Resources"
         },
-        "header": {
-          "stat": {
-            "members": "Members",
-            "proposals": "Proposals",
-            "treasury": "Treasury"
-          }
-        },
         "main": {
           "assets": {
             "title": "Assets"
@@ -474,6 +422,13 @@
             "title": "Latest proposals"
           },
           "viewAll": "View all"
+        }
+      },
+      "dashboardDefaultHeader": {
+        "stat": {
+          "members": "Members",
+          "proposals": "Proposals",
+          "treasury": "Treasury"
         }
       }
     },
@@ -992,7 +947,6 @@
           },
           "label": "Remove all admins"
         },
-
         "adminVotingTerminal": {
           "description": "Proposals created by admins pass automatically without any governance.",
           "title": "Automatic execution"
@@ -1003,19 +957,6 @@
           "MultisigAddMembers": "Add members",
           "MultisigRemoveMembers": "Remove members",
           "UpdateMultiSigSettings": "Update settings"
-        },
-        "multisigAddMembersAction": {
-          "add": "Add",
-          "addressInput": {
-            "error": {
-              "alreadyInList": "Address has already been added.",
-              "alreadyMember": "Address is already a member of the DAO.",
-              "invalid": "Address is not valid."
-            },
-            "label": "Member",
-            "placeholder": "ENS or 0x…"
-          },
-          "removeMember": "Remove member"
         },
         "multisigCreateProposalSettingsForm": {
           "endTime": {
@@ -1070,35 +1011,14 @@
           "optimisticApprovalLabel": "veto approval",
           "vetoed": "vetoed"
         },
-        "multisigRemoveMembersAction": {
-          "add": "Add",
-          "addressInput": {
-            "error": {
-              "alreadyInList": "Address has already been added."
-            },
-            "placeholder": "ENS or 0x…"
-          },
-          "dialog": {
-            "entity": "Members",
-            "heading": "Remove members"
-          },
-          "removeMember": "Remove member",
-          "select": "select"
-        },
-        "multisigSubmitVote": {
-          "approve": "Approve proposal",
-          "approved": "Approved",
-          "veto": "Veto proposal",
-          "vetoed": "Vetoed"
-        },
-        "multisigUpdateSettingsAction": {
+        "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
               "majority": "Proposal will be approved by majority",
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
-            "helpText": "Minimum approval is how many addresses must approve a proposal for it to pass.",
-            "label": "Minimum approval",
+            "helpText": "At least this many members will have to approve proposals.",
+            "label": "Approval threshold",
             "total": "of {{total}} addresses"
           },
           "onlyListed": {
@@ -1114,8 +1034,25 @@
             }
           }
         },
+        "multisigSetupMembership": {
+          "helpText": "These addresses will be the only ones able to participate",
+          "item": {
+            "alreadyMember": "Address is already a member of the DAO"
+          },
+          "label": "Members"
+        },
+        "multisigSubmitVote": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed"
+        },
         "multisigVoteList": {
           "entity": "Votes"
+        },
+        "setup": {
+          "description": "Designated members must reach a minimum approval threshold",
+          "name": "Multisig"
         }
       },
       "spp": {
@@ -1175,6 +1112,10 @@
         }
       },
       "token": {
+        "setup": {
+          "description": "Majority voting based on token voting power",
+          "name": "Token voting"
+        },
         "tokenActions": {
           "Mint": "Mint",
           "UpdateVoteSettings": "Update settings"
@@ -1277,7 +1218,7 @@
           "distributionTerm": "Distribution",
           "enabled": "Enabled",
           "holders": "{{count}} token holders",
-          "minParticipationDefinition": "≥ {{minimumParticipation}}%",
+          "minParticipationDefinition": "≥ {{minParticipation}}%",
           "minParticipationTerm": "Minimum participation",
           "supplyTerm": "Supply",
           "supportDefinition": "> {{threshold}}%",
@@ -1285,7 +1226,7 @@
           "tokenTerm": "Token",
           "voteChange": "Vote change"
         },
-        "tokenProposalCreationRequirements": {
+        "tokenProposalCreationSettings": {
           "helpText": "The voting power or token balance required to create proposals.",
           "label": "Minimum requirement",
           "placeholder": "≥ 1"
@@ -1302,26 +1243,7 @@
           "vetoed": "vetoed",
           "votesDescription": "of {{details}}"
         },
-        "tokenSubmitVote": {
-          "buttons": {
-            "cancel": "Cancel",
-            "change": "Change vote",
-            "default": "Vote on proposal",
-            "submit": "Submit vote",
-            "submitChange": "Submit change",
-            "submitted": "Vote submitted"
-          },
-          "options": {
-            "abstain": "Abstain",
-            "approveLabel": "approve",
-            "current": "Current",
-            "label": "Do you want to {{label}} this proposal?",
-            "no": "No",
-            "vetoLabel": "veto",
-            "yes": "Yes"
-          }
-        },
-        "tokenUpdateSettingsAction": {
+        "tokenSetupGovernance": {
           "earlyExecution": {
             "helpText": "Allows a proposal to be executed before the voting period ends. This is only possible if the proposal meets the support threshold, satisfies the minimum participation, and can’t be overturned by remaining voters.",
             "label": "Early execution",
@@ -1350,7 +1272,7 @@
             "label": "Minimum duration"
           },
           "minParticipation": {
-            "helpText": "This is the percentage of tokens that must participate, out of the total supply, for a proposal to pass.",
+            "helpText": "The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.",
             "label": "Minimum participation"
           },
           "minVotingPower": {
@@ -1362,8 +1284,12 @@
               "majority": "Proposal will be approved by majority",
               "minority": "Proposals could be approved by a minority rather than a majority."
             },
-            "helpText": "The percentage of tokens voting Yes, out of the total votes cast, must exceed this.",
-            "label": "Support threshold"
+            "helpText": "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.",
+            "label": "Support threshold",
+            "tag": {
+              "no": "No",
+              "yes": "Yes"
+            }
           },
           "voteChange": {
             "helpText": "Allows voters to change their vote during the voting period. This prevents the body from giving early approval or veto.",
@@ -1371,6 +1297,70 @@
             "switch": {
               "label": "Enabled"
             }
+          }
+        },
+        "tokenSetupMembership": {
+          "createToken": {
+            "member": {
+              "action": {
+                "add": "Add",
+                "remove": "Remove"
+              },
+              "address": {
+                "label": "Address",
+                "placeholder": "ENS or 0x…"
+              },
+              "tokens": {
+                "label": "Tokens"
+              }
+            },
+            "name": {
+              "helpText": "These addreses will receive newly minted tokens.",
+              "label": "Token name"
+            },
+            "symbol": {
+              "helpText": "This is the abbreviated ticker of the token. For example: UNI",
+              "label": "Token symbol",
+              "onlyLetters": "Only letters are allowed"
+            }
+          },
+          "importDisabled": "Token importing is not yet available in the new version of the Aragon app.",
+          "importDisabledLink": "Legacy app",
+          "importToken": {
+            "alert": {
+              "description": "In order for this body to be able to participate in governance, you must ensure that this token has these exact functions: getPastVotes, getVotes, getPastTotalSupply.",
+              "message": "Not all tokens are compatible"
+            },
+            "helpText": "The address of the token to be imported",
+            "label": "Token address",
+            "placeholder": "Enter the token address to import"
+          },
+          "type": {
+            "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
+            "label": "ERC-20 token",
+            "option": {
+              "create": "Create new token",
+              "import": "Import token"
+            }
+          }
+        },
+        "tokenSubmitVote": {
+          "buttons": {
+            "cancel": "Cancel",
+            "change": "Change vote",
+            "default": "Vote on proposal",
+            "submit": "Submit vote",
+            "submitChange": "Submit change",
+            "submitted": "Vote submitted"
+          },
+          "options": {
+            "abstain": "Abstain",
+            "approveLabel": "approve",
+            "current": "Current",
+            "label": "Do you want to {{label}} this proposal?",
+            "no": "No",
+            "vetoLabel": "veto",
+            "yes": "Yes"
           }
         },
         "tokenVoteList": {
@@ -1586,7 +1576,8 @@
       },
       "wizardDialog": {
         "container": {
-          "back": "Back"
+          "back": "Back",
+          "close": "Close"
         }
       },
       "wizardPage": {

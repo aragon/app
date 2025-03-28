@@ -17,8 +17,8 @@ const config = {
         '^@/(.*)$': '<rootDir>/src/$1',
     },
     transform: {
-        '^.+\\.(svg|css)$': '<rootDir>/src/test/fileTransform.js',
-        '^.+\\.m?[tj]sx?$': ['ts-jest', { tsconfig: { jsx: 'react-jsx' }, isolatedModules: true }],
+        '^.+\\.(svg|jpg|css)$': '<rootDir>/src/test/fileTransform.js',
+        '^.+\\.m?[tj]sx?$': ['ts-jest', { tsconfig: { jsx: 'react-jsx', isolatedModules: true } }],
     },
     transformIgnorePatterns: ['node_modules/(?!(@aragon/gov-ui-kit|wagmi|@wagmi)/)'],
 };

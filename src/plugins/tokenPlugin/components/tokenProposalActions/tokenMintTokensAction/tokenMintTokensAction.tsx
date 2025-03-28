@@ -4,14 +4,30 @@ import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AddressInput, addressUtils, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    InputNumber,
+    type ICompositeAddress,
+    type IProposalActionComponentProps,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
-import type { ITokenMintTokensFormData } from './tokenMintTokensActionFormDefinitions';
 
 export interface ITokenMintTokensActionProps
     extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
+
+export interface ITokenMintTokensFormData {
+    /**
+     * The address receiving the tokens.
+     */
+    receiver?: ICompositeAddress;
+    /**
+     * The amount of tokens to be minted.
+     */
+    amount?: string;
+}
 
 const mintTokensAbi = {
     type: 'function',

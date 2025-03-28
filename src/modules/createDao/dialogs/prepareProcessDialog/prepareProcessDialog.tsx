@@ -78,13 +78,11 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
             const sppMetadata = prepareProcessDialogUtils.prepareSppMetadata(values);
             const { IpfsHash: sppMetadataHash } = await pinJson({ body: sppMetadata }, params);
 
-            const pinPluginsMetadataPromises = values.stages
-                .flatMap((stage) => stage.bodies)
-                .map((plugin) => {
-                    const pluginMetadata = prepareProcessDialogUtils.preparePluginMetadata(plugin);
+            const pinPluginsMetadataPromises = values.bodies.map((plugin) => {
+                const pluginMetadata = prepareProcessDialogUtils.preparePluginMetadata(plugin);
 
-                    return pinJson({ body: pluginMetadata }, params);
-                });
+                return pinJson({ body: pluginMetadata }, params);
+            });
 
             const pluginMetadataResults = (await Promise.all(pinPluginsMetadataPromises)).map(
                 (result) => result.IpfsHash,

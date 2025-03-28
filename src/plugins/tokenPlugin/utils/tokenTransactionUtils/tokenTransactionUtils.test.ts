@@ -1,3 +1,4 @@
+import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
@@ -74,11 +75,14 @@ describe('tokenTransaction utils', () => {
         it('calls the encodeAbiParameters with the correct params', () => {
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
-            const permissionSettings = { minVotingPower: '2', bodyId: '1' };
+            const token = { address: zeroAddress, name: '', symbol: '' };
             const body = generateCreateProcessFormBody({
-                supportThreshold: 2,
-                minimumParticipation: 2,
-                tokenType: 'new',
+                membership: { members: [], token } as ISetupBodyFormMembership,
+                governance: {
+                    supportThreshold: 2,
+                    minParticipation: 2,
+                    tokenType: 'new',
+                },
             });
             const stage = generateCreateProcessFormStage({
                 timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
@@ -94,12 +98,14 @@ describe('tokenTransaction utils', () => {
             };
             votingSettingsSpy.mockReturnValue(votingSettingsMock);
 
-            const params = { metadataCid, dao, permissionSettings, body, stage };
-            tokenTransactionUtils.buildPrepareInstallData(params);
+            const params = [{ metadataCid, dao, body, stage }] as Parameters<
+                typeof tokenTransactionUtils.buildPrepareInstallData
+            >;
+            tokenTransactionUtils.buildPrepareInstallData(...params);
 
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(tokenPluginSetupAbi, [
                 votingSettingsMock,
-                { addr: zeroAddress, name: '', symbol: '' },
+                { addr: token.address, name: token.name, symbol: token.symbol },
                 { amounts: [], receivers: [] },
                 { operation: 1, target: '0x56ce4D8006292Abf418291FaE813C1E3769240A4' },
                 BigInt(0),
@@ -112,15 +118,18 @@ describe('tokenTransaction utils', () => {
             const transactionData = '0xTransactionData';
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
-            const permissionSettings = { minVotingPower: '1', bodyId: '1' };
-            const body = generateCreateProcessFormBody();
+            const body = generateCreateProcessFormBody({
+                membership: { members: [], token: {} } as ISetupBodyFormMembership,
+            });
             const stage = generateCreateProcessFormStage();
 
             encodeAbiParametersSpy.mockReturnValue(encodedPluginData);
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
 
-            const params = { metadataCid, dao, permissionSettings, body, stage };
-            const result = tokenTransactionUtils.buildPrepareInstallData(params);
+            const params = [{ metadataCid, dao, body, stage }] as Parameters<
+                typeof tokenTransactionUtils.buildPrepareInstallData
+            >;
+            const result = tokenTransactionUtils.buildPrepareInstallData(...params);
 
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 tokenPlugin.repositoryAddresses[dao.network],
@@ -134,66 +143,40 @@ describe('tokenTransaction utils', () => {
     });
 
     describe('buildInstallDataVotingSettings', () => {
-        it('returns the correct voting mode when vote change is enabled', () => {
-            const body = generateCreateProcessFormBody({ voteChange: true });
+        it('returns the correct voting mode', () => {
+            const body = generateCreateProcessFormBody({
+                governance: { votingMode: DaoTokenVotingMode.VOTE_REPLACEMENT, minProposerVotingPower: '1' },
+                membership: { members: [], token: { decimals: 18 } } as ISetupBodyFormMembership,
+            });
             const stage = generateCreateProcessFormStage();
-            const permissionSettings = { minVotingPower: '1', bodyId: '' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
-
+            const params = [{ body, stage }] as Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](...params);
             expect(result.votingMode).toBe(DaoTokenVotingMode.VOTE_REPLACEMENT);
         });
 
-        it('returns the correct voting mode when early execution is enabled', () => {
-            const body = generateCreateProcessFormBody();
-            const stage = generateCreateProcessFormStage({
-                timing: { votingPeriod: { days: 1, hours: 0, minutes: 0 }, earlyStageAdvance: true },
-            });
-            const permissionSettings = { minVotingPower: '1', bodyId: '' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
-
-            expect(result.votingMode).toBe(DaoTokenVotingMode.EARLY_EXECUTION);
-        });
-
-        it('returns standard voting mode when vote replacement and early execution are not set', () => {
-            const body = generateCreateProcessFormBody();
-            const stage = generateCreateProcessFormStage();
-            const permissionSettings = { minVotingPower: '3', bodyId: '' };
-
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
-
-            expect(result.votingMode).toBe(DaoTokenVotingMode.STANDARD);
-        });
-
-        it('returns 0 for min proposer voting power when permissionSettings are undefined', () => {
-            const body = generateCreateProcessFormBody();
-            const stage = generateCreateProcessFormStage();
-            const params = { body, stage, permissionSettings: undefined };
-
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
-            expect(result.minProposerVotingPower).toBe(BigInt(0));
-        });
-
         it('correctly calculates the voting settings', () => {
-            const body = generateCreateProcessFormBody({ supportThreshold: 3, minimumParticipation: 4 });
+            const body = generateCreateProcessFormBody({
+                governance: {
+                    supportThreshold: 3,
+                    minParticipation: 4,
+                    votingMode: DaoTokenVotingMode.STANDARD,
+                    minProposerVotingPower: '100',
+                },
+                membership: { members: [], token: { decimals: 18 } } as ISetupBodyFormMembership,
+            });
             const stage = generateCreateProcessFormStage({
                 timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
             });
-            const permissionSettings = { minVotingPower: '2', bodyId: '' };
 
-            const params = { body, stage, permissionSettings };
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](params);
+            const params = [{ body, stage }] as Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
+            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](...params);
 
             const expectedResult = {
                 votingMode: DaoTokenVotingMode.STANDARD,
                 supportThreshold: 30000,
                 minParticipation: 40000,
                 minDuration: BigInt(7200),
-                minProposerVotingPower: BigInt(2e18),
+                minProposerVotingPower: BigInt(100000000000000000000),
             };
 
             expect(result).toEqual(expectedResult);

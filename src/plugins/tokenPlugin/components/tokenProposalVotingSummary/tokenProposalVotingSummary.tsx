@@ -54,7 +54,7 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
     const winningOptionPercentage = totalVotes > 0 ? (winningOption / totalVotes) * 100 : 0;
     const formattedWinningOption = formatterUtils.formatNumber(winningOption, { format: NumberFormat.GENERIC_SHORT });
 
-    const supportThresholdPercentage = tokenSettingsUtils.fromRatioToPercentage(supportThreshold);
+    const supportThresholdPercentage = tokenSettingsUtils.ratioToPercentage(supportThreshold);
     const supportReached = winningOptionPercentage >= supportThresholdPercentage;
 
     const isApprovalReached = tokenProposalUtils.isApprovalReached(proposal);
