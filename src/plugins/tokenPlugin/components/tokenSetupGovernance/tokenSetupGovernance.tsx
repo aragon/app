@@ -15,6 +15,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
 
     const votingModeField = useFormField<ITokenSetupGovernanceForm, 'votingMode'>('votingMode', {
         fieldPrefix: formPrefix,
+        defaultValue: DaoTokenVotingMode.STANDARD,
     });
 
     const handleEarlyExecutionToggle = (checked: boolean) =>

@@ -47,7 +47,6 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
 
     const handleAddBody = () => {
         const params: ISetupBodyDialogParams = { onSubmit: handleBodySubmit() };
-        // TODO: check circular dependency on dialog id
         open('SETUP_BODY', { params });
     };
 
