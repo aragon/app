@@ -41,7 +41,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
 
     const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${formPrefix}.type` });
 
-    const processBodies = useWatch<Record<string, ICreateProcessFormData['bodies']>>({ name: 'bodies' });
+    const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
     const stageBodies = processBodies.filter((body) => body.stageId === stage.internalId);
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;

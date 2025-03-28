@@ -16,7 +16,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
         fields: stages,
         append: appendStage,
         remove: removeStage,
-    } = useFieldArray<Record<string, ICreateProcessFormData['stages']>>({ name: 'stages' });
+    } = useFieldArray<ICreateProcessFormData, 'stages'>({ name: 'stages' });
 
     const handleAddStage = () => appendStage(createProcessFormUtils.buildDefaultStage());
 
