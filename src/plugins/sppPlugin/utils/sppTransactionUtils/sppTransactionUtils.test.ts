@@ -266,7 +266,7 @@ describe('sppTransaction utils', () => {
         });
 
         it('correctly builds the update stages transaction', () => {
-            const sppBody = generateCreateProcessFormBody();
+            const sppBody = generateCreateProcessFormBody({ stageIndex: 0 });
             const sppStage = generateCreateProcessFormStage();
             const values = generateCreateProcessFormData({ stages: [sppStage], bodies: [sppBody] });
             const transactionData = '0xupdate-stages';

@@ -87,7 +87,7 @@ describe('multisigTransaction utils', () => {
             };
             const expectedPluginSettings = {
                 onlyListed: true,
-                minApprovals: (body.membership as unknown as IMultisigSetupGovernanceForm).minApprovals,
+                minApprovals: (body.governance as IMultisigSetupGovernanceForm).minApprovals,
             };
 
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginSetupAbi, [

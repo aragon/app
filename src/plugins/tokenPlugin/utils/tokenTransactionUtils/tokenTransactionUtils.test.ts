@@ -1,3 +1,4 @@
+import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
@@ -75,7 +76,9 @@ describe('tokenTransaction utils', () => {
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
             const permissionSettings = { minVotingPower: '2', bodyId: '1' };
+            const token = { address: zeroAddress, name: '', symbol: '' };
             const body = generateCreateProcessFormBody({
+                membership: { members: [], token } as ISetupBodyFormMembership,
                 governance: {
                     supportThreshold: 2,
                     minParticipation: 2,
@@ -103,7 +106,7 @@ describe('tokenTransaction utils', () => {
 
             expect(encodeAbiParametersSpy).toHaveBeenCalledWith(tokenPluginSetupAbi, [
                 votingSettingsMock,
-                { addr: zeroAddress, name: '', symbol: '' },
+                { addr: token.address, name: token.name, symbol: token.symbol },
                 { amounts: [], receivers: [] },
                 { operation: 1, target: '0x56ce4D8006292Abf418291FaE813C1E3769240A4' },
                 BigInt(0),
@@ -117,7 +120,9 @@ describe('tokenTransaction utils', () => {
             const metadataCid = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
             const permissionSettings = { minVotingPower: '1', bodyId: '1' };
-            const body = generateCreateProcessFormBody();
+            const body = generateCreateProcessFormBody({
+                membership: { members: [], token: {} } as ISetupBodyFormMembership,
+            });
             const stage = generateCreateProcessFormStage();
 
             encodeAbiParametersSpy.mockReturnValue(encodedPluginData);
@@ -165,7 +170,9 @@ describe('tokenTransaction utils', () => {
         });
 
         it('correctly calculates the voting settings', () => {
-            const body = generateCreateProcessFormBody({ governance: { supportThreshold: 3, minParticipation: 4 } });
+            const body = generateCreateProcessFormBody({
+                governance: { supportThreshold: 3, minParticipation: 4, votingMode: DaoTokenVotingMode.STANDARD },
+            });
             const stage = generateCreateProcessFormStage({
                 timing: { votingPeriod: { days: 0, hours: 2, minutes: 0 }, earlyStageAdvance: false },
             });

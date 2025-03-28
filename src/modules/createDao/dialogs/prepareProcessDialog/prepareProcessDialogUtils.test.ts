@@ -169,7 +169,7 @@ describe('prepareProcessDialog utils', () => {
         });
 
         it('prepares the plugin install data with no permissions when proposal creation mode is any wallet', () => {
-            const body = generateCreateProcessFormBody({ id: 'body1', plugin: 'multisig' });
+            const body = generateCreateProcessFormBody({ id: 'body1', plugin: 'multisig', stageIndex: 0 });
             const stage = generateCreateProcessFormStage();
             const permissions = {
                 proposalCreationMode: ProposalCreationMode.ANY_WALLET,
@@ -193,7 +193,7 @@ describe('prepareProcessDialog utils', () => {
         });
 
         it('prepares the plugin install data with defined permissions when proposal creation mode is listed bodies', () => {
-            const body = generateCreateProcessFormBody({ id: 'body1', plugin: 'token-voting' });
+            const body = generateCreateProcessFormBody({ id: 'body1', plugin: 'token-voting', stageIndex: 0 });
             const listedBody = { bodyId: body.id };
             const stage = generateCreateProcessFormStage();
             const permissions = {
