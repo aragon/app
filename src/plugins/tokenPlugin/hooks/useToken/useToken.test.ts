@@ -28,32 +28,31 @@ describe('useToken hook', () => {
 
         useReadContractsSpy.mockReturnValue({
             data: mockData,
-            error: null,
+            isError: null,
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType<[number, string, string, string], false, unknown>);
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
         expect(result.current.token).toEqual(mockReturn);
-        expect(result.current.error).toBeNull();
+        expect(result.current.isError).toBeNull();
         expect(result.current.isLoading).toBe(false);
     });
 
     it('returns null data and error when errored', () => {
         const address: Hash = '0x1234567890abcdef1234567890abcdef123456789';
         const chainId = 42;
-        const error = new Error('Something went wrong');
 
         useReadContractsSpy.mockReturnValue({
             data: [] as [],
-            error,
+            isError: true,
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType<[], false, unknown>);
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
         expect(result.current.token).toBeNull();
-        expect(result.current.error).toBe(error);
+        expect(result.current.isError).toBe(true);
         expect(result.current.isLoading).toBe(false);
     });
 
@@ -63,14 +62,14 @@ describe('useToken hook', () => {
 
         useReadContractsSpy.mockReturnValue({
             data: undefined,
-            error: null,
+            isError: null,
             isLoading: true,
         } as unknown as wagmi.UseReadContractsReturnType<[number, string, string, bigint], false, unknown>);
 
         const { result } = renderHook(() => useToken({ address, chainId }));
 
         expect(result.current.token).toBeNull();
-        expect(result.current.error).toBeNull();
+        expect(result.current.isError).toBeNull();
         expect(result.current.isLoading).toBe(true);
     });
 });
