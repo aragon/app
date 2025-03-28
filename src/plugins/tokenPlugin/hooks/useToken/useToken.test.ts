@@ -14,15 +14,15 @@ describe('useToken hook', () => {
         const address: Hash = '0x1234567890abcdef1234567890abcdef123456789';
         const chainId = 42;
         const mockReturn = {
-            decimals: 18,
             name: 'MockToken',
             symbol: 'MTK',
+            decimals: 18,
             totalSupply: '1000000000000000000',
         };
-        const mockData: [number, string, string, string] = [
-            mockReturn.decimals,
+        const mockData: [string, string, number, string] = [
             mockReturn.name,
             mockReturn.symbol,
+            mockReturn.decimals,
             mockReturn.totalSupply,
         ];
 
