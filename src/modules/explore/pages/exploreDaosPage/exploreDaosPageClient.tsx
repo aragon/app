@@ -8,7 +8,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Heading } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
-import React from 'react';
 import doItYourselfIcon from '../../../../assets/images/doItYourselfIcon.svg';
 import enterpriseServiceIcon from '../../../../assets/images/enterpriseServiceIcon.svg';
 import NetBackground from '../../../../assets/images/net_bg.svg';

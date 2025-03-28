@@ -1,4 +1,4 @@
-import { Hash } from 'viem';
+import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
 
 export interface IUseERC20VotingTokenCheckParams {

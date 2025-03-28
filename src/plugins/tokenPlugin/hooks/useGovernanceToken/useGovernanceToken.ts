@@ -1,5 +1,5 @@
 import { useToken } from '@/plugins/tokenPlugin/hooks/useToken';
-import { IUseTokenResult } from '@/plugins/tokenPlugin/hooks/useToken/useToken';
+import type { IUseTokenResult } from '@/plugins/tokenPlugin/hooks/useToken/useToken';
 import type { Hash } from 'viem';
 import type { ReadContractsErrorType } from 'wagmi/actions';
 import { useERC20VotingTokenCheck } from './useERC20VotingTokenCheck';

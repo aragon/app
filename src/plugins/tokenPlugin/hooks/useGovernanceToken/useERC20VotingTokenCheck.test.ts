@@ -7,9 +7,9 @@ describe('useToken hook', () => {
     const useReadContractsSpy = jest.spyOn(wagmi, 'useReadContracts');
 
     const successCaseResponse = [
-        { result: 0n, status: 'success' },
-        { result: 0n, status: 'success' },
-        { result: 0n, status: 'success' },
+        { result: 0, status: 'success' },
+        { result: 0, status: 'success' },
+        { result: 0, status: 'success' },
         { result: '0x0000000000000000000000000000000000000000', status: 'success' },
     ];
 
