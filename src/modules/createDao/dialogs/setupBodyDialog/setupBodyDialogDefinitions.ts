@@ -7,21 +7,21 @@ export interface ISetupBodyForm<
     TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
 > {
     /**
+     * Internal ID of the body used to reference the body.
+     */
+    internalId: string;
+    /**
      * Name of the body.
      */
     name: string;
-    /**
-     * Unique ID of the body generated automatically.
-     */
-    id: string;
     /**
      * Optional description of the voting body.
      */
     description?: string;
     /**
-     * Index of the stage the body is associated with, only defined when setting up advanced governance processes.
+     * ID of the stage the body is associated with, only defined when setting up advanced governance processes.
      */
-    stageIndex?: number;
+    stageId?: string;
     /**
      * Resources of the body.
      */

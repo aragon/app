@@ -13,13 +13,13 @@ export interface IStageBodiesFieldProps {
      */
     isOptimisticStage?: boolean;
     /**
-     * Index of the current stage, only set for advanced governance processes.
+     * ID of the stage to add the governance bodies for.
      */
-    stageIndex?: number;
+    stageId?: string;
 }
 
 export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageIndex } = props;
+    const { isOptimisticStage, stageId } = props;
 
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
@@ -33,12 +33,12 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
     const watchBodiesField = useWatch<Record<string, ICreateProcessFormData['bodies']>>({ name: 'bodies' });
     const controlledBodiesField = bodiesField.map((field, index) => ({ ...field, ...watchBodiesField[index] }));
 
-    const stageBodies = controlledBodiesField.filter((body) => body.stageIndex === stageIndex);
+    const stageBodies = controlledBodiesField.filter((body) => body.stageId === stageId);
 
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
         if (index == null) {
             const bodyId = crypto.randomUUID();
-            appendBody({ ...values, id: bodyId, stageIndex });
+            appendBody({ ...values, internalId: bodyId, stageId });
         } else {
             updateBody(index, values);
         }

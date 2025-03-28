@@ -31,7 +31,10 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
     const [isInitialized, setIsInitialized] = useState(false);
 
     const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
-    const defaultBodiesValue = useMemo(() => processBodies.map((body) => ({ bodyId: body.id })), [processBodies]);
+    const defaultBodiesValue = useMemo(
+        () => processBodies.map((body) => ({ bodyId: body.internalId })),
+        [processBodies],
+    );
 
     const {
         onChange: onProposalCreationModeChange,
@@ -107,11 +110,11 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                 >
                     {processBodies.map((body) => (
                         <VotingBodyCheckboxCard
-                            key={body.id}
+                            key={body.internalId}
                             body={body}
                             onChange={handleBodyCheckboxChange}
-                            checked={proposalCreationBodies.some(({ bodyId }) => body.id === bodyId)}
-                            fieldPrefix={`${proposalCreationBodiesName}.${proposalCreationBodies.findIndex(({ bodyId }) => body.id === bodyId).toString()}`}
+                            checked={proposalCreationBodies.some(({ bodyId }) => body.internalId === bodyId)}
+                            fieldPrefix={`${proposalCreationBodiesName}.${proposalCreationBodies.findIndex(({ bodyId }) => body.internalId === bodyId).toString()}`}
                         />
                     ))}
                 </InputContainer>

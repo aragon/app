@@ -13,15 +13,6 @@ export enum ProcessStageType {
     TIMELOCK = 'TIMELOCK',
 }
 
-const defaultVotingPeriod = { days: 7, minutes: 0, hours: 0 };
-
-export const defaultStage: ICreateProcessFormStage = {
-    name: '',
-    type: ProcessStageType.NORMAL,
-    timing: { votingPeriod: defaultVotingPeriod, earlyStageAdvance: false },
-    requiredApprovals: 1,
-};
-
 export interface ICreateProcessFormData {
     /**
      * Name of the process.
@@ -69,6 +60,10 @@ export interface ICreateProcessFormStageTiming {
 }
 
 export interface ICreateProcessFormStage {
+    /**
+     * Internal ID of the stage used as reference for bodies.
+     */
+    internalId: string;
     /**
      * Name of the stage.
      */

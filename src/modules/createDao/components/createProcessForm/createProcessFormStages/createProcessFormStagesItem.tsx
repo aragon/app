@@ -15,13 +15,13 @@ import { StageTypeField } from './fields/stageTypeField';
 
 export interface ICreateProcessFormStagesItemProps {
     /**
-     * Index of the stage.
+     * Prefix to be prepended to all form fields.
      */
-    index: number;
+    formPrefix: string;
     /**
-     * Stage field name.
+     * Stage to display the details for.
      */
-    name: string;
+    stage: ICreateProcessFormStage;
     /**
      * Current number of stages.
      */
@@ -29,20 +29,20 @@ export interface ICreateProcessFormStagesItemProps {
     /**
      * Callback called on delete button click.
      */
-    onDelete: (index: number) => void;
+    onDelete: () => void;
 }
 
 const nameMaxLength = 40;
 
 export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemProps> = (props) => {
-    const { index, name, stagesCount, onDelete } = props;
+    const { formPrefix, stage, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
 
-    const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${name}.type` });
+    const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${formPrefix}.type` });
 
     const processBodies = useWatch<Record<string, ICreateProcessFormData['bodies']>>({ name: 'bodies' });
-    const stageBodies = processBodies.filter((body) => body.stageIndex === index);
+    const stageBodies = processBodies.filter((body) => body.stageId === stage.internalId);
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -51,7 +51,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
         label: t('app.createDao.createProcessForm.stages.name.label'),
         trimOnBlur: true,
         rules: { required: true, maxLength: nameMaxLength },
-        fieldPrefix: name,
+        fieldPrefix: formPrefix,
         defaultValue: '',
     });
 
@@ -62,12 +62,12 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />
-            <StageTypeField fieldPrefix={name} />
-            <StageTimingField fieldPrefix={`${name}.timing`} stageType={stageType} />
-            {!isTimelockStage && <StageBodiesField stageIndex={index} isOptimisticStage={isOptimisticStage} />}
+            <StageTypeField fieldPrefix={formPrefix} />
+            <StageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
+            {!isTimelockStage && <StageBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />}
             {stageBodies.length > 0 && (
                 <StageRequiredApprovalsField
-                    fieldPrefix={name}
+                    fieldPrefix={formPrefix}
                     stageBodiesCount={stageBodies.length}
                     isOptimisticStage={isOptimisticStage}
                 />
@@ -82,7 +82,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                         </Button>
                     }
                 >
-                    <Dropdown.Item onClick={() => onDelete(index)}>
+                    <Dropdown.Item onClick={onDelete}>
                         {t('app.createDao.createProcessForm.stages.action.remove')}
                     </Dropdown.Item>
                 </Dropdown.Container>

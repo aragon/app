@@ -24,7 +24,7 @@ export interface IVotingBodyCheckboxCardProps {
 
 export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (props) => {
     const { body, onChange, checked, fieldPrefix } = props;
-    const { name, description, plugin, id } = body;
+    const { name, description, plugin, internalId } = body;
 
     const LoadedComponent = pluginRegistryUtils.getSlotComponent({
         slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
@@ -35,7 +35,7 @@ export const VotingBodyCheckboxCard: React.FC<IVotingBodyCheckboxCardProps> = (p
         <CheckboxCard
             label={name}
             description={description}
-            onCheckedChange={(isChecked) => onChange(id, Boolean(isChecked))}
+            onCheckedChange={(isChecked) => onChange(internalId, Boolean(isChecked))}
             checked={checked}
         >
             {LoadedComponent && <LoadedComponent body={body} fieldPrefix={fieldPrefix} />}

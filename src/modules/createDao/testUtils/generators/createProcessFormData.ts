@@ -8,7 +8,7 @@ import {
 export const generateCreateProcessFormBody = (
     values?: Partial<ICreateProcessFormData['bodies'][number]>,
 ): ICreateProcessFormData['bodies'][number] => ({
-    id: 'body1',
+    internalId: 'body1',
     name: 'body1',
     resources: [],
     plugin: 'multisig',
@@ -18,6 +18,7 @@ export const generateCreateProcessFormBody = (
 });
 
 export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFormStage>): ICreateProcessFormStage => ({
+    internalId: '0',
     name: 'stage',
     type: ProcessStageType.NORMAL,
     timing: {

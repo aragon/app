@@ -147,7 +147,9 @@ class SppTransactionUtils {
         }
 
         const conditionAddresses = bodies.reduce<string[]>((current, body, bodyIndex) => {
-            const isBodyAllowed = proposalCreationBodies.find((bodySettings) => bodySettings.bodyId === body.id);
+            const isBodyAllowed = proposalCreationBodies.find(
+                (bodySettings) => bodySettings.bodyId === body.internalId,
+            );
             const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
             return isBodyAllowed ? [...current, bodyConditionAddress] : current;
@@ -168,9 +170,9 @@ class SppTransactionUtils {
         const { stages } = values;
 
         const processedBodyAddresses = [...bodyAddresses];
-        const processedStages = stages.map((stage, index) => {
+        const processedStages = stages.map((stage) => {
             const { type, timing, requiredApprovals } = stage;
-            const stageBodies = values.bodies.filter((body) => body.stageIndex === index);
+            const stageBodies = values.bodies.filter((body) => body.stageId === stage.internalId);
 
             const stageTiming = this.processStageTiming(timing);
             const stageApprovals = this.processStageApprovals(requiredApprovals, type);

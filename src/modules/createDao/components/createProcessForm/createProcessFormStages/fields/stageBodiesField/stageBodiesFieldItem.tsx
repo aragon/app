@@ -27,7 +27,7 @@ export const StageBodiesFieldItem: React.FC<IStageBodiesFieldItemProps> = (props
     return (
         <Card className="overflow-hidden border border-neutral-100">
             <Accordion.Container isMulti={true}>
-                <Accordion.Item value={body.id}>
+                <Accordion.Item value={body.internalId}>
                     <Accordion.ItemHeader>
                         <Heading size="h4">{body.name}</Heading>
                     </Accordion.ItemHeader>

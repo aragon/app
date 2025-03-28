@@ -106,15 +106,15 @@ class PrepareProcessDialogUtils {
 
         const sppInstallData = sppTransactionUtils.buildPreparePluginInstallData(sppMetadata, dao);
 
-        const pluginsInstallData = stages.map((stage, index) => {
-            const stageBodies = values.bodies.filter((body) => body.stageIndex === index);
+        const pluginsInstallData = stages.map((stage) => {
+            const stageBodies = values.bodies.filter((body) => body.stageId === stage.internalId);
             const installData = stageBodies.map((body) => {
                 const metadataCid = pluginsMetadata.shift()!;
 
                 const permissionSettings =
                     proposalCreationMode === ProposalCreationMode.ANY_WALLET
                         ? undefined
-                        : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.id);
+                        : proposalCreationBodies.find((bodyPermissions) => bodyPermissions.bodyId === body.internalId);
 
                 const params = { metadataCid, dao, permissionSettings, body, stage };
                 const prepareFunction = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginInstallDataParams, Hex>({
