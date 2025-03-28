@@ -4,4 +4,4 @@ export const MultisigAddMembersAction = dynamic(() =>
     import('./multisigAddMembersAction').then((mod) => mod.MultisigAddMembersAction),
 );
 
-export type { IMultisigAddMembersActionFormData, IMultisigAddMembersActionProps } from './multisigAddMembersAction';
+export type { IMultisigAddMembersActionProps } from './multisigAddMembersAction';

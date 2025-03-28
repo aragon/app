@@ -17,7 +17,7 @@ export const generateCreateProcessFormBody = (values?: Partial<ICreateProcessFor
     supportThreshold: 1,
     minParticipation: 1,
     votingMode: DaoTokenVotingMode.STANDARD,
-    multisigThreshold: 1,
+    minApprovals: 1,
     ...values,
 });
 
