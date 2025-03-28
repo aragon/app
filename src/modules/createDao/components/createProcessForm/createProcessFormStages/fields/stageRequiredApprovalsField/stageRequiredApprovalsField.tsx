@@ -1,6 +1,6 @@
+import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
-import { InputContainer, InputNumber, Progress } from '@aragon/gov-ui-kit';
+import { useWatch } from 'react-hook-form';
 import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 
 export interface IStageRequiredApprovalsFieldProps {
@@ -18,39 +18,33 @@ export interface IStageRequiredApprovalsFieldProps {
     isOptimisticStage: boolean;
 }
 
+const requiredApprovalsDefaultValue = 1;
+
 export const StageRequiredApprovalsField: React.FC<IStageRequiredApprovalsFieldProps> = (props) => {
     const { fieldPrefix, stageBodiesCount, isOptimisticStage } = props;
 
     const { t } = useTranslations();
 
-    const requiredApprovalsField = useFormField<ICreateProcessFormStage, 'requiredApprovals'>('requiredApprovals', {
-        rules: { min: 0, max: stageBodiesCount },
-        defaultValue: 1,
-        fieldPrefix,
+    const fieldName = `${fieldPrefix}.requiredApprovals`;
+    const value = useWatch<Record<string, ICreateProcessFormStage['requiredApprovals']>>({
+        name: fieldName,
+        defaultValue: requiredApprovalsDefaultValue,
     });
 
-    const approvalsLabelNamespace = 'app.createDao.createProcessForm.stages.bodies.threshold';
-    const approvalsLabelContext = isOptimisticStage ? 'vetoing' : 'voting';
-    const requiredApprovalsLabel = t(`${approvalsLabelNamespace}.label.${approvalsLabelContext}`);
-    const requiredApprovalsHelpText = t(`${approvalsLabelNamespace}.helpText.${approvalsLabelContext}`);
+    const labelContext = isOptimisticStage ? 'veto' : 'approve';
 
     return (
-        <InputContainer
-            id="requiredApprovals"
-            label={requiredApprovalsLabel}
-            useCustomWrapper={true}
-            helpText={requiredApprovalsHelpText}
-        >
-            <div className="flex w-full items-center gap-x-4 rounded-xl border border-neutral-100 p-6">
-                <InputNumber min={0} max={stageBodiesCount} {...requiredApprovalsField} />
-                <div className="my-auto flex size-full flex-col justify-center gap-y-2">
-                    <Progress value={(requiredApprovalsField.value / stageBodiesCount) * 100} />
-                    <p className="text-right">
-                        {requiredApprovalsField.value} of {stageBodiesCount}{' '}
-                        {t('app.createDao.createProcessForm.stages.bodies.threshold.bodies')}
-                    </p>
-                </div>
-            </div>
-        </InputContainer>
+        <NumberProgressInput
+            label={t(`app.createDao.createProcessForm.stages.requiredApprovals.${labelContext}.label`)}
+            helpText={t(`app.createDao.createProcessForm.stages.requiredApprovals.${labelContext}.helpText`)}
+            min={0}
+            fieldName={fieldName}
+            valueLabel={value.toString()}
+            defaultValue={requiredApprovalsDefaultValue}
+            total={stageBodiesCount}
+            totalLabel={t('app.createDao.createProcessForm.stages.requiredApprovals.summary', {
+                count: stageBodiesCount,
+            })}
+        />
     );
 };

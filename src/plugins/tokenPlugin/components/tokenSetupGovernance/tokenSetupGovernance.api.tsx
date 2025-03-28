@@ -1,23 +1,16 @@
-import type { IToken } from '@/modules/finance/api/financeService';
+import type { IPluginSetupGovernanceParams } from '@/modules/createDao/types';
 import type { ITokenPluginSettings } from '../../types';
+import type { ITokenSetupMembershipForm } from '../tokenSetupMembership';
 
-export interface ITokenSetupGovernanceProps {
+export interface ITokenSetupGovernanceMembershipSettings
+    extends Partial<Pick<ITokenSetupMembershipForm, 'members'>>,
+        Pick<ITokenSetupMembershipForm, 'token'> {}
+
+export interface ITokenSetupGovernanceProps extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
     /**
-     * Prefix to be appended to all form fields.
+     * Membership settings of the multisig body.
      */
-    formPrefix: string;
-    /**
-     * The token used by the plugin.
-     */
-    token: Pick<IToken, 'symbol' | 'totalSupply' | 'decimals'>;
-    /**
-     * Hides the minimum-duration and early-execution fields when set to true.
-     */
-    isSubPlugin?: boolean;
-    /**
-     * Shows the settings for creating proposals when set to true.
-     */
-    showProposalCreationSettings?: boolean;
+    membershipSettings: ITokenSetupGovernanceMembershipSettings;
 }
 
 export interface ITokenSetupGovernanceForm

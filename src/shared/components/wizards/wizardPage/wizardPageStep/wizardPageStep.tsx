@@ -17,10 +17,10 @@ export interface IWizardPageStepProps extends IWizardStepProps {
 export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
     const { title, description, children, className, ...otherProps } = props;
 
-    const { hasPrevious, previousStep } = useWizardContext();
-
     const { t } = useTranslations();
-    const { displayValidationError, validationStatus, submitLabel, submitVariant } = useWizardFooter();
+
+    const { hasPrevious } = useWizardContext();
+    const { displayValidationError, validationStatus, submitLabel, submitVariant, onPreviousClick } = useWizardFooter();
 
     return (
         <Wizard.Step
@@ -46,7 +46,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                     <Button
                         className={!hasPrevious ? 'invisible' : undefined}
                         iconLeft={IconType.CHEVRON_LEFT}
-                        onClick={previousStep}
+                        onClick={onPreviousClick}
                         variant="tertiary"
                         size="lg"
                     >

@@ -113,10 +113,12 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         decimals,
     ]);
 
+    const membershipSettings = { token: action.meta.settings.token };
+
     return (
         <TokenSetupGovernance
             formPrefix={`${actionFieldName}.proposedSettings`}
-            token={action.meta.settings.token}
+            membershipSettings={membershipSettings}
             isSubPlugin={action.meta.isSubPlugin}
             showProposalCreationSettings={!action.meta.isSubPlugin}
         />

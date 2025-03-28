@@ -1,7 +1,6 @@
-import type { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
-import type { ICompositeAddress } from '@aragon/gov-ui-kit';
+import type { ISetupBodyForm } from '../../dialogs/setupBodyDialog';
 
 export enum ProposalCreationMode {
     LISTED_BODIES = 'LISTED_BODIES',
@@ -13,17 +12,6 @@ export enum ProcessStageType {
     OPTIMISTIC = 'OPTIMISTIC',
     TIMELOCK = 'TIMELOCK',
 }
-
-export const defaultStage: ICreateProcessFormStage = {
-    name: '',
-    type: ProcessStageType.NORMAL,
-    timing: {
-        votingPeriod: { days: 7, minutes: 0, hours: 0 },
-        earlyStageAdvance: false,
-    },
-    requiredApprovals: 1,
-    bodies: [],
-};
 
 export interface ICreateProcessFormData {
     /**
@@ -47,9 +35,13 @@ export interface ICreateProcessFormData {
      */
     stages: ICreateProcessFormStage[];
     /**
-     * Permissions for creating proposals.
+     * List of bodies of the process.
      */
-    permissions: ICreateProcessFormPermissions;
+    bodies: ISetupBodyForm[];
+    /**
+     * Defines who can create proposals for this process.
+     */
+    proposalCreationMode: ProposalCreationMode;
 }
 
 export interface ICreateProcessFormStageTiming {
@@ -69,6 +61,10 @@ export interface ICreateProcessFormStageTiming {
 
 export interface ICreateProcessFormStage {
     /**
+     * Internal ID of the stage used as reference for bodies.
+     */
+    internalId: string;
+    /**
      * Name of the stage.
      */
     name: string;
@@ -84,104 +80,4 @@ export interface ICreateProcessFormStage {
      * Number of bodies required to veto (for optimistic type) or approve.
      */
     requiredApprovals: number;
-    /**
-     * Voting bodies of the stage.
-     */
-    bodies: ICreateProcessFormBody[];
-}
-
-export interface ICreateProcessFormBody {
-    /**
-     * Name of the body.
-     */
-    name: string;
-    /**
-     * ID of the body generated internally to reference bodies to permissions.
-     */
-    id: string;
-    /**
-     * Optional description of the voting body.
-     */
-    description?: string;
-    /**
-     * Resources of the body.
-     */
-    resources: IResourcesInputResource[];
-    /**
-     * Governance type of the body.
-     */
-    governanceType: string;
-    /**
-     * Members of the voting body.
-     */
-    members: ICompositeAddress[] | ITokenVotingMember[];
-
-    // Token-specific values
-    /**
-     * Type of the token used on the body.
-     */
-    tokenType: 'imported' | 'new';
-    /**
-     * Address of the token to be imported.
-     */
-    importTokenAddress?: string;
-    /**
-     * Name of the governance token.
-     */
-    tokenName?: string;
-    /**
-     * Symbol of the governance token.
-     */
-    tokenSymbol?: string;
-    /**
-     * The percentage of tokens that vote yes, out of all tokens that have voted, must be greater than this value for
-     * the proposal to pass.
-     */
-    supportThreshold: number;
-    /**
-     * The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal
-     * to this value.
-     */
-    minParticipation: number;
-    /**
-     * Allows voters to change their vote during the voting period.
-     */
-    votingMode: DaoTokenVotingMode;
-
-    // Multisig-specific values
-    /**
-     * Amount of addresses in the authorized list that must approve a proposal for it to pass.
-     */
-    minApprovals: number;
-}
-
-export interface ICreateProcessFormPermissions {
-    /**
-     * Defines who can create proposals on the process.
-     */
-    proposalCreationMode: ProposalCreationMode;
-    /**
-     * List of bodies that can create proposals when proposalCreationMode is set to "LISTED_BODIES".
-     */
-    proposalCreationBodies: ICreateProcessFormProposalCreationBody[];
-}
-
-export interface ICreateProcessFormProposalCreationBody {
-    /**
-     * ID of the body.
-     */
-    bodyId: string;
-
-    // Token-specific values
-    /**
-     * Min voting power / balance the user needs to have for creating proposals
-     */
-    minVotingPower?: string;
-}
-
-export interface ITokenVotingMember extends ICompositeAddress {
-    /**
-     * Token amount to be distributed.
-     */
-    tokenAmount: string | number;
 }

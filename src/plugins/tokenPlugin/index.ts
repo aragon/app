@@ -1,7 +1,6 @@
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { TokenProposalCreationRequirements } from '@/plugins/tokenPlugin/components/tokenProposalCreationRequirements';
 import { useTokenPermissionCheckProposalCreation } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckProposalCreation';
 import { useTokenPermissionCheckVoteSubmission } from '@/plugins/tokenPlugin/hooks/useTokenPermissionCheckVoteSubmission';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -11,9 +10,12 @@ import { TokenMemberInfo } from './components/tokenMemberInfo';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenMemberPanel } from './components/tokenMemberPanel';
 import { TokenProcessBodyField } from './components/tokenProcessBodyField';
+import { TokenProposalCreationSettings } from './components/tokenProposalCreationSettings';
 import { TokenProposalList } from './components/tokenProposalList';
 import { TokenProposalVotingBreakdown } from './components/tokenProposalVotingBreakdown';
 import { TokenProposalVotingSummary } from './components/tokenProposalVotingSummary';
+import { TokenSetupGovernance } from './components/tokenSetupGovernance';
+import { TokenSetupMembership } from './components/tokenSetupMembership';
 import { TokenSubmitVote } from './components/tokenSubmitVote';
 import { TokenVoteList } from './components/tokenVoteList';
 import { tokenPlugin } from './constants/tokenPlugin';
@@ -145,8 +147,18 @@ export const initialiseTokenPlugin = () => {
             component: TokenProcessBodyField,
         })
         .registerSlotComponent({
-            slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
+            slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS,
             pluginId: tokenPlugin.id,
-            component: TokenProposalCreationRequirements,
+            component: TokenProposalCreationSettings,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_MEMBERSHIP,
+            pluginId: tokenPlugin.id,
+            component: TokenSetupMembership,
+        })
+        .registerSlotComponent({
+            slotId: CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE,
+            pluginId: tokenPlugin.id,
+            component: TokenSetupGovernance,
         });
 };

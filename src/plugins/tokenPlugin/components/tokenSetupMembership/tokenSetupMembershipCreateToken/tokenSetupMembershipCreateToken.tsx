@@ -2,8 +2,10 @@ import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
-import { useFieldArray } from 'react-hook-form';
-import { TokenSetupMemberhipCreateTokenMember } from './tokenSetupMemberhipCreateTokenMember';
+import { useEffect } from 'react';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { parseUnits, zeroAddress } from 'viem';
+import { TokenSetupMembershipCreateTokenMember } from './tokenSetupMembershipCreateTokenMember';
 
 export interface ITokenSetupMembershipCreateTokenProps {
     /**
@@ -12,66 +14,98 @@ export interface ITokenSetupMembershipCreateTokenProps {
     formPrefix: string;
 }
 
+const nameMaxLength = 40;
+const symbolMaxLength = 12;
+const defaultTokenDecimals = 18;
+const defaultTokenAddress = zeroAddress;
+
 export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCreateTokenProps> = (props) => {
     const { formPrefix } = props;
 
     const { t } = useTranslations();
+    const { setValue } = useFormContext();
 
-    const tokenNameField = useFormField<ITokenSetupMembershipForm, 'tokenName'>('tokenName', {
+    const tokenFormPrefix = `${formPrefix}.token`;
+
+    useFormField<ITokenSetupMembershipForm['token'], 'address'>('address', {
+        defaultValue: defaultTokenAddress,
+        fieldPrefix: tokenFormPrefix,
+    });
+
+    useFormField<ITokenSetupMembershipForm['token'], 'decimals'>('decimals', {
+        defaultValue: defaultTokenDecimals,
+        fieldPrefix: tokenFormPrefix,
+    });
+
+    const nameField = useFormField<ITokenSetupMembershipForm['token'], 'name'>('name', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.name.label'),
         defaultValue: '',
         trimOnBlur: true,
-        fieldPrefix: formPrefix,
-        rules: {
-            required: true,
-        },
+        fieldPrefix: tokenFormPrefix,
+        rules: { required: true },
     });
 
-    const tokenSymbolField = useFormField<ITokenSetupMembershipForm, 'tokenSymbol'>('tokenSymbol', {
+    const symbolField = useFormField<ITokenSetupMembershipForm['token'], 'symbol'>('symbol', {
         label: t('app.plugins.token.tokenSetupMembership.createToken.symbol.label'),
         defaultValue: '',
         trimOnBlur: true,
-        fieldPrefix: formPrefix,
+        fieldPrefix: tokenFormPrefix,
         rules: {
-            maxLength: { value: 10, message: t('app.plugins.token.tokenSetupMembership.createToken.symbol.maxLength') },
             required: true,
             validate: (value) =>
-                /^[A-Za-z]+$/.test(value ?? '') ||
-                t('app.plugins.token.tokenSetupMembership.createToken.symbol.onlyLetters'),
+                /^[A-Za-z]+$/.test(value) || t('app.plugins.token.tokenSetupMembership.createToken.symbol.onlyLetters'),
         },
     });
 
-    const { fields, append, remove } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
-        name: `${formPrefix}.members`,
+    const membersFieldName = `${formPrefix}.members`;
+    const {
+        fields: membersField,
+        append: addMember,
+        remove: removeMember,
+    } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
+        name: membersFieldName,
     });
+    const watchMembersField = useWatch<Record<string, ITokenSetupMembershipForm['members']>>({
+        name: membersFieldName,
+    });
+    const controlledMembersField = membersField.map((field, index) => ({ ...field, ...watchMembersField[index] }));
 
-    const handleAddMember = () => append({ address: '', tokenAmount: 1 });
+    const handleAddMember = () => addMember({ address: '', tokenAmount: 1 });
+
+    useEffect(() => {
+        const totalSupply = controlledMembersField.reduce(
+            (current, member) => current + Number(member.tokenAmount ?? 0),
+            0,
+        );
+        const totalSupplyWei = parseUnits(totalSupply.toString(), defaultTokenDecimals);
+        setValue(`${tokenFormPrefix}.totalSupply`, totalSupplyWei.toString());
+    }, [controlledMembersField, setValue, tokenFormPrefix]);
 
     return (
         <>
             <InputText
                 helpText={t('app.plugins.token.tokenSetupMembership.createToken.name.helpText')}
-                {...tokenNameField}
+                maxLength={nameMaxLength}
+                {...nameField}
             />
             <InputText
                 helpText={t('app.plugins.token.tokenSetupMembership.createToken.symbol.helpText')}
-                {...tokenSymbolField}
+                maxLength={symbolMaxLength}
+                {...symbolField}
             />
             <InputContainer id="distribute" useCustomWrapper={true}>
-                {fields.map((field, index) => (
-                    <TokenSetupMemberhipCreateTokenMember
-                        key={field.id}
-                        fieldNamePrefix={formPrefix}
-                        index={index}
-                        initialValue={field.address}
-                        onRemoveMember={remove}
-                        canRemove={fields.length > 1}
+                {membersField.map((member, index) => (
+                    <TokenSetupMembershipCreateTokenMember
+                        key={member.id}
+                        formPrefix={`${membersFieldName}.${index.toString()}`}
+                        initialValue={member.address}
+                        onRemove={membersField.length > 1 ? () => removeMember(index) : undefined}
                     />
                 ))}
             </InputContainer>
             <div className="flex w-full justify-between">
                 <Button size="md" variant="secondary" iconLeft={IconType.PLUS} onClick={handleAddMember}>
-                    {t('app.plugins.token.tokenSetupMembership.createToken.add')}
+                    {t('app.plugins.token.tokenSetupMembership.createToken.member.action.add')}
                 </Button>
             </div>
         </>

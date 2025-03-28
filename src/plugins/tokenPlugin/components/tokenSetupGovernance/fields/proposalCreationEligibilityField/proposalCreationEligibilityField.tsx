@@ -11,7 +11,7 @@ export interface IProposalCreationEligibilityFieldProps {
     /**
      * The token linked to the plugin.
      */
-    token: ITokenSetupGovernanceProps['token'];
+    token: ITokenSetupGovernanceProps['membershipSettings']['token'];
 }
 
 export const ProposalCreationEligibilityField: React.FC<IProposalCreationEligibilityFieldProps> = (props) => {

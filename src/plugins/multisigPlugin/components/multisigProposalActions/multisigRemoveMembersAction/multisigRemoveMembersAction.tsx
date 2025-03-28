@@ -67,6 +67,7 @@ export const MultisigRemoveMembersAction: React.FC<IMultisigRemoveMembersActionP
                 formPrefix={actionFieldName}
                 disabled={true}
                 onAddClick={() => setIsDialogOpen(true)}
+                hideLabel={true}
             />
             <MultisigRemoveMembersActionDialog
                 open={isDialogOpen}

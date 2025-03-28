@@ -11,5 +11,5 @@ export const CreateProcessForm = {
 export * from './createProcessFormDefinitions';
 export * from './createProcessFormMetadata';
 export * from './createProcessFormPermissions';
-export * from './createProcessFormPluginFlows';
 export * from './createProcessFormStages';
+export { createProcessFormUtils } from './createProcessFormUtils';

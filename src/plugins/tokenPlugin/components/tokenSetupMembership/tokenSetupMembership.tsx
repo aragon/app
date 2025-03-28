@@ -1,19 +1,30 @@
-import type { ITokenSetupMembershipProps } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembership.api';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Icon, IconType, InputContainer, Link, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import type { ITokenSetupMembershipProps } from './tokenSetupMembership.api';
 import { TokenSetupMembershipCreateToken } from './tokenSetupMembershipCreateToken';
 import { TokenSetupMembershipImportToken } from './tokenSetupMembershipImportToken';
 
 export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props) => {
     const { formPrefix } = props;
 
+    const { t } = useTranslations();
+    const { setValue } = useFormContext();
+
     const [tokenType, setTokenType] = useState<'imported' | 'new'>('new');
 
-    const { t } = useTranslations();
+    const isImportDisabled = process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true';
+
+    // Reset members array when selecting import token
+    useEffect(() => {
+        if (tokenType === 'imported') {
+            setValue(`${formPrefix}.members`, []);
+        }
+    }, [tokenType, formPrefix, setValue]);
 
     return (
-        <>
+        <div className="flex flex-col gap-6">
             <InputContainer
                 id="token"
                 label={t('app.plugins.token.tokenSetupMembership.type.label')}
@@ -23,22 +34,17 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                 <RadioGroup
                     className="w-full"
                     value={tokenType}
-                    onValueChange={(value) => setTokenType(value as 'imported' | 'new')}
+                    onValueChange={(value) => setTokenType(value as typeof tokenType)}
                 >
                     <div className="flex w-full flex-row gap-x-2">
+                        <RadioCard label={t('app.plugins.token.tokenSetupMembership.type.option.create')} value="new" />
                         <RadioCard
-                            className="w-1/2"
-                            label={t('app.plugins.token.tokenSetupMembership.type.option.create')}
-                            value="new"
-                        />
-                        <RadioCard
-                            className="w-1/2"
                             label={t('app.plugins.token.tokenSetupMembership.type.option.import')}
                             value="imported"
-                            disabled={process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true'}
+                            disabled={isImportDisabled}
                         />
                     </div>
-                    {process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true' && (
+                    {isImportDisabled && (
                         <div className="flex flex-row items-baseline gap-x-2">
                             <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
                             <div className="flex flex-col gap-y-1">
@@ -62,6 +68,6 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
             </InputContainer>
             {tokenType === 'imported' && <TokenSetupMembershipImportToken formPrefix={formPrefix} />}
             {tokenType === 'new' && <TokenSetupMembershipCreateToken formPrefix={formPrefix} />}
-        </>
+        </div>
     );
 };
