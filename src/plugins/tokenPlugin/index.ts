@@ -24,7 +24,7 @@ import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
 import { tokenTransactionUtils } from './utils/tokenTransactionUtils';
-import { TokenVotingBodyCheckboxCard } from './components/tokenVotingBodyCheckboxCard';
+import { TokenProposalCreationSettings } from './components/tokenProposalCreationSettings';
 
 export const initialiseTokenPlugin = () => {
     pluginRegistryUtils
@@ -147,9 +147,9 @@ export const initialiseTokenPlugin = () => {
             component: TokenProcessBodyField,
         })
         .registerSlotComponent({
-            slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS,
+            slotId: CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS,
             pluginId: tokenPlugin.id,
-            component: TokenVotingBodyCheckboxCard,
+            component: TokenProposalCreationSettings,
         })
         .registerSlotComponent({
             slotId: CreateDaoSlotId.CREATE_DAO_SETUP_MEMBERSHIP,

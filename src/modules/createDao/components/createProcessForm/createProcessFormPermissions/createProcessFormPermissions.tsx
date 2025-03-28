@@ -75,7 +75,6 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         }
     };
 
-    console.log('processBodies', processBodies);
 
     return (
         <>
@@ -110,7 +109,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         <PluginSingleComponent
                             key={body.internalId}
                             pluginId={body.plugin}
-                            slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_REQUIREMENTS}
+                            slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS}
                             body={body}
                             onChange={handleBodyCheckboxChange}
                             checked={proposalCreationBodies.some(({ bodyId }) => body.internalId === bodyId)}

@@ -1,10 +1,10 @@
-import type { ICreateProcessFormData } from '@/modules/createDao/components/createProcessForm';
+import type { ISetupBodyForm } from "@/modules/createDao/dialogs/setupBodyDialog";
 
-export interface IMultisigVotingBodyCheckboxCardProps {
+export interface IMultisigProposalCreationSettingsProps {
     /**
      * Body to render the checkbox card for.
      */
-    body: ICreateProcessFormData['bodies'][number];
+    body: ISetupBodyForm
     /**
      * Callback called on body checkbox change.
      */

@@ -8,7 +8,7 @@ export interface ITokenVotingBodySettings {
     minVotingPower?: string;
 }
 
-export interface ITokenVotingBodyCheckboxCardProps {
+export interface ITokenProposalCreationSettingsProps {
     /**
      * Body to render the checkbox card for.
      */

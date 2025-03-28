@@ -1,11 +1,11 @@
-import { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { CheckboxCard, InputNumber } from '@aragon/gov-ui-kit';
-import { ITokenMember } from '../../types';
-import type { ITokenVotingBodyCheckboxCardProps, ITokenVotingBodySettings } from './tokenVotingBodyCheckboxCard.api';
+import type { ITokenMember } from '../../types';
+import type { ITokenProposalCreationSettingsProps, ITokenVotingBodySettings } from './tokenProposalCreationSettings.api';
 
-export const TokenVotingBodyCheckboxCard: React.FC<ITokenVotingBodyCheckboxCardProps> = (props) => {
+export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSettingsProps> = (props) => {
     const { body, onChange, checked, fieldPrefix } = props;
     const { name, description, internalId } = body;
 
@@ -23,11 +23,11 @@ export const TokenVotingBodyCheckboxCard: React.FC<ITokenVotingBodyCheckboxCardP
         fieldPrefix,
         defaultValue: '1',
         rules: { validate: (value) => Number(value) > 0 },
-        label: t('app.plugins.token.tokenProposalCreationRequirements.label'),
+        label: t('app.plugins.token.tokenProposalCreationSettings.label'),
     });
 
-    console.log('body', body);
-    console.log('minVotingPowerField', minVotingPowerField);
+    const handleChange = () => {...}
+
 
     return (
         <CheckboxCard
@@ -39,8 +39,8 @@ export const TokenVotingBodyCheckboxCard: React.FC<ITokenVotingBodyCheckboxCardP
             <button className="w-full text-left" onClick={(e) => e.preventDefault()}>
                 <InputNumber
                     prefix="≥"
-                    helpText={t('app.plugins.token.tokenProposalCreationRequirements.helpText')}
-                    placeholder={t('app.plugins.token.tokenProposalCreationRequirements.placeholder')}
+                    helpText={t('app.plugins.token.tokenProposalCreationSettings.helpText')}
+                    placeholder={t('app.plugins.token.tokenProposalCreationSettings.placeholder')}
                     max={totalSupply}
                     {...minVotingPowerField}
                 />
