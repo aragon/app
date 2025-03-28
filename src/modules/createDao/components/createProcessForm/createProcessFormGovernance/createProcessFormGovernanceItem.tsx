@@ -8,12 +8,12 @@ import {
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
 } from '../createProcessFormDefinitions';
-import { StageBodiesField } from './fields/stageBodiesField';
-import { StageRequiredApprovalsField } from './fields/stageRequiredApprovalsField';
-import { StageTimingField } from './fields/stageTimingField';
-import { StageTypeField } from './fields/stageTypeField';
+import { GovernanceTypeField } from './fields/governanceTypeField';
+import { GovernanceTimingField } from './fields/governanceTimingField';
+import { GovernanceBodiesField } from './fields/governanceBodiesField';
+import { GovernanceRequiredApprovalsField } from './fields/governanceRequiredApprovalsField';
 
-export interface ICreateProcessFormStagesItemProps {
+export interface ICreateProcessFormGovernanceItemProps {
     /**
      * Prefix to be prepended to all form fields.
      */
@@ -34,7 +34,7 @@ export interface ICreateProcessFormStagesItemProps {
 
 const nameMaxLength = 40;
 
-export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemProps> = (props) => {
+export const CreateProcessFormGovernanceItem: React.FC<ICreateProcessFormGovernanceItemProps> = (props) => {
     const { formPrefix, stage, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
@@ -64,11 +64,11 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />
-            <StageTypeField fieldPrefix={formPrefix} />
-            <StageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
-            {!isTimelockStage && <StageBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />}
+            <GovernanceTypeField fieldPrefix={formPrefix} />
+            <GovernanceTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
+            {!isTimelockStage && <GovernanceBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />}
             {stageBodies.length > 0 && (
-                <StageRequiredApprovalsField
+                <GovernanceRequiredApprovalsField
                     fieldPrefix={formPrefix}
                     stageBodiesCount={stageBodies.length}
                     isOptimisticStage={isOptimisticStage}

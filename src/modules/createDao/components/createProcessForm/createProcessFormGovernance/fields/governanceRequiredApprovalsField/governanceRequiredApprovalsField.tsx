@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWatch } from 'react-hook-form';
 import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 
-export interface IStageRequiredApprovalsFieldProps {
+export interface IGovernanceRequiredApprovalsFieldProps {
     /**
      * Field prefix to be used.
      */
@@ -20,7 +20,7 @@ export interface IStageRequiredApprovalsFieldProps {
 
 const requiredApprovalsDefaultValue = 1;
 
-export const StageRequiredApprovalsField: React.FC<IStageRequiredApprovalsFieldProps> = (props) => {
+export const GovernanceRequiredApprovalsField: React.FC<IGovernanceRequiredApprovalsFieldProps> = (props) => {
     const { fieldPrefix, stageBodiesCount, isOptimisticStage } = props;
 
     const { t } = useTranslations();

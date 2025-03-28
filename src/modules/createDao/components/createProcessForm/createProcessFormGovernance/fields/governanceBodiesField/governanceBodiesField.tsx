@@ -5,9 +5,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import type { ICreateProcessFormData } from '../../../createProcessFormDefinitions';
-import { StageBodiesFieldItem } from './stageBodiesFieldItem';
+import { GovernanceBodiesFieldItem } from './governanceBodiesFieldItem';
 
-export interface IStageBodiesFieldProps {
+export interface IGovernanceBodiesFieldProps {
     /**
      * Defines if current stage is optimistic or not, only set for advanced governance processes.
      */
@@ -18,7 +18,7 @@ export interface IStageBodiesFieldProps {
     stageId?: string;
 }
 
-export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
+export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (props) => {
     const { isOptimisticStage, stageId } = props;
 
     const { open, close } = useDialogContext();
@@ -71,7 +71,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
             >
                 <div className="flex flex-col gap-3 md:gap-2">
                     {stageBodies.map((body, index) => (
-                        <StageBodiesFieldItem
+                        <GovernanceBodiesFieldItem
                             key={body.id}
                             fieldName={`bodies.${index.toString()}`}
                             body={body}

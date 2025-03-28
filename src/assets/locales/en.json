@@ -1315,7 +1315,7 @@
               }
             },
             "name": {
-              "helpText": "These addreses will receive newly minted tokens.",
+              "helpText": "These addresses will receive newly minted tokens.",
               "label": "Token name"
             },
             "symbol": {

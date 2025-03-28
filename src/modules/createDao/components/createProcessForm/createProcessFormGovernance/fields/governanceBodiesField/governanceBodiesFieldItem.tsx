@@ -5,7 +5,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Accordion, Button, Card, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
 
-export interface IStageBodiesFieldItemProps {
+export interface IGovernanceBodiesFieldItemProps {
     /**
      * Name of the body field.
      */
@@ -24,7 +24,7 @@ export interface IStageBodiesFieldItemProps {
     onDelete: () => void;
 }
 
-export const StageBodiesFieldItem: React.FC<IStageBodiesFieldItemProps> = (props) => {
+export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps> = (props) => {
     const { fieldName, body, onEdit, onDelete } = props;
 
     const { t } = useTranslations();

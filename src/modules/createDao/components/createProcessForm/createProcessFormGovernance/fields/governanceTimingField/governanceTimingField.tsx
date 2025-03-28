@@ -6,9 +6,9 @@ import { Duration } from 'luxon';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { type ICreateProcessFormStageTiming, ProcessStageType } from '../../../createProcessFormDefinitions';
-import { StageTimingFieldDialog } from './stageTimingFieldDialog';
+import { GovernanceTimingFieldDialog } from './governanceTimingFieldDialog';
 
-export interface IStageTimingFieldProps {
+export interface IGovernanceTimingFieldProps {
     /**
      * Prefix to be prepended to the form field.
      */
@@ -19,7 +19,7 @@ export interface IStageTimingFieldProps {
     stageType: ProcessStageType;
 }
 
-export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
+export const GovernanceTimingField: React.FC<IGovernanceTimingFieldProps> = (props) => {
     const { fieldPrefix, stageType } = props;
 
     const { t } = useTranslations();
@@ -107,7 +107,7 @@ export const StageTimingField: React.FC<IStageTimingFieldProps> = (props) => {
                 {t('app.createDao.createProcessForm.stages.timing.edit')}
             </Button>
             {isTimingDialogOpen && (
-                <StageTimingFieldDialog
+                <GovernanceTimingFieldDialog
                     onClose={() => setIsTimingDialogOpen(false)}
                     onSubmit={handleDialogSubmit}
                     stageType={stageType}

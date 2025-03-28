@@ -1,15 +1,15 @@
 import { CreateProcessFormMetadata } from './createProcessFormMetadata';
 import { CreateProcessFormPermissions } from './createProcessFormPermissions';
-import { CreateProcessFormStages } from './createProcessFormStages';
+import { CreateProcessFormGovernance } from './createProcessFormGovernance';
 
 export const CreateProcessForm = {
     Metadata: CreateProcessFormMetadata,
-    Stages: CreateProcessFormStages,
+    Stages: CreateProcessFormGovernance,
     Permissions: CreateProcessFormPermissions,
 };
 
 export * from './createProcessFormDefinitions';
 export * from './createProcessFormMetadata';
 export * from './createProcessFormPermissions';
-export * from './createProcessFormStages';
+export * from './createProcessFormGovernance';
 export { createProcessFormUtils } from './createProcessFormUtils';

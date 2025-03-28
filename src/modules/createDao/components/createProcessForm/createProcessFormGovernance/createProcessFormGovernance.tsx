@@ -3,11 +3,11 @@ import { Button, IconType } from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
-import { CreateProcessFormStagesItem } from './createProcessFormStagesItem';
+import { CreateProcessFormGovernanceItem } from './createProcessFormGovernanceItem';
 
-export interface ICreateProcessFormStagesProps {}
+export interface ICreateProcessFormGovernanceProps {}
 
-export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = () => {
+export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceProps> = () => {
     const { t } = useTranslations();
 
     const { setValue, getValues } = useFormContext<ICreateProcessFormData>();
@@ -31,7 +31,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
         <div className="flex flex-col gap-2 md:gap-3">
             <div className="flex flex-col gap-3 md:gap-2">
                 {stages.map((stage, index) => (
-                    <CreateProcessFormStagesItem
+                    <CreateProcessFormGovernanceItem
                         key={stage.id}
                         formPrefix={`stages.${index.toString()}`}
                         stage={stage}

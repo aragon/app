@@ -6,7 +6,7 @@ import { useState, type FormEvent } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ProcessStageType, type ICreateProcessFormStageTiming } from '../../../createProcessFormDefinitions';
 
-export interface IStageTimingFieldDialogProps {
+export interface IGovernanceTimingFieldDialogProps {
     /**
      * Callback triggered when dialog is closed.
      */
@@ -29,7 +29,7 @@ const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
 
 const formId = 'stageTimingForm';
 
-export const StageTimingFieldDialog: React.FC<IStageTimingFieldDialogProps> = (props) => {
+export const GovernanceTimingFieldDialog: React.FC<IGovernanceTimingFieldDialogProps> = (props) => {
     const { onClose, stageType, defaultValues, onSubmit } = props;
 
     const { t } = useTranslations();
