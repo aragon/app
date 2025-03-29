@@ -3,17 +3,21 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useWatch } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { ProposalCreationMode, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 
 export interface ICreateProcessFormPermissionProps {}
 
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
     const { t } = useTranslations();
+    const { trigger } = useFormContext();
 
     const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
     const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
     const createProposalsError = 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
+
+    const { ANY_WALLET, LISTED_BODIES } = ProposalCreationMode;
 
     const {
         onChange: onModeChange,
@@ -22,9 +26,16 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         ...modeField
     } = useFormField<ICreateProcessFormData, 'proposalCreationMode'>('proposalCreationMode', {
         label: t('app.createDao.createProcessForm.permissions.proposalCreation.mode.label'),
-        rules: { validate: () => canBodiesCreateProposals || createProposalsError },
-        defaultValue: ProposalCreationMode.LISTED_BODIES,
+        rules: {
+            validate: (value) => (value !== ANY_WALLET && !canBodiesCreateProposals ? createProposalsError : undefined),
+        },
+        defaultValue: LISTED_BODIES,
     });
+
+    // Trigger proposalCreationMode validation on allowed bodies selection change
+    useEffect(() => {
+        void trigger('proposalCreationMode');
+    }, [trigger, canBodiesCreateProposals]);
 
     return (
         <>
@@ -35,20 +46,20 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                     description={t(
                         'app.createDao.createProcessForm.permissions.proposalCreation.mode.bodiesDescription',
                     )}
-                    value={ProposalCreationMode.LISTED_BODIES}
+                    value={LISTED_BODIES}
                 />
                 <RadioCard
                     className="min-w-0"
                     label={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.anyLabel')}
                     description={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.anyDescription')}
-                    value={ProposalCreationMode.ANY_WALLET}
+                    value={ANY_WALLET}
                 />
             </RadioGroup>
             <InputContainer
                 id="proposalCreationBodies"
                 label={t('app.createDao.createProcessForm.permissions.proposalCreation.bodies.label')}
                 useCustomWrapper={true}
-                className={mode === ProposalCreationMode.ANY_WALLET ? 'hidden' : ''}
+                className={mode === ANY_WALLET ? 'hidden' : ''}
                 alert={permissionsAlert}
             >
                 {processBodies.map((body, index) => (

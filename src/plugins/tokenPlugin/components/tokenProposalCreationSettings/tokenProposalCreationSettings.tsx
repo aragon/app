@@ -4,7 +4,7 @@ import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { CheckboxCard, type CheckboxState, InputNumber } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { formatUnits } from 'viem';
 import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
@@ -21,29 +21,28 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
     const { body, formPrefix, mode } = props;
 
     const { t } = useTranslations();
-    const { trigger } = useFormContext();
-
-    const [isChecked, setIsChecked] = useState(true);
+    const { trigger, setValue } = useFormContext();
 
     const { name, description, membership } = body;
     const { totalSupply, decimals } = membership.token;
 
     const parsedTotalSupply = formatUnits(BigInt(totalSupply), decimals);
 
+    const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<
+        ISetupBodyForm,
+        'canCreateProposal'
+    >('canCreateProposal', { fieldPrefix: formPrefix, defaultValue: true });
+
     const validateMinVotingPower = (value: string) => {
         // Only validate for minVotingPower to be greater than 0 when the plugin is selected
-        if (!isChecked || mode === ProposalCreationMode.ANY_WALLET) {
+        if (!canCreateProposal || mode === ProposalCreationMode.ANY_WALLET) {
             return undefined;
         }
 
         return Number(value) > 0;
     };
 
-    const { onChange: onCreateProposalChange } = useFormField<ISetupBodyForm, 'canCreateProposal'>(
-        'canCreateProposal',
-        { fieldPrefix: formPrefix },
-    );
-
+    const minVotingPowerFieldName = `${formPrefix}.governance.minProposerVotingPower`;
     const {
         onChange: onMinVotingPowerChange,
         value: minVotingPower,
@@ -55,31 +54,25 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
         label: t('app.plugins.token.tokenProposalCreationSettings.label'),
     });
 
-    const handleCheckedChange = (checked: CheckboxState) => {
-        const isChecked = checked === true;
-        onMinVotingPowerChange(isChecked ? '1' : '0');
-        setIsChecked(isChecked);
-    };
+    const handleCheckedChange = (checked: CheckboxState) => onCreateProposalChange(checked === true);
 
-    // Trigger minVotingPower validation when checking / unchecking the card
+    // Trigger minVotingPower validation on mode and canCreateProposal change
     useEffect(() => {
-        void trigger(`${formPrefix}.governance.minProposerVotingPower`);
-    }, [trigger, formPrefix, isChecked]);
+        void trigger(minVotingPowerFieldName);
+    }, [trigger, mode, minVotingPower, minVotingPowerFieldName, canCreateProposal]);
 
-    // Make sure to set minVotingPower to 0 when user selects any-wallet
     useEffect(() => {
-        if (mode === ProposalCreationMode.ANY_WALLET) {
-            onMinVotingPowerChange('0');
-        }
-    }, [mode, onMinVotingPowerChange]);
-
-    // Update the canCreateProposal generic field whenever the card is selected
-    useEffect(() => {
-        onCreateProposalChange(isChecked);
-    }, [isChecked, onCreateProposalChange]);
+        const votingPower = mode === ProposalCreationMode.ANY_WALLET || !canCreateProposal ? '0' : '1';
+        setValue(minVotingPowerFieldName, votingPower);
+    }, [mode, canCreateProposal, minVotingPowerFieldName, setValue]);
 
     return (
-        <CheckboxCard label={name} description={description} onCheckedChange={handleCheckedChange} checked={isChecked}>
+        <CheckboxCard
+            label={name}
+            description={description}
+            onCheckedChange={handleCheckedChange}
+            checked={canCreateProposal}
+        >
             {
                 // Stop onClick event propagation to avoid unchecking the card when clicking on the number-input buttons
                 // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
