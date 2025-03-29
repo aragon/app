@@ -1,6 +1,5 @@
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Hash } from 'viem';
-import type { ReadContractsErrorType } from 'wagmi/actions';
 
 export interface IUseTokenParams {
     /**
@@ -13,17 +12,15 @@ export interface IUseTokenParams {
     chainId: number;
 }
 
-export interface IUseTokenReturn extends Pick<IToken, 'decimals' | 'name' | 'symbol' | 'totalSupply'> {}
-
 export interface IUseTokenResult {
     /**
      * Token data result.
      */
-    token: IUseTokenReturn | null;
+    token: Pick<IToken, 'decimals' | 'name' | 'symbol' | 'totalSupply'> | null;
     /**
-     * Possible error result.
+     * Defines if an error occurred while fetching the token data.
      */
-    error: ReadContractsErrorType | null;
+    isError: boolean;
     /**
      * Whether the token data is loading.
      */

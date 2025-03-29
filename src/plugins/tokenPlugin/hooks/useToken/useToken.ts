@@ -1,35 +1,7 @@
-import type { IToken } from '@/modules/finance/api/financeService';
 import { useMemo } from 'react';
-import { erc20Abi, type Hash } from 'viem';
+import { erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';
-
-export interface IUseTokenParams {
-    /**
-     * Address of the token contract.
-     */
-    address: Hash;
-    /**
-     * Chain ID of the token contract.
-     */
-    chainId: number;
-}
-
-export interface IUseTokenData extends Pick<IToken, 'decimals' | 'name' | 'symbol' | 'totalSupply'> {}
-
-export interface IUseTokenResult {
-    /**
-     * Token data result.
-     */
-    token: IUseTokenData | null;
-    /**
-     * Possible error result.
-     */
-    isError: boolean;
-    /**
-     * Whether the token data is loading.
-     */
-    isLoading: boolean;
-}
+import type { IUseTokenParams, IUseTokenResult } from './useToken.api';
 
 export const useToken = (params: IUseTokenParams): IUseTokenResult => {
     const { address, chainId } = params;
@@ -44,22 +16,15 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
         ],
     });
 
-    const token = useMemo<IUseTokenData | null>(() => {
+    const token = useMemo(() => {
         if (data == null || isError) {
             return null;
         }
 
-        return {
-            name: data[0],
-            symbol: data[1],
-            decimals: data[2],
-            totalSupply: data[3].toString(),
-        };
+        const [name, symbol, decimals, totalSupply] = data;
+
+        return { name, symbol, decimals, totalSupply: totalSupply.toString() };
     }, [data, isError]);
 
-    return {
-        token,
-        isError,
-        isLoading,
-    };
+    return { token, isError, isLoading };
 };
