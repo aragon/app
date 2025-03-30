@@ -1,122 +1,78 @@
+import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo, useState } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import {
-    ProposalCreationMode,
-    type ICreateProcessFormData,
-    type ICreateProcessFormPermissions,
-} from '../createProcessFormDefinitions';
-import { VotingBodyCheckboxCard } from './components/votingBodyCheckboxCard';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { ProposalCreationMode, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 
 export interface ICreateProcessFormPermissionProps {}
 
-const validateProposalCreationBodies =
-    (proposalCreationMode: ProposalCreationMode) =>
-    (bodies: ICreateProcessFormPermissions['proposalCreationBodies']) => {
-        if (proposalCreationMode === ProposalCreationMode.ANY_WALLET) {
-            return true;
-        }
-
-        return bodies.length > 0 || 'app.createDao.createProcessForm.permissions.votingBodies.error';
-    };
-
 export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionProps> = () => {
     const { t } = useTranslations();
-    const { setValue, trigger } = useFormContext();
+    const { trigger } = useFormContext();
 
-    // TODO: temporary workaround to prevent race condition of rendering the plugin-specific proposal creation form
-    // fields (e.g. minProposerVotingPower) before the proposalCreationBodies array field is initialized (APP-3679)
-    const [isInitialized, setIsInitialized] = useState(false);
+    const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
+    const canBodiesCreateProposals = processBodies.some((body) => body.canCreateProposal);
+    const createProposalsError = 'app.createDao.createProcessForm.permissions.proposalCreation.bodies.error';
 
-    const processStages = useWatch<ICreateProcessFormData, 'stages'>({ name: 'stages' });
-    const processBodies = useMemo(() => processStages.flatMap((stage) => stage.bodies), [processStages]);
-    const defaultBodiesValue = useMemo(() => processBodies.map((body) => ({ bodyId: body.id })), [processBodies]);
+    const { ANY_WALLET, LISTED_BODIES } = ProposalCreationMode;
 
     const {
-        onChange: onProposalCreationModeChange,
-        value: proposalCreationMode,
-        ...proposalCreationModeField
-    } = useFormField<ICreateProcessFormPermissions, 'proposalCreationMode'>('proposalCreationMode', {
-        label: t('app.createDao.createProcessForm.permissions.proposalCreationMode.label'),
-        fieldPrefix: 'permissions',
-        defaultValue: ProposalCreationMode.LISTED_BODIES,
+        onChange: onModeChange,
+        value: mode,
+        alert: permissionsAlert,
+        ...modeField
+    } = useFormField<ICreateProcessFormData, 'proposalCreationMode'>('proposalCreationMode', {
+        label: t('app.createDao.createProcessForm.permissions.proposalCreation.mode.label'),
+        rules: {
+            validate: (value) => (value !== ANY_WALLET && !canBodiesCreateProposals ? createProposalsError : undefined),
+        },
+        defaultValue: LISTED_BODIES,
     });
 
-    const proposalCreationBodiesName = 'permissions.proposalCreationBodies';
-    const {
-        fields: proposalCreationBodies,
-        remove: removeProposalCreationBody,
-        append: addProposalCreationBody,
-    } = useFieldArray<ICreateProcessFormData, typeof proposalCreationBodiesName>({
-        name: proposalCreationBodiesName,
-        rules: { validate: validateProposalCreationBodies(proposalCreationMode) },
-    });
-
-    // Initialise proposalCreationBodies to all process bodies and update value on bodies list change
+    // Trigger proposalCreationMode validation on allowed bodies selection change
     useEffect(() => {
-        setValue(proposalCreationBodiesName, defaultBodiesValue);
-        setIsInitialized(true);
-    }, [setValue, defaultBodiesValue]);
-
-    const handleProposalCreationModeChange = (value: string) => {
-        onProposalCreationModeChange(value);
-        if (value === ProposalCreationMode.LISTED_BODIES) {
-            setValue(proposalCreationBodiesName, defaultBodiesValue);
-            void trigger(proposalCreationBodiesName);
-        }
-    };
-
-    const handleBodyCheckboxChange = (bodyId: string, value: boolean) => {
-        if (value) {
-            addProposalCreationBody({ bodyId });
-        } else {
-            const checkedBodyIndex = proposalCreationBodies.findIndex((body) => body.bodyId === bodyId);
-            removeProposalCreationBody(checkedBodyIndex);
-        }
-    };
+        void trigger('proposalCreationMode');
+    }, [trigger, canBodiesCreateProposals]);
 
     return (
         <>
-            <RadioGroup
-                className="flex gap-4 md:!flex-row"
-                onValueChange={handleProposalCreationModeChange}
-                value={proposalCreationMode}
-                {...proposalCreationModeField}
-            >
+            <RadioGroup className="flex gap-4 md:!flex-row" onValueChange={onModeChange} value={mode} {...modeField}>
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.proposalCreationMode.bodiesLabel')}
+                    label={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.bodiesLabel')}
                     description={t(
-                        'app.createDao.createProcessForm.permissions.proposalCreationMode.bodiesDescription',
+                        'app.createDao.createProcessForm.permissions.proposalCreation.mode.bodiesDescription',
                     )}
-                    value={ProposalCreationMode.LISTED_BODIES}
+                    value={LISTED_BODIES}
                 />
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.proposalCreationMode.anyLabel')}
-                    description={t('app.createDao.createProcessForm.permissions.proposalCreationMode.anyDescription')}
-                    value={ProposalCreationMode.ANY_WALLET}
+                    label={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.anyLabel')}
+                    description={t('app.createDao.createProcessForm.permissions.proposalCreation.mode.anyDescription')}
+                    value={ANY_WALLET}
                 />
             </RadioGroup>
-            {isInitialized && proposalCreationMode === ProposalCreationMode.LISTED_BODIES && (
-                <InputContainer
-                    id="proposalCreationBodies"
-                    label={t('app.createDao.createProcessForm.permissions.proposalCreationBodies.label')}
-                    useCustomWrapper={true}
-                >
-                    {processBodies.map((body) => (
-                        <VotingBodyCheckboxCard
-                            key={body.id}
-                            body={body}
-                            onChange={handleBodyCheckboxChange}
-                            checked={proposalCreationBodies.some(({ bodyId }) => body.id === bodyId)}
-                            fieldPrefix={`${proposalCreationBodiesName}.${proposalCreationBodies.findIndex(({ bodyId }) => body.id === bodyId).toString()}`}
-                        />
-                    ))}
-                </InputContainer>
-            )}
+            <InputContainer
+                id="proposalCreationBodies"
+                label={t('app.createDao.createProcessForm.permissions.proposalCreation.bodies.label')}
+                useCustomWrapper={true}
+                className={mode === ANY_WALLET ? 'hidden' : ''}
+                alert={permissionsAlert}
+            >
+                {processBodies.map((body, index) => (
+                    <PluginSingleComponent
+                        key={body.internalId}
+                        pluginId={body.plugin}
+                        slotId={CreateDaoSlotId.CREATE_DAO_PROPOSAL_CREATION_SETTINGS}
+                        body={body}
+                        formPrefix={`bodies.${index.toString()}`}
+                        mode={mode}
+                    />
+                ))}
+            </InputContainer>
         </>
     );
 };

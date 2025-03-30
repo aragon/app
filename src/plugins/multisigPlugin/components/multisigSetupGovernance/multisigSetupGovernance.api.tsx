@@ -1,19 +1,20 @@
+import type { IPluginSetupGovernanceParams } from '@/modules/createDao/types';
 import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import type { IMultisigSetupMembershipForm } from '../multisigSetupMembership';
 
 export interface IMultisigSetupGovernanceForm extends Pick<IMultisigPluginSettings, 'minApprovals' | 'onlyListed'> {}
 
-export interface IMultisigSetupGovernanceProps {
+export interface IMultisigSetupGovernanceMembershipSettings
+    extends Partial<Pick<IMultisigSetupMembershipForm, 'members'>> {
     /**
-     * Prefix to be appended to all form fields. This is expected to always be a sub-form of the main form.
+     * Number of members used as fallback when the members list is not defined.
      */
-    formPrefix: string;
+    membersCount?: number;
+}
+
+export interface IMultisigSetupGovernanceProps extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
     /**
-     * Total number of members in the body of the DAO. It is a prop because it can either come from the API (actions) or
-     * from the local members field (create process form).
+     * Membership settings of the multisig body.
      */
-    membersCount: number;
-    /**
-     * Whether to show the proposal creation settings (who can vote, any vs members).
-     */
-    showProposalCreationSettings?: boolean;
+    membershipSettings: IMultisigSetupGovernanceMembershipSettings;
 }

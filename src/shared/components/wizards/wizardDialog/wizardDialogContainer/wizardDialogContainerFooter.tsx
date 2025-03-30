@@ -1,3 +1,4 @@
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog } from '@aragon/gov-ui-kit';
 import { useWizardContext, useWizardFooter } from '../../wizard';
@@ -13,12 +14,14 @@ export const WizardDialogContainerFooter: React.FC<IWizardDialogContainerFooterP
     const { formId } = props;
 
     const { t } = useTranslations();
-    const { hasPrevious, previousStep } = useWizardContext();
-    const { displayValidationError, submitLabel } = useWizardFooter();
+    const { close } = useDialogContext();
+    const { hasPrevious } = useWizardContext();
+    const { displayValidationError, submitLabel, onPreviousClick } = useWizardFooter();
 
+    const secondaryActionLabel = hasPrevious ? 'back' : 'close';
     const secondaryAction = {
-        label: t('app.shared.wizardDialog.container.back'),
-        onClick: previousStep,
+        label: t(`app.shared.wizardDialog.container.${secondaryActionLabel}`),
+        onClick: hasPrevious ? onPreviousClick : () => close(),
     };
 
     return (
@@ -26,7 +29,7 @@ export const WizardDialogContainerFooter: React.FC<IWizardDialogContainerFooterP
             hasError={displayValidationError}
             variant="wizard"
             primaryAction={{ label: submitLabel, type: 'submit', form: formId }}
-            secondaryAction={hasPrevious ? secondaryAction : undefined}
+            secondaryAction={secondaryAction}
         />
     );
 };

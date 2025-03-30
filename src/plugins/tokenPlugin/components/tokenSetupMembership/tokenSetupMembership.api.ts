@@ -1,27 +1,20 @@
-import type { ITokenVotingMember } from '@/modules/createDao/components/createProcessForm';
+import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type { IPluginSetupMembershipParams } from '@/modules/createDao/types';
+import type { IToken } from '@/modules/finance/api/financeService';
+import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
-export interface ITokenSetupMembershipProps {
+export interface ITokenSetupMembershipProps extends IPluginSetupMembershipParams {}
+
+export interface ITokenSetupMembershipForm extends ISetupBodyFormMembership<ITokenSetupMembershipMember> {
     /**
-     * Prefix to be appended to all form fields.
+     * The token used by the plugin.
      */
-    formPrefix: string;
+    token: Pick<IToken, 'address' | 'name' | 'symbol' | 'totalSupply' | 'decimals'>;
 }
 
-export interface ITokenSetupMembershipForm {
+export interface ITokenSetupMembershipMember extends ICompositeAddress {
     /**
-     * Address of the token to be imported.
+     * Token amount to be distributed.
      */
-    importTokenAddress?: string;
-    /**
-     * Name of the governance token.
-     */
-    tokenName?: string;
-    /**
-     * Symbol of the governance token.
-     */
-    tokenSymbol?: string;
-    /**
-     * Members of the token voting body.
-     */
-    members: ITokenVotingMember[];
+    tokenAmount?: string | number;
 }

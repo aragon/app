@@ -34,7 +34,7 @@ export const MultisigSetupMembershipItem: React.FC<IMultisigSetupMembershipItemP
         { enabled: pluginAddress != null && addressUtils.isAddress(member.address) },
     );
 
-    const customValidator = () => (isMember ? 'app.plugins.multisig.multisigSetupMembershipItem.alreadyMember' : true);
+    const customValidator = () => (isMember ? 'app.plugins.multisig.multisigSetupMembership.item.alreadyMember' : true);
 
     return <AddressesInput.Item index={index} disabled={disabled} customValidator={customValidator} />;
 };

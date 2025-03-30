@@ -14,6 +14,8 @@ export interface ISupportThresholdFieldProps {
     initialValue?: number;
 }
 
+const defaultSupportThreshold = 50;
+
 export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (props) => {
     const { formPrefix } = props;
 
@@ -22,7 +24,7 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
     const fieldName = `${formPrefix}.supportThreshold`;
     const value = useWatch<Record<string, ITokenSetupGovernanceForm['supportThreshold']>>({
         name: fieldName,
-        defaultValue: 0,
+        defaultValue: defaultSupportThreshold,
     });
 
     const context = value >= 50 ? 'majority' : 'minority';
@@ -38,10 +40,12 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             label={t('app.plugins.token.tokenSetupGovernance.supportThreshold.label')}
             helpText={t('app.plugins.token.tokenSetupGovernance.supportThreshold.helpText')}
             valueLabel={`> ${value.toString()} %`}
+            min={1}
             total={100}
             prefix=">"
             suffix="%"
             alert={alert}
+            defaultValue={defaultSupportThreshold}
             tags={[
                 { label: t('app.plugins.token.tokenSetupGovernance.supportThreshold.tag.yes'), variant: 'primary' },
                 { label: t('app.plugins.token.tokenSetupGovernance.supportThreshold.tag.no'), variant: 'neutral' },

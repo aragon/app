@@ -78,13 +78,19 @@ export class PluginRegistryUtils {
     };
 
     registerPlugin = (plugin: IPlugin): this => {
-        this.pluginRegistry.plugins.push(plugin);
+        const hasPlugin = this.pluginRegistry.plugins.some(({ id }) => id === plugin.id);
+
+        if (!hasPlugin) {
+            this.pluginRegistry.plugins.push(plugin);
+        }
 
         return this;
     };
 
     getPlugin = (pluginId: PluginId): IPlugin | undefined =>
         this.pluginRegistry.plugins.find((plugin) => plugin.id === pluginId);
+
+    getPlugins = (): IPlugin[] => this.pluginRegistry.plugins;
 
     registerSlotFunction = (params: IRegisterSlotFunctionParams): this => {
         const { slotId, pluginId, function: func } = params;

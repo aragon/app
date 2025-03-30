@@ -50,5 +50,5 @@ export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> 
         setValue(`${actionFieldName}.inputData.parameters[0].value`, addresses);
     }, [actionFieldName, controlledMembersField, setValue]);
 
-    return <MultisigSetupMembership formPrefix={actionFieldName} pluginAddress={action.to} />;
+    return <MultisigSetupMembership formPrefix={actionFieldName} pluginAddress={action.to} hideLabel={true} />;
 };

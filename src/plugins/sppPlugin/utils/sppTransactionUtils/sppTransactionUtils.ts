@@ -137,8 +137,7 @@ class SppTransactionUtils {
         sppSetupData: IPluginSetupData,
         pluginSetupData: IPluginSetupData[],
     ) => {
-        const { permissions, stages } = values;
-        const { proposalCreationBodies, proposalCreationMode } = permissions;
+        const { bodies, proposalCreationMode } = values;
 
         const sppRuleConditionContract = sppSetupData.preparedSetupData.helpers[0];
 
@@ -146,9 +145,8 @@ class SppTransactionUtils {
             return undefined;
         }
 
-        const sppBodies = stages.flatMap((stage) => stage.bodies);
-        const conditionAddresses = sppBodies.reduce<string[]>((current, body, bodyIndex) => {
-            const isBodyAllowed = proposalCreationBodies.find((bodySettings) => bodySettings.bodyId === body.id);
+        const conditionAddresses = bodies.reduce<string[]>((current, body, bodyIndex) => {
+            const isBodyAllowed = body.canCreateProposal;
             const bodyConditionAddress = pluginSetupData[bodyIndex].preparedSetupData.helpers[0];
 
             return isBodyAllowed ? [...current, bodyConditionAddress] : current;
@@ -170,7 +168,8 @@ class SppTransactionUtils {
 
         const processedBodyAddresses = [...bodyAddresses];
         const processedStages = stages.map((stage) => {
-            const { type, bodies, timing, requiredApprovals } = stage;
+            const { type, timing, requiredApprovals } = stage;
+            const stageBodies = values.bodies.filter((body) => body.stageId === stage.internalId);
 
             const stageTiming = this.processStageTiming(timing);
             const stageApprovals = this.processStageApprovals(requiredApprovals, type);
@@ -178,7 +177,7 @@ class SppTransactionUtils {
             const resultType = type === ProcessStageType.NORMAL ? SppProposalType.APPROVAL : SppProposalType.VETO;
 
             const bodySettings = { isManual: false, tryAdvance: true };
-            const processedBodies = bodies.map(() => ({
+            const processedBodies = stageBodies.map(() => ({
                 addr: processedBodyAddresses.shift()!,
                 resultType,
                 ...bodySettings,

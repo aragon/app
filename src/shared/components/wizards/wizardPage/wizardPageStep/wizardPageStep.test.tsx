@@ -16,12 +16,7 @@ describe('<WizardPageStep /> component', () => {
 
     beforeEach(() => {
         useWizardContextSpy.mockReturnValue(generateWizardContext());
-        useWizardFooterSpy.mockReturnValue({
-            submitLabel: '',
-            submitVariant: 'primary',
-            validationStatus: 'valid',
-            displayValidationError: false,
-        });
+        useWizardFooterSpy.mockReturnValue({} as Wizard.IUseWizardFooterReturn);
     });
 
     afterEach(() => {
@@ -52,11 +47,9 @@ describe('<WizardPageStep /> component', () => {
 
     it('renders a validation error when the wizard-footer utility returns error feedback', () => {
         useWizardFooterSpy.mockReturnValue({
-            submitLabel: '',
-            submitVariant: 'critical',
             validationStatus: 'required',
             displayValidationError: true,
-        });
+        } as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
         expect(screen.getByRole('alert')).toBeInTheDocument();
         expect(screen.getByText(/wizardPage.step.error.required.title/)).toBeInTheDocument();
@@ -65,14 +58,15 @@ describe('<WizardPageStep /> component', () => {
 
     it('renders a back button to go to the previous step when current step is not the first', async () => {
         const hasPrevious = true;
-        const previousStep = jest.fn();
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious, previousStep }));
+        const onPreviousClick = jest.fn();
+        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
+        useWizardFooterSpy.mockReturnValue({ onPreviousClick } as unknown as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
         const button = screen.getByRole('button', { name: /wizardPage.step.back/ });
         expect(button).toBeInTheDocument();
         expect(button.classList).not.toContain('invisible');
         await userEvent.click(button);
-        expect(previousStep).toHaveBeenCalled();
+        expect(onPreviousClick).toHaveBeenCalled();
     });
 
     it('hides the back button when step is the first step', () => {
@@ -84,12 +78,7 @@ describe('<WizardPageStep /> component', () => {
 
     it('renders a submit button to submit the values of the current step', () => {
         const submitLabel = 'Save';
-        useWizardFooterSpy.mockReturnValue({
-            submitLabel,
-            submitVariant: 'critical',
-            validationStatus: '',
-            displayValidationError: false,
-        });
+        useWizardFooterSpy.mockReturnValue({ submitLabel } as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
         const button = screen.getByRole<HTMLButtonElement>('button', { name: submitLabel });
         expect(button).toBeInTheDocument();
