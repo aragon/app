@@ -3,7 +3,7 @@ import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { erc20VotesAbi } from './erc20VotesAbi';
 
-export interface IUseERC20VotingTokenCheckParams {
+export interface IUseERC20VotesTokenCheckParams {
     /**
      * Address of the token contract.
      */
@@ -14,7 +14,7 @@ export interface IUseERC20VotingTokenCheckParams {
     chainId: number;
 }
 
-interface IUseERC20VotingTokenCheckQueryParams {
+interface IUseERC20VotesTokenCheckQueryParams {
     /**
      * Flag to enable or disable the query.
      */
@@ -29,9 +29,9 @@ const testAddress = '0x0000000000000000000000000000000000000001' as Hash;
  *
  * Checks governance compatibility according to the following logic https://github.com/aragon/token-voting-plugin/blob/develop/packages/contracts/src/TokenVotingSetup.sol
  */
-export const useERC20VotingTokenCheck = (
-    params: IUseERC20VotingTokenCheckParams,
-    queryParams: IUseERC20VotingTokenCheckQueryParams = {},
+export const useERC20VotesTokenCheck = (
+    params: IUseERC20VotesTokenCheckParams,
+    queryParams: IUseERC20VotesTokenCheckQueryParams = {},
 ) => {
     const { address, chainId } = params;
     const { enabled = true } = queryParams;

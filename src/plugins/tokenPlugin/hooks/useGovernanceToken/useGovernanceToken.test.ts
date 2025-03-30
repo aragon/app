@@ -1,15 +1,15 @@
 import { renderHook } from '@testing-library/react';
 import * as useTokenModule from '../useToken';
-import * as useERC20VotingTokenCheckModule from './useERC20VotingTokenCheck';
+import * as useERC20VotesTokenCheckModule from './useERC20VotesTokenCheck';
 import { useGovernanceToken } from './useGovernanceToken';
 
 describe('useGovernanceToken hook', () => {
     const useTokenSpy = jest.spyOn(useTokenModule, 'useToken');
-    const useERC20VotingTokenCheckSpy = jest.spyOn(useERC20VotingTokenCheckModule, 'useERC20VotingTokenCheck');
+    const useERC20VotesTokenCheckSpy = jest.spyOn(useERC20VotesTokenCheckModule, 'useERC20VotesTokenCheck');
 
     afterEach(() => {
         useTokenSpy.mockReset();
-        useERC20VotingTokenCheckSpy.mockReset();
+        useERC20VotesTokenCheckSpy.mockReset();
     });
 
     it('does not trigger ERC20Votes checks if ERC20 check fails', () => {
@@ -21,7 +21,7 @@ describe('useGovernanceToken hook', () => {
         });
 
         // Mock to return default values when not enabled
-        useERC20VotingTokenCheckSpy.mockReturnValue({
+        useERC20VotesTokenCheckSpy.mockReturnValue({
             isLoading: false,
             isGovernanceCompatible: false,
             isDelegationCompatible: false,
@@ -36,12 +36,9 @@ describe('useGovernanceToken hook', () => {
         expect(result.current.isGovernanceCompatible).toBe(false);
         expect(result.current.isDelegationCompatible).toBe(false);
 
-        // useERC20VotingTokenCheck not called with enabled: true query param!
-        expect(useERC20VotingTokenCheckSpy).toHaveBeenCalledTimes(1);
-        expect(useERC20VotingTokenCheckSpy).toHaveBeenCalledWith(
-            { address: '0x123', chainId: 123 },
-            { enabled: false },
-        );
+        // useERC20VotesTokenCheck not called with enabled: true query param!
+        expect(useERC20VotesTokenCheckSpy).toHaveBeenCalledTimes(1);
+        expect(useERC20VotesTokenCheckSpy).toHaveBeenCalledWith({ address: '0x123', chainId: 123 }, { enabled: false });
     });
 
     it('still returns loading state without token while ERC20Votes checks are in progress', () => {
@@ -58,7 +55,7 @@ describe('useGovernanceToken hook', () => {
         });
 
         // Mock ERC20Votes loading state
-        useERC20VotingTokenCheckSpy.mockReturnValue({
+        useERC20VotesTokenCheckSpy.mockReturnValue({
             isLoading: true,
             isGovernanceCompatible: false,
             isDelegationCompatible: false,
@@ -87,7 +84,7 @@ describe('useGovernanceToken hook', () => {
         });
 
         // Mock ERC20Votes success
-        useERC20VotingTokenCheckSpy.mockReturnValue({
+        useERC20VotesTokenCheckSpy.mockReturnValue({
             isLoading: false,
             isGovernanceCompatible: true,
             isDelegationCompatible: true,

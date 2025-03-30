@@ -1,5 +1,5 @@
 import { useToken } from '../useToken';
-import { useERC20VotingTokenCheck } from './useERC20VotingTokenCheck';
+import { useERC20VotesTokenCheck } from './useERC20VotesTokenCheck';
 import type { IUseGovernanceTokenParams, IUseGovernanceTokenResult } from './useGovernanceToken.api';
 
 export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGovernanceTokenResult => {
@@ -9,7 +9,7 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
         isGovernanceCompatible,
         isDelegationCompatible,
         isError,
-    } = useERC20VotingTokenCheck(params, {
+    } = useERC20VotesTokenCheck(params, {
         enabled: token != null && !isTokenLoading,
     });
 

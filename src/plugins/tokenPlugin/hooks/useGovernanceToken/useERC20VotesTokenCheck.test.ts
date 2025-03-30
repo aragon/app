@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import * as wagmi from 'wagmi';
-import { useERC20VotingTokenCheck } from './useERC20VotingTokenCheck';
+import { useERC20VotesTokenCheck } from './useERC20VotesTokenCheck';
 
-describe('useERC20VotingTokenCheck hook', () => {
+describe('useERC20VotesTokenCheck hook', () => {
     const useReadContractsSpy = jest.spyOn(wagmi, 'useReadContracts');
 
     const successCaseResponse = [
@@ -23,7 +23,7 @@ describe('useERC20VotingTokenCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: '0x123', chainId: 123 }));
+        const { result } = renderHook(() => useERC20VotesTokenCheck({ address: '0x123', chainId: 123 }));
 
         expect(result.current.isGovernanceCompatible).toEqual(true);
         expect(result.current.isDelegationCompatible).toEqual(true);
@@ -41,7 +41,7 @@ describe('useERC20VotingTokenCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: '0x123', chainId: 123 }));
+        const { result } = renderHook(() => useERC20VotesTokenCheck({ address: '0x123', chainId: 123 }));
 
         expect(result.current.isGovernanceCompatible).toBe(false);
         expect(result.current.isDelegationCompatible).toBe(true);
@@ -59,7 +59,7 @@ describe('useERC20VotingTokenCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: '0x123', chainId: 123 }));
+        const { result } = renderHook(() => useERC20VotesTokenCheck({ address: '0x123', chainId: 123 }));
 
         expect(result.current.isGovernanceCompatible).toEqual(true);
         expect(result.current.isDelegationCompatible).toEqual(false);
