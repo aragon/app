@@ -1,12 +1,10 @@
 import { renderHook } from '@testing-library/react';
-import type { Hash } from 'viem';
 import * as wagmi from 'wagmi';
 import { useERC20VotingTokenCheck } from './useERC20VotingTokenCheck';
 
 describe('useERC20VotingTokenCheck hook', () => {
     const useReadContractsSpy = jest.spyOn(wagmi, 'useReadContracts');
 
-    const tokenAddress: Hash = '0x1234567890abcdef1234567890abcdef123456789';
     const successCaseResponse = [
         { result: 0, status: 'success' },
         { result: 0, status: 'success' },
@@ -25,7 +23,7 @@ describe('useERC20VotingTokenCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: tokenAddress, chainId: 123 }));
+        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: '0x123', chainId: 123 }));
 
         expect(result.current.isGovernanceCompatible).toEqual(true);
         expect(result.current.isDelegationCompatible).toEqual(true);
@@ -43,10 +41,10 @@ describe('useERC20VotingTokenCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: tokenAddress, chainId: 123 }));
+        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: '0x123', chainId: 123 }));
 
-        expect(result.current.isGovernanceCompatible).toEqual(false);
-        expect(result.current.isDelegationCompatible).toEqual(true);
+        expect(result.current.isGovernanceCompatible).toBe(false);
+        expect(result.current.isDelegationCompatible).toBe(true);
         expect(result.current.isError).toBe(true);
         expect(result.current.isLoading).toBe(false);
     });
@@ -61,7 +59,7 @@ describe('useERC20VotingTokenCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: tokenAddress, chainId: 123 }));
+        const { result } = renderHook(() => useERC20VotingTokenCheck({ address: '0x123', chainId: 123 }));
 
         expect(result.current.isGovernanceCompatible).toEqual(true);
         expect(result.current.isDelegationCompatible).toEqual(false);

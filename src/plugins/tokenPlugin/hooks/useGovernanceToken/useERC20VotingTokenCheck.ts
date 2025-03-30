@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { erc20VotesAbi } from './erc20VotesAbi';
@@ -75,12 +76,23 @@ export const useERC20VotingTokenCheck = (
         ],
     });
 
-    const governanceCheckResults = contractResults ? contractResults.slice(0, 3) : [];
-    const delegationCheckResults = contractResults ? [contractResults[3]] : [];
+    const isGovernanceCompatible = useMemo(() => {
+        if (!contractResults) {
+            return false;
+        }
+        return contractResults.slice(0, 3).every((result) => result.status === 'success');
+    }, [contractResults]);
+
+    const isDelegationCompatible = useMemo(() => {
+        if (!contractResults) {
+            return false;
+        }
+        return contractResults[3].status === 'success';
+    }, [contractResults]);
 
     return {
-        isGovernanceCompatible: governanceCheckResults.every((result) => result.status === 'success'),
-        isDelegationCompatible: delegationCheckResults.every((result) => result.status === 'success'),
+        isGovernanceCompatible,
+        isDelegationCompatible,
         isLoading,
         isError,
     };

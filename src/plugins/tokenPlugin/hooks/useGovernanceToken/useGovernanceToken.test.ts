@@ -1,5 +1,4 @@
 import { renderHook } from '@testing-library/react';
-import type { Hash } from 'viem';
 import * as useTokenModule from '../useToken';
 import * as useERC20VotingTokenCheckModule from './useERC20VotingTokenCheck';
 import { useGovernanceToken } from './useGovernanceToken';
@@ -7,8 +6,6 @@ import { useGovernanceToken } from './useGovernanceToken';
 describe('useGovernanceToken hook', () => {
     const useTokenSpy = jest.spyOn(useTokenModule, 'useToken');
     const useERC20VotingTokenCheckSpy = jest.spyOn(useERC20VotingTokenCheckModule, 'useERC20VotingTokenCheck');
-
-    const tokenAddress: Hash = '0x1234567890abcdef1234567890abcdef123456789';
 
     afterEach(() => {
         useTokenSpy.mockReset();
@@ -23,7 +20,7 @@ describe('useGovernanceToken hook', () => {
             token: null,
         });
 
-        // Mock ERC20Votes check to fail
+        // Mock to return default values when not enabled
         useERC20VotingTokenCheckSpy.mockReturnValue({
             isLoading: false,
             isGovernanceCompatible: false,
@@ -31,7 +28,7 @@ describe('useGovernanceToken hook', () => {
             isError: false,
         });
 
-        const { result } = renderHook(() => useGovernanceToken({ address: tokenAddress, chainId: 123 }));
+        const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 123 }));
 
         expect(result.current.token).toBe(null);
         expect(result.current.isError).toBe(true);
@@ -42,7 +39,7 @@ describe('useGovernanceToken hook', () => {
         // useERC20VotingTokenCheck not called with enabled: true query param!
         expect(useERC20VotingTokenCheckSpy).toHaveBeenCalledTimes(1);
         expect(useERC20VotingTokenCheckSpy).toHaveBeenCalledWith(
-            { address: tokenAddress, chainId: 123 },
+            { address: '0x123', chainId: 123 },
             { enabled: false },
         );
     });
@@ -68,7 +65,7 @@ describe('useGovernanceToken hook', () => {
             isError: false,
         });
 
-        const { result } = renderHook(() => useGovernanceToken({ address: tokenAddress, chainId: 123 }));
+        const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 123 }));
 
         expect(result.current.token).toBe(null);
         expect(result.current.isLoading).toBe(true);
@@ -97,7 +94,7 @@ describe('useGovernanceToken hook', () => {
             isError: false,
         });
 
-        const { result } = renderHook(() => useGovernanceToken({ address: tokenAddress, chainId: 123 }));
+        const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 123 }));
 
         expect(result.current.token).toEqual({
             name: 'Test Token',
