@@ -2,7 +2,7 @@ import type { ISetupBodyDialogParams } from '@/modules/createDao/dialogs/setupBo
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { Button, IconType, type IInputContainerProps, InputContainer } from '@aragon/gov-ui-kit';
 import { useFieldArray, useWatch } from 'react-hook-form';
 import type { ICreateProcessFormData } from '../../../createProcessFormDefinitions';
 import { StageBodiesFieldItem } from './stageBodiesFieldItem';
@@ -16,10 +16,14 @@ export interface IStageBodiesFieldProps {
      * ID of the stage to add the governance bodies for.
      */
     stageId?: string;
+    /**
+     * Alert to be displayed on the field.
+     */
+    alert?: IInputContainerProps['alert'];
 }
 
 export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageId } = props;
+    const { isOptimisticStage, stageId, alert } = props;
 
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
@@ -68,6 +72,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                 label={t(`app.createDao.createProcessForm.stages.bodies.label.${bodiesLabelContext}`)}
                 helpText={t('app.createDao.createProcessForm.stages.bodies.helpText')}
                 useCustomWrapper={true}
+                alert={alert}
             >
                 <div className="flex flex-col gap-3 md:gap-2">
                     {stageBodies.map((body, index) => (

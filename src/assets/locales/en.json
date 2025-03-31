@@ -222,6 +222,9 @@
               "voting": "Voting bodies"
             }
           },
+          "error": {
+            "requiredBodies": "At least one body must be added to the stage"
+          },
           "name": {
             "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
             "label": "Stage name"

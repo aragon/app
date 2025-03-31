@@ -2,7 +2,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
 import type React from 'react';
-import { useWatch } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import {
     ProcessStageType,
     type ICreateProcessFormData,
@@ -38,13 +39,21 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
     const { formPrefix, stage, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
-
-    useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix);
+    const { trigger } = useFormContext();
 
     const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${formPrefix}.type` });
 
     const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
     const stageBodies = processBodies.filter((body) => body.stageId === stage.internalId);
+
+    const stageError = 'app.createDao.createProcessForm.stages.error.requiredBodies';
+    const { alert: stageAlert } = useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix, {
+        label: 'Stage',
+        rules: {
+            validate: () =>
+                stageType !== ProcessStageType.TIMELOCK && stageBodies.length === 0 ? stageError : undefined,
+        },
+    });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
@@ -57,6 +66,14 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
         defaultValue: '',
     });
 
+    // Re-trigger stage required-body validation when user selects timelock stage type or adds a body. Do not trigger
+    // validation on type / stage-bodies change otherwise the component would display the error on mount.
+    useEffect(() => {
+        if (isTimelockStage || stageBodies.length > 0) {
+            void trigger(formPrefix);
+        }
+    }, [trigger, formPrefix, stageType, isTimelockStage, stageBodies]);
+
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
             <InputText
@@ -66,7 +83,9 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
             />
             <StageTypeField fieldPrefix={formPrefix} />
             <StageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
-            {!isTimelockStage && <StageBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />}
+            {!isTimelockStage && (
+                <StageBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} alert={stageAlert} />
+            )}
             {stageBodies.length > 0 && (
                 <StageRequiredApprovalsField
                     fieldPrefix={formPrefix}
