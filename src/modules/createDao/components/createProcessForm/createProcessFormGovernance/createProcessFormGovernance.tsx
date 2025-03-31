@@ -1,11 +1,11 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { CreateProcessFormGovernanceItem } from './createProcessFormGovernanceItem';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
-import { useFormField } from '@/shared/hooks/useFormField';
 
 export interface ICreateProcessFormGovernanceProps {}
 

@@ -8,10 +8,10 @@ import {
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
 } from '../createProcessFormDefinitions';
-import { GovernanceStageTypeField } from './fields/governanceStageTypeField';
-import { GovernanceStageTimingField } from './fields/governanceStageTimingField';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
 import { GovernanceStageApprovalsField } from './fields/governanceStageApprovalsField';
+import { GovernanceStageTimingField } from './fields/governanceStageTimingField';
+import { GovernanceStageTypeField } from './fields/governanceStageTypeField';
 
 export interface ICreateProcessFormGovernanceItemProps {
     /**
