@@ -1,4 +1,5 @@
 import { Network } from '@/shared/api/daoService';
+import type { ITransactionStatus } from '@/shared/api/transactionService/domain';
 import { useTransactionStatus } from '@/shared/api/transactionService/queries';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
@@ -14,7 +15,6 @@ import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
-import type { ITransactionStatus } from '@/shared/api/transactionService/domain';
 
 const maxRetries = 40;
 
