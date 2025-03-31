@@ -18,7 +18,7 @@ export const GovernanceStageTypeField: React.FC<IGovernanceStageTypeFieldProps> 
     const { setValue } = useFormContext();
 
     const { onChange: onTypeChange, ...stageTypeField } = useFormField<ICreateProcessFormStage, 'type'>('type', {
-        label: t('app.createDao.createProcessForm.governanceStageTypeField.label'),
+        label: t('app.createDao.createProcessForm.governance.stageTypeField.label'),
         defaultValue: ProcessStageType.NORMAL,
         fieldPrefix: fieldPrefix,
     });
@@ -40,14 +40,16 @@ export const GovernanceStageTypeField: React.FC<IGovernanceStageTypeFieldProps> 
     return (
         <RadioGroup
             onValueChange={handleTypeChange}
-            helpText={t('app.createDao.createProcessForm.governanceStageTypeField.helpText')}
+            helpText={t('app.createDao.createProcessForm.governance.stageTypeField.helpText')}
             {...stageTypeField}
         >
             {Object.values(ProcessStageType).map((type) => (
                 <RadioCard
                     key={type}
-                    label={t(`app.createDao.createProcessForm.governanceStageTypeField.list.${type}.label`)}
-                    description={t(`app.createDao.createProcessForm.governanceStageTypeField.list.${type}.description`)}
+                    label={t(`app.createDao.createProcessForm.governance.stageTypeField.list.${type}.label`)}
+                    description={t(
+                        `app.createDao.createProcessForm.governance.stageTypeField.list.${type}.description`,
+                    )}
                     value={type}
                 />
             ))}

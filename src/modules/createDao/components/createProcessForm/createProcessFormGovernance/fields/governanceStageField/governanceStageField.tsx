@@ -4,6 +4,7 @@ import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit'
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
 import {
+    GovernanceType,
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
     ProcessStageType,
@@ -13,7 +14,7 @@ import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField'
 import { GovernanceStageTimingField } from '../governanceStageTimingField';
 import { GovernanceStageTypeField } from '../governanceStageTypeField';
 
-export interface IGovernanceStageProps {
+export interface IGovernanceStageFieldProps {
     /**
      * Prefix to be prepended to all form fields.
      */
@@ -34,7 +35,7 @@ export interface IGovernanceStageProps {
 
 const nameMaxLength = 40;
 
-export const GovernanceStage: React.FC<IGovernanceStageProps> = (props) => {
+export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props) => {
     const { formPrefix, stage, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
@@ -50,7 +51,7 @@ export const GovernanceStage: React.FC<IGovernanceStageProps> = (props) => {
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
     const stageNameField = useFormField<ICreateProcessFormStage, 'name'>('name', {
-        label: t('app.createDao.createProcessForm.governanceStage.name.label'),
+        label: t('app.createDao.createProcessForm.governance.stageField.name.label'),
         trimOnBlur: true,
         rules: { required: true, maxLength: nameMaxLength },
         fieldPrefix: formPrefix,
@@ -60,7 +61,7 @@ export const GovernanceStage: React.FC<IGovernanceStageProps> = (props) => {
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
             <InputText
-                helpText={t('app.createDao.createProcessForm.governanceStage.name.helpText')}
+                helpText={t('app.createDao.createProcessForm.governance.stageField.name.helpText')}
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />
@@ -70,7 +71,7 @@ export const GovernanceStage: React.FC<IGovernanceStageProps> = (props) => {
                 <GovernanceBodiesField
                     stageId={stage.internalId}
                     isOptimisticStage={isOptimisticStage}
-                    allowMultipleBodies={true}
+                    governanceType={GovernanceType.ADVANCED}
                 />
             )}
             {stageBodies.length > 0 && (
@@ -86,12 +87,12 @@ export const GovernanceStage: React.FC<IGovernanceStageProps> = (props) => {
                     size="md"
                     customTrigger={
                         <Button variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL} className="self-end">
-                            {t('app.createDao.createProcessForm.governanceStage.action.more')}
+                            {t('app.createDao.createProcessForm.governance.stageField.action.more')}
                         </Button>
                     }
                 >
                     <Dropdown.Item onClick={onDelete}>
-                        {t('app.createDao.createProcessForm.governanceStage.action.remove')}
+                        {t('app.createDao.createProcessForm.governance.stageField.action.remove')}
                     </Dropdown.Item>
                 </Dropdown.Container>
             )}

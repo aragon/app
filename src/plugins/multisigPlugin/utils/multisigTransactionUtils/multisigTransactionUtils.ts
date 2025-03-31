@@ -3,7 +3,6 @@ import type { ICreateProposalFormData } from '@/modules/governance/components/cr
 import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import type { IMultisigSetupGovernanceForm } from '../../components/multisigSetupGovernance';
@@ -35,15 +34,14 @@ class MultisigTransactionUtils {
     };
 
     buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams<IMultisigSetupGovernanceForm>) => {
-        const { metadataCid, dao, body } = params;
+        const { metadataCid, dao, body, stageVotingPeriod } = params;
         const { members } = body.membership;
         const { minApprovals, onlyListed } = body.governance;
 
-        const { globalExecutor } = networkDefinitions[dao.network].addresses;
         const repositoryAddress = multisigPlugin.repositoryAddresses[dao.network];
 
         const memberAddresses = members.map((member) => member.address as Hex);
-        const multisigTarget = { target: globalExecutor, operation: 1 };
+        const multisigTarget = pluginTransactionUtils.getPluginTargetConfig(dao, stageVotingPeriod != null);
         const pluginSettings = { onlyListed, minApprovals };
 
         const pluginSettingsData = encodeAbiParameters(multisigPluginSetupAbi, [

@@ -35,14 +35,14 @@ export const GovernanceStageApprovalsField: React.FC<IGovernanceStageApprovalsFi
 
     return (
         <NumberProgressInput
-            label={t(`app.createDao.createProcessForm.governanceStageApprovalsField.${labelContext}.label`)}
-            helpText={t(`app.createDao.createProcessForm.governanceStageApprovalsField.${labelContext}.helpText`)}
+            label={t(`app.createDao.createProcessForm.governance.stageApprovalsField.${labelContext}.label`)}
+            helpText={t(`app.createDao.createProcessForm.governance.stageApprovalsField.${labelContext}.helpText`)}
             min={0}
             fieldName={fieldName}
             valueLabel={value.toString()}
             defaultValue={requiredApprovalsDefaultValue}
             total={stageBodiesCount}
-            totalLabel={t('app.createDao.createProcessForm.governanceStageApprovalsField.summary', {
+            totalLabel={t('app.createDao.createProcessForm.governance.stageApprovalsField.summary', {
                 count: stageBodiesCount,
             })}
         />

@@ -8,7 +8,6 @@ import type { ICreateProposalFormData } from '@/modules/governance/components/cr
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import type { IDao } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { type IPluginSetupData, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
@@ -26,12 +25,6 @@ class SppTransactionUtils {
     // A special address for encoding permissions
     // See https://github.com/aragon/osx/blob/main/packages/contracts/src/core/permission/PermissionManager.sol#L23
     private anyAddress: Hex = '0xffffffffffffffffffffffffffffffffffffffff';
-
-    private permissionIds = {
-        rootPermission: 'ROOT_PERMISSION',
-        createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
-        executePermission: 'EXECUTE_PERMISSION',
-    };
 
     buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateSppProposalFormData>): Hex => {
         const { metadata, actions, values } = params;
@@ -64,42 +57,19 @@ class SppTransactionUtils {
 
     buildInstallPluginsActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], dao: IDao) => {
         const daoAddress = dao.address as Hex;
-        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
 
         // The SPP plugin is the one prepared first, the setupData array contains the data for the SPP plugin as the first element.
         const [sppAddress, ...pluginAddresses] = setupData.map((data) => data.pluginAddress);
         const [sppSetupData, ...pluginSetupData] = setupData;
 
-        const grantRootPermissionAction = permissionTransactionUtils.buildGrantPermissionTransaction({
-            where: daoAddress,
-            who: pluginSetupProcessor,
-            what: this.permissionIds.rootPermission,
-            to: daoAddress,
-        });
+        const updateStages = this.buildUpdateStagesTransaction(values, sppAddress, pluginAddresses);
+        const updateCreateProposalRules = this.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData);
 
-        const applyInstallationActions = pluginTransactionUtils.setupDataToActions(setupData, dao);
-        const updateStagesAction = this.buildUpdateStagesTransaction(values, sppAddress, pluginAddresses);
-        const updateCreateProposalRulesAction = this.buildUpdateRulesTransaction(values, sppSetupData, pluginSetupData);
-
-        const pluginPermissionActions = pluginSetupData
+        const updatePluginPermissions = pluginSetupData
             .map((data) => this.buildBodyPermissionActions(data, daoAddress, sppAddress))
             .flat();
 
-        const revokeRootPermissionAction = permissionTransactionUtils.buildRevokePermissionTransaction({
-            where: daoAddress,
-            who: pluginSetupProcessor,
-            what: this.permissionIds.rootPermission,
-            to: daoAddress,
-        });
-
-        return [
-            grantRootPermissionAction,
-            ...applyInstallationActions,
-            updateStagesAction,
-            updateCreateProposalRulesAction,
-            ...pluginPermissionActions,
-            revokeRootPermissionAction,
-        ].filter((action) => action != null);
+        return [updateStages, updateCreateProposalRules, ...updatePluginPermissions].filter((action) => action != null);
     };
 
     private buildBodyPermissionActions = (pluginData: IPluginSetupData, daoAddress: Hex, sppAddress: Hex) => {
@@ -109,7 +79,7 @@ class SppTransactionUtils {
         const revokePluginCreateProposalAction = permissionTransactionUtils.buildRevokePermissionTransaction({
             where: bodyAddress,
             who: this.anyAddress,
-            what: this.permissionIds.createProposalPermission,
+            what: permissionTransactionUtils.permissionIds.createProposalPermission,
             to: daoAddress,
         });
 
@@ -117,7 +87,7 @@ class SppTransactionUtils {
         const grantSppCreateProposalAction = permissionTransactionUtils.buildGrantPermissionTransaction({
             where: bodyAddress,
             who: sppAddress,
-            what: this.permissionIds.createProposalPermission,
+            what: permissionTransactionUtils.permissionIds.createProposalPermission,
             to: daoAddress,
         });
 
@@ -125,7 +95,7 @@ class SppTransactionUtils {
         const revokeExecutePermission = permissionTransactionUtils.buildRevokePermissionTransaction({
             where: daoAddress,
             who: bodyAddress,
-            what: this.permissionIds.executePermission,
+            what: permissionTransactionUtils.permissionIds.executePermission,
             to: daoAddress,
         });
 

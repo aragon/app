@@ -63,27 +63,27 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
     };
 
     const votingPeriodLabel = isTimelockStage
-        ? t('app.createDao.createProcessForm.governanceStageTimingField.timelockPeriod')
-        : t('app.createDao.createProcessForm.governanceStageTimingField.votingPeriod');
+        ? t('app.createDao.createProcessForm.governance.stageTimingField.timelockPeriod')
+        : t('app.createDao.createProcessForm.governance.stageTimingField.votingPeriod');
 
     const earlyStageTagValue = earlyStageAdvance ? 'yes' : 'no';
-    const earlyStageTagLabel = t(`app.createDao.createProcessForm.governanceStageTimingField.${earlyStageTagValue}`);
+    const earlyStageTagLabel = t(`app.createDao.createProcessForm.governance.stageTimingField.${earlyStageTagValue}`);
 
     const expirationTagValue = stageExpiration != null ? 'yes' : 'no';
-    const expirationTagLabel = t(`app.createDao.createProcessForm.governanceStageTimingField.${expirationTagValue}`);
+    const expirationTagLabel = t(`app.createDao.createProcessForm.governance.stageTimingField.${expirationTagValue}`);
 
     return (
         <InputContainer
             id="stageTiming"
             useCustomWrapper={true}
-            label={t('app.createDao.createProcessForm.governanceStageTimingField.label')}
+            label={t('app.createDao.createProcessForm.governance.stageTimingField.label')}
             className="flex flex-col items-start gap-3"
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
                 <DefinitionList.Item term={votingPeriodLabel}>{formatDuration(votingPeriod)}</DefinitionList.Item>
                 {!isOptimisticStage && !isTimelockStage && (
                     <DefinitionList.Item
-                        term={t('app.createDao.createProcessForm.governanceStageTimingField.earlyAdvance')}
+                        term={t('app.createDao.createProcessForm.governance.stageTimingField.earlyAdvance')}
                     >
                         <Tag
                             className="w-fit"
@@ -92,7 +92,7 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
                         />
                     </DefinitionList.Item>
                 )}
-                <DefinitionList.Item term={t('app.createDao.createProcessForm.governanceStageTimingField.expiration')}>
+                <DefinitionList.Item term={t('app.createDao.createProcessForm.governance.stageTimingField.expiration')}>
                     <Tag
                         className="w-fit"
                         label={expirationTagLabel}
@@ -101,14 +101,14 @@ export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldPro
                 </DefinitionList.Item>
                 {stageExpiration != null && (
                     <DefinitionList.Item
-                        term={t('app.createDao.createProcessForm.governanceStageTimingField.expirationPeriod')}
+                        term={t('app.createDao.createProcessForm.governance.stageTimingField.expirationPeriod')}
                     >
                         {formatDuration(stageExpiration)}
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
             <Button onClick={() => setIsTimingDialogOpen(true)} variant="tertiary" size="md">
-                {t('app.createDao.createProcessForm.governanceStageTimingField.edit')}
+                {t('app.createDao.createProcessForm.governance.stageTimingField.edit')}
             </Button>
             {isTimingDialogOpen && (
                 <GovernanceStageTimingFieldDialog

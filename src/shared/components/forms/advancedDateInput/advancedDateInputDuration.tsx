@@ -15,6 +15,10 @@ export interface IAdvancedDateInputDurationProps
      * Default value for the duration date. Defaults to minDuration or 0 days, 0 hours, 0 minutes.
      */
     defaultValue?: IDateDuration;
+    /**
+     * Exposes the duration as seconds on the form when set to true.
+     */
+    useSecondsFormat?: boolean;
 }
 
 export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
@@ -27,27 +31,37 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
         validateMinDuration,
         className,
         defaultValue,
+        useSecondsFormat,
         ...otherProps
     } = props;
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
-    const validateDuration = (value: IDateDuration) =>
+    const validateDuration = (value: IDateDuration | number) =>
         validateMinDuration ? dateUtils.validateDuration({ value, minDuration }) : true;
 
-    const processedDefaultValue = minDuration ?? { days: 0, hours: 0, minutes: 0 };
+    const processedDefaultValue = defaultValue ?? minDuration ?? { days: 0, hours: 0, minutes: 0 };
+    const formattedDefaultValue = useSecondsFormat
+        ? dateUtils.durationToSeconds(processedDefaultValue)
+        : processedDefaultValue;
 
-    const durationField = useFormField<Record<string, IDateDuration>, typeof field>(field, {
+    const durationField = useFormField<Record<string, IDateDuration | number>, typeof field>(field, {
         rules: { validate: validateDuration },
         label,
-        defaultValue: processedDefaultValue,
+        defaultValue: formattedDefaultValue,
     });
+
+    const currentDurationObject =
+        typeof durationField.value === 'object'
+            ? durationField.value
+            : dateUtils.secondsToDuration(durationField.value);
 
     const handleDurationChange = (type: string) => (value: string) => {
         const parsedValue = parseInt(value, 10);
         const numericValue = isNaN(parsedValue) ? 0 : parsedValue;
-        const newValue = { ...durationField.value, [type]: numericValue };
-        setValue(field, newValue, { shouldValidate: false });
+        const newValue = { ...currentDurationObject, [type]: numericValue };
+        const processedNewValue = useSecondsFormat ? dateUtils.durationToSeconds(newValue) : newValue;
+        setValue(field, processedNewValue, { shouldValidate: false });
     };
 
     const handleInputBlur = () => trigger(field);
@@ -61,7 +75,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     max={59}
                     className="w-full md:w-1/3"
                     placeholder="0 min"
-                    value={durationField.value.minutes}
+                    value={currentDurationObject.minutes}
                     onChange={handleDurationChange('minutes')}
                     onBlur={handleInputBlur}
                     suffix="min"
@@ -72,7 +86,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     max={23}
                     className="w-full md:w-1/3"
                     placeholder="0 h"
-                    value={durationField.value.hours}
+                    value={currentDurationObject.hours}
                     onChange={handleDurationChange('hours')}
                     onBlur={handleInputBlur}
                     suffix="h"
@@ -82,7 +96,7 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     min={0}
                     className="w-full md:w-1/3"
                     placeholder="0 d"
-                    value={durationField.value.days}
+                    value={currentDurationObject.days}
                     onChange={handleDurationChange('days')}
                     onBlur={handleInputBlur}
                     suffix="d"

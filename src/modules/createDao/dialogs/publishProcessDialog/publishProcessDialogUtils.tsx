@@ -2,7 +2,7 @@ import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUti
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionDialogPrepareReturn } from '@/shared/components/transactionDialog';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import type { IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
+import { pluginTransactionUtils, type IPluginSetupData } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import { GovernanceSlotId } from '../../../governance/constants/moduleSlots';
@@ -44,26 +44,27 @@ class PublishProcessDialogUtils {
         const { values, dao, setupData, plugin, metadataCid } = params;
 
         const proposalMetadata = transactionUtils.cidToHex(metadataCid);
+        const isAdvancedGovernance = values.governanceType === 'ADVANCED';
 
         const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildCreateProposalDataParams, Hex>({
             pluginId: plugin.subdomain,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
         })!;
 
-        const proposalActions = sppTransactionUtils.buildInstallPluginsActions(values, setupData, dao);
+        const processorSetupActions = isAdvancedGovernance
+            ? sppTransactionUtils.buildInstallPluginsActions(values, setupData, dao)
+            : [];
 
-        const buildDataParams: IBuildCreateProposalDataParams = {
+        const buildActionsParams = { dao, setupData, actions: processorSetupActions };
+        const proposalActions = pluginTransactionUtils.buildApplyPluginsInstallationActions(buildActionsParams);
+
+        const transactionData = buildDataFunction({
             actions: proposalActions,
             metadata: proposalMetadata,
             values: {} as IBuildCreateProposalDataParams['values'],
-        };
+        });
 
-        const transactionData = buildDataFunction(buildDataParams);
-
-        const transaction: TransactionDialogPrepareReturn = {
-            to: plugin.address as Hex,
-            data: transactionData,
-        };
+        const transaction: TransactionDialogPrepareReturn = { to: plugin.address as Hex, data: transactionData };
 
         return Promise.resolve(transaction);
     };

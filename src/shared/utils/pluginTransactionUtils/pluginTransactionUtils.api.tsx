@@ -1,3 +1,5 @@
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IDao } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
 
 export interface IPluginSetupPermission {
@@ -62,4 +64,19 @@ export interface IPluginSetupData {
      * Helpers and permissions for the plugin setup.
      */
     preparedSetupData: IPluginSetupPreparedSetupData;
+}
+
+export interface IBuildApplyPluginsInstallationActionsParams {
+    /**
+     * DAO to apply the plugin installation for.
+     */
+    dao: IDao;
+    /**
+     * List of plugin setup data to be applied.
+     */
+    setupData: IPluginSetupData[];
+    /**
+     * Other actions to be added to the installaction action array before the revoke root permission transaction.
+     */
+    actions?: Array<Pick<IProposalAction, 'value' | 'to' | 'data'>>;
 }

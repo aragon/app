@@ -5,7 +5,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
-import { GovernanceStage } from './fields/governanceStage';
+import { GovernanceStageField } from './fields/governanceStageField';
 
 export interface ICreateProcessFormGovernanceProps {}
 
@@ -19,7 +19,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
         onChange: onGovernanceTypeChange,
         ...governanceTypeField
     } = useFormField<ICreateProcessFormData, 'governanceType'>('governanceType', {
-        label: t('app.createDao.createProcessForm.governanceType.label'),
+        label: t('app.createDao.createProcessForm.governance.type.label'),
         defaultValue: GovernanceType.BASIC,
         rules: { required: true },
     });
@@ -40,19 +40,15 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
     };
 
     const handleGovernanceTypeChanged = (value: string) => {
+        // Reset bodies array when switching governance type
+        setValue('bodies', []);
         onGovernanceTypeChange(value);
-
-        // Reset stages if process type is BASIC
-        if (value === GovernanceType.BASIC) {
-            setValue('stages', []);
-            setValue('bodies', []);
-        }
     };
 
     return (
         <div className="flex w-full flex-col gap-10">
             <RadioGroup
-                helpText={t('app.createDao.createProcessForm.governanceType.helpText')}
+                helpText={t('app.createDao.createProcessForm.governance.type.helpText')}
                 onValueChange={handleGovernanceTypeChanged}
                 className="w-full !flex-row gap-4"
                 value={governanceType}
@@ -61,18 +57,18 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                 {Object.values(GovernanceType).map((type) => (
                     <RadioCard
                         key={type}
-                        label={t(`app.createDao.createProcessForm.governanceType.${type}.label`)}
-                        description={t(`app.createDao.createProcessForm.governanceType.${type}.description`)}
+                        label={t(`app.createDao.createProcessForm.governance.type.${type}.label`)}
+                        description={t(`app.createDao.createProcessForm.governance.type.${type}.description`)}
                         value={type}
                     />
                 ))}
             </RadioGroup>
-            {governanceType === GovernanceType.BASIC && <GovernanceBodiesField />}
+            {governanceType === GovernanceType.BASIC && <GovernanceBodiesField governanceType={governanceType} />}
             {governanceType === GovernanceType.ADVANCED && (
                 <div className="flex flex-col gap-2 md:gap-3">
                     <div className="flex flex-col gap-3 md:gap-2">
                         {stages.map((stage, index) => (
-                            <GovernanceStage
+                            <GovernanceStageField
                                 key={stage.id}
                                 formPrefix={`stages.${index.toString()}`}
                                 stage={stage}
@@ -88,7 +84,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                         iconLeft={IconType.PLUS}
                         onClick={handleAddStage}
                     >
-                        {t('app.createDao.createProcessForm.governanceStage.action.add')}
+                        {t('app.createDao.createProcessForm.governance.stageField.action.add')}
                     </Button>
                 </div>
             )}

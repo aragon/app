@@ -167,111 +167,111 @@
         "title": "Create governance process"
       },
       "createProcessForm": {
-        "governanceBodiesField": {
-          "action": {
-            "add": "Add body",
-            "edit": "Edit",
-            "more": "More",
-            "remove": "Remove body"
-          },
-          "add": "Add body",
-          "helpText": "These bodies will decide whether or not this stage passes.",
-          "label": {
-            "vetoing": "Vetoing bodies",
-            "voting": "Voting bodies"
-          }
-        },
-        "governanceStage": {
-          "action": {
-            "add": "Add stage",
-            "more": "More",
-            "remove": "Remove stage"
-          },
-
-          "name": {
-            "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
-            "label": "Stage name"
-          }
-        },
-        "governanceStageApprovalsField": {
-          "approve": {
-            "helpText": "The number of bodies that must approve this proposal to advance it.",
-            "label": "Approval threshold"
-          },
-          "summary": "of {{count}} bodies",
-          "veto": {
-            "helpText": "The number of bodies that must veto this proposal to stop it from advancing.",
-            "label": "Veto threshold"
-          }
-        },
-        "governanceStageTimingField": {
-          "dialog": {
-            "a11y": {
-              "description": "Configure the duration and expiration for the stage"
-            },
+        "governance": {
+          "bodiesField": {
             "action": {
-              "cancel": "Cancel",
-              "save": "Save"
+              "add": "Add body",
+              "edit": "Edit",
+              "more": "More",
+              "remove": "Remove body"
             },
-            "earlyAdvance": {
-              "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
-              "label": "Early stage advance"
-            },
-            "expiration": {
-              "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
-              "infoText": "Recommended minimum expiration time is 7 days.",
-              "label": "Stage expiration"
-            },
-            "timelockPeriod": {
-              "helpText": "The time that must pass before the proposal can advance.",
-              "label": "Timelock period"
-            },
-            "title": "Edit timing",
-            "votingPeriod": {
-              "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
-              "infoText": "Recommended minimum voting period is 7 days.",
-              "label": "Voting period"
+            "helpText": "These bodies will decide whether or not this stage passes.",
+            "label": {
+              "vetoing": "Vetoing bodies",
+              "voting": "Voting bodies"
             }
           },
-          "earlyAdvance": "Early stage advance",
-          "edit": "Edit timing",
-          "expiration": "Stage expiration",
-          "expirationPeriod": "Expiration period",
-          "label": "Timing",
-          "no": "Disabled",
-          "timelockPeriod": "Timelock period",
-          "votingPeriod": "Voting period",
-          "yes": "Enabled"
-        },
-        "governanceStageTypeField": {
-          "helpText": "This will determine the role that governance plays in the stage.",
-          "label": "Stage type",
-          "list": {
-            "NORMAL": {
-              "description": "Proposals pass this stage only if approved.",
-              "label": "Normal"
+          "stageApprovalsField": {
+            "approve": {
+              "helpText": "The number of bodies that must approve this proposal to advance it.",
+              "label": "Approval threshold"
             },
-            "OPTIMISTIC": {
-              "description": "Proposals pass this stage unless vetoed.",
-              "label": "Optimistic"
-            },
-            "TIMELOCK": {
-              "description": "Proposals pass this stage after the timelock period.",
-              "label": "Timelock"
+            "summary": "of {{count}} bodies",
+            "veto": {
+              "helpText": "The number of bodies that must veto this proposal to stop it from advancing.",
+              "label": "Veto threshold"
             }
+          },
+          "stageField": {
+            "action": {
+              "add": "Add stage",
+              "more": "More",
+              "remove": "Remove stage"
+            },
+            "name": {
+              "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
+              "label": "Stage name"
+            }
+          },
+          "stageTimingField": {
+            "dialog": {
+              "a11y": {
+                "description": "Configure the duration and expiration for the stage"
+              },
+              "action": {
+                "cancel": "Cancel",
+                "save": "Save"
+              },
+              "earlyAdvance": {
+                "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
+                "label": "Early stage advance"
+              },
+              "expiration": {
+                "helpText": "This limits the amount of time after the voting period ends for advancing the proposal to the next stage.",
+                "infoText": "Recommended minimum expiration time is 7 days.",
+                "label": "Stage expiration"
+              },
+              "timelockPeriod": {
+                "helpText": "The time that must pass before the proposal can advance.",
+                "label": "Timelock period"
+              },
+              "title": "Edit timing",
+              "votingPeriod": {
+                "helpText": "This is amount of time bodies in this stage have to vote on proposals.",
+                "infoText": "Recommended minimum voting period is 7 days.",
+                "label": "Voting period"
+              }
+            },
+            "earlyAdvance": "Early stage advance",
+            "edit": "Edit timing",
+            "expiration": "Stage expiration",
+            "expirationPeriod": "Expiration period",
+            "label": "Timing",
+            "no": "Disabled",
+            "timelockPeriod": "Timelock period",
+            "votingPeriod": "Voting period",
+            "yes": "Enabled"
+          },
+          "stageTypeField": {
+            "helpText": "This will determine the role that governance plays in the stage.",
+            "label": "Stage type",
+            "list": {
+              "NORMAL": {
+                "description": "Proposals pass this stage only if approved.",
+                "label": "Normal"
+              },
+              "OPTIMISTIC": {
+                "description": "Proposals pass this stage unless vetoed.",
+                "label": "Optimistic"
+              },
+              "TIMELOCK": {
+                "description": "Proposals pass this stage after the timelock period.",
+                "label": "Timelock"
+              }
+            }
+          },
+          "type": {
+            "ADVANCED": {
+              "description": "Proposals advance across multiple stages.",
+              "label": "Advanced"
+            },
+            "BASIC": {
+              "description": "Proposals are decided on by a single body.",
+              "label": "Basic"
+            },
+            "helpText": "This determines the amount of control and flexibility you need to design your governance process.",
+            "label": "Governance Designer"
           }
-        },
-        "governanceType": {
-          "ADVANCED": {
-            "description": "Proposals advance across multiple stages.",
-            "label": "Advanced"
-          },
-          "BASIC": {
-            "description": "Proposals are decided on by a single body.",
-            "label": "Basic"
-          },
-          "helpText": "This determines the amount of control and flexibility you need to design your governance process.",
-          "label": "Governance Designer"
         },
         "metadata": {
           "description": {
