@@ -1,3 +1,4 @@
+import { generateToken } from '@/modules/finance/testUtils';
 import { renderHook } from '@testing-library/react';
 import * as useTokenModule from '../useToken';
 import * as useERC20VotesTokenCheckModule from './useERC20VotesTokenCheck';
@@ -46,16 +47,13 @@ describe('useGovernanceToken hook', () => {
     });
 
     it('still returns loading state without token while ERC20Votes checks are in progress', () => {
+        const token = generateToken();
+
         // Mock the useToken hook success
         useTokenSpy.mockReturnValue({
             isLoading: false,
             isError: false,
-            token: {
-                name: 'Test Token',
-                symbol: 'TT',
-                decimals: 18,
-                totalSupply: '1000000',
-            },
+            token,
         });
 
         // Mock ERC20Votes loading state
@@ -75,16 +73,13 @@ describe('useGovernanceToken hook', () => {
     });
 
     it('returns both token and governance check flags in success case', () => {
+        const token = generateToken();
+
         // Mock the useToken hook success
         useTokenSpy.mockReturnValue({
             isLoading: false,
             isError: false,
-            token: {
-                name: 'Test Token',
-                symbol: 'TT',
-                decimals: 18,
-                totalSupply: '1000000',
-            },
+            token,
         });
 
         // Mock ERC20Votes success
@@ -97,12 +92,7 @@ describe('useGovernanceToken hook', () => {
 
         const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 123 }));
 
-        expect(result.current.token).toEqual({
-            name: 'Test Token',
-            symbol: 'TT',
-            decimals: 18,
-            totalSupply: '1000000',
-        });
+        expect(result.current.token).toEqual(token);
         expect(result.current.isGovernanceCompatible).toBe(true);
         expect(result.current.isDelegationCompatible).toBe(true);
         expect(result.current.isLoading).toBe(false);
