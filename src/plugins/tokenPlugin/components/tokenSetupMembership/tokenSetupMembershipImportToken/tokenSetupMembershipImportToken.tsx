@@ -35,6 +35,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
 
+    // TODO: add useGovToken hook here
+
     return (
         <>
             <AddressInput

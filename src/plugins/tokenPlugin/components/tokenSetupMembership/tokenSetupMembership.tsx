@@ -19,6 +19,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
     // Reset members array when selecting import token
     useEffect(() => {
         if (tokenType === 'imported') {
+            // TODO: reset to a single address (current user)
             setValue(`${formPrefix}.members`, []);
         }
     }, [tokenType, formPrefix, setValue]);
