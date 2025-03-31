@@ -76,6 +76,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             network={proposal.network}
             transactionType={TransactionType.PROPOSAL_VOTE}
+            daoId={daoId}
         >
             <VoteProposalDataListItemStructure
                 proposalId={slug}

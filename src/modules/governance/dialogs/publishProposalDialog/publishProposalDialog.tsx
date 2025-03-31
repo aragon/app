@@ -131,6 +131,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
             transactionType={TransactionType.PROPOSAL_CREATE}
+            daoId={daoId}
         >
             <ProposalDataListItem.Structure
                 title={title}

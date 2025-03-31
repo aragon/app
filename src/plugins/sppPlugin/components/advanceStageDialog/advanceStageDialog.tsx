@@ -75,6 +75,7 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
                     onClick: onSuccessClick,
                 }}
                 transactionType={TransactionType.PROPOSAL_ADVANCE_STAGE}
+                daoId={daoId}
             >
                 <ProposalDataListItem.Structure
                     title={proposal.title}

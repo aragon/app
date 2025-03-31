@@ -3,7 +3,7 @@ import { useTransactionStatus } from '@/shared/api/transactionService/queries';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
 import {
     TransactionStatus,
@@ -14,6 +14,9 @@ import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
+import type { ITransactionStatus } from '@/shared/api/transactionService/domain';
+
+const maxRetries = 40;
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
@@ -44,6 +47,8 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const { chainId, address } = useAccount();
     const { id: requiredChainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
+
+    const [retryCount, setRetryCount] = useState(0);
 
     const handleTransactionError = useCallback(
         (stepId?: string) => (error: unknown, context?: Record<string, unknown>) =>
@@ -76,9 +81,10 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const indexingUrlParams = { network, transactionHash: transactionHash! };
     const indexingQueryParams = { type: transactionType! };
     const indexingParams = { urlParams: indexingUrlParams, queryParams: indexingQueryParams };
-    const { data: transactionStatus, refetch: refetchTransactionStatus } = useTransactionStatus(indexingParams, {
+    const { data: transactionStatus } = useTransactionStatus(indexingParams, {
         enabled: waitTxStatus === 'success',
-        refetchInterval: 1000,
+        refetchInterval: (data) =>
+            retryCount < maxRetries && !(data as unknown as ITransactionStatus).isProcessed ? 1000 : false,
     });
 
     const handleSendTransaction = useCallback(() => {
@@ -101,19 +107,17 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         handleSendTransaction();
     }, [updateActiveStep, handleSendTransaction]);
 
-    const handleIndexing = useCallback(async () => {
-        await refetchTransactionStatus();
-    }, [refetchTransactionStatus]);
-
     const approveStepAction = requiredChainId === chainId ? handleSendTransaction : handleSwitchNetwork;
     const transactionStepActions: Record<TransactionDialogStep, () => void> = useMemo(
         () => ({
             [TransactionDialogStep.PREPARE]: prepareTransactionMutate,
             [TransactionDialogStep.APPROVE]: approveStepAction,
             [TransactionDialogStep.CONFIRM]: handleRetryTransaction,
-            [TransactionDialogStep.INDEXING]: handleIndexing,
+            [TransactionDialogStep.INDEXING]: () => {
+                // noOp needed as react query will refetch the transaction status
+            },
         }),
-        [prepareTransactionMutate, approveStepAction, handleRetryTransaction, handleIndexing],
+        [prepareTransactionMutate, approveStepAction, handleRetryTransaction],
     );
 
     const approveStepStatus = chainId === requiredChainId ? approveTransactionStatus : switchChainStatus;
@@ -199,6 +203,18 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             nextStep();
         }
     }, [waitTxStatus, nextStep]);
+
+    // Use effect to handle the retry count for the transaction status
+    // This is to avoid backend being constantly pinged for the transaction status
+    useEffect(() => {
+        if (isIndexing && !transactionStatus?.isProcessed && retryCount < 40) {
+            const interval = setInterval(() => {
+                setRetryCount((prev) => prev + 1);
+            }, 1000);
+
+            return () => clearInterval(interval);
+        }
+    }, [transactionStatus, retryCount, isIndexing]);
 
     return (
         <>

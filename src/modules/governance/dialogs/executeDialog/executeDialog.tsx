@@ -72,6 +72,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             network={network}
             transactionType={TransactionType.PROPOSAL_EXECUTE}
+            daoId={daoId}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure
