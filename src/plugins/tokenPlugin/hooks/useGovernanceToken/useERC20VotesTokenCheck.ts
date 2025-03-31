@@ -1,4 +1,4 @@
-import { IUseTokenParams } from '@/plugins/tokenPlugin/hooks/useToken';
+import type { IUseTokenParams } from '@/plugins/tokenPlugin/hooks/useToken';
 import { useMemo } from 'react';
 import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
