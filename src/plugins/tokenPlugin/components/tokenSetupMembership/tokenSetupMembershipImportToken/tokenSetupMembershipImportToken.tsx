@@ -1,8 +1,27 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
+import { ITransactionStatusStepMeta } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, AlertCard } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+
+type StepState = ITransactionStatusStepMeta['state'];
+
+function useGovernanceToken() {
+    return {
+        isLoading: false,
+        isError: false,
+        isDelegationCompatible: true,
+        isGovernanceCompatible: true,
+        token: {
+            symbol: 'ETH',
+            totalSupply: '1000000000000000000',
+            decimals: 18,
+            name: 'Ethereum',
+        },
+    };
+}
 
 export interface ITokenSetupMembershipImportTokenProps {
     /**
@@ -36,6 +55,57 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
 
     // TODO: add useGovToken hook here
+    const { isError, isLoading, token, isDelegationCompatible, isGovernanceCompatible } = useGovernanceToken();
+
+    // Helper function to determine step state based on conditions
+    const [erc20StepState, governanceStepState, delegationStepState] = useMemo((): [
+        StepState,
+        StepState,
+        StepState,
+    ] => {
+        if (isLoading) {
+            return ['pending', 'pending', 'pending'];
+        }
+
+        if (isError) {
+            return ['error', 'error', 'error'];
+        }
+
+        return [
+            'success',
+            isGovernanceCompatible ? 'success' : 'warning',
+            isDelegationCompatible ? 'success' : 'warning',
+        ];
+    }, [isDelegationCompatible, isError, isGovernanceCompatible, isLoading]);
+
+    const steps: Array<IStepperStep<ITransactionStatusStepMeta>> = useMemo(() => {
+        return [
+            {
+                id: 'erc20',
+                order: 0,
+                meta: {
+                    label: 'ERC-20 token standard',
+                    state: erc20StepState,
+                },
+            },
+            {
+                id: 'governance',
+                order: 0,
+                meta: {
+                    label: 'Governance compatible',
+                    state: governanceStepState,
+                },
+            },
+            {
+                id: 'delegation',
+                order: 0,
+                meta: {
+                    label: 'Delegation compatible',
+                    state: delegationStepState,
+                },
+            },
+        ];
+    }, [delegationStepState, erc20StepState, governanceStepState]);
 
     return (
         <>
