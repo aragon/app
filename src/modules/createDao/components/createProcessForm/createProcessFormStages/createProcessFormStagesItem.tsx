@@ -71,7 +71,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
         if (isTimelockStage || stageBodies.length > 0) {
             void trigger(formPrefix);
         }
-    }, [trigger, formPrefix, stageType, isTimelockStage, stageBodies]);
+    }, [trigger, formPrefix, stageType, isTimelockStage, stageBodies.length]);
 
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
