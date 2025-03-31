@@ -11,9 +11,7 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
         isError,
     } = useERC20VotesTokenCheck({
         ...params,
-        query: {
-            enabled: token != null,
-        },
+        enabled: token != null,
     });
 
     return {

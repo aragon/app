@@ -5,13 +5,11 @@ import { useReadContracts } from 'wagmi';
 import { erc20VotesAbi } from './erc20VotesAbi';
 
 export interface IUseERC20VotesTokenCheckParams extends IUseTokenParams {
-    query?: {
-        /**
-         * Flag to enable or disable the query.
-         * @default true
-         */
-        enabled?: boolean;
-    };
+    /**
+     * Flag to enable or disable the query.
+     * @default true
+     */
+    enabled?: boolean;
 }
 
 // A random address for testing vote functions
@@ -23,8 +21,7 @@ const testAddress = '0x0000000000000000000000000000000000000001' as Hash;
  * Checks governance compatibility according to the following logic https://github.com/aragon/token-voting-plugin/blob/develop/packages/contracts/src/TokenVotingSetup.sol
  */
 export const useERC20VotesTokenCheck = (params: IUseERC20VotesTokenCheckParams) => {
-    const { address, chainId, query = {} } = params;
-    const { enabled = true } = query;
+    const { address, chainId, enabled = true } = params;
 
     const {
         data: governanceCheckResult,

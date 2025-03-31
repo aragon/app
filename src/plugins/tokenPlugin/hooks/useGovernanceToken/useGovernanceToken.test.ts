@@ -42,7 +42,7 @@ describe('useGovernanceToken hook', () => {
         expect(useERC20VotesTokenCheckSpy).toHaveBeenCalledWith({
             address: '0x123',
             chainId: 123,
-            query: { enabled: false },
+            enabled: false,
         });
     });
 
