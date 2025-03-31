@@ -22,7 +22,7 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
         isLoading,
         isError: isLoading ? false : isTokenError || isError,
         token: isLoading ? null : token,
-        isGovernanceCompatible: isLoading ? false : isGovernanceCompatible,
-        isDelegationCompatible: isLoading ? false : isDelegationCompatible,
+        isGovernanceCompatible: isLoading ? undefined : isGovernanceCompatible,
+        isDelegationCompatible: isLoading ? undefined : isDelegationCompatible,
     };
 };

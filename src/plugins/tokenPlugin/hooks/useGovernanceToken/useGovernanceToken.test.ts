@@ -68,8 +68,8 @@ describe('useGovernanceToken hook', () => {
 
         expect(result.current.token).toBe(null);
         expect(result.current.isLoading).toBe(true);
-        expect(result.current.isGovernanceCompatible).toBe(false);
-        expect(result.current.isDelegationCompatible).toBe(false);
+        expect(result.current.isGovernanceCompatible).toBe(undefined);
+        expect(result.current.isDelegationCompatible).toBe(undefined);
     });
 
     it('returns both token and governance check flags in success case', () => {

@@ -18,9 +18,9 @@ export interface IUseGovernanceTokenResult {
     /**
      * Whether the token is governance compatible.
      */
-    isGovernanceCompatible: boolean;
+    isGovernanceCompatible?: boolean;
     /**
      * Whether the token is delegation compatible.
      */
-    isDelegationCompatible: boolean;
+    isDelegationCompatible?: boolean;
 }
