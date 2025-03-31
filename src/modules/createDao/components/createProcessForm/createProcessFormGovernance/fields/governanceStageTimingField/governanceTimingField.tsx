@@ -8,7 +8,7 @@ import { useFormContext } from 'react-hook-form';
 import { type ICreateProcessFormStageTiming, ProcessStageType } from '../../../createProcessFormDefinitions';
 import { GovernanceTimingFieldDialog } from './governanceTimingFieldDialog';
 
-export interface IGovernanceTimingFieldProps {
+export interface IGovernanceStageTimingFieldProps {
     /**
      * Prefix to be prepended to the form field.
      */
@@ -19,7 +19,7 @@ export interface IGovernanceTimingFieldProps {
     stageType: ProcessStageType;
 }
 
-export const GovernanceTimingField: React.FC<IGovernanceTimingFieldProps> = (props) => {
+export const GovernanceStageTimingField: React.FC<IGovernanceStageTimingFieldProps> = (props) => {
     const { fieldPrefix, stageType } = props;
 
     const { t } = useTranslations();

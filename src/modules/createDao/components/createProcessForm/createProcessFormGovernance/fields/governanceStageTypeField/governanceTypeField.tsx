@@ -4,14 +4,14 @@ import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import { ProcessStageType, type ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 
-export interface IGovernanceTypeFieldProps {
+export interface IGovernanceStageTypeFieldProps {
     /**
      * Prefix to be prepended to the form field.
      */
     fieldPrefix: string;
 }
 
-export const GovernanceTypeField: React.FC<IGovernanceTypeFieldProps> = (props) => {
+export const GovernanceStageTypeField: React.FC<IGovernanceStageTypeFieldProps> = (props) => {
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();

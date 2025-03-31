@@ -8,10 +8,10 @@ import {
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
 } from '../createProcessFormDefinitions';
-import { GovernanceTypeField } from './fields/governanceTypeField';
-import { GovernanceTimingField } from './fields/governanceTimingField';
+import { GovernanceStageTypeField } from './fields/governanceStageTypeField';
+import { GovernanceStageTimingField } from './fields/governanceStageTimingField';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
-import { GovernanceRequiredApprovalsField } from './fields/governanceRequiredApprovalsField';
+import { GovernanceStageApprovalsField } from './fields/governanceStageApprovalsField';
 
 export interface ICreateProcessFormGovernanceItemProps {
     /**
@@ -64,11 +64,13 @@ export const CreateProcessFormGovernanceItem: React.FC<ICreateProcessFormGoverna
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />
-            <GovernanceTypeField fieldPrefix={formPrefix} />
-            <GovernanceTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
-            {!isTimelockStage && <GovernanceBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />}
+            <GovernanceStageTypeField fieldPrefix={formPrefix} />
+            <GovernanceStageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
+            {!isTimelockStage && (
+                <GovernanceBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />
+            )}
             {stageBodies.length > 0 && (
-                <GovernanceRequiredApprovalsField
+                <GovernanceStageApprovalsField
                     fieldPrefix={formPrefix}
                     stageBodiesCount={stageBodies.length}
                     isOptimisticStage={isOptimisticStage}
