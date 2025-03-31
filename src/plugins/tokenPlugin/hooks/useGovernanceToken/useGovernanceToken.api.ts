@@ -18,7 +18,7 @@ export interface IUseGovernanceTokenResult {
      */
     token: IUseTokenResult['token'];
     /**
-     * Error flag.
+     * Defines if an error occurred while fetching the token governance data.
      */
     isError: boolean;
     /**
