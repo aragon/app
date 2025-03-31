@@ -20,7 +20,7 @@ describe('useGovernanceToken hook', () => {
             token: null,
         });
 
-        // Mock to return default values when not enabled
+        // Set useERC20VotesTokenCheck to initial disabled state
         useERC20VotesTokenCheckSpy.mockReturnValue({
             isLoading: false,
             isGovernanceCompatible: false,

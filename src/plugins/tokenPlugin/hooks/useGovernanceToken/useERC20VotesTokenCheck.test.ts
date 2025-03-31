@@ -5,20 +5,20 @@ import { useERC20VotesTokenCheck } from './useERC20VotesTokenCheck';
 describe('useERC20VotesTokenCheck hook', () => {
     const useReadContractsSpy = jest.spyOn(wagmi, 'useReadContracts');
 
-    const successCaseResponse = [
-        { result: 0, status: 'success' },
-        { result: 0, status: 'success' },
-        { result: 0, status: 'success' },
-        { result: '0x0000000000000000000000000000000000000000', status: 'success' },
-    ];
-
     afterEach(() => {
         useReadContractsSpy.mockReset();
     });
 
     it('returns positive isGovernanceCompatible and isDelegationCompatible flags when ERC20Votes checks pass', () => {
+        const contractsSuccessResponse = [
+            { result: 0, status: 'success' },
+            { result: 0, status: 'success' },
+            { result: 0, status: 'success' },
+            { result: '0x0000000000000000000000000000000000000000', status: 'success' },
+        ];
+
         useReadContractsSpy.mockReturnValue({
-            data: successCaseResponse,
+            data: contractsSuccessResponse,
             isError: false,
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
@@ -32,9 +32,12 @@ describe('useERC20VotesTokenCheck hook', () => {
     });
 
     it('returns negative isGovernanceCompatible flag when governance checks fail', () => {
-        const governanceFailureResponse = successCaseResponse.map((item, index) =>
-            index === 1 ? { ...item, status: 'failure' } : item,
-        );
+        const governanceFailureResponse = [
+            { result: 0, status: 'success' },
+            { result: 0, status: 'failure' },
+            { result: 0, status: 'success' },
+            { result: '0x0000000000000000000000000000000000000000', status: 'success' },
+        ];
         useReadContractsSpy.mockReturnValue({
             data: governanceFailureResponse,
             isError: true,
@@ -50,9 +53,12 @@ describe('useERC20VotesTokenCheck hook', () => {
     });
 
     it('returns negative isDelegationCompatible flag when delegation checks fail', () => {
-        const delegationFailureResponse = successCaseResponse.map((item, index) =>
-            index === 3 ? { ...item, status: 'failure' } : item,
-        );
+        const delegationFailureResponse = [
+            { result: 0, status: 'success' },
+            { result: 0, status: 'success' },
+            { result: 0, status: 'success' },
+            { result: null, status: 'failure' },
+        ];
         useReadContractsSpy.mockReturnValue({
             data: delegationFailureResponse,
             isError: true,
