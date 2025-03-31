@@ -27,9 +27,9 @@ export const useERC20VotesTokenCheck = (params: IUseERC20VotesTokenCheckParams) 
     const { enabled = true } = query;
 
     const {
-        data: contractResults,
-        isError,
-        isLoading,
+        data: governanceCheckResult,
+        isError: isGovernanceCheckError,
+        isLoading: isGovernanceCheckLoading,
     } = useReadContracts({
         query: {
             enabled,
@@ -56,6 +56,18 @@ export const useERC20VotesTokenCheck = (params: IUseERC20VotesTokenCheckParams) 
                 functionName: 'getPastVotes',
                 args: [testAddress, BigInt(0)],
             },
+        ],
+    });
+
+    const {
+        data: delegationCheckResult,
+        isError: isDelegationCheckError,
+        isLoading: isDelegationCheckLoading,
+    } = useReadContracts({
+        query: {
+            enabled,
+        },
+        contracts: [
             {
                 chainId,
                 address,
@@ -67,23 +79,28 @@ export const useERC20VotesTokenCheck = (params: IUseERC20VotesTokenCheckParams) 
     });
 
     const isGovernanceCompatible = useMemo(() => {
-        if (!contractResults) {
+        if (!governanceCheckResult) {
             return false;
         }
-        return contractResults.slice(0, 3).every((result) => result.status === 'success');
-    }, [contractResults]);
+        return governanceCheckResult.every((result) => result.status === 'success');
+    }, [governanceCheckResult]);
 
     const isDelegationCompatible = useMemo(() => {
-        if (!contractResults) {
+        if (!delegationCheckResult) {
             return false;
         }
-        return contractResults[3].status === 'success';
-    }, [contractResults]);
+        return delegationCheckResult.every((result) => result.status === 'success');
+    }, [delegationCheckResult]);
+
+    const isLoading = isGovernanceCheckLoading || isDelegationCheckLoading;
+    // since allowFailure flag is set by default, isError is not true when some of the function calls fail, but only in
+    // the case of invalid input
+    const isError = isGovernanceCheckError || isDelegationCheckError;
 
     return {
-        isGovernanceCompatible,
-        isDelegationCompatible,
         isLoading,
         isError,
+        isGovernanceCompatible,
+        isDelegationCompatible,
     };
 };
