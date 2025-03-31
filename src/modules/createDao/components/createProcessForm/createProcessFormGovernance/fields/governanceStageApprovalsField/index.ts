@@ -1,1 +1,4 @@
-export { GovernanceStageApprovalsField, type IGovernanceStageApprovalsFieldProps } from './governanceRequiredApprovalsField';
+export {
+    GovernanceStageApprovalsField,
+    type IGovernanceStageApprovalsFieldProps,
+} from './governanceStageApprovalsField';

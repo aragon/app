@@ -1,1 +1,1 @@
-export { GovernanceStageTypeField, type IGovernanceStageTypeFieldProps } from './governanceTypeField';
+export { GovernanceStageTypeField, type IGovernanceStageTypeFieldProps } from './governanceStageTypeField';

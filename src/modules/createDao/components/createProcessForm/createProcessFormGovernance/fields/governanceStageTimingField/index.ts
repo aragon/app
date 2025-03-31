@@ -1,1 +1,1 @@
-export { GovernanceStageTimingField, type IGovernanceStageTimingFieldProps } from './governanceTimingField';
+export { GovernanceStageTimingField, type IGovernanceStageTimingFieldProps } from './governanceStageTimingField';

@@ -6,7 +6,7 @@ import { Duration } from 'luxon';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { type ICreateProcessFormStageTiming, ProcessStageType } from '../../../createProcessFormDefinitions';
-import { GovernanceTimingFieldDialog } from './governanceTimingFieldDialog';
+import { GovernanceTimingFieldDialog } from './governanceStageTimingFieldDialog';
 
 export interface IGovernanceStageTimingFieldProps {
     /**
