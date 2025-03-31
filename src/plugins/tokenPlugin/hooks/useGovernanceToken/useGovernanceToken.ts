@@ -16,13 +16,11 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
         },
     });
 
-    const isLoading = isTokenLoading || areGovernanceChecksLoading;
-
     return {
-        isLoading,
-        isError: isLoading ? false : isTokenError || isError,
-        token: isLoading ? null : token,
-        isGovernanceCompatible: isLoading ? undefined : isGovernanceCompatible,
-        isDelegationCompatible: isLoading ? undefined : isDelegationCompatible,
+        isLoading: isTokenLoading || areGovernanceChecksLoading,
+        isError: isTokenError || isError,
+        token,
+        isGovernanceCompatible,
+        isDelegationCompatible,
     };
 };

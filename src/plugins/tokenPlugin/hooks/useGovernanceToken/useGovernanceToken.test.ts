@@ -59,14 +59,14 @@ describe('useGovernanceToken hook', () => {
         // Mock ERC20Votes loading state
         useERC20VotesTokenCheckSpy.mockReturnValue({
             isLoading: true,
-            isGovernanceCompatible: false,
-            isDelegationCompatible: false,
+            isGovernanceCompatible: undefined,
+            isDelegationCompatible: undefined,
             isError: false,
         });
 
         const { result } = renderHook(() => useGovernanceToken({ address: '0x123', chainId: 123 }));
 
-        expect(result.current.token).toBe(null);
+        expect(result.current.token).toBe(token);
         expect(result.current.isLoading).toBe(true);
         expect(result.current.isGovernanceCompatible).toBe(undefined);
         expect(result.current.isDelegationCompatible).toBe(undefined);

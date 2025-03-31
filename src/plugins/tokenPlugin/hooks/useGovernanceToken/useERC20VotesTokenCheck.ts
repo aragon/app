@@ -80,14 +80,14 @@ export const useERC20VotesTokenCheck = (params: IUseERC20VotesTokenCheckParams) 
 
     const isGovernanceCompatible = useMemo(() => {
         if (!governanceCheckResult) {
-            return false;
+            return undefined;
         }
         return governanceCheckResult.every((result) => result.status === 'success');
     }, [governanceCheckResult]);
 
     const isDelegationCompatible = useMemo(() => {
         if (!delegationCheckResult) {
-            return false;
+            return undefined;
         }
         return delegationCheckResult.every((result) => result.status === 'success');
     }, [delegationCheckResult]);
