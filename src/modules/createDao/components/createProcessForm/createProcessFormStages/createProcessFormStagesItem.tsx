@@ -47,12 +47,11 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
     const stageBodies = processBodies.filter((body) => body.stageId === stage.internalId);
 
     const stageError = 'app.createDao.createProcessForm.stages.error.requiredBodies';
+    const validateStage = () =>
+        stageType !== ProcessStageType.TIMELOCK && stageBodies.length === 0 ? stageError : undefined;
+
     const { alert: stageAlert } = useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix, {
-        label: 'Stage',
-        rules: {
-            validate: () =>
-                stageType !== ProcessStageType.TIMELOCK && stageBodies.length === 0 ? stageError : undefined,
-        },
+        rules: { validate: validateStage },
     });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
