@@ -4,16 +4,16 @@ import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit'
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
 import {
-    ProcessStageType,
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
-} from '../createProcessFormDefinitions';
-import { GovernanceBodiesField } from './fields/governanceBodiesField';
-import { GovernanceStageApprovalsField } from './fields/governanceStageApprovalsField';
-import { GovernanceStageTimingField } from './fields/governanceStageTimingField';
-import { GovernanceStageTypeField } from './fields/governanceStageTypeField';
+    ProcessStageType,
+} from '../../../createProcessFormDefinitions';
+import { GovernanceBodiesField } from '../governanceBodiesField';
+import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField';
+import { GovernanceStageTimingField } from '../governanceStageTimingField';
+import { GovernanceStageTypeField } from '../governanceStageTypeField';
 
-export interface ICreateProcessFormGovernanceItemProps {
+export interface IGovernanceStageProps {
     /**
      * Prefix to be prepended to all form fields.
      */
@@ -34,7 +34,7 @@ export interface ICreateProcessFormGovernanceItemProps {
 
 const nameMaxLength = 40;
 
-export const CreateProcessFormGovernanceItem: React.FC<ICreateProcessFormGovernanceItemProps> = (props) => {
+export const GovernanceStage: React.FC<IGovernanceStageProps> = (props) => {
     const { formPrefix, stage, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
@@ -50,7 +50,7 @@ export const CreateProcessFormGovernanceItem: React.FC<ICreateProcessFormGoverna
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
     const stageNameField = useFormField<ICreateProcessFormStage, 'name'>('name', {
-        label: t('app.createDao.createProcessForm.stages.name.label'),
+        label: t('app.createDao.createProcessForm.governanceStage.name.label'),
         trimOnBlur: true,
         rules: { required: true, maxLength: nameMaxLength },
         fieldPrefix: formPrefix,
@@ -60,14 +60,18 @@ export const CreateProcessFormGovernanceItem: React.FC<ICreateProcessFormGoverna
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
             <InputText
-                helpText={t('app.createDao.createProcessForm.stages.name.helpText')}
+                helpText={t('app.createDao.createProcessForm.governanceStage.name.helpText')}
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />
             <GovernanceStageTypeField fieldPrefix={formPrefix} />
             <GovernanceStageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
             {!isTimelockStage && (
-                <GovernanceBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />
+                <GovernanceBodiesField
+                    stageId={stage.internalId}
+                    isOptimisticStage={isOptimisticStage}
+                    allowMultipleBodies={true}
+                />
             )}
             {stageBodies.length > 0 && (
                 <GovernanceStageApprovalsField
@@ -82,12 +86,12 @@ export const CreateProcessFormGovernanceItem: React.FC<ICreateProcessFormGoverna
                     size="md"
                     customTrigger={
                         <Button variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL} className="self-end">
-                            {t('app.createDao.createProcessForm.stages.action.more')}
+                            {t('app.createDao.createProcessForm.governanceStage.action.more')}
                         </Button>
                     }
                 >
                     <Dropdown.Item onClick={onDelete}>
-                        {t('app.createDao.createProcessForm.stages.action.remove')}
+                        {t('app.createDao.createProcessForm.governanceStage.action.remove')}
                     </Dropdown.Item>
                 </Dropdown.Container>
             )}

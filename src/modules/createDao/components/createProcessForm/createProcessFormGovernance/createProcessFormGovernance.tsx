@@ -4,8 +4,8 @@ import { Button, IconType, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
-import { CreateProcessFormGovernanceItem } from './createProcessFormGovernanceItem';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
+import { GovernanceStage } from './fields/governanceStage';
 
 export interface ICreateProcessFormGovernanceProps {}
 
@@ -45,6 +45,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
         // Reset stages if process type is BASIC
         if (value === GovernanceType.BASIC) {
             setValue('stages', []);
+            setValue('bodies', []);
         }
     };
 
@@ -71,7 +72,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                 <div className="flex flex-col gap-2 md:gap-3">
                     <div className="flex flex-col gap-3 md:gap-2">
                         {stages.map((stage, index) => (
-                            <CreateProcessFormGovernanceItem
+                            <GovernanceStage
                                 key={stage.id}
                                 formPrefix={`stages.${index.toString()}`}
                                 stage={stage}
@@ -87,7 +88,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                         iconLeft={IconType.PLUS}
                         onClick={handleAddStage}
                     >
-                        {t('app.createDao.createProcessForm.stages.action.add')}
+                        {t('app.createDao.createProcessForm.governanceStage.action.add')}
                     </Button>
                 </div>
             )}

@@ -4,7 +4,7 @@ import { CreateProcessFormPermissions } from './createProcessFormPermissions';
 
 export const CreateProcessForm = {
     Metadata: CreateProcessFormMetadata,
-    Stages: CreateProcessFormGovernance,
+    Governance: CreateProcessFormGovernance,
     Permissions: CreateProcessFormPermissions,
 };
 

@@ -45,7 +45,7 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                         />
                         <div className="flex w-full grow justify-between">
                             <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>
-                                {t('app.createDao.createProcessForm.stages.bodies.action.edit')}
+                                {t('app.createDao.createProcessForm.governanceBodiesField.action.edit')}
                             </Button>
                             <Dropdown.Container
                                 constrainContentWidth={false}
@@ -57,12 +57,12 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                                         size="md"
                                         iconRight={IconType.DOTS_VERTICAL}
                                     >
-                                        {t('app.createDao.createProcessForm.stages.bodies.action.more')}
+                                        {t('app.createDao.createProcessForm.governanceBodiesField.action.more')}
                                     </Button>
                                 }
                             >
                                 <Dropdown.Item onClick={onDelete}>
-                                    {t('app.createDao.createProcessForm.stages.bodies.action.remove')}
+                                    {t('app.createDao.createProcessForm.governanceBodiesField.action.remove')}
                                 </Dropdown.Item>
                             </Dropdown.Container>
                         </div>

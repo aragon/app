@@ -6,7 +6,7 @@ import { useState, type FormEvent } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ProcessStageType, type ICreateProcessFormStageTiming } from '../../../createProcessFormDefinitions';
 
-export interface IGovernanceTimingFieldDialogProps {
+export interface IGovernanceStageTimingFieldDialogProps {
     /**
      * Callback triggered when dialog is closed.
      */
@@ -29,7 +29,7 @@ const defaultExpiration = { days: 7, hours: 0, minutes: 0 };
 
 const formId = 'stageTimingForm';
 
-export const GovernanceTimingFieldDialog: React.FC<IGovernanceTimingFieldDialogProps> = (props) => {
+export const GovernanceStageTimingFieldDialog: React.FC<IGovernanceStageTimingFieldDialogProps> = (props) => {
     const { onClose, stageType, defaultValues, onSubmit } = props;
 
     const { t } = useTranslations();
@@ -47,7 +47,7 @@ export const GovernanceTimingFieldDialog: React.FC<IGovernanceTimingFieldDialogP
         onChange: onEarlyStageChange,
         ...earlyStageField
     } = useFormField<ICreateProcessFormStageTiming, 'earlyStageAdvance'>('earlyStageAdvance', {
-        label: t('app.createDao.createProcessForm.stages.timing.dialog.earlyAdvance.label'),
+        label: t('app.createDao.createProcessForm.governanceStageTimingField.dialog.earlyAdvance.label'),
         control,
     });
 
@@ -66,31 +66,37 @@ export const GovernanceTimingFieldDialog: React.FC<IGovernanceTimingFieldDialogP
 
     const context = isTimelockStage ? 'timelockPeriod' : 'votingPeriod';
     const votingPeriodInfoText = !isTimelockStage
-        ? t('app.createDao.createProcessForm.stages.timing.dialog.votingPeriod.infoText')
+        ? t('app.createDao.createProcessForm.governanceStageTimingField.dialog.votingPeriod.infoText')
         : undefined;
 
     return (
         <Dialog.Root
             size="lg"
-            hiddenDescription={t('app.createDao.createProcessForm.stages.timing.dialog.a11y.description')}
+            hiddenDescription={t('app.createDao.createProcessForm.governanceStageTimingField.dialog.a11y.description')}
             open={true}
             onOpenChange={onClose}
         >
             <FormProvider {...formMethods}>
-                <Dialog.Header title={t('app.createDao.createProcessForm.stages.timing.dialog.title')} />
+                <Dialog.Header title={t('app.createDao.createProcessForm.governanceStageTimingField.dialog.title')} />
                 <Dialog.Content>
                     <form className="flex flex-col gap-6 py-4" onSubmit={handleFormSubmit} id={formId}>
                         <InputContainer
                             className="flex flex-col"
                             id="minDuration"
                             useCustomWrapper={true}
-                            helpText={t(`app.createDao.createProcessForm.stages.timing.dialog.${context}.helpText`)}
-                            label={t(`app.createDao.createProcessForm.stages.timing.dialog.${context}.label`)}
+                            helpText={t(
+                                `app.createDao.createProcessForm.governanceStageTimingField.dialog.${context}.helpText`,
+                            )}
+                            label={t(
+                                `app.createDao.createProcessForm.governanceStageTimingField.dialog.${context}.label`,
+                            )}
                         >
                             <Card className="border border-neutral-100">
                                 <AdvancedDateInputDuration
                                     field="votingPeriod"
-                                    label={t(`app.createDao.createProcessForm.stages.timing.dialog.${context}.label`)}
+                                    label={t(
+                                        `app.createDao.createProcessForm.governanceStageTimingField.dialog.${context}.label`,
+                                    )}
                                     infoDisplay="inline"
                                     infoText={votingPeriodInfoText}
                                 />
@@ -99,10 +105,10 @@ export const GovernanceTimingFieldDialog: React.FC<IGovernanceTimingFieldDialogP
                         {!isOptimisticStage && !isTimelockStage && (
                             <Switch
                                 helpText={t(
-                                    'app.createDao.createProcessForm.stages.timing.dialog.earlyAdvance.helpText',
+                                    'app.createDao.createProcessForm.governanceStageTimingField.dialog.earlyAdvance.helpText',
                                 )}
                                 inlineLabel={t(
-                                    `app.createDao.createProcessForm.stages.timing.${earlyStage ? 'yes' : 'no'}`,
+                                    `app.createDao.createProcessForm.governanceStageTimingField.${earlyStage ? 'yes' : 'no'}`,
                                 )}
                                 onCheckedChanged={(checked) => onEarlyStageChange(checked)}
                                 checked={earlyStage}
@@ -110,10 +116,14 @@ export const GovernanceTimingFieldDialog: React.FC<IGovernanceTimingFieldDialogP
                             />
                         )}
                         <Switch
-                            label={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.label')}
-                            helpText={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.helpText')}
+                            label={t(
+                                'app.createDao.createProcessForm.governanceStageTimingField.dialog.expiration.label',
+                            )}
+                            helpText={t(
+                                'app.createDao.createProcessForm.governanceStageTimingField.dialog.expiration.helpText',
+                            )}
                             inlineLabel={t(
-                                `app.createDao.createProcessForm.stages.timing.${displayExpiration ? 'yes' : 'no'}`,
+                                `app.createDao.createProcessForm.governanceStageTimingField.${displayExpiration ? 'yes' : 'no'}`,
                             )}
                             onCheckedChanged={handleToggleExpiration}
                             checked={displayExpiration}
@@ -122,9 +132,11 @@ export const GovernanceTimingFieldDialog: React.FC<IGovernanceTimingFieldDialogP
                             <Card className="border border-neutral-100">
                                 <AdvancedDateInputDuration
                                     field="stageExpiration"
-                                    label={t('app.createDao.createProcessForm.stages.timing.dialog.expiration.label')}
+                                    label={t(
+                                        'app.createDao.createProcessForm.governanceStageTimingField.dialog.expiration.label',
+                                    )}
                                     infoText={t(
-                                        'app.createDao.createProcessForm.stages.timing.dialog.expiration.infoText',
+                                        'app.createDao.createProcessForm.governanceStageTimingField.dialog.expiration.infoText',
                                     )}
                                     infoDisplay="inline"
                                 />
@@ -134,12 +146,12 @@ export const GovernanceTimingFieldDialog: React.FC<IGovernanceTimingFieldDialogP
                 </Dialog.Content>
                 <Dialog.Footer
                     primaryAction={{
-                        label: t('app.createDao.createProcessForm.stages.timing.dialog.action.save'),
+                        label: t('app.createDao.createProcessForm.governanceStageTimingField.dialog.action.save'),
                         type: 'submit',
                         form: formId,
                     }}
                     secondaryAction={{
-                        label: t('app.createDao.createProcessForm.stages.timing.dialog.action.cancel'),
+                        label: t('app.createDao.createProcessForm.governanceStageTimingField.dialog.action.cancel'),
                         onClick: onClose,
                     }}
                 />

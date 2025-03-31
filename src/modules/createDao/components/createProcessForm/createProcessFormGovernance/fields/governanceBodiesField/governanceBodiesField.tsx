@@ -16,10 +16,15 @@ export interface IGovernanceBodiesFieldProps {
      * ID of the stage to add the governance bodies for.
      */
     stageId?: string;
+    /**
+     * Flag to determine if multiple bodies are allowed.
+     * @default false
+     */
+    allowMultipleBodies?: boolean;
 }
 
 export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageId } = props;
+    const { isOptimisticStage, stageId, allowMultipleBodies = false } = props;
 
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
@@ -35,6 +40,8 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
 
     const stageBodies = controlledBodiesField.filter((body) => body.stageId === stageId);
 
+    const shouldAllowAdd = allowMultipleBodies || stageBodies.length === 0;
+
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
         if (index == null) {
             const bodyId = crypto.randomUUID();
@@ -46,6 +53,9 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
     };
 
     const handleAddBody = () => {
+        if (!shouldAllowAdd) {
+            return;
+        }
         const params: ISetupBodyDialogParams = { onSubmit: handleBodySubmit() };
         open('SETUP_BODY', { params });
     };
@@ -65,8 +75,8 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
             <InputContainer
                 className="flex flex-col gap-2"
                 id="bodies"
-                label={t(`app.createDao.createProcessForm.stages.bodies.label.${bodiesLabelContext}`)}
-                helpText={t('app.createDao.createProcessForm.stages.bodies.helpText')}
+                label={t(`app.createDao.createProcessForm.governanceBodiesField.label.${bodiesLabelContext}`)}
+                helpText={t('app.createDao.createProcessForm.governanceBodiesField.helpText')}
                 useCustomWrapper={true}
             >
                 <div className="flex flex-col gap-3 md:gap-2">
@@ -79,15 +89,18 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
                             onDelete={() => removeBody(index)}
                         />
                     ))}
-                    <Button
-                        size="md"
-                        variant="tertiary"
-                        className="w-fit"
-                        iconLeft={IconType.PLUS}
-                        onClick={handleAddBody}
-                    >
-                        {t('app.createDao.createProcessForm.stages.bodies.action.add')}
-                    </Button>
+
+                    {shouldAllowAdd && (
+                        <Button
+                            size="md"
+                            variant="tertiary"
+                            className="w-fit"
+                            iconLeft={IconType.PLUS}
+                            onClick={handleAddBody}
+                        >
+                            {t('app.createDao.createProcessForm.governanceBodiesField.action.add')}
+                        </Button>
+                    )}
                 </div>
             </InputContainer>
         </>
