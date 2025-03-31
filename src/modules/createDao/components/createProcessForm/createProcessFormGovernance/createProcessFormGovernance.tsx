@@ -1,11 +1,11 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { type ICreateProcessFormData } from '../createProcessFormDefinitions';
+import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { CreateProcessFormGovernanceItem } from './createProcessFormGovernanceItem';
-import { useState } from 'react';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
+import { useFormField } from '@/shared/hooks/useFormField';
 
 export interface ICreateProcessFormGovernanceProps {}
 
@@ -14,7 +14,15 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
 
     const { setValue, getValues } = useFormContext<ICreateProcessFormData>();
 
-    const [processType, setProcessType] = useState<'basic' | 'advanced'>('basic');
+    const {
+        value: governanceType,
+        onChange: onGovernanceTypeChange,
+        ...governanceTypeField
+    } = useFormField<ICreateProcessFormData, 'governanceType'>('governanceType', {
+        label: t('app.createDao.createProcessForm.governanceType.label'),
+        defaultValue: GovernanceType.BASIC,
+        rules: { required: true },
+    });
 
     const {
         fields: stages,
@@ -31,37 +39,35 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
         setValue('bodies', updatedBodies);
     };
 
-    const handleProcessTypeChanged = (value: string) => {
-            setProcessType(value as typeof processType);
-            if (value === 'basic') {
-                setValue('stages', []);
-            } else {
-                handleAddStage();
-            }
-        };
+    const handleGovernanceTypeChanged = (value: string) => {
+        onGovernanceTypeChange(value);
+
+        // Reset stages if process type is BASIC
+        if (value === GovernanceType.BASIC) {
+            setValue('stages', []);
+        }
+    };
 
     return (
         <div className="flex w-full flex-col gap-10">
             <RadioGroup
-                label={t('app.createDao.createProcessForm.processType.label')}
-                helpText={t('app.createDao.createProcessForm.processType.helpText')}
-                value={processType}
-                onValueChange={handleProcessTypeChanged}
+                helpText={t('app.createDao.createProcessForm.governanceType.helpText')}
+                onValueChange={handleGovernanceTypeChanged}
                 className="w-full !flex-row gap-4"
+                value={governanceType}
+                {...governanceTypeField}
             >
-                <RadioCard
-                    label={t('app.createDao.createProcessForm.processType.basic.label')}
-                    description={t('app.createDao.createProcessForm.processType.basic.description')}
-                    value="basic"
-                />
-                <RadioCard
-                    label={t('app.createDao.createProcessForm.processType.advanced.label')}
-                    description={t('app.createDao.createProcessForm.processType.advanced.description')}
-                    value="advanced"
-                />
+                {Object.values(GovernanceType).map((type) => (
+                    <RadioCard
+                        key={type}
+                        label={t(`app.createDao.createProcessForm.governanceType.${type}.label`)}
+                        description={t(`app.createDao.createProcessForm.governanceType.${type}.description`)}
+                        value={type}
+                    />
+                ))}
             </RadioGroup>
-            {processType === 'basic' && <GovernanceBodiesField />}
-            {processType === 'advanced' && (
+            {governanceType === GovernanceType.BASIC && <GovernanceBodiesField />}
+            {governanceType === GovernanceType.ADVANCED && (
                 <div className="flex flex-col gap-2 md:gap-3">
                     <div className="flex flex-col gap-3 md:gap-2">
                         {stages.map((stage, index) => (

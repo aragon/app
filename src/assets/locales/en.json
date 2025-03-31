@@ -167,6 +167,18 @@
         "title": "Create governance process"
       },
       "createProcessForm": {
+        "governanceType": {
+          "ADVANCED": {
+            "description": "Proposals advance across multiple stages.",
+            "label": "Advanced"
+          },
+          "BASIC": {
+            "description": "Proposals are decided on by a single body.",
+            "label": "Basic"
+          },
+          "helpText": "This determines the amount of control and flexibility you need to design your governance process.",
+          "label": "Governance Designer"
+        },
         "metadata": {
           "description": {
             "helpText": "This is shown on the proposals list.",
@@ -201,18 +213,6 @@
               "label": "Proposal creation eligibility"
             }
           }
-        },
-        "processType": {
-          "advanced": {
-            "description": "Proposals advance across multiple stages.",
-            "label": "Advanced"
-          },
-          "basic": {
-            "description": "Proposals are decided on by a single body.",
-            "label": "Basic"
-          },
-          "helpText": "This determines the amount of control and flexibility you need to design your governance process.",
-          "label": "Governance Designer"
         },
         "stages": {
           "action": {
