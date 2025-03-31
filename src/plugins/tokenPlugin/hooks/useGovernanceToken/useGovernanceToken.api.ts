@@ -1,16 +1,6 @@
-import type { IUseTokenResult } from '@/plugins/tokenPlugin/hooks/useToken';
-import type { Hash } from 'viem';
+import type { IUseTokenParams, IUseTokenResult } from '@/plugins/tokenPlugin/hooks/useToken';
 
-export interface IUseGovernanceTokenParams {
-    /**
-     * Address of the token contract.
-     */
-    address: Hash;
-    /**
-     * Chain ID of the token contract.
-     */
-    chainId: number;
-}
+export interface IUseGovernanceTokenParams extends IUseTokenParams {}
 
 export interface IUseGovernanceTokenResult {
     /**

@@ -9,27 +9,20 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
         isGovernanceCompatible,
         isDelegationCompatible,
         isError,
-    } = useERC20VotesTokenCheck(params, {
-        enabled: token != null && !isTokenLoading,
+    } = useERC20VotesTokenCheck({
+        ...params,
+        query: {
+            enabled: token != null,
+        },
     });
 
     const isLoading = isTokenLoading || areGovernanceChecksLoading;
 
-    if (isLoading) {
-        return {
-            isLoading: true,
-            isError: false,
-            token: null,
-            isGovernanceCompatible: false,
-            isDelegationCompatible: false,
-        };
-    }
-
     return {
-        isLoading: false,
-        isError: isTokenError || isError,
-        isGovernanceCompatible,
-        isDelegationCompatible,
-        token,
+        isLoading,
+        isError: isLoading ? false : isTokenError || isError,
+        token: isLoading ? null : token,
+        isGovernanceCompatible: isLoading ? false : isGovernanceCompatible,
+        isDelegationCompatible: isLoading ? false : isDelegationCompatible,
     };
 };

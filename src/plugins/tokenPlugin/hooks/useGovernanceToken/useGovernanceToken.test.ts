@@ -38,7 +38,11 @@ describe('useGovernanceToken hook', () => {
 
         // useERC20VotesTokenCheck not called with enabled: true query param!
         expect(useERC20VotesTokenCheckSpy).toHaveBeenCalledTimes(1);
-        expect(useERC20VotesTokenCheckSpy).toHaveBeenCalledWith({ address: '0x123', chainId: 123 }, { enabled: false });
+        expect(useERC20VotesTokenCheckSpy).toHaveBeenCalledWith({
+            address: '0x123',
+            chainId: 123,
+            query: { enabled: false },
+        });
     });
 
     it('still returns loading state without token while ERC20Votes checks are in progress', () => {
