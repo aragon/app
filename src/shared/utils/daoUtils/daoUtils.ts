@@ -1,7 +1,6 @@
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
-
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 
 export interface IGetDaoPluginsParams {

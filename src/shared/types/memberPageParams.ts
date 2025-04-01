@@ -1,6 +1,6 @@
 export interface IMemberPageParams {
     /**
-     * Slug of the proposal.
+     * Address of the member.
      */
     address: string;
     /**

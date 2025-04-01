@@ -75,18 +75,18 @@ class MetadataUtils {
         };
     };
 
-    private async getDao(id: string) {
+    private getDao(id: string) {
         return daoService.getDao({ urlParams: { id } });
     }
 
-    private async getMember(daoId: string, address: string) {
+    private getMember(daoId: string, address: string) {
         return governanceService.getMember({
             urlParams: { address },
             queryParams: { daoId },
         });
     }
 
-    private async getProposal(daoId: string, slug: string) {
+    private getProposal(daoId: string, slug: string) {
         return governanceService.getProposalBySlug({
             urlParams: { slug },
             queryParams: { daoId },

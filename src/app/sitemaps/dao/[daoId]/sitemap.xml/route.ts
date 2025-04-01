@@ -3,27 +3,23 @@ import type { MetadataRoute } from 'next';
 import { NextResponse } from 'next/server';
 
 export async function GET(_req: Request, { params }: { params: { daoId: string } }) {
-    const entries: MetadataRoute.Sitemap = await sitemapUtils.generateDaoSitemap(params.daoId);
+    const sitemapPages: MetadataRoute.Sitemap = await sitemapUtils.generateDaoSitemap(params.daoId);
 
-    if (!entries.length) {
-        return new NextResponse('No sitemap entries found.', { status: 404 });
+    if (!sitemapPages.length) {
+        return new NextResponse('No sitemap sitemap pages found.', { status: 404 });
     }
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
                   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-                  ${entries
+                  ${sitemapPages
                       .map(
-                          (entry) =>
-                              `<url>
-                                  <loc>${entry.url}</loc>
-                                  <lastmod>${
-                                      entry.lastModified instanceof Date
-                                          ? entry.lastModified.toISOString()
-                                          : new Date(entry.lastModified ?? Date.now()).toISOString()
-                                  }</lastmod>
-                                  <changefreq>${entry.changeFrequency ?? 'daily'}</changefreq>
-                                  <priority>${entry.priority?.toString() ?? '0.8'}</priority>
-                              </url>`,
+                          (page) => `
+                                <url>
+                                    <loc>${page.url}</loc>
+                                    ${page.lastModified ? `<lastmod>${new Date(page.lastModified).toISOString()}</lastmod>` : ''}
+                                    <changefreq>${page.changeFrequency ?? 'daily'}</changefreq>
+                                    <priority>${page.priority?.toString() ?? '0.8'}</priority>
+                                </url>`,
                       )
                       .join('\n')}
                   </urlset>`;

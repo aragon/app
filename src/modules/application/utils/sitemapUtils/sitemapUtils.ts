@@ -40,7 +40,6 @@ class SitemapUtils {
     public generateDaoSitemap = async (daoId: string): Promise<MetadataRoute.Sitemap> => {
         const routePages: MetadataRoute.Sitemap = Object.values(PageRoutes).map((route) => ({
             url: `/dao/${daoId}/${route}`,
-            lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 0.8,
         }));
@@ -55,7 +54,6 @@ class SitemapUtils {
 
         const daoPages: MetadataRoute.Sitemap = daos.data.map((dao) => ({
             url: `${this.baseUrl}/sitemaps/dao/${dao.id}/sitemap.xml`,
-            lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 0.8,
         }));
