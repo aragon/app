@@ -106,7 +106,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 id: 'erc20',
                 order: 0,
                 meta: {
-                    label: 'ERC-20 token standard',
+                    label: t('app.plugins.token.tokenSetupMembership.importToken.erc20StepLabel'),
                     state: erc20StepState,
                 },
             },
@@ -114,7 +114,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 id: 'governance',
                 order: 0,
                 meta: {
-                    label: 'Governance compatible',
+                    label: t('app.plugins.token.tokenSetupMembership.importToken.governanceStepLabel'),
                     state: governanceStepState,
                 },
             },
@@ -122,7 +122,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 id: 'delegation',
                 order: 0,
                 meta: {
-                    label: 'Delegation compatible',
+                    label: t('app.plugins.token.tokenSetupMembership.importToken.delegationStepLabel'),
                     state: delegationStepState,
                 },
             },
