@@ -1,7 +1,6 @@
 import { governanceService } from '@/modules/governance/api/governanceService';
 import { daoService } from '@/shared/api/daoService';
 import type { IMemberPageParams } from '@/shared/types';
-import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Metadata } from 'next';
 
 export interface IGenerateMemberMetadataParams {
@@ -11,7 +10,7 @@ export interface IGenerateMemberMetadataParams {
     params: Promise<IMemberPageParams>;
 }
 
-class ProposalUtils {
+class MemberUtils {
     generateMetadata = async ({ params }: IGenerateMemberMetadataParams): Promise<Metadata> => {
         const { id, address } = await params;
 
@@ -22,21 +21,21 @@ class ProposalUtils {
 
         return {
             authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
-            title: `Member - ${member.ens ?? addressUtils.truncateAddress(member.address)}`,
+            title: `Member - ${member.ens ?? member.address}`,
             description: `A ${dao.name} collaborator.`,
 
             openGraph: {
-                title: `Member - ${member.ens ?? addressUtils.truncateAddress(member.address)}`,
+                title: `Member - ${member.ens ?? member.address}`,
                 description: `A ${dao.name} collaborator.`,
                 type: 'article',
             },
             twitter: {
                 card: 'summary',
-                title: `Member - ${member.ens ?? addressUtils.truncateAddress(member.address)}`,
+                title: `Member - ${member.ens ?? member.address}`,
                 description: `A ${dao.name} collaborator.`,
             },
         };
     };
 }
 
-export const proposalUtils = new ProposalUtils();
+export const memberUtils = new MemberUtils();
