@@ -22,17 +22,16 @@ class MemberUtils {
         return {
             authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
             title: `Member - ${member.ens ?? member.address}`,
-            description: `A ${dao.name} collaborator.`,
-
+            description: `${dao.name} - ${dao.description}`,
             openGraph: {
                 title: `Member - ${member.ens ?? member.address}`,
-                description: `A ${dao.name} collaborator.`,
+                description: `${dao.name} - ${dao.description}`,
                 type: 'article',
             },
             twitter: {
                 card: 'summary',
                 title: `Member - ${member.ens ?? member.address}`,
-                description: `A ${dao.name} collaborator.`,
+                description: `${dao.name} - ${dao.description}`,
             },
         };
     };

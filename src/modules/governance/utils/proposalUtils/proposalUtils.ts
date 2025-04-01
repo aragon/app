@@ -20,17 +20,19 @@ class ProposalUtils {
 
         return {
             authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
-            title: `Proposal ${proposal.incrementalId.toString()} - ${proposal.title}`,
-            description: proposal.description ?? 'A governance proposal for consideration by the DAO.',
+            title: `${proposalSlug} - ${proposal.title}`,
+            description: proposal.description,
             openGraph: {
-                title: `Proposal ${proposal.incrementalId.toString()} - ${proposal.title}`,
-                description: proposal.description ?? 'A governance proposal for consideration by the DAO.',
+                title: ` ${proposal.incrementalId.toString()} - ${proposal.title}`,
+                description: proposal.description ?? '',
                 type: 'article',
             },
             twitter: {
                 card: 'summary',
-                title: `Proposal ${proposal.incrementalId.toString()} - ${proposal.title}`,
-                description: proposal.description ?? 'A governance proposal for consideration by the DAO.',
+                title: `${proposal.incrementalId.toString()} - ${proposal.title}`,
+                description: proposal.description ?? '',
+                creator: 'Aragon',
+                creatorId: '@AragonProject',
             },
         };
     };
