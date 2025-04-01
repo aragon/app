@@ -1,5 +1,5 @@
 import { DaoMemberDetailsPage } from '@/modules/governance/pages/daoMemberDetailsPage';
-import { memberUtils } from '@/modules/governance/utils/memberUtils';
+import { metadataUtils } from '@/shared/utils/metadataUtils';
 
-export const generateMetadata = memberUtils.generateMetadata;
+export const generateMetadata = metadataUtils.generateMemberMetadata;
 export default DaoMemberDetailsPage;

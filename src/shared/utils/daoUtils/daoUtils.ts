@@ -1,16 +1,8 @@
-import { daoService, type IDao, type IDaoPlugin } from '@/shared/api/daoService';
-import { PluginType, type IDaoPageParams } from '@/shared/types';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import { PluginType } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { type Metadata } from 'next/types';
-import { ipfsUtils } from '../ipfsUtils';
-import { pluginRegistryUtils } from '../pluginRegistryUtils';
 
-export interface IGenerateDaoMetadataParams {
-    /**
-     * Path parameters of DAO pages.
-     */
-    params: Promise<IDaoPageParams>;
-}
+import { pluginRegistryUtils } from '../pluginRegistryUtils';
 
 export interface IGetDaoPluginsParams {
     /**
@@ -33,21 +25,6 @@ export interface IGetDaoPluginsParams {
 }
 
 class DaoUtils {
-    generateMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
-        const { id } = await params;
-
-        const getDaoParams = { id };
-        const dao = await daoService.getDao({ urlParams: getDaoParams });
-
-        const daoAvatarUrl = ipfsUtils.cidToSrc(dao.avatar);
-
-        return {
-            title: dao.name,
-            description: dao.description,
-            openGraph: { images: daoAvatarUrl ? [daoAvatarUrl] : undefined },
-        };
-    };
-
     hasSupportedPlugins = (dao?: IDao): boolean => {
         const pluginIds = dao?.plugins.map(({ subdomain }) => subdomain);
 

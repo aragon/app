@@ -1,5 +1,5 @@
 import { LayoutDao } from '@/modules/application/components/layouts/layoutDao';
-import { daoUtils } from '@/shared/utils/daoUtils';
+import { metadataUtils } from '@/shared/utils/metadataUtils';
 
-export const generateMetadata = daoUtils.generateMetadata;
+export const generateMetadata = metadataUtils.generateDaoMetadata;
 export default LayoutDao;

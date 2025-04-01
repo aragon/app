@@ -1,6 +1,5 @@
 import { LayoutWizardCreateProposal } from '@/modules/governance/components/layoutWizardCreateProposal';
-import { daoUtils } from '@/shared/utils/daoUtils';
+import { metadataUtils } from '@/shared/utils/metadataUtils';
 
-export const generateMetadata = daoUtils.generateMetadata;
-
+export const generateMetadata = metadataUtils.generateDaoMetadata;
 export default LayoutWizardCreateProposal;

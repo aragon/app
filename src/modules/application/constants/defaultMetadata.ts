@@ -1,26 +1,30 @@
 import type { Metadata } from 'next/types';
 
+const baseTitle = 'Aragon App, DAO creation and management platform';
+const baseDescription =
+    'Aragon App is the long awaited human-centered approach to DAOs. A huge evolution when it comes to user experience in web3, backed by a strong and modular core.';
+const baseUrl = 'https://app.aragon.org';
+const imageUrl = '/og-share-large.png';
+
 export const defaultMetadata: Metadata = {
-    title: 'Aragon App, DAO creation and management platform',
-    description:
-        'Aragon App is the long awaited human-centered approach to DAOs. A huge evolution when it comes to user experience in web3, backed by a strong and modular core.',
+    title: baseTitle,
+    description: baseDescription,
     authors: [
         {
             name: 'Aragon',
-            url: 'https://app.aragon.org',
+            url: baseUrl,
         },
     ],
     openGraph: {
         type: 'website',
         locale: 'en_US',
-        url: 'https://app.aragon.org',
-        title: 'Aragon App, DAO creation and management platform',
-        description:
-            'Aragon App is the long awaited human-centered approach to DAOs. A huge evolution when it comes to user experience in web3, backed by a strong and modular core.',
+        url: baseUrl,
+        title: baseTitle,
+        description: baseDescription,
         siteName: 'Aragon',
         images: [
             {
-                url: '/og-share-large.png',
+                url: imageUrl,
                 width: 1200,
                 height: 630,
                 alt: 'Aragon Logo',
@@ -30,9 +34,8 @@ export const defaultMetadata: Metadata = {
     twitter: {
         card: 'summary_large_image',
         site: '@AragonProject',
-        title: 'Aragon App, DAO creation and management platform',
-        description:
-            'Aragon App is the long awaited human-centered approach to DAOs. A huge evolution when it comes to user experience in web3, backed by a strong and modular core.',
-        images: ['/og-share-large.png'],
+        title: baseTitle,
+        description: baseDescription,
+        images: [imageUrl],
     },
 };

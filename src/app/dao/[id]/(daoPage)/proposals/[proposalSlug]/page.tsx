@@ -1,5 +1,5 @@
 import { DaoProposalDetailsPage } from '@/modules/governance/pages/daoProposalDetailsPage';
-import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import { metadataUtils } from '@/shared/utils/metadataUtils';
 
-export const generateMetadata = proposalUtils.generateMetadata;
+export const generateMetadata = metadataUtils.generateProposalMetadata;
 export default DaoProposalDetailsPage;
