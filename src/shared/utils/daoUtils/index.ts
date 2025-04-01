@@ -1,1 +1,1 @@
-export { daoUtils, type IGenerateDaoMetadataParams } from './daoUtils';
+export { daoUtils } from './daoUtils';
