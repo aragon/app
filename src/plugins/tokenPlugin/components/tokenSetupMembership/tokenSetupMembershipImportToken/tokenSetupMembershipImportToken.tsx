@@ -127,7 +127,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 },
             },
         ];
-    }, [delegationStepState, erc20StepState, governanceStepState]);
+    }, [delegationStepState, erc20StepState, governanceStepState, t]);
 
     const isTokenCheckCardVisible = !!(importTokenAddress && !alert);
     const isNotCompatibleAlertVisible = erc20StepState === 'error';
