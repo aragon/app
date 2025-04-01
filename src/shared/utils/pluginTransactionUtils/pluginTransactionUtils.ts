@@ -100,7 +100,7 @@ class PluginTransactionUtils {
         });
 
         // Build the apply installation actions
-        const applyInstallationActions = pluginTransactionUtils.setupDataToActions(setupData, dao);
+        const applyInstallationActions = this.setupDataToActions(setupData, dao);
 
         // Revoke the temporarily granted ROOT_PERMISSION to the plugin setup processor contract.
         const revokeRootPermissionAction = permissionTransactionUtils.buildRevokePermissionTransaction({
