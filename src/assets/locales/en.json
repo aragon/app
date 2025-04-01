@@ -167,66 +167,21 @@
         "title": "Create governance process"
       },
       "createProcessForm": {
-        "metadata": {
-          "description": {
-            "helpText": "This is shown on the proposals list.",
-            "label": "Description"
-          },
-          "name": {
-            "label": "Process name"
-          },
-          "processKey": {
-            "helpText": "The key is part of the unique identifier for proposals of this type. Something like EIP would lead to EIP-1 and increment for each proposal.",
-            "label": "Key"
-          },
-          "resources": {
-            "helpText": "These are shown as links on the proposal list. They can be used to help visitors understand the {{type}}."
-          },
-          "type": {
-            "plugin": "plugin",
-            "process": "governance process"
-          }
-        },
-        "permissions": {
-          "proposalCreation": {
-            "bodies": {
-              "error": "You must select at least one body.",
-              "label": "Bodies"
-            },
-            "mode": {
-              "anyDescription": "Any address can create proposals",
-              "anyLabel": "Anyone",
-              "bodiesDescription": "Members of the selected bodies",
-              "bodiesLabel": "Members",
-              "label": "Proposal creation eligibility"
-            }
-          }
-        },
-        "stages": {
-          "action": {
-            "add": "Add stage",
-            "more": "More",
-            "remove": "Remove stage"
-          },
-          "bodies": {
+        "governance": {
+          "bodiesField": {
             "action": {
               "add": "Add body",
               "edit": "Edit",
               "more": "More",
               "remove": "Remove body"
             },
-            "add": "Add body",
             "helpText": "These bodies will decide whether or not this stage passes.",
             "label": {
               "vetoing": "Vetoing bodies",
               "voting": "Voting bodies"
             }
           },
-          "name": {
-            "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
-            "label": "Stage name"
-          },
-          "requiredApprovals": {
+          "stageApprovalsField": {
             "approve": {
               "helpText": "The number of bodies that must approve this proposal to advance it.",
               "label": "Approval threshold"
@@ -237,7 +192,18 @@
               "label": "Veto threshold"
             }
           },
-          "timing": {
+          "stageField": {
+            "action": {
+              "add": "Add stage",
+              "more": "More",
+              "remove": "Remove stage"
+            },
+            "name": {
+              "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
+              "label": "Stage name"
+            }
+          },
+          "stageTimingField": {
             "dialog": {
               "a11y": {
                 "description": "Configure the duration and expiration for the stage"
@@ -276,7 +242,7 @@
             "votingPeriod": "Voting period",
             "yes": "Enabled"
           },
-          "type": {
+          "stageTypeField": {
             "helpText": "This will determine the role that governance plays in the stage.",
             "label": "Stage type",
             "list": {
@@ -292,6 +258,53 @@
                 "description": "Proposals pass this stage after the timelock period.",
                 "label": "Timelock"
               }
+            }
+          },
+          "type": {
+            "ADVANCED": {
+              "description": "Proposals advance across multiple stages.",
+              "label": "Advanced"
+            },
+            "BASIC": {
+              "description": "Proposals are decided on by a single body.",
+              "label": "Basic"
+            },
+            "helpText": "This determines the amount of control and flexibility you need to design your governance process.",
+            "label": "Governance Designer"
+          }
+        },
+        "metadata": {
+          "description": {
+            "helpText": "This is shown on the proposals list.",
+            "label": "Description"
+          },
+          "name": {
+            "label": "Process name"
+          },
+          "processKey": {
+            "helpText": "The key is part of the unique identifier for proposals of this type. Something like EIP would lead to EIP-1 and increment for each proposal.",
+            "label": "Key"
+          },
+          "resources": {
+            "helpText": "These are shown as links on the proposal list. They can be used to help visitors understand the {{type}}."
+          },
+          "type": {
+            "plugin": "plugin",
+            "process": "governance process"
+          }
+        },
+        "permissions": {
+          "proposalCreation": {
+            "bodies": {
+              "error": "You must select at least one body.",
+              "label": "Bodies"
+            },
+            "mode": {
+              "anyDescription": "Any address can create proposals",
+              "anyLabel": "Anyone",
+              "bodiesDescription": "Members of the selected bodies",
+              "bodiesLabel": "Members",
+              "label": "Proposal creation eligibility"
             }
           }
         }
@@ -1216,8 +1229,11 @@
         "tokenProcessBodyField": {
           "disabled": "Disabled",
           "distributionTerm": "Distribution",
+          "earlyExecution": "Early execution",
           "enabled": "Enabled",
           "holders": "{{count}} token holders",
+          "minDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "minDurationTerm": "Minimum duration",
           "minParticipationDefinition": "≥ {{minParticipation}}%",
           "minParticipationTerm": "Minimum participation",
           "supplyTerm": "Supply",
@@ -1315,7 +1331,7 @@
               }
             },
             "name": {
-              "helpText": "These addreses will receive newly minted tokens.",
+              "helpText": "These addresses will receive newly minted tokens.",
               "label": "Token name"
             },
             "symbol": {

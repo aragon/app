@@ -4,10 +4,10 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useFieldArray, useWatch } from 'react-hook-form';
-import type { ICreateProcessFormData } from '../../../createProcessFormDefinitions';
-import { StageBodiesFieldItem } from './stageBodiesFieldItem';
+import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
+import { GovernanceBodiesFieldItem } from './governanceBodiesFieldItem';
 
-export interface IStageBodiesFieldProps {
+export interface IGovernanceBodiesFieldProps {
     /**
      * Defines if current stage is optimistic or not, only set for advanced governance processes.
      */
@@ -16,10 +16,14 @@ export interface IStageBodiesFieldProps {
      * ID of the stage to add the governance bodies for.
      */
     stageId?: string;
+    /**
+     * Type of governance to setup.
+     */
+    governanceType: GovernanceType;
 }
 
-export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageId } = props;
+export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (props) => {
+    const { isOptimisticStage, stageId, governanceType } = props;
 
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
@@ -33,7 +37,10 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
     const watchBodiesField = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
     const controlledBodiesField = bodiesField.map((field, index) => ({ ...field, ...watchBodiesField[index] }));
 
-    const stageBodies = controlledBodiesField.filter((body) => body.stageId === stageId);
+    const bodies = controlledBodiesField.filter((body) => stageId == null || body.stageId === stageId);
+
+    const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+    const renderAddButton = isAdvancedGovernance || bodies.length === 0;
 
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
         if (index == null) {
@@ -46,7 +53,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
     };
 
     const handleAddBody = () => {
-        const params: ISetupBodyDialogParams = { onSubmit: handleBodySubmit() };
+        const params: ISetupBodyDialogParams = { onSubmit: handleBodySubmit(), isSubPlugin: isAdvancedGovernance };
         open('SETUP_BODY', { params });
     };
 
@@ -54,6 +61,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
         const params: ISetupBodyDialogParams = {
             onSubmit: handleBodySubmit(index),
             initialValues: controlledBodiesField[index],
+            isSubPlugin: isAdvancedGovernance,
         };
         open('SETUP_BODY', { params });
     };
@@ -65,13 +73,13 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
             <InputContainer
                 className="flex flex-col gap-2"
                 id="bodies"
-                label={t(`app.createDao.createProcessForm.stages.bodies.label.${bodiesLabelContext}`)}
-                helpText={t('app.createDao.createProcessForm.stages.bodies.helpText')}
+                label={t(`app.createDao.createProcessForm.governance.bodiesField.label.${bodiesLabelContext}`)}
+                helpText={t('app.createDao.createProcessForm.governance.bodiesField.helpText')}
                 useCustomWrapper={true}
             >
                 <div className="flex flex-col gap-3 md:gap-2">
-                    {stageBodies.map((body, index) => (
-                        <StageBodiesFieldItem
+                    {bodies.map((body, index) => (
+                        <GovernanceBodiesFieldItem
                             key={body.id}
                             fieldName={`bodies.${index.toString()}`}
                             body={body}
@@ -79,15 +87,17 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
                             onDelete={() => removeBody(index)}
                         />
                     ))}
-                    <Button
-                        size="md"
-                        variant="tertiary"
-                        className="w-fit"
-                        iconLeft={IconType.PLUS}
-                        onClick={handleAddBody}
-                    >
-                        {t('app.createDao.createProcessForm.stages.bodies.action.add')}
-                    </Button>
+                    {renderAddButton && (
+                        <Button
+                            size="md"
+                            variant="tertiary"
+                            className="w-fit"
+                            iconLeft={IconType.PLUS}
+                            onClick={handleAddBody}
+                        >
+                            {t('app.createDao.createProcessForm.governance.bodiesField.action.add')}
+                        </Button>
+                    )}
                 </div>
             </InputContainer>
         </>

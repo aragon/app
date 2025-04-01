@@ -5,7 +5,7 @@ export interface IValidateDurationParams {
     /**
      * Value to be validated.
      */
-    value: IDateDuration;
+    value: IDateDuration | number;
     /**
      * Minimum duration to check.
      */
@@ -50,8 +50,16 @@ class DateUtils {
         return isoDate == null ? null : { date: isoDate, time: isoTime };
     };
 
-    validateDuration = ({ value, minDuration }: IValidateDurationParams) =>
-        minDuration ? Duration.fromObject(value) >= Duration.fromObject(minDuration) : true;
+    validateDuration = ({ value, minDuration }: IValidateDurationParams) => {
+        if (!minDuration) {
+            return true;
+        }
+
+        const valueObject = typeof value === 'number' ? { seconds: value } : value;
+        const isValid = Duration.fromObject(valueObject) >= Duration.fromObject(minDuration);
+
+        return isValid;
+    };
 
     validateFixedTime = ({ value, minTime, minDuration }: IValidateFixedTimeParams) => {
         const { date, time } = value;

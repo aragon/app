@@ -4,16 +4,17 @@ import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit'
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
 import {
-    ProcessStageType,
+    GovernanceType,
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
-} from '../createProcessFormDefinitions';
-import { StageBodiesField } from './fields/stageBodiesField';
-import { StageRequiredApprovalsField } from './fields/stageRequiredApprovalsField';
-import { StageTimingField } from './fields/stageTimingField';
-import { StageTypeField } from './fields/stageTypeField';
+    ProcessStageType,
+} from '../../../createProcessFormDefinitions';
+import { GovernanceBodiesField } from '../governanceBodiesField';
+import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField';
+import { GovernanceStageTimingField } from '../governanceStageTimingField';
+import { GovernanceStageTypeField } from '../governanceStageTypeField';
 
-export interface ICreateProcessFormStagesItemProps {
+export interface IGovernanceStageFieldProps {
     /**
      * Prefix to be prepended to all form fields.
      */
@@ -34,7 +35,7 @@ export interface ICreateProcessFormStagesItemProps {
 
 const nameMaxLength = 40;
 
-export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemProps> = (props) => {
+export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props) => {
     const { formPrefix, stage, stagesCount, onDelete } = props;
 
     const { t } = useTranslations();
@@ -50,7 +51,7 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
     const stageNameField = useFormField<ICreateProcessFormStage, 'name'>('name', {
-        label: t('app.createDao.createProcessForm.stages.name.label'),
+        label: t('app.createDao.createProcessForm.governance.stageField.name.label'),
         trimOnBlur: true,
         rules: { required: true, maxLength: nameMaxLength },
         fieldPrefix: formPrefix,
@@ -60,15 +61,21 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
             <InputText
-                helpText={t('app.createDao.createProcessForm.stages.name.helpText')}
+                helpText={t('app.createDao.createProcessForm.governance.stageField.name.helpText')}
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />
-            <StageTypeField fieldPrefix={formPrefix} />
-            <StageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
-            {!isTimelockStage && <StageBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />}
+            <GovernanceStageTypeField fieldPrefix={formPrefix} />
+            <GovernanceStageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
+            {!isTimelockStage && (
+                <GovernanceBodiesField
+                    stageId={stage.internalId}
+                    isOptimisticStage={isOptimisticStage}
+                    governanceType={GovernanceType.ADVANCED}
+                />
+            )}
             {stageBodies.length > 0 && (
-                <StageRequiredApprovalsField
+                <GovernanceStageApprovalsField
                     fieldPrefix={formPrefix}
                     stageBodiesCount={stageBodies.length}
                     isOptimisticStage={isOptimisticStage}
@@ -80,12 +87,12 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                     size="md"
                     customTrigger={
                         <Button variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL} className="self-end">
-                            {t('app.createDao.createProcessForm.stages.action.more')}
+                            {t('app.createDao.createProcessForm.governance.stageField.action.more')}
                         </Button>
                     }
                 >
                     <Dropdown.Item onClick={onDelete}>
-                        {t('app.createDao.createProcessForm.stages.action.remove')}
+                        {t('app.createDao.createProcessForm.governance.stageField.action.remove')}
                     </Dropdown.Item>
                 </Dropdown.Container>
             )}

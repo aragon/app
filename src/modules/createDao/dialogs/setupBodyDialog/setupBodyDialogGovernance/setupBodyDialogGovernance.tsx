@@ -3,9 +3,16 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useWatch } from 'react-hook-form';
 import type { ISetupBodyForm } from '../setupBodyDialogDefinitions';
 
-export interface ISetupBodyDialogGovernanceProps {}
+export interface ISetupBodyDialogGovernanceProps {
+    /**
+     * Renders the correct governance settings depending if the plugin is setup as a sub-plugin or not.
+     */
+    isSubPlugin?: boolean;
+}
 
-export const SetupBodyDialogGovernance: React.FC<ISetupBodyDialogGovernanceProps> = () => {
+export const SetupBodyDialogGovernance: React.FC<ISetupBodyDialogGovernanceProps> = (props) => {
+    const { isSubPlugin } = props;
+
     const selectedPlugin = useWatch<Record<string, ISetupBodyForm['plugin']>>({ name: 'plugin' });
 
     const membershipSettings = useWatch<Record<string, ISetupBodyForm['membership']>>({ name: 'membership' });
@@ -15,7 +22,7 @@ export const SetupBodyDialogGovernance: React.FC<ISetupBodyDialogGovernanceProps
             slotId={CreateDaoSlotId.CREATE_DAO_SETUP_GOVERNANCE}
             pluginId={selectedPlugin}
             formPrefix="governance"
-            isSubPlugin={true}
+            isSubPlugin={isSubPlugin}
             showProposalCreationSettings={false}
             membershipSettings={membershipSettings}
         />

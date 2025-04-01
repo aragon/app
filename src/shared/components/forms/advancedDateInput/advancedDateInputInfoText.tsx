@@ -7,7 +7,7 @@ export interface IAdvancedDateInputInfoTextProps extends Pick<IAdvancedDateInput
     /**
      * Form field to display the info text for.
      */
-    field: IUseFormFieldReturn<Record<string, IDateFixed | IDateDuration>, string>;
+    field: IUseFormFieldReturn<Record<string, IDateFixed | IDateDuration | number>, string>;
 }
 
 export const AdvancedDateInputInfoText: React.FC<IAdvancedDateInputInfoTextProps> = (props) => {
