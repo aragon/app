@@ -2,6 +2,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { Icon, IconType, InputContainer, Link, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useAccount } from 'wagmi';
 import type { ITokenSetupMembershipProps } from './tokenSetupMembership.api';
 import { TokenSetupMembershipCreateToken } from './tokenSetupMembershipCreateToken';
 import { TokenSetupMembershipImportToken } from './tokenSetupMembershipImportToken';
@@ -11,6 +12,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
+    const { address } = useAccount();
 
     const [tokenType, setTokenType] = useState<'imported' | 'new'>('new');
 
@@ -20,9 +22,9 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
     useEffect(() => {
         if (tokenType === 'imported') {
             // TODO: reset to a single address (current user)
-            setValue(`${formPrefix}.members`, []);
+            setValue(`${formPrefix}.members`, address ? [{ address }] : []);
         }
-    }, [tokenType, formPrefix, setValue]);
+    }, [tokenType, formPrefix, setValue, address]);
 
     return (
         <div className="flex flex-col gap-6">

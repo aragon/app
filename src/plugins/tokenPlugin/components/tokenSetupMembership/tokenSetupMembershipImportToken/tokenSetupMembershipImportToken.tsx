@@ -7,15 +7,16 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Heading } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 type StepState = ITransactionStatusStepMeta['state'];
 
 function useGovernanceToken() {
     return {
         isLoading: false,
-        isError: true,
+        isError: false,
         isDelegationCompatible: false,
-        isGovernanceCompatible: true,
+        isGovernanceCompatible: false,
         token: {
             symbol: 'ETH',
             totalSupply: '1000000000000000000',
@@ -38,7 +39,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const { t } = useTranslations();
 
     const tokenFormPrefix = `${formPrefix}.token`;
-
+    const form = useForm();
+    console.log('FORMM', form);
     const {
         onChange: onImportTokenAddressChange,
         value: importTokenAddress,

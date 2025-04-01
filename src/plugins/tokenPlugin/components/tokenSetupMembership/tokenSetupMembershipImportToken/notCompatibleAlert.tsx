@@ -11,7 +11,7 @@ export const NotCompatibleAlert = () => {
             message={t('app.plugins.token.tokenSetupMembership.importToken.notCompatibleAlert.message')}
             description={
                 <div className="flex flex-col gap-3">
-                    <p>{t('app.plugins.token.tokenSetupMembership.importToken.notCompatibleAlert.description')}</p>
+                    <div>{t('app.plugins.token.tokenSetupMembership.importToken.notCompatibleAlert.description')}</div>
 
                     <Link
                         href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"

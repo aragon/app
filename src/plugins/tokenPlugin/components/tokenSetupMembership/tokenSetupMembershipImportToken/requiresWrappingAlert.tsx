@@ -12,13 +12,13 @@ export const RequiresWrappingAlert = () => {
             description={
                 <div className="flex flex-col gap-3">
                     <div>
-                        <p>
+                        <div>
                             {t('app.plugins.token.tokenSetupMembership.importToken.requiresWrappingAlert.description1')}
-                        </p>
+                        </div>
                         <br />
-                        <p>
+                        <div>
                             {t('app.plugins.token.tokenSetupMembership.importToken.requiresWrappingAlert.description2')}
-                        </p>
+                        </div>
                     </div>
 
                     <Link
