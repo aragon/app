@@ -1,9 +1,11 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import { ITransactionStatusStepMeta } from '@/shared/components/transactionStatus';
+import { NotCompatibleAlert } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembershipImportToken/notCompatibleAlert';
+import { RequiresWrappingAlert } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembershipImportToken/requiresWrappingAlert';
+import { ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, AlertCard } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, Heading } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 
 type StepState = ITransactionStatusStepMeta['state'];
@@ -11,8 +13,8 @@ type StepState = ITransactionStatusStepMeta['state'];
 function useGovernanceToken() {
     return {
         isLoading: false,
-        isError: false,
-        isDelegationCompatible: true,
+        isError: true,
+        isDelegationCompatible: false,
         isGovernanceCompatible: true,
         token: {
             symbol: 'ETH',
@@ -40,6 +42,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const {
         onChange: onImportTokenAddressChange,
         value: importTokenAddress,
+        alert,
         ...importTokenAddressField
     } = useFormField<ITokenSetupMembershipForm['token'], 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.importToken.label'),
@@ -51,7 +54,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             validate: (value) => addressUtils.isAddress(value),
         },
     });
-
+    console.log('importTokenAddressField', importTokenAddressField, importTokenAddress);
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
 
     // TODO: add useGovToken hook here
@@ -107,22 +110,34 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         ];
     }, [delegationStepState, erc20StepState, governanceStepState]);
 
+    const isTokenCheckCardVisible = !!(importTokenAddress && !alert);
+    const isNotCompatibleAlertVisible = erc20StepState === 'error';
+    const isRequiresWrappingAlertVisible = !isNotCompatibleAlertVisible && governanceStepState === 'warning';
+
     return (
         <>
-            <AddressInput
-                placeholder={t('app.plugins.token.tokenSetupMembership.importToken.placeholder')}
-                helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
-                onAccept={(value) => onImportTokenAddressChange(value?.address)}
-                value={tokenAddressInput}
-                chainId={1}
-                onChange={setTokenAddressInput}
-                {...importTokenAddressField}
-            />
-            <AlertCard
-                message={t('app.plugins.token.tokenSetupMembership.importToken.alert.message')}
-                description={t('app.plugins.token.tokenSetupMembership.importToken.alert.description')}
-                variant="warning"
-            />
+            <div className="flex flex-col gap-2 md:gap-3">
+                <AddressInput
+                    placeholder={t('app.plugins.token.tokenSetupMembership.importToken.placeholder')}
+                    helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
+                    onAccept={(value) => onImportTokenAddressChange(value?.address)}
+                    value={tokenAddressInput}
+                    chainId={1}
+                    onChange={setTokenAddressInput}
+                    alert={alert}
+                    {...importTokenAddressField}
+                />
+                {isTokenCheckCardVisible && (
+                    <TransactionStatus.Container steps={steps}>
+                        <Heading size="h4">{addressUtils.truncateAddress(importTokenAddress)}</Heading>
+                        {steps.map((step) => (
+                            <TransactionStatus.Step key={step.id} {...step} />
+                        ))}
+                    </TransactionStatus.Container>
+                )}
+            </div>
+            {isNotCompatibleAlertVisible && <NotCompatibleAlert />}
+            {isRequiresWrappingAlertVisible && <RequiresWrappingAlert />}
         </>
     );
 };

@@ -1327,13 +1327,20 @@
           "importDisabled": "Token importing is not yet available in the new version of the Aragon app.",
           "importDisabledLink": "Legacy app",
           "importToken": {
-            "alert": {
-              "description": "In order for this body to be able to participate in governance, you must ensure that this token has these exact functions: getPastVotes, getVotes, getPastTotalSupply.",
-              "message": "Not all tokens are compatible"
-            },
             "helpText": "The address of the token to be imported",
             "label": "Token address",
-            "placeholder": "Enter the token address to import"
+            "notCompatibleAlert": {
+              "description": "The address isn’t a valid ERC-20 address and therefore can't be used in governance.",
+              "infoLabel": "Learn more",
+              "message": "Not compatible"
+            },
+            "placeholder": "Enter the token address to import",
+            "requiresWrappingAlert": {
+              "description1": "This token must be wrapped by its holders to be used in governance.",
+              "description2": "Token holders will be able to wrap their tokens at any time to receive equivalent governance\n                            tokens, which can be used to vote on proposals. They can unwrap at any time to receive their original tokens.",
+              "infoLabel": "Learn more",
+              "message": "Requires wrapping"
+            }
           },
           "type": {
             "helpText": "You can either import an existing ERC-20 token to be used in governance or create a new one.",
