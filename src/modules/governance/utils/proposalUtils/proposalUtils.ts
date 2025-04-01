@@ -13,8 +13,9 @@ export interface IGenerateProposalMetadataParams {
 
 class ProposalUtils {
     generateMetadata = async ({ params }: IGenerateProposalMetadataParams): Promise<Metadata> => {
-        const { slug } = await params;
-        const slugParams = { urlParams: { slug } };
+        const { proposalSlug } = await params;
+
+        const slugParams = { urlParams: { slug: proposalSlug } };
         const proposal = await governanceService.getProposalBySlug(slugParams);
 
         return {
