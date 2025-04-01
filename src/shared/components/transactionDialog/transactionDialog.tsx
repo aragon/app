@@ -1,5 +1,4 @@
 import { Network } from '@/shared/api/daoService';
-import type { ITransactionStatus } from '@/shared/api/transactionService/domain';
 import { useTransactionStatus } from '@/shared/api/transactionService/queries';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
@@ -83,8 +82,13 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const indexingParams = { urlParams: indexingUrlParams, queryParams: indexingQueryParams };
     const { data: transactionStatus } = useTransactionStatus(indexingParams, {
         enabled: waitTxStatus === 'success',
-        refetchInterval: (data) =>
-            retryCount < maxRetries && !(data as unknown as ITransactionStatus).isProcessed ? 1000 : false,
+        refetchInterval: (data) => {
+            const status = data.state.data ?? null;
+            if (!status) {
+                return retryCount < maxRetries ? 1000 : false;
+            }
+            return retryCount < maxRetries && !status.isProcessed ? 1000 : false;
+        },
     });
 
     const handleSendTransaction = useCallback(() => {
