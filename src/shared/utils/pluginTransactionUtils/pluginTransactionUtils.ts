@@ -17,6 +17,13 @@ import type {
 } from './pluginTransactionUtils.api';
 
 class PluginTransactionUtils {
+    // Specifies the type of operation to perform
+    // See https://github.com/aragon/osx-commons/blob/main/contracts/src/plugin/IPlugin.sol#L18
+    private targetOperation = {
+        call: 0,
+        delegateCall: 1,
+    };
+
     setupDataToActions = (setupData: IPluginSetupData[], dao: IDao) => {
         const { address, network } = dao;
 
@@ -71,9 +78,11 @@ class PluginTransactionUtils {
 
     getPluginTargetConfig = (dao: IDao, isAdvancedGovernace?: boolean) => {
         const { globalExecutor } = networkDefinitions[dao.network].addresses;
-        const target = isAdvancedGovernace != null ? globalExecutor : (dao.address as Hex);
 
-        return { target, operation: 1 };
+        const target = isAdvancedGovernace ? globalExecutor : (dao.address as Hex);
+        const operation = isAdvancedGovernace ? this.targetOperation.delegateCall : this.targetOperation.call;
+
+        return { target, operation };
     };
 
     buildApplyPluginsInstallationActions = (params: IBuildApplyPluginsInstallationActionsParams) => {
