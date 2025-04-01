@@ -3,7 +3,7 @@ import type { Metadata } from 'next/types';
 export const defaultMetadata: Metadata = {
     title: 'Aragon App, DAO creation and management platform',
     description:
-        'Aragon App is a human-centered platform for creating and managing DAOs. Designed for usability, backed by a modular and robust core.',
+        'Aragon App is the long awaited human-centered approach to DAOs. A huge evolution when it comes to user experience in web3, backed by a strong and modular core.',
     authors: [
         {
             name: 'Aragon',
@@ -16,7 +16,7 @@ export const defaultMetadata: Metadata = {
         url: 'https://app.aragon.org',
         title: 'Aragon App, DAO creation and management platform',
         description:
-            'Aragon App is a human-centered platform for creating and managing DAOs. Designed for usability, backed by a modular and robust core.',
+            'Aragon App is the long awaited human-centered approach to DAOs. A huge evolution when it comes to user experience in web3, backed by a strong and modular core.',
         siteName: 'Aragon',
         images: [
             {
@@ -32,7 +32,7 @@ export const defaultMetadata: Metadata = {
         site: '@AragonProject',
         title: 'Aragon App, DAO creation and management platform',
         description:
-            'Aragon App is a human-centered platform for creating and managing DAOs. Designed for usability, backed by a modular and robust core.',
+            'Aragon App is the long awaited human-centered approach to DAOs. A huge evolution when it comes to user experience in web3, backed by a strong and modular core.',
         images: ['/og-share-large.png'],
     },
 };

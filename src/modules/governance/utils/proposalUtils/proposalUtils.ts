@@ -9,14 +9,10 @@ export interface IGenerateProposalMetadataParams {
      * Path parameters of DAO pages.
      */
     params: Promise<IProposalPageParams>;
-    /**
-     * Translation function.
-     */
-    t: (key: string, values?: Record<string, string>) => string;
 }
 
 class ProposalUtils {
-    generateMetadata = async ({ params, t }: IGenerateProposalMetadataParams): Promise<Metadata> => {
+    generateMetadata = async ({ params }: IGenerateProposalMetadataParams): Promise<Metadata> => {
         const { proposalSlug, id } = await params;
 
         const slugParams = { urlParams: { slug: proposalSlug }, queryParams: { daoId: id } };
@@ -24,20 +20,17 @@ class ProposalUtils {
 
         return {
             authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
-            title: t('app.governance.proposalMetadata.title', {
-                incrementalId: proposal.incrementalId.toString(),
-                title: proposal.title,
-            }),
-            description: proposal.description ?? t('app.governance.proposalMetadata.defaultDescription'),
+            title: `Proposal ${proposal.incrementalId.toString()} - ${proposal.title}`,
+            description: proposal.description ?? 'A governance proposal for consideration by the DAO.',
             openGraph: {
-                title: proposal.title,
-                description: proposal.description ?? t('app.governance.proposalMetadata.defaultDescription'),
+                title: `Proposal ${proposal.incrementalId.toString()} - ${proposal.title}`,
+                description: proposal.description ?? 'A governance proposal for consideration by the DAO.',
                 type: 'article',
             },
             twitter: {
                 card: 'summary',
-                title: proposal.title,
-                description: proposal.description ?? t('app.governance.proposalMetadata.defaultDescription'),
+                title: `Proposal ${proposal.incrementalId.toString()} - ${proposal.title}`,
+                description: proposal.description ?? 'A governance proposal for consideration by the DAO.',
             },
         };
     };

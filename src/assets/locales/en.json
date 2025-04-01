@@ -800,10 +800,6 @@
         },
         "notExecutable": "The proposal must pass before its actions can be executed."
       },
-      "proposalMetadata": {
-        "defaultDescription": "A governance proposal for consideration by the DAO.",
-        "title": "Proposal {{incrementalId}} - {{title}}"
-      },
       "publishProposalDialog": {
         "button": {
           "submit": "Publish proposal",
