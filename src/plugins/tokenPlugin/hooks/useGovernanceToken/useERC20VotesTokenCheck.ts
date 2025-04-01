@@ -1,5 +1,4 @@
 import type { IUseTokenParams } from '@/plugins/tokenPlugin/hooks/useToken';
-import { useMemo } from 'react';
 import type { Hash } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { erc20VotesAbi } from './erc20VotesAbi';
@@ -75,20 +74,6 @@ export const useERC20VotesTokenCheck = (params: IUseERC20VotesTokenCheckParams) 
         ],
     });
 
-    const isGovernanceCompatible = useMemo(() => {
-        if (!governanceCheckResult) {
-            return undefined;
-        }
-        return governanceCheckResult.every((result) => result.status === 'success');
-    }, [governanceCheckResult]);
-
-    const isDelegationCompatible = useMemo(() => {
-        if (!delegationCheckResult) {
-            return undefined;
-        }
-        return delegationCheckResult.every((result) => result.status === 'success');
-    }, [delegationCheckResult]);
-
     const isLoading = isGovernanceCheckLoading || isDelegationCheckLoading;
     // since allowFailure flag is set by default, isError is not true when some of the function calls fail, but only in
     // the case of invalid input
@@ -97,7 +82,7 @@ export const useERC20VotesTokenCheck = (params: IUseERC20VotesTokenCheckParams) 
     return {
         isLoading,
         isError,
-        isGovernanceCompatible,
-        isDelegationCompatible,
+        isGovernanceCompatible: governanceCheckResult?.every((result) => result.status === 'success'),
+        isDelegationCompatible: delegationCheckResult?.every((result) => result.status === 'success'),
     };
 };
