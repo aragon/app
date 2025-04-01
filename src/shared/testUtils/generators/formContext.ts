@@ -35,5 +35,6 @@ export const generateFormContext = (values?: Partial<UseFormReturn>): UseFormRet
     setFocus: jest.fn(),
     control: {} as Control,
     formState: generateFormContextState(values?.formState),
+    subscribe: jest.fn(),
     ...values,
 });
