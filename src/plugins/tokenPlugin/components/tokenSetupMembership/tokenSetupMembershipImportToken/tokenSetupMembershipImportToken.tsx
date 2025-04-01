@@ -43,8 +43,14 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
     const tokenFormPrefix = `${formPrefix}.token`;
     const { setValue } = useFormContext();
-
     const { chainId } = useAccount();
+
+    // Used to prevent moving forward if the token is not set.
+    useFormField<ITokenSetupMembershipForm['token'], 'name'>('name', {
+        defaultValue: '',
+        fieldPrefix: tokenFormPrefix,
+        rules: { required: true },
+    });
 
     const {
         onChange: onImportTokenAddressChange,
@@ -62,15 +68,17 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         },
     });
 
-    const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
-
     const { isError, isLoading, token, isDelegationCompatible, isGovernanceCompatible } = useGovernanceToken({
         address: importTokenAddress as Hash,
         chainId: chainId ?? 1,
     });
 
+    const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
+
     useEffect(() => {
         if (!token) {
+            // name is used as a required field to prevent moving forward if the token is not set!
+            setValue(`${tokenFormPrefix}.name`, '');
             return;
         }
 
