@@ -8,6 +8,7 @@ import { useDialogContext } from '../dialogProvider';
 import { type TransactionStatusState } from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
 import {
+    IHrefParams,
     type ITransactionDialogActionParams,
     type ITransactionDialogProps,
     type ITransactionDialogStep,
@@ -48,6 +49,10 @@ export interface ITransactionDialogFooterProps<TCustomStepId extends string = st
      * ID of the DAO
      */
     daoId?: string;
+    /**
+     * Slug of the proposal if the transaction type is creating a proposal.
+     */
+    proposalSlug?: string;
 }
 
 const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record<TransactionStatusState, string>>>> = {
@@ -58,12 +63,20 @@ const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record
     },
 };
 
-const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, txReceipt?: TransactionReceipt) => {
+const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, params: IHrefParams): string | undefined => {
     if (typeof successHref === 'string') {
         return successHref;
     }
 
-    return txReceipt ? successHref(txReceipt) : undefined;
+    if (params.slug) {
+        return successHref({ slug: params.slug });
+    }
+
+    if (params.receipt) {
+        return successHref({ receipt: params.receipt });
+    }
+
+    return undefined;
 };
 
 const getFallbackRouteByTransactionType = (type?: TransactionType, daoId?: string) => {
@@ -83,7 +96,17 @@ const getFallbackRouteByTransactionType = (type?: TransactionType, daoId?: strin
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
-    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick, transactionType, daoId } = props;
+    const {
+        submitLabel,
+        successLink,
+        txReceipt,
+        activeStep,
+        onError,
+        onCancelClick,
+        transactionType,
+        daoId,
+        proposalSlug,
+    } = props;
 
     const { label: successLabel, href: successHref, onClick: successOnClick } = successLink;
     const { id: stepId, meta } = activeStep ?? {};
@@ -156,7 +179,12 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     };
 
     const processedSuccessLink =
-        displaySuccessLink && successHref ? buildSuccessLink(successHref, txReceipt) : undefined;
+        displaySuccessLink && successHref
+            ? buildSuccessLink(
+                  successHref,
+                  transactionType === TransactionType.PROPOSAL_CREATE ? { slug: proposalSlug } : { receipt: txReceipt },
+              )
+            : undefined;
 
     // The cancel button becomes "Proceed anyway" during indexing after 8 seconds
     // and navigates the user to a different page based on transaction type

@@ -242,6 +242,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 onCancelClick={onCancelClick}
                 transactionType={transactionType}
                 daoId={daoId}
+                proposalSlug={transactionStatus?.slug}
             />
         </>
     );

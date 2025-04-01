@@ -10,12 +10,24 @@ import type { ITransactionStatusStepMeta } from '../transactionStatus';
 // Return type for the prepareTransaction property of the TransactionDialog component
 export type TransactionDialogPrepareReturn = SendTransactionParameters;
 
-// Static or dynamic link based on the transaction receipt.
-export type TransactionDialogSuccessLinkHref = string | ((receipt: TransactionReceipt) => string);
+/**
+ * Params for building a transaction success link.
+ * either a slug, used for proposal transactions or a
+ * transaction receipt, used for other transactions.
+ */
+export interface IHrefParams {
+    /** Slug used for proposal transactions */
+    slug?: string;
+    /** Transaction receipt used for non-proposal transactions */
+    receipt?: TransactionReceipt;
+}
+
+// Static or dynamic link based on the params.
+export type TransactionDialogSuccessLinkHref = string | ((params: IHrefParams) => string);
 
 export interface ITransactionDialogActionParams {
     /**
-     * Callback to be triggered if an error occurs to propertly monitor the transaction status.
+     * Callback to be triggered if an error occurs to properly monitor the transaction status.
      */
     onError: (error: unknown) => void;
 }

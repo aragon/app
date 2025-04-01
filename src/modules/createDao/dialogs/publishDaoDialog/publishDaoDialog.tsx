@@ -10,12 +10,12 @@ import {
     TransactionDialog,
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
+import type { IHrefParams } from '@/shared/components/transactionDialog/transactionDialog.api';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { DaoDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
-import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
@@ -106,10 +106,12 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         return publishDaoDialogUtils.buildTransaction({ values: values, metadataCid, connectedAddress: address });
     };
 
-    const getDaoLink = (txReceipt: TransactionReceipt) => {
+    const getDaoLink = ({ receipt }: IHrefParams) => {
+        invariant(receipt != null, 'PublishDaoDialog: receipt must be defined.');
+
         setIsBlocked(false);
 
-        const daoAddress = publishDaoDialogUtils.getDaoAddress(txReceipt)!;
+        const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;
         const daoId = `${network}-${daoAddress}`;
 
         return `/dao/${daoId}`;

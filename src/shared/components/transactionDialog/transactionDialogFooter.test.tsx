@@ -142,14 +142,35 @@ describe('<TransactionDialogFooter /> component', () => {
 
     it('supports success href to be a function to build the link based on the transaction receipt', () => {
         const txReceipt = { from: '0x123' } as unknown as TransactionReceipt;
-        const href = (txReceipt: TransactionReceipt) => `/custom-href-${txReceipt.from}`;
+        const href = ({ receipt }: { receipt?: TransactionReceipt }) => `/custom-href-${receipt!.from}`;
         const successLink = { label: 'View proposal', href };
         const activeStep = {
             id: TransactionDialogStep.CONFIRM,
             meta: { state: 'success' },
-        } as unknown as ITransactionDialogStep;
+        } as ITransactionDialogStep;
         render(createTestComponent({ txReceipt, successLink, activeStep }));
-        expect(screen.getByRole('link').getAttribute('href')).toEqual(href(txReceipt));
+        expect(screen.getByRole('link').getAttribute('href')).toEqual(href({ receipt: txReceipt }));
+    });
+
+    it('supports success href as a function that builds the link based on a slug for proposals', () => {
+        const proposalSlug = 'tokenvoting';
+        const href = ({ slug }: { slug?: string }) => `/custom-href-${slug!}`;
+        const successLink = { label: 'View proposal', href };
+        const activeStep = {
+            id: TransactionDialogStep.INDEXING,
+            meta: { state: 'success' },
+        } as ITransactionDialogStep;
+
+        render(
+            createTestComponent({
+                proposalSlug,
+                successLink,
+                activeStep,
+                transactionType: TransactionType.PROPOSAL_CREATE,
+            }),
+        );
+
+        expect(screen.getByRole('link').getAttribute('href')).toEqual(href({ slug: proposalSlug }));
     });
 
     it('closes the dialog on success link click', async () => {

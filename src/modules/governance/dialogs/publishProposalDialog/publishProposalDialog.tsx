@@ -10,6 +10,7 @@ import {
     TransactionDialog,
     type TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
+import type { IHrefParams } from '@/shared/components/transactionDialog/transactionDialog.api';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
@@ -96,9 +97,11 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     // Handler function to disable the navigation block when the transaction is needed.
     // We can't simply just pass the href to the TransactionDialog
-    const getProposalsLink = () => {
+    const getProposalsLink = ({ slug }: IHrefParams) => {
         setIsBlocked(false);
-        return `/dao/${daoId}/proposals`;
+        const proposalLink = slug ? `/dao/${daoId}/proposals/${slug}` : `/dao/${daoId}/proposals`;
+
+        return proposalLink;
     };
 
     const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
