@@ -28,7 +28,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
 
     const handleTokenTypeChange = (value: string) => {
         // It is important to reset critical fields when changing the token type (before the new form is mounted)!
-        // Forms reuse the same form state, so default values are not set when the form is mounted.
+        // Forms reuse the same state, so default values aren't applied when a field already contains a value from the previous form.
         setValue(`${formPrefix}.token.name`, '');
         setValue(`${formPrefix}.token.symbol`, '');
         setValue(`${formPrefix}.token.totalSupply`, '0');

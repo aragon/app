@@ -14,21 +14,6 @@ import { useAccount } from 'wagmi';
 
 type StepState = ITransactionStatusStepMeta['state'];
 
-// function useGovernanceToken() {
-//     return {
-//         isLoading: false,
-//         isError: true,
-//         isDelegationCompatible: true,
-//         isGovernanceCompatible: true,
-//         token: {
-//             symbol: 'ETH',
-//             totalSupply: '1000000000000000000',
-//             decimals: 18,
-//             name: 'Ethereum',
-//         },
-//     };
-// }
-
 export interface ITokenSetupMembershipImportTokenProps {
     /**
      * Prefix to be appended to all form fields.
