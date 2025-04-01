@@ -16,9 +16,10 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useAccount } from 'wagmi';
-import type { ICreateProcessFormData } from '../../components/createProcessForm';
+import { GovernanceType, type ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IPublishProcessDialogParams } from '../publishProcessDialog';
-import { type IPrepareProcessMetadata, prepareProcessDialogUtils } from './prepareProcessDialogUtils';
+import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
+import type { IPrepareProcessMetadata } from './prepareProcessDialogUtils.api';
 
 export enum PrepareProcessStep {
     PIN_METADATA = 'PIN_METADATA',
@@ -73,27 +74,27 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const handlePinJson = useCallback(
         async (params: ITransactionDialogActionParams) => {
             const proposalMetadata = prepareProcessDialogUtils.prepareProposalMetadata();
+            const isAdvancedGovernance = values.governanceType === GovernanceType.ADVANCED;
             const { IpfsHash: proposalMetadataHash } = await pinJson({ body: proposalMetadata }, params);
 
-            const sppMetadata = prepareProcessDialogUtils.prepareSppMetadata(values);
-            const { IpfsHash: sppMetadataHash } = await pinJson({ body: sppMetadata }, params);
-
             const pinPluginsMetadataPromises = values.bodies.map((plugin) => {
-                const pluginMetadata = prepareProcessDialogUtils.preparePluginMetadata(plugin);
+                const pluginMetadata = isAdvancedGovernance
+                    ? prepareProcessDialogUtils.preparePluginMetadata(plugin)
+                    : prepareProcessDialogUtils.prepareProcessorMetadata(values);
 
                 return pinJson({ body: pluginMetadata }, params);
             });
 
-            const pluginMetadataResults = (await Promise.all(pinPluginsMetadataPromises)).map(
-                (result) => result.IpfsHash,
-            );
+            const pluginMetadata = (await Promise.all(pinPluginsMetadataPromises)).map(({ IpfsHash }) => IpfsHash);
+            const metadata: IPrepareProcessMetadata = { proposal: proposalMetadataHash, plugins: pluginMetadata };
 
-            setProcessMetadata({
-                proposal: proposalMetadataHash,
-                spp: sppMetadataHash,
-                plugins: pluginMetadataResults,
-            });
+            if (isAdvancedGovernance) {
+                const processorMetadata = prepareProcessDialogUtils.prepareProcessorMetadata(values);
+                const { IpfsHash: processorMetadataHash } = await pinJson({ body: processorMetadata }, params);
+                metadata.processor = processorMetadataHash;
+            }
 
+            setProcessMetadata(metadata);
             nextStep();
         },
         [pinJson, nextStep, values],

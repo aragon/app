@@ -17,6 +17,13 @@ class PermissionTransactionUtils {
         or: 10,
     };
 
+    // List of generic permission IDs
+    public permissionIds = {
+        rootPermission: 'ROOT_PERMISSION',
+        createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
+        executePermission: 'EXECUTE_PERMISSION',
+    };
+
     buildGrantPermissionTransaction = (params: IUpdatePermissionParams) => {
         const { where, who, what, to } = params;
         const transactionData = encodeFunctionData({

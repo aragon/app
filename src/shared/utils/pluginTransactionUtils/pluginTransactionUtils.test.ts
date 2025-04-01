@@ -3,6 +3,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generatePluginSetupData, generatePluginSetupDataPermission } from '@/shared/testUtils';
 import type { Hex } from 'viem';
 import * as Viem from 'viem';
+import { permissionTransactionUtils } from '../permissionTransactionUtils';
 import { pluginSetupProcessorAbi } from './abi/pluginSetupProcessorAbi';
 import { pluginTransactionUtils } from './pluginTransactionUtils';
 
@@ -58,32 +59,6 @@ describe('pluginTransaction utils', () => {
         });
     });
 
-    describe('buildPrepareInstallationData', () => {
-        it('encodes function data with correct arguments', () => {
-            const transactionData = '0xencoded-data';
-            encodeFunctionDataSpy.mockReturnValue(transactionData);
-            const pluginAddress = '0xAddress';
-            const pluginVersion = { release: 1, build: 2 };
-            const data = '0xSomeData';
-            const daoAddress = '0xDAOAddress';
-
-            const result = pluginTransactionUtils.buildPrepareInstallationData(
-                pluginAddress,
-                pluginVersion,
-                data,
-                daoAddress,
-            );
-
-            const expectedPluginSetupRef = { pluginSetupRepo: pluginAddress, versionTag: pluginVersion };
-            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
-                abi: pluginSetupProcessorAbi,
-                functionName: 'prepareInstallation',
-                args: [daoAddress, { pluginSetupRef: expectedPluginSetupRef, data }],
-            });
-            expect(result).toEqual(transactionData);
-        });
-    });
-
     describe('getPluginSetupData', () => {
         it('parses the transaction logs to return an array of plugin setup-data', () => {
             const transaction = { logs: [{ address: '0x123' }] } as unknown as Viem.TransactionReceipt;
@@ -121,7 +96,78 @@ describe('pluginTransaction utils', () => {
         });
     });
 
-    describe('buildApplyInstallationTransaction', () => {
+    describe('buildPrepareInstallationData', () => {
+        it('encodes function data with correct arguments', () => {
+            const transactionData = '0xencoded-data';
+            encodeFunctionDataSpy.mockReturnValue(transactionData);
+            const pluginAddress = '0xAddress';
+            const pluginVersion = { release: 1, build: 2 };
+            const data = '0xSomeData';
+            const daoAddress = '0xDAOAddress';
+
+            const result = pluginTransactionUtils.buildPrepareInstallationData(
+                pluginAddress,
+                pluginVersion,
+                data,
+                daoAddress,
+            );
+
+            const expectedPluginSetupRef = { pluginSetupRepo: pluginAddress, versionTag: pluginVersion };
+            expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
+                abi: pluginSetupProcessorAbi,
+                functionName: 'prepareInstallation',
+                args: [daoAddress, { pluginSetupRef: expectedPluginSetupRef, data }],
+            });
+            expect(result).toEqual(transactionData);
+        });
+    });
+
+    describe('getPluginTargetConfig', () => {
+        it('returns call operation and dao target for simple governance setup', () => {
+            const dao = generateDao({ address: '0x123' });
+            const isAdvancedGovernace = false;
+            const result = pluginTransactionUtils.getPluginTargetConfig(dao, isAdvancedGovernace);
+            expect(result).toEqual({ target: dao.address, operation: 0 });
+        });
+
+        it('returns delegate-call operation and global-executor target for simple governance setup', () => {
+            const dao = generateDao({ address: '0x456', network: Network.ETHEREUM_MAINNET });
+            const isAdvancedGovernace = true;
+            const { globalExecutor } = networkDefinitions[dao.network].addresses;
+            const result = pluginTransactionUtils.getPluginTargetConfig(dao, isAdvancedGovernace);
+            expect(result).toEqual({ target: globalExecutor, operation: 1 });
+        });
+    });
+
+    describe('buildApplyPluginsInstallationActions', () => {
+        const grantPermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildGrantPermissionTransaction');
+        const revokePermissionSpy = jest.spyOn(permissionTransactionUtils, 'buildRevokePermissionTransaction');
+        const setupDataToActionsSpy = jest.spyOn(pluginTransactionUtils, 'setupDataToActions');
+
+        afterEach(() => {
+            grantPermissionSpy.mockReset();
+            revokePermissionSpy.mockReset();
+            setupDataToActionsSpy.mockReset();
+        });
+
+        it('builds the required transaction to apply the plugin installation', () => {
+            const daoAddress = '0x123' as Hex;
+            const dao = generateDao({ address: daoAddress });
+            const setupData = [generatePluginSetupData(), generatePluginSetupData()];
+            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: '0' };
+            const setupActions = [{ to: '0x001' as Viem.Hex, data: '0xsetup' as Viem.Hex, value: '0' }];
+            const revokeAction = { to: daoAddress, data: '0xrevoke' as Viem.Hex, value: '0' };
+
+            grantPermissionSpy.mockReturnValueOnce(grantAction);
+            setupDataToActionsSpy.mockReturnValue(setupActions);
+            revokePermissionSpy.mockReturnValueOnce(revokeAction);
+
+            const result = pluginTransactionUtils.buildApplyPluginsInstallationActions({ dao, setupData });
+            expect(result).toEqual([grantAction, ...setupActions, revokeAction]);
+        });
+    });
+
+    describe('buildApplyInstallationData', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const hashHelpersSpy = jest.spyOn(pluginTransactionUtils as any, 'hashHelpers');
 

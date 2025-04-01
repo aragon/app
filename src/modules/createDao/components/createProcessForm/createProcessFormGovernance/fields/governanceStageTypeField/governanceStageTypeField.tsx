@@ -4,21 +4,21 @@ import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import { ProcessStageType, type ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 
-export interface IStageTypeFieldProps {
+export interface IGovernanceStageTypeFieldProps {
     /**
      * Prefix to be prepended to the form field.
      */
     fieldPrefix: string;
 }
 
-export const StageTypeField: React.FC<IStageTypeFieldProps> = (props) => {
+export const GovernanceStageTypeField: React.FC<IGovernanceStageTypeFieldProps> = (props) => {
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
 
     const { onChange: onTypeChange, ...stageTypeField } = useFormField<ICreateProcessFormStage, 'type'>('type', {
-        label: t('app.createDao.createProcessForm.stages.type.label'),
+        label: t('app.createDao.createProcessForm.governance.stageTypeField.label'),
         defaultValue: ProcessStageType.NORMAL,
         fieldPrefix: fieldPrefix,
     });
@@ -40,14 +40,16 @@ export const StageTypeField: React.FC<IStageTypeFieldProps> = (props) => {
     return (
         <RadioGroup
             onValueChange={handleTypeChange}
-            helpText={t('app.createDao.createProcessForm.stages.type.helpText')}
+            helpText={t('app.createDao.createProcessForm.governance.stageTypeField.helpText')}
             {...stageTypeField}
         >
             {Object.values(ProcessStageType).map((type) => (
                 <RadioCard
                     key={type}
-                    label={t(`app.createDao.createProcessForm.stages.type.list.${type}.label`)}
-                    description={t(`app.createDao.createProcessForm.stages.type.list.${type}.description`)}
+                    label={t(`app.createDao.createProcessForm.governance.stageTypeField.list.${type}.label`)}
+                    description={t(
+                        `app.createDao.createProcessForm.governance.stageTypeField.list.${type}.description`,
+                    )}
                     value={type}
                 />
             ))}

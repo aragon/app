@@ -34,89 +34,28 @@ describe('sppTransaction utils', () => {
         parseStartDateSpy.mockReset();
     });
 
-    describe('buildInstallPluginsActions', () => {
-        const setupDataToActionsSpy = jest.spyOn(pluginTransactionUtils, 'setupDataToActions');
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const buildUpdateStagesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateStagesTransaction');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const buildUpdateRulesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateRulesTransaction');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const buildBodyPermissionActionsSpy = jest.spyOn(sppTransactionUtils as any, 'buildBodyPermissionActions');
-
-        afterEach(() => {
-            setupDataToActionsSpy.mockReset();
-            buildUpdateStagesTransactionSpy.mockReset();
-            buildUpdateRulesTransactionSpy.mockReset();
-            buildBodyPermissionActionsSpy.mockReset();
-        });
-
-        afterAll(() => {
-            setupDataToActionsSpy.mockRestore();
-            buildUpdateStagesTransactionSpy.mockRestore();
-            buildUpdateRulesTransactionSpy.mockRestore();
-            buildBodyPermissionActionsSpy.mockRestore();
-        });
-
-        it('correctly builds the install actions for plugins', () => {
-            const values = generateCreateProcessFormData();
-            const setupData = [generatePluginSetupData(), generatePluginSetupData()];
-            const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
-            const daoAddress = dao.address as Viem.Hex;
-
-            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: '0' };
-            const setupActions = [{ to: '0x001' as Viem.Hex, data: '0xsetup' as Viem.Hex, value: '0' }];
-            const updateStagesAction = { to: '0x002', data: '0xstages', value: '0' };
-            const updateRulesAction = { to: '0x003', data: '0xrules', value: '0' };
-            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Viem.Hex, value: '0' }];
-            const revokeAction = { to: daoAddress, data: '0xrevoke' as Viem.Hex, value: '0' };
-
-            grantPermissionSpy.mockReturnValueOnce(grantAction);
-            setupDataToActionsSpy.mockReturnValueOnce(setupActions);
-            buildUpdateStagesTransactionSpy.mockReturnValueOnce(updateStagesAction);
-            buildUpdateRulesTransactionSpy.mockReturnValueOnce(updateRulesAction);
-            buildBodyPermissionActionsSpy.mockReturnValueOnce(bodyPermissionActions);
-            revokePermissionSpy.mockReturnValueOnce(revokeAction);
-
-            const result = sppTransactionUtils.buildInstallPluginsActions(values, setupData, dao);
-
-            const expected = [
-                grantAction,
-                ...setupActions,
-                updateStagesAction,
-                updateRulesAction,
-                ...bodyPermissionActions,
-                revokeAction,
-            ];
-
-            expect(result).toEqual(expected);
-        });
-    });
-
     describe('buildCreateProposalData', () => {
         it('encodes createProposal data with correct parameters', () => {
             const transactionData = '0xencoded';
             const startDate = 12345;
+            const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
+            const actions = [{ to: '0xAddress', data: '0xdata', value: '0' }];
             parseStartDateSpy.mockReturnValue(startDate);
 
-            const params = {
-                metadata: '0xmetadata' as Viem.Hex,
-                actions: [{ to: '0xAddress', data: '0xdata', value: '0' }],
-                values: { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() },
-            };
+            const params = { metadata: '0xmetadata' as Viem.Hex, actions, values };
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
             const result = sppTransactionUtils.buildCreateProposalData(params);
+            expect(result).toBe(transactionData);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: sppPluginAbi,
                 functionName: 'createProposal',
                 args: [params.metadata, params.actions, BigInt(0), startDate, [[]]],
             });
-            expect(result).toBe(transactionData);
         });
     });
 
-    describe('buildPrepareSppInstallData', () => {
+    describe('buildPreparePluginInstallData', () => {
         it('encodes the plugin settings correctly using encodeAbiParameters', () => {
             const metadataCid = '0xMetadataCID';
             const dao = generateDao({ address: '0xDAOAddress' });
@@ -145,15 +84,52 @@ describe('sppTransaction utils', () => {
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
 
             const result = sppTransactionUtils.buildPreparePluginInstallData(metadataCid, dao);
-
+            expect(result).toEqual(transactionData);
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 sppPlugin.repositoryAddresses[network],
                 sppPlugin.installVersion,
                 pluginSettingsData,
                 dao.address as Viem.Hex,
             );
+        });
+    });
 
-            expect(result).toBe(transactionData);
+    describe('buildPluginsSetupActions', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const buildUpdateStagesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateStagesTransaction');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const buildUpdateRulesTransactionSpy = jest.spyOn(sppTransactionUtils as any, 'buildUpdateRulesTransaction');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const buildBodyPermissionActionsSpy = jest.spyOn(sppTransactionUtils as any, 'buildBodyPermissionActions');
+
+        afterEach(() => {
+            buildUpdateStagesTransactionSpy.mockReset();
+            buildUpdateRulesTransactionSpy.mockReset();
+            buildBodyPermissionActionsSpy.mockReset();
+        });
+
+        afterAll(() => {
+            buildUpdateStagesTransactionSpy.mockRestore();
+            buildUpdateRulesTransactionSpy.mockRestore();
+            buildBodyPermissionActionsSpy.mockRestore();
+        });
+
+        it('correctly builds the install actions for plugins', () => {
+            const values = generateCreateProcessFormData();
+            const setupData = [generatePluginSetupData(), generatePluginSetupData()];
+            const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
+            const daoAddress = dao.address as Viem.Hex;
+
+            const updateStagesAction = { to: '0x002', data: '0xstages', value: '0' };
+            const updateRulesAction = { to: '0x003', data: '0xrules', value: '0' };
+            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Viem.Hex, value: '0' }];
+
+            buildUpdateStagesTransactionSpy.mockReturnValueOnce(updateStagesAction);
+            buildUpdateRulesTransactionSpy.mockReturnValueOnce(updateRulesAction);
+            buildBodyPermissionActionsSpy.mockReturnValueOnce(bodyPermissionActions);
+
+            const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao);
+            expect(result).toEqual([updateStagesAction, updateRulesAction, ...bodyPermissionActions]);
         });
     });
 
@@ -178,19 +154,19 @@ describe('sppTransaction utils', () => {
             expect(revokePermissionSpy).toHaveBeenNthCalledWith(1, {
                 where: pluginData.pluginAddress,
                 who: sppTransactionUtils['anyAddress'],
-                what: sppTransactionUtils['permissionIds'].createProposalPermission,
+                what: permissionTransactionUtils.permissionIds.createProposalPermission,
                 to: daoAddress,
             });
             expect(revokePermissionSpy).toHaveBeenNthCalledWith(2, {
                 where: daoAddress,
                 who: pluginData.pluginAddress,
-                what: sppTransactionUtils['permissionIds'].executePermission,
+                what: permissionTransactionUtils.permissionIds.executePermission,
                 to: daoAddress,
             });
             expect(grantPermissionSpy).toHaveBeenCalledWith({
                 where: pluginData.pluginAddress,
                 who: sppAddress,
-                what: sppTransactionUtils['permissionIds'].createProposalPermission,
+                what: permissionTransactionUtils.permissionIds.createProposalPermission,
                 to: daoAddress,
             });
         });
