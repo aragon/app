@@ -1,4 +1,3 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IDao } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
 
@@ -78,5 +77,20 @@ export interface IBuildApplyPluginsInstallationActionsParams {
     /**
      * Other actions to be added to the installaction action array before the revoke root permission transaction.
      */
-    actions?: Array<Pick<IProposalAction, 'value' | 'to' | 'data'>>;
+    actions?: IPluginSetupAction[];
+}
+
+export interface IPluginSetupAction {
+    /**
+     * Target of the transaction.
+     */
+    to: Hex;
+    /**
+     * Data of the transaction.
+     */
+    data: Hex;
+    /**
+     * Value of the transaction
+     */
+    value: string;
 }

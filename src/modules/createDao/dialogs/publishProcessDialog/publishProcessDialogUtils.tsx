@@ -52,7 +52,7 @@ class PublishProcessDialogUtils {
         })!;
 
         const processorSetupActions = isAdvancedGovernance
-            ? sppTransactionUtils.buildInstallPluginsActions(values, setupData, dao)
+            ? sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao)
             : [];
 
         const buildActionsParams = { dao, setupData, actions: processorSetupActions };

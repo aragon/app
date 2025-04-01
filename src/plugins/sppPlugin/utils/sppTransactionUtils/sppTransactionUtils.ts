@@ -55,7 +55,7 @@ class SppTransactionUtils {
         return transactionData;
     };
 
-    buildInstallPluginsActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], dao: IDao) => {
+    buildPluginsSetupActions = (values: ICreateProcessFormData, setupData: IPluginSetupData[], dao: IDao) => {
         const daoAddress = dao.address as Hex;
 
         // The SPP plugin is the one prepared first, the setupData array contains the data for the SPP plugin as the first element.
