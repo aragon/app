@@ -25,6 +25,7 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
     const lastStep = steps.length > 0 ? steps[steps.length - 1] : undefined;
     const isSuccess = lastStep?.meta.state === 'success';
 
+    // TODO: remove border colors and update spacing (APP-4111) https://www.figma.com/design/ISSDryshtEpB7SUSdNqAcw/Governance-UI-Kit?m=auto&node-id=20738-124268
     return (
         <ul
             className={classNames(
