@@ -89,19 +89,19 @@ class PrepareProcessDialogUtils {
         const installActionsData = bodies.map((body, index) => {
             const stage = stages.find(({ internalId }) => internalId === body.stageId);
             const { votingPeriod: stageVotingPeriod } = stage?.timing ?? {};
-            const metadata = pluginsMetadata[index];
+            const metadataCid = pluginsMetadata[index];
 
-            return this.buildPrepareInstallPluginActionData({ body, dao, metadata, stageVotingPeriod });
+            return this.buildPrepareInstallPluginActionData({ body, dao, metadataCid, stageVotingPeriod });
         });
 
         return installActionsData;
     };
 
     private buildPrepareInstallPluginActionData = (params: IBuildPrepareInstallPluginActionParams) => {
-        const { metadata, dao, body, stageVotingPeriod } = params;
+        const { metadataCid, dao, body, stageVotingPeriod } = params;
 
-        const metadataCid = transactionUtils.cidToHex(metadata);
-        const prepareFunctionParams = { metadataCid, dao, body, stageVotingPeriod };
+        const metadata = transactionUtils.cidToHex(metadataCid);
+        const prepareFunctionParams = { metadata, dao, body, stageVotingPeriod };
         const prepareFunction = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginInstallDataParams, Hex>({
             slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA,
             pluginId: body.plugin,

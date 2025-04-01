@@ -34,7 +34,7 @@ class MultisigTransactionUtils {
     };
 
     buildPrepareInstallData = (params: IBuildPreparePluginInstallDataParams<IMultisigSetupGovernanceForm>) => {
-        const { metadataCid, dao, body, stageVotingPeriod } = params;
+        const { metadata, dao, body, stageVotingPeriod } = params;
         const { members } = body.membership;
         const { minApprovals, onlyListed } = body.governance;
 
@@ -48,7 +48,7 @@ class MultisigTransactionUtils {
             memberAddresses,
             pluginSettings,
             multisigTarget,
-            metadataCid as Hex,
+            metadata,
         ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(

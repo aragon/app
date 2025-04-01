@@ -52,7 +52,7 @@ class TokenTransactionUtils {
     };
 
     buildPrepareInstallData = (params: IPrepareTokenInstallDataParams) => {
-        const { body, metadataCid, dao, stageVotingPeriod } = params;
+        const { body, metadata, dao, stageVotingPeriod } = params;
         const { members } = body.membership;
         const { name: tokenName, symbol: tokenSymbol, address: tokenAddress } = body.membership.token;
 
@@ -76,7 +76,7 @@ class TokenTransactionUtils {
             mintSettings,
             tokenTarget,
             BigInt(0),
-            metadataCid as Hex,
+            metadata,
         ]);
 
         const transactionData = pluginTransactionUtils.buildPrepareInstallationData(

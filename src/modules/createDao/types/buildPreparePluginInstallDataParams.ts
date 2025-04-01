@@ -1,6 +1,7 @@
 import type { IDao } from '@/shared/api/daoService';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
+import type { Hex } from 'viem';
 import type { ISetupBodyForm, ISetupBodyFormMembership } from '../dialogs/setupBodyDialog';
 
 export interface IBuildPreparePluginInstallDataParams<
@@ -13,9 +14,9 @@ export interface IBuildPreparePluginInstallDataParams<
      */
     body: ISetupBodyForm<TGovernance, TMember, TMembership>;
     /**
-     * The metadata CID of the process.
+     * The metadata already in hex format of the process.
      */
-    metadataCid: string;
+    metadata: Hex;
     /**
      * The DAO to install the process to.
      */
