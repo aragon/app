@@ -1,6 +1,7 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { NotCompatibleAlert } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembershipImportToken/notCompatibleAlert';
 import { RequiresWrappingAlert } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembershipImportToken/requiresWrappingAlert';
+import { useGovernanceToken } from '@/plugins/tokenPlugin/hooks/useGovernanceToken';
 import { ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -8,23 +9,25 @@ import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Heading } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { Hash } from 'viem';
+import { useAccount } from 'wagmi';
 
 type StepState = ITransactionStatusStepMeta['state'];
 
-function useGovernanceToken() {
-    return {
-        isLoading: false,
-        isError: true,
-        isDelegationCompatible: true,
-        isGovernanceCompatible: true,
-        token: {
-            symbol: 'ETH',
-            totalSupply: '1000000000000000000',
-            decimals: 18,
-            name: 'Ethereum',
-        },
-    };
-}
+// function useGovernanceToken() {
+//     return {
+//         isLoading: false,
+//         isError: true,
+//         isDelegationCompatible: true,
+//         isGovernanceCompatible: true,
+//         token: {
+//             symbol: 'ETH',
+//             totalSupply: '1000000000000000000',
+//             decimals: 18,
+//             name: 'Ethereum',
+//         },
+//     };
+// }
 
 export interface ITokenSetupMembershipImportTokenProps {
     /**
@@ -40,6 +43,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
     const tokenFormPrefix = `${formPrefix}.token`;
     const { setValue } = useFormContext();
+
+    const { chainId } = useAccount();
 
     const {
         onChange: onImportTokenAddressChange,
@@ -57,16 +62,12 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         },
     });
 
-    // useEffect(() => {
-    //     console.log('HELLELELE');
-    //     // Reset the zero address set by create-token component!
-    //     onImportTokenAddressChange('');
-    // }, [onImportTokenAddressChange]);
-
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
 
-    // TODO: add useGovToken hook here
-    const { isError, isLoading, token, isDelegationCompatible, isGovernanceCompatible } = useGovernanceToken();
+    const { isError, isLoading, token, isDelegationCompatible, isGovernanceCompatible } = useGovernanceToken({
+        address: importTokenAddress as Hash,
+        chainId: chainId ?? 1,
+    });
 
     // Helper function to determine step state based on conditions
     const [erc20StepState, governanceStepState, delegationStepState] = useMemo((): [
@@ -84,8 +85,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
         return [
             'success',
-            isGovernanceCompatible ? 'success' : 'warning',
-            isDelegationCompatible ? 'success' : 'warning',
+            isGovernanceCompatible ? 'success' : isGovernanceCompatible === undefined ? 'idle' : 'warning',
+            isDelegationCompatible ? 'success' : isDelegationCompatible === undefined ? 'idle' : 'warning',
         ];
     }, [isDelegationCompatible, isError, isGovernanceCompatible, isLoading]);
 
@@ -121,7 +122,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const isTokenCheckCardVisible = !!(importTokenAddress && !alert);
     const isNotCompatibleAlertVisible = erc20StepState === 'error';
     const isRequiresWrappingAlertVisible = !isNotCompatibleAlertVisible && governanceStepState === 'warning';
-
+    console.log('ISADASD', isRequiresWrappingAlertVisible, governanceStepState, isNotCompatibleAlertVisible);
     return (
         <>
             <div className="flex flex-col gap-2 md:gap-3">
