@@ -60,6 +60,7 @@ export const GovernanceBodiesFieldItem: React.FC<IGovernanceBodiesFieldItemProps
                             pluginId={body.plugin}
                             slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
                             body={body}
+                            isAdvancedGovernance={isAdvancedGovernance}
                         />
                         <div className="flex w-full grow justify-between">
                             <Button className="justify-end" variant="secondary" size="md" onClick={onEdit}>

@@ -1229,8 +1229,11 @@
         "tokenProcessBodyField": {
           "disabled": "Disabled",
           "distributionTerm": "Distribution",
+          "earlyExecution": "Early execution",
           "enabled": "Enabled",
           "holders": "{{count}} token holders",
+          "minDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
+          "minDurationTerm": "Minimum duration",
           "minParticipationDefinition": "≥ {{minParticipation}}%",
           "minParticipationTerm": "Minimum participation",
           "supplyTerm": "Supply",
