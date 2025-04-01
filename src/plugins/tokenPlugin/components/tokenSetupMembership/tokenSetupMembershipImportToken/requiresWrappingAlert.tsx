@@ -10,16 +10,15 @@ export const RequiresWrappingAlert = () => {
             variant="warning"
             message={t('app.plugins.token.tokenSetupMembership.importToken.requiresWrappingAlert.message')}
             description={
-                <div className="flex flex-col gap-3">
-                    <div>
-                        <div>
+                <span className="flex flex-col gap-3">
+                    <span className="flex flex-col gap-6">
+                        <span>
                             {t('app.plugins.token.tokenSetupMembership.importToken.requiresWrappingAlert.description1')}
-                        </div>
-                        <br />
-                        <div>
+                        </span>
+                        <span>
                             {t('app.plugins.token.tokenSetupMembership.importToken.requiresWrappingAlert.description2')}
-                        </div>
-                    </div>
+                        </span>
+                    </span>
 
                     <Link
                         href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
@@ -27,7 +26,7 @@ export const RequiresWrappingAlert = () => {
                     >
                         {t('app.plugins.token.tokenSetupMembership.importToken.requiresWrappingAlert.infoLabel')}
                     </Link>
-                </div>
+                </span>
             }
         />
     );

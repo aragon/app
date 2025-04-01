@@ -10,8 +10,10 @@ export const NotCompatibleAlert = () => {
             variant="critical"
             message={t('app.plugins.token.tokenSetupMembership.importToken.notCompatibleAlert.message')}
             description={
-                <div className="flex flex-col gap-3">
-                    <div>{t('app.plugins.token.tokenSetupMembership.importToken.notCompatibleAlert.description')}</div>
+                <span className="flex flex-col gap-3">
+                    <span>
+                        {t('app.plugins.token.tokenSetupMembership.importToken.notCompatibleAlert.description')}
+                    </span>
 
                     <Link
                         href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
@@ -19,7 +21,7 @@ export const NotCompatibleAlert = () => {
                     >
                         {t('app.plugins.token.tokenSetupMembership.importToken.notCompatibleAlert.infoLabel')}
                     </Link>
-                </div>
+                </span>
             }
         />
     );

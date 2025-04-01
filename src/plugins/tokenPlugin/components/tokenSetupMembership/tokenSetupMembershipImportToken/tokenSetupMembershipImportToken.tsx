@@ -7,16 +7,16 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Heading } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 type StepState = ITransactionStatusStepMeta['state'];
 
 function useGovernanceToken() {
     return {
         isLoading: false,
-        isError: false,
-        isDelegationCompatible: false,
-        isGovernanceCompatible: false,
+        isError: true,
+        isDelegationCompatible: true,
+        isGovernanceCompatible: true,
         token: {
             symbol: 'ETH',
             totalSupply: '1000000000000000000',
@@ -39,8 +39,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     const { t } = useTranslations();
 
     const tokenFormPrefix = `${formPrefix}.token`;
-    const form = useForm();
-    console.log('FORMM', form);
+    const { setValue } = useFormContext();
+
     const {
         onChange: onImportTokenAddressChange,
         value: importTokenAddress,
@@ -56,7 +56,13 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             validate: (value) => addressUtils.isAddress(value),
         },
     });
-    console.log('importTokenAddressField', importTokenAddressField, importTokenAddress);
+
+    // useEffect(() => {
+    //     console.log('HELLELELE');
+    //     // Reset the zero address set by create-token component!
+    //     onImportTokenAddressChange('');
+    // }, [onImportTokenAddressChange]);
+
     const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
 
     // TODO: add useGovToken hook here

@@ -1,18 +1,39 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Icon, IconType, InputContainer, Link, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { zeroAddress } from 'viem';
+import { useAccount } from 'wagmi';
 import type { ITokenSetupMembershipProps } from './tokenSetupMembership.api';
 import { TokenSetupMembershipCreateToken } from './tokenSetupMembershipCreateToken';
 import { TokenSetupMembershipImportToken } from './tokenSetupMembershipImportToken';
+
+const defaultTokenAddress = zeroAddress;
 
 export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props) => {
     const { formPrefix } = props;
 
     const { t } = useTranslations();
+    const { setValue } = useFormContext();
+    const { address } = useAccount();
 
     const [tokenType, setTokenType] = useState<'imported' | 'new'>('new');
 
     const isImportDisabled = process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true';
+
+    const handleTokenTypeChange = (value: string) => {
+        // It is important to reset critical fields when changing the token type (before the new form is mounted)!
+        // Forms reuse the same form state, so default values are not set when the form is mounted.
+        if (value === 'imported') {
+            setValue(`${formPrefix}.members`, []);
+            setValue(`${formPrefix}.token.address`, '');
+        } else {
+            setValue(`${formPrefix}.members`, [{ address }]);
+            setValue(`${formPrefix}.token.address`, defaultTokenAddress);
+        }
+
+        setTokenType(value as typeof tokenType);
+    };
 
     return (
         <div className="flex flex-col gap-6">
@@ -22,11 +43,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                 helpText={t('app.plugins.token.tokenSetupMembership.type.helpText')}
                 useCustomWrapper={true}
             >
-                <RadioGroup
-                    className="w-full"
-                    value={tokenType}
-                    onValueChange={(value) => setTokenType(value as typeof tokenType)}
-                >
+                <RadioGroup className="w-full" value={tokenType} onValueChange={handleTokenTypeChange}>
                     <div className="flex w-full flex-row gap-x-2">
                         <RadioCard label={t('app.plugins.token.tokenSetupMembership.type.option.create')} value="new" />
                         <RadioCard
