@@ -15,10 +15,14 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
     const { formPrefix } = props;
 
     const { t } = useTranslations();
-    const { setValue } = useFormContext();
+    const { setValue, getValues } = useFormContext();
     const { address } = useAccount();
 
-    const [tokenType, setTokenType] = useState<'imported' | 'new'>('new');
+    const currentTokenAddress = getValues(`${formPrefix}.token.address`) as string;
+    // Make sure to set the right default value when coming back from the next step!
+    const [tokenType, setTokenType] = useState<'imported' | 'new'>(() =>
+        currentTokenAddress && currentTokenAddress !== zeroAddress ? 'imported' : 'new',
+    );
 
     const isImportDisabled = process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true';
 
