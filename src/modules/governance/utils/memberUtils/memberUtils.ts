@@ -1,6 +1,6 @@
 import { governanceService } from '@/modules/governance/api/governanceService';
 import { daoService } from '@/shared/api/daoService';
-import type { IProposalPageParams } from '@/shared/types';
+import type { IMemberPageParams } from '@/shared/types';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Metadata } from 'next';
 
@@ -8,7 +8,7 @@ export interface IGenerateMemberMetadataParams {
     /**
      * Path parameters of DAO pages.
      */
-    params: Promise<IProposalPageParams>;
+    params: Promise<IMemberPageParams>;
 }
 
 class ProposalUtils {
