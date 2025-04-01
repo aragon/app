@@ -1,9 +1,8 @@
-import { generateCreateProcessFormBody, generateCreateProcessFormStage } from '@/modules/createDao/testUtils';
+import { generateCreateProcessFormBody } from '@/modules/createDao/testUtils';
 import { generateCreateProposalEndDateFormData, generateCreateProposalFormData } from '@/modules/governance/testUtils';
 import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import * as Viem from 'viem';
@@ -67,16 +66,15 @@ describe('multisigTransaction utils', () => {
 
     describe('buildPrepareInstallData', () => {
         it('encodes the plugin settings correctly using encodeAbiParameters', () => {
-            const metadataCid = 'test-metadata';
+            const metadata = 'test-metadata';
             const members = [{ address: '0x1' }, { address: '0x2' }];
             const body = generateCreateProcessFormBody({
                 membership: { members },
                 governance: { minApprovals: 3, onlyListed: true },
             });
-            const stage = generateCreateProcessFormStage();
             const dao = generateDao();
 
-            const params = [{ metadataCid, body, stage, dao }] as Parameters<
+            const params = [{ metadata, body, dao }] as unknown as Parameters<
                 typeof multisigTransactionUtils.buildPrepareInstallData
             >;
 
@@ -84,8 +82,8 @@ describe('multisigTransaction utils', () => {
             multisigTransactionUtils.buildPrepareInstallData(...params);
 
             const expectedMultisigTarget = {
-                target: networkDefinitions[dao.network].addresses.globalExecutor,
-                operation: 1,
+                target: dao.address,
+                operation: 0,
             };
             const expectedPluginSettings = {
                 onlyListed: (body.governance as IMultisigSetupGovernanceForm).onlyListed,
@@ -96,21 +94,20 @@ describe('multisigTransaction utils', () => {
                 members.map((member) => member.address),
                 expectedPluginSettings,
                 expectedMultisigTarget,
-                metadataCid,
+                metadata,
             ]);
         });
 
         it('builds prepare installation data correctly using buildPrepareInstallationData', () => {
             const dao = generateDao({ address: '0x1' });
             const body = generateCreateProcessFormBody();
-            const stage = generateCreateProcessFormStage();
             const pluginSettingsData = '0xPluginSettingsData';
             const transactionData = '0xTransactionData';
 
             encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
 
-            const params = [{ metadataCid: '', body, stage, dao }] as Parameters<
+            const params = [{ metadata: '', body, dao }] as unknown as Parameters<
                 typeof multisigTransactionUtils.buildPrepareInstallData
             >;
 

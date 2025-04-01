@@ -34,7 +34,7 @@ describe('sppTransaction utils', () => {
         parseStartDateSpy.mockReset();
     });
 
-    describe('buildInstallPluginsActions', () => {
+    describe('buildPluginsSetupActions', () => {
         const setupDataToActionsSpy = jest.spyOn(pluginTransactionUtils, 'setupDataToActions');
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,7 +78,7 @@ describe('sppTransaction utils', () => {
             buildBodyPermissionActionsSpy.mockReturnValueOnce(bodyPermissionActions);
             revokePermissionSpy.mockReturnValueOnce(revokeAction);
 
-            const result = sppTransactionUtils.buildInstallPluginsActions(values, setupData, dao);
+            const result = sppTransactionUtils.buildPluginsSetupActions(values, setupData, dao);
 
             const expected = [
                 grantAction,
@@ -178,19 +178,19 @@ describe('sppTransaction utils', () => {
             expect(revokePermissionSpy).toHaveBeenNthCalledWith(1, {
                 where: pluginData.pluginAddress,
                 who: sppTransactionUtils['anyAddress'],
-                what: sppTransactionUtils['permissionIds'].createProposalPermission,
+                what: permissionTransactionUtils.permissionIds.createProposalPermission,
                 to: daoAddress,
             });
             expect(revokePermissionSpy).toHaveBeenNthCalledWith(2, {
                 where: daoAddress,
                 who: pluginData.pluginAddress,
-                what: sppTransactionUtils['permissionIds'].executePermission,
+                what: permissionTransactionUtils.permissionIds.executePermission,
                 to: daoAddress,
             });
             expect(grantPermissionSpy).toHaveBeenCalledWith({
                 where: pluginData.pluginAddress,
                 who: sppAddress,
-                what: sppTransactionUtils['permissionIds'].createProposalPermission,
+                what: permissionTransactionUtils.permissionIds.createProposalPermission,
                 to: daoAddress,
             });
         });
