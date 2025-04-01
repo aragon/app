@@ -9,6 +9,7 @@ import { TokenSetupMembershipCreateToken } from './tokenSetupMembershipCreateTok
 import { TokenSetupMembershipImportToken } from './tokenSetupMembershipImportToken';
 
 const defaultTokenAddress = zeroAddress;
+const defaultTokenDecimals = 18;
 
 export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props) => {
     const { formPrefix } = props;
@@ -24,11 +25,16 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
     const handleTokenTypeChange = (value: string) => {
         // It is important to reset critical fields when changing the token type (before the new form is mounted)!
         // Forms reuse the same form state, so default values are not set when the form is mounted.
+        setValue(`${formPrefix}.token.name`, '');
+        setValue(`${formPrefix}.token.symbol`, '');
+        setValue(`${formPrefix}.token.totalSupply`, '0');
+        setValue(`${formPrefix}.token.decimals`, defaultTokenDecimals);
+
         if (value === 'imported') {
             setValue(`${formPrefix}.members`, []);
             setValue(`${formPrefix}.token.address`, '');
         } else {
-            setValue(`${formPrefix}.members`, [{ address }]);
+            setValue(`${formPrefix}.members`, [{ address, tokenAmount: 1 }]);
             setValue(`${formPrefix}.token.address`, defaultTokenAddress);
         }
 
