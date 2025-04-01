@@ -1,1 +1,1 @@
-export { sitemapUtils } from './sitemapUtils';
+export { PageRoutes, sitemapUtils } from './sitemapUtils';

@@ -1,0 +1,6 @@
+export interface IProposalPageParams {
+    /**
+     * Slug of the proposal.
+     */
+    slug: string;
+}
