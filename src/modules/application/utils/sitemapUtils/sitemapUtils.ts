@@ -24,22 +24,18 @@ class SitemapUtils {
 
     /**
      * Generates root ./sitemap.xml
-     * Includes: static pages + per-DAO sitemap links
+     * Includes: static pages + per-DAO sitemap links  (Top 100 by tvlUSD)
      */
     public generateRootSitemap = async (): Promise<MetadataRoute.Sitemap> => {
-        const daos = await this.getTopDaos();
+        const daoPages = await this.buildDaoPages();
+        const sitemap = [...this.staticPages, ...daoPages];
 
-        const daoSitemaps = daos.map((dao) => ({
-            url: `${this.baseUrl}/sitemaps/dao/${dao.id}/sitemap.xml`,
-            lastModified: new Date(),
-        }));
-
-        return [...this.staticPages, ...daoSitemaps];
+        return this.prependBaseUrl(sitemap);
     };
 
     /**
-     * Generates DAO site for ./sitemaps/dao/[daoId]/sitemap.xml (Top 100 by tvlUSD)
-     * Includes: per-route + latest 10 proposals per PROCESS plugin
+     * Generates DAO site for ./sitemaps/dao/[daoId]/sitemap.xml
+     * Includes: DAO pages per-route (see enum PageRoutes) + latest 10 proposal detail pages per PROCESS plugin
      */
     public generateDaoSitemap = async (daoId: string): Promise<MetadataRoute.Sitemap> => {
         const routePages: MetadataRoute.Sitemap = Object.values(PageRoutes).map((route) => ({
@@ -54,28 +50,41 @@ class SitemapUtils {
         return this.prependBaseUrl([...routePages, ...proposalPages]);
     };
 
+    private buildDaoPages = async (): Promise<MetadataRoute.Sitemap> => {
+        const daos = await daoExplorerService.getDaoList({ queryParams: { pageSize: 100 } });
+
+        const daoPages: MetadataRoute.Sitemap = daos.data.map((dao) => ({
+            url: `${this.baseUrl}/sitemaps/dao/${dao.id}/sitemap.xml`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 0.8,
+        }));
+
+        return daoPages;
+    };
+
     private buildProposalPages = async (daoId: string): Promise<MetadataRoute.Sitemap> => {
         const dao = await daoService.getDao({ urlParams: { id: daoId } });
 
-        const plugins = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS });
+        const pluginsByProcess = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS });
 
-        if (!plugins?.length) {
+        if (!pluginsByProcess?.length) {
             return [];
         }
 
-        const proposalResponses = await Promise.all(
-            plugins.map((plugin) =>
+        const proposalsByProcess = await Promise.all(
+            pluginsByProcess.map((plugin) =>
                 governanceService
                     .getProposalList({ queryParams: { daoId, pluginAddress: plugin.address } })
                     .then((res) => ({ proposals: res.data, plugin })),
             ),
         );
 
-        const allProposalsWithPlugin = proposalResponses.flatMap(({ proposals, plugin }) =>
+        const proposals = proposalsByProcess.flatMap(({ proposals, plugin }) =>
             proposals.map((proposal) => ({ proposal, plugin })),
         );
 
-        return allProposalsWithPlugin
+        return proposals
             .map(({ proposal, plugin }) => {
                 const slug = this.getServerProposalSlug(proposal.incrementalId, plugin) ?? proposal.id;
 

@@ -9,27 +9,35 @@ export interface IGenerateProposalMetadataParams {
      * Path parameters of DAO pages.
      */
     params: Promise<IProposalPageParams>;
+    /**
+     * Translation function.
+     */
+    t: (key: string, values?: Record<string, string>) => string;
 }
 
 class ProposalUtils {
-    generateMetadata = async ({ params }: IGenerateProposalMetadataParams): Promise<Metadata> => {
+    generateMetadata = async ({ params, t }: IGenerateProposalMetadataParams): Promise<Metadata> => {
         const { proposalSlug, id } = await params;
 
         const slugParams = { urlParams: { slug: proposalSlug }, queryParams: { daoId: id } };
         const proposal = await governanceService.getProposalBySlug(slugParams);
 
         return {
-            title: proposal.title,
-            description: proposal.description,
+            authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
+            title: t('app.governance.proposalMetadata.title', {
+                incrementalId: proposal.incrementalId.toString(),
+                title: proposal.title,
+            }),
+            description: proposal.description ?? t('app.governance.proposalMetadata.defaultDescription'),
             openGraph: {
                 title: proposal.title,
-                description: proposal.description ?? '',
+                description: proposal.description ?? t('app.governance.proposalMetadata.defaultDescription'),
                 type: 'article',
             },
             twitter: {
                 card: 'summary',
                 title: proposal.title,
-                description: proposal.description ?? '',
+                description: proposal.description ?? t('app.governance.proposalMetadata.defaultDescription'),
             },
         };
     };
