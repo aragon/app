@@ -1,5 +1,5 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Icon, IconType, InputContainer, Link, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { zeroAddress } from 'viem';
@@ -56,24 +56,6 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                             label={t('app.plugins.token.tokenSetupMembership.type.option.import')}
                             value="imported"
                         />
-                    </div>
-                    <div className="flex flex-row items-baseline gap-x-2">
-                        <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
-                        <div className="flex flex-col gap-y-1">
-                            <p className="text-sm text-neutral-400">
-                                {t('app.plugins.token.tokenSetupMembership.importDisabled')}{' '}
-                            </p>
-                            <Link
-                                href="https://app-legacy.aragon.org/"
-                                target="_blank"
-                                iconRight={IconType.LINK_EXTERNAL}
-                                className="text-sm"
-                            >
-                                <span className="text-sm">
-                                    {t('app.plugins.token.tokenSetupMembership.importDisabledLink')}
-                                </span>
-                            </Link>
-                        </div>
                     </div>
                 </RadioGroup>
             </InputContainer>

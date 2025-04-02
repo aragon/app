@@ -1346,8 +1346,6 @@
               "onlyLetters": "Only letters are allowed"
             }
           },
-          "importDisabled": "Token importing is not yet available in the new version of the Aragon app.",
-          "importDisabledLink": "Legacy app",
           "importToken": {
             "alert": {
               "infoLabel": "Learn more",
