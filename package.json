@@ -22,26 +22,26 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.0.72",
+    "@aragon/gov-ui-kit": "^1.0.74",
     "@floating-ui/react": "^0.27.5",
-    "@reown/appkit": "^1.7.0",
-    "@reown/appkit-adapter-wagmi": "^1.7.0",
-    "@reown/walletkit": "^1.2.2",
-    "@sentry/nextjs": "^9.9.0",
-    "@tanstack/react-query": "^5.69.0",
-    "@walletconnect/core": "^2.19.1",
-    "@walletconnect/utils": "^2.19.1",
+    "@reown/appkit": "^1.7.1",
+    "@reown/appkit-adapter-wagmi": "^1.7.1",
+    "@reown/walletkit": "^1.2.3",
+    "@sentry/nextjs": "^9.10.1",
+    "@tanstack/react-query": "^5.71.1",
+    "@walletconnect/core": "^2.19.2",
+    "@walletconnect/utils": "^2.19.2",
     "classnames": "^2.5.1",
-    "framer-motion": "^12.5.0",
-    "luxon": "^3.5.0",
+    "framer-motion": "^12.6.2",
+    "luxon": "^3.6.1",
     "next": "^15.2.4",
     "nextjs-toploader": "^3.8.16",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-hook-form": "^7.54.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.55.0",
     "react-use-measure": "^2.1.7",
     "server-only": "^0.0.1",
-    "viem": "^2.23.15",
+    "viem": "^2.24.2",
     "wagmi": "^2.14.15"
   },
   "devDependencies": {
@@ -56,7 +56,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^22.13.13",
+    "@types/node": "^22.13.14",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.21",
@@ -81,9 +81,9 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.17",
     "tailwindcss-fluid-type": "^2.0.7",
-    "ts-jest": "^29.3.0",
+    "ts-jest": "^29.3.1",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.28.0",
+    "typescript-eslint": "^8.29.0",
     "vercel": "^41.4.1"
   },
   "repository": {
@@ -103,5 +103,5 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "packageManager": "yarn@4.7.0"
+  "packageManager": "yarn@4.8.1"
 }

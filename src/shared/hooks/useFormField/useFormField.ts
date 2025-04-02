@@ -32,7 +32,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
     const inputVariant = error != null ? 'critical' : 'default';
 
     const alert = useMemo(() => {
-        if (error?.type == null) {
+        if (error == null) {
             return undefined;
         }
 

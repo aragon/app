@@ -7,7 +7,7 @@ export interface IAdvancedDateInputInfoTextProps extends Pick<IAdvancedDateInput
     /**
      * Form field to display the info text for.
      */
-    field: IUseFormFieldReturn<Record<string, IDateFixed | IDateDuration>, string>;
+    field: IUseFormFieldReturn<Record<string, IDateFixed | IDateDuration | number>, string>;
 }
 
 export const AdvancedDateInputInfoText: React.FC<IAdvancedDateInputInfoTextProps> = (props) => {
@@ -21,7 +21,9 @@ export const AdvancedDateInputInfoText: React.FC<IAdvancedDateInputInfoTextProps
     }
 
     return infoDisplay === 'card' ? (
-        <AlertCard message={field.label!} description={alertDescription} variant={alertVariant} />
+        <AlertCard message={field.label!} variant={alertVariant}>
+            {alertDescription}
+        </AlertCard>
     ) : (
         <AlertInline message={alertDescription} variant={alertVariant} />
     );

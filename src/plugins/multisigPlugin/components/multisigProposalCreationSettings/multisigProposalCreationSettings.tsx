@@ -12,36 +12,29 @@ export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreatio
     const { body, formPrefix, mode } = props;
     const { name, description } = body;
 
-    const { onChange: onCreateProposalChange } = useFormField<ISetupBodyForm, 'canCreateProposal'>(
-        'canCreateProposal',
-        { fieldPrefix: formPrefix },
-    );
+    const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<
+        ISetupBodyForm,
+        'canCreateProposal'
+    >('canCreateProposal', { fieldPrefix: formPrefix, defaultValue: true });
 
-    const { onChange: onOnlyListedChange, value: onlyListed } = useFormField<
-        IMultisigSetupGovernanceForm,
-        'onlyListed'
-    >('onlyListed', { fieldPrefix: `${formPrefix}.governance`, defaultValue: false });
+    const { onChange: onOnlyListedChange } = useFormField<IMultisigSetupGovernanceForm, 'onlyListed'>('onlyListed', {
+        fieldPrefix: `${formPrefix}.governance`,
+        defaultValue: true,
+    });
 
-    const handleCheckedChange = (checked: CheckboxState) => onOnlyListedChange(checked === false);
+    const handleCheckedChange = (checked: CheckboxState) => onCreateProposalChange(checked === true);
 
-    // Update the onlyListed parameter when user selects "anyone" button as proposal creation setting.
     useEffect(() => {
-        if (mode === ProposalCreationMode.ANY_WALLET) {
-            onOnlyListedChange(false);
-        }
-    }, [mode, onOnlyListedChange]);
-
-    // Update the generic canCreateProposal field whenever the onlyListed parameter is updated
-    useEffect(() => {
-        onCreateProposalChange(!onlyListed);
-    }, [onlyListed, onCreateProposalChange]);
+        const onlyListed = mode !== ProposalCreationMode.ANY_WALLET && canCreateProposal;
+        onOnlyListedChange(onlyListed);
+    }, [mode, canCreateProposal, onOnlyListedChange]);
 
     return (
         <CheckboxCard
             label={name}
             description={description}
             onCheckedChange={handleCheckedChange}
-            checked={!onlyListed}
+            checked={canCreateProposal}
         />
     );
 };

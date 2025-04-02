@@ -69,13 +69,8 @@ export const PublishProcessDialog: React.FC<IPublishProcessDialogProps> = (props
 
         const { IpfsHash: metadataCid } = pinJsonData;
 
-        const transaction = await publishProcessDialogUtils.buildTransaction({
-            values,
-            setupData,
-            dao,
-            plugin: adminPlugin.meta,
-            metadataCid,
-        });
+        const params = { values, setupData, dao, plugin: adminPlugin.meta, metadataCid };
+        const transaction = await publishProcessDialogUtils.buildTransaction(params);
 
         setIsBlocked(false);
 
