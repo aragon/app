@@ -1,13 +1,11 @@
-import type { ISetupBodyDialogParams } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialog';
-import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogDefinitions';
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { Button, IconType, type IInputContainerProps, InputContainer } from '@aragon/gov-ui-kit';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
+import type { IUseBodiesFieldReturn } from '../../hooks';
 import { GovernanceBodiesFieldItem } from './governanceBodiesFieldItem';
 
-export interface IGovernanceBodiesFieldProps {
+export interface IGovernanceBodiesFieldProps extends IUseBodiesFieldReturn {
     /**
      * Defines if current stage is optimistic or not, only set for advanced governance processes.
      */
@@ -31,62 +29,14 @@ export interface IGovernanceBodiesFieldProps {
 }
 
 export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageId, governanceType, alert, daoId } = props;
+    const { isOptimisticStage, stageId, governanceType, alert, daoId, bodies, addBody, removeBody, editBody } = props;
 
-    const { open, close } = useDialogContext();
     const { t } = useTranslations();
     const { formState } = useFormContext<ICreateProcessFormData>();
 
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
-
-    // Only apply min-length rule for simple governance as stage bodies are already validated per-stage on the stage field
-    const validateBodies = (bodies: ICreateProcessFormData['bodies']) => {
-        const bodiesFieldError = 'app.createDao.createProcessForm.governance.bodiesField.error.minLength';
-        const isValid = bodies.length > 0;
-
-        return isAdvancedGovernance || isValid ? undefined : bodiesFieldError;
-    };
-
-    const {
-        fields: bodiesField,
-        remove: removeBody,
-        update: updateBody,
-        append: appendBody,
-    } = useFieldArray<ICreateProcessFormData, 'bodies'>({ name: 'bodies', rules: { validate: validateBodies } });
-    const watchBodiesField = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
-    const controlledBodiesField = bodiesField.map((field, index) => ({ ...field, ...watchBodiesField[index] }));
-
-    const bodies = controlledBodiesField.filter((body) => stageId == null || body.stageId === stageId);
-    const renderAddButton = isAdvancedGovernance || bodies.length === 0;
-
-    const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
-        if (index == null) {
-            const bodyId = crypto.randomUUID();
-            appendBody({ ...values, internalId: bodyId, stageId });
-        } else {
-            updateBody(index, values);
-        }
-        close();
-    };
-
-    const handleAddBody = () => {
-        const params: ISetupBodyDialogParams = {
-            onSubmit: handleBodySubmit(),
-            isSubPlugin: isAdvancedGovernance,
-            daoId,
-        };
-        open('SETUP_BODY', { params });
-    };
-
-    const handleEditBody = (index: number) => {
-        const params: ISetupBodyDialogParams = {
-            onSubmit: handleBodySubmit(index),
-            initialValues: controlledBodiesField[index],
-            isSubPlugin: isAdvancedGovernance,
-            daoId,
-        };
-        open('SETUP_BODY', { params });
-    };
+    const filteredBodies = bodies.filter((body) => stageId == null || body.stageId === stageId);
+    const renderAddButton = isAdvancedGovernance || filteredBodies.length === 0;
 
     const { message: errorMessage } = formState.errors.bodies?.root ?? {};
     const internalFieldAlert = errorMessage ? { message: t(errorMessage), variant: 'critical' as const } : undefined;
@@ -104,13 +54,13 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
                 alert={alert ?? internalFieldAlert}
             >
                 <div className="flex flex-col gap-3 md:gap-2">
-                    {bodies.map((body, index) => (
+                    {filteredBodies.map((body, index) => (
                         <GovernanceBodiesFieldItem
                             key={body.id}
                             fieldName={`bodies.${index.toString()}`}
                             body={body}
-                            onEdit={() => handleEditBody(index)}
-                            onDelete={() => removeBody(index)}
+                            onEdit={() => editBody(body.internalId)}
+                            onDelete={() => removeBody(body.internalId)}
                         />
                     ))}
                     {renderAddButton && (
@@ -119,7 +69,7 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
                             variant="tertiary"
                             className="w-fit"
                             iconLeft={IconType.PLUS}
-                            onClick={handleAddBody}
+                            onClick={() => addBody(stageId)}
                         >
                             {t('app.createDao.createProcessForm.governance.bodiesField.action.add')}
                         </Button>

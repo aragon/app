@@ -6,6 +6,7 @@ import { GovernanceType, type ICreateProcessFormData } from '../createProcessFor
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
 import { GovernanceStageField } from './fields/governanceStageField';
+import { useBodiesField } from './hooks';
 
 export interface ICreateProcessFormGovernanceProps {
     /**
@@ -35,6 +36,9 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
         append: appendStage,
         remove: removeStage,
     } = useFieldArray<ICreateProcessFormData, 'stages'>({ name: 'stages' });
+
+    const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+    const bodiesResult = useBodiesField({ isAdvancedGovernance });
 
     const handleAddStage = () => appendStage(createProcessFormUtils.buildDefaultStage());
 
@@ -69,10 +73,10 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                     />
                 ))}
             </RadioGroup>
-            {governanceType === GovernanceType.BASIC && (
-                <GovernanceBodiesField governanceType={governanceType} daoId={daoId} />
+            {!isAdvancedGovernance && (
+                <GovernanceBodiesField governanceType={governanceType} daoId={daoId} {...bodiesResult} />
             )}
-            {governanceType === GovernanceType.ADVANCED && (
+            {isAdvancedGovernance && (
                 <div className="flex flex-col gap-2 md:gap-3">
                     <div className="flex flex-col gap-3 md:gap-2">
                         {stages.map((stage, index) => (
@@ -83,6 +87,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                                 stagesCount={stages.length}
                                 onDelete={() => handleRemoveStage(index)}
                                 daoId={daoId}
+                                {...bodiesResult}
                             />
                         ))}
                     </div>
