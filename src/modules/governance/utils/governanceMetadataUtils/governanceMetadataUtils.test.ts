@@ -2,10 +2,10 @@ import { governanceService } from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { daoService } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
-import { ipfsUtils } from '../ipfsUtils';
-import { metadataUtils } from './metadataUtils';
+import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
+import { governanceMetadataUtils } from './governanceMetadataUtils';
 
-describe('metadata utils', () => {
+describe('governanceMetadata utils', () => {
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const getProposalBySlugSpy = jest.spyOn(governanceService, 'getProposalBySlug');
@@ -14,37 +14,6 @@ describe('metadata utils', () => {
         getDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
         getProposalBySlugSpy.mockReset();
-    });
-
-    describe('generateDaoMetadata', () => {
-        it('fetches the DAO with the given id and returns the relative title and description metadata', async () => {
-            const id = 'eth-mainnet-my-dao';
-            const dao = generateDao({ name: 'My DAO', description: 'Description' });
-            getDaoSpy.mockResolvedValue(dao);
-
-            const metadata = await metadataUtils.generateDaoMetadata({ params: Promise.resolve({ id }) });
-            expect(metadata.title).toEqual(`${dao.name} | Governed on Aragon`);
-            expect(metadata.description).toEqual(dao.description);
-        });
-
-        it('processes the DAO avatar to return a full IPFS url', async () => {
-            const dao = generateDao({ avatar: 'cidTest' });
-            const ipfsUrl = `https://ipfs.com/ipfs/${dao.avatar!}`;
-            getDaoSpy.mockResolvedValue(dao);
-            cidToSrcSpy.mockReturnValue(ipfsUrl);
-
-            const metadata = await metadataUtils.generateDaoMetadata({ params: Promise.resolve({ id: 'test' }) });
-            expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
-            expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
-        });
-
-        it('returns undefined OG images when DAO has no avatar', async () => {
-            const dao = generateDao({ avatar: undefined });
-            getDaoSpy.mockResolvedValue(dao);
-
-            const metadata = await metadataUtils.generateDaoMetadata({ params: Promise.resolve({ id: 'test' }) });
-            expect(metadata.openGraph?.images).toBeUndefined();
-        });
     });
 
     describe('generateProposalMetadata', () => {
@@ -62,7 +31,7 @@ describe('metadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
-            const metadata = await metadataUtils.generateProposalMetadata({
+            const metadata = await governanceMetadataUtils.generateProposalMetadata({
                 params: Promise.resolve({ id, proposalSlug }),
             });
 
@@ -97,7 +66,7 @@ describe('metadata utils', () => {
             getProposalBySlugSpy.mockResolvedValue(proposal);
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await metadataUtils.generateProposalMetadata({
+            const metadata = await governanceMetadataUtils.generateProposalMetadata({
                 params: Promise.resolve({ id, proposalSlug }),
             });
 

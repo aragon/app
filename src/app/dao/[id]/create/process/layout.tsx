@@ -1,5 +1,5 @@
+import { applicationMetadataUtils } from '@/modules/application/utils/applicationMetadataUtils';
 import { LayoutWizardCreateProcess } from '@/modules/createDao/components/layoutWizardCreateProcess';
-import { metadataUtils } from '@/shared/utils/metadataUtils';
 
-export const generateMetadata = metadataUtils.generateDaoMetadata;
+export const generateMetadata = applicationMetadataUtils.generateDaoMetadata;
 export default LayoutWizardCreateProcess;

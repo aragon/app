@@ -1,17 +1,10 @@
 import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
 import type { MetadataRoute } from 'next';
 
-export enum PageRoutes {
-    ASSETS = 'assets',
-    DASHBOARD = 'dashboard',
-    MEMBERS = 'members',
-    PROPOSALS = 'proposals',
-    SETTINGS = 'settings',
-    TRANSACTIONS = 'transactions',
-}
-
 class SitemapUtils {
     private baseUrl = 'https://app.aragon.org';
+
+    private routes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];
 
     private staticPages: MetadataRoute.Sitemap = [
         { url: '', lastModified: new Date(), changeFrequency: 'monthly', priority: 1 },
@@ -27,7 +20,7 @@ class SitemapUtils {
     };
 
     private buildDaoPages = (daoId: string): MetadataRoute.Sitemap => {
-        return Object.values(PageRoutes).map((route) => ({
+        return Object.values(this.routes).map((route) => ({
             url: `/dao/${daoId}/${route}`,
             changeFrequency: 'daily',
             priority: 0.8,
