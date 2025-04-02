@@ -1327,9 +1327,6 @@
           "importDisabled": "Token importing is not yet available in the new version of the Aragon app.",
           "importDisabledLink": "Legacy app",
           "importToken": {
-            "delegationStepLabel": "Delegation compatible",
-            "erc20StepLabel": "ERC-20 token standard",
-            "governanceStepLabel": "Governance compatible",
             "helpText": "The address of the token to be imported",
             "label": "Token address",
             "notCompatibleAlert": {
@@ -1343,6 +1340,11 @@
               "description2": "Token holders will be able to wrap their tokens at any time to receive equivalent governance\n                            tokens, which can be used to vote on proposals. They can unwrap at any time to receive their original tokens.",
               "infoLabel": "Learn more",
               "message": "Requires wrapping"
+            },
+            "step": {
+              "delegation": "Delegation compatible",
+              "erc20": "ERC-20 token standard",
+              "governance": "Governance compatible"
             }
           },
           "type": {

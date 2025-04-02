@@ -106,7 +106,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 id: 'erc20',
                 order: 0,
                 meta: {
-                    label: t('app.plugins.token.tokenSetupMembership.importToken.erc20StepLabel'),
+                    label: t('app.plugins.token.tokenSetupMembership.importToken.step.erc20'),
                     state: erc20StepState,
                 },
             },
@@ -114,7 +114,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 id: 'governance',
                 order: 0,
                 meta: {
-                    label: t('app.plugins.token.tokenSetupMembership.importToken.governanceStepLabel'),
+                    label: t('app.plugins.token.tokenSetupMembership.importToken.step.governance'),
                     state: governanceStepState,
                 },
             },
@@ -122,7 +122,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 id: 'delegation',
                 order: 0,
                 meta: {
-                    label: t('app.plugins.token.tokenSetupMembership.importToken.delegationStepLabel'),
+                    label: t('app.plugins.token.tokenSetupMembership.importToken.step.delegation'),
                     state: delegationStepState,
                 },
             },
