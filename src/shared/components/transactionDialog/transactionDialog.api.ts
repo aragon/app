@@ -16,9 +16,13 @@ export type TransactionDialogPrepareReturn = SendTransactionParameters;
  * transaction receipt, used for other transactions.
  */
 export interface IHrefParams {
-    /** Slug used for proposal transactions */
+    /**
+     * Slug of the proposal if the transaction type is creating a proposal.
+     */
     slug?: string;
-    /** Transaction receipt used for non-proposal transactions */
+    /**
+     * Receipt of the transaction used for building the success link for transactions that aren't creating a proposal.
+     */
     receipt?: TransactionReceipt;
 }
 
