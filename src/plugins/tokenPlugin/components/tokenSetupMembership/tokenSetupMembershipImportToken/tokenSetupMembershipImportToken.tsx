@@ -1,13 +1,12 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useGovernanceToken } from '@/plugins/tokenPlugin/hooks/useGovernanceToken';
 import { useDao } from '@/shared/api/daoService';
-import { Link } from '@/shared/components/link';
 import { type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils, Heading } from '@aragon/gov-ui-kit';
+import { AddressInput, addressUtils, Heading, IconType, Link } from '@aragon/gov-ui-kit';
 import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -68,7 +67,6 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
     useEffect(() => {
         if (!token) {
-            // name is used as a required field to prevent moving forward if the token is not set!
             setValue(`${tokenFormPrefix}.name`, '');
             return;
         }
@@ -134,32 +132,33 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 <AlertCard
                     variant={alertContext === 'notErc20Compatible' ? 'critical' : 'warning'}
                     message={t(`app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.message`)}
-                    description={
-                        <span className="flex flex-col gap-3">
-                            <span className="flex flex-col gap-6">
-                                <span>
-                                    {t(
-                                        `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.description1`,
-                                    )}
-                                </span>
-                                {alertContext === 'notGovernanceCompatible' && (
-                                    <span>
-                                        {t(
-                                            `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.description2`,
-                                        )}
-                                    </span>
+                >
+                    <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-6">
+                            <p>
+                                {t(
+                                    `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.description1`,
                                 )}
-                            </span>
+                            </p>
+                            {alertContext === 'notGovernanceCompatible' && (
+                                <p>
+                                    {t(
+                                        `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.description2`,
+                                    )}
+                                </p>
+                            )}
+                        </div>
 
-                            <Link
-                                href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
-                                target="_blank"
-                            >
-                                {t('app.plugins.token.tokenSetupMembership.importToken.alert.infoLabel')}
-                            </Link>
-                        </span>
-                    }
-                />
+                        <Link
+                            href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
+                            target="_blank"
+                            iconRight={IconType.LINK_EXTERNAL}
+                            variant="neutral"
+                        >
+                            {t('app.plugins.token.tokenSetupMembership.importToken.alert.infoLabel')}
+                        </Link>
+                    </div>
+                </AlertCard>
             )}
         </>
     );
