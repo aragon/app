@@ -24,8 +24,6 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
         currentTokenAddress && currentTokenAddress !== zeroAddress ? 'imported' : 'new',
     );
 
-    const isImportDisabled = process.env.NEXT_PUBLIC_FEATURE_DISABLE_TOKEN_IMPORT === 'true';
-
     const handleTokenTypeChange = (value: string) => {
         // It is important to reset critical fields when changing the token type (before the new form is mounted)!
         // Forms reuse the same state, so default values aren't applied when a field already contains a value from the previous form.
@@ -59,29 +57,26 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                         <RadioCard
                             label={t('app.plugins.token.tokenSetupMembership.type.option.import')}
                             value="imported"
-                            disabled={isImportDisabled}
                         />
                     </div>
-                    {isImportDisabled && (
-                        <div className="flex flex-row items-baseline gap-x-2">
-                            <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
-                            <div className="flex flex-col gap-y-1">
-                                <p className="text-sm text-neutral-400">
-                                    {t('app.plugins.token.tokenSetupMembership.importDisabled')}{' '}
-                                </p>
-                                <Link
-                                    href="https://app-legacy.aragon.org/"
-                                    target="_blank"
-                                    iconRight={IconType.LINK_EXTERNAL}
-                                    className="text-sm"
-                                >
-                                    <span className="text-sm">
-                                        {t('app.plugins.token.tokenSetupMembership.importDisabledLink')}
-                                    </span>
-                                </Link>
-                            </div>
+                    <div className="flex flex-row items-baseline gap-x-2">
+                        <Icon icon={IconType.WARNING} size="sm" className="text-info-500" />
+                        <div className="flex flex-col gap-y-1">
+                            <p className="text-sm text-neutral-400">
+                                {t('app.plugins.token.tokenSetupMembership.importDisabled')}{' '}
+                            </p>
+                            <Link
+                                href="https://app-legacy.aragon.org/"
+                                target="_blank"
+                                iconRight={IconType.LINK_EXTERNAL}
+                                className="text-sm"
+                            >
+                                <span className="text-sm">
+                                    {t('app.plugins.token.tokenSetupMembership.importDisabledLink')}
+                                </span>
+                            </Link>
                         </div>
-                    )}
+                    </div>
                 </RadioGroup>
             </InputContainer>
             {tokenType === 'imported' && <TokenSetupMembershipImportToken formPrefix={formPrefix} />}
