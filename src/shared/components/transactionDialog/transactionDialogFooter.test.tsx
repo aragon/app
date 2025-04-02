@@ -217,9 +217,9 @@ describe('<TransactionDialogFooter /> component', () => {
             expect(screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
         });
 
-        it('navigates to the proposals page when type is PROPOSAL_CREATE', () => {
+        it('navigates to the correct fallback url', () => {
             const close = jest.fn();
-            const daoId = 'test-dao-proposal';
+            const indexingFallbackUrl = '/proposals';
 
             useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
 
@@ -232,7 +232,7 @@ describe('<TransactionDialogFooter /> component', () => {
                 createTestComponent({
                     activeStep,
                     transactionType: TransactionType.PROPOSAL_CREATE,
-                    daoId,
+                    indexingFallbackUrl,
                 }),
             );
 
@@ -247,40 +247,7 @@ describe('<TransactionDialogFooter /> component', () => {
             });
 
             expect(close).toHaveBeenCalled();
-            expect(mockRouterPush).toHaveBeenCalledWith(`/dao/${daoId}/proposals`);
-        });
-
-        it('navigates to the explore page when type is DAO_CREATE', () => {
-            const close = jest.fn();
-            const daoId = 'test-dao-proposal';
-
-            useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
-
-            const activeStep = {
-                id: TransactionDialogStep.INDEXING,
-                meta: { state: 'pending' },
-            } as ITransactionDialogStep;
-
-            render(
-                createTestComponent({
-                    activeStep,
-                    transactionType: TransactionType.DAO_CREATE,
-                    daoId,
-                }),
-            );
-
-            act(() => {
-                jest.advanceTimersByTime(8000);
-            });
-
-            const proceedButton = screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ });
-
-            act(() => {
-                proceedButton.click();
-            });
-
-            expect(close).toHaveBeenCalled();
-            expect(mockRouterPush).toHaveBeenCalledWith(`/`);
+            expect(mockRouterPush).toHaveBeenCalledWith(indexingFallbackUrl);
         });
     });
 });
