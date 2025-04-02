@@ -8,13 +8,11 @@ import { metadataUtils } from './metadataUtils';
 describe('metadata utils', () => {
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
-    const getMemberSpy = jest.spyOn(governanceService, 'getMember');
     const getProposalBySlugSpy = jest.spyOn(governanceService, 'getProposalBySlug');
 
     afterEach(() => {
         getDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
-        getMemberSpy.mockReset();
         getProposalBySlugSpy.mockReset();
     });
 
@@ -76,7 +74,7 @@ describe('metadata utils', () => {
             expect(getDaoSpy).toHaveBeenCalledWith({ urlParams: { id } });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
 
-            const expectedTitle = `${proposalSlug} - ${proposal.title}`;
+            const expectedTitle = `${proposalSlug}: ${proposal.title}`;
             expect(metadata.title).toEqual(expectedTitle);
             expect(metadata.description).toEqual(proposal.description);
             expect(metadata.openGraph).toMatchObject({
