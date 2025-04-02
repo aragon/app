@@ -48,9 +48,10 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             />
             <AlertCard
                 message={t('app.plugins.token.tokenSetupMembership.importToken.alert.message')}
-                description={t('app.plugins.token.tokenSetupMembership.importToken.alert.description')}
                 variant="warning"
-            />
+            >
+                {t('app.plugins.token.tokenSetupMembership.importToken.alert.description')}
+            </AlertCard>
         </>
     );
 };
