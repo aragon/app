@@ -15,13 +15,15 @@ describe('metadata utils', () => {
 
         expect(spy).toHaveBeenCalledWith('Title', 'Desc', 'https://img.png', 'article');
         expect(result).toMatchObject<Partial<Metadata>>({
+            authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
             title: 'Title',
             description: 'Desc',
-            openGraph: expect.objectContaining({
+            openGraph: {
                 title: 'Title',
                 description: 'Desc',
                 images: ['https://img.png'],
-            }) as Metadata['openGraph'],
+                type: 'article',
+            },
         });
     });
 });
