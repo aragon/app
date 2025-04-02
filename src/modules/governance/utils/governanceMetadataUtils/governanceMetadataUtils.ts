@@ -22,7 +22,7 @@ class GovernanceMetadataUtils {
         });
 
         const title = `${proposalSlug}: ${proposal.title}`;
-        const description = proposal.description ?? '';
+        const description = proposal.summary;
         const dao = await daoService.getDao({ urlParams: { id } });
         const image = ipfsUtils.cidToSrc(dao.avatar);
 

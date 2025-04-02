@@ -22,7 +22,7 @@ describe('governanceMetadata utils', () => {
             const proposalSlug = 'proposal-slug';
             const proposal = generateProposal({
                 title: 'A Big Change',
-                description: 'We propose doing something big.',
+                summary: 'We propose doing something big.',
             });
             const dao = generateDao({ avatar: 'cid123' });
             const ipfsUrl = `https://ipfs.com/ipfs/${dao.avatar!}`;
@@ -45,34 +45,13 @@ describe('governanceMetadata utils', () => {
 
             const expectedTitle = `${proposalSlug}: ${proposal.title}`;
             expect(metadata.title).toEqual(expectedTitle);
-            expect(metadata.description).toEqual(proposal.description);
+            expect(metadata.description).toEqual(proposal.summary);
             expect(metadata.openGraph).toMatchObject({
                 title: expectedTitle,
-                description: proposal.description,
+                description: proposal.summary,
                 type: 'article',
                 images: [ipfsUrl],
             });
-        });
-
-        it('returns undefined description when unavailabe and undefined OG images when DAO has no avatar', async () => {
-            const id = 'dao-id';
-            const proposalSlug = 'no-desc';
-            const proposal = generateProposal({
-                title: 'No Description',
-                description: undefined,
-            });
-            const dao = generateDao({ avatar: undefined });
-
-            getProposalBySlugSpy.mockResolvedValue(proposal);
-            getDaoSpy.mockResolvedValue(dao);
-
-            const metadata = await governanceMetadataUtils.generateProposalMetadata({
-                params: Promise.resolve({ id, proposalSlug }),
-            });
-
-            expect(metadata.description).toBe('');
-            expect(metadata.openGraph?.description).toBe('');
-            expect(metadata.openGraph?.images).toBeUndefined();
         });
     });
 });

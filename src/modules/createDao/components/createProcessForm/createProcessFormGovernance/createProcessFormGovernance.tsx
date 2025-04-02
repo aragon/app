@@ -50,7 +50,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
             <RadioGroup
                 helpText={t('app.createDao.createProcessForm.governance.type.helpText')}
                 onValueChange={handleGovernanceTypeChanged}
-                className="w-full !flex-row gap-4"
+                className="w-full gap-4 md:flex-row"
                 value={governanceType}
                 {...governanceTypeField}
             >
