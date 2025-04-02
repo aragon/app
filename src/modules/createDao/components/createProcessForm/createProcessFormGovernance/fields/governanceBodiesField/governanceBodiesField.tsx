@@ -24,10 +24,14 @@ export interface IGovernanceBodiesFieldProps {
      * Alert to be displayed on the field.
      */
     alert?: IInputContainerProps['alert'];
+    /**
+     * ID of the DAO to fetch the members from.
+     */
+    daoId: string;
 }
 
 export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageId, governanceType, alert } = props;
+    const { isOptimisticStage, stageId, governanceType, alert, daoId } = props;
 
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
@@ -66,7 +70,11 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
     };
 
     const handleAddBody = () => {
-        const params: ISetupBodyDialogParams = { onSubmit: handleBodySubmit(), isSubPlugin: isAdvancedGovernance };
+        const params: ISetupBodyDialogParams = {
+            onSubmit: handleBodySubmit(),
+            isSubPlugin: isAdvancedGovernance,
+            daoId,
+        };
         open('SETUP_BODY', { params });
     };
 
@@ -75,6 +83,7 @@ export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (pro
             onSubmit: handleBodySubmit(index),
             initialValues: controlledBodiesField[index],
             isSubPlugin: isAdvancedGovernance,
+            daoId,
         };
         open('SETUP_BODY', { params });
     };

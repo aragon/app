@@ -7,9 +7,15 @@ import { createProcessFormUtils } from '../createProcessFormUtils';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
 import { GovernanceStageField } from './fields/governanceStageField';
 
-export interface ICreateProcessFormGovernanceProps {}
+export interface ICreateProcessFormGovernanceProps {
+    /**
+     * ID of the DAO to fetch the members from.
+     */
+    daoId: string;
+}
 
-export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceProps> = () => {
+export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceProps> = (props) => {
+    const { daoId } = props;
     const { t } = useTranslations();
 
     const { setValue, getValues } = useFormContext<ICreateProcessFormData>();
@@ -63,7 +69,9 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                     />
                 ))}
             </RadioGroup>
-            {governanceType === GovernanceType.BASIC && <GovernanceBodiesField governanceType={governanceType} />}
+            {governanceType === GovernanceType.BASIC && (
+                <GovernanceBodiesField governanceType={governanceType} daoId={daoId} />
+            )}
             {governanceType === GovernanceType.ADVANCED && (
                 <div className="flex flex-col gap-2 md:gap-3">
                     <div className="flex flex-col gap-3 md:gap-2">
@@ -74,6 +82,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                                 stage={stage}
                                 stagesCount={stages.length}
                                 onDelete={() => handleRemoveStage(index)}
+                                daoId={daoId}
                             />
                         ))}
                     </div>
