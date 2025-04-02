@@ -1,4 +1,4 @@
-import { TransactionType } from '@/shared/api/transactionService';
+import type { TransactionType } from '@/shared/api/transactionService';
 import { DialogFooter, IconType } from '@aragon/gov-ui-kit';
 import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
@@ -46,13 +46,13 @@ export interface ITransactionDialogFooterProps<TCustomStepId extends string = st
      */
     transactionType?: TransactionType;
     /**
-     * ID of the DAO
-     */
-    daoId?: string;
-    /**
      * Slug of the proposal if the transaction type is creating a proposal.
      */
     proposalSlug?: string;
+    /**
+     * Fallback URL if the indexing step moves to the proceed anyway state.
+     */
+    indexingFallbackUrl?: ITransactionDialogProps['indexingFallbackUrl'];
 }
 
 const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record<TransactionStatusState, string>>>> = {
@@ -74,20 +74,6 @@ const buildSuccessLink = (
     return successHref(params);
 };
 
-const getFallbackRouteByTransactionType = (type?: TransactionType, daoId?: string) => {
-    if (!daoId) {
-        return '/';
-    }
-    switch (type) {
-        case TransactionType.DAO_CREATE:
-            return '/';
-        case TransactionType.PROPOSAL_CREATE:
-            return `/dao/${daoId}/proposals`;
-        default:
-            return `dao/${daoId}/dashboard`;
-    }
-};
-
 export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     props: ITransactionDialogFooterProps<TCustomStepId>,
 ) => {
@@ -99,7 +85,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         onError,
         onCancelClick,
         transactionType,
-        daoId,
+        indexingFallbackUrl,
         proposalSlug,
     } = props;
 
@@ -169,7 +155,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         close();
         onCancelClick?.();
 
-        const route = getFallbackRouteByTransactionType(transactionType, daoId);
+        const route = indexingFallbackUrl ?? '/';
         router.push(route as Route);
     };
 

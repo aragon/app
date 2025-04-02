@@ -124,7 +124,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
      */
     transactionType?: TransactionType;
     /**
-     * ID of the dao
+     * Fallback URL if the indexing step moves to the proceed anyway state.
      */
-    daoId?: string;
+    indexingFallbackUrl?: string;
 }

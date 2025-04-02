@@ -31,7 +31,6 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         onSuccess,
         network = Network.ETHEREUM_MAINNET,
         transactionType,
-        daoId,
     } = props;
 
     const { activeStep, steps, activeStepIndex, nextStep, updateActiveStep, updateSteps } = stepper;
@@ -241,7 +240,6 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
                 onError={handleTransactionError(activeStepInfo?.id)}
                 onCancelClick={onCancelClick}
                 transactionType={transactionType}
-                daoId={daoId}
                 proposalSlug={transactionStatus?.slug}
             />
         </>

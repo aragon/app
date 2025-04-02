@@ -133,7 +133,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
             prepareTransaction={handlePrepareTransaction}
             network={dao?.network}
             transactionType={TransactionType.PROPOSAL_CREATE}
-            daoId={daoId}
+            indexingFallbackUrl={`/dao/${daoId}/proposals`}
         >
             <ProposalDataListItem.Structure
                 title={title}
