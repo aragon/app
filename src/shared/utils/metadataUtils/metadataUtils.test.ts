@@ -2,12 +2,12 @@ import type { Metadata } from 'next';
 import { MetadataUtils } from './metadataUtils';
 
 describe('metadata utils', () => {
-    it('builds metadata with expected structure', () => {
-        // Test-only subclass with super since methods are protected
-        class TestMetadataUtils extends MetadataUtils {
-            public buildMetadata = super.buildMetadata;
-        }
+    // Test-only subclass with super since methods are protected
+    class TestMetadataUtils extends MetadataUtils {
+        public buildMetadata = super.buildMetadata;
+    }
 
+    it('builds metadata with expected structure', () => {
         const utils = new TestMetadataUtils();
         const spy = jest.spyOn(utils, 'buildMetadata');
 
