@@ -1,9 +1,8 @@
 import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
+import { metadataUtils } from '@/shared/utils/metadataUtils';
 import type { MetadataRoute } from 'next';
 
 class SitemapUtils {
-    private baseUrl = 'https://app.aragon.org';
-
     private daoPageRoutes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];
 
     private staticPages: MetadataRoute.Sitemap = [
@@ -20,7 +19,7 @@ class SitemapUtils {
     };
 
     private buildDaoPages = (daoId: string): MetadataRoute.Sitemap => {
-        return Object.values(this.daoPageRoutes).map((daoPageRoute) => ({
+        return this.daoPageRoutes.map((daoPageRoute) => ({
             url: `/dao/${daoId}/${daoPageRoute}`,
             changeFrequency: 'daily',
             priority: 0.8,
@@ -28,7 +27,7 @@ class SitemapUtils {
     };
 
     private prependBaseUrl = (sitemap: MetadataRoute.Sitemap): MetadataRoute.Sitemap =>
-        sitemap.map((site) => ({ ...site, url: `${this.baseUrl}${site.url}` }));
+        sitemap.map((site) => ({ ...site, url: `${metadataUtils.baseUrl}${site.url}` }));
 }
 
 export const sitemapUtils = new SitemapUtils();

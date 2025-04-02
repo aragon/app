@@ -1,7 +1,7 @@
 import { daoService } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { MetadataUtils } from '@/shared/utils/metadataUtils';
+import { metadataUtils } from '@/shared/utils/metadataUtils';
 import type { Metadata } from 'next';
 
 export interface IGenerateDaoMetadataParams {
@@ -11,15 +11,16 @@ export interface IGenerateDaoMetadataParams {
     params: Promise<IDaoPageParams>;
 }
 
-class ApplicationMetadataUtils extends MetadataUtils {
+class ApplicationMetadataUtils {
     generateDaoMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
         const { id } = await params;
         const dao = await daoService.getDao({ urlParams: { id } });
-        const daoAvatarUrl = ipfsUtils.cidToSrc(dao.avatar);
+
+        const image = ipfsUtils.cidToSrc(dao.avatar);
         const title = `${dao.name} | Governed on Aragon`;
         const description = dao.description;
 
-        return this.buildMetadata(title, description, daoAvatarUrl);
+        return metadataUtils.buildMetadata({ title, description, image });
     };
 }
 

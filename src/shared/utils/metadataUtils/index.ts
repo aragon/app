@@ -1,1 +1,1 @@
-export { MetadataUtils } from './metadataUtils';
+export { metadataUtils, type IBuildMetadataParams } from './metadataUtils';

@@ -1,5 +1,5 @@
 import { LayoutRoot } from '@/modules/application/components/layouts/layoutRoot';
-import { defaultMetadata } from '@/modules/application/constants/defaultMetadata';
+import { metadataUtils } from '@/shared/utils/metadataUtils';
 
-export const metadata = defaultMetadata;
+export const metadata = metadataUtils.getDefaultMetadata();
 export default LayoutRoot;
