@@ -42,6 +42,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
                             label={t('app.plugins.token.tokenSetupGovernance.minDuration.label')}
                             className="!p-0"
                             minDuration={{ days: 0, hours: 1, minutes: 0 }}
+                            useSecondsFormat={true}
                             validateMinDuration={true}
                         />
                         <AlertCard

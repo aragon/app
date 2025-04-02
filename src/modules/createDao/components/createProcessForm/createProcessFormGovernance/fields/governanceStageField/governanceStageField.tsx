@@ -2,18 +2,20 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
 import type React from 'react';
-import { useWatch } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import {
-    ProcessStageType,
+    GovernanceType,
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
-} from '../createProcessFormDefinitions';
-import { StageBodiesField } from './fields/stageBodiesField';
-import { StageRequiredApprovalsField } from './fields/stageRequiredApprovalsField';
-import { StageTimingField } from './fields/stageTimingField';
-import { StageTypeField } from './fields/stageTypeField';
+    ProcessStageType,
+} from '../../../createProcessFormDefinitions';
+import { GovernanceBodiesField } from '../governanceBodiesField';
+import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField';
+import { GovernanceStageTimingField } from '../governanceStageTimingField';
+import { GovernanceStageTypeField } from '../governanceStageTypeField';
 
-export interface ICreateProcessFormStagesItemProps {
+export interface IGovernanceStageFieldProps {
     /**
      * Prefix to be prepended to all form fields.
      */
@@ -38,43 +40,64 @@ export interface ICreateProcessFormStagesItemProps {
 
 const nameMaxLength = 40;
 
-export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemProps> = (props) => {
+export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props) => {
     const { formPrefix, stage, stagesCount, onDelete, daoId } = props;
 
     const { t } = useTranslations();
-
-    useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix);
+    const { trigger } = useFormContext();
 
     const stageType = useWatch<Record<string, ICreateProcessFormStage['type']>>({ name: `${formPrefix}.type` });
 
     const processBodies = useWatch<ICreateProcessFormData, 'bodies'>({ name: 'bodies' });
     const stageBodies = processBodies.filter((body) => body.stageId === stage.internalId);
 
+    const stageError = 'app.createDao.createProcessForm.governance.stageField.error.requiredBodies';
+    const validateStage = () =>
+        stageType !== ProcessStageType.TIMELOCK && stageBodies.length === 0 ? stageError : undefined;
+
+    const { alert: stageAlert } = useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix, {
+        rules: { validate: validateStage },
+    });
+
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
     const isTimelockStage = stageType === ProcessStageType.TIMELOCK;
 
     const stageNameField = useFormField<ICreateProcessFormStage, 'name'>('name', {
-        label: t('app.createDao.createProcessForm.stages.name.label'),
+        label: t('app.createDao.createProcessForm.governance.stageField.name.label'),
         trimOnBlur: true,
         rules: { required: true, maxLength: nameMaxLength },
         fieldPrefix: formPrefix,
         defaultValue: '',
     });
 
+    // Re-trigger stage required-body validation when user selects timelock stage type or adds a body. Do not trigger
+    // validation on type / stage-bodies change otherwise the component would display the error on mount.
+    useEffect(() => {
+        if (isTimelockStage || stageBodies.length > 0) {
+            void trigger(formPrefix);
+        }
+    }, [trigger, formPrefix, stageType, isTimelockStage, stageBodies.length]);
+
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
             <InputText
-                helpText={t('app.createDao.createProcessForm.stages.name.helpText')}
+                helpText={t('app.createDao.createProcessForm.governance.stageField.name.helpText')}
                 maxLength={nameMaxLength}
                 {...stageNameField}
             />
-            <StageTypeField fieldPrefix={formPrefix} />
-            <StageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
+            <GovernanceStageTypeField fieldPrefix={formPrefix} />
+            <GovernanceStageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
             {!isTimelockStage && (
-                <StageBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} daoId={daoId} />
+                <GovernanceBodiesField
+                    stageId={stage.internalId}
+                    isOptimisticStage={isOptimisticStage}
+                    governanceType={GovernanceType.ADVANCED}
+                    alert={stageAlert}
+                    daoId={daoId}
+                />
             )}
             {stageBodies.length > 0 && (
-                <StageRequiredApprovalsField
+                <GovernanceStageApprovalsField
                     fieldPrefix={formPrefix}
                     stageBodiesCount={stageBodies.length}
                     isOptimisticStage={isOptimisticStage}
@@ -86,12 +109,12 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
                     size="md"
                     customTrigger={
                         <Button variant="tertiary" size="md" iconRight={IconType.DOTS_VERTICAL} className="self-end">
-                            {t('app.createDao.createProcessForm.stages.action.more')}
+                            {t('app.createDao.createProcessForm.governance.stageField.action.more')}
                         </Button>
                     }
                 >
                     <Dropdown.Item onClick={onDelete}>
-                        {t('app.createDao.createProcessForm.stages.action.remove')}
+                        {t('app.createDao.createProcessForm.governance.stageField.action.remove')}
                     </Dropdown.Item>
                 </Dropdown.Container>
             )}

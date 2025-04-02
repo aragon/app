@@ -3,7 +3,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWatch } from 'react-hook-form';
 import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 
-export interface IStageRequiredApprovalsFieldProps {
+export interface IGovernanceStageApprovalsFieldProps {
     /**
      * Field prefix to be used.
      */
@@ -20,7 +20,7 @@ export interface IStageRequiredApprovalsFieldProps {
 
 const requiredApprovalsDefaultValue = 1;
 
-export const StageRequiredApprovalsField: React.FC<IStageRequiredApprovalsFieldProps> = (props) => {
+export const GovernanceStageApprovalsField: React.FC<IGovernanceStageApprovalsFieldProps> = (props) => {
     const { fieldPrefix, stageBodiesCount, isOptimisticStage } = props;
 
     const { t } = useTranslations();
@@ -35,14 +35,14 @@ export const StageRequiredApprovalsField: React.FC<IStageRequiredApprovalsFieldP
 
     return (
         <NumberProgressInput
-            label={t(`app.createDao.createProcessForm.stages.requiredApprovals.${labelContext}.label`)}
-            helpText={t(`app.createDao.createProcessForm.stages.requiredApprovals.${labelContext}.helpText`)}
+            label={t(`app.createDao.createProcessForm.governance.stageApprovalsField.${labelContext}.label`)}
+            helpText={t(`app.createDao.createProcessForm.governance.stageApprovalsField.${labelContext}.helpText`)}
             min={0}
             fieldName={fieldName}
             valueLabel={value.toString()}
             defaultValue={requiredApprovalsDefaultValue}
             total={stageBodiesCount}
-            totalLabel={t('app.createDao.createProcessForm.stages.requiredApprovals.summary', {
+            totalLabel={t('app.createDao.createProcessForm.governance.stageApprovalsField.summary', {
                 count: stageBodiesCount,
             })}
         />

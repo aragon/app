@@ -20,6 +20,10 @@ export interface ISetupBodyDialogParams {
      */
     initialValues?: ISetupBodyForm;
     /**
+     * Defines if the body is being added to the governance process as a sub-plugin or not.
+     */
+    isSubPlugin?: boolean;
+    /**
      * ID of the DAO to fetch the members from.
      */
     daoId: string;
@@ -38,7 +42,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { location } = props;
 
     invariant(location.params != null, 'SetupBodyDialog: required parameters must be set.');
-    const { onSubmit, initialValues, daoId } = location.params;
+    const { onSubmit, initialValues, isSubPlugin, daoId } = location.params;
 
     const { t } = useTranslations();
     const { address } = useAccount();
@@ -52,7 +56,9 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     }, [initialValues, address]);
 
     const [selectStep, metadataStep, membershipStep, governanceStep] = setupBodySteps;
-    const initialSteps = initialValues == null ? setupBodySteps : setupBodySteps.filter((step) => step.id !== 'select');
+    const initialSteps = setupBodySteps.filter(
+        (step) => (initialValues == null || step.id !== 'select') && (isSubPlugin === true || step.id !== 'metadata'),
+    );
 
     return (
         <WizardDialog.Container
@@ -68,14 +74,16 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
                     <SetupBodyDialogSelect />
                 </WizardDialog.Step>
             )}
-            <WizardDialog.Step {...metadataStep}>
-                <SetupBodyDialogMetadata />
-            </WizardDialog.Step>
+            {isSubPlugin && (
+                <WizardDialog.Step {...metadataStep}>
+                    <SetupBodyDialogMetadata />
+                </WizardDialog.Step>
+            )}
             <WizardDialog.Step {...membershipStep}>
                 <SetupBodyDialogMemberhip daoId={daoId} />
             </WizardDialog.Step>
             <WizardDialog.Step {...governanceStep}>
-                <SetupBodyDialogGovernance />
+                <SetupBodyDialogGovernance isSubPlugin={isSubPlugin} />
             </WizardDialog.Step>
         </WizardDialog.Container>
     );

@@ -1,4 +1,5 @@
 import {
+    GovernanceType,
     type ICreateProcessFormData,
     type ICreateProcessFormStage,
     ProcessStageType,
@@ -38,5 +39,6 @@ export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFor
     stages: [],
     bodies: [],
     proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+    governanceType: GovernanceType.BASIC,
     ...values,
 });

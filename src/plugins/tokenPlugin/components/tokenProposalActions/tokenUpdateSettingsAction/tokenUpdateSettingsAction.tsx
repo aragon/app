@@ -4,7 +4,6 @@ import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { dateUtils } from '@/shared/utils/dateUtils';
 import { type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -80,37 +79,29 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
         name: `${formPrefix}.votingMode`,
     });
 
-    /* For the transaction we need the value in seconds, but for the UI it is nicer to use the days/hours/mins object
-    When the user does not change the minDuration it will already be in seconds. However once this value is changed
-    it will be an object. Therefore we need to check if the value is an object and convert it to seconds if needed */
-    const minDurationInSeconds =
-        typeof minDuration === 'object' ? dateUtils.durationToSeconds(minDuration) : minDuration;
-
     useEffect(() => {
         const updateSettingsParams = {
             votingMode,
             supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
             minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
-            minDuration: minDurationInSeconds,
+            minDuration,
             minProposerVotingPower: parseUnits(minVotingPowerValue, decimals),
         };
 
         const newData = encodeFunctionData({ abi: [updateTokenSettingsAbi], args: [updateSettingsParams] });
         const paramValues = Object.values(updateSettingsParams).map((value) => value.toString());
-        const minDuration = dateUtils.secondsToDuration(minDurationInSeconds);
 
         setValue(`${actionFieldName}.data`, newData);
         setValue(`${actionFieldName}.inputData.parameters[0].value`, paramValues);
-        setValue(`${actionFieldName}.proposedSettings.minDuration`, minDuration);
     }, [
         actionFieldName,
-        minDurationInSeconds,
         minParticipation,
         minVotingPowerValue,
         setValue,
         supportThreshold,
         votingMode,
         decimals,
+        minDuration,
     ]);
 
     const membershipSettings = { token: action.meta.settings.token };
