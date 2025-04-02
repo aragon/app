@@ -47,9 +47,10 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
                         />
                         <AlertCard
                             message={t('app.plugins.token.tokenSetupGovernance.minDuration.alert.message')}
-                            description={t('app.plugins.token.tokenSetupGovernance.minDuration.alert.description')}
                             variant="info"
-                        />
+                        >
+                            {t('app.plugins.token.tokenSetupGovernance.minDuration.alert.description')}
+                        </AlertCard>
                     </Card>
                 </InputContainer>
             )}
