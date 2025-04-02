@@ -8,7 +8,7 @@ import { useDialogContext } from '../dialogProvider';
 import { type TransactionStatusState } from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
 import {
-    IHrefParams,
+    type IHrefParams,
     type ITransactionDialogActionParams,
     type ITransactionDialogProps,
     type ITransactionDialogStep,
