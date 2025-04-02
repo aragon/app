@@ -105,6 +105,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
     const displayAlert = isError || isGovernanceCompatible === false;
     const alertContext = isError ? `notErc20Compatible` : `notGovernanceCompatible`;
+    const alertNamespace = `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}`;
 
     return (
         <>
@@ -131,24 +132,13 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             {displayAlert && (
                 <AlertCard
                     variant={alertContext === 'notErc20Compatible' ? 'critical' : 'warning'}
-                    message={t(`app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.message`)}
+                    message={t(`${alertNamespace}.message`)}
                 >
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-6">
-                            <p>
-                                {t(
-                                    `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.description1`,
-                                )}
-                            </p>
-                            {alertContext === 'notGovernanceCompatible' && (
-                                <p>
-                                    {t(
-                                        `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.description2`,
-                                    )}
-                                </p>
-                            )}
+                            <p>{t(`${alertNamespace}.description1`)}</p>
+                            {alertContext === 'notGovernanceCompatible' && <p>{t(`${alertNamespace}.description2`)}</p>}
                         </div>
-
                         <Link
                             href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
                             target="_blank"
