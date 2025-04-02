@@ -21,7 +21,9 @@ export const AdvancedDateInputInfoText: React.FC<IAdvancedDateInputInfoTextProps
     }
 
     return infoDisplay === 'card' ? (
-        <AlertCard message={field.label!} description={alertDescription} variant={alertVariant} />
+        <AlertCard message={field.label!} variant={alertVariant}>
+            {alertDescription}
+        </AlertCard>
     ) : (
         <AlertInline message={alertDescription} variant={alertVariant} />
     );
