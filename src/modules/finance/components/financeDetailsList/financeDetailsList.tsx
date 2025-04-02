@@ -47,7 +47,12 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (props) =>
                 </DefinitionList.Item>
                 {daoEns && (
                     <DefinitionList.Item term={t('app.finance.financeDetailsList.vaultEns')}>
-                        <Link iconRight={IconType.LINK_EXTERNAL} href={daoAddressLink} target="_blank">
+                        <Link
+                            iconRight={IconType.LINK_EXTERNAL}
+                            href={daoAddressLink}
+                            target="_blank"
+                            className="max-w-full"
+                        >
                             {daoEns}
                         </Link>
                     </DefinitionList.Item>

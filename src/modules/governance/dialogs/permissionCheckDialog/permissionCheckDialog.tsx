@@ -93,7 +93,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (pro
                                                 href={href}
                                                 target="_blank"
                                                 iconRight={IconType.LINK_EXTERNAL}
-                                                className="first-letter:capitalize"
+                                                textClassName="first-letter:capitalize"
                                             >
                                                 {definition}
                                             </Link>

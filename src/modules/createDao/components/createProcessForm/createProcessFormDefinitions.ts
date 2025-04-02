@@ -13,6 +13,11 @@ export enum ProcessStageType {
     TIMELOCK = 'TIMELOCK',
 }
 
+export enum GovernanceType {
+    BASIC = 'BASIC',
+    ADVANCED = 'ADVANCED',
+}
+
 export interface ICreateProcessFormData {
     /**
      * Name of the process.
@@ -42,6 +47,10 @@ export interface ICreateProcessFormData {
      * Defines who can create proposals for this process.
      */
     proposalCreationMode: ProposalCreationMode;
+    /**
+     * Defines the type of governance process basic/advanced.
+     */
+    governanceType: GovernanceType;
 }
 
 export interface ICreateProcessFormStageTiming {

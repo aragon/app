@@ -42,14 +42,14 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     </div>
                 </DefinitionList.Item>
                 <DefinitionList.Item term={t('app.settings.daoSettingsInfo.chain')}>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
-                        <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} />
+                        <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} className="shrink-0" />
                     </div>
                 </DefinitionList.Item>
                 {dao.subdomain && (
                     <DefinitionList.Item term={t('app.settings.daoSettingsInfo.ens')}>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-2">
                             <Link
                                 description={addressUtils.truncateAddress(dao.address)}
                                 href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address })}
@@ -58,7 +58,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                             >
                                 {daoUtils.getDaoEns(dao)}
                             </Link>
-                            <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} />
+                            <Tag label={t('app.settings.daoSettingsInfo.notChangeable')} className="shrink-0" />
                         </div>
                     </DefinitionList.Item>
                 )}

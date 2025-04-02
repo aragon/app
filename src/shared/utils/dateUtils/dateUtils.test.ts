@@ -33,20 +33,20 @@ describe('dateUtils', () => {
     });
 
     describe('parseFixedDate', () => {
-        test('parses valid date and time correctly', () => {
+        it('parses valid date and time correctly', () => {
             const result = dateUtils.parseFixedDate({ date: '2024-09-06', time: '14:30' });
             expect(result.toISO()).toBe('2024-09-06T14:30:00.000+00:00');
         });
     });
 
     describe('dateToFixedDate', () => {
-        test('converts DateTime to IDateFixed correctly', () => {
+        it('converts DateTime to IDateFixed correctly', () => {
             const date = DateTime.fromISO('2024-09-06T14:30:00.000Z');
             const result = dateUtils.dateToFixedDate(date);
             expect(result).toEqual({ date: '2024-09-06', time: '14:30' });
         });
 
-        test('returns null for invalid DateTime', () => {
+        it('returns null for invalid DateTime', () => {
             const invalidDate = DateTime.invalid('invalid date');
             const result = dateUtils.dateToFixedDate(invalidDate);
             expect(result).toBeNull();
@@ -54,12 +54,12 @@ describe('dateUtils', () => {
     });
 
     describe('validateDuration', () => {
-        test('returns true when no minDuration is provided', () => {
+        it('returns true when no minDuration is provided', () => {
             const result = dateUtils.validateDuration({ value: { days: 0, hours: 2, minutes: 0 } });
             expect(result).toBe(true);
         });
 
-        test('returns true when value is greater than minDuration', () => {
+        it('returns true when value is greater than minDuration', () => {
             const result = dateUtils.validateDuration({
                 value: { days: 0, hours: 3, minutes: 0 },
                 minDuration: { days: 0, hours: 2, minutes: 0 },
@@ -67,7 +67,7 @@ describe('dateUtils', () => {
             expect(result).toBe(true);
         });
 
-        test('returns false when value is less than minDuration', () => {
+        it('returns false when value is less than minDuration', () => {
             const result = dateUtils.validateDuration({
                 value: { days: 0, hours: 1, minutes: 0 },
                 minDuration: { days: 0, hours: 2, minutes: 0 },
@@ -75,24 +75,32 @@ describe('dateUtils', () => {
             expect(result).toBe(false);
         });
 
-        test('returns true when value equals minDuration', () => {
+        it('returns true when value equals minDuration', () => {
             const result = dateUtils.validateDuration({
                 value: { days: 0, hours: 2, minutes: 0 },
                 minDuration: { days: 0, hours: 2, minutes: 0 },
             });
             expect(result).toBe(true);
         });
+
+        it('supports validation of value when set in seconds format', () => {
+            const value = 120;
+            const valid = dateUtils.validateDuration({ value, minDuration: { days: 0, hours: 0, minutes: 1 } });
+            const invalid = dateUtils.validateDuration({ value, minDuration: { days: 0, hours: 0, minutes: 3 } });
+            expect(valid).toBeTruthy();
+            expect(invalid).toBeFalsy();
+        });
     });
 
     describe('validateFixedTime', () => {
         const minTime = DateTime.fromISO('2024-09-06T10:00:00.000Z');
 
-        test('returns false for empty date or time', () => {
+        it('returns false for empty date or time', () => {
             expect(dateUtils.validateFixedTime({ value: { date: '', time: '10:00' }, minTime })).toBe(false);
             expect(dateUtils.validateFixedTime({ value: { date: '2024-09-06', time: '' }, minTime })).toBe(false);
         });
 
-        test('returns true when value is after minTime', () => {
+        it('returns true when value is after minTime', () => {
             const result = dateUtils.validateFixedTime({
                 value: { date: '2024-09-06', time: '11:00' },
                 minTime,
@@ -100,7 +108,7 @@ describe('dateUtils', () => {
             expect(result).toBe(true);
         });
 
-        test('returns false when value is before minTime', () => {
+        it('returns false when value is before minTime', () => {
             const result = dateUtils.validateFixedTime({
                 value: { date: '2024-09-06', time: '09:00' },
                 minTime,
@@ -108,7 +116,7 @@ describe('dateUtils', () => {
             expect(result).toBe(false);
         });
 
-        test('returns true when value is after minTime plus minDuration', () => {
+        it('returns true when value is after minTime plus minDuration', () => {
             const result = dateUtils.validateFixedTime({
                 value: { date: '2024-09-06', time: '13:00' },
                 minTime,
@@ -117,7 +125,7 @@ describe('dateUtils', () => {
             expect(result).toBe(true);
         });
 
-        test('returns false when value is before minTime plus minDuration', () => {
+        it('returns false when value is before minTime plus minDuration', () => {
             const result = dateUtils.validateFixedTime({
                 value: { date: '2024-09-06', time: '11:00' },
                 minTime,

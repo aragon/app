@@ -71,7 +71,15 @@ export interface IGetProposalBySlugUrlParams {
     slug: string;
 }
 
-export interface IGetProposalBySlugParams extends IRequestUrlParams<IGetProposalBySlugUrlParams> {}
+export interface IGetProposalBySlugQueryParams {
+    /**
+     * ID of the DAO to fetch the proposal from.
+     */
+    daoId: string;
+}
+
+export interface IGetProposalBySlugParams
+    extends IRequestUrlQueryParams<IGetProposalBySlugUrlParams, IGetProposalBySlugQueryParams> {}
 
 export interface IGetCanVoteUrlParams {
     /**
