@@ -7,7 +7,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Heading } from '@aragon/gov-ui-kit';
 import { AlertCard } from '@aragon/gov-ui-kit-original';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Hash } from 'viem';
 import { useAccount } from 'wagmi';
@@ -80,54 +80,22 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         }
     }, [isGovernanceCompatible, setValue, token, tokenFormPrefix]);
 
-    const [erc20StepState, governanceStepState, delegationStepState] = useMemo((): [
-        StepState,
-        StepState,
-        StepState,
-    ] => {
-        if (isLoading) {
-            return ['pending', 'pending', 'pending'];
-        }
+    const getCompatibilityState = (isCompatible: boolean | undefined): StepState =>
+        isCompatible ? 'success' : isCompatible === undefined ? 'idle' : 'warning';
 
-        if (isError) {
-            return ['error', 'error', 'error'];
-        }
+    const [erc20StepState, governanceStepState, delegationStepState]: [StepState, StepState, StepState] = isLoading
+        ? ['pending', 'pending', 'pending']
+        : isError
+          ? ['error', 'error', 'error']
+          : ['success', getCompatibilityState(isGovernanceCompatible), getCompatibilityState(isDelegationCompatible)];
 
-        return [
-            'success',
-            isGovernanceCompatible ? 'success' : isGovernanceCompatible === undefined ? 'idle' : 'warning',
-            isDelegationCompatible ? 'success' : isDelegationCompatible === undefined ? 'idle' : 'warning',
-        ];
-    }, [isDelegationCompatible, isError, isGovernanceCompatible, isLoading]);
+    const getStepLabel = (step: string) => t(`app.plugins.token.tokenSetupMembership.importToken.step.${step}`);
 
-    const steps: Array<IStepperStep<ITransactionStatusStepMeta>> = useMemo(() => {
-        return [
-            {
-                id: 'erc20',
-                order: 0,
-                meta: {
-                    label: t('app.plugins.token.tokenSetupMembership.importToken.step.erc20'),
-                    state: erc20StepState,
-                },
-            },
-            {
-                id: 'governance',
-                order: 0,
-                meta: {
-                    label: t('app.plugins.token.tokenSetupMembership.importToken.step.governance'),
-                    state: governanceStepState,
-                },
-            },
-            {
-                id: 'delegation',
-                order: 0,
-                meta: {
-                    label: t('app.plugins.token.tokenSetupMembership.importToken.step.delegation'),
-                    state: delegationStepState,
-                },
-            },
-        ];
-    }, [delegationStepState, erc20StepState, governanceStepState, t]);
+    const steps: Array<IStepperStep<ITransactionStatusStepMeta>> = [
+        { id: 'erc20', order: 0, meta: { label: getStepLabel('erc20'), state: erc20StepState } },
+        { id: 'governance', order: 0, meta: { label: getStepLabel('governance'), state: governanceStepState } },
+        { id: 'delegation', order: 0, meta: { label: getStepLabel('delegation'), state: delegationStepState } },
+    ];
 
     const isTokenCheckCardVisible = !!(importTokenAddress && !alert);
 
