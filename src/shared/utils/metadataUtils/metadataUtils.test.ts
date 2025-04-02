@@ -1,5 +1,5 @@
 import { governanceService } from '@/modules/governance/api/governanceService';
-import { generateMember, generateProposal } from '@/modules/governance/testUtils';
+import { generateProposal } from '@/modules/governance/testUtils';
 import { daoService } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '../ipfsUtils';
@@ -46,49 +46,6 @@ describe('metadata utils', () => {
 
             const metadata = await metadataUtils.generateDaoMetadata({ params: Promise.resolve({ id: 'test' }) });
             expect(metadata.openGraph?.images).toBeUndefined();
-        });
-    });
-
-    describe('generateMemberMetadata', () => {
-        it('fetches DAO and member and returns expected metadata', async () => {
-            const id = 'dao-id';
-            const address = '0xabc';
-            const ens = 'user.eth';
-            const dao = generateDao({ name: 'Test DAO', description: 'DAO description' });
-            const member = generateMember({ address, ens });
-
-            getDaoSpy.mockResolvedValue(dao);
-            getMemberSpy.mockResolvedValue(member);
-
-            const metadata = await metadataUtils.generateMemberMetadata({
-                params: Promise.resolve({ id, address }),
-            });
-
-            expect(getDaoSpy).toHaveBeenCalledWith({ urlParams: { id } });
-            expect(getMemberSpy).toHaveBeenCalledWith({
-                urlParams: { address },
-                queryParams: { daoId: id },
-            });
-
-            expect(metadata.title).toEqual(`Member - ${ens}`);
-            expect(metadata.description).toEqual(`${dao.name} - ${dao.description}`);
-        });
-
-        it('uses address as title fallback when ENS is missing', async () => {
-            const id = 'dao-id';
-            const address = '0xdef';
-            const ens = undefined;
-            const dao = generateDao();
-            const member = generateMember({ address, ens });
-
-            getDaoSpy.mockResolvedValue(dao);
-            getMemberSpy.mockResolvedValue(member);
-
-            const metadata = await metadataUtils.generateMemberMetadata({
-                params: Promise.resolve({ id, address }),
-            });
-
-            expect(metadata.title).toEqual(`Member - ${address}`);
         });
     });
 

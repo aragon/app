@@ -1,8 +1,8 @@
 import type { Metadata } from 'next/types';
 
-const baseTitle = 'Aragon App, DAO creation and management platform';
+const baseTitle = 'Governed on Aragon';
 const baseDescription =
-    'Aragon App is the long awaited human-centered approach to DAOs. A huge evolution when it comes to user experience in web3, backed by a strong and modular core.';
+    'Explore the organizations using our modular governance stack to secure their onchain governance.';
 const baseUrl = 'https://app.aragon.org';
 const imageUrl = '/og-share-large.png';
 

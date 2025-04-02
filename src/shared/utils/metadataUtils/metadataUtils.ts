@@ -1,6 +1,6 @@
 import { governanceService } from '@/modules/governance/api/governanceService';
 import { daoService } from '@/shared/api/daoService';
-import type { IDaoPageParams, IMemberPageParams, IProposalPageParams } from '@/shared/types';
+import type { IDaoPageParams, IProposalPageParams } from '@/shared/types';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { Metadata } from 'next';
 
@@ -9,13 +9,6 @@ export interface IGenerateDaoMetadataParams {
      * Path parameters of DAO pages.
      */
     params: Promise<IDaoPageParams>;
-}
-
-export interface IGenerateMemberMetadataParams {
-    /**
-     * Path parameters of member pages.
-     */
-    params: Promise<IMemberPageParams>;
 }
 
 export interface IGenerateProposalMetadataParams {
@@ -30,27 +23,19 @@ class MetadataUtils {
         const { id } = await params;
         const dao = await this.getDao(id);
         const daoAvatarUrl = ipfsUtils.cidToSrc(dao.avatar);
-
-        return {
-            title: dao.name,
-            description: dao.description,
-            openGraph: { images: daoAvatarUrl ? [daoAvatarUrl] : undefined },
-        };
-    };
-
-    generateMemberMetadata = async ({ params }: IGenerateMemberMetadataParams): Promise<Metadata> => {
-        const { id, address } = await params;
-        const [member, dao] = await Promise.all([this.getMember(id, address), this.getDao(id)]);
-
-        const title = `Member - ${member.ens ?? member.address}`;
-        const description = `${dao.name} - ${dao.description}`;
+        const title = dao.name;
+        const description = dao.description;
 
         return {
             authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
             title,
             description,
-            openGraph: { title, description, type: 'article' },
-            twitter: { card: 'summary', title, description },
+            openGraph: {
+                siteName: `${title} | Governed on Aragon`,
+                type: 'website',
+                images: daoAvatarUrl ? [daoAvatarUrl] : undefined,
+            },
+            twitter: { card: 'summary', site: '@AragonProject', title, description },
         };
     };
 
@@ -59,31 +44,20 @@ class MetadataUtils {
         const proposal = await this.getProposal(id, proposalSlug);
         const title = `${proposalSlug} - ${proposal.title}`;
         const description = proposal.description ?? '';
+        const dao = await this.getDao(id);
+        const daoAvatarUrl = ipfsUtils.cidToSrc(dao.avatar);
 
         return {
             authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
             title,
             description,
-            openGraph: { title, description, type: 'article' },
-            twitter: {
-                card: 'summary',
-                title,
-                description,
-                creator: 'Aragon',
-                creatorId: '@AragonProject',
-            },
+            openGraph: { title, description, type: 'article', images: daoAvatarUrl ? [daoAvatarUrl] : undefined },
+            twitter: { card: 'summary', site: '@AragonProject', title, description },
         };
     };
 
     private getDao(id: string) {
         return daoService.getDao({ urlParams: { id } });
-    }
-
-    private getMember(daoId: string, address: string) {
-        return governanceService.getMember({
-            urlParams: { address },
-            queryParams: { daoId },
-        });
     }
 
     private getProposal(daoId: string, slug: string) {
