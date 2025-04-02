@@ -5,9 +5,15 @@ import { type ICreateProcessFormData } from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { CreateProcessFormStagesItem } from './createProcessFormStagesItem';
 
-export interface ICreateProcessFormStagesProps {}
+export interface ICreateProcessFormStagesProps {
+    /**
+     * ID of the DAO to fetch the members from.
+     */
+    daoId: string;
+}
 
-export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = () => {
+export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = (props) => {
+    const { daoId } = props;
     const { t } = useTranslations();
 
     const { setValue, getValues } = useFormContext<ICreateProcessFormData>();
@@ -37,6 +43,7 @@ export const CreateProcessFormStages: React.FC<ICreateProcessFormStagesProps> = 
                         stage={stage}
                         stagesCount={stages.length}
                         onDelete={() => handleRemoveStage(index)}
+                        daoId={daoId}
                     />
                 ))}
             </div>

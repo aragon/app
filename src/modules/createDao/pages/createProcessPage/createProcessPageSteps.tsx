@@ -18,7 +18,7 @@ export interface ICreateProcessPageClientStepsProps {
 }
 
 export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStepsProps> = (props) => {
-    const { steps } = props;
+    const { steps, daoId } = props;
 
     const { t } = useTranslations();
     const [metadataStep, processesStep, permissionsStep] = steps;
@@ -37,7 +37,7 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
                 description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.description`)}
                 {...processesStep}
             >
-                <CreateProcessForm.Stages />
+                <CreateProcessForm.Stages daoId={daoId} />
             </WizardPage.Step>
             <WizardPage.Step
                 title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.title`)}

@@ -19,6 +19,10 @@ export interface ISetupBodyDialogParams {
      * Initial values for the form.
      */
     initialValues?: ISetupBodyForm;
+    /**
+     * ID of the DAO to fetch the members from.
+     */
+    daoId: string;
 }
 
 export interface ISetupBodyDialogProps extends IDialogComponentProps<ISetupBodyDialogParams> {}
@@ -34,7 +38,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { location } = props;
 
     invariant(location.params != null, 'SetupBodyDialog: required parameters must be set.');
-    const { onSubmit, initialValues } = location.params;
+    const { onSubmit, initialValues, daoId } = location.params;
 
     const { t } = useTranslations();
     const { address } = useAccount();
@@ -68,7 +72,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
                 <SetupBodyDialogMetadata />
             </WizardDialog.Step>
             <WizardDialog.Step {...membershipStep}>
-                <SetupBodyDialogMemberhip />
+                <SetupBodyDialogMemberhip daoId={daoId} />
             </WizardDialog.Step>
             <WizardDialog.Step {...governanceStep}>
                 <SetupBodyDialogGovernance />

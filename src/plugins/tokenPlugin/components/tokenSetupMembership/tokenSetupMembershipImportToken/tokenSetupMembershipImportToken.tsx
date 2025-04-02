@@ -1,8 +1,10 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
 import { useGovernanceToken } from '@/plugins/tokenPlugin/hooks/useGovernanceToken';
+import { useDao } from '@/shared/api/daoService';
 import { Link } from '@/shared/components/link';
 import { type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Heading } from '@aragon/gov-ui-kit';
@@ -10,7 +12,6 @@ import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Hash } from 'viem';
-import { useAccount } from 'wagmi';
 
 type StepState = ITransactionStatusStepMeta['state'];
 
@@ -19,16 +20,22 @@ export interface ITokenSetupMembershipImportTokenProps {
      * Prefix to be appended to all form fields.
      */
     formPrefix: string;
+    /**
+     * ID of the DAO to fetch the members from.
+     */
+    daoId: string;
 }
 
 export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImportTokenProps> = (props) => {
-    const { formPrefix } = props;
-
+    const { formPrefix, daoId } = props;
     const { t } = useTranslations();
 
     const tokenFormPrefix = `${formPrefix}.token`;
     const { setValue } = useFormContext();
-    const { chainId } = useAccount();
+
+    const useDaoParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: useDaoParams });
+    const chainId = dao ? networkDefinitions[dao.network].id : undefined;
 
     // Used to prevent moving forward if the token is not set.
     useFormField<ITokenSetupMembershipForm['token'], 'name'>('name', {
@@ -45,7 +52,6 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     } = useFormField<ITokenSetupMembershipForm['token'], 'address'>('address', {
         label: t('app.plugins.token.tokenSetupMembership.importToken.label'),
         defaultValue: '',
-        trimOnBlur: true,
         fieldPrefix: tokenFormPrefix,
         rules: {
             required: true,
@@ -97,7 +103,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         { id: 'delegation', order: 0, meta: { label: getStepLabel('delegation'), state: delegationStepState } },
     ];
 
-    const isTokenCheckCardVisible = !!(importTokenAddress && !alert);
+    const isTokenCheckCardVisible = !!importTokenAddress;
 
     const displayAlert = isError || isGovernanceCompatible === false;
     const alertContext = isError ? `notErc20Compatible` : `notGovernanceCompatible`;
@@ -110,7 +116,7 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                     helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
                     onAccept={(value) => onImportTokenAddressChange(value?.address)}
                     value={tokenAddressInput}
-                    chainId={1}
+                    chainId={chainId}
                     onChange={setTokenAddressInput}
                     alert={alert}
                     {...importTokenAddressField}

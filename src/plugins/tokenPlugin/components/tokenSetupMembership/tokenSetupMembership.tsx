@@ -12,7 +12,7 @@ const defaultTokenAddress = zeroAddress;
 const defaultTokenDecimals = 18;
 
 export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props) => {
-    const { formPrefix } = props;
+    const { formPrefix, daoId } = props;
 
     const { t } = useTranslations();
     const { setValue, getValues } = useFormContext();
@@ -79,7 +79,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
                     </div>
                 </RadioGroup>
             </InputContainer>
-            {tokenType === 'imported' && <TokenSetupMembershipImportToken formPrefix={formPrefix} />}
+            {tokenType === 'imported' && <TokenSetupMembershipImportToken formPrefix={formPrefix} daoId={daoId} />}
             {tokenType === 'new' && <TokenSetupMembershipCreateToken formPrefix={formPrefix} />}
         </div>
     );

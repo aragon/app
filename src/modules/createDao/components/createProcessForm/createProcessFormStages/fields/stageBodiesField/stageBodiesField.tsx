@@ -16,10 +16,14 @@ export interface IStageBodiesFieldProps {
      * ID of the stage to add the governance bodies for.
      */
     stageId?: string;
+    /**
+     * ID of the DAO to fetch the members from.
+     */
+    daoId: string;
 }
 
 export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageId } = props;
+    const { isOptimisticStage, stageId, daoId } = props;
 
     const { open, close } = useDialogContext();
     const { t } = useTranslations();
@@ -46,7 +50,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
     };
 
     const handleAddBody = () => {
-        const params: ISetupBodyDialogParams = { onSubmit: handleBodySubmit() };
+        const params: ISetupBodyDialogParams = { onSubmit: handleBodySubmit(), daoId };
         open('SETUP_BODY', { params });
     };
 
@@ -54,6 +58,7 @@ export const StageBodiesField: React.FC<IStageBodiesFieldProps> = (props) => {
         const params: ISetupBodyDialogParams = {
             onSubmit: handleBodySubmit(index),
             initialValues: controlledBodiesField[index],
+            daoId,
         };
         open('SETUP_BODY', { params });
     };

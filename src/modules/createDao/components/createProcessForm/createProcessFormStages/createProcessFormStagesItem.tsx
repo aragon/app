@@ -30,12 +30,16 @@ export interface ICreateProcessFormStagesItemProps {
      * Callback called on delete button click.
      */
     onDelete: () => void;
+    /**
+     * ID of the DAO to fetch the members from.
+     */
+    daoId: string;
 }
 
 const nameMaxLength = 40;
 
 export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemProps> = (props) => {
-    const { formPrefix, stage, stagesCount, onDelete } = props;
+    const { formPrefix, stage, stagesCount, onDelete, daoId } = props;
 
     const { t } = useTranslations();
 
@@ -66,7 +70,9 @@ export const CreateProcessFormStagesItem: React.FC<ICreateProcessFormStagesItemP
             />
             <StageTypeField fieldPrefix={formPrefix} />
             <StageTimingField fieldPrefix={`${formPrefix}.timing`} stageType={stageType} />
-            {!isTimelockStage && <StageBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} />}
+            {!isTimelockStage && (
+                <StageBodiesField stageId={stage.internalId} isOptimisticStage={isOptimisticStage} daoId={daoId} />
+            )}
             {stageBodies.length > 0 && (
                 <StageRequiredApprovalsField
                     fieldPrefix={formPrefix}
