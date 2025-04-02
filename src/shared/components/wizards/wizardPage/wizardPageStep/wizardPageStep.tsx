@@ -38,9 +38,10 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                 {displayValidationError && (
                     <AlertCard
                         message={t(`app.shared.wizardPage.step.error.${validationStatus}.title`)}
-                        description={t(`app.shared.wizardPage.step.error.${validationStatus}.description`)}
                         variant="critical"
-                    />
+                    >
+                        {t(`app.shared.wizardPage.step.error.${validationStatus}.description`)}
+                    </AlertCard>
                 )}
                 <div className="flex flex-row justify-between">
                     <Button
