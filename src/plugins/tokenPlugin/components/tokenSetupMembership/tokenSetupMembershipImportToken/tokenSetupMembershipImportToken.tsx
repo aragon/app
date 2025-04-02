@@ -1,12 +1,12 @@
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import { NotCompatibleAlert } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembershipImportToken/notCompatibleAlert';
-import { RequiresWrappingAlert } from '@/plugins/tokenPlugin/components/tokenSetupMembership/tokenSetupMembershipImportToken/requiresWrappingAlert';
 import { useGovernanceToken } from '@/plugins/tokenPlugin/hooks/useGovernanceToken';
+import { Link } from '@/shared/components/link';
 import { type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { AddressInput, addressUtils, Heading } from '@aragon/gov-ui-kit';
+import { AlertCard } from '@aragon/gov-ui-kit-original';
 import { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Hash } from 'viem';
@@ -130,8 +130,9 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
     }, [delegationStepState, erc20StepState, governanceStepState, t]);
 
     const isTokenCheckCardVisible = !!(importTokenAddress && !alert);
-    const isNotCompatibleAlertVisible = erc20StepState === 'error';
-    const isRequiresWrappingAlertVisible = !isNotCompatibleAlertVisible && governanceStepState === 'warning';
+
+    const displayAlert = isError || isGovernanceCompatible === false;
+    const alertContext = isError ? `notErc20Compatible` : `notGovernanceCompatible`;
 
     return (
         <>
@@ -155,8 +156,37 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                     </TransactionStatus.Container>
                 )}
             </div>
-            {isNotCompatibleAlertVisible && <NotCompatibleAlert />}
-            {isRequiresWrappingAlertVisible && <RequiresWrappingAlert />}
+            {displayAlert && (
+                <AlertCard
+                    variant={alertContext === 'notErc20Compatible' ? 'critical' : 'warning'}
+                    message={t(`app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.message`)}
+                    description={
+                        <span className="flex flex-col gap-3">
+                            <span className="flex flex-col gap-6">
+                                <span>
+                                    {t(
+                                        `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.description1`,
+                                    )}
+                                </span>
+                                {alertContext === 'notGovernanceCompatible' && (
+                                    <span>
+                                        {t(
+                                            `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}.description2`,
+                                        )}
+                                    </span>
+                                )}
+                            </span>
+
+                            <Link
+                                href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
+                                target="_blank"
+                            >
+                                {t('app.plugins.token.tokenSetupMembership.importToken.alert.infoLabel')}
+                            </Link>
+                        </span>
+                    }
+                />
+            )}
         </>
     );
 };
