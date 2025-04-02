@@ -102,7 +102,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (props
     const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
         const setupData = pluginTransactionUtils.getPluginSetupData(txReceipt);
         const params: IPublishProcessDialogParams = { values, daoId, setupData };
-        open('PUBLISH_PROCESS', { params, disableOutsideClick: true });
+        open('PUBLISH_PROCESS', { params });
     };
 
     const pinMetadataNamespace = `app.createDao.prepareProcessDialog.step.${PrepareProcessStep.PIN_METADATA}`;

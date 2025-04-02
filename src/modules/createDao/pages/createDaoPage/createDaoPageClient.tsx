@@ -22,7 +22,7 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
     const handleFormSubmit = (values: ICreateDaoFormData) => {
         const params: IPublishDaoDialogParams = { values };
         checkWalletConnection({
-            onSuccess: () => open(CreateDaoDialog.PUBLISH_DAO, { params, disableOutsideClick: true }),
+            onSuccess: () => open(CreateDaoDialog.PUBLISH_DAO, { params }),
         });
     };
 

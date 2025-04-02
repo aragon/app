@@ -71,17 +71,8 @@ export const TokenWrapFormDialogAction: React.FC<ITokenWrapFormDialogActionProps
     const parsedAmount = formatUnits(amount, token.decimals);
     const assetToken = action === 'wrap' ? underlyingToken : token;
 
-    const handlePreventClose = (e: Event) => {
-        e.preventDefault();
-    };
-
     return (
-        <Dialog.Root
-            onInteractOutside={handlePreventClose}
-            onEscapeKeyDown={handlePreventClose}
-            onOpenChange={handleCloseDialog}
-            {...otherProps}
-        >
+        <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
             <TransactionDialog
                 title={t(`app.plugins.token.tokenWrapForm.dialog.${action}.title`)}
                 description={t(`app.plugins.token.tokenWrapForm.dialog.${action}.description`)}

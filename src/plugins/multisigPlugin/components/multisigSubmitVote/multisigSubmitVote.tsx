@@ -42,7 +42,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (props) =>
     const openTransactionDialog = () => {
         const vote = { label: 'approve' as const };
         const params: IVoteDialogParams = { daoId, proposal, vote, isVeto, plugin };
-        open(GovernanceDialog.VOTE, { params, disableOutsideClick: true });
+        open(GovernanceDialog.VOTE, { params });
     };
 
     const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';

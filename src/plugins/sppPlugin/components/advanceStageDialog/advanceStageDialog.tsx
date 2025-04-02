@@ -51,17 +51,8 @@ export const AdvanceStageDialog: React.FC<IAdvanceStageDialogProps> = (props) =>
 
     const slug = proposalUtils.getProposalSlug(proposal.incrementalId, plugin?.meta);
 
-    const handlePreventClose = (e: Event) => {
-        e.preventDefault();
-    };
-
     return (
-        <Dialog.Root
-            onInteractOutside={handlePreventClose}
-            onEscapeKeyDown={handlePreventClose}
-            onOpenChange={handleCloseDialog}
-            {...otherProps}
-        >
+        <Dialog.Root onOpenChange={handleCloseDialog} {...otherProps}>
             <TransactionDialog
                 title={t('app.plugins.spp.advanceStageDialog.title')}
                 description={t('app.plugins.spp.advanceStageDialog.description')}

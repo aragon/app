@@ -81,7 +81,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         const params: IPublishProposalDialogParams = { values, daoId, pluginAddress, prepareActions };
-        open(GovernanceDialog.PUBLISH_PROPOSAL, { params, disableOutsideClick: true });
+        open(GovernanceDialog.PUBLISH_PROPOSAL, { params });
     };
 
     const contextValues = useMemo(
