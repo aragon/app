@@ -24,7 +24,7 @@ export interface ISetupBodyDialogParams {
      */
     isSubPlugin?: boolean;
     /**
-     * ID of the DAO to fetch the members from.
+     * ID of the DAO.
      */
     daoId: string;
 }

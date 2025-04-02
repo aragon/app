@@ -5,7 +5,7 @@ import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
 export interface ITokenSetupMembershipProps extends IPluginSetupMembershipParams {
     /**
-     * ID of the DAO to fetch the members from.
+     * ID of the DAO.
      */
     daoId: string;
 }

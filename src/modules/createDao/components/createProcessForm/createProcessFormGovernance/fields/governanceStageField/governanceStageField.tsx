@@ -33,7 +33,7 @@ export interface IGovernanceStageFieldProps {
      */
     onDelete: () => void;
     /**
-     * ID of the DAO to fetch the members from.
+     * ID of the DAO.
      */
     daoId: string;
 }

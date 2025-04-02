@@ -21,7 +21,7 @@ export interface ITokenSetupMembershipImportTokenProps {
      */
     formPrefix: string;
     /**
-     * ID of the DAO to fetch the members from.
+     * ID of the DAO.
      */
     daoId: string;
 }

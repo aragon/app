@@ -9,7 +9,7 @@ import { GovernanceStageField } from './fields/governanceStageField';
 
 export interface ICreateProcessFormGovernanceProps {
     /**
-     * ID of the DAO to fetch the members from.
+     * ID of the DAO.
      */
     daoId: string;
 }

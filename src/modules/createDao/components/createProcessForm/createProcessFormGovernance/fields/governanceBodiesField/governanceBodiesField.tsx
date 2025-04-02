@@ -25,7 +25,7 @@ export interface IGovernanceBodiesFieldProps {
      */
     alert?: IInputContainerProps['alert'];
     /**
-     * ID of the DAO to fetch the members from.
+     * ID of the DAO.
      */
     daoId: string;
 }
