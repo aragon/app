@@ -1,18 +1,12 @@
-import { MetadataUtils } from './metadataUtils';
-
-// Test-only subclass with super since methods are protected
-class TestMetadataUtils extends MetadataUtils {
-    public buildMetadata = super.buildMetadata;
-}
+import { metadataUtils } from './metadataUtils';
 
 describe('metadata utils', () => {
     it('builds metadata with expected structure', () => {
-        const utils = new TestMetadataUtils();
         const title = 'title';
         const description = 'description';
         const image = 'https://image.png';
         const type = 'article';
-        const result = utils.buildMetadata({ title, description, image, type });
+        const result = metadataUtils.buildMetadata({ title, description, image, type });
 
         expect(result).toEqual({
             authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
