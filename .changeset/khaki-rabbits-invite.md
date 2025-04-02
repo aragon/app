@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Implement sitemap, and improve metadata generation: specifically for Member and Proposal pages
+Implement XML sitemap and refactor metadata generation for SEO, specifically `Member` and `Proposal` pages
