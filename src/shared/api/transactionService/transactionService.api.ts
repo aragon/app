@@ -13,7 +13,6 @@ export interface IGetTransactionStatusUrlParams {
     transactionHash: string;
 }
 
-
 export interface IGetTransactionStatusQueryParams {
     /**
      * Type of the transaction.

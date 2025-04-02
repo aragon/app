@@ -4,12 +4,12 @@ import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
+    type IBuildTransactionDialogSuccessLinkHref,
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
     type ITransactionDialogStepMeta,
     TransactionDialog,
     type TransactionDialogStep,
-    type IBuildTransactionDialogSuccessLinkHref,
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
