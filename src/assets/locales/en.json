@@ -175,6 +175,9 @@
               "more": "More",
               "remove": "Remove body"
             },
+            "error": {
+              "minLength": "At least one body must be added to this process."
+            },
             "helpText": "These bodies will decide whether or not this stage passes.",
             "label": {
               "vetoing": "Vetoing bodies",
@@ -197,6 +200,9 @@
               "add": "Add stage",
               "more": "More",
               "remove": "Remove stage"
+            },
+            "error": {
+              "requiredBodies": "At least one body must be added to the stage."
             },
             "name": {
               "helpText": "This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff",
