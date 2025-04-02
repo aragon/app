@@ -176,7 +176,7 @@
               "remove": "Remove body"
             },
             "error": {
-              "minLength": "At least one body must be added to this process."
+              "minLength": "A body must be added to this process."
             },
             "helpText": "These bodies will decide whether or not this stage passes.",
             "label": {
@@ -1286,10 +1286,7 @@
             }
           },
           "minDuration": {
-            "alert": {
-              "description": "Ensure members have enough time to vote. It's recommended to set this to at least 1 day.",
-              "message": "Minimum duration"
-            },
+            "alertInfo": "Ensure members have enough time to vote. It's recommended to set this to at least 1 day.",
             "helpText": "The shortest time a proposal is open for voting. Proposals can have a longer duration but not shorter.",
             "label": "Minimum duration"
           },
@@ -1502,6 +1499,9 @@
       "advancedDateInput": {
         "duration": {
           "days": "Days",
+          "error": {
+            "minDuration": "Duration must be at least {{value}}."
+          },
           "hours": "Hours",
           "label": "Duration",
           "minutes": "Minutes"

@@ -70,6 +70,7 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
                         body={body}
                         formPrefix={`bodies.${index.toString()}`}
                         mode={mode}
+                        disableCheckbox={processBodies.length === 1}
                     />
                 ))}
             </InputContainer>
