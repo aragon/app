@@ -23,7 +23,7 @@ class MetadataUtils {
         const { id } = await params;
         const dao = await this.getDao(id);
         const daoAvatarUrl = ipfsUtils.cidToSrc(dao.avatar);
-        const title = dao.name;
+        const title = `${dao.name} | Governed on Aragon`;
         const description = dao.description;
 
         return {
@@ -31,7 +31,8 @@ class MetadataUtils {
             title,
             description,
             openGraph: {
-                siteName: `${title} | Governed on Aragon`,
+                siteName: title,
+                description,
                 type: 'website',
                 images: daoAvatarUrl ? [daoAvatarUrl] : undefined,
             },
