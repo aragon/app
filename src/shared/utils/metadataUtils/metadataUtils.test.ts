@@ -25,7 +25,7 @@ describe('metadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
 
             const metadata = await metadataUtils.generateDaoMetadata({ params: Promise.resolve({ id }) });
-            expect(metadata.title).toEqual(dao.name);
+            expect(metadata.title).toEqual(`${dao.name} | Governed on Aragon`);
             expect(metadata.description).toEqual(dao.description);
         });
 
