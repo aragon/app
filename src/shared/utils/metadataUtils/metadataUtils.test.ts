@@ -50,15 +50,19 @@ describe('metadata utils', () => {
     });
 
     describe('generateProposalMetadata', () => {
-        it('fetches proposal and returns expected metadata', async () => {
+        it('fetches proposal and returns expected metadata including dao avatar', async () => {
             const id = 'dao-id';
             const proposalSlug = 'proposal-slug';
             const proposal = generateProposal({
                 title: 'A Big Change',
                 description: 'We propose doing something big.',
             });
+            const dao = generateDao({ avatar: 'cid123' });
+            const ipfsUrl = `https://ipfs.com/ipfs/${dao.avatar!}`;
 
             getProposalBySlugSpy.mockResolvedValue(proposal);
+            getDaoSpy.mockResolvedValue(dao);
+            cidToSrcSpy.mockReturnValue(ipfsUrl);
 
             const metadata = await metadataUtils.generateProposalMetadata({
                 params: Promise.resolve({ id, proposalSlug }),
@@ -69,24 +73,31 @@ describe('metadata utils', () => {
                 queryParams: { daoId: id },
             });
 
-            expect(metadata.title).toEqual(`${proposalSlug} - ${proposal.title}`);
+            expect(getDaoSpy).toHaveBeenCalledWith({ urlParams: { id } });
+            expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
+
+            const expectedTitle = `${proposalSlug} - ${proposal.title}`;
+            expect(metadata.title).toEqual(expectedTitle);
             expect(metadata.description).toEqual(proposal.description);
             expect(metadata.openGraph).toMatchObject({
-                title: `${proposalSlug} - ${proposal.title}`,
+                title: expectedTitle,
                 description: proposal.description,
                 type: 'article',
+                images: [ipfsUrl],
             });
         });
 
-        it('handles missing description gracefully', async () => {
+        it('returns undefined description when unavailabe and undefined OG images when DAO has no avatar', async () => {
             const id = 'dao-id';
             const proposalSlug = 'no-desc';
             const proposal = generateProposal({
                 title: 'No Description',
                 description: undefined,
             });
+            const dao = generateDao({ avatar: undefined });
 
             getProposalBySlugSpy.mockResolvedValue(proposal);
+            getDaoSpy.mockResolvedValue(dao);
 
             const metadata = await metadataUtils.generateProposalMetadata({
                 params: Promise.resolve({ id, proposalSlug }),
@@ -94,6 +105,7 @@ describe('metadata utils', () => {
 
             expect(metadata.description).toBe('');
             expect(metadata.openGraph?.description).toBe('');
+            expect(metadata.openGraph?.images).toBeUndefined();
         });
     });
 });
