@@ -2,4 +2,4 @@
 '@aragon/app-next': patch
 ---
 
-Implement sitemap & DaoProposalDetailsPage metadata generation
+Implement sitemap, and improve metadata generation: specifically for Member and Proposal pages

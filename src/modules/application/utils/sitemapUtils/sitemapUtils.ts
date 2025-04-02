@@ -99,11 +99,6 @@ class SitemapUtils {
     private prependBaseUrl = (sitemap: MetadataRoute.Sitemap): MetadataRoute.Sitemap =>
         sitemap.map((site) => ({ ...site, url: `${this.baseUrl}${site.url}` }));
 
-    private getTopDaos = async (limit = 100): Promise<Array<{ id: string }>> => {
-        const result = await daoExplorerService.getDaoList({ queryParams: { pageSize: limit } });
-        return result.data;
-    };
-
     private getServerProposalSlug = (incrementalId?: number, plugin?: { slug?: string }): string | null => {
         if (incrementalId == null || !plugin?.slug) {
             return null;
