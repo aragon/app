@@ -1,6 +1,6 @@
 import { useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -9,8 +9,8 @@ import {
     type ITransactionDialogStepMeta,
     TransactionDialog,
     type TransactionDialogStep,
+    type IBuildTransactionDialogSuccessLinkHref,
 } from '@/shared/components/transactionDialog';
-import type { IHrefParams } from '@/shared/components/transactionDialog/transactionDialog.api';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
@@ -97,11 +97,10 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     // Handler function to disable the navigation block when the transaction is needed.
     // We can't simply just pass the href to the TransactionDialog
-    const getProposalsLink = ({ slug }: IHrefParams) => {
+    const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) => {
         setIsBlocked(false);
-        const proposalLink = slug ? `/dao/${daoId}/proposals/${slug}` : `/dao/${daoId}/proposals`;
 
-        return proposalLink;
+        return `/dao/${daoId}/proposals/${slug!}`;
     };
 
     const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(

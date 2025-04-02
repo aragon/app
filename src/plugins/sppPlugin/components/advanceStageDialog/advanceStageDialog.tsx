@@ -1,5 +1,5 @@
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import { TransactionType } from '@/shared/api/transactionService';
 import {
     TransactionDialog,
     TransactionDialogStep,

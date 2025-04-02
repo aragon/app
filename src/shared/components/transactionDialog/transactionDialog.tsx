@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { useTransactionStatus } from '@/shared/api/transactionService/queries';
+import { useTransactionStatus } from '@/shared/api/transactionService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';

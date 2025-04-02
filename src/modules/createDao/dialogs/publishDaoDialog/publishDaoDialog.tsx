@@ -1,6 +1,6 @@
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import { TransactionType } from '@/shared/api/transactionService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { type IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -9,8 +9,8 @@ import {
     type ITransactionDialogStepMeta,
     TransactionDialog,
     type TransactionDialogStep,
+    type IBuildTransactionDialogSuccessLinkHref,
 } from '@/shared/components/transactionDialog';
-import type { IHrefParams } from '@/shared/components/transactionDialog/transactionDialog.api';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useStepper } from '@/shared/hooks/useStepper';
@@ -106,9 +106,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         return publishDaoDialogUtils.buildTransaction({ values: values, metadataCid, connectedAddress: address });
     };
 
-    const getDaoLink = ({ receipt }: IHrefParams) => {
-        invariant(receipt != null, 'PublishDaoDialog: receipt must be defined.');
-
+    const getDaoLink = ({ receipt }: IBuildTransactionDialogSuccessLinkHref) => {
         setIsBlocked(false);
 
         const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;

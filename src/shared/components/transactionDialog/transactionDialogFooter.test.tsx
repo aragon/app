@@ -1,4 +1,4 @@
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import { TransactionType } from '@/shared/api/transactionService';
 import { generateDialogContext } from '@/shared/testUtils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { act, render, screen } from '@testing-library/react';

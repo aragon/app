@@ -1,4 +1,4 @@
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import { TransactionType } from '@/shared/api/transactionService';
 import { DialogFooter, IconType } from '@aragon/gov-ui-kit';
 import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,7 @@ import { useDialogContext } from '../dialogProvider';
 import { type TransactionStatusState } from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
 import {
-    type IHrefParams,
+    type IBuildTransactionDialogSuccessLinkHref,
     type ITransactionDialogActionParams,
     type ITransactionDialogProps,
     type ITransactionDialogStep,
@@ -63,20 +63,15 @@ const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record
     },
 };
 
-const buildSuccessLink = (successHref: TransactionDialogSuccessLinkHref, params: IHrefParams): string | undefined => {
+const buildSuccessLink = (
+    successHref: TransactionDialogSuccessLinkHref,
+    params: IBuildTransactionDialogSuccessLinkHref,
+): string | undefined => {
     if (typeof successHref === 'string') {
         return successHref;
     }
 
-    if (params.slug) {
-        return successHref({ slug: params.slug });
-    }
-
-    if (params.receipt) {
-        return successHref({ receipt: params.receipt });
-    }
-
-    return undefined;
+    return successHref(params);
 };
 
 const getFallbackRouteByTransactionType = (type?: TransactionType, daoId?: string) => {
@@ -180,10 +175,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const processedSuccessLink =
         displaySuccessLink && successHref
-            ? buildSuccessLink(
-                  successHref,
-                  transactionType === TransactionType.PROPOSAL_CREATE ? { slug: proposalSlug } : { receipt: txReceipt },
-              )
+            ? buildSuccessLink(successHref, { receipt: txReceipt!, slug: proposalSlug })
             : undefined;
 
     // The cancel button becomes "Proceed anyway" during indexing after 8 seconds

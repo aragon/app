@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import { TransactionType } from '@/shared/api/transactionService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateReactQueryResultError, generateStepperResult } from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';

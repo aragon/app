@@ -6,4 +6,5 @@ export {
     type ITransactionDialogStep,
     type ITransactionDialogStepMeta,
     type TransactionDialogPrepareReturn,
+    type IBuildTransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';

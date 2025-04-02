@@ -1,5 +1,5 @@
 import type { Network } from '@/shared/api/daoService';
-import type { TransactionType } from '@/shared/api/transactionService/transactionService.api';
+import type { TransactionType } from '@/shared/api/transactionService';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ReactNode } from 'react';
@@ -15,19 +15,19 @@ export type TransactionDialogPrepareReturn = SendTransactionParameters;
  * either a slug, used for proposal transactions or a
  * transaction receipt, used for other transactions.
  */
-export interface IHrefParams {
+export interface IBuildTransactionDialogSuccessLinkHref {
+    /**
+     * Receipt of the transaction used for building the success link for transactions that aren't creating a proposal.
+     */
+    receipt: TransactionReceipt;
     /**
      * Slug of the proposal if the transaction type is creating a proposal.
      */
     slug?: string;
-    /**
-     * Receipt of the transaction used for building the success link for transactions that aren't creating a proposal.
-     */
-    receipt?: TransactionReceipt;
 }
 
 // Static or dynamic link based on the params.
-export type TransactionDialogSuccessLinkHref = string | ((params: IHrefParams) => string);
+export type TransactionDialogSuccessLinkHref = string | ((params: IBuildTransactionDialogSuccessLinkHref) => string);
 
 export interface ITransactionDialogActionParams {
     /**
