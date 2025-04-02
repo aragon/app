@@ -4,7 +4,8 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { Button, IconType, InputContainer, InputText } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import { parseUnits, zeroAddress } from 'viem';
+import { parseUnits } from 'viem';
+import { defaultTokenAddress, defaultTokenDecimals } from '../constants/tokenDefaults';
 import { TokenSetupMembershipCreateTokenMember } from './tokenSetupMembershipCreateTokenMember';
 
 export interface ITokenSetupMembershipCreateTokenProps {
@@ -16,8 +17,6 @@ export interface ITokenSetupMembershipCreateTokenProps {
 
 const nameMaxLength = 40;
 const symbolMaxLength = 12;
-const defaultTokenDecimals = 18;
-const defaultTokenAddress = zeroAddress;
 
 export const TokenSetupMembershipCreateToken: React.FC<ITokenSetupMembershipCreateTokenProps> = (props) => {
     const { formPrefix } = props;
