@@ -113,7 +113,8 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                 <AddressInput
                     placeholder={t('app.plugins.token.tokenSetupMembership.importToken.placeholder')}
                     helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
-                    onAccept={(value) => onImportTokenAddressChange(value?.address)}
+                    // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
+                    onAccept={(value) => onImportTokenAddressChange(value?.address ?? '')}
                     value={tokenAddressInput}
                     chainId={chainId}
                     onChange={setTokenAddressInput}
