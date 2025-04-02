@@ -4,7 +4,7 @@ import type { MetadataRoute } from 'next';
 class SitemapUtils {
     private baseUrl = 'https://app.aragon.org';
 
-    private routes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];
+    private daoPageRoutes = ['assets', 'dashboard', 'members', 'proposals', 'settings', 'transactions'];
 
     private staticPages: MetadataRoute.Sitemap = [
         { url: '', lastModified: new Date(), changeFrequency: 'monthly', priority: 1 },
@@ -20,8 +20,8 @@ class SitemapUtils {
     };
 
     private buildDaoPages = (daoId: string): MetadataRoute.Sitemap => {
-        return Object.values(this.routes).map((route) => ({
-            url: `/dao/${daoId}/${route}`,
+        return Object.values(this.daoPageRoutes).map((daoPageRoute) => ({
+            url: `/dao/${daoId}/${daoPageRoute}`,
             changeFrequency: 'daily',
             priority: 0.8,
         }));
