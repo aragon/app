@@ -68,7 +68,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
         {
             // Add search value to the query params
             ...daoListByMemberParams!,
-            queryParams: { ...daoListByMemberParams?.queryParams, search: searchValueDebounced },
+            queryParams: { ...daoListByMemberParams?.queryParams, search: searchValueDebounced, sort: 'blockNumber' }, // returns duplicates without sort!
         },
         { enabled: enableDaoListByMember },
     );

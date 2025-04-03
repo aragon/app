@@ -29,7 +29,12 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
         includeSubPlugins: true,
     })![0];
 
-    const memberListQueryParams = { daoId, pluginAddress: bodyPluginAddress, pageSize: daoMembersCount };
+    const memberListQueryParams = {
+        daoId,
+        pluginAddress: bodyPluginAddress,
+        pageSize: daoMembersCount,
+        sort: 'votingPower', // returns duplicates without sort!
+    };
     const memberListParams = { queryParams: memberListQueryParams };
     await queryClient.prefetchInfiniteQuery(memberListOptions({ queryParams: memberListQueryParams }));
 
