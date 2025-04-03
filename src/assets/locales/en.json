@@ -59,7 +59,7 @@
       "navigation": {
         "appLinks": {
           "contact": "Feedback",
-          "legacy": "Legacy App"
+          "legacy": "Legacy app"
         }
       },
       "navigationDao": {
@@ -462,7 +462,7 @@
           "description": "There was an error loading the DAOs. Try again later.",
           "heading": "Error loading DAOs"
         },
-        "searchPlaceholder": "Filter by Name, Address or ENS"
+        "searchPlaceholder": "Search by name, address, or ENS"
       },
       "exploreDao": {
         "createDao": "Create a DAO",
@@ -590,7 +590,7 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
-        "placeholder": "Filter by action, contract name, or address",
+        "placeholder": "Search by action, contract name, or address",
         "rawCalldataFunction": "Unknown",
         "selectItem": "Add action"
       },
@@ -764,7 +764,7 @@
         "cta": "View on EFP",
         "followers": "Followers",
         "following": "Following",
-        "info": "The Ethereum Follow Protocol is an onchain social graph for Ethereum"
+        "info": "The Ethereum Follow Protocol is an onchain social graph for Ethereum."
       },
       "executeDialog": {
         "buttons": {
@@ -922,7 +922,7 @@
                 "submit": "Update admins",
                 "success": "View settings"
               },
-              "description": "To update admins you have to confirm the onchain transaction with your wallet.",
+              "description": "To update admins, confirm the onchain transaction in your wallet.",
               "step": {
                 "PIN_METADATA": {
                   "errorLabel": "Unable to pin data on IPFS",
@@ -1085,7 +1085,7 @@
         },
         "sppCreateProposalSettingsForm": {
           "startTime": {
-            "helpText": "This is the time that the first stage's voting period begins.",
+            "helpText": "The first stage's voting period begins at this time.",
             "label": "Stage 1 start time"
           }
         },
@@ -1399,22 +1399,22 @@
         "tokenWrapForm": {
           "dialog": {
             "approve": {
-              "description": "To approve the wrapping you have to confirm the onchain transaction with your wallet.",
+              "description": "To approve wrapping your tokens, confirm the onchain transaction in your wallet.",
               "submit": "Approve tokens",
               "success": "Wrap tokens",
-              "title": "Approve wrap"
+              "title": "Approve wrapping"
             },
             "unwrap": {
-              "description": "To unwrap your tokens you have to confirm the onchain transaction with your wallet.",
+              "description": "To unwrap your tokens, confirm the onchain transaction in your wallet.",
               "submit": "Unwrap tokens",
               "success": "View members",
-              "title": "Unwrap"
+              "title": "Unwrap tokens"
             },
             "wrap": {
-              "description": "To wrap your tokens you have to confirm the onchain transaction with your wallet.",
+              "description": "To wrap your tokens, confirm the onchain transaction in your wallet.",
               "submit": "Wrap tokens",
               "success": "View members",
-              "title": "Wrap"
+              "title": "Wrap tokens"
             }
           },
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
@@ -1523,7 +1523,7 @@
         "message": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "errorFeedback": {
-        "description": "If you'd like to help, you can report the issue to our team!",
+        "description": "If you'd like to help, you can report the issue to our team.",
         "link": {
           "explore": "Explore DAOs",
           "report": "Report issue"
@@ -1578,7 +1578,7 @@
           "CONFIRM": {
             "addon": "Details",
             "errorLabel": "Confirmation failed",
-            "label": "Onchain confirmation"
+            "label": "Confirm transaction"
           },
           "PREPARE": {
             "errorLabel": "Unable to prepare transaction",
