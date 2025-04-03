@@ -6,10 +6,17 @@ import { GovernanceType, type ICreateProcessFormData } from '../createProcessFor
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { GovernanceBodiesField } from './fields/governanceBodiesField';
 import { GovernanceStageField } from './fields/governanceStageField';
+import { useBodiesField } from './hooks';
 
-export interface ICreateProcessFormGovernanceProps {}
+export interface ICreateProcessFormGovernanceProps {
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
+}
 
-export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceProps> = () => {
+export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceProps> = (props) => {
+    const { daoId } = props;
     const { t } = useTranslations();
 
     const { setValue, getValues } = useFormContext<ICreateProcessFormData>();
@@ -29,6 +36,9 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
         append: appendStage,
         remove: removeStage,
     } = useFieldArray<ICreateProcessFormData, 'stages'>({ name: 'stages' });
+
+    const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
+    const bodiesResult = useBodiesField({ isAdvancedGovernance, daoId });
 
     const handleAddStage = () => appendStage(createProcessFormUtils.buildDefaultStage());
 
@@ -50,7 +60,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
             <RadioGroup
                 helpText={t('app.createDao.createProcessForm.governance.type.helpText')}
                 onValueChange={handleGovernanceTypeChanged}
-                className="w-full !flex-row gap-4"
+                className="w-full gap-4 md:flex-row"
                 value={governanceType}
                 {...governanceTypeField}
             >
@@ -63,8 +73,8 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                     />
                 ))}
             </RadioGroup>
-            {governanceType === GovernanceType.BASIC && <GovernanceBodiesField governanceType={governanceType} />}
-            {governanceType === GovernanceType.ADVANCED && (
+            {!isAdvancedGovernance && <GovernanceBodiesField governanceType={governanceType} {...bodiesResult} />}
+            {isAdvancedGovernance && (
                 <div className="flex flex-col gap-2 md:gap-3">
                     <div className="flex flex-col gap-3 md:gap-2">
                         {stages.map((stage, index) => (
@@ -74,6 +84,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                                 stage={stage}
                                 stagesCount={stages.length}
                                 onDelete={() => handleRemoveStage(index)}
+                                {...bodiesResult}
                             />
                         ))}
                     </div>

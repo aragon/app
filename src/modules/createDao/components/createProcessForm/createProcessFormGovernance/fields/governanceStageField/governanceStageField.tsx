@@ -10,12 +10,13 @@ import {
     type ICreateProcessFormStage,
     ProcessStageType,
 } from '../../../createProcessFormDefinitions';
+import type { IUseBodiesFieldReturn } from '../../hooks';
 import { GovernanceBodiesField } from '../governanceBodiesField';
 import { GovernanceStageApprovalsField } from '../governanceStageApprovalsField';
 import { GovernanceStageTimingField } from '../governanceStageTimingField';
 import { GovernanceStageTypeField } from '../governanceStageTypeField';
 
-export interface IGovernanceStageFieldProps {
+export interface IGovernanceStageFieldProps extends IUseBodiesFieldReturn {
     /**
      * Prefix to be prepended to all form fields.
      */
@@ -37,7 +38,7 @@ export interface IGovernanceStageFieldProps {
 const nameMaxLength = 40;
 
 export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props) => {
-    const { formPrefix, stage, stagesCount, onDelete } = props;
+    const { formPrefix, stage, stagesCount, onDelete, ...bodiesResult } = props;
 
     const { t } = useTranslations();
     const { trigger } = useFormContext();
@@ -89,6 +90,7 @@ export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props
                     isOptimisticStage={isOptimisticStage}
                     governanceType={GovernanceType.ADVANCED}
                     alert={stageAlert}
+                    {...bodiesResult}
                 />
             )}
             {stageBodies.length > 0 && (

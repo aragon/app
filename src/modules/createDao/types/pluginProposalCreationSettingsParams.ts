@@ -19,4 +19,8 @@ export interface IPluginProposalCreationSettingsParams<
      * Current selection for the proposal creation settings.
      */
     mode: ProposalCreationMode;
+    /**
+     * Informs the plugin-specific component that the checkbox should be disabled (e.g. when having only one body on the process).
+     */
+    disableCheckbox?: boolean;
 }

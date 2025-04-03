@@ -2,6 +2,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { dateUtils, type IDateDuration } from '@/shared/utils/dateUtils';
 import { Card, InputNumber } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import { Duration } from 'luxon';
 import type { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '../../translationsProvider';
@@ -37,18 +38,26 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     const { t } = useTranslations();
     const { setValue, trigger } = useFormContext();
 
-    const validateDuration = (value: IDateDuration | number) =>
-        validateMinDuration ? dateUtils.validateDuration({ value, minDuration }) : true;
+    const validateDuration = (value: IDateDuration | number) => {
+        const isValid = dateUtils.validateDuration({ value, minDuration });
+        const durationError = 'app.shared.advancedDateInput.duration.error.minDuration';
+
+        return validateMinDuration && !isValid ? durationError : true;
+    };
 
     const processedDefaultValue = defaultValue ?? minDuration ?? { days: 0, hours: 0, minutes: 0 };
     const formattedDefaultValue = useSecondsFormat
         ? dateUtils.durationToSeconds(processedDefaultValue)
         : processedDefaultValue;
 
+    const alertValue = Duration.fromObject(minDuration ?? {})
+        .rescale()
+        .toHuman();
     const durationField = useFormField<Record<string, IDateDuration | number>, typeof field>(field, {
         rules: { validate: validateDuration },
         label,
         defaultValue: formattedDefaultValue,
+        alertValue: { value: alertValue },
     });
 
     const currentDurationObject =

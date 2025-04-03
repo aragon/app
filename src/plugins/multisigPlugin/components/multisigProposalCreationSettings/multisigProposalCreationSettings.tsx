@@ -9,7 +9,7 @@ import type { IMultisigSetupGovernanceForm } from '../multisigSetupGovernance';
 export interface IMultisigProposalCreationSettingsProps extends IPluginProposalCreationSettingsParams {}
 
 export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreationSettingsProps> = (props) => {
-    const { body, formPrefix, mode } = props;
+    const { body, formPrefix, mode, disableCheckbox } = props;
     const { name, description } = body;
 
     const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<
@@ -22,19 +22,20 @@ export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreatio
         defaultValue: true,
     });
 
-    const handleCheckedChange = (checked: CheckboxState) => onCreateProposalChange(checked === true);
+    const handleCheckedChange = (checked: CheckboxState) => {
+        if (!disableCheckbox) {
+            onCreateProposalChange(checked === true);
+        }
+    };
 
     useEffect(() => {
         const onlyListed = mode !== ProposalCreationMode.ANY_WALLET && canCreateProposal;
         onOnlyListedChange(onlyListed);
     }, [mode, canCreateProposal, onOnlyListedChange]);
 
+    const checked = canCreateProposal;
+
     return (
-        <CheckboxCard
-            label={name}
-            description={description}
-            onCheckedChange={handleCheckedChange}
-            checked={canCreateProposal}
-        />
+        <CheckboxCard label={name} description={description} onCheckedChange={handleCheckedChange} checked={checked} />
     );
 };

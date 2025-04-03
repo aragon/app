@@ -18,7 +18,7 @@ export interface ITokenProposalCreationSettingsProps
     > {}
 
 export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSettingsProps> = (props) => {
-    const { body, formPrefix, mode } = props;
+    const { body, formPrefix, mode, disableCheckbox } = props;
 
     const { t } = useTranslations();
     const { trigger, setValue } = useFormContext();
@@ -54,7 +54,11 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
         label: t('app.plugins.token.tokenProposalCreationSettings.label'),
     });
 
-    const handleCheckedChange = (checked: CheckboxState) => onCreateProposalChange(checked === true);
+    const handleCheckedChange = (checked: CheckboxState) => {
+        if (!disableCheckbox) {
+            onCreateProposalChange(checked === true);
+        }
+    };
 
     // Trigger minVotingPower validation on mode and canCreateProposal change
     useEffect(() => {
@@ -66,13 +70,10 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
         setValue(minVotingPowerFieldName, votingPower);
     }, [mode, canCreateProposal, minVotingPowerFieldName, setValue]);
 
+    const checked = canCreateProposal;
+
     return (
-        <CheckboxCard
-            label={name}
-            description={description}
-            onCheckedChange={handleCheckedChange}
-            checked={canCreateProposal}
-        >
+        <CheckboxCard label={name} description={description} onCheckedChange={handleCheckedChange} checked={checked}>
             {
                 // Stop onClick event propagation to avoid unchecking the card when clicking on the number-input buttons
                 // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
@@ -81,7 +82,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
                         prefix="≥"
                         helpText={t('app.plugins.token.tokenProposalCreationSettings.helpText')}
                         placeholder={t('app.plugins.token.tokenProposalCreationSettings.placeholder')}
-                        max={Number(parsedTotalSupply)}
+                        max={totalSupply === '0' ? undefined : Number(parsedTotalSupply)}
                         onChange={onMinVotingPowerChange}
                         value={minVotingPower}
                         {...minVotingPowerField}

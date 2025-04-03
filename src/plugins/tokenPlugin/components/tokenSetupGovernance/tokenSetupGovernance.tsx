@@ -1,12 +1,15 @@
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { AlertCard, Card, InputContainer, Switch } from '@aragon/gov-ui-kit';
+import { Card, InputContainer, Switch } from '@aragon/gov-ui-kit';
 import { DaoTokenVotingMode } from '../../types';
 import { MinParticipationField } from './fields/minParticipationField';
 import { ProposalCreationEligibilityField } from './fields/proposalCreationEligibilityField';
 import { SupportThresholdField } from './fields/supportThresholdField';
 import type { ITokenSetupGovernanceForm, ITokenSetupGovernanceProps } from './tokenSetupGovernance.api';
+
+const voteDurationMin = { days: 0, hours: 1, minutes: 0 };
+const voteDurationDefault = { days: 1, hours: 0, minutes: 0 };
 
 export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props) => {
     const { formPrefix, membershipSettings, isSubPlugin, showProposalCreationSettings } = props;
@@ -41,16 +44,12 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (props
                             field={`${formPrefix}.minDuration`}
                             label={t('app.plugins.token.tokenSetupGovernance.minDuration.label')}
                             className="!p-0"
-                            minDuration={{ days: 0, hours: 1, minutes: 0 }}
+                            minDuration={voteDurationMin}
+                            defaultValue={voteDurationDefault}
                             useSecondsFormat={true}
                             validateMinDuration={true}
+                            infoText={t('app.plugins.token.tokenSetupGovernance.minDuration.alertInfo')}
                         />
-                        <AlertCard
-                            message={t('app.plugins.token.tokenSetupGovernance.minDuration.alert.message')}
-                            variant="info"
-                        >
-                            {t('app.plugins.token.tokenSetupGovernance.minDuration.alert.description')}
-                        </AlertCard>
                     </Card>
                 </InputContainer>
             )}
