@@ -20,7 +20,6 @@ describe('<TransactionDialogFooter /> component', () => {
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        mockRouterPush.mockClear();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogFooterProps>) => {

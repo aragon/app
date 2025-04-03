@@ -3,7 +3,7 @@ import { useTransactionStatus } from '@/shared/api/transactionService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ChainEntityType, Dialog, IconType, useBlockExplorer } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAccount, useSendTransaction, useSwitchChain, useWaitForTransactionReceipt } from 'wagmi';
 import {
     TransactionStatus,
@@ -14,8 +14,6 @@ import { useTranslations } from '../translationsProvider';
 import { TransactionDialogStep, type ITransactionDialogProps } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
-
-const maxRetries = 40;
 
 export const TransactionDialog = <TCustomStepId extends string>(props: ITransactionDialogProps<TCustomStepId>) => {
     const {
@@ -45,8 +43,6 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
     const { chainId, address } = useAccount();
     const { id: requiredChainId } = networkDefinitions[network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-
-    const [retryCount, setRetryCount] = useState(0);
 
     const handleTransactionError = useCallback(
         (stepId?: string) => (error: unknown, context?: Record<string, unknown>) =>
@@ -83,10 +79,7 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
         enabled: waitTxStatus === 'success',
         refetchInterval: (data) => {
             const status = data.state.data ?? null;
-            if (!status) {
-                return retryCount < maxRetries ? 1000 : false;
-            }
-            return retryCount < maxRetries && !status.isProcessed ? 1000 : false;
+            return !status?.isProcessed ? 1000 : false;
         },
     });
 
@@ -206,18 +199,6 @@ export const TransactionDialog = <TCustomStepId extends string>(props: ITransact
             nextStep();
         }
     }, [waitTxStatus, nextStep]);
-
-    // Use effect to handle the retry count for the transaction status
-    // This is to avoid backend being constantly pinged for the transaction status
-    useEffect(() => {
-        if (isIndexing && !transactionStatus?.isProcessed && retryCount < 40) {
-            const interval = setInterval(() => {
-                setRetryCount((prev) => prev + 1);
-            }, 1000);
-
-            return () => clearInterval(interval);
-        }
-    }, [transactionStatus, retryCount, isIndexing]);
 
     return (
         <>
