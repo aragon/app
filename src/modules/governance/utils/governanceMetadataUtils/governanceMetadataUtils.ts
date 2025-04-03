@@ -24,9 +24,10 @@ class GovernanceMetadataUtils {
         const title = `${proposalSlug}: ${proposal.title}`;
         const description = proposal.summary;
         const dao = await daoService.getDao({ urlParams: { id } });
+        const siteName = `${dao.name} | Governed on Aragon`;
         const image = ipfsUtils.cidToSrc(dao.avatar);
 
-        return metadataUtils.buildMetadata({ title, description, image, type: 'article' });
+        return metadataUtils.buildMetadata({ title, description, siteName, image, type: 'article' });
     };
 }
 

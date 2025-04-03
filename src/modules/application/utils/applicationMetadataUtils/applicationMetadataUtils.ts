@@ -17,10 +17,11 @@ class ApplicationMetadataUtils {
         const dao = await daoService.getDao({ urlParams: { id } });
 
         const image = ipfsUtils.cidToSrc(dao.avatar);
-        const title = `${dao.name} | Governed on Aragon`;
+        const title = dao.name;
         const description = dao.description;
+        const siteName = `${dao.name} | Governed on Aragon`;
 
-        return metadataUtils.buildMetadata({ title, description, image });
+        return metadataUtils.buildMetadata({ title, description, siteName, image });
     };
 }
 
