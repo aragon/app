@@ -3,6 +3,7 @@
 import { Dialog, type IDialogRootProps as IGukDialogRootProps } from '@aragon/gov-ui-kit';
 import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
+import { useEffect } from 'react';
 
 export interface IDialogRootProps extends IGukDialogRootProps {
     /**
@@ -40,14 +41,23 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
         closeFunction();
     };
 
+    useEffect(() => {
+        if (location == null) {
+            const closeFunction = onClose ?? close;
+            closeFunction();
+        }
+    }, [location, close, onClose]);
+
     return (
         <Dialog.Root
             {...props}
             open={isOpen}
+            useFocusTrap={false}
             onOpenChange={handleOpenChange}
             onInteractOutside={handleInteractOutside}
             hiddenTitle={hiddenTitle ? t(hiddenTitle) : undefined}
             hiddenDescription={hiddenDescription ? t(hiddenDescription) : undefined}
+            //modal={location != null && modal}
             {...activeDialogProps}
         >
             {ActiveDialogComponent && <ActiveDialogComponent location={location!} />}

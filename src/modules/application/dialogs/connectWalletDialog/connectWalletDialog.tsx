@@ -49,7 +49,13 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
     useEffect(() => {
         const disableOutsideClick = isAppKitModalOpen;
         updateOptions({ disableOutsideClick });
-    }, [updateOptions, isAppKitModalOpen]);
+        const [appKitModal] = document.body.getElementsByTagName('w3m-modal');
+        console.log({ appKitModal });
+        appKitModal.addEventListener('wheel', (event) => {
+            console.log('hh');
+            event.stopPropagation();
+        });
+    }, [updateOptions, isAppKitModalOpen, handleDialogClose]);
 
     useEffect(() => {
         updateOptions({ onClose: handleDialogClose });

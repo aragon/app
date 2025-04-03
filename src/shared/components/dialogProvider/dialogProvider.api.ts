@@ -18,6 +18,7 @@ export interface IDialogLocationOptions<TParams extends DialogComponentProps = D
      * Callback triggered instead of the default close function.
      */
     onClose?: () => void;
+    modal?: boolean;
 }
 
 export interface IDialogLocation<TParams extends DialogComponentProps = DialogComponentProps>
