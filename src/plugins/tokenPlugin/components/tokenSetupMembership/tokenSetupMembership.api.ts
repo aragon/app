@@ -3,7 +3,12 @@ import type { IPluginSetupMembershipParams } from '@/modules/createDao/types';
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 
-export interface ITokenSetupMembershipProps extends IPluginSetupMembershipParams {}
+export interface ITokenSetupMembershipProps extends IPluginSetupMembershipParams {
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
+}
 
 export interface ITokenSetupMembershipForm extends ISetupBodyFormMembership<ITokenSetupMembershipMember> {
     /**

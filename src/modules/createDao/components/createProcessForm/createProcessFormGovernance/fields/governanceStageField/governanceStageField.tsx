@@ -32,12 +32,16 @@ export interface IGovernanceStageFieldProps {
      * Callback called on delete button click.
      */
     onDelete: () => void;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
 }
 
 const nameMaxLength = 40;
 
 export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props) => {
-    const { formPrefix, stage, stagesCount, onDelete } = props;
+    const { formPrefix, stage, stagesCount, onDelete, daoId } = props;
 
     const { t } = useTranslations();
     const { trigger } = useFormContext();
@@ -89,6 +93,7 @@ export const GovernanceStageField: React.FC<IGovernanceStageFieldProps> = (props
                     isOptimisticStage={isOptimisticStage}
                     governanceType={GovernanceType.ADVANCED}
                     alert={stageAlert}
+                    daoId={daoId}
                 />
             )}
             {stageBodies.length > 0 && (

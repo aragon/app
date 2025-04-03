@@ -23,6 +23,10 @@ export interface ISetupBodyDialogParams {
      * Defines if the body is being added to the governance process as a sub-plugin or not.
      */
     isSubPlugin?: boolean;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
 }
 
 export interface ISetupBodyDialogProps extends IDialogComponentProps<ISetupBodyDialogParams> {}
@@ -38,7 +42,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { location } = props;
 
     invariant(location.params != null, 'SetupBodyDialog: required parameters must be set.');
-    const { onSubmit, initialValues, isSubPlugin } = location.params;
+    const { onSubmit, initialValues, isSubPlugin, daoId } = location.params;
 
     const { t } = useTranslations();
     const { address } = useAccount();
@@ -76,7 +80,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
                 </WizardDialog.Step>
             )}
             <WizardDialog.Step {...membershipStep}>
-                <SetupBodyDialogMemberhip />
+                <SetupBodyDialogMemberhip daoId={daoId} />
             </WizardDialog.Step>
             <WizardDialog.Step {...governanceStep}>
                 <SetupBodyDialogGovernance isSubPlugin={isSubPlugin} />

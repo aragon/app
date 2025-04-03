@@ -39,14 +39,18 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const minDurationObject = dateUtils.secondsToDuration(minDuration);
     const formattedMinDuration = t('app.plugins.token.tokenProcessBodyField.minDurationDefinition', minDurationObject);
 
+    const numberOfMembers = membership.members.length;
+
     return (
         <DefinitionList.Container className="w-full">
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}>
                 {tokenName} (${tokenSymbol})
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}>
-                {t('app.plugins.token.tokenProcessBodyField.holders', { count: membership.members.length })}
-            </DefinitionList.Item>
+            {numberOfMembers > 0 && (
+                <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.distributionTerm')}>
+                    {t('app.plugins.token.tokenProcessBodyField.holders', { count: numberOfMembers })}
+                </DefinitionList.Item>
+            )}
             <DefinitionList.Item term={t('app.plugins.token.tokenProcessBodyField.supplyTerm')}>
                 {`${formattedSupply!} ${tokenSymbol}`}
             </DefinitionList.Item>

@@ -81,7 +81,7 @@ export const TokenProposalCreationSettings: React.FC<ITokenProposalCreationSetti
                         prefix="≥"
                         helpText={t('app.plugins.token.tokenProposalCreationSettings.helpText')}
                         placeholder={t('app.plugins.token.tokenProposalCreationSettings.placeholder')}
-                        max={Number(parsedTotalSupply)}
+                        max={totalSupply === '0' ? undefined : Number(parsedTotalSupply)}
                         onChange={onMinVotingPowerChange}
                         value={minVotingPower}
                         {...minVotingPowerField}
