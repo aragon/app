@@ -1,16 +1,5 @@
 import type { Metadata } from 'next';
 
-export interface IAuthor {
-    /**
-     * Name of the author.
-     */
-    name: string;
-    /**
-     * URL of the author.
-     */
-    url: string;
-}
-
 export interface IBuildMetadataParams {
     /**
      * Title of the page.
