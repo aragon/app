@@ -22,14 +22,10 @@ export interface IGovernanceBodiesFieldProps extends IUseBodiesFieldReturn {
      * Alert to be displayed on the field.
      */
     alert?: IInputContainerProps['alert'];
-    /**
-     * ID of the DAO.
-     */
-    daoId: string;
 }
 
 export const GovernanceBodiesField: React.FC<IGovernanceBodiesFieldProps> = (props) => {
-    const { isOptimisticStage, stageId, governanceType, alert, daoId, bodies, addBody, removeBody, editBody } = props;
+    const { isOptimisticStage, stageId, governanceType, alert, bodies, addBody, removeBody, editBody } = props;
 
     const { t } = useTranslations();
     const { formState } = useFormContext<ICreateProcessFormData>();

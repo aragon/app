@@ -6,6 +6,10 @@ export interface IUseBodiesFieldParams {
      * Defines if the bodies are being setup for an advanced governance process.
      */
     isAdvancedGovernance?: boolean;
+    /**
+     * ID of the dao used for plugin-setup settings.
+     */
+    daoId: string;
 }
 
 export interface IUseBodiesFieldReturn {

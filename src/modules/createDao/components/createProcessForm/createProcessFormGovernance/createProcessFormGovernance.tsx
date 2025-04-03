@@ -38,7 +38,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
     } = useFieldArray<ICreateProcessFormData, 'stages'>({ name: 'stages' });
 
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
-    const bodiesResult = useBodiesField({ isAdvancedGovernance });
+    const bodiesResult = useBodiesField({ isAdvancedGovernance, daoId });
 
     const handleAddStage = () => appendStage(createProcessFormUtils.buildDefaultStage());
 
@@ -73,9 +73,7 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                     />
                 ))}
             </RadioGroup>
-            {!isAdvancedGovernance && (
-                <GovernanceBodiesField governanceType={governanceType} daoId={daoId} {...bodiesResult} />
-            )}
+            {!isAdvancedGovernance && <GovernanceBodiesField governanceType={governanceType} {...bodiesResult} />}
             {isAdvancedGovernance && (
                 <div className="flex flex-col gap-2 md:gap-3">
                     <div className="flex flex-col gap-3 md:gap-2">
@@ -86,7 +84,6 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
                                 stage={stage}
                                 stagesCount={stages.length}
                                 onDelete={() => handleRemoveStage(index)}
-                                daoId={daoId}
                                 {...bodiesResult}
                             />
                         ))}

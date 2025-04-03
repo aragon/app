@@ -13,7 +13,7 @@ const validateBodies = (isAdvancedGovernance?: boolean) => (bodies: ICreateProce
 };
 
 export const useBodiesField = (params: IUseBodiesFieldParams): IUseBodiesFieldReturn => {
-    const { isAdvancedGovernance } = params;
+    const { isAdvancedGovernance, daoId } = params;
 
     const { open, close } = useDialogContext();
 
@@ -38,6 +38,7 @@ export const useBodiesField = (params: IUseBodiesFieldParams): IUseBodiesFieldRe
         const params: ISetupBodyDialogParams = {
             onSubmit: handleBodySubmit(stageId),
             isSubPlugin: isAdvancedGovernance,
+            daoId,
         };
         open('SETUP_BODY', { params });
     };
@@ -48,6 +49,7 @@ export const useBodiesField = (params: IUseBodiesFieldParams): IUseBodiesFieldRe
             onSubmit: handleBodySubmit(undefined, bodyIndex),
             initialValues: bodies[bodyIndex],
             isSubPlugin: isAdvancedGovernance,
+            daoId,
         };
         open('SETUP_BODY', { params });
     };
