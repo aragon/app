@@ -59,7 +59,7 @@ class MetadataUtils {
     });
 
     buildMetadata = (params: IBuildMetadataParams): Metadata => {
-        const { title, description, siteName = this.authors[0].name, image, type = 'website' } = params;
+        const { title, description, siteName = this.defaultSiteName, image, type = 'website' } = params;
         const imageArray = image ? [image] : undefined;
 
         return {
