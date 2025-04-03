@@ -1,3 +1,4 @@
+import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 import type { IInputContainerProps } from '@aragon/gov-ui-kit';
 import {
     type FieldPath,
@@ -36,6 +37,10 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
      * Control property to be used only when hook is not used inside a form-context provider.
      */
     control?: UseControllerProps<TFieldValues, TName>['control'];
+    /**
+     * Value to be forwarded to the translation function when definining custom error messages.
+     */
+    alertValue?: ITFuncOptions;
 }
 
 export type IUseFormFieldReturn<

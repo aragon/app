@@ -9,7 +9,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
-    const { label, fieldPrefix, rules, trimOnBlur, ...otherOptions } = options ?? {};
+    const { label, fieldPrefix, rules, trimOnBlur, alertValue: alertValueProp, ...otherOptions } = options ?? {};
 
     const processedFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
@@ -32,7 +32,7 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
     const inputVariant = error != null ? 'critical' : 'default';
 
     const alert = useMemo(() => {
-        if (error == null) {
+        if (error?.type == null && error?.message == null) {
             return undefined;
         }
 
@@ -45,11 +45,11 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 
         const alertMessage =
             error.message != null && error.message.length > 0
-                ? t(error.message)
+                ? t(error.message, alertValueProp)
                 : t(alertMessageKey, alertMessageParams);
 
         return { message: alertMessage, variant: 'critical' as const };
-    }, [error, rules, label, t, name]);
+    }, [error, rules, label, alertValueProp, t, name]);
 
     return {
         ...field,
