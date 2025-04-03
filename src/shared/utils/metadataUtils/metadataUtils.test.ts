@@ -6,14 +6,14 @@ describe('metadata utils', () => {
         const description = 'description';
         const image = 'https://image.png';
         const type = 'article';
+
         const result = metadataUtils.buildMetadata({ title, description, image, type });
 
         expect(result).toEqual({
-            authors: [{ name: 'Aragon', url: 'https://app.aragon.org' }],
             title,
             description,
-            openGraph: { title, description, images: [image], type },
-            twitter: { card: 'summary', site: '@AragonProject', title, description, images: [image] },
+            openGraph: { title, description, siteName: 'Aragon', images: [image], type },
+            twitter: { card: 'summary', site: '@aragonproject', title, description, images: [image] },
         });
     });
 });

@@ -10,6 +10,11 @@ export interface IBuildMetadataParams {
      */
     description: string;
     /**
+     * Open Graph site name.
+     * @default Aragon
+     */
+    siteName?: string;
+    /**
      * Optional image of the page.
      */
     image?: string;
@@ -27,25 +32,26 @@ class MetadataUtils {
     private defaultDescription =
         'Explore the organizations using our modular governance stack to secure their onchain governance.';
     private defaultImage = '/og-share-large.png';
+    private defaultSiteName = 'Aragon';
 
-    private authors = [{ name: 'Aragon', url: this.baseUrl }];
+    private authors = [{ name: this.defaultSiteName, url: this.baseUrl }];
 
     getDefaultMetadata = (): Metadata => ({
         title: this.defaultTitle,
         description: this.defaultDescription,
-        authors: [{ name: 'Aragon', url: this.baseUrl }],
+        authors: this.authors,
         openGraph: {
             type: 'website',
             locale: 'en_US',
             url: this.baseUrl,
             title: this.defaultTitle,
             description: this.defaultDescription,
-            siteName: 'Aragon',
+            siteName: this.defaultSiteName,
             images: [{ url: this.defaultImage, width: 1200, height: 630, alt: 'Aragon Logo' }],
         },
         twitter: {
             card: 'summary_large_image',
-            site: '@AragonProject',
+            site: '@aragonproject',
             title: this.defaultTitle,
             description: this.defaultDescription,
             images: [this.defaultImage],
@@ -53,15 +59,14 @@ class MetadataUtils {
     });
 
     buildMetadata = (params: IBuildMetadataParams): Metadata => {
-        const { title, description, image, type = 'website' } = params;
+        const { title, description, siteName = this.defaultSiteName, image, type = 'website' } = params;
         const imageArray = image ? [image] : undefined;
 
         return {
-            authors: this.authors,
             title,
             description,
-            openGraph: { title, description, type, images: imageArray },
-            twitter: { card: 'summary', site: '@AragonProject', title, description, images: imageArray },
+            openGraph: { title, description, siteName, type, images: imageArray },
+            twitter: { card: 'summary', site: '@aragonproject', title, description, images: imageArray },
         };
     };
 }
