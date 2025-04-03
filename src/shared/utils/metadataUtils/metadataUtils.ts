@@ -21,11 +21,6 @@ export interface IBuildMetadataParams {
      */
     description: string;
     /**
-     * Authors of the page.
-     * @default [{ name: 'Aragon', url: 'https://app.aragon.org' }]
-     */
-    authors?: IAuthor[];
-    /**
      * Open Graph site name.
      * @default Aragon
      */
@@ -48,8 +43,9 @@ class MetadataUtils {
     private defaultDescription =
         'Explore the organizations using our modular governance stack to secure their onchain governance.';
     private defaultImage = '/og-share-large.png';
+    private defaultSiteName = 'Aragon';
 
-    private authors = [{ name: 'Aragon', url: this.baseUrl }];
+    private authors = [{ name: this.defaultSiteName, url: this.baseUrl }];
 
     getDefaultMetadata = (): Metadata => ({
         title: this.defaultTitle,
@@ -61,7 +57,7 @@ class MetadataUtils {
             url: this.baseUrl,
             title: this.defaultTitle,
             description: this.defaultDescription,
-            siteName: this.authors[0].name,
+            siteName: this.defaultSiteName,
             images: [{ url: this.defaultImage, width: 1200, height: 630, alt: 'Aragon Logo' }],
         },
         twitter: {
@@ -74,18 +70,10 @@ class MetadataUtils {
     });
 
     buildMetadata = (params: IBuildMetadataParams): Metadata => {
-        const {
-            title,
-            description,
-            authors = this.authors,
-            siteName = this.authors[0].name,
-            image,
-            type = 'website',
-        } = params;
+        const { title, description, siteName = this.authors[0].name, image, type = 'website' } = params;
         const imageArray = image ? [image] : undefined;
 
         return {
-            authors,
             title,
             description,
             openGraph: { title, description, siteName, type, images: imageArray },
