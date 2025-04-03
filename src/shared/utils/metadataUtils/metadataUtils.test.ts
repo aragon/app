@@ -13,7 +13,7 @@ describe('metadata utils', () => {
             title,
             description,
             openGraph: { title, description, images: [image], type },
-            twitter: { card: 'summary', site: '@AragonProject', title, description, images: [image] },
+            twitter: { card: 'summary', site: '@aragonproject', title, description, images: [image] },
         });
     });
 });

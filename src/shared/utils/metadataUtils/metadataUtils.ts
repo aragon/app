@@ -1,5 +1,16 @@
 import type { Metadata } from 'next';
 
+export interface IAuthor {
+    /**
+     * Name of the author.
+     */
+    name: string;
+    /**
+     * URL of the author.
+     */
+    url: string;
+}
+
 export interface IBuildMetadataParams {
     /**
      * Title of the page.
@@ -9,6 +20,16 @@ export interface IBuildMetadataParams {
      * Description of the page.
      */
     description: string;
+    /**
+     * Authors of the page.
+     * @default [{ name: 'Aragon', url: 'https://app.aragon.org' }]
+     */
+    authors?: IAuthor[];
+    /**
+     * Open Graph site name.
+     * @default Aragon
+     */
+    siteName?: string;
     /**
      * Optional image of the page.
      */
@@ -33,19 +54,19 @@ class MetadataUtils {
     getDefaultMetadata = (): Metadata => ({
         title: this.defaultTitle,
         description: this.defaultDescription,
-        authors: [{ name: 'Aragon', url: this.baseUrl }],
+        authors: this.authors,
         openGraph: {
             type: 'website',
             locale: 'en_US',
             url: this.baseUrl,
             title: this.defaultTitle,
             description: this.defaultDescription,
-            siteName: 'Aragon',
+            siteName: this.authors[0].name,
             images: [{ url: this.defaultImage, width: 1200, height: 630, alt: 'Aragon Logo' }],
         },
         twitter: {
             card: 'summary_large_image',
-            site: '@AragonProject',
+            site: '@aragonproject',
             title: this.defaultTitle,
             description: this.defaultDescription,
             images: [this.defaultImage],
@@ -53,15 +74,22 @@ class MetadataUtils {
     });
 
     buildMetadata = (params: IBuildMetadataParams): Metadata => {
-        const { title, description, image, type = 'website' } = params;
+        const {
+            title,
+            description,
+            authors = this.authors,
+            siteName = this.authors[0].name,
+            image,
+            type = 'website',
+        } = params;
         const imageArray = image ? [image] : undefined;
 
         return {
-            authors: this.authors,
+            authors,
             title,
             description,
-            openGraph: { title, description, type, images: imageArray },
-            twitter: { card: 'summary', site: '@AragonProject', title, description, images: imageArray },
+            openGraph: { title, description, siteName, type, images: imageArray },
+            twitter: { card: 'summary', site: '@aragonproject', title, description, images: imageArray },
         };
     };
 }
