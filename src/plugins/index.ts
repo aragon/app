@@ -11,7 +11,6 @@ export const initialisePlugins = () => {
     initialiseAdminPlugin();
 };
 
-// collect all dialogs and reexport
 export const pluginDialogs = {
     ...tokenPluginDialogs,
 };

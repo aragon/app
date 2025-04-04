@@ -53,10 +53,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
 
-    // Set the amount to be wrapped / unwrapped on a state because as soon as the transactions are successfully sent,
-    // the amount is refetched and an amount of "0" would be displayed on the wrap / unwrap dialogs.
-    const [confirmAmount, setConfirmAmount] = useState<bigint>(BigInt(0));
-
     const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
 
     const { data: tokenMember, refetch: refetchMember } = useMember<ITokenMember>(
@@ -102,15 +98,13 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     };
 
     const handleFormSubmit = () => {
-        setConfirmAmount(wrapAmountWei);
-
         const dialogType = needsApproval ? 'approve' : 'wrap';
-        const dialogProps = getDialogProps();
+        const dialogProps = getDialogProps(wrapAmountWei);
 
         if (dialogType === 'approve') {
             const params: ITokenWrapFormDialogApproveParams = {
                 ...dialogProps,
-                onApproveSuccess: handleApproveSuccess,
+                onApproveSuccess: () => handleApproveSuccess(dialogProps), // open wrap dialog with the same params!
             };
             open(TokenPluginDialog.TOKEN_WRAPPING_APPROVE, { params });
         } else {
@@ -141,18 +135,16 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     );
 
     const handleUnwrapToken = () => {
-        setConfirmAmount(wrappedAmount);
-
-        const params: ITokenWrapFormDialogActionParams = { ...getDialogProps(), action: 'unwrap' };
+        const params: ITokenWrapFormDialogActionParams = { ...getDialogProps(wrappedAmount), action: 'unwrap' };
         open(TokenPluginDialog.TOKEN_WRAPPING_ACTION, { params });
     };
 
-    const handleApproveSuccess = () => {
-        const params: ITokenWrapFormDialogActionParams = { ...getDialogProps(), action: 'wrap' };
+    const handleApproveSuccess = (dialogProps: ReturnType<typeof getDialogProps>) => {
+        const params: ITokenWrapFormDialogActionParams = { ...dialogProps, action: 'wrap' };
         open(TokenPluginDialog.TOKEN_WRAPPING_ACTION, { params });
     };
 
-    const getDialogProps = () => ({
+    const getDialogProps = (confirmAmount: bigint) => ({
         token,
         underlyingToken,
         amount: confirmAmount,
