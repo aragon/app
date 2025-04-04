@@ -53,11 +53,14 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
         // see here: https://github.com/radix-ui/primitives/issues/1159
         const appKitModal = document.querySelector('w3m-modal');
         const handleWheel = (event: Event) => event.stopPropagation();
+        const preventTouchScroll = (event: Event) => event.stopPropagation();
 
         appKitModal?.addEventListener('wheel', handleWheel);
+        appKitModal?.addEventListener('touchmove', preventTouchScroll, { passive: false });
 
         return () => {
             appKitModal?.removeEventListener('wheel', handleWheel);
+            appKitModal?.removeEventListener('touchmove', preventTouchScroll);
         };
     }, [updateOptions, isAppKitModalOpen]);
 
