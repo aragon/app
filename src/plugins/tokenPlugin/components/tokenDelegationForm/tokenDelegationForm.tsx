@@ -16,7 +16,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAccount } from 'wagmi';
-import { ITokenDelegationFormDialogParams } from '../../dialogs/tokenDelegationFormDialog';
+import type { ITokenDelegationFormDialogParams } from '../../dialogs/tokenDelegationFormDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 
 export enum TokenDelegationSelection {

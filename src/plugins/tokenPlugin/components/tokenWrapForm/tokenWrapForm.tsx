@@ -3,6 +3,7 @@ import type { IToken } from '@/modules/finance/api/financeService';
 import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
 import { useMember } from '@/modules/governance/api/governanceService';
 import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { Button, formatterUtils, NumberFormat, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
@@ -11,9 +12,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { erc20Abi, formatUnits, parseUnits, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
+import { TokenPluginDialog } from '../../constants/pluginDialogs';
+import type {
+    ITokenWrapFormDialogActionParams,
+    ITokenWrapFormDialogApproveParams,
+} from '../../dialogs/tokenWrapFormDialog';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
-import { TokenWrapFormDialogAction } from './tokenWrapFormDialogAction';
-import { TokenWrapFormDialogApprove } from './tokenWrapFormDialogApprove';
 
 export interface ITokenWrapFormProps {
     /**
@@ -41,13 +45,13 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const { symbol, decimals } = token;
     const underlyingAddress = underlyingToken.address as Hex;
 
+    const { open } = useDialogContext();
     const { t } = useTranslations();
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const queryClient = useQueryClient();
 
     const [percentageValue, setPercentageValue] = useState<string>('100');
-    const [activeDialog, setActiveDialog] = useState<string | undefined>();
 
     // Set the amount to be wrapped / unwrapped on a state because as soon as the transactions are successfully sent,
     // the amount is refetched and an amount of "0" would be displayed on the wrap / unwrap dialogs.
@@ -97,12 +101,23 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         void refetchMember();
     };
 
-    const displayFormDialog = (dialog: string, amount: bigint) => {
-        setConfirmAmount(amount);
-        setActiveDialog(dialog);
-    };
+    const handleFormSubmit = () => {
+        setConfirmAmount(wrapAmountWei);
 
-    const handleFormSubmit = () => displayFormDialog(needsApproval ? 'approve' : 'wrap', wrapAmountWei);
+        const dialogType = needsApproval ? 'approve' : 'wrap';
+        const dialogProps = getDialogProps();
+
+        if (dialogType === 'approve') {
+            const params: ITokenWrapFormDialogApproveParams = {
+                ...dialogProps,
+                onApproveSuccess: handleApproveSuccess,
+            };
+            open(TokenPluginDialog.TOKEN_WRAPPING_APPROVE, { params });
+        } else {
+            const params: ITokenWrapFormDialogActionParams = { ...dialogProps, action: 'wrap' };
+            open(TokenPluginDialog.TOKEN_WRAPPING_ACTION, { params });
+        }
+    };
 
     const updateAmountField = useCallback(
         (value?: string) => {
@@ -125,16 +140,22 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         [updateAmountField],
     );
 
-    const handleUnwrapToken = () => displayFormDialog('unwrap', wrappedAmount);
+    const handleUnwrapToken = () => {
+        setConfirmAmount(wrappedAmount);
 
-    const handleApproveSuccess = () => setActiveDialog('wrap');
+        const params: ITokenWrapFormDialogActionParams = { ...getDialogProps(), action: 'unwrap' };
+        open(TokenPluginDialog.TOKEN_WRAPPING_ACTION, { params });
+    };
 
-    const getDialogProps = (dialog: string) => ({
-        open: activeDialog === dialog,
+    const handleApproveSuccess = () => {
+        const params: ITokenWrapFormDialogActionParams = { ...getDialogProps(), action: 'wrap' };
+        open(TokenPluginDialog.TOKEN_WRAPPING_ACTION, { params });
+    };
+
+    const getDialogProps = () => ({
         token,
         underlyingToken,
         amount: confirmAmount,
-        onOpenChange: () => setActiveDialog(undefined),
         network: dao!.network,
         onSuccess: handleTransactionSuccess,
     });
@@ -212,13 +233,6 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                     </p>
                 </div>
             </form>
-            <TokenWrapFormDialogApprove onApproveSuccess={handleApproveSuccess} {...getDialogProps('approve')} />
-            {isConnected && (
-                <>
-                    <TokenWrapFormDialogAction action="wrap" {...getDialogProps('wrap')} />
-                    <TokenWrapFormDialogAction action="unwrap" {...getDialogProps('unwrap')} />
-                </>
-            )}
         </FormProvider>
     );
 };

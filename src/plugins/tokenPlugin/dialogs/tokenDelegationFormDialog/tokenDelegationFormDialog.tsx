@@ -50,12 +50,6 @@ export const TokenDelegationFormDialog: React.FC<ITokenDelegationFormDialogProps
     const onSuccessClick = () => {
         router.refresh();
     };
-    //
-    // TODO: check if this is needed
-    // const handleCloseDialog = () => {
-    //     onOpenChange?.(false);
-    //     stepper.updateActiveStep(initialActiveStep);
-    // };
 
     return (
         <TransactionDialog
@@ -64,7 +58,6 @@ export const TokenDelegationFormDialog: React.FC<ITokenDelegationFormDialogProps
             submitLabel={t('app.plugins.token.tokenDelegationForm.dialog.button.submit')}
             stepper={stepper}
             prepareTransaction={handlePrepareTransaction}
-            // onCancelClick={handleCloseDialog}
             network={network}
             successLink={{
                 label: t('app.plugins.token.tokenDelegationForm.dialog.button.success'),
