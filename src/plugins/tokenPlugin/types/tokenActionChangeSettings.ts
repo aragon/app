@@ -9,6 +9,10 @@ export interface ITokenActionChangeSettings
      */
     type: TokenProposalActionType.UPDATE_VOTE_SETTINGS;
     /**
+     * The existing settings prior to the action updates.
+     */
+    existingSettings: ITokenPluginSettings;
+    /**
      * The proposed settings to be updated.
      */
     proposedSettings: ITokenPluginSettings;
