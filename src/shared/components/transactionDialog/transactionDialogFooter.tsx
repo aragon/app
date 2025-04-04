@@ -1,7 +1,5 @@
 import type { TransactionType } from '@/shared/api/transactionService';
 import { DialogFooter, IconType } from '@aragon/gov-ui-kit';
-import type { Route } from 'next';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useDialogContext } from '../dialogProvider';
@@ -97,7 +95,6 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const { close } = useDialogContext();
     const { t } = useTranslations();
-    const router = useRouter();
 
     const isIndexing = stepId === TransactionDialogStep.INDEXING;
 
@@ -146,15 +143,9 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const handleCancelClick = () => {
         close();
-        onCancelClick?.();
-    };
-
-    const handleProceedAnyway = () => {
-        close();
-        onCancelClick?.();
-
-        const route = indexingFallbackUrl ?? '/';
-        router.push(route as Route);
+        if (!showProceedAnyway) {
+            onCancelClick?.();
+        }
     };
 
     const processedSuccessLink =
@@ -168,8 +159,6 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         ? t('app.shared.transactionDialog.footer.proceedAnyway')
         : t('app.shared.transactionDialog.footer.cancel');
 
-    const onCancelAction = isIndexing && showProceedAnyway ? handleProceedAnyway : handleCancelClick;
-
     return (
         <DialogFooter
             primaryAction={{
@@ -181,7 +170,8 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
             }}
             secondaryAction={{
                 label: cancelButtonLabel,
-                onClick: onCancelAction,
+                onClick: handleCancelClick,
+                href: showProceedAnyway ? indexingFallbackUrl : undefined,
                 disabled: isCancelDisabled,
             }}
         />

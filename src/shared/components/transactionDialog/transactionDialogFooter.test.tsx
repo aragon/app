@@ -9,13 +9,6 @@ import { type ITransactionDialogStep, TransactionDialogStep } from './transactio
 import { type ITransactionDialogFooterProps, TransactionDialogFooter } from './transactionDialogFooter';
 import { testLogger } from '@/test/utils';
 
-const mockRouterPush = jest.fn();
-jest.mock('next/navigation', () => ({
-    useRouter: jest.fn(() => ({
-        push: mockRouterPush,
-    })),
-}));
-
 describe('<TransactionDialogFooter /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
 
@@ -207,7 +200,7 @@ describe('<TransactionDialogFooter /> component', () => {
             expect(screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
         });
 
-        it('navigates to the correct fallback url', async () => {
+        it('the proceed anyway button has the correct fallback href', () => {
             testLogger.suppressErrors(); // suppress navigation not implemented error
             const transactionType = TransactionType.PROPOSAL_CREATE;
 
@@ -227,12 +220,8 @@ describe('<TransactionDialogFooter /> component', () => {
                 jest.advanceTimersByTime(8000);
             });
 
-            const proceedButton = screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ });
-
-            await userEvent.click(proceedButton);
-
-            expect(close).toHaveBeenCalled();
-            expect(mockRouterPush).toHaveBeenCalledWith(indexingFallbackUrl);
+            const proceedButton = screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ });
+            expect(proceedButton).toHaveAttribute('href', indexingFallbackUrl);
         });
     });
 });
