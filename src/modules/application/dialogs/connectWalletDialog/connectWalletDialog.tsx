@@ -49,8 +49,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
     useEffect(() => {
         const disableOutsideClick = isAppKitModalOpen;
         updateOptions({ disableOutsideClick });
-        // There is a known issue on the appkit modal where elements inside the modal are not scrollable
-        // when the modal is open and the user scrolls the page. This is a workaround to fix that.
+        // There is a known issue on the radix dialog where elements are not scrollable when the dialog is open.
         // see here: https://github.com/radix-ui/primitives/issues/1159
         const appKitModal = document.querySelector('w3m-modal');
         const handleWheel = (event: Event) => event.stopPropagation();
