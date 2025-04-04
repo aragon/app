@@ -13,6 +13,7 @@ import {
     TransactionDialogStep,
     type TransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';
+import { useBlockNavigationContext } from '../blockNavigationContext';
 
 export interface ITransactionDialogFooterProps<TCustomStepId extends string = string> {
     /**
@@ -93,6 +94,8 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const { id: stepId, meta } = activeStep ?? {};
     const { state, action } = meta ?? {};
 
+    const { setIsBlocked } = useBlockNavigationContext();
+
     const { close } = useDialogContext();
     const { t } = useTranslations();
 
@@ -159,6 +162,11 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         ? t('app.shared.transactionDialog.footer.proceedAnyway')
         : t('app.shared.transactionDialog.footer.cancel');
 
+    const getFallbackUrl = () => {
+        setIsBlocked(false);
+        return indexingFallbackUrl ?? '';
+    };
+
     return (
         <DialogFooter
             primaryAction={{
@@ -171,7 +179,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
             secondaryAction={{
                 label: cancelButtonLabel,
                 onClick: handleCancelClick,
-                href: showProceedAnyway ? indexingFallbackUrl : undefined,
+                href: showProceedAnyway ? getFallbackUrl() : undefined,
                 disabled: isCancelDisabled,
             }}
         />
