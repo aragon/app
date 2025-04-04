@@ -47,7 +47,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
                         alt="Background Texture"
                         className="absolute left-0 top-0 size-full object-cover"
                         priority={true}
-                        unoptimized={true}
                     />
 
                     <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
