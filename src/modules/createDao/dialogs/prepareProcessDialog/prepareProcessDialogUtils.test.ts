@@ -1,8 +1,8 @@
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
+import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
 import { type Hex } from 'viem';
 import {
     generateCreateProcessFormBody,
@@ -56,8 +56,8 @@ describe('prepareProcessDialog utils', () => {
         });
     });
 
-    describe('buildPrepareInstallActions', () => {
-        const installDataToActionSpy = jest.spyOn(pluginTransactionUtils, 'installDataToAction');
+    describe('buildTransaction', () => {
+        const encodeTransactionRequestsSpy = jest.spyOn(transactionUtils, 'encodeTransactionRequests');
         const buildPrepareInstallProcessorActionDataSpy = jest.spyOn(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             prepareProcessDialogUtils as any,
@@ -73,12 +73,13 @@ describe('prepareProcessDialog utils', () => {
         beforeEach(() => {
             buildPrepareInstallProcessorActionDataSpy.mockReturnValue('');
             buildPrepareInstallPluginsActionDataSpy.mockReturnValue([]);
+            encodeTransactionRequestsSpy.mockReturnValue({ data: '0x1', to: '0x1' });
         });
 
         afterEach(() => {
             buildPrepareInstallProcessorActionDataSpy.mockReset();
             buildPrepareInstallPluginsActionDataSpy.mockReset();
-            installDataToActionSpy.mockReset();
+            encodeTransactionRequestsSpy.mockReset();
         });
 
         afterAll(() => {
@@ -86,52 +87,45 @@ describe('prepareProcessDialog utils', () => {
             buildPrepareInstallPluginsActionDataSpy.mockRestore();
         });
 
-        it('builds the prepare install action of the processor when processor metadata is set', () => {
+        it('builds the prepare install action of the processor when processor metadata is set', async () => {
             const values = generateCreateProcessFormData();
-            const dao = generateDao();
+            const dao = generateDao({ network: Network.ARBITRUM_MAINNET });
             const processMetadata = { processor: 'metadataTest', plugins: [], proposal: '' };
             const installProcessorActionData = '0x0000';
-            const installProcessorAction = { to: '0x456' as Hex, data: installProcessorActionData as Hex, value: '0' };
             buildPrepareInstallProcessorActionDataSpy.mockReturnValue(installProcessorActionData);
-            installDataToActionSpy.mockReturnValue(installProcessorAction);
 
-            const result = prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
+            await prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
             expect(buildPrepareInstallProcessorActionDataSpy).toHaveBeenCalledWith(processMetadata.processor, dao);
-            expect(installDataToActionSpy).toHaveBeenCalledWith(installProcessorActionData, dao.network);
-            expect(result).toEqual([installProcessorAction]);
+            expect(encodeTransactionRequestsSpy).toHaveBeenCalledWith(
+                [{ to: '0x308a1DC5020c4B5d992F5543a7236c465997fecB', data: installProcessorActionData }],
+                dao.network,
+            );
         });
 
-        it('does not build the prepare install action for the processor when processor metadata is not set', () => {
+        it('does not build the prepare install action for the processor when processor metadata is not set', async () => {
             const values = generateCreateProcessFormData();
             const dao = generateDao();
             const processMetadata = { plugins: [], proposal: '' };
-            const result = prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
+            await prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
             expect(buildPrepareInstallProcessorActionDataSpy).not.toHaveBeenCalled();
-            expect(installDataToActionSpy).not.toHaveBeenCalled();
-            expect(result).toEqual([]);
         });
 
-        it('builds the action data for each plugin and maps it to an action', () => {
+        it('builds the action data for each plugin and maps it to an action', async () => {
             const values = generateCreateProcessFormData();
             const dao = generateDao();
-            const processMetadata = { plugins: [], proposal: '' };
-            const pluginInstallActions = [
-                { to: '0x123' as Hex, data: '0x01' as Hex, value: '0' },
-                { to: '0x456' as Hex, data: '0x02' as Hex, value: '0' },
-            ];
+            const processMetadata = { plugins: ['meta'], proposal: '' };
+            const encodedTransaction: ITransactionRequest = { to: '0x123', data: '0x01' };
             buildPrepareInstallPluginsActionDataSpy.mockReturnValue(['0x01', '0x02']);
-            installDataToActionSpy
-                .mockReturnValueOnce(pluginInstallActions[0])
-                .mockReturnValueOnce(pluginInstallActions[1]);
+            encodeTransactionRequestsSpy.mockReturnValue(encodedTransaction);
 
-            const result = prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
+            const result = await prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
 
             expect(buildPrepareInstallPluginsActionDataSpy).toHaveBeenCalledWith({
                 values,
                 dao,
                 pluginsMetadata: processMetadata.plugins,
             });
-            expect(result).toEqual(pluginInstallActions);
+            expect(result).toEqual(encodedTransaction);
         });
     });
 

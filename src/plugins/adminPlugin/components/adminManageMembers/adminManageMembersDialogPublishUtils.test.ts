@@ -58,8 +58,8 @@ describe('adminManageMembersDialogPublish utils', () => {
             });
 
             const expectedResult = [
-                { to: daoAddress, value: '0', data: encodedGrantData },
-                { to: daoAddress, value: '0', data: encodedRevokeData },
+                { to: daoAddress, data: encodedGrantData },
+                { to: daoAddress, data: encodedRevokeData },
             ];
 
             expect(result).toEqual(expectedResult);

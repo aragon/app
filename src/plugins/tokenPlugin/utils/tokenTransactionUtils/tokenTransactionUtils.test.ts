@@ -35,15 +35,18 @@ describe('tokenTransaction utils', () => {
             const values = { ...generateCreateProposalFormData(), ...generateCreateProposalEndDateFormData() };
             const actions: ITransactionRequest[] = [{ to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x' }];
             const params = { metadata: '0xipfs-cid' as const, actions, values };
+            const transactionData = '0xdata';
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
+            encodeFunctionDataSpy.mockReturnValue(transactionData);
 
-            tokenTransactionUtils.buildCreateProposalData(params);
+            const result = tokenTransactionUtils.buildCreateProposalData(params);
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
                 args: [params.metadata, params.actions, BigInt(0), startDate, endDate, 0, false],
             });
+            expect(result).toEqual(transactionData);
         });
     });
 

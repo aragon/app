@@ -13,15 +13,19 @@ describe('adminTransaction utils', () => {
 
     describe('buildCreateProposalData', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
-            const metadata = 'testData';
+            const metadata = '0xmeta';
             const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x000' }];
             const values = generateCreateProposalFormData();
-            adminTransactionUtils.buildCreateProposalData({ metadata: '0xdao-metadata-cid' as const, actions, values });
+            const transactionData = '0xdata';
+            encodeFunctionDataSpy.mockReturnValueOnce(transactionData);
+
+            const result = adminTransactionUtils.buildCreateProposalData({ metadata, actions, values });
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: adminPluginAbi,
                 functionName: 'createProposal',
                 args: [metadata, actions, BigInt(0), BigInt(0), ''],
             });
+            expect(result).toEqual(transactionData);
         });
     });
 });

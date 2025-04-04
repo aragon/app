@@ -121,9 +121,9 @@ describe('sppTransaction utils', () => {
             const dao = generateDao({ address: '0x123', network: Network.ETHEREUM_SEPOLIA });
             const daoAddress = dao.address as Viem.Hex;
 
-            const updateStagesAction = { to: '0x002', data: '0xstages', value: '0' };
-            const updateRulesAction = { to: '0x003', data: '0xrules', value: '0' };
-            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Viem.Hex, value: '0' }];
+            const updateStagesAction = { to: '0x002', data: '0xstages' };
+            const updateRulesAction = { to: '0x003', data: '0xrules' };
+            const bodyPermissionActions = [{ to: daoAddress, data: '0xbody' as Viem.Hex }];
 
             buildUpdateStagesTransactionSpy.mockReturnValueOnce(updateStagesAction);
             buildUpdateRulesTransactionSpy.mockReturnValueOnce(updateRulesAction);
@@ -140,9 +140,9 @@ describe('sppTransaction utils', () => {
             const daoAddress = '0xDao' as Viem.Hex;
             const sppAddress = '0xSpp' as Viem.Hex;
 
-            const revokeCreateProposalAction = { to: daoAddress, data: '0xrevoke-proposal' as Viem.Hex, value: '0' };
-            const revokeExecutePermissionAction = { to: daoAddress, data: '0xrevoke-execute' as Viem.Hex, value: '0' };
-            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex, value: '0' };
+            const revokeCreateProposalAction = { to: daoAddress, data: '0xrevoke-proposal' as Viem.Hex };
+            const revokeExecutePermissionAction = { to: daoAddress, data: '0xrevoke-execute' as Viem.Hex };
+            const grantAction = { to: daoAddress, data: '0xgrant' as Viem.Hex };
 
             revokePermissionSpy
                 .mockReturnValueOnce(revokeCreateProposalAction)
@@ -217,7 +217,7 @@ describe('sppTransaction utils', () => {
                 args: [expectedConditionRules],
             });
 
-            const expectedTransaction = { to: '0xSppRuleCondition', data: updateRulesTxData, value: '0' };
+            const expectedTransaction = { to: '0xSppRuleCondition', data: updateRulesTxData };
             expect(result).toEqual(expectedTransaction);
         });
     });
@@ -273,7 +273,7 @@ describe('sppTransaction utils', () => {
                 args: [expectedProcessedStages],
             });
 
-            expect(result).toEqual({ to: sppAddress, data: transactionData, value: '0' });
+            expect(result).toEqual({ to: sppAddress, data: transactionData });
         });
     });
 

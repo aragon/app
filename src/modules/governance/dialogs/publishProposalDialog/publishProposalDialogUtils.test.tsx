@@ -43,21 +43,14 @@ describe('publishProposalDialog utils', () => {
             const slotFunction = jest.fn(() => transactionData);
             getSlotFunctionSpy.mockReturnValue(slotFunction);
 
-            const actionBaseValues = { data: '0x123456', to: '0x000', value: '0' };
+            const actionBaseValues = { data: '0x123456', to: '0x000', value: '4' };
             const values = generateCreateProposalFormData({
                 actions: [
-                    {
-                        ...generateProposalActionUpdateMetadata(actionBaseValues),
-                        daoId: 'test',
-                        meta: undefined,
-                    },
+                    { ...generateProposalActionUpdateMetadata(actionBaseValues), daoId: 'test', meta: undefined },
                 ],
             });
             const metadataCid = 'test-cid';
-            const plugin = generateDaoPlugin({
-                address: '0x30FF8f1Ecd022aBD2d3A79AF44fD069A7bB3EFD3',
-                subdomain: 'multisig',
-            });
+            const plugin = generateDaoPlugin({ address: '0x123', subdomain: 'multisig' });
 
             const transaction = publishProposalDialogUtils.buildTransaction({ values, metadataCid, plugin });
 
@@ -66,7 +59,7 @@ describe('publishProposalDialog utils', () => {
                 slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
             });
             expect(slotFunction).toHaveBeenCalledWith({
-                actions: [actionBaseValues],
+                actions: [{ ...actionBaseValues, value: BigInt(actionBaseValues.value) }],
                 metadata: '0x697066733a2f2f746573742d636964',
                 values,
             });
