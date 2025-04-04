@@ -1,7 +1,7 @@
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { encodeFunctionData, type Hex, multicall3Abi, toHex } from 'viem';
-import type { IMulticallRequest, ITransactionRequest, ITransactionToMulticallRequest } from './transactionUtils.api';
+import type { IMulticallRequest, ITransactionRequest } from './transactionUtils.api';
 
 class TransactionUtils {
     cidToHex = (cid: string): Hex => toHex(`ipfs://${cid}`);
@@ -11,14 +11,16 @@ class TransactionUtils {
             return transactions[0];
         }
 
-        const multicallRequests = transactions.map((tx) => this.transactionToMulticallRequest({ transaction: tx }));
+        const multicallRequests = transactions.map((transaction) => this.transactionToMulticallRequest(transaction));
         const multicallTransaction = this.encodeMulticallTransaction(multicallRequests, network);
 
         return multicallTransaction;
     };
 
-    private transactionToMulticallRequest = (params: ITransactionToMulticallRequest): IMulticallRequest => {
-        const { transaction, allowFailure = false } = params;
+    private transactionToMulticallRequest = (
+        transaction: Omit<ITransactionRequest, 'value'>,
+        allowFailure = false,
+    ): IMulticallRequest => {
         const { data, to } = transaction;
 
         return { target: to, callData: data, allowFailure };

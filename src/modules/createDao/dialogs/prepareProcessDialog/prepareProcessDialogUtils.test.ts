@@ -10,7 +10,6 @@ import {
     generateCreateProcessFormStage,
 } from '../../testUtils';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
-import type { IBuildTransactionParams } from './prepareProcessDialogUtils.api';
 
 describe('prepareProcessDialog utils', () => {
     const cidToHexSpy = jest.spyOn(transactionUtils, 'cidToHex');
@@ -57,45 +56,6 @@ describe('prepareProcessDialog utils', () => {
         });
     });
 
-    describe('buildTransaction', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const prepareInstallActionsSpy = jest.spyOn(prepareProcessDialogUtils as any, 'buildPrepareInstallActions');
-
-        beforeEach(() => {
-            prepareInstallActionsSpy.mockReturnValue([]);
-        });
-
-        afterEach(() => {
-            prepareInstallActionsSpy.mockReset();
-        });
-
-        afterAll(() => {
-            prepareInstallActionsSpy.mockRestore();
-        });
-
-        const createTestParams = (params?: Partial<IBuildTransactionParams>): IBuildTransactionParams => ({
-            values: generateCreateProcessFormData(),
-            dao: generateDao(),
-            processMetadata: { plugins: ['pluginCID1', 'pluginCID2'] },
-            ...params,
-        });
-
-        it('builds the prepare install plugin actions and passes them to the create proposal plugin function', async () => {
-            const dao = generateDao();
-            const values = generateCreateProcessFormData();
-            const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: '11' }];
-            const slotFunction = jest.fn();
-
-            prepareInstallActionsSpy.mockReturnValue(installPluginActions);
-            getSlotFunctionSpy.mockReturnValue(slotFunction);
-
-            await prepareProcessDialogUtils.buildTransaction(createTestParams({ dao, values }));
-
-            expect(prepareInstallActionsSpy).toHaveBeenCalledWith(expect.objectContaining({ values, dao }));
-            expect(slotFunction).toHaveBeenCalledWith(expect.objectContaining({ actions: installPluginActions }));
-        });
-    });
-
     describe('buildPrepareInstallActions', () => {
         const installDataToActionSpy = jest.spyOn(pluginTransactionUtils, 'installDataToAction');
         const buildPrepareInstallProcessorActionDataSpy = jest.spyOn(
@@ -135,7 +95,7 @@ describe('prepareProcessDialog utils', () => {
             buildPrepareInstallProcessorActionDataSpy.mockReturnValue(installProcessorActionData);
             installDataToActionSpy.mockReturnValue(installProcessorAction);
 
-            const result = prepareProcessDialogUtils['buildPrepareInstallAction']({ values, dao, processMetadata });
+            const result = prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
             expect(buildPrepareInstallProcessorActionDataSpy).toHaveBeenCalledWith(processMetadata.processor, dao);
             expect(installDataToActionSpy).toHaveBeenCalledWith(installProcessorActionData, dao.network);
             expect(result).toEqual([installProcessorAction]);
@@ -145,7 +105,7 @@ describe('prepareProcessDialog utils', () => {
             const values = generateCreateProcessFormData();
             const dao = generateDao();
             const processMetadata = { plugins: [], proposal: '' };
-            const result = prepareProcessDialogUtils['buildPrepareInstallAction']({ values, dao, processMetadata });
+            const result = prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
             expect(buildPrepareInstallProcessorActionDataSpy).not.toHaveBeenCalled();
             expect(installDataToActionSpy).not.toHaveBeenCalled();
             expect(result).toEqual([]);
@@ -164,7 +124,7 @@ describe('prepareProcessDialog utils', () => {
                 .mockReturnValueOnce(pluginInstallActions[0])
                 .mockReturnValueOnce(pluginInstallActions[1]);
 
-            const result = prepareProcessDialogUtils['buildPrepareInstallAction']({ values, dao, processMetadata });
+            const result = prepareProcessDialogUtils.buildTransaction({ values, dao, processMetadata });
 
             expect(buildPrepareInstallPluginsActionDataSpy).toHaveBeenCalledWith({
                 values,
