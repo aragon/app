@@ -1,9 +1,9 @@
 'use client';
 
 import { Dialog, type IDialogRootProps as IGukDialogRootProps } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
 import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
-import { useEffect } from 'react';
 
 export interface IDialogRootProps extends IGukDialogRootProps {
     /**
