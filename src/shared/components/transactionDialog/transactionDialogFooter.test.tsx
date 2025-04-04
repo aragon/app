@@ -1,5 +1,6 @@
 import { TransactionType } from '@/shared/api/transactionService';
 import { generateDialogContext } from '@/shared/testUtils';
+import { testLogger } from '@/test/utils';
 import { IconType } from '@aragon/gov-ui-kit';
 import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -7,7 +8,6 @@ import type { TransactionReceipt } from 'viem';
 import * as useDialogContext from '../dialogProvider';
 import { type ITransactionDialogStep, TransactionDialogStep } from './transactionDialog.api';
 import { type ITransactionDialogFooterProps, TransactionDialogFooter } from './transactionDialogFooter';
-import { testLogger } from '@/test/utils';
 
 describe('<TransactionDialogFooter /> component', () => {
     const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
