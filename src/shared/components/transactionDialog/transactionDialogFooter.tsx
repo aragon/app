@@ -164,7 +164,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     const getFallbackUrl = () => {
         setIsBlocked(false);
-        return indexingFallbackUrl ?? '';
+        return indexingFallbackUrl ?? '/';
     };
 
     return (

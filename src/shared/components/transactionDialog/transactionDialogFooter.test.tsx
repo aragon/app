@@ -197,7 +197,7 @@ describe('<TransactionDialogFooter /> component', () => {
             });
 
             // Cancel button should now be Proceed anyway
-            expect(screen.getByRole('button', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
+            expect(screen.getByRole('link', { name: /transactionDialog.footer.proceedAnyway/ })).toBeInTheDocument();
         });
 
         it('the proceed anyway button has the correct fallback href', () => {
