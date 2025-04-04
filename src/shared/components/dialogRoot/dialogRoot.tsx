@@ -1,7 +1,6 @@
 'use client';
 
 import { Dialog, type IDialogRootProps as IGukDialogRootProps } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
 import { useDialogContext, type IDialogComponentDefinitions } from '../dialogProvider';
 import { useTranslations } from '../translationsProvider';
 
@@ -40,13 +39,6 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
         const closeFunction = onClose ?? close;
         closeFunction();
     };
-
-    useEffect(() => {
-        if (location == null) {
-            const closeFunction = onClose ?? close;
-            closeFunction();
-        }
-    }, [location, close, onClose]);
 
     return (
         <Dialog.Root
