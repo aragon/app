@@ -12,6 +12,7 @@ export const applicationDialogs: Record<ApplicationDialog, IDialogComponentDefin
         Component: ConnectWalletDialog,
         hiddenTitle: 'app.application.connectWalletDialog.a11y.title',
         hiddenDescription: 'app.application.connectWalletDialog.a11y.description',
+        useFocusTrap: false,
     },
     [ApplicationDialog.USER]: {
         Component: UserDialog,
